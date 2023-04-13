@@ -18,6 +18,7 @@ module.exports = {
 				400: '#D9D9D9',
 				420: '#D3D3D3',
 				450: '#CFCFCF',
+				550: '#8D8D8D',
 				600: '#747474',
 				700: '#656565',
 				800: '#4A4A4A',
@@ -26,7 +27,7 @@ module.exports = {
 		},
 		fontFamily: {
 			display: ['Gloock', 'ui-serif'],
-			body: ['Outfit', 'ui-sans-serif'],
+			body: ['Outfit', 'ui-sans-serif']
 		}
 	},
 	/* To style checkboxes with form-checkbox */
