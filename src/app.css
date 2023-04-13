@@ -4,19 +4,11 @@
 
 @layer base {
 	html {
-		@apply h-full text-gray-800;
+		@apply h-full ;
 	}
 
 	body {
-		@apply font-body h-full flex items-center bg-[#292929];
-	}
-
-	header {
-		@apply font-display text-gray-850;
-	}
-
-	main {
-		@apply bg-white;
+		@apply font-body h-full flex flex-col;
 	}
 }
 
