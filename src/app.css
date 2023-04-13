@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	html {
+		@apply h-full text-gray-800;
+	}
+
+	body {
+		@apply font-body h-full flex items-center bg-[#292929];
+	}
+
+	header {
+		@apply font-display text-gray-850;
+	}
+
+	main {
+		@apply bg-white;
+	}
+}
+
+@layer components {
+	.btn {
+		@apply bg-gray-400 rounded-lg border-0 cursor-pointer w-40 h-14 text-xl flex items-center justify-center;
+	}
+
+	.btn:not([disabled]) {
+		@apply hover:bg-gray-350;
+	}
+
+	.btn[disabled] {
+		@apply cursor-not-allowed opacity-75;
+	}
+
+	.form-input {
+		@apply border-gray-100 border-2 bg-white w-full border-solid rounded-xl pl-2 h-12 block text-lg text-gray-850 placeholder-gray-420;
+	}
+
+	.form-input-container {
+		@apply flex items-center bg-gray-100 rounded-xl text-lg;
+	}
+
+	.form-input-container > span {
+		@apply text-center px-3 whitespace-nowrap;
+	}
+
+	.text-label {
+		@apply text-xl text-gray-700;
+	}
+
+	.form-label {
+		@apply flex flex-col gap-2 text-label;
+	}
+}
+
+@font-face {
+	font-family: 'Gloock';
+	src: url('/fonts/Gloock-Regular.ttf') format('opentype');
+}
