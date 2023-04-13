@@ -4,6 +4,11 @@
 	import '@fontsource/outfit/600.css';
 	import '@fontsource/outfit/400.css';
 	import '@fontsource/outfit/300.css';
+	import IconDownArrow from '$lib/components/icons/IconDownArrow.svelte';
+	import IconSearch from '$lib/components/icons/IconSearch.svelte';
+	import IconWallet from '$lib/components/icons/IconWallet.svelte';
+	import IconSatoshi from '$lib/components/icons/IconSatoshi.svelte';
+	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 </script>
 
 <svelte:head>
@@ -12,7 +17,7 @@
 </svelte:head>
 
 <header class="bg-gray-850 items-center flex h-[100px]">
-	<div class="mx-auto max-w-5xl flex items-center gap-6 px-6 text-white grow">
+	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
 		<div class="flex items-center gap-4">
 			<img
 				class="h-[60px] w-[60px] rounded-full"
@@ -31,12 +36,42 @@
 		<a href="/connect" class="btn btn-blue font-bold">Connect your wallet</a>
 	</div>
 </header>
+<header class="bg-gray-240 text-gray-800 h-[66px] items-center flex">
+	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
+		<nav class="flex gap-6 font-light items-center">
+			<a href="/categories" class="flex gap-2 items-center">Categories <IconDownArrow /></a>
+			<a href="/challenges">Challenges</a>
+			<a href="/rewards">Rewards</a>
+		</nav>
+		<form action="/search" method="post" class="max-w-[520px] grow relative">
+			<input type="text" name="search" class="form-input pr-8 border-gray-300" />
+			<IconSearch class="absolute right-2 top-0 bottom-0 my-auto" />
+		</form>
+		<div class="flex items-center ml-auto gap-2">
+			<IconWallet />
+			<div class="flex flex-col">
+				<span class="flex items-center gap-1">
+					<IconSatoshi class="ml-auto" />
+					{Number(220_625).toLocaleString('en')}
+				</span>
+				<span class="text-right text-sm text-gray-550">
+					{Number(1.22).toLocaleString('en', { currency: 'EUR', style: 'currency' })}
+				</span>
+			</div>
+			<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
+			<a href="/cart" class="flex gap-2 items-center">
+				<IconBasket />
+				3
+			</a>
+		</div>
+	</div>
+</header>
 <main class="grow">
 	<slot />
 </main>
 <footer class="bg-gray-850 h-[90px] items-center flex">
-	<div class="mx-auto max-w-5xl px-6 flex items-center gap-2 text-gray-550 grow">
-		<span class="font-thin">Power by</span><span class="font-display text-xl text-white">
+	<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 text-gray-550 grow">
+		<span class="font-light">Power by</span><span class="font-display text-xl text-white">
 			LaBookinerie.
 		</span>
 	</div>

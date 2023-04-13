@@ -30,16 +30,16 @@
 	}
 
 	.form-input {
-		@apply border-gray-100 border-2 bg-white w-full border-solid rounded-xl pl-2 h-12 block text-lg text-gray-850 placeholder-gray-420;
+		@apply border-gray-300 border-[1px] bg-white w-full border-solid rounded pl-2 h-10 block text-gray-850 placeholder-gray-420;
 	}
 
-	.form-input-container {
+	/* .form-input-container {
 		@apply flex items-center bg-gray-100 rounded-xl text-lg;
 	}
 
 	.form-input-container > span {
 		@apply text-center px-3 whitespace-nowrap;
-	}
+	} */
 
 	.text-label {
 		@apply text-xl text-gray-700;
