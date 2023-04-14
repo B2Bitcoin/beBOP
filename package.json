@@ -19,6 +19,8 @@
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.5.0",
 		"@tailwindcss/forms": "^0.5.3",
+		"@types/busboy": "^1.5.0",
+		"@types/mime-types": "^2.1.1",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
 		"autoprefixer": "^10.4.14",
@@ -38,6 +40,12 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"mongodb": "^5.2.0"
+		"@aws-sdk/client-s3": "^3.312.0",
+		"busboy": "^1.6.0",
+		"mime-types": "^2.1.35",
+		"mongodb": "^5.2.0",
+		"nanoid": "^4.0.2",
+		"sharp": "^0.32.0",
+		"zod": "^3.21.4"
 	}
 }
