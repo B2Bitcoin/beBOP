@@ -37,7 +37,7 @@ export async function generatePicture(
 		throw error(400, 'Invalid image format: ' + format);
 	}
 
-	const _id = generateId(name);
+	const _id = generateId(name, true);
 	const extension = '.' + mimeTypes.extension(mime);
 
 	const uploadedKeys: string[] = [];

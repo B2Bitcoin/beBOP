@@ -6,7 +6,7 @@ import { pipeline } from 'node:stream/promises';
 import { Decimal128 } from 'mongodb';
 import busboy from 'busboy';
 import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const actions: Actions = {
@@ -42,7 +42,15 @@ export const actions: Actions = {
 			}
 		});
 
-		const productId = generateId(fields.name);
+		const productId = generateId(fields.name, false);
+
+		if (!productId) {
+			throw error(400, 'Could not generate product ID');
+		}
+
+		if (await collections.products.countDocuments({ _id: productId })) {
+			throw error(409, 'Product with same slug already exists');
+		}
 
 		const parsed = z
 			.object({
