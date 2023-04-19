@@ -3,6 +3,7 @@
 		<span class="font-bold text-xl">Admin</span>
 		<nav class="flex gap-6 font-light items-center">
 			<a href="/admin/product">Products</a>
+			<a href="/admin/picture">Pictures</a>
 		</nav>
 	</div>
 </header>
