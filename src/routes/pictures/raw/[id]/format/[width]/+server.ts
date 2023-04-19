@@ -18,13 +18,15 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	throw redirect(
 		302,
-		await getSignedUrl(
-			s3client,
-			new GetObjectCommand({
-				Bucket: S3_BUCKET,
-				Key: picture.storage.formats.find((f) => f.width === +params.width)!.key
-			}),
-			{ expiresIn: 24 * 3600 }
-		)
+		(
+			await getSignedUrl(
+				s3client,
+				new GetObjectCommand({
+					Bucket: S3_BUCKET,
+					Key: picture.storage.formats.find((f) => f.width === +params.width)!.key
+				}),
+				{ expiresIn: 24 * 3600 }
+			)
+		).replace('http:', 'https:')
 	);
 };
