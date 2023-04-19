@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@aws-sdk/client-s3': ^3.312.0
+  '@aws-sdk/s3-request-presigner': ^3.316.0
   '@fontsource/outfit': ^4.5.11
   '@playwright/test': ^1.28.1
   '@sveltejs/adapter-auto': ^2.0.0
@@ -34,6 +35,7 @@ specifiers:
 
 dependencies:
   '@aws-sdk/client-s3': 3.312.0
+  '@aws-sdk/s3-request-presigner': 3.316.0
   busboy: 1.6.0
   mime-types: 2.1.35
   mongodb: 5.2.0
@@ -757,6 +759,21 @@ packages:
       tslib: 2.5.0
     dev: false
 
+  /@aws-sdk/s3-request-presigner/3.316.0:
+    resolution: {integrity: sha512-FTsXtmkpVKRANtjZ84dUiEoynTLy3M+Q6DGP0/Jwx1xefK4uKbQvQSRt9IpcuVYTzO/2+7fRk0hGuv/V6+Keiw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/middleware-endpoint': 3.310.0
+      '@aws-sdk/protocol-http': 3.310.0
+      '@aws-sdk/signature-v4-multi-region': 3.310.0
+      '@aws-sdk/smithy-client': 3.316.0
+      '@aws-sdk/types': 3.310.0
+      '@aws-sdk/util-format-url': 3.310.0
+      tslib: 2.5.0
+    transitivePeerDependencies:
+      - '@aws-sdk/signature-v4-crt'
+    dev: false
+
   /@aws-sdk/service-error-classification/3.310.0:
     resolution: {integrity: sha512-PuyC7k3qfIKeH2LCnDwbttMOKq3qAx4buvg0yfnJtQOz6t1AR8gsnAq0CjKXXyfkXwNKWTqCpE6lVNUIkXgsMw==}
     engines: {node: '>=14.0.0'}
@@ -800,6 +817,15 @@ packages:
 
   /@aws-sdk/smithy-client/3.310.0:
     resolution: {integrity: sha512-UHMFvhoB2RLzsTb0mQe1ofvBUg/+/JEu1uptavxf/hEpEKZnRAaHH5FNkTG+mbFd/olay/QFjqNcMD6t8LcsNQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/middleware-stack': 3.310.0
+      '@aws-sdk/types': 3.310.0
+      tslib: 2.5.0
+    dev: false
+
+  /@aws-sdk/smithy-client/3.316.0:
+    resolution: {integrity: sha512-6YXOKbRnXeS8r8RWzuL6JMBolDYM5Wa4fD/VY6x/wK78i2xErHOvqzHgyyeLI1MMw4uqyd4wRNJNWC9TMPduXw==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/middleware-stack': 3.310.0
@@ -904,6 +930,15 @@ packages:
     resolution: {integrity: sha512-zG+/d/O5KPmAaeOMPd6bW1abifdT0H03f42keLjYEoRZzYtHPC5DuPE0UayiWGckI6BCDgy0sRKXCYS49UNFaQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
+      '@aws-sdk/types': 3.310.0
+      tslib: 2.5.0
+    dev: false
+
+  /@aws-sdk/util-format-url/3.310.0:
+    resolution: {integrity: sha512-NBOvmvvVR3ydquHmznfgtakiSgDhq8Ww6fq8TUaEjM+Es6+iqY4AwZo0rZ9xTX3GpCcoZy391HUi6kiXRAFzuA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@aws-sdk/querystring-builder': 3.310.0
       '@aws-sdk/types': 3.310.0
       tslib: 2.5.0
     dev: false

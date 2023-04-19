@@ -66,9 +66,9 @@
 		</div>
 	</div>
 </header>
-<main class="grow">
+<div class="grow">
 	<slot />
-</main>
+</div>
 <footer class="bg-gray-850 h-[90px] items-center flex">
 	<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 text-gray-550 grow">
 		<span class="font-light">Power by</span><span class="font-display text-xl text-white">

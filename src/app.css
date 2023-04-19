@@ -30,7 +30,11 @@
 	}
 
 	.form-input {
-		@apply border-gray-300 border-[1px] bg-white w-full border-solid rounded pl-2 h-10 block text-gray-850 placeholder-gray-420;
+		@apply border-gray-300 border-[1px] bg-white w-full border-solid rounded pl-2 block text-gray-850 placeholder-gray-450;
+	}
+
+	.form-input:not(textarea) {
+		@apply h-10;
 	}
 
 	/* .form-input-container {

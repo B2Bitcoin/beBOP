@@ -3,7 +3,7 @@ import { generatePicture } from '$lib/server/picture';
 import { generateId } from '$lib/utils/generateId';
 import type { Actions } from './$types';
 import { pipeline } from 'node:stream/promises';
-import { Decimal128} from "mongodb";
+import { Decimal128 } from 'mongodb';
 import busboy from 'busboy';
 import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
 import { redirect } from '@sveltejs/kit';
@@ -15,7 +15,7 @@ export const actions: Actions = {
 			name: '',
 			description: '',
 			priceAmount: '',
-			priceCurrency: '',
+			priceCurrency: ''
 		};
 
 		// eslint-disable-next-line no-async-promise-executor
@@ -47,9 +47,9 @@ export const actions: Actions = {
 		const parsed = z
 			.object({
 				name: z.string().trim().min(1).max(100),
-				description: z.string().max(10_000),
+				description: z.string().trim().max(10_000),
 				priceCurrency: z.enum(['BTC']),
-				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
+				priceAmount: z.string().regex(/^\d+(\.\d+)?$/)
 			})
 			.parse(fields);
 
@@ -65,14 +65,14 @@ export const actions: Actions = {
 						name: parsed.name,
 						price: {
 							currency: parsed.priceCurrency,
-							amount: new Decimal128(parsed.priceAmount),
-						},
+							amount: new Decimal128(parsed.priceAmount)
+						}
 					},
 					{ session }
 				);
 			}
 		});
 
-		throw redirect(303, '/admin/produits/' + productId);
+		throw redirect(303, '/admin/product/' + productId);
 	}
 };

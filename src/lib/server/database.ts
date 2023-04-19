@@ -1,5 +1,5 @@
 import { MONGODB_URL, MONGODB_DB } from '$env/static/private';
-import { MongoClient, ObjectId } from 'mongodb';
+import { MongoClient, ObjectId, type WithSessionCallback } from 'mongodb';
 import type { Picture } from '../types/Picture';
 import type { Product } from '$lib/types/Product';
 
@@ -22,3 +22,7 @@ export const collections = { errors, pictures, products };
 client.on('open', () => {
 	// coll.createIndex(...)
 });
+
+export async function withTransaction(cb: WithSessionCallback) {
+	await client.withSession((session) => session.withTransaction(cb));
+}
