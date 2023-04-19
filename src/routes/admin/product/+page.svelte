@@ -7,8 +7,6 @@
 	let picturesByProduct = Object.fromEntries(
 		data.pictures.map((picture) => [picture.productId, picture])
 	);
-
-	console.log(picturesByProduct);
 </script>
 
 <main class="p-4">

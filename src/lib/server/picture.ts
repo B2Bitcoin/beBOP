@@ -95,7 +95,10 @@ export async function generatePicture(
 					.toFormat('webp')
 					.toBuffer();
 
-				const key = `${pathPrefix}${_id}-${width}x${height}.webp`;
+				// Is it possible to get the new width and height as an intermediate step of the above call instead?
+				const { width: newWidth, height: newHeight } = await sharp(buffer).metadata();
+
+				const key = `${pathPrefix}${_id}-${newWidth}x${newHeight}.webp`;
 				await s3client.send(
 					new PutObjectCommand({
 						Bucket: S3_BUCKET,
@@ -108,8 +111,8 @@ export async function generatePicture(
 				uploadedKeys.push(key);
 
 				formats.push({
-					width,
-					height,
+					width: newWidth!,
+					height: newHeight!,
 					key,
 					size: buffer.length
 				});
