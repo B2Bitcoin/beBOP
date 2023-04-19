@@ -7,7 +7,7 @@ import { s3client } from './s3';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { S3_BUCKET } from '$env/static/private';
 import * as mimeTypes from 'mime-types';
-import type { ImageData } from '../types/Picture';
+import type { ImageData, Picture } from '../types/Picture';
 
 /**
  * Upload picture to S3 under different formats, and create a document in db.pictures.
@@ -146,4 +146,22 @@ export async function generatePicture(
 		}
 		throw err;
 	}
+}
+
+export async function deletePicture(pictureId: Picture['_id']) {
+	const res = await collections.pictures.findOneAndDelete({ _id: pictureId });
+
+	if (!res.value) {
+		return;
+	}
+
+	for (const format of res.value.storage.formats) {
+		await s3client
+			.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: format.key }))
+			.catch(console.error);
+	}
+
+	await s3client
+		.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: res.value.storage.original.key }))
+		.catch(console.error);
 }

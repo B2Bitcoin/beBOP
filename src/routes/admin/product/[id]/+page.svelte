@@ -11,11 +11,11 @@
 	<div class="flex flex-col">
 		<form method="post" action="?/update">
 			<label class="block w-full mt-4 leading-8">
-				Nom
+				Name
 				<input type="text" name="name" class="form-input block" value={data.product.name} />
 			</label>
 			<label class="block w-full mt-4 leading-8">
-				Prix (BTC)
+				Price (BTC)
 				<input
 					type="number"
 					name="priceAmount"
@@ -34,7 +34,10 @@
 				>
 			</label>
 
-			<button type="submit" class="mt-4 btn btn-blue text-white">Valider</button>
+			<div class="flex justify-between mt-4">
+				<button type="submit" class="btn btn-blue">Update</button>
+				<button type="submit" class="btn btn-red" formaction="?/delete"> Delete </button>
+			</div>
 		</form>
 	</div>
 

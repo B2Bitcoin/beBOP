@@ -1,8 +1,9 @@
 import { collections } from '$lib/server/database';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 import { Decimal128 } from 'mongodb';
+import { deletePicture } from '$lib/server/picture';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -71,5 +72,15 @@ export const actions: Actions = {
 		}
 
 		return {};
+	},
+
+	// Todo: disable in production
+	delete: async ({ params }) => {
+		for await (const picture of collections.pictures.find({ productId: params.id })) {
+			await deletePicture(picture._id);
+		}
+		await collections.products.deleteOne({ _id: params.id });
+
+		throw redirect(303, '/admin/product');
 	}
 };

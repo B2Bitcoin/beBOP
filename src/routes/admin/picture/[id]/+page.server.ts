@@ -1,6 +1,7 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { deletePicture } from '$lib/server/picture';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const picture = await collections.pictures.findOne({ _id: params.id });
@@ -30,15 +31,17 @@ export const actions: Actions = {
 		return {};
 	},
 	delete: async function ({ params }) {
-		const res = await collections.pictures.findOneAndDelete({ _id: params.id });
+		const picture = await collections.pictures.findOne({ _id: params.id });
 
-		if (!res.value) {
+		if (!picture) {
 			throw error(404);
 		}
 
+		await deletePicture(picture._id);
+
 		throw redirect(
 			303,
-			res.value.productId ? '/admin/product/' + res.value.productId : '/admin/picture'
+			picture.productId ? '/admin/product/' + picture.productId : '/admin/picture'
 		);
 	}
 };

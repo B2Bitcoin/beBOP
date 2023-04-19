@@ -17,8 +17,16 @@
 		@apply rounded-lg border-0 cursor-pointer px-4 h-10 text-xl flex items-center justify-center;
 	}
 
+	.btn-red {
+		@apply bg-[#ff2600] text-white;
+	}
+
+	.btn-red:not([disabled]) {
+		@apply hover:bg-[#ff3d1a];
+	}
+
 	.btn-blue {
-		@apply bg-[#2271B1];
+		@apply bg-[#2271B1] text-white;
 	}
 
 	.btn-blue:not([disabled]) {
