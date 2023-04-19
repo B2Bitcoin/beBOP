@@ -8,7 +8,7 @@
 	}
 
 	body {
-		@apply font-body h-full flex flex-col;
+		@apply font-body min-h-full flex flex-col;
 	}
 }
 
