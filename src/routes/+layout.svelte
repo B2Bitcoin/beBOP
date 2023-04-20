@@ -9,6 +9,7 @@
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
 	import IconSatoshi from '$lib/components/icons/IconSatoshi.svelte';
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
+	import PriceTag from '$lib/components/PriceTag.svelte';
 </script>
 
 <svelte:head>
@@ -50,13 +51,14 @@
 		<div class="flex items-center ml-auto gap-2">
 			<IconWallet />
 			<div class="flex flex-col">
-				<span class="flex items-center gap-1">
-					<IconSatoshi class="ml-auto" />
-					{Number(220_625).toLocaleString('en')}
-				</span>
-				<span class="text-right text-sm text-gray-550">
-					{Number(1.22).toLocaleString('en', { currency: 'EUR', style: 'currency' })}
-				</span>
+				<PriceTag gap={'gap-1'} currency="BTC" amount={0.00_220_625} short />
+				<PriceTag
+					gap={'gap-1'}
+					currency="EUR"
+					amount={1.22}
+					class="ml-auto text-sm text-gray-550"
+					short
+				/>
 			</div>
 			<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
 			<a href="/cart" class="flex gap-2 items-center">
