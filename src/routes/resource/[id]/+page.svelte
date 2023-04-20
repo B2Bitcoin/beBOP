@@ -37,6 +37,12 @@
 			</div>
 			<div class="grow">
 				<PriceTag currency={data.product.price.currency} amount={data.product.price.amount} />
+				<PriceTag
+					currency={data.product.price.currency}
+					amount={data.product.price.amount}
+					convertedTo="EUR"
+					exchangeRate="30_000"
+				/>
 			</div>
 		</div>
 	</div>

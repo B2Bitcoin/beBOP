@@ -4,7 +4,9 @@
 
 	export let amount: number;
 	export let currency: Currency;
-	export let short: boolean;
+	export let exchangeRate = 0;
+	export let convertedTo: Currency | undefined = undefined;
+	export let short = false;
 	export let gap = 'gap-2';
 
 	let className = '';
