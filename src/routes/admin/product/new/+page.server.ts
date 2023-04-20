@@ -13,6 +13,7 @@ export const actions: Actions = {
 	default: async ({ request }) => {
 		const fields = {
 			name: '',
+			shortDescription: '',
 			description: '',
 			priceAmount: '',
 			priceCurrency: ''
@@ -56,6 +57,7 @@ export const actions: Actions = {
 			.object({
 				name: z.string().trim().min(1).max(100),
 				description: z.string().trim().max(10_000),
+				shortDescription: z.string().trim().max(250),
 				priceCurrency: z.enum(['BTC']),
 				priceAmount: z.string().regex(/^\d+(\.\d+)?$/)
 			})
@@ -70,6 +72,7 @@ export const actions: Actions = {
 						createdAt: new Date(),
 						updatedAt: new Date(),
 						description: parsed.description.replaceAll('\r', ''),
+						shortDescription: parsed.shortDescription.replaceAll('\r', ''),
 						name: parsed.name,
 						price: {
 							currency: parsed.priceCurrency,

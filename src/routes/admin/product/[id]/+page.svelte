@@ -28,8 +28,19 @@
 			<input type="hidden" name="priceCurrency" value={data.product.price.currency} />
 
 			<label class="block my-4 w-full">
+				Short description
+				<textarea
+					name="shortDescription"
+					cols="30"
+					rows="2"
+					maxlength="250"
+					class="block form-input">{data.product.shortDescription}</textarea
+				>
+			</label>
+
+			<label class="block my-4 w-full">
 				Description
-				<textarea name="description" cols="30" rows="10" class="block form-input"
+				<textarea name="description" cols="30" rows="10" maxlength="10000" class="block form-input"
 					>{data.product.description}</textarea
 				>
 			</label>

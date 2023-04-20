@@ -6,6 +6,7 @@ export interface Product extends Timestamps {
 	_id: string;
 	name: string;
 	description: string;
+	shortDescription: string;
 	price: {
 		amount: Decimal128;
 		currency: Currency;

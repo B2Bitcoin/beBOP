@@ -22,8 +22,25 @@
 		<input type="hidden" name="priceCurrency" value="BTC" />
 
 		<label class="block w-full mt-4">
+			Short description
+			<textarea
+				name="shortDescription"
+				cols="30"
+				rows="2"
+				maxlength="250"
+				class="form-input block w-full"
+			/>
+		</label>
+
+		<label class="block w-full mt-4">
 			Description
-			<textarea name="description" cols="30" rows="10" class="form-input block w-full" />
+			<textarea
+				name="description"
+				cols="30"
+				rows="10"
+				maxlength="10000"
+				class="form-input block w-full"
+			/>
 		</label>
 
 		<label class="block my-4 leading-8">

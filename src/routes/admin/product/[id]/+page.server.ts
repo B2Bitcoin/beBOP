@@ -35,17 +35,16 @@ export const actions: Actions = {
 
 		const update = z
 			.object({
-				name: z.string().trim().min(1).max(100).optional(),
-				description: z.string().trim().max(10_000).optional(),
-				priceAmount: z
-					.string()
-					.regex(/^\d+(\.\d+)?$/)
-					.optional(),
+				name: z.string().trim().min(1).max(100),
+				description: z.string().trim().max(10_000),
+				shortDescription: z.string().trim().max(250),
+				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
 				priceCurrency: z.enum(['BTC'])
 			})
 			.parse({
 				name: formData.get('name'),
 				description: formData.get('description'),
+				shortDescription: formData.get('shortDescription'),
 				priceAmount: formData.get('priceAmount'),
 				priceCurrency: formData.get('priceCurrency')
 			});
@@ -56,6 +55,7 @@ export const actions: Actions = {
 				$set: {
 					name: update.name,
 					description: update.description,
+					shortDescription: update.shortDescription,
 					price: update.priceAmount
 						? {
 								amount: new Decimal128(update.priceAmount),
