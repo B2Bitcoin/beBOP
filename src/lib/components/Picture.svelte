@@ -10,7 +10,7 @@
 		alt={picture.name}
 		srcset={picture.storage.formats
 			.slice(minStorage)
-			.map((format) => `/pictures/raw/${picture?._id}/format/${format.width} ${format.width}w`)
+			.map((format) => `/picture/raw/${picture?._id}/format/${format.width} ${format.width}w`)
 			.join(', ')}
 		{...$$restProps}
 		on:click

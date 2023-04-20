@@ -45,16 +45,17 @@
 				>
 			</label>
 
-			<div class="flex justify-between mt-4">
+			<div class="flex justify-between mt-4 gap-2">
 				<button type="submit" class="btn btn-blue">Update</button>
-				<button type="submit" class="btn btn-red" formaction="?/delete"> Delete </button>
+				<a href="/resource/{data.product._id}" class="btn btn-gray">View</a>
+				<button type="button" class="ml-auto btn btn-red" formaction="?/delete"> Delete </button>
 			</div>
 		</form>
 	</div>
 
 	<h2 class="text-2xl my-4">Photos</h2>
 
-	<a href="/admin/pictures/new?productId={data.product._id}" class="underline">Add picture</a>
+	<a href="/admin/picture/new?productId={data.product._id}" class="underline">Add picture</a>
 
 	<div class="flex flex-row flex-wrap gap-6 mt-6">
 		{#each data.pictures as picture}

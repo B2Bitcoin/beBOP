@@ -33,6 +33,14 @@
 		@apply hover:bg-[#2d83ca];
 	}
 
+	.btn-gray {
+		@apply bg-gray-550 text-white;
+	}
+
+	.btn-gray:not([disabled]) {
+		@apply hover:bg-[#aaaaaa];
+	}
+
 	.btn[disabled] {
 		@apply cursor-not-allowed opacity-75;
 	}
