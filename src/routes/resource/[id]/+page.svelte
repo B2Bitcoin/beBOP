@@ -57,7 +57,7 @@
 			<div class="flex flex-col">
 				<PriceTag
 					currency={data.product.price.currency}
-					class="ml-auto"
+					class="ml-auto text-4xl"
 					amount={data.product.price.amount}
 				/>
 				<PriceTag
@@ -65,7 +65,7 @@
 					amount={data.product.price.amount}
 					convertedTo="EUR"
 					exchangeRate={data.exchangeRate}
-					class="ml-auto"
+					class="ml-auto text-xl"
 				/>
 			</div>
 		</div>
