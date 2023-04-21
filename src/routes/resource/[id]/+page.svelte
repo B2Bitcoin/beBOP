@@ -5,6 +5,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 
 	export let data: PageData;
 
@@ -87,7 +88,16 @@
 				<hr class="border-gray-300" />
 				50% off
 				<hr class="border-gray-300" />
-				Free with xxx
+				<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
+					<IconInfo class="text-[#E4C315]" />
+					<div>
+						<h3 class="font-semibold text-gray-800">Free with "xxxxx"</h3>
+						<p class="text-gray-700">
+							This product is available for free with your monthly subscription
+						</p>
+						<a href="/cabinet" class="text-[#E4C315] hover:underline">See in MyCabinet</a>
+					</div>
+				</div>
 				<hr class="border-gray-300" />
 				<form action="?/buy" use:enhance class="flex flex-col gap-2">
 					<label class="mb-2">
