@@ -128,3 +128,4 @@ async function maintainExchangeRate() {
 
 maintainLock();
 maintainExchangeRate();
+refresh();
