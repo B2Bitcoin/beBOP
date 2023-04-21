@@ -86,7 +86,16 @@
 					class="text-xl"
 				/>
 				<hr class="border-gray-300" />
-				50% off
+				<h3 class="text-gray-850 text-[22px] mb-2">50% off for 48h</h3>
+				<div
+					class="bg-gradient-to-r from-green-500 to-red-500 via-yellow-500 rounded flex justify-end"
+				>
+					<div
+						data-before="1h32min left"
+						class="-mt-4 h-4 w-0 border border-red-500 relative before:content-[attr(data-before)] before:text-gray-800 before:absolute before:right-1 before:-bottom-0 before:text-sm before:whitespace-nowrap"
+					/>
+					<div class="h-6 w-[10%] bg-gray-100" />
+				</div>
 				<hr class="border-gray-300" />
 				<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
 					<IconInfo class="text-[#E4C315]" />
