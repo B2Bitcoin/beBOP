@@ -9,6 +9,27 @@
 	$: currentPicture = data.pictures[0];
 </script>
 
+<svelte:head>
+	<title>{data.product.name}</title>
+	{#if data.product.shortDescription}
+		<meta name="description" content={data.product.shortDescription} />
+		<meta property="og:description" content={data.product.shortDescription} />
+	{/if}
+	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
+	<meta property="og:type" content="og:product" />
+	<meta property="og:title" content={data.product.name} />
+	{#if currentPicture}
+		<meta
+			property="og:image"
+			content="{$page.url.origin}/picture/raw/${currentPicture._id}/format/${currentPicture.storage
+				.formats[0].width}"
+		/>
+	{/if}
+	<meta property="product:price:amount" content={data.product.price.amount} />
+	<meta property="product:price:currency" content={data.product.price.currency} />
+	<meta property="og:type" content="og:product" />
+</svelte:head>
+
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<nav class="flex gap-2 text-gray-700 font-light">
 		<a href="/" class="hover:underline">Home</a>
