@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { marked } from 'marked';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import type { PageData } from './$types';
@@ -38,7 +39,9 @@
 		&gt;
 		<a href={$page.url.pathname} class="hover:underline font-semibold">{data.product.name}</a>
 	</nav>
-	<div class="mt-2 w-full rounded-xl bg-white border-gray-300 border-[1px] py-3 px-3 flex gap-2">
+	<article
+		class="mt-2 w-full rounded-xl bg-white border-gray-300 border-[1px] py-3 px-3 flex gap-2"
+	>
 		<div class="flex flex-col gap-2 w-12 min-w-[48px]">
 			{#each data.pictures as picture}
 				<Picture
@@ -51,13 +54,20 @@
 			{/each}
 		</div>
 		<div class="grid grid-cols-[70%_1fr] gap-2 grow">
-			<div class="aspect-video">
+			<div class="aspect-video flex flex-col gap-4">
 				<Picture picture={currentPicture} class="h-full object-cover mx-auto rounded" />
+				<hr class="border-gray-300" />
+				<h2 class="text-gray-850 text-[22px]">Description</h2>
+				<p class="text-gray-850 prose">
+					{@html marked(data.product.description.replaceAll('<', '&lt;'))}
+				</p>
 			</div>
-			<div class="flex flex-col">
+			<div
+				class="flex flex-col text-gray-850 gap-2 border-gray-300 border-l border-b rounded pl-4 pb-4 h-fit"
+			>
 				<PriceTag
 					currency={data.product.price.currency}
-					class="ml-auto text-4xl"
+					class="text-4xl"
 					amount={data.product.price.amount}
 				/>
 				<PriceTag
@@ -65,9 +75,9 @@
 					amount={data.product.price.amount}
 					convertedTo="EUR"
 					exchangeRate={data.exchangeRate}
-					class="ml-auto text-xl"
+					class="text-xl"
 				/>
 			</div>
 		</div>
-	</div>
+	</article>
 </main>

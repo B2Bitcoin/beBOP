@@ -33,5 +33,5 @@ module.exports = {
 		}
 	},
 	/* To style checkboxes with form-checkbox */
-	plugins: [require('@tailwindcss/forms')]
+	plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')]
 };
