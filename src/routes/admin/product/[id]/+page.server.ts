@@ -4,6 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 import { Decimal128 } from 'mongodb';
 import { deletePicture } from '$lib/server/picture';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });

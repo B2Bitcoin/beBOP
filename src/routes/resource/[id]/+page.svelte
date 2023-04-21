@@ -35,13 +35,18 @@
 					<Picture picture={currentPicture} class="h-full object-cover mx-auto rounded" />
 				</div>
 			</div>
-			<div class="grow">
-				<PriceTag currency={data.product.price.currency} amount={data.product.price.amount} />
+			<div class="grow flex flex-col">
+				<PriceTag
+					currency={data.product.price.currency}
+					class="ml-auto"
+					amount={data.product.price.amount}
+				/>
 				<PriceTag
 					currency={data.product.price.currency}
 					amount={data.product.price.amount}
 					convertedTo="EUR"
-					exchangeRate="30_000"
+					exchangeRate={data.exchangeRate}
+					class="ml-auto"
 				/>
 			</div>
 		</div>

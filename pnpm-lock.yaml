@@ -14,6 +14,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.45.0
   autoprefixer: ^10.4.14
   busboy: ^1.6.0
+  date-fns: ^2.29.3
   eslint: ^8.28.0
   eslint-config-prettier: ^8.5.0
   eslint-plugin-svelte3: ^4.0.0
@@ -37,6 +38,7 @@ dependencies:
   '@aws-sdk/client-s3': 3.312.0
   '@aws-sdk/s3-request-presigner': 3.316.0
   busboy: 1.6.0
+  date-fns: 2.29.3
   mime-types: 2.1.35
   mongodb: 5.2.0
   nanoid: 4.0.2
@@ -1983,6 +1985,11 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
     dev: true
+
+  /date-fns/2.29.3:
+    resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
+    engines: {node: '>=0.11'}
+    dev: false
 
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}

@@ -43,6 +43,7 @@
 		"@aws-sdk/client-s3": "^3.312.0",
 		"@aws-sdk/s3-request-presigner": "^3.316.0",
 		"busboy": "^1.6.0",
+		"date-fns": "^2.29.3",
 		"mime-types": "^2.1.35",
 		"mongodb": "^5.2.0",
 		"nanoid": "^4.0.2",

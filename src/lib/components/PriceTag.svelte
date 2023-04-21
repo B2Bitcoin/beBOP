@@ -12,8 +12,11 @@
 	let className = '';
 	export { className as class };
 
-	$: displayedAmount = currency === 'BTC' ? amount * SATOSHIS_PER_BTC : amount;
-	$: displayedCurrency = currency === 'BTC' ? 'SAT' : currency;
+	$: actualAmount = convertedTo ? amount * exchangeRate : amount;
+	$: actualCurrency = convertedTo ?? currency;
+
+	$: displayedAmount = actualCurrency === 'BTC' ? actualAmount * SATOSHIS_PER_BTC : actualAmount;
+	$: displayedCurrency = actualCurrency === 'BTC' ? 'SAT' : actualCurrency;
 </script>
 
 <div class="{className} flex {gap} items-center">
@@ -24,7 +27,7 @@
 	{displayedAmount.toLocaleString('en-US', {
 		style: displayedCurrency === 'SAT' ? undefined : 'currency',
 		currency: displayedCurrency === 'SAT' ? undefined : displayedCurrency,
-		minimumSignificantDigits: 2
+		maximumFractionDigits: displayedCurrency === 'SAT' ? 0 : 2
 	})}
 
 	{#if displayedCurrency === 'SAT' && !short}
