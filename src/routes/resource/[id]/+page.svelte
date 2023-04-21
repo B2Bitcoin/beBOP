@@ -4,6 +4,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import type { PageData } from './$types';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 
@@ -58,8 +59,14 @@
 				<Picture picture={currentPicture} class="h-full object-cover mx-auto rounded" />
 				<hr class="border-gray-300" />
 				<h2 class="text-gray-850 text-[22px]">Description</h2>
-				<p class="text-gray-850 prose">
+				<p class="text-gray-800 prose">
 					{@html marked(data.product.description.replaceAll('<', '&lt;'))}
+				</p>
+				<hr class="border-gray-300" />
+				<h2 class="text-gray-850 text-[22px]">This product is part of a challenge</h2>
+				<p class="text-gray-800">
+					By purchasing this product, 20% of its price will go to the funds of the next
+					crowdfounding:
 				</p>
 			</div>
 			<div
@@ -77,6 +84,22 @@
 					exchangeRate={data.exchangeRate}
 					class="text-xl"
 				/>
+				<hr class="border-gray-300" />
+				50% off
+				<hr class="border-gray-300" />
+				Free with xxx
+				<hr class="border-gray-300" />
+				<form action="?/buy" use:enhance class="flex flex-col gap-2">
+					<label class="mb-2">
+						Amount: <select name="amount" class="form-input w-16 ml-2 inline cursor-pointer">
+							{#each [1, 2, 3, 4, 5] as i}
+								<option value={i}>{i}</option>
+							{/each}
+						</select>
+					</label>
+					<button class="btn btn-black">Buy now</button>
+					<button value="Add to cart" formaction="?/add" class="btn btn-gray">Add to cart</button>
+				</form>
 			</div>
 		</div>
 	</article>

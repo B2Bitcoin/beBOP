@@ -34,11 +34,19 @@
 	}
 
 	.btn-gray {
-		@apply bg-gray-550 text-white;
+		@apply bg-gray-450;
 	}
 
 	.btn-gray:not([disabled]) {
-		@apply hover:bg-[#aaaaaa];
+		@apply hover:bg-gray-400;
+	}
+
+	.btn-black {
+		@apply bg-gray-850 text-white;
+	}
+
+	.btn-black:not([disabled]) {
+		@apply hover:bg-gray-800;
 	}
 
 	.btn[disabled] {
