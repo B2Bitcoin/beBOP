@@ -29,13 +29,11 @@
 				/>
 			{/each}
 		</div>
-		<div class="flex">
-			<div class="grow-[2]">
-				<div class="w-full aspect-video">
-					<Picture picture={currentPicture} class="h-full object-cover mx-auto rounded" />
-				</div>
+		<div class="grid grid-cols-[70%_1fr] gap-2 grow">
+			<div class="aspect-video">
+				<Picture picture={currentPicture} class="h-full object-cover mx-auto rounded" />
 			</div>
-			<div class="grow flex flex-col">
+			<div class="flex flex-col">
 				<PriceTag
 					currency={data.product.price.currency}
 					class="ml-auto"
