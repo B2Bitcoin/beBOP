@@ -24,7 +24,7 @@
 	{#if currentPicture}
 		<meta
 			property="og:image"
-			content="{$page.url.origin}/picture/raw/${currentPicture._id}/format/${currentPicture.storage
+			content="{$page.url.origin}/picture/raw/{currentPicture._id}/format/{currentPicture.storage
 				.formats[0].width}"
 		/>
 	{/if}
