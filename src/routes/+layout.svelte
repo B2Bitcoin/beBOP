@@ -11,10 +11,11 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { UrlDependency } from '$lib/types/UrlDependecy';
 
 	onMount(() => {
-		// Update exchange rates every 5 minutes
-		const interval = setInterval(() => invalidate((url) => url.pathname === '/'), 1000 * 60 * 5);
+		// Update exchange rate every 5 minutes
+		const interval = setInterval(() => invalidate(UrlDependency.ExchangeRate), 1000 * 60 * 5);
 
 		return () => clearInterval(interval);
 	});

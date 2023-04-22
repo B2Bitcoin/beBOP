@@ -92,7 +92,7 @@ async function maintainExchangeRate() {
 		try {
 			const doc = await collections.runtimeConfig.findOne({ _id: 'BTC_EUR' });
 
-			if (!doc || differenceInMinutes(new Date(), doc.updatedAt) > 30) {
+			if (!doc || differenceInMinutes(new Date(), doc.updatedAt) > 10) {
 				// const newRate = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur')
 				const newRate = await fetch('https://api.coingate.com/v2/rates/merchant/BTC/EUR').then(
 					(res) => res.json()
