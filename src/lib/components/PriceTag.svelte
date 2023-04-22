@@ -19,7 +19,10 @@
 	$: displayedCurrency = actualCurrency === 'BTC' ? 'SAT' : actualCurrency;
 </script>
 
-<div class="{className} flex {gap} items-center">
+<div
+	class="{className} flex {gap} items-center"
+	title={convertedTo ? `Exchange rate: ${exchangeRate} ${convertedTo} per ${currency}` : undefined}
+>
 	{#if displayedCurrency === 'SAT'}
 		<IconSatoshi />
 	{/if}
