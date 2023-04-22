@@ -9,7 +9,9 @@
 
 	export let data: PageData;
 
-	$: currentPicture = data.pictures[0];
+	$: currentPicture =
+		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
+		data.pictures[0];
 </script>
 
 <svelte:head>
@@ -45,14 +47,15 @@
 		class="mt-2 w-full rounded-xl bg-white border-gray-300 border-[1px] py-3 px-3 flex gap-2"
 	>
 		<div class="flex flex-col gap-2 w-12 min-w-[48px]">
-			{#each data.pictures as picture}
-				<Picture
-					{picture}
-					class="h-12 w-12 rounded-sm {picture === currentPicture
-						? 'ring-2 ring-blue-500 ring-offset-2'
-						: ''} cursor-pointer"
-					on:click={() => (currentPicture = picture)}
-				/>
+			{#each data.pictures as picture, i}
+				<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
+					<Picture
+						{picture}
+						class="h-12 w-12 rounded-sm {picture === currentPicture
+							? 'ring-2 ring-blue-500 ring-offset-2'
+							: ''} cursor-pointer"
+					/>
+				</a>
 			{/each}
 		</div>
 		<div class="grid grid-cols-[70%_1fr] gap-2 grow">

@@ -5,7 +5,7 @@
 	export let data: PageData;
 
 	let picturesByProduct = Object.fromEntries(
-		data.pictures.map((picture) => [picture.productId, picture])
+		[...data.pictures].reverse().map((picture) => [picture.productId, picture])
 	);
 </script>
 

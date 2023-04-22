@@ -16,8 +16,6 @@
 		on:click
 		on:load
 	/>
-{:else}
-	zz
 {/if}
 
 <style>

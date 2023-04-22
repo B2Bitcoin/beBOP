@@ -9,6 +9,9 @@ export const load: PageServerLoad = async () => {
 			...p,
 			price: { ...p.price, amount: parseFloat(p.price.amount.toString()) }
 		})),
-		pictures: await collections.pictures.find({ productId: { $exists: true } }).toArray()
+		pictures: await collections.pictures
+			.find({ productId: { $exists: true } })
+			.sort({ createdAt: 1 })
+			.toArray()
 	};
 };
