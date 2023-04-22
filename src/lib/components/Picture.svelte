@@ -20,7 +20,7 @@
 		matchedWidth = null;
 	}
 
-	$: if (matchedWidth === null && /(\s|^)h-(\d+)(\s|$)/.test(className)) {
+	$: if (/(\s|^)h-(\d+)(\s|$)/.test(className)) {
 		matchedHeight = parseInt(className.match(/(\s|^)h-(\d+)(\s|$)/)![2]) * 4;
 	} else {
 		matchedHeight = null;
