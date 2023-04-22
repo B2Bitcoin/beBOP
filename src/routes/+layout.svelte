@@ -28,14 +28,14 @@
 
 <header class="bg-gray-850 items-center flex h-[100px]">
 	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
-		<div class="flex items-center gap-4">
+		<a class="flex items-center gap-4" href="/">
 			<img
 				class="h-[60px] w-[60px] rounded-full"
 				src="https://coyo.dev/icons/logo.png"
 				alt="Main logo"
 			/>
 			<span class="font-bold text-[32px]">Samdoesart</span>
-		</div>
+		</a>
 		<span class="grow" />
 		<nav class="flex gap-10 text-[22px] font-semibold">
 			<a href="/">Blog</a>
