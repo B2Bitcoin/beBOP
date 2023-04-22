@@ -88,7 +88,7 @@ export async function generatePicture(
 			});
 		}
 
-		for (const size of [2048, 1024, 512]) {
+		for (const size of [2048, 1024, 512, 256, 128]) {
 			if (width > size || height > size) {
 				const buffer = await image
 					.resize(width > height ? { width: size } : { height: size })
