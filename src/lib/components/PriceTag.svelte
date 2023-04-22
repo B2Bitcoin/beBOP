@@ -24,10 +24,11 @@
 		<IconSatoshi />
 	{/if}
 
-	{displayedAmount.toLocaleString('en-US', {
+	{displayedAmount.toLocaleString('en', {
 		style: displayedCurrency === 'SAT' ? undefined : 'currency',
 		currency: displayedCurrency === 'SAT' ? undefined : displayedCurrency,
-		maximumFractionDigits: displayedCurrency === 'SAT' ? 0 : 2
+		maximumFractionDigits: 2,
+		minimumFractionDigits: 0
 	})}
 
 	{#if displayedCurrency === 'SAT' && !short}

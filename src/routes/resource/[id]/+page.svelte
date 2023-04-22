@@ -6,6 +6,7 @@
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import GoalProgress from '$lib/components/GoalProgress.svelte';
 
 	export let data: PageData;
 
@@ -58,7 +59,7 @@
 				</a>
 			{/each}
 		</div>
-		<div class="grid grid-cols-[70%_1fr] gap-2 grow">
+		<div class="grid grid-cols-[70%_1fr] gap-2 grow pb-12">
 			<div class="aspect-video flex flex-col gap-4">
 				<Picture picture={currentPicture} class="h-full object-cover mx-auto rounded" />
 				<hr class="border-gray-300" />
@@ -72,6 +73,27 @@
 					By purchasing this product, 20% of its price will go to the funds of the next
 					crowdfounding:
 				</p>
+				<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col">
+					<div class="flex justify-between items-center">
+						<h3 class="font-medium text-[22px] text-gray-850">
+							WACOM CINTIQ 24" for an emerging artist.
+						</h3>
+						<span class="text-base font-light text-gray-550">Ends April 25</span>
+					</div>
+					<GoalProgress
+						class="font-bold mt-3"
+						text="{Number(7).toLocaleString('en', {
+							style: 'currency',
+							currency: 'EUR',
+							minimumFractionDigits: 0
+						})} 🙂"
+						percentage={700 / 600}
+					/>
+					<div class="flex justify-between mt-1 items-center">
+						<a href="/" class="text-[#2271B1] underline">How can I contribute?</a>
+						<PriceTag amount={600} class="text-gray-800 text-base" currency="EUR" />
+					</div>
+				</div>
 			</div>
 			<div
 				class="flex flex-col text-gray-850 gap-2 border-gray-300 border-l border-b rounded pl-4 pb-4 h-fit"
@@ -89,16 +111,8 @@
 					class="text-xl"
 				/>
 				<hr class="border-gray-300" />
-				<h3 class="text-gray-850 text-[22px] mb-2">50% off for 48h</h3>
-				<div
-					class="bg-gradient-to-r from-green-500 to-red-500 via-yellow-500 rounded flex justify-end"
-				>
-					<div
-						data-before="1h32min left"
-						class="-mt-4 h-4 w-0 border border-red-500 relative before:content-[attr(data-before)] before:text-gray-800 before:absolute before:right-1 before:-bottom-0 before:text-sm before:whitespace-nowrap"
-					/>
-					<div class="h-6 w-[10%] bg-gray-100" />
-				</div>
+				<h3 class="text-gray-850 text-[22px]">50% off for 48h</h3>
+				<GoalProgress text="1h32min left" percentage={90} />
 				<hr class="border-gray-300" />
 				<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
 					<IconInfo class="text-[#E4C315]" />
