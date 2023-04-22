@@ -61,7 +61,7 @@
 		</div>
 		<div class="grid grid-cols-[70%_1fr] gap-2 grow pb-12">
 			<div class="aspect-video flex flex-col gap-4">
-				<Picture picture={currentPicture} class="h-full object-cover mx-auto rounded" />
+				<Picture picture={currentPicture} class="h-full mx-auto rounded" viewportMaxPercent={70} />
 				<hr class="border-gray-300" />
 				<h2 class="text-gray-850 text-[22px]">Description</h2>
 				<p class="text-gray-800 prose">

@@ -14,7 +14,7 @@
 		{#each data.pictures as picture}
 			<div class="flex flex-col text-center">
 				<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
-					<Picture {picture} class="h-36 block" style="object-fit: scale-down;" />
+					<Picture {picture} class="block h-36" />
 					<span>{picture.name}</span>
 				</a>
 			</div>
