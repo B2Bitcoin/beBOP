@@ -12,9 +12,10 @@
 	>
 		<div
 			data-text={text}
-			class="-mt-6 h-6 w-0 border border-red-500 relative before:content-[attr(data-text)] before:text-gray-800 before:absolute {percentage <
+			style="background-position: {percentage}% 0%"
+			class="-mt-6 h-6 bg-[length:100px_50px] bg-gradient-to-r from-green-500 to-red-500 via-yellow-500 w-[2px] relative before:content-[attr(data-text)] before:text-gray-800 before:absolute {percentage <
 			50
-				? 'before:left-1'
+				? 'before:left-[6px]'
 				: 'before:right-1'} before:-top-1 before:text-base before:whitespace-nowrap"
 		/>
 		<div

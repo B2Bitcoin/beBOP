@@ -71,7 +71,7 @@
 				<h2 class="text-gray-850 text-[22px]">This product is part of a challenge</h2>
 				<p class="text-gray-800">
 					By purchasing this product, 20% of its price will go to the funds of the next
-					crowdfounding:
+					crowdfunding:
 				</p>
 				<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col">
 					<div class="flex justify-between items-center">
