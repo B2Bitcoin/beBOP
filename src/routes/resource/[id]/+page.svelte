@@ -108,7 +108,7 @@
 					</div>
 				</div>
 				<hr class="border-gray-300" />
-				<form action="?/buy" use:enhance class="flex flex-col gap-2">
+				<form action="?/buy" method="post" use:enhance class="flex flex-col gap-2">
 					<label class="mb-2">
 						Amount: <select name="amount" class="form-input w-16 ml-2 inline cursor-pointer">
 							{#each [1, 2, 3, 4, 5] as i}
