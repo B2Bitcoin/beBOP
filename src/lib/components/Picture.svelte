@@ -6,11 +6,6 @@
 	export { className as class };
 	export let style = '';
 
-	/**
-	 * Hint to load most optimized image
-	 */
-	export let viewportMaxPercent = 100;
-
 	let matchedWidth: number | null = null;
 	let matchedHeight: number | null = null;
 
@@ -66,7 +61,7 @@
 			.join(', ')}
 		sizes={matchedWidth ?? computedWidth !== null
 			? `${matchedWidth ?? computedWidth}px`
-			: `${viewportMaxPercent}vw`}
+			: undefined}
 		class={className}
 		style={computedStyle}
 		{...$$restProps}
