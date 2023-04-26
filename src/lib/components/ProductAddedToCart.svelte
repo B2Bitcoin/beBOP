@@ -18,7 +18,7 @@
 <div class="{className} rounded flex p-2 gap-4 relative">
 	<Picture {picture} class="w-[138px] h-[138px] border-gray-300 border rounded object-cover" />
 	<div class="flex flex-col grow gap-1">
-		<h2 class="text-black text-[22px] font-medium">Product added to basket</h2>
+		<h2 class="text-black text-[22px] font-medium">Product added to cart</h2>
 		<h3 class="text-gray-850 text-base font-light">{product.name}</h3>
 		<PriceTag
 			currency={product.price.currency}
