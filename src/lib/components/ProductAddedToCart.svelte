@@ -9,13 +9,13 @@
 	export let product: ProductFrontend;
 	export let picture: PictureType;
 
+	let className = '';
+	export { className as class };
+
 	const dispatch = createEventDispatcher<{ dismiss: void }>();
 </script>
 
-<div
-	class="rounded flex p-2 bg-gray-40 gap-4 relative"
-	style="box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.13)"
->
+<div class="{className} rounded flex p-2 gap-4 relative">
 	<Picture {picture} class="w-[138px] h-[138px] border-gray-300 border rounded object-cover" />
 	<div class="flex flex-col grow gap-1">
 		<h2 class="text-black text-[22px] font-medium">Product added to basket</h2>
