@@ -1,6 +1,7 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { productToFrontend } from '$lib/types/Product';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -15,13 +16,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		.toArray();
 
 	return {
-		product: {
-			...product,
-			price: {
-				...product.price,
-				amount: parseFloat(product.price.amount.toString())
-			}
-		},
+		product: productToFrontend(product),
 		pictures
 	};
 };

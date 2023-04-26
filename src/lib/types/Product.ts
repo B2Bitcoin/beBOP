@@ -16,3 +16,13 @@ export interface Product extends Timestamps {
 export type ProductFrontend = Omit<Product, 'price'> & {
 	price: { amount: number; currency: Currency };
 };
+
+export function productToFrontend(product: Product): ProductFrontend {
+	return {
+		...product,
+		price: {
+			amount: parseFloat(product.price.amount.toString()),
+			currency: product.price.currency
+		}
+	};
+}

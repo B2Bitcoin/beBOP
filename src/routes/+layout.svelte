@@ -13,9 +13,11 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { navigating } from '$app/stores';
-	import { UrlDependency } from '$lib/types/UrlDependecy';
+	import { UrlDependency } from '$lib/types/UrlDependency';
 	import ProductAddedToCart from '$lib/components/ProductAddedToCart.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
+
+	export let data;
 
 	onMount(() => {
 		// Update exchange rate every 5 minutes
@@ -81,7 +83,7 @@
 			<div class="relative">
 				<a href="/cart" class="flex gap-2 items-center">
 					<IconBasket />
-					3
+					{data.cart?.length || 0}
 				</a>
 				{#if $productAddedToCart}
 					<div
