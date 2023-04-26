@@ -12,6 +12,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { navigating } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependecy';
 	import ProductAddedToCart from '$lib/components/ProductAddedToCart.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
@@ -22,6 +23,10 @@
 
 		return () => clearInterval(interval);
 	});
+
+	$: if ($navigating) {
+		$productAddedToCart = null;
+	}
 </script>
 
 <svelte:head>
