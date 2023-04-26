@@ -2,6 +2,7 @@ import { ZodError } from 'zod';
 import type { HandleServerError, Handle } from '@sveltejs/kit';
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
+import { addYears } from 'date-fns';
 
 export const handleError = (({ error, event }) => {
 	console.error(error);
@@ -38,6 +39,19 @@ export const handleError = (({ error, event }) => {
 }) satisfies HandleServerError;
 
 export const handle = (async ({ event, resolve }) => {
+	const token = event.cookies.get('bootik-session');
+
+	event.locals.sessionId = token || crypto.randomUUID();
+
+	// Refresh cookie expiration date
+	event.cookies.set('bootik-session', event.locals.sessionId, {
+		path: '/',
+		sameSite: 'none',
+		secure: true,
+		httpOnly: true,
+		expires: addYears(new Date(), 1)
+	});
+
 	const response = await resolve(event);
 
 	// Work around handleError which does not allow setting the header
