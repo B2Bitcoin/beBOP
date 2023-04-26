@@ -13,6 +13,8 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependecy';
+	import ProductAddedToCart from '$lib/components/ProductAddedToCart.svelte';
+	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	onMount(() => {
 		// Update exchange rate every 5 minutes
@@ -71,10 +73,24 @@
 				/>
 			</div>
 			<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
-			<a href="/cart" class="flex gap-2 items-center">
-				<IconBasket />
-				3
-			</a>
+			<div class="relative">
+				<a href="/cart" class="flex gap-2 items-center">
+					<IconBasket />
+					3
+				</a>
+				{#if $productAddedToCart}
+					<div
+						class="absolute z-20 ml-1 w-0 h-0 -bottom-1 translate-y-full border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[18px] border-b-gray-40"
+					/>
+					<div class="absolute z-10 -bottom-4 right-0 w-[562px] max-w-[95vw] translate-y-full">
+						<ProductAddedToCart
+							on:dismiss={() => ($productAddedToCart = null)}
+							product={$productAddedToCart.product}
+							picture={$productAddedToCart.picture}
+						/>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 </header>

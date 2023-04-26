@@ -12,3 +12,7 @@ export interface Product extends Timestamps {
 		currency: Currency;
 	};
 }
+
+export type ProductFrontend = Omit<Product, 'price'> & {
+	price: { amount: number; currency: Currency };
+};

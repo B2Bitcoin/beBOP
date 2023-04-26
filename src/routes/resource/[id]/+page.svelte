@@ -7,12 +7,23 @@
 	import { enhance } from '$app/forms';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import GoalProgress from '$lib/components/GoalProgress.svelte';
+	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	export let data: PageData;
+
+	let quantity = 1;
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
 		data.pictures[0];
+
+	function addToCart() {
+		productAddedToCart.set({
+			product: data.product,
+			quantity,
+			picture: currentPicture
+		});
+	}
 </script>
 
 <svelte:head>
@@ -131,14 +142,23 @@
 				<hr class="border-gray-300" />
 				<form action="?/buy" method="post" use:enhance class="flex flex-col gap-2">
 					<label class="mb-2">
-						Amount: <select name="amount" class="form-input w-16 ml-2 inline cursor-pointer">
+						Amount: <select
+							name="amount"
+							bind:value={quantity}
+							class="form-input w-16 ml-2 inline cursor-pointer"
+						>
 							{#each [1, 2, 3, 4, 5] as i}
 								<option value={i}>{i}</option>
 							{/each}
 						</select>
 					</label>
 					<button class="btn btn-black">Buy now</button>
-					<button value="Add to cart" formaction="?/add" class="btn btn-gray">Add to cart</button>
+					<button
+						value="Add to cart"
+						formaction="?/add"
+						on:click|preventDefault={addToCart}
+						class="btn btn-gray">Add to cart</button
+					>
 				</form>
 			</div>
 		</div>
