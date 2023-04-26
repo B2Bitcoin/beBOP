@@ -9,8 +9,8 @@
 	{#each data.cart ?? [] as item}
 		<article class="flex items-center p-2 gap-4">
 			{#if item.picture}
-				<div class="w-30 h-30 min-w-[120px] min-h-[120px]">
-					<Picture picture={item.picture} class="w-30 h-30 object-contain" />
+				<div class="w-[120px] h-[120px] min-w-[120px] min-h-[120px]">
+					<Picture picture={item.picture} class="w-[120px] h-[120px] object-contain" />
 				</div>
 			{/if}
 			<div>
