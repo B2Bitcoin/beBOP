@@ -16,8 +16,11 @@
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import ProductAddedToCart from '$lib/components/ProductAddedToCart.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
+	import { sum } from '$lib/utils/sum';
 
 	export let data;
+
+	$: cartItems = sum(data.cart?.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
 		// Update exchange rate every 5 minutes
@@ -83,7 +86,7 @@
 			<div class="relative">
 				<a href="/cart" class="flex gap-2 items-center">
 					<IconBasket />
-					{data.cart?.length || 0}
+					{cartItems}
 				</a>
 				{#if $productAddedToCart}
 					<div

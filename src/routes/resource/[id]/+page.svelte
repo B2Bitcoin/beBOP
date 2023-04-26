@@ -4,25 +4,28 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import type { PageData } from './$types';
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import GoalProgress from '$lib/components/GoalProgress.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
+	import { invalidate } from '$app/navigation';
+	import { UrlDependency } from '$lib/types/UrlDependency';
 
 	export let data: PageData;
 
 	let quantity = 1;
+	let loading = false;
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
 		data.pictures[0];
 
 	function addToCart() {
-		productAddedToCart.set({
+		$productAddedToCart = {
 			product: data.product,
 			quantity,
 			picture: currentPicture
-		});
+		};
 	}
 </script>
 
@@ -140,10 +143,25 @@
 					</div>
 				</div>
 				<hr class="border-gray-300" />
-				<form action="?/buy" method="post" use:enhance class="flex flex-col gap-2">
+				<form
+					action="?/buy"
+					method="post"
+					use:enhance={({ action }) => {
+						return async ({ result }) => {
+							console.log(result.type, action.href);
+							if (result.type === 'error' || !action.searchParams.has('/addToCart')) {
+								return await applyAction(result);
+							}
+
+							await invalidate(UrlDependency.Cart);
+							addToCart();
+						};
+					}}
+					class="flex flex-col gap-2"
+				>
 					<label class="mb-2">
 						Amount: <select
-							name="amount"
+							name="quantity"
 							bind:value={quantity}
 							class="form-input w-16 ml-2 inline cursor-pointer"
 						>
@@ -152,13 +170,15 @@
 							{/each}
 						</select>
 					</label>
-					<button class="btn btn-black">Buy now</button>
+					<button class="btn btn-black" disabled={loading}>Buy now</button>
 					<button
 						value="Add to cart"
-						formaction="?/add"
-						on:click|preventDefault={addToCart}
-						class="btn btn-gray">Add to cart</button
+						formaction="?/addToCart"
+						disabled={loading}
+						class="btn btn-gray"
 					>
+						Add to cart
+					</button>
 				</form>
 			</div>
 		</div>
