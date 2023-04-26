@@ -1,9 +1,12 @@
 import { collections } from '$lib/server/database';
-import { productToFrontend } from '$lib/types/Product';
+import { productToFrontend, type Product } from '$lib/types/Product';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const products = await collections.products.find({}).toArray();
+	const products = await collections.products
+		.find({})
+		.project<Pick<Product, '_id' | 'price' | 'name'>>({ price: 1, _id: 1, name: 1 })
+		.toArray();
 
 	return {
 		products: products.map(productToFrontend),

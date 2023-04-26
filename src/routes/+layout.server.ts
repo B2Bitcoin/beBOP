@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { productToFrontend } from '$lib/types/Product.js';
+import { productToFrontend, type Product } from '$lib/types/Product.js';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef.js';
 
@@ -15,7 +15,12 @@ export async function load({ depends, locals }) {
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
-						const productDoc = await collections.products.findOne({ _id: item.productId });
+						const productDoc = await collections.products.findOne<
+							Pick<Product, '_id' | 'name' | 'price' | 'shortDescription'>
+						>(
+							{ _id: item.productId },
+							{ projection: { _id: 1, name: 1, price: 1, shortDescription: 1 } }
+						);
 						if (productDoc) {
 							return {
 								product: productToFrontend(productDoc),

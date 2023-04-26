@@ -4,7 +4,6 @@ import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 import { Decimal128 } from 'mongodb';
 import { deletePicture } from '$lib/server/picture';
-import { runtimeConfig } from '$lib/server/runtime-config';
 import { productToFrontend } from '$lib/types/Product';
 
 export const load: PageServerLoad = async ({ params }) => {

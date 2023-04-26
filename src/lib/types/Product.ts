@@ -17,7 +17,9 @@ export type ProductFrontend = Omit<Product, 'price'> & {
 	price: { amount: number; currency: Currency };
 };
 
-export function productToFrontend(product: Product): ProductFrontend {
+export function productToFrontend<T extends { price: Product['price'] }>(
+	product: T
+): Omit<T, 'price'> & { price: ProductFrontend['price'] } {
 	return {
 		...product,
 		price: {

@@ -1,12 +1,19 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { productToFrontend } from '$lib/types/Product';
+import { productToFrontend, type Product } from '$lib/types/Product';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const product = await collections.products.findOne({ _id: params.id });
+	const product = await collections.products.findOne<
+		Pick<Product, '_id' | 'name' | 'price' | 'shortDescription' | 'description'>
+	>(
+		{ _id: params.id },
+		{
+			projection: { _id: 1, name: 1, price: 1, shortDescription: 1, description: 1 }
+		}
+	);
 
 	if (!product) {
 		throw error(404, 'Resource not found');
@@ -24,14 +31,14 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions = {
-	checkout: async ({ request, params }) => {
+	checkout: async () => {
 		// blabla
 	},
 
 	addToCart: async ({ request, params, locals }) => {
-		const product = await collections.products.findOne({ _id: params.id });
+		const productExists = !!(await collections.products.countDocuments({ _id: params.id }));
 
-		if (!product) {
+		if (!productExists) {
 			throw error(404, 'Resource not found');
 		}
 
