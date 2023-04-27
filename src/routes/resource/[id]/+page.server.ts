@@ -4,6 +4,7 @@ import type { PageServerLoad } from './$types';
 import { productToFrontend, type Product } from '$lib/types/Product';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
+import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne<
@@ -45,7 +46,7 @@ export const actions = {
 		const formData = await request.formData();
 		const { quantity } = z
 			.object({
-				quantity: z.number({ coerce: true }).int().min(1).max(100)
+				quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY)
 			})
 			.parse({
 				quantity: formData.get('quantity')

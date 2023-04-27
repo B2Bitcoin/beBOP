@@ -8,3 +8,5 @@ export interface Cart extends Timestamps {
 		quantity: number;
 	}>;
 }
+
+export const MAX_PRODUCT_QUANTITY = 100;

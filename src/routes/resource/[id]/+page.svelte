@@ -10,6 +10,7 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 
 	export let data: PageData;
 
@@ -45,19 +46,19 @@
 				.formats[0].width}"
 		/>
 	{/if}
-	<meta property="product:price:amount" content={data.product.price.amount} />
+	<meta property="product:price:amount" content={String(data.product.price.amount)} />
 	<meta property="product:price:currency" content={data.product.price.currency} />
 	<meta property="og:type" content="og:product" />
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<nav class="flex gap-2 text-gray-700 font-light">
-		<a href="/" class="hover:underline">Home</a>
-		&gt;
-		<a href="/resource" class="hover:underline">Resources</a>
-		&gt;
-		<a href={$page.url.pathname} class="hover:underline font-semibold">{data.product.name}</a>
-	</nav>
+	<Breadcrumbs
+		links={[
+			{ name: 'Home', url: '/' },
+			{ name: 'Resources', url: '/resource' },
+			{ name: data.product.name, url: $page.url.pathname }
+		]}
+	/>
 	<article
 		class="mt-2 w-full rounded-xl bg-white border-gray-300 border-[1px] py-3 px-3 flex gap-2"
 	>
@@ -148,7 +149,6 @@
 					method="post"
 					use:enhance={({ action }) => {
 						return async ({ result }) => {
-							console.log(result.type, action.href);
 							if (result.type === 'error' || !action.searchParams.has('/addToCart')) {
 								return await applyAction(result);
 							}

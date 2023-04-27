@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { ProductFrontend } from '$lib/types/Product';
+	import type { BasicProductFrontend } from '$lib/types/Product';
 	import type { Picture as PictureType } from '$lib/types/Picture';
 	import Picture from './Picture.svelte';
 	import PriceTag from './PriceTag.svelte';
 	import IconCross from './icons/IconCross.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let product: ProductFrontend;
+	export let product: BasicProductFrontend;
 	export let picture: PictureType;
 
 	let className = '';
@@ -24,6 +24,7 @@
 			currency={product.price.currency}
 			class="text-xl text-gray-800"
 			amount={product.price.amount}
+			short
 		/>
 		<div class="flex gap-2">
 			<a href="/cart" class="grow basis-0 btn btn-gray"> View cart </a>

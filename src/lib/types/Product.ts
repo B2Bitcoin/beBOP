@@ -17,6 +17,11 @@ export type ProductFrontend = Omit<Product, 'price'> & {
 	price: { amount: number; currency: Currency };
 };
 
+export type BasicProductFrontend = Pick<
+	ProductFrontend,
+	'_id' | 'shortDescription' | 'price' | 'name'
+>;
+
 export function productToFrontend<T extends { price: Product['price'] }>(
 	product: T
 ): Omit<T, 'price'> & { price: ProductFrontend['price'] } {
