@@ -4,7 +4,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const actions = {
-	delete: async ({ locals, params }) => {
+	remove: async ({ locals, params }) => {
 		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
 
 		if (!cart) {

@@ -66,7 +66,7 @@
 					<Picture
 						{picture}
 						class="h-12 w-12 rounded-sm {picture === currentPicture
-							? 'ring-2 ring-blue-500 ring-offset-2'
+							? 'ring-2 ring-blue ring-offset-2'
 							: ''} cursor-pointer"
 					/>
 				</a>
@@ -107,7 +107,7 @@
 						percentage={700 / 600}
 					/>
 					<div class="flex justify-between mt-1 items-center">
-						<a href="/" class="text-[#2271B1] underline">How can I contribute?</a>
+						<a href="/" class="text-blue underline">How can I contribute?</a>
 						<PriceTag amount={600} class="text-gray-800 text-base" currency="EUR" />
 					</div>
 				</div>

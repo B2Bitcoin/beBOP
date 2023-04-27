@@ -26,7 +26,7 @@
 	}
 
 	.btn-blue {
-		@apply bg-[#2271B1] text-white;
+		@apply bg-blue text-white;
 	}
 
 	.btn-blue:not([disabled]) {
