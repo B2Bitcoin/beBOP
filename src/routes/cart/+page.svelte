@@ -26,83 +26,90 @@
 		<h1 class="font-bold text-5xl text-gray-850">Products</h1>
 
 		{#if items.length}
-			{#each items as item}
-				<form
-					method="POST"
-					use:enhance={({ action }) => {
-						if (action.searchParams.has('/increase')) {
-							item.quantity++;
-						} else if (action.searchParams.has('/decrease')) {
-							item.quantity--;
-						} else if (action.searchParams.has('/remove')) {
-							item.quantity = 0;
-						}
-					}}
-					class="flex items-center gap-4 border-b border-gray-300 pb-6 justify-stretch"
-				>
-					{#if item.picture}
+			<div class="grid gap-x-4 gap-y-6" style="grid-template-columns: auto auto auto auto">
+				{#each items as item}
+					<form
+						method="POST"
+						class="contents"
+						use:enhance={({ action }) => {
+							if (action.searchParams.has('/increase')) {
+								item.quantity++;
+							} else if (action.searchParams.has('/decrease')) {
+								item.quantity--;
+							} else if (action.searchParams.has('/remove')) {
+								item.quantity = 0;
+							}
+						}}
+					>
 						<div class="w-[138px] h-[138px] min-w-[138px] min-h-[138px] rounded flex items-center">
-							<Picture
-								picture={item.picture}
-								class="rounded grow object-cover h-full w-full"
-								sizes="138px"
+							{#if item.picture}
+								<Picture
+									picture={item.picture}
+									class="rounded grow object-cover h-full w-full"
+									sizes="138px"
+								/>
+							{/if}
+						</div>
+						<div class="grow flex flex-col gap-2 self-stretch">
+							<h2 class="text-2xl text-gray-850">{item.product.name}</h2>
+							<p class="text-sm text-gray-600">{item.product.shortDescription}</p>
+							<div class="grow" />
+
+							<button
+								formaction="/cart/{item.product._id}/?/remove"
+								class="mt-auto mr-auto hover:underline text-blue text-base font-light"
+							>
+								Eliminate
+							</button>
+						</div>
+
+						<div class="self-center">
+							<div class="flex">
+								<button
+									formaction="/cart/{item.product._id}/?/increase"
+									class="px-3 bg-gray-300 rounded-l text-gray-800 disabled:text-gray-450"
+									disabled={item.quantity >= MAX_PRODUCT_QUANTITY}
+								>
+									<span class="sr-only">Increase quantity</span><IconChevronUp />
+								</button>
+								<input
+									type="number"
+									class="form-input text-center text-gray-850 text-xl rounded-none w-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+									disabled
+									name="quantity"
+									value={item.quantity}
+								/>
+								<input type="hidden" name="quantity" value={item.quantity} />
+								<button
+									formaction="/cart/{item.product._id}/?/decrease"
+									class="px-3 bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
+								>
+									<span class="sr-only">Decrease quantity</span><IconChevronDown />
+								</button>
+							</div>
+						</div>
+
+						<div class="flex flex-col items-end justify-center">
+							<PriceTag
+								amount={item.product.price.amount}
+								currency={item.product.price.currency}
+								class="text-2xl text-gray-800"
+								short
+							/>
+							<PriceTag
+								short
+								class="text-base text-gray-600"
+								currency={item.product.price.currency}
+								amount={item.product.price.amount}
+								convertedTo="EUR"
+								exchangeRate={data.exchangeRate}
 							/>
 						</div>
-					{/if}
-					<div class="grow flex flex-col gap-2 self-stretch">
-						<h2 class="text-2xl text-gray-850">{item.product.name}</h2>
-						<p class="text-sm text-gray-600">{item.product.shortDescription}</p>
-						<div class="grow" />
-						<button
-							formaction="/cart/{item.product._id}/?/remove"
-							class="mt-auto mr-auto hover:underline text-blue text-base font-light"
-						>
-							Eliminate
-						</button>
-					</div>
+					</form>
 
-					<div class="flex">
-						<button
-							formaction="/cart/{item.product._id}/?/increase"
-							class="px-3 bg-gray-300 rounded-l text-gray-800 disabled:text-gray-450"
-							disabled={item.quantity >= MAX_PRODUCT_QUANTITY}
-						>
-							<span class="sr-only">Increase quantity</span><IconChevronUp />
-						</button>
-						<input
-							type="number"
-							class="form-input text-center text-gray-850 text-xl rounded-none w-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-							disabled
-							name="quantity"
-							value={item.quantity}
-						/>
-						<input type="hidden" name="quantity" value={item.quantity} />
-						<button
-							formaction="/cart/{item.product._id}/?/decrease"
-							class="px-3 bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
-						>
-							<span class="sr-only">Decrease quantity</span><IconChevronDown />
-						</button>
-					</div>
-
-					<div class="flex flex-col items-end">
-						<PriceTag
-							amount={item.product.price.amount}
-							currency={item.product.price.currency}
-							class="text-2xl text-gray-800"
-							short
-						/>
-						<PriceTag
-							short
-							class="text-base text-gray-600"
-							currency={item.product.price.currency}
-							amount={item.product.price.amount}
-							convertedTo="EUR"
-							exchangeRate={data.exchangeRate}
-						/>
-					</div>
-				</form>
-			{/each}
+					<div style="grid-column: span 4;" class="border-b border-gray-300" />
+				{/each}
+			</div>
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 				<h2 class="text-gray-800 text-[32px]">Total:</h2>
 				<div class="flex flex-col items-end">
