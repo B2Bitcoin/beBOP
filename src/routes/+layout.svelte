@@ -102,7 +102,7 @@
 		</div>
 	</div>
 </header>
-<div class="grow">
+<div class="grow bg-gray-75">
 	<slot />
 </div>
 <footer class="bg-gray-850 h-[90px] items-center flex">

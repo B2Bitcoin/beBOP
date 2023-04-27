@@ -59,9 +59,7 @@
 			{ name: data.product.name, url: $page.url.pathname }
 		]}
 	/>
-	<article
-		class="mt-2 w-full rounded-xl bg-white border-gray-300 border-[1px] py-3 px-3 flex gap-2"
-	>
+	<article class="mt-2 w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
 		<div class="flex flex-col gap-2 w-12 min-w-[48px]">
 			{#each data.pictures as picture, i}
 				<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
