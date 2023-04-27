@@ -26,7 +26,7 @@
 		<h1 class="font-bold text-5xl text-gray-850">Products</h1>
 
 		{#if items.length}
-			<div class="grid gap-x-4 gap-y-6" style="grid-template-columns: auto auto auto auto">
+			<div class="grid gap-x-4 gap-y-6" style="grid-template-columns: repeat(4, auto)">
 				{#each items as item}
 					<form
 						method="POST"
@@ -107,7 +107,7 @@
 						</div>
 					</form>
 
-					<div style="grid-column: span 4;" class="border-b border-gray-300" />
+					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
