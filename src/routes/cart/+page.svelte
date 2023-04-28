@@ -1,18 +1,15 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
+	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import IconChevronDown from '$lib/components/icons/IconChevronDown.svelte';
-	import IconChevronUp from '$lib/components/icons/IconChevronUp.svelte';
-	import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 	import { sum } from '$lib/utils/sum';
 
 	export let data;
 
-	let loading = 0;
+	let actionCount = 0;
 
 	$: items = data.cart || [];
-
 	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
 </script>
 
@@ -34,11 +31,11 @@
 							} else if (action.searchParams.has('/remove')) {
 								item.quantity = 0;
 							}
-							loading++;
+							actionCount++;
+							let currentActionCount = actionCount;
 
 							return async ({ result }) => {
-								loading--;
-								if (loading === 0) {
+								if (actionCount === currentActionCount) {
 									await applyAction(result);
 								}
 							};
@@ -67,30 +64,7 @@
 						</div>
 
 						<div class="self-center">
-							<div class="flex">
-								<button
-									formaction="/cart/{item.product._id}/?/increase"
-									class="px-3 bg-gray-300 rounded-l text-gray-800 disabled:text-gray-450"
-									disabled={item.quantity >= MAX_PRODUCT_QUANTITY}
-								>
-									<span class="sr-only">Increase quantity</span><IconChevronUp />
-								</button>
-								<input
-									type="number"
-									class="form-input text-center text-gray-850 text-xl rounded-none w-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-									disabled
-									name="quantity"
-									value={item.quantity}
-								/>
-								<input type="hidden" name="quantity" value={item.quantity} />
-								<button
-									formaction="/cart/{item.product._id}/?/decrease"
-									class="px-3 bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
-									disabled={item.quantity <= 0}
-								>
-									<span class="sr-only">Decrease quantity</span><IconChevronDown />
-								</button>
-							</div>
+							<CartQuantity {item} />
 						</div>
 
 						<div class="flex flex-col items-end justify-center">

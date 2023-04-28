@@ -12,17 +12,25 @@
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { onMount } from 'svelte';
-	import { invalidate } from '$app/navigation';
+	import { afterNavigate, invalidate } from '$app/navigation';
 	import { navigating } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import ProductAddedToCart from '$lib/components/ProductAddedToCart.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { sum } from '$lib/utils/sum';
 	import Popup from '$lib/components/Popup.svelte';
+	import { applyAction, enhance } from '$app/forms';
+	import Picture from '$lib/components/Picture.svelte';
+	import CartQuantity from '$lib/components/CartQuantity.svelte';
+	import IconTrash from '$lib/components/icons/IconTrash.svelte';
 
 	export let data;
 
-	$: cartItems = sum(data.cart?.map((item) => item.quantity) ?? []);
+	let actionCount = 0;
+
+	$: items = data.cart || [];
+	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
+	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
 		// Update exchange rate every 5 minutes
@@ -31,9 +39,17 @@
 		return () => clearInterval(interval);
 	});
 
+	let cartOpen = false;
+
 	$: if ($navigating) {
 		$productAddedToCart = null;
 	}
+
+	afterNavigate(({ from, to }) => {
+		if (from?.url.pathname !== to?.url.pathname) {
+			cartOpen = false;
+		}
+	});
 </script>
 
 <svelte:head>
@@ -86,18 +102,92 @@
 			</div>
 			<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
 			<div class="relative">
-				<a href="/cart" class="flex gap-2 items-center">
+				<a
+					href="/cart"
+					on:click={(ev) => {
+						if (!data.cart) {
+							return;
+						}
+						cartOpen = !cartOpen;
+						ev.preventDefault();
+					}}
+					class="flex gap-2 items-center"
+				>
 					<IconBasket />
-					{cartItems}
+					{totalItems}
 				</a>
 				{#if $productAddedToCart}
 					<Popup>
 						<ProductAddedToCart
-							class=""
+							class="w-[562px]"
 							on:dismiss={() => ($productAddedToCart = null)}
 							product={$productAddedToCart.product}
 							picture={$productAddedToCart.picture}
 						/>
+					</Popup>
+				{:else if cartOpen}
+					<Popup>
+						<div class="p-2 gap-2 flex flex-col">
+							{#each items as item}
+								<form
+									class="flex border-b border-gray-300 pb-2 gap-2"
+									method="POST"
+									use:enhance={({ action }) => {
+										if (action.searchParams.has('/increase')) {
+											item.quantity++;
+										} else if (action.searchParams.has('/decrease')) {
+											item.quantity--;
+										} else if (action.searchParams.has('/remove')) {
+											item.quantity = 0;
+										}
+										actionCount++;
+										let currentCount = actionCount;
+
+										return async ({ result }) => {
+											if (actionCount === currentCount) {
+												await applyAction(result);
+											}
+										};
+									}}
+								>
+									<div
+										class="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded flex items-center"
+									>
+										{#if item.picture}
+											<Picture
+												picture={item.picture}
+												class="rounded grow object-cover h-full w-full"
+												sizes="44px"
+											/>
+										{/if}
+									</div>
+									<div class="flex flex-col">
+										<h3 class="text-base text-gray-850 font-medium">{item.product.name}</h3>
+										<div class="flex items-center gap-2 text-gray-700">
+											<span class="text-xs">Quantity: </span>
+											<CartQuantity {item} sm />
+										</div>
+									</div>
+									<div class="flex flex-col items-end gap-[6px] ml-auto">
+										<PriceTag
+											short
+											class="text-gray-600 text-base"
+											amount={item.product.price.amount}
+											currency={item.product.price.currency}
+										/>
+										<button formaction="/cart/{item.product._id}/?/remove">
+											<IconTrash class="text-gray-800" />
+											<span class="sr-only">Remote item from cart</span>
+										</button>
+									</div>
+								</form>
+							{/each}
+							<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
+								Total <PriceTag short currency="BTC" amount={totalPrice} />
+							</div>
+							<a href="/cart" class="btn btn-gray mt-1"> View cart </a>
+							<a href="/checkout" class="btn btn-black"> Checkout </a>
+						</div>
 					</Popup>
 				{/if}
 			</div>
