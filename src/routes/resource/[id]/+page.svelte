@@ -10,7 +10,6 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
-	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 
 	export let data: PageData;
 
@@ -52,13 +51,6 @@
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<Breadcrumbs
-		links={[
-			{ name: 'Home', url: '/' },
-			{ name: 'Resources', url: '/resource' },
-			{ name: data.product.name, url: $page.url.pathname }
-		]}
-	/>
 	<article class="mt-2 w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
 		<div class="flex flex-col gap-2 w-12 min-w-[48px]">
 			{#each data.pictures as picture, i}

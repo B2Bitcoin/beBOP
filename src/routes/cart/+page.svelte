@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
-	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import IconChevronDown from '$lib/components/icons/IconChevronDown.svelte';
@@ -18,12 +17,6 @@
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
-	<Breadcrumbs
-		links={[
-			{ name: 'Home', url: '/' },
-			{ name: 'Cart', url: '/cart' }
-		]}
-	/>
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 bg-white border-gray-300 border">
 		<h1 class="font-bold text-5xl text-gray-850">Products</h1>
 
