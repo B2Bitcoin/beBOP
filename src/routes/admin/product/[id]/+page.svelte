@@ -47,7 +47,7 @@
 
 			<div class="flex justify-between mt-4 gap-2">
 				<button type="submit" class="btn btn-blue">Update</button>
-				<a href="/resource/{data.product._id}" class="btn btn-gray">View</a>
+				<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
 				<button type="button" class="ml-auto btn btn-red" formaction="?/delete"> Delete </button>
 			</div>
 		</form>
