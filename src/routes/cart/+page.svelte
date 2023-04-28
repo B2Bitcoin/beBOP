@@ -21,7 +21,7 @@
 		<h1 class="page-title">Products</h1>
 
 		{#if items.length}
-			<div class="grid gap-x-4 gap-y-6" style="grid-template-columns: repeat(4, auto)">
+			<div class="grid gap-x-4 gap-y-6" style="grid-template-columns: auto 1fr auto auto">
 				{#each items as item}
 					<form
 						method="POST"
@@ -53,7 +53,7 @@
 								/>
 							{/if}
 						</div>
-						<div class="grow flex flex-col gap-2 self-stretch">
+						<div class="flex flex-col gap-2">
 							<h2 class="text-2xl text-gray-850">{item.product.name}</h2>
 							<p class="text-sm text-gray-600">{item.product.shortDescription}</p>
 							<div class="grow" />
