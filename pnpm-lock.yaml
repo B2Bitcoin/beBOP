@@ -4,6 +4,7 @@ specifiers:
   '@aws-sdk/client-s3': ^3.312.0
   '@aws-sdk/s3-request-presigner': ^3.316.0
   '@fontsource/outfit': ^4.5.11
+  '@fontsource/poppins': ^4.5.10
   '@playwright/test': ^1.28.1
   '@sveltejs/adapter-node': ^1.2.3
   '@sveltejs/kit': ^1.5.0
@@ -40,6 +41,7 @@ specifiers:
 dependencies:
   '@aws-sdk/client-s3': 3.312.0
   '@aws-sdk/s3-request-presigner': 3.316.0
+  '@fontsource/poppins': 4.5.10
   busboy: 1.6.0
   date-fns: 2.29.3
   marked: 4.3.0
@@ -1298,6 +1300,10 @@ packages:
   /@fontsource/outfit/4.5.11:
     resolution: {integrity: sha512-msPqJLLmSyWj/YtJknO75RjoTHIep6mDjnDO5IrZUJea31bO4s1QCuepG54LsmMXLKs+gp603nPM8/SUv5ZgSg==}
     dev: true
+
+  /@fontsource/poppins/4.5.10:
+    resolution: {integrity: sha512-oYZVHsnlwV3VWM1SE/m6SUxVh0QLk5+2wB+lBiXcI7N/0KVQWmV9YykaPqfJHBLvmdya+MAOnv+BQHeLU1vOOw==}
+    dev: false
 
   /@humanwhocodes/config-array/0.11.8:
     resolution: {integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g==}

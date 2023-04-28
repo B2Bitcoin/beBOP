@@ -18,7 +18,7 @@
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 bg-white border-gray-300 border">
-		<h1 class="font-bold text-5xl text-gray-850">Products</h1>
+		<h1 class="page-title">Products</h1>
 
 		{#if items.length}
 			<div class="grid gap-x-4 gap-y-6" style="grid-template-columns: repeat(4, auto)">

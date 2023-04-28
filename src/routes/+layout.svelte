@@ -5,6 +5,7 @@
 	import '@fontsource/outfit/500.css';
 	import '@fontsource/outfit/400.css';
 	import '@fontsource/outfit/300.css';
+	import '@fontsource/poppins/400.css';
 	import IconDownArrow from '$lib/components/icons/IconDownArrow.svelte';
 	import IconSearch from '$lib/components/icons/IconSearch.svelte';
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';

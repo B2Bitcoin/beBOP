@@ -13,8 +13,16 @@
 }
 
 @layer components {
+	.page-title {
+		@apply font-bold text-5xl text-gray-850;
+	}
+
 	.btn {
-		@apply rounded-lg border-0 cursor-pointer px-4 h-10 text-xl flex items-center justify-center;
+		@apply rounded-lg border-0 cursor-pointer px-4 h-10 text-xl flex items-center justify-center font-btn;
+	}
+
+	.btn-xl {
+		@apply h-[60px] text-2xl;
 	}
 
 	.btn-red {
@@ -70,7 +78,7 @@
 	} */
 
 	.text-label {
-		@apply text-xl text-gray-700;
+		@apply text-base font-light text-gray-800;
 	}
 
 	.form-label {
