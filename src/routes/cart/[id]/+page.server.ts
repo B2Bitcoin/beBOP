@@ -4,7 +4,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const actions = {
-	remove: async ({ locals, params }) => {
+	remove: async ({ locals, params, request }) => {
 		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
 
 		if (!cart) {
@@ -24,7 +24,7 @@ export const actions = {
 			{ $set: { items: cart.items, updatedAt: new Date() } }
 		);
 
-		throw redirect(303, '/cart');
+		throw redirect(303, request.headers.get('referer') || '/cart');
 	},
 	increase: async ({ locals, params, request }) => {
 		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
@@ -60,7 +60,7 @@ export const actions = {
 			{ $set: { items: cart.items, updatedAt: new Date() } }
 		);
 
-		throw redirect(303, '/cart');
+		throw redirect(303, request.headers.get('referer') || '/cart');
 	},
 	decrease: async ({ request, locals, params }) => {
 		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
@@ -95,6 +95,6 @@ export const actions = {
 			{ $set: { items: cart.items, updatedAt: new Date() } }
 		);
 
-		throw redirect(303, '/cart');
+		throw redirect(303, request.headers.get('referer') || '/cart');
 	}
 };

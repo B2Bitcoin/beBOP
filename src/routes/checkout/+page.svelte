@@ -1,92 +1,219 @@
+<script lang="ts">
+	import { applyAction, enhance } from '$app/forms';
+	import Picture from '$lib/components/Picture.svelte';
+	import PriceTag from '$lib/components/PriceTag.svelte';
+	import IconChevronDown from '$lib/components/icons/IconChevronDown.svelte';
+	import IconChevronUp from '$lib/components/icons/IconChevronUp.svelte';
+	import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart.js';
+	import { sum } from '$lib/utils/sum.js';
+
+	let loading = 0;
+	export let data;
+
+	$: items = data.cart || [];
+
+	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
+</script>
+
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 flex flex-col gap-6">
-		<h1 class="page-title">Checkout</h1>
+	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 grid grid-cols-3 gap-2">
+		<section class="col-span-2 flex flex-col gap-4">
+			<h1 class="page-title">Checkout</h1>
 
-		<section class="gap-4 grid grid-cols-6">
-			<h2 class="font-light text-2xl col-span-6">Shipment info</h2>
+			<section class="gap-4 grid grid-cols-6 w-4/5">
+				<h2 class="font-light text-2xl col-span-6">Shipment info</h2>
 
-			<label class="form-label col-span-3">
-				First name
-				<input type="text" class="form-input" name="firstName" required />
-			</label>
+				<label class="form-label col-span-3">
+					First name
+					<input type="text" class="form-input" name="firstName" required />
+				</label>
 
-			<label class="form-label col-span-3">
-				Last name
-				<input type="text" class="form-input" name="lastName" required />
-			</label>
+				<label class="form-label col-span-3">
+					Last name
+					<input type="text" class="form-input" name="lastName" required />
+				</label>
 
-			<label class="form-label col-span-6">
-				Address
-				<input type="text" class="form-input" name="address" required />
-			</label>
+				<label class="form-label col-span-6">
+					Address
+					<input type="text" class="form-input" name="address" required />
+				</label>
 
-			<label class="form-label col-span-3">
-				Country
-				<select name="country" class="form-input" required>
-					<option value="FRA">France</option>
-					<option value="CHF">Swiss</option>
-					<option value="USA">USA</option>
-				</select>
-			</label>
-
-			<span class="col-span-3" />
-
-			<label class="form-label col-span-2">
-				State
-
-				<input type="text" name="state" class="form-input" />
-			</label>
-			<label class="form-label col-span-2">
-				City
-
-				<input type="text" name="city" class="form-input" required />
-			</label>
-			<label class="form-label col-span-2">
-				Zip code
-
-				<input type="text" name="zipCode" class="form-input" required />
-			</label>
-		</section>
-
-		<section class="gap-4 flex flex-col">
-			<h2 class="font-light text-2xl">Payment</h2>
-
-			<label class="form-label">
-				Payment method
-
-				<div class="grid grid-cols-2 gap-4 items-center">
-					<select name="paymentMethod" class="form-input" required>
-						<option value="walletA">Wallet A</option>
+				<label class="form-label col-span-3">
+					Country
+					<select name="country" class="form-input" required>
+						<option value="FRA">France</option>
+						<option value="CHF">Swiss</option>
+						<option value="USA">USA</option>
 					</select>
-					<a href="/connect" class="underline text-blue"> Connect another wallet </a>
-				</div>
-			</label>
+				</label>
+
+				<span class="col-span-3" />
+
+				<label class="form-label col-span-2">
+					State
+
+					<input type="text" name="state" class="form-input" />
+				</label>
+				<label class="form-label col-span-2">
+					City
+
+					<input type="text" name="city" class="form-input" required />
+				</label>
+				<label class="form-label col-span-2">
+					Zip code
+
+					<input type="text" name="zipCode" class="form-input" required />
+				</label>
+			</section>
+
+			<section class="gap-4 flex flex-col">
+				<h2 class="font-light text-2xl">Payment</h2>
+
+				<label class="form-label">
+					Payment method
+
+					<div class="grid grid-cols-2 gap-4 items-center">
+						<select name="paymentMethod" class="form-input" required>
+							<option value="walletA">Wallet A</option>
+						</select>
+						<a href="/connect" class="underline text-blue"> Connect another wallet </a>
+					</div>
+				</label>
+			</section>
+
+			<section class="gap-4 flex flex-col">
+				<h2 class="font-light text-2xl">Feed & Notifications</h2>
+
+				{#each ['Payment status', 'Product changes', 'Newsletter'] as feedTitle}
+					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
+						<div
+							class="pl-4 py-2 bg-gray-190 border-b border-gray-300 text-base font-light text-gray-800"
+						>
+							{feedTitle}
+						</div>
+						<div class="p-4 flex flex-col gap-3">
+							<label class="form-label">
+								Email
+								<input type="email" class="form-input" />
+							</label>
+							<label class="form-label">
+								Phone
+								<input type="email" class="form-input" />
+							</label>
+						</div>
+					</article>
+				{/each}
+			</section>
+
+			<button class="btn btn-black btn-xl">Proceed</button>
 		</section>
+		<article
+			class="rounded -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden self-start gap-1"
+		>
+			<div class="flex justify-between">
+				<a href="/cart" class="text-blue hover:underline">&lt;&lt;Back to cart</a>
+				{data.cart?.length} products
+			</div>
+			{#each items as item}
+				<form
+					method="POST"
+					class="flex flex-col mt-2"
+					use:enhance={({ action }) => {
+						if (action.searchParams.has('/increase')) {
+							item.quantity++;
+						} else if (action.searchParams.has('/decrease')) {
+							item.quantity--;
+						} else if (action.searchParams.has('/remove')) {
+							item.quantity = 0;
+						}
+						loading++;
 
-		<section class="gap-4 flex flex-col">
-			<h2 class="font-light text-2xl">Feed & Notifications</h2>
+						return async ({ result }) => {
+							loading--;
+							if (loading === 0) {
+								await applyAction(result);
+							}
+						};
+					}}
+				>
+					<h3 class="text-base text-gray-700">{item.product.name}</h3>
 
-			{#each ['Payment status', 'Product changes', 'Newsletter'] as feedTitle}
-				<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
-					<div
-						class="pl-4 py-2 bg-gray-190 border-b border-gray-300 text-base font-light text-gray-800"
-					>
-						{feedTitle}
+					<div class="flex gap-2">
+						<div class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center">
+							{#if item.picture}
+								<Picture
+									picture={item.picture}
+									class="rounded grow object-cover h-full w-full"
+									sizes="50px"
+								/>
+							{/if}
+						</div>
+
+						<div class="self-center">
+							<div class="flex">
+								<button
+									formaction="/cart/{item.product._id}/?/increase"
+									class="px-3 bg-gray-300 rounded-l text-gray-800 disabled:text-gray-450"
+									disabled={item.quantity >= MAX_PRODUCT_QUANTITY}
+								>
+									<span class="sr-only">Increase quantity</span><IconChevronUp />
+								</button>
+								<input
+									type="number"
+									class="form-input text-center text-gray-850 text-xl rounded-none w-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+									disabled
+									name="quantity"
+									value={item.quantity}
+								/>
+								<input type="hidden" name="quantity" value={item.quantity} />
+								<button
+									formaction="/cart/{item.product._id}/?/decrease"
+									class="px-3 bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
+									disabled={item.quantity <= 0}
+								>
+									<span class="sr-only">Decrease quantity</span><IconChevronDown />
+								</button>
+							</div>
+						</div>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								amount={item.product.price.amount}
+								currency={item.product.price.currency}
+								class="text-2xl text-gray-800 truncate"
+								short
+							/>
+							<PriceTag
+								short
+								class="text-base text-gray-600 truncate"
+								currency={item.product.price.currency}
+								amount={item.product.price.amount}
+								convertedTo="EUR"
+								exchangeRate={data.exchangeRate}
+							/>
+						</div>
 					</div>
-					<div class="p-4 flex flex-col gap-3">
-						<label class="form-label">
-							Email
-							<input type="email" class="form-input" />
-						</label>
-						<label class="form-label">
-							Phone
-							<input type="email" class="form-input" />
-						</label>
-					</div>
-				</article>
+				</form>
+
+				<div class="border-b border-gray-300 col-span-4" />
 			{/each}
-		</section>
 
-		<button class="btn btn-black btn-xl">Proceed</button>
+			<span class="py-1" />
+
+			<div class="bg-gray-190 -mx-3 -mb-3 p-3 flex flex-col">
+				<div class="flex justify-between">
+					<span class="text-xl text-gray-850">Total</span>
+					<PriceTag short class="text-2xl text-gray-800" amount={totalPrice} currency="BTC" />
+				</div>
+				<PriceTag
+					class="self-end text-gray-600"
+					amount={totalPrice}
+					convertedTo="EUR"
+					currency="BTC"
+					short
+					exchangeRate={data.exchangeRate}
+				/>
+			</div>
+		</article>
 	</div>
 </main>
