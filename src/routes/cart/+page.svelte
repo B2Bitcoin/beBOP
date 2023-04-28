@@ -69,7 +69,7 @@
 								formaction="/cart/{item.product._id}/?/remove"
 								class="mt-auto mr-auto hover:underline text-blue text-base font-light"
 							>
-								Eliminate
+								Discard
 							</button>
 						</div>
 
@@ -93,6 +93,7 @@
 								<button
 									formaction="/cart/{item.product._id}/?/decrease"
 									class="px-3 bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
+									disabled={item.quantity <= 0}
 								>
 									<span class="sr-only">Decrease quantity</span><IconChevronDown />
 								</button>
