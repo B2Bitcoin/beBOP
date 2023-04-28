@@ -73,12 +73,15 @@
 			{/each}
 		</div>
 		<div class="grid grid-cols-[70%_1fr] gap-2 grow pb-12">
-			<div class="aspect-video flex flex-col gap-4">
-				<Picture
-					picture={currentPicture}
-					class="h-full mx-auto rounded"
-					sizes="(min-width: 1280px) 896px, 70vw"
-				/>
+			<div class="flex flex-col gap-4">
+				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
+				<div class="aspect-video w-full overflow-hidden">
+					<Picture
+						picture={currentPicture}
+						class="mx-auto rounded h-full object-contain"
+						sizes="(min-width: 1280px) 896px, 70vw"
+					/>
+				</div>
 				<hr class="border-gray-300" />
 				<h2 class="text-gray-850 text-[22px]">Description</h2>
 				<p class="text-gray-800 prose">
