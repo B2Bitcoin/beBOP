@@ -41,7 +41,6 @@ export const actions = {
 
 		const formData = await request.formData();
 
-		console.log(formData, formData.get('quantity'));
 		const { quantity } = z
 			.object({
 				quantity: z

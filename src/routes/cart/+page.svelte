@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
@@ -9,6 +9,8 @@
 	import { sum } from '$lib/utils/sum';
 
 	export let data;
+
+	let loading = 0;
 
 	$: items = data.cart || [];
 
@@ -39,6 +41,14 @@
 							} else if (action.searchParams.has('/remove')) {
 								item.quantity = 0;
 							}
+							loading++;
+
+							return async ({ result }) => {
+								loading--;
+								if (loading === 0) {
+									await applyAction(result);
+								}
+							};
 						}}
 					>
 						<div class="w-[138px] h-[138px] min-w-[138px] min-h-[138px] rounded flex items-center">
