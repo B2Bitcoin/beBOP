@@ -90,7 +90,7 @@ export const actions = {
 	buy: async (params) => {
 		await addToCart(params);
 
-		throw redirect(303, '/cart');
+		throw redirect(303, '/checkout');
 	},
 
 	addToCart
