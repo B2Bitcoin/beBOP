@@ -16,7 +16,11 @@ export const actions: Actions = {
 			shortDescription: '',
 			description: '',
 			priceAmount: '',
-			priceCurrency: ''
+			priceCurrency: '',
+			type: 'resource',
+			availableDate: undefined as undefined | string,
+			preorder: undefined as undefined | string,
+			shipping: undefined as undefined | string
 		};
 
 		// eslint-disable-next-line no-async-promise-executor
@@ -59,9 +63,26 @@ export const actions: Actions = {
 				description: z.string().trim().max(10_000),
 				shortDescription: z.string().trim().max(250),
 				priceCurrency: z.enum(['BTC']),
-				priceAmount: z.string().regex(/^\d+(\.\d+)?$/)
+				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
+				type: z.enum(['resource', 'donation', 'subscription']),
+				availableDate: z.date({ coerce: true }).optional(),
+				preorder: z.boolean({ coerce: true }).default(false),
+				shipping: z.boolean({ coerce: true }).default(false)
 			})
 			.parse(fields);
+
+		if (!parsed.availableDate) {
+			parsed.preorder = false;
+		}
+
+		if (parsed.type !== 'resource') {
+			delete parsed.availableDate;
+			parsed.preorder = false;
+		}
+
+		if (parsed.type === 'donation') {
+			parsed.shipping = false;
+		}
 
 		await generatePicture(buffer, fields.name, {
 			productId,
@@ -77,7 +98,11 @@ export const actions: Actions = {
 						price: {
 							currency: parsed.priceCurrency,
 							amount: new Decimal128(parsed.priceAmount)
-						}
+						},
+						type: parsed.type,
+						availableDate: parsed.availableDate,
+						preorder: parsed.preorder,
+						shipping: parsed.shipping
 					},
 					{ session }
 				);

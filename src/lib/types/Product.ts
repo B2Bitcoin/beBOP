@@ -11,6 +11,10 @@ export interface Product extends Timestamps {
 		amount: Decimal128;
 		currency: Currency;
 	};
+	type: 'subscription' | 'resource' | 'donation';
+	shipping: boolean;
+	availableDate?: Date;
+	preorder: boolean;
 }
 
 export type ProductFrontend = Omit<Product, 'price'> & {

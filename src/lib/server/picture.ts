@@ -20,6 +20,10 @@ export async function generatePicture(
 	name: string,
 	opts?: { productId?: string; cb?: (session: ClientSession) => Promise<void> }
 ): Promise<void> {
+	if (buffer.length > 10 * 1024 * 1024) {
+		throw error(400, 'Image too big, 10MB max');
+	}
+
 	const image = sharp(buffer);
 	const { width, height, format } = await image.metadata();
 
