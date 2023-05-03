@@ -74,7 +74,7 @@
 			<a href="/mecenas">Mecenas</a>
 		</nav>
 		<div class="border-r-[1px] border-gray-700 h-8 border-solid" />
-		<a href="/connect" class="btn btn-blue font-bold">Connect your wallet</a>
+		<a href="/admin" class="btn btn-blue font-bold">Connect your wallet</a>
 	</div>
 </header>
 <header class="bg-gray-240 text-gray-800 h-[66px] items-center flex">

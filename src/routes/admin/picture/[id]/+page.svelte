@@ -7,12 +7,20 @@
 </script>
 
 <main class="flex flex-col items-center mt-6">
-	<form method="post" action="?/update" use:enhance>
+	<form method="post" action="?/update" use:enhance class="flex flex-col gap-4">
+		{#if data.picture.productId}
+			<a href="/admin/product/{data.picture.productId}" class="underline text-blue text-center"
+				>Back to product</a
+			>
+		{:else}
+			<a href="/admin/picture" class="underline text-blue text-center">Back to list</a>
+		{/if}
+
 		<input type="text" name="name" class="form-input" value={data.picture.name} />
-		<input type="submit" hidden />
-	</form>
-	<Picture picture={data.picture} class="mt-2 max-w-full" style="max-height: 500px" />
-	<form method="post" action="?/delete" use:enhance>
-		<input type="submit" value="Delete" class="mt-2" />
+		<Picture picture={data.picture} class="mt-2 max-w-full" style="max-height: 500px" />
+		<div class="flex gap-4 justify-between">
+			<input type="submit" value="Update" class="btn btn-gray" />
+			<input type="submit" value="Delete" formaction="?/delete" class="btn btn-red" />
+		</div>
 	</form>
 </main>
