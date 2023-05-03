@@ -39,6 +39,13 @@ export const actions = {
 			throw error(404, 'This product is not in the cart');
 		}
 
+		const product = await collections.products.findOne({ _id: item.productId });
+
+		if (!product) {
+			await collections.carts.updateOne({ _id: cart._id }, { $pull: { items: item } });
+			throw error(404, 'This product does not exist anymore');
+		}
+
 		const formData = await request.formData();
 
 		const { quantity } = z
@@ -54,6 +61,10 @@ export const actions = {
 			});
 
 		item.quantity = quantity + 1;
+
+		if (product.type === 'subscription') {
+			item.quantity = 1;
+		}
 
 		await collections.carts.updateOne(
 			{ _id: cart._id },
@@ -73,6 +84,13 @@ export const actions = {
 
 		if (!item) {
 			throw error(404, 'This product is not in the cart');
+		}
+
+		const product = await collections.products.findOne({ _id: item.productId });
+
+		if (!product) {
+			await collections.carts.updateOne({ _id: cart._id }, { $pull: { items: item } });
+			throw error(404, 'This product does not exist anymore');
 		}
 
 		const formData = await request.formData();
