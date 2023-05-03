@@ -118,7 +118,7 @@
 						class="form-checkbox rounded-sm cursor-pointer"
 						type="checkbox"
 						name="shipping"
-						value={data.product.shipping}
+						checked={data.product.shipping}
 					/>
 					The product has a physical component that will be shipped to the customer's address
 				</label>
@@ -127,7 +127,7 @@
 			<div class="flex justify-between gap-2">
 				<button type="submit" class="btn btn-blue">Update</button>
 				<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
-				<button type="button" class="ml-auto btn btn-red" formaction="?/delete"> Delete </button>
+				<button type="submit" class="ml-auto btn btn-red" formaction="?/delete"> Delete </button>
 			</div>
 		</form>
 	</div>

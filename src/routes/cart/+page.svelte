@@ -64,7 +64,9 @@
 						</div>
 
 						<div class="self-center">
-							<CartQuantity {item} />
+							{#if item.product.type !== 'subscription'}
+								<CartQuantity {item} />
+							{/if}
 						</div>
 
 						<div class="flex flex-col items-end justify-center">

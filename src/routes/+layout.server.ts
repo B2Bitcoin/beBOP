@@ -16,10 +16,10 @@ export async function load({ depends, locals }) {
 			? Promise.all(
 					cart.items.map(async (item) => {
 						const productDoc = await collections.products.findOne<
-							Pick<Product, '_id' | 'name' | 'price' | 'shortDescription'>
+							Pick<Product, '_id' | 'name' | 'price' | 'shortDescription' | 'type'>
 						>(
 							{ _id: item.productId },
-							{ projection: { _id: 1, name: 1, price: 1, shortDescription: 1 } }
+							{ projection: { _id: 1, name: 1, price: 1, shortDescription: 1, type: 1 } }
 						);
 						if (productDoc) {
 							return {

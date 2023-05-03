@@ -163,10 +163,12 @@
 									</div>
 									<div class="flex flex-col">
 										<h3 class="text-base text-gray-850 font-medium">{item.product.name}</h3>
-										<div class="flex items-center gap-2 text-gray-700">
-											<span class="text-xs">Quantity: </span>
-											<CartQuantity {item} sm />
-										</div>
+										{#if item.product.type !== 'subscription'}
+											<div class="flex items-center gap-2 text-gray-700">
+												<span class="text-xs">Quantity: </span>
+												<CartQuantity {item} sm />
+											</div>
+										{/if}
 									</div>
 									<div class="flex flex-col items-end gap-[6px] ml-auto">
 										<PriceTag

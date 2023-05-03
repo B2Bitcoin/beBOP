@@ -8,11 +8,30 @@ import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne<
-		Pick<Product, '_id' | 'name' | 'price' | 'shortDescription' | 'description'>
+		Pick<
+			Product,
+			| '_id'
+			| 'name'
+			| 'price'
+			| 'shortDescription'
+			| 'description'
+			| 'availableDate'
+			| 'preorder'
+			| 'type'
+		>
 	>(
 		{ _id: params.id },
 		{
-			projection: { _id: 1, name: 1, price: 1, shortDescription: 1, description: 1 }
+			projection: {
+				_id: 1,
+				name: 1,
+				price: 1,
+				shortDescription: 1,
+				description: 1,
+				availableDate: 1,
+				preorder: 1,
+				type: 1
+			}
 		}
 	);
 
@@ -32,9 +51,9 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 async function addToCart({ params, request, locals }: RequestEvent) {
-	const productExists = !!(await collections.products.countDocuments({ _id: params.id }));
+	const product = await collections.products.findOne({ _id: params.id });
 
-	if (!productExists) {
+	if (!product) {
 		throw error(404, 'Product not found');
 	}
 
@@ -44,7 +63,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY)
 		})
 		.parse({
-			quantity: formData.get('quantity')
+			quantity: formData.get('quantity') || '1'
 		});
 
 	let cart = await collections.carts.findOne({ sessionId: locals.sessionId });
@@ -63,10 +82,18 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 
 	if (existingItem) {
 		existingItem.quantity += quantity;
+
+		if (existingItem.quantity > MAX_PRODUCT_QUANTITY) {
+			existingItem.quantity = MAX_PRODUCT_QUANTITY;
+		}
+
+		if (product.type === 'subscription') {
+			existingItem.quantity = 1;
+		}
 	} else {
 		cart.items.push({
 			productId: params.id,
-			quantity
+			quantity: product.type === 'subscription' ? 1 : quantity
 		});
 	}
 

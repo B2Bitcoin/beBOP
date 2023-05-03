@@ -152,18 +152,26 @@
 					}}
 					class="flex flex-col gap-2"
 				>
-					<label class="mb-2">
-						Amount: <select
-							name="quantity"
-							bind:value={quantity}
-							class="form-input w-16 ml-2 inline cursor-pointer"
-						>
-							{#each [1, 2, 3, 4, 5] as i}
-								<option value={i}>{i}</option>
-							{/each}
-						</select>
-					</label>
-					<button class="btn btn-black" disabled={loading}>Buy now</button>
+					{#if data.product.type !== 'subscription'}
+						<label class="mb-2">
+							Amount: <select
+								name="quantity"
+								bind:value={quantity}
+								class="form-input w-16 ml-2 inline cursor-pointer"
+							>
+								{#each [1, 2, 3, 4, 5] as i}
+									<option value={i}>{i}</option>
+								{/each}
+							</select>
+						</label>
+					{/if}
+					<button class="btn btn-black" disabled={loading}
+						>{data.product.type === 'donation'
+							? 'Donate now'
+							: data.product.type === 'subscription'
+							? 'Subscribe now'
+							: 'Buy now'}</button
+					>
 					<button
 						value="Add to cart"
 						formaction="?/addToCart"

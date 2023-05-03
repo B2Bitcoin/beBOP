@@ -65,7 +65,7 @@
 
 		<label>
 			Type
-			<select class="form-input" bind:value={type}>
+			<select class="form-input" bind:value={type} name="type">
 				{#each ['resource', 'donation', 'subscription'] as type}
 					<option value={type}>{upperFirst(type)}</option>
 				{/each}
