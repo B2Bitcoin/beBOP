@@ -28,21 +28,53 @@ export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
 
+		const product = await collections.products.findOne({ _id: params.id });
+
+		if (!product) {
+			throw error(404, 'Product not found');
+		}
+
 		const update = z
 			.object({
 				name: z.string().trim().min(1).max(100),
 				description: z.string().trim().max(10_000),
 				shortDescription: z.string().trim().max(250),
 				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
-				priceCurrency: z.enum(['BTC'])
+				priceCurrency: z.enum(['BTC']),
+				availableDate: z.date({ coerce: true }).optional(),
+				changedDate: z.boolean({ coerce: true }).default(false),
+				preorder: z.boolean({ coerce: true }).default(false),
+				shipping: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				name: formData.get('name'),
 				description: formData.get('description'),
 				shortDescription: formData.get('shortDescription'),
 				priceAmount: formData.get('priceAmount'),
-				priceCurrency: formData.get('priceCurrency')
+				priceCurrency: formData.get('priceCurrency'),
+				preorder: formData.get('preorder'),
+				shipping: formData.get('shipping'),
+				availableDate: formData.get('availableDate') || undefined,
+				changedDate: formData.get('changedDate')
 			});
+
+		if (product.type !== 'resource') {
+			delete update.availableDate;
+			update.preorder = false;
+		}
+
+		if (!update.changedDate) {
+			delete update.availableDate;
+		}
+
+		const availableDate = product.availableDate || update.availableDate;
+		if (!availableDate || availableDate < new Date()) {
+			update.preorder = false;
+		}
+
+		if (product.type === 'donation') {
+			update.shipping = false;
+		}
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
@@ -57,7 +89,14 @@ export const actions: Actions = {
 								currency: update.priceCurrency
 						  }
 						: undefined,
+					...(update.changedDate &&
+						update.availableDate && { availableDate: update.availableDate }),
+					shipping: update.shipping,
+					preorder: update.preorder,
 					updatedAt: new Date()
+				},
+				$unset: {
+					...(update.changedDate && !update.availableDate && { availableDate: '' })
 				}
 			}
 		);

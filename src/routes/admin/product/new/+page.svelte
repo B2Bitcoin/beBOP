@@ -83,7 +83,6 @@
 						name="availableDate"
 						bind:value={availableDate}
 						min={addDays(new Date(), 1).toJSON().slice(0, 10)}
-						required
 					/>
 					<span class="text-sm text-gray-600 mt-2 block"
 						>Leave empty if your product is immediately available. Press
@@ -121,7 +120,7 @@
 					name="shipping"
 					bind:checked={shipping}
 				/>
-				Something will be shipped physically to the customer
+				The product has a physical component that will be shipped to the customer's address
 			</label>
 		{/if}
 

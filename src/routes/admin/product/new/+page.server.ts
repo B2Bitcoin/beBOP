@@ -100,7 +100,7 @@ export const actions: Actions = {
 							amount: new Decimal128(parsed.priceAmount)
 						},
 						type: parsed.type,
-						availableDate: parsed.availableDate,
+						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
 						shipping: parsed.shipping
 					},

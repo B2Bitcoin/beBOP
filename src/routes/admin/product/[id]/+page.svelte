@@ -1,20 +1,38 @@
 <script lang="ts">
 	import PictureComponent from '$lib/components/Picture.svelte';
+	import { upperFirst } from '$lib/utils/upperFirst';
+	import { addDays } from 'date-fns';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	let availableDate = data.product.availableDate;
+	let availableDateStr = availableDate?.toJSON().slice(0, 10);
+	let preorder = data.product.preorder;
+
+	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
+	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
+
+	$: if (!enablePreorder) {
+		preorder = false;
+	}
+
+	$: if (!availableDateStr) {
+		availableDateStr = undefined;
+		availableDate = undefined;
+	}
 </script>
 
 <main class="p-4">
 	<h1 class="text-3xl">Edit a product</h1>
 
 	<div class="flex flex-col">
-		<form method="post" action="?/update">
-			<label class="block w-full mt-4 leading-8">
+		<form method="post" class="flex flex-col gap-4 mt-4" action="?/update">
+			<label>
 				Name
 				<input type="text" name="name" class="form-input block" value={data.product.name} />
 			</label>
-			<label class="block w-full mt-4 leading-8">
+			<label>
 				Price (BTC)
 				<input
 					type="number"
@@ -27,7 +45,7 @@
 
 			<input type="hidden" name="priceCurrency" value={data.product.price.currency} />
 
-			<label class="block my-4 w-full">
+			<label>
 				Short description
 				<textarea
 					name="shortDescription"
@@ -38,14 +56,75 @@
 				>
 			</label>
 
-			<label class="block my-4 w-full">
+			<label>
 				Description
 				<textarea name="description" cols="30" rows="10" maxlength="10000" class="block form-input"
 					>{data.product.description}</textarea
 				>
 			</label>
 
-			<div class="flex justify-between mt-4 gap-2">
+			<label class="text-gray-450">
+				Type
+				<select class="form-input text-gray-450" disabled value={data.product.type}>
+					<option value={data.product.type}>{upperFirst(data.product.type)}</option>
+				</select>
+			</label>
+
+			{#if data.product.type === 'resource'}
+				<div class="flex flex-wrap gap-4">
+					<label>
+						Available date
+
+						<input
+							class="form-input"
+							type="date"
+							name="availableDate"
+							bind:value={availableDateStr}
+							min={addDays(new Date(), 1).toJSON().slice(0, 10)}
+						/>
+						<span class="text-sm text-gray-600 mt-2 block"
+							>Leave empty if your product is immediately available. Press
+							<kbd
+								class="px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg"
+								>backspace</kbd
+							> to remove the date.</span
+						>
+					</label>
+
+					<label
+						class="flex gap-2 items-center {enablePreorder
+							? 'cursor-pointer'
+							: 'cursor-not-allowed text-gray-450'}"
+					>
+						<input
+							class="form-checkbox rounded-sm {enablePreorder
+								? 'cursor-pointer'
+								: 'cursor-not-allowed border-gray-450'}"
+							type="checkbox"
+							bind:checked={data.product.preorder}
+							name="preorder"
+							disabled={!enablePreorder}
+						/>
+						Enable preorders before available date
+					</label>
+				</div>
+
+				<input type="hidden" name="changedDate" value={changedDate} />
+			{/if}
+
+			{#if data.product.type !== 'donation'}
+				<label class="flex gap-2 items-center cursor-pointer">
+					<input
+						class="form-checkbox rounded-sm cursor-pointer"
+						type="checkbox"
+						name="shipping"
+						value={data.product.shipping}
+					/>
+					The product has a physical component that will be shipped to the customer's address
+				</label>
+			{/if}
+
+			<div class="flex justify-between gap-2">
 				<button type="submit" class="btn btn-blue">Update</button>
 				<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
 				<button type="button" class="ml-auto btn btn-red" formaction="?/delete"> Delete </button>
