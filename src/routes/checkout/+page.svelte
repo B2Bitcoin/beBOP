@@ -14,7 +14,7 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 grid grid-cols-3 gap-2">
-		<section class="col-span-2 flex flex-col gap-4">
+		<form id="checkout" method="post" class="col-span-2 flex flex-col gap-4">
 			<h1 class="page-title">Checkout</h1>
 
 			<section class="gap-4 grid grid-cols-6 w-4/5">
@@ -101,93 +101,104 @@
 					</article>
 				{/each}
 			</section>
-
-			<button class="btn btn-black btn-xl">Proceed</button>
-		</section>
-		<article
-			class="rounded -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden self-start gap-1"
-		>
-			<div class="flex justify-between">
-				<a href="/cart" class="text-blue hover:underline">&lt;&lt;Back to cart</a>
-				{data.cart?.length} products
-			</div>
-			{#each items as item}
-				<form
-					method="POST"
-					class="flex flex-col mt-2"
-					use:enhance={({ action }) => {
-						if (action.searchParams.has('/increase')) {
-							item.quantity++;
-						} else if (action.searchParams.has('/decrease')) {
-							item.quantity--;
-						} else if (action.searchParams.has('/remove')) {
-							item.quantity = 0;
-						}
-						actionCount++;
-						let currentActionCount = actionCount;
-
-						return async ({ result }) => {
-							if (actionCount === currentActionCount) {
-								await applyAction(result);
-							}
-						};
-					}}
-				>
-					<h3 class="text-base text-gray-700">{item.product.name}</h3>
-
-					<div class="flex gap-2">
-						<div class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center">
-							{#if item.picture}
-								<Picture
-									picture={item.picture}
-									class="rounded grow object-cover h-full w-full"
-									sizes="50px"
-								/>
-							{/if}
-						</div>
-
-						<div class="self-center">
-							<CartQuantity {item} sm />
-						</div>
-
-						<div class="flex flex-col ml-auto items-end justify-center">
-							<PriceTag
-								amount={item.product.price.amount}
-								currency={item.product.price.currency}
-								class="text-2xl text-gray-800 truncate"
-								short
-							/>
-							<PriceTag
-								short
-								class="text-base text-gray-600 truncate"
-								currency={item.product.price.currency}
-								amount={item.product.price.amount}
-								convertedTo="EUR"
-								exchangeRate={data.exchangeRate}
-							/>
-						</div>
-					</div>
-				</form>
-
-				<div class="border-b border-gray-300 col-span-4" />
-			{/each}
-
-			<span class="py-1" />
-
-			<div class="bg-gray-190 -mx-3 -mb-3 p-3 flex flex-col">
+		</form>
+		<div>
+			<article
+				class="rounded sticky top-4 -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
+			>
 				<div class="flex justify-between">
-					<span class="text-xl text-gray-850">Total</span>
-					<PriceTag short class="text-2xl text-gray-800" amount={totalPrice} currency="BTC" />
+					<a href="/cart" class="text-blue hover:underline">&lt;&lt;Back to cart</a>
+					{data.cart?.length} products
 				</div>
-				<PriceTag
-					class="self-end text-gray-600"
-					amount={totalPrice}
-					convertedTo="EUR"
-					currency="BTC"
-					short
-					exchangeRate={data.exchangeRate}
+				{#each items as item}
+					<form
+						method="POST"
+						class="flex flex-col mt-2"
+						use:enhance={({ action }) => {
+							if (action.searchParams.has('/increase')) {
+								item.quantity++;
+							} else if (action.searchParams.has('/decrease')) {
+								item.quantity--;
+							} else if (action.searchParams.has('/remove')) {
+								item.quantity = 0;
+							}
+							actionCount++;
+							let currentActionCount = actionCount;
+
+							return async ({ result }) => {
+								if (actionCount === currentActionCount) {
+									await applyAction(result);
+								}
+							};
+						}}
+					>
+						<h3 class="text-base text-gray-700">{item.product.name}</h3>
+
+						<div class="flex gap-2">
+							<div class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center">
+								{#if item.picture}
+									<Picture
+										picture={item.picture}
+										class="rounded grow object-cover h-full w-full"
+										sizes="50px"
+									/>
+								{/if}
+							</div>
+
+							<div class="self-center">
+								{#if 0}
+									<CartQuantity {item} sm />
+								{:else if item.quantity > 1}
+									Quantity: {item.quantity}
+								{/if}
+							</div>
+
+							<div class="flex flex-col ml-auto items-end justify-center">
+								<PriceTag
+									amount={item.product.price.amount}
+									currency={item.product.price.currency}
+									class="text-2xl text-gray-800 truncate"
+									short
+								/>
+								<PriceTag
+									short
+									class="text-base text-gray-600 truncate"
+									currency={item.product.price.currency}
+									amount={item.product.price.amount}
+									convertedTo="EUR"
+									exchangeRate={data.exchangeRate}
+								/>
+							</div>
+						</div>
+					</form>
+
+					<div class="border-b border-gray-300 col-span-4" />
+				{/each}
+
+				<span class="py-1" />
+
+				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
+					<div class="flex justify-between">
+						<span class="text-xl text-gray-850">Total</span>
+						<PriceTag short class="text-2xl text-gray-800" amount={totalPrice} currency="BTC" />
+					</div>
+					<PriceTag
+						class="self-end text-gray-600"
+						amount={totalPrice}
+						convertedTo="EUR"
+						currency="BTC"
+						short
+						exchangeRate={data.exchangeRate}
+					/>
+				</div>
+
+				<input
+					type="submit"
+					class="btn btn-black btn-xl -mx-1 -mb-1 mt-1"
+					value="Proceed"
+					form="checkout"
 				/>
-			</div>
-		</article>
+			</article>
+		</div>
 	</div>
 </main>
