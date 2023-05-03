@@ -57,6 +57,10 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		throw error(404, 'Product not found');
 	}
 
+	if (product.availableDate && !product.preorder && product.availableDate > new Date()) {
+		throw error(400, 'Product is not available for preorder');
+	}
+
 	const formData = await request.formData();
 	const { quantity } = z
 		.object({

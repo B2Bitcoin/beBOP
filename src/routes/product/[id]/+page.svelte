@@ -20,6 +20,11 @@
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
 		data.pictures[0];
 
+	$: isPreorder =
+		!!data.product.availableDate &&
+		data.product.availableDate > new Date() &&
+		data.product.preorder;
+
 	function addToCart() {
 		$productAddedToCart = {
 			product: data.product,
@@ -137,50 +142,74 @@
 					</div>
 				</div>
 				<hr class="border-gray-300" />
-				<form
-					action="?/buy"
-					method="post"
-					use:enhance={({ action }) => {
-						return async ({ result }) => {
-							if (result.type === 'error' || !action.searchParams.has('/addToCart')) {
-								return await applyAction(result);
-							}
 
-							await invalidate(UrlDependency.Cart);
-							addToCart();
-						};
-					}}
-					class="flex flex-col gap-2"
-				>
-					{#if data.product.type !== 'subscription'}
-						<label class="mb-2">
-							Amount: <select
-								name="quantity"
-								bind:value={quantity}
-								class="form-input w-16 ml-2 inline cursor-pointer"
-							>
-								{#each [1, 2, 3, 4, 5] as i}
-									<option value={i}>{i}</option>
-								{/each}
-							</select>
-						</label>
-					{/if}
-					<button class="btn btn-black" disabled={loading}
-						>{data.product.type === 'donation'
-							? 'Donate now'
-							: data.product.type === 'subscription'
-							? 'Subscribe now'
-							: 'Buy now'}</button
+				{#if isPreorder}
+					<p>
+						This is a preorder, your product will be available on
+						{new Date(data.product.availableDate).toLocaleDateString('en', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric'
+						})}
+					</p>
+				{/if}
+				{#if !data.product.availableDate || data.product.availableDate <= new Date() || isPreorder}
+					<form
+						action="?/buy"
+						method="post"
+						use:enhance={({ action }) => {
+							return async ({ result }) => {
+								if (result.type === 'error' || !action.searchParams.has('/addToCart')) {
+									return await applyAction(result);
+								}
+
+								await invalidate(UrlDependency.Cart);
+								addToCart();
+							};
+						}}
+						class="flex flex-col gap-2"
 					>
-					<button
-						value="Add to cart"
-						formaction="?/addToCart"
-						disabled={loading}
-						class="btn btn-gray"
-					>
-						Add to cart
-					</button>
-				</form>
+						{#if data.product.type !== 'subscription'}
+							<label class="mb-2">
+								Amount: <select
+									name="quantity"
+									bind:value={quantity}
+									class="form-input w-16 ml-2 inline cursor-pointer"
+								>
+									{#each [1, 2, 3, 4, 5] as i}
+										<option value={i}>{i}</option>
+									{/each}
+								</select>
+							</label>
+						{/if}
+						<button class="btn btn-black" disabled={loading}
+							>{isPreorder
+								? 'Preorder now'
+								: data.product.type === 'donation'
+								? 'Donate now'
+								: data.product.type === 'subscription'
+								? 'Subscribe now'
+								: 'Buy now'}</button
+						>
+						<button
+							value="Add to cart"
+							formaction="?/addToCart"
+							disabled={loading}
+							class="btn btn-gray"
+						>
+							Add to cart
+						</button>
+					</form>
+				{:else}
+					<p>
+						Available on
+						{new Date(data.product.availableDate).toLocaleDateString('en', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric'
+						})}
+					</p>
+				{/if}
 			</div>
 		</div>
 	</article>
