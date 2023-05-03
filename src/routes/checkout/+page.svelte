@@ -20,47 +20,54 @@
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">Shipment info</h2>
 
-				<label class="form-label col-span-3">
-					First name
-					<input type="text" class="form-input" name="firstName" required />
-				</label>
+				{#if items.every((item) => !item.product.shipping)}
+					<p class="col-span-6 text-gray-800">
+						All products in your cart are digital products. You don't need to provide any shipping
+						information.
+					</p>
+				{:else}
+					<label class="form-label col-span-3">
+						First name
+						<input type="text" class="form-input" name="firstName" required />
+					</label>
 
-				<label class="form-label col-span-3">
-					Last name
-					<input type="text" class="form-input" name="lastName" required />
-				</label>
+					<label class="form-label col-span-3">
+						Last name
+						<input type="text" class="form-input" name="lastName" required />
+					</label>
 
-				<label class="form-label col-span-6">
-					Address
-					<input type="text" class="form-input" name="address" required />
-				</label>
+					<label class="form-label col-span-6">
+						Address
+						<input type="text" class="form-input" name="address" required />
+					</label>
 
-				<label class="form-label col-span-3">
-					Country
-					<select name="country" class="form-input" required>
-						<option value="FRA">France</option>
-						<option value="CHF">Swiss</option>
-						<option value="USA">USA</option>
-					</select>
-				</label>
+					<label class="form-label col-span-3">
+						Country
+						<select name="country" class="form-input" required>
+							<option value="FRA">France</option>
+							<option value="CHF">Swiss</option>
+							<option value="USA">USA</option>
+						</select>
+					</label>
 
-				<span class="col-span-3" />
+					<span class="col-span-3" />
 
-				<label class="form-label col-span-2">
-					State
+					<label class="form-label col-span-2">
+						State
 
-					<input type="text" name="state" class="form-input" />
-				</label>
-				<label class="form-label col-span-2">
-					City
+						<input type="text" name="state" class="form-input" />
+					</label>
+					<label class="form-label col-span-2">
+						City
 
-					<input type="text" name="city" class="form-input" required />
-				</label>
-				<label class="form-label col-span-2">
-					Zip code
+						<input type="text" name="city" class="form-input" required />
+					</label>
+					<label class="form-label col-span-2">
+						Zip code
 
-					<input type="text" name="zipCode" class="form-input" required />
-				</label>
+						<input type="text" name="zipCode" class="form-input" required />
+					</label>
+				{/if}
 			</section>
 
 			<section class="gap-4 flex flex-col">
