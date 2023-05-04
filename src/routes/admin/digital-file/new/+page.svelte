@@ -14,12 +14,13 @@
 			const fileSize = files[0].size;
 			const fileName = files[0].name;
 
-			const response = await fetch('/admin/digital-files/prepare', {
+			const response = await fetch('/admin/digital-file/prepare', {
 				method: 'POST',
 				body: JSON.stringify({
 					name,
 					fileName,
-					fileSize
+					fileSize,
+					productId
 				}),
 				headers: {
 					'Content-Type': 'application/json'
@@ -41,7 +42,7 @@
 				throw new Error(await uploadResponse.text());
 			}
 
-			const finalizeResponse = await fetch('/admin/digital-files/finalize', {
+			const finalizeResponse = await fetch('/admin/digital-file/finalize', {
 				method: 'POST',
 				body: JSON.stringify({
 					digitalFileId
@@ -82,7 +83,7 @@
 
 		<label>
 			File
-			<input type="file" accept="image/jpeg" class="block" bind:value={files} required />
+			<input type="file" class="block" bind:files required />
 		</label>
 
 		{#if productId}
@@ -92,8 +93,6 @@
 				>
 			</p>
 		{/if}
-
-		<input type="hidden" name="productId" value={productId || ''} />
 
 		{#if !uploading}
 			<input type="submit" class="btn btn-gray self-start" value="Add" />

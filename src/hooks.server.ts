@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 
 export const handleError = (({ error, event }) => {
-	console.error(error);
+	console.error('handleError', error);
 	if (typeof error === 'object' && error) {
 		collections.errors
 			.insertOne({

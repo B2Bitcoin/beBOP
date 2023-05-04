@@ -9,6 +9,10 @@ P2P Bootik for merch, subscribers and crowdfunding
 - A BTCPayServer instance. You can run it inside docker, or use paid services like Nodl.it, LunaNode or Voltage.cloud.
 - A MongoDB replica set. You can run it inside docker or use MongoDB Atlas.
 
+### S3 configuration
+
+The app will automatically configure the S3 bucket to accept CORS PUT calls.
+
 ## Environment variables
 
 Add `.env.local` or `.env.{development,test,production}.local` files for secrets not committed to git and to override the `.env`
@@ -17,5 +21,5 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `MONGODB_DB` - The DB name, defaulting to "bootik"
 - `S3_BUCKET` - The name of the bucket for the S3-compatible object storage
 - `S3_ENDPOINT` - The endpoint for the S3-compatible object storage - eg http://s3-website.us-east-1.amazonaws.com or http://s3.fr-par.scw.cloud
-- `S3_KEY_ID` - Credentials for the S3-compatible object storage 
+- `S3_KEY_ID` - Credentials for the S3-compatible object storage
 - `S3_KEY_SECRET` - Credentials for the S3-compatible object storage
