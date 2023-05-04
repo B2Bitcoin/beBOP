@@ -154,6 +154,11 @@
 					</p>
 				{/if}
 				{#if !data.product.availableDate || data.product.availableDate <= new Date() || isPreorder}
+					{@const verb = isPreorder
+						? 'Preorder'
+						: data.product.type === 'donation'
+						? 'Donate'
+						: 'Subscribe'}
 					<form
 						action="?/buy"
 						method="post"
@@ -182,23 +187,26 @@
 								</select>
 							</label>
 						{/if}
-						<button class="btn btn-black" disabled={loading}
-							>{isPreorder
-								? 'Preorder now'
-								: data.product.type === 'donation'
-								? 'Donate now'
-								: data.product.type === 'subscription'
-								? 'Subscribe now'
-								: 'Buy now'}</button
-						>
-						<button
-							value="Add to cart"
-							formaction="?/addToCart"
-							disabled={loading}
-							class="btn btn-gray"
-						>
-							Add to cart
-						</button>
+						{#if data.showCheckoutButton}
+							<button class="btn btn-black" disabled={loading}>{verb} now</button>
+							<button
+								value="Add to cart"
+								formaction="?/addToCart"
+								disabled={loading}
+								class="btn btn-gray"
+							>
+								Add to cart
+							</button>
+						{:else}
+							<button
+								value="Add to cart"
+								formaction="?/addToCart"
+								disabled={loading}
+								class="btn btn-black"
+							>
+								{verb}
+							</button>
+						{/if}
 					</form>
 				{:else}
 					<p>

@@ -4,7 +4,9 @@ import { differenceInMinutes } from 'date-fns';
 import { setTimeout } from 'node:timers/promises';
 
 const defaultConfig = {
-	BTC_EUR: 30_000
+	BTC_EUR: 30_000,
+
+	checkoutButtonOnProductPage: true
 };
 
 export type RuntimeConfig = typeof defaultConfig;
@@ -28,7 +30,7 @@ async function refresh(): Promise<void> {
 
 	for (const config of configs) {
 		if (config._id in defaultConfig) {
-			runtimeConfig[config._id] = config.data;
+			Object.assign(runtimeConfig, { [config._id]: config.data });
 		}
 	}
 }

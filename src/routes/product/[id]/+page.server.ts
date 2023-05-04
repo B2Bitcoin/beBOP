@@ -5,6 +5,7 @@ import { productToFrontend, type Product } from '$lib/types/Product';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne<
@@ -46,7 +47,8 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
 		product: productToFrontend(product),
-		pictures
+		pictures,
+		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
 };
 

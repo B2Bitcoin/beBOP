@@ -1,9 +1,23 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+</script>
+
 <header class="bg-gray-400 text-gray-800 py-2 items-center flex">
 	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 		<span class="font-bold text-xl">Admin</span>
 		<nav class="flex gap-6 font-light items-center">
-			<a href="/admin/product">Products</a>
-			<a href="/admin/picture">Pictures</a>
+			<a
+				href="/admin/config"
+				class={$page.url.pathname.startsWith('/admin/config') ? 'underline' : ''}>Config</a
+			>
+			<a
+				href="/admin/product"
+				class={$page.url.pathname.startsWith('/admin/product') ? 'underline' : ''}>Products</a
+			>
+			<a
+				href="/admin/picture"
+				class={$page.url.pathname.startsWith('/admin/picture') ? 'underline' : ''}>Pictures</a
+			>
 		</nav>
 	</div>
 </header>
