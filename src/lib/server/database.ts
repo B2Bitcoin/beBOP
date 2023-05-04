@@ -5,6 +5,7 @@ import type { Product } from '$lib/types/Product';
 import type { RuntimeConfigItem } from './runtime-config';
 import type { Lock } from '$lib/types/Lock';
 import type { Cart } from '$lib/types/Cart';
+import type { DigitalFile } from '$lib/types/DigitalFile';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -20,16 +21,32 @@ const products = db.collection<Product>('products');
 const carts = db.collection<Cart>('carts');
 const runtimeConfig = db.collection<RuntimeConfigItem>('runtimeConfig');
 const locks = db.collection<Lock>('locks');
+const digitalFiles = db.collection<DigitalFile>('digitalFiles');
+const pendingDigitalFiles = db.collection<DigitalFile>('digitalFiles.pending');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
 export { client, db };
-export const collections = { errors, pictures, products, runtimeConfig, locks, carts };
+export const collections = {
+	errors,
+	pictures,
+	products,
+	runtimeConfig,
+	locks,
+	carts,
+	digitalFiles,
+	pendingDigitalFiles
+};
+
+export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
+	return client.withSession((session) => session.withTransaction(dbTransactions));
+}
 
 client.on('open', () => {
 	pictures.createIndex({ productId: 1 });
 	locks.createIndex({ updatedAt: 1 }, { expireAfterSeconds: 60 });
 	carts.createIndex({ sessionId: 1 }, { unique: true });
+	digitalFiles.createIndex({ productId: 1 });
 });
 
 export async function withTransaction(cb: WithSessionCallback) {

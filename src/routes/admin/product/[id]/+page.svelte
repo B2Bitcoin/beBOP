@@ -146,4 +146,20 @@
 			</div>
 		{/each}
 	</div>
+
+	{#if data.product.type !== 'donation'}
+		<h2 class="text-2xl my-4">Digital Files</h2>
+
+		<a href="/admin/digital-file/new?productId={data.product._id}" class="underline"
+			>Add digital file</a
+		>
+
+		<div class="flex flex-row flex-wrap gap-6 mt-6">
+			{#each data.digitalFiles as digitalFile}
+				<a href="/admin/digital-file/{digitalFile._id}" class="text-blue hover:underline">
+					{digitalFile.name}
+				</a>
+			{/each}
+		</div>
+	{/if}
 </main>

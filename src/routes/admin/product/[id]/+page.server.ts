@@ -18,9 +18,15 @@ export const load: PageServerLoad = async ({ params }) => {
 		.sort({ createdAt: 1 })
 		.toArray();
 
+	const digitalFiles = await collections.digitalFiles
+		.find({ productId: params.id })
+		.sort({ createdAt: 1 })
+		.toArray();
+
 	return {
 		product: productToFrontend(product),
-		pictures
+		pictures,
+		digitalFiles
 	};
 };
 
