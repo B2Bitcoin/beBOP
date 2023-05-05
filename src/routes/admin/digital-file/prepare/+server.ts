@@ -27,7 +27,7 @@ export async function POST({ request }) {
 	const digitalFileId = generateId(body.name, true);
 
 	const contentType = mimeTypes.lookup(body.fileName);
-	const extension = contentType ? '.' + mimeTypes.extension(contentType) : '';
+	const extension = contentType ? mimeTypes.extension(contentType) : '';
 
 	const key = `products/${product._id}/${
 		extension ? `${digitalFileId}.${extension}` : digitalFileId
