@@ -8,7 +8,7 @@ import { error } from '@sveltejs/kit';
 import * as mimeTypes from 'mime-types';
 import { z } from 'zod';
 
-export async function POST({ request, url }) {
+export async function POST({ request }) {
 	const body = z
 		.object({
 			name: z.string().trim().min(1).max(100),

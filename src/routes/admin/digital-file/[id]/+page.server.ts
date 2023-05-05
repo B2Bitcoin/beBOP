@@ -1,7 +1,7 @@
 import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database';
 import { s3client } from '$lib/server/s3.js';
-import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { error, redirect } from '@sveltejs/kit';
 
@@ -40,6 +40,10 @@ export const actions = {
 		}
 
 		await collections.digitalFiles.deleteOne({ _id: params.id });
+
+		await s3client
+			.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: digitalFile.storage.key }))
+			.catch(console.error);
 
 		throw redirect(303, '/admin/product/' + digitalFile.productId);
 	},
