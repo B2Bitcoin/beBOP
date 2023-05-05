@@ -8,6 +8,7 @@ P2P Bootik for merch, subscribers and crowdfunding
 - SMTP credentials, for sending emails
 - A BTCPayServer instance. You can run it inside docker, or use paid services like Nodl.it, LunaNode or Voltage.cloud.
 - A MongoDB replica set. You can run it inside docker or use MongoDB Atlas.
+- Node version 18+, corepack enabled with `corepack enable`
 
 ### S3 configuration
 
