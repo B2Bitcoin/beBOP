@@ -33,16 +33,18 @@ export async function POST({ request, url }) {
 		extension ? `${digitalFileId}.${extension}` : digitalFileId
 	}`;
 
-	const presignedUrl = await getSignedUrl(
-		s3client,
-		new PutObjectCommand({
-			Bucket: S3_BUCKET,
-			Key: key,
-			...(contentType ? { ContentType: contentType } : {}),
-			ContentLength: body.fileSize
-		}),
-		{ expiresIn: 60 * 60 * 24 }
-	);
+	const presignedUrl = (
+		await getSignedUrl(
+			s3client,
+			new PutObjectCommand({
+				Bucket: S3_BUCKET,
+				Key: key,
+				...(contentType ? { ContentType: contentType } : {}),
+				ContentLength: body.fileSize
+			}),
+			{ expiresIn: 60 * 60 * 24 }
+		)
+	).replace('http:', 'https:');
 
 	await collections.pendingDigitalFiles.insertOne({
 		_id: digitalFileId,
