@@ -81,3 +81,7 @@ export async function listTransactions(label?: string) {
 		})
 		.parse(json).result;
 }
+
+export function orderAddressLabel(orderId: string) {
+	return `order:${orderId}`;
+}

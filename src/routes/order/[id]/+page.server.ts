@@ -3,12 +3,10 @@ import type { Picture } from '$lib/types/Picture.js';
 import { productToFrontend } from '$lib/types/Product.js';
 import { UrlDependency } from '$lib/types/UrlDependency.js';
 import { error } from '@sveltejs/kit';
-import { ObjectId } from 'mongodb';
 
-export async function load({ locals, params, depends }) {
+export async function load({ params, depends }) {
 	const order = await collections.orders.findOne({
-		_id: new ObjectId(params.id),
-		sessionId: locals.sessionId
+		_id: params.id
 	});
 
 	if (!order) {

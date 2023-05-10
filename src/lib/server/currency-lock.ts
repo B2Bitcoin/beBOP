@@ -1,52 +1,14 @@
 import { collections } from './database';
 import { differenceInMinutes } from 'date-fns';
 import { setTimeout } from 'node:timers/promises';
-import { processClosed, processId } from './process';
+import { processClosed } from './process';
+import { Lock } from './lock';
 
-let ownsLock = false;
-
-async function maintainLock(): Promise<void> {
-	while (!processClosed) {
-		try {
-			let lock = await collections.locks.findOne({
-				_id: 'currency'
-			});
-
-			if (!lock) {
-				lock = {
-					_id: 'currency',
-					createdAt: new Date(),
-					updatedAt: new Date(),
-					ownerId: processId
-				};
-
-				await collections.locks.insertOne(lock);
-				ownsLock = true;
-			} else {
-				const res = await collections.locks.updateOne(
-					{
-						_id: 'currency',
-						ownerId: processId
-					},
-					{
-						$set: {
-							updatedAt: new Date()
-						}
-					}
-				);
-				ownsLock = res.matchedCount > 0;
-			}
-		} catch {
-			ownsLock = false;
-		}
-
-		await setTimeout(5_000);
-	}
-}
+const lock = new Lock('currency');
 
 async function maintainExchangeRate() {
-	while (!closed) {
-		if (!ownsLock) {
+	while (!processClosed) {
+		if (!lock.ownsLock) {
 			await setTimeout(5_000);
 			continue;
 		}
@@ -88,5 +50,4 @@ async function maintainExchangeRate() {
 	}
 }
 
-maintainLock();
 maintainExchangeRate();

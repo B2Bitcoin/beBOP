@@ -1,9 +1,9 @@
-import { getNewAddress } from '$lib/server/bitcoin';
+import { getNewAddress, orderAddressLabel } from '$lib/server/bitcoin';
 import { collections, withTransaction } from '$lib/server/database';
 import { COUNTRY_ALPHA3S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { addHours } from 'date-fns';
-import { Decimal128, ObjectId } from 'mongodb';
+import { Decimal128 } from 'mongodb';
 import { z } from 'zod';
 
 export const actions = {
@@ -85,7 +85,7 @@ export const actions = {
 			total += price * quantity;
 		}
 
-		const orderId = new ObjectId();
+		const orderId = crypto.randomUUID();
 
 		await withTransaction(async (session) => {
 			const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -119,7 +119,7 @@ export const actions = {
 					payment: {
 						method: paymentMethod,
 						status: 'pending',
-						address: await getNewAddress('order:' + orderId.toString()),
+						address: await getNewAddress(orderAddressLabel(orderId)),
 						expiresAt: addHours(new Date(), 2)
 					}
 				},

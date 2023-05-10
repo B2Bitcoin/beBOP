@@ -1,11 +1,14 @@
-import type { Decimal128, ObjectId } from 'mongodb';
+import type { Decimal128 } from 'mongodb';
 import type { Product } from './Product';
 import type { Currency } from './Currency';
 import type { CountryAlpha3 } from './Country';
 import type { Timestamps } from './Timestamps';
 
 export interface Order extends Timestamps {
-	_id: ObjectId;
+	/**
+	 * A string - a crypto UUID. Anyone having access to the _id can access the order.
+	 */
+	_id: string;
 	sessionId: string;
 
 	number: number;
