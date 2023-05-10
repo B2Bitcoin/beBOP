@@ -165,13 +165,16 @@
 						action="?/buy"
 						method="post"
 						use:enhance={({ action }) => {
+							loading = true;
 							return async ({ result }) => {
+								loading = false;
 								if (result.type === 'error' || !action.searchParams.has('/addToCart')) {
 									return await applyAction(result);
 								}
 
 								await invalidate(UrlDependency.Cart);
 								addToCart();
+								document.body.scrollIntoView();
 							};
 						}}
 						class="flex flex-col gap-2"
