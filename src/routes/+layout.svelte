@@ -178,7 +178,7 @@
 										<PriceTag
 											short
 											class="text-gray-600 text-base"
-											amount={item.product.price.amount}
+											amount={item.quantity * item.product.price.amount}
 											currency={item.product.price.currency}
 										/>
 										<button formaction="/cart/{item.product._id}/?/remove">

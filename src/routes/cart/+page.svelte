@@ -76,7 +76,7 @@
 
 						<div class="flex flex-col items-end justify-center">
 							<PriceTag
-								amount={item.product.price.amount}
+								amount={item.quantity * item.product.price.amount}
 								currency={item.product.price.currency}
 								class="text-2xl text-gray-800"
 								short
@@ -84,8 +84,8 @@
 							<PriceTag
 								short
 								class="text-base text-gray-600"
+								amount={item.quantity * item.product.price.amount}
 								currency={item.product.price.currency}
-								amount={item.product.price.amount}
 								convertedTo="EUR"
 								exchangeRate={data.exchangeRate}
 							/>
