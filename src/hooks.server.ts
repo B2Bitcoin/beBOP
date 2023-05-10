@@ -22,7 +22,7 @@ export const handleError = (({ error, event }) => {
 		const formattedError = error.format();
 
 		if (formattedError._errors.length) {
-			return { message: formattedError._errors[0] };
+			return { message: formattedError._errors[0], status: 422 };
 		}
 
 		return {
@@ -33,7 +33,8 @@ export const handleError = (({ error, event }) => {
 					}
 				})
 				.filter(Boolean)
-				.join(', ')
+				.join(', '),
+			status: 422
 		};
 	}
 }) satisfies HandleServerError;
@@ -57,9 +58,13 @@ export const handle = (async ({ event, resolve }) => {
 	// Work around handleError which does not allow setting the header
 	const status = event.locals.status;
 	if (status) {
+		const contentType = response.headers.get('Content-Type');
 		return new Response(response.body, {
 			...response,
-			headers: { 'Content-Type': 'application/json', ...response.headers },
+			headers: {
+				...Object.fromEntries(response.headers.entries()),
+				'content-type': contentType?.includes('html') ? contentType : 'application/json'
+			},
 			status
 		});
 	}

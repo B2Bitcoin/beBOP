@@ -143,7 +143,7 @@
 				</div>
 				<hr class="border-gray-300" />
 
-				{#if isPreorder}
+				{#if isPreorder && data.product.availableDate}
 					<p>
 						This is a preorder, your product will be available on
 						{new Date(data.product.availableDate).toLocaleDateString('en', {

@@ -4,6 +4,7 @@
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
+	import { COUNTRIES } from '$lib/types/Country';
 	import { sum } from '$lib/utils/sum.js';
 
 	let actionCount = 0;
@@ -45,9 +46,9 @@
 					<label class="form-label col-span-3">
 						Country
 						<select name="country" class="form-input" required>
-							<option value="FRA">France</option>
-							<option value="CHF">Swiss</option>
-							<option value="USA">USA</option>
+							{#each Object.entries(COUNTRIES) as [code, country]}
+								<option value={code}>{country}</option>
+							{/each}
 						</select>
 					</label>
 
@@ -66,7 +67,7 @@
 					<label class="form-label col-span-2">
 						Zip code
 
-						<input type="text" name="zipCode" class="form-input" required />
+						<input type="text" name="zip" class="form-input" required />
 					</label>
 				{/if}
 			</section>
@@ -79,7 +80,8 @@
 
 					<div class="grid grid-cols-2 gap-4 items-center">
 						<select name="paymentMethod" class="form-input" required>
-							<option value="walletA">Wallet A</option>
+							<option value="bitcoin">Bitcoin</option>
+							<option value="lightning">Lightning</option>
 						</select>
 						<a href="/connect" class="underline text-blue"> Connect another wallet </a>
 					</div>

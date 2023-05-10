@@ -6,6 +6,7 @@ import type { RuntimeConfigItem } from './runtime-config';
 import type { Lock } from '$lib/types/Lock';
 import type { Cart } from '$lib/types/Cart';
 import type { DigitalFile } from '$lib/types/DigitalFile';
+import type { Order } from '$lib/types/Order';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -23,6 +24,7 @@ const runtimeConfig = db.collection<RuntimeConfigItem>('runtimeConfig');
 const locks = db.collection<Lock>('locks');
 const digitalFiles = db.collection<DigitalFile>('digitalFiles');
 const pendingDigitalFiles = db.collection<DigitalFile>('digitalFiles.pending');
+const orders = db.collection<Order>('orders');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -35,7 +37,8 @@ export const collections = {
 	locks,
 	carts,
 	digitalFiles,
-	pendingDigitalFiles
+	pendingDigitalFiles,
+	orders
 };
 
 export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
@@ -46,6 +49,8 @@ client.on('open', () => {
 	pictures.createIndex({ productId: 1 });
 	locks.createIndex({ updatedAt: 1 }, { expireAfterSeconds: 60 });
 	carts.createIndex({ sessionId: 1 }, { unique: true });
+	orders.createIndex({ sessionId: 1 });
+	orders.createIndex({ number: 1 }, { unique: true });
 	digitalFiles.createIndex({ productId: 1 });
 });
 
