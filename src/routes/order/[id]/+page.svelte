@@ -2,9 +2,8 @@
 	import { invalidate } from '$app/navigation';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
-	import { differenceInMinutes, differenceInSeconds } from 'date-fns';
+	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
-	import { dataset_dev } from 'svelte/internal';
 
 	let currentDate = new Date();
 	export let data;
@@ -56,7 +55,9 @@
 					Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
 				</li>
 			</ul>
-			<div class="text-xl">Pay to to complete the order.</div>
+			<div class="text-xl">
+				Pay to to complete the order. Order will be marked as paid after 1 confirmation.
+			</div>
 		{:else if data.order.payment.status === 'paid'}
 			Order paid!
 		{:else if data.order.payment.status === 'expired'}

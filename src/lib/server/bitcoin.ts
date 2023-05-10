@@ -72,7 +72,7 @@ export async function listTransactions(label?: string) {
 					address: z.string(),
 					category: z.enum(['send', 'receive', 'generate', 'immature', 'orphan']),
 					label: z.string(),
-					fee: z.number(),
+					fee: z.number().optional(),
 					amount: z.number(),
 					confirmations: z.number(),
 					txid: z.string()

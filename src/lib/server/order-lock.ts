@@ -5,6 +5,7 @@ import type { Order } from '$lib/types/Order';
 import { listTransactions, orderAddressLabel } from './bitcoin';
 import { sum } from '$lib/utils/sum';
 import { Lock } from './lock';
+import { inspect } from 'node:util';
 
 const lock = new Lock('orders');
 
@@ -41,7 +42,7 @@ async function maintainOrders() {
 				}
 			}
 		} catch (err) {
-			console.error(err);
+			console.error(inspect(err, { depth: 10 }));
 		}
 
 		await setTimeout(5_000);
