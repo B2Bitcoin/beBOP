@@ -158,7 +158,9 @@
 						? 'Preorder'
 						: data.product.type === 'donation'
 						? 'Donate'
-						: 'Subscribe'}
+						: data.product.type === 'subscription'
+						? 'Subscribe'
+						: 'Buy'}
 					<form
 						action="?/buy"
 						method="post"
