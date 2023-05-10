@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { differenceInMinutes } from 'date-fns';
@@ -55,6 +56,7 @@
 					Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
 				</li>
 			</ul>
+			<img src="{$page.url.pathname}/qrcode" class="w-40 h-40" alt="QR code" />
 			<div class="text-xl">
 				Pay to to complete the order. Order will be marked as paid after 1 confirmation.
 			</div>
