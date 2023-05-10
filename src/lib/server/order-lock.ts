@@ -32,7 +32,13 @@ async function maintainOrders() {
 				if (received >= parseFloat(order.totalPrice.amount.toString())) {
 					await collections.orders.updateOne(
 						{ _id: order._id },
-						{ $set: { 'payment.status': 'paid' } }
+						{
+							$set: {
+								'payment.status': 'paid',
+								'payment.paidAt': new Date(),
+								'payment.transactionIds': transactions.map((transaction) => transaction.txid)
+							}
+						}
 					);
 				} else if (order.payment.expiresAt < new Date()) {
 					await collections.orders.updateOne(

@@ -21,7 +21,13 @@
 
 	<ul>
 		{#each data.transactions as transaction}
-			<li>{transaction}</li>
+			<li>
+				Amount: {transaction.amount} / Txid: {transaction.txid}
+				{#if transaction.label.startsWith('order:')}
+					/ <a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
+						>Order</a
+					>{/if}
+			</li>
 		{:else}
 			No transactions yet
 		{/each}

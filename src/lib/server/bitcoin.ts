@@ -82,6 +82,8 @@ export async function listTransactions(label?: string) {
 		.parse(json).result;
 }
 
+export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[number];
+
 export function orderAddressLabel(orderId: string) {
 	return `order:${orderId}`;
 }

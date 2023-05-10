@@ -38,5 +38,7 @@ export interface Order extends Timestamps {
 		status: 'pending' | 'paid' | 'expired';
 		expiresAt: Date;
 		address: string;
+		transactionIds?: string[];
+		paidAt?: Date;
 	};
 }
