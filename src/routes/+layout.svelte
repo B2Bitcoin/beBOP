@@ -12,7 +12,7 @@
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { onMount } from 'svelte';
-	import { afterNavigate, invalidate } from '$app/navigation';
+	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { navigating } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import ProductAddedToCart from '$lib/components/ProductAddedToCart.svelte';
@@ -145,6 +145,10 @@
 
 										return async ({ result }) => {
 											if (actionCount === currentCount) {
+												if (result.type === 'redirect') {
+													await goto(result.location, { noScroll: true });
+													return;
+												}
 												await applyAction(result);
 											}
 										};

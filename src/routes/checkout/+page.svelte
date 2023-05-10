@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
@@ -134,6 +135,10 @@
 
 							return async ({ result }) => {
 								if (actionCount === currentActionCount) {
+									if (result.type === 'redirect') {
+										await goto(result.location, { noScroll: true });
+										return;
+									}
 									await applyAction(result);
 								}
 							};
