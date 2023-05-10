@@ -38,7 +38,8 @@
 							return async ({ result }) => {
 								if (actionCount === currentActionCount) {
 									if (result.type === 'redirect') {
-										await goto(result.location, { noScroll: true });
+										// Invalidate all to remove 0-quantity items
+										await goto(result.location, { noScroll: true, invalidateAll: true });
 										return;
 									}
 									await applyAction(result);
