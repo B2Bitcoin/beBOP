@@ -1,6 +1,10 @@
+import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database.js';
+import { s3client } from '$lib/server/s3.js';
 import type { Picture } from '$lib/types/Picture.js';
 import { UrlDependency } from '$lib/types/UrlDependency.js';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, depends }) {
@@ -28,6 +32,10 @@ export async function load({ params, depends }) {
 		])
 		.toArray();
 
+	const digitalFiles = await collections.digitalFiles
+		.find({ productId: { $in: order.items.map((item) => item.product._id) } })
+		.toArray();
+
 	return {
 		order: {
 			number: order.number,
@@ -49,6 +57,24 @@ export async function load({ params, depends }) {
 				amount: parseFloat(order.totalPrice.amount.toString()),
 				currency: order.totalPrice.currency
 			}
-		}
+		},
+
+		digitalFiles: await Promise.all(
+			digitalFiles.map(async (file) => ({
+				name: file.name,
+				size: file.storage.size,
+				link:
+					order.payment.status === 'paid'
+						? await getSignedUrl(
+								s3client,
+								new GetObjectCommand({
+									Bucket: S3_BUCKET,
+									Key: file.storage.key
+								}),
+								{ expiresIn: 24 * 3600 }
+						  )
+						: undefined
+			}))
+		)
 	};
 }

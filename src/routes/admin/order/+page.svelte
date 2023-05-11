@@ -1,5 +1,4 @@
 <script lang="ts">
-	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { sum } from '$lib/utils/sum.js';
 
 	export let data;

@@ -39,7 +39,7 @@
 			{/each}
 		</ul>
 
-		<div class="text-xl">
+		<div class="text-xl flex items-center gap-2">
 			Total <PriceTag
 				class="text-xl inline-flex"
 				gap="gap-1"
@@ -48,6 +48,13 @@
 				rawBtc
 			/>
 		</div>
+
+		{#if data.order.payment.status !== 'expired'}
+			<div>
+				Keep this link: <a class="underline text-blue" href={$page.url.href}>{$page.url.href}</a> to
+				access the order later.
+			</div>
+		{/if}
 
 		{#if data.order.payment.status === 'pending'}
 			<ul>
@@ -61,9 +68,26 @@
 				Pay to to complete the order. Order will be marked as paid after 1 confirmation.
 			</div>
 		{:else if data.order.payment.status === 'paid'}
-			Order paid!
+			<p>Order <span class="text-green-500">paid</span>!</p>
 		{:else if data.order.payment.status === 'expired'}
-			Order expired!
+			<p>Order expired!</p>
+		{/if}
+
+		{#if data.digitalFiles.length}
+			<h2 class="text-2xl">Digital Files</h2>
+			<ul>
+				{#each data.digitalFiles as digitalFile}
+					<li>
+						{#if digitalFile.link}
+							<a href={digitalFile.link} class="text-blue hover:underline" target="_blank"
+								>{digitalFile.name}</a
+							>
+						{:else}
+							{digitalFile.name}
+						{/if}
+					</li>
+				{/each}
+			</ul>
 		{/if}
 	</article>
 </main>
