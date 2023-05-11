@@ -39,7 +39,7 @@
 					name="priceAmount"
 					class="form-input block"
 					step="any"
-					value={data.product.price.amount}
+					value={data.product.price.amount.toLocaleString('en', { maximumFractionDigits: 8 })}
 				/>
 			</label>
 
