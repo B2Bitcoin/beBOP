@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { productToFrontend, type Product } from '$lib/types/Product.js';
+import type { Product } from '$lib/types/Product.js';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef.js';
 
@@ -25,7 +25,7 @@ export async function load({ depends, locals }) {
 						);
 						if (productDoc) {
 							return {
-								product: productToFrontend(productDoc),
+								product: productDoc,
 								picture: await collections.pictures.findOne(
 									{ productId: item.productId },
 									{ sort: { createdAt: 1 } }

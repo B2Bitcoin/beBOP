@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, RequestEvent } from './$types';
-import { productToFrontend, type Product } from '$lib/types/Product';
+import type { Product } from '$lib/types/Product';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		.toArray();
 
 	return {
-		product: productToFrontend(product),
+		product,
 		pictures,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};

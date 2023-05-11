@@ -1,5 +1,5 @@
 import { collections } from '$lib/server/database';
-import { productToFrontend, type Product } from '$lib/types/Product';
+import type { Product } from '$lib/types/Product';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -9,7 +9,7 @@ export const load: PageServerLoad = async () => {
 		.toArray();
 
 	return {
-		products: products.map(productToFrontend),
+		products,
 		pictures: await collections.pictures
 			.find({ productId: { $exists: true } })
 			.sort({ createdAt: 1 })

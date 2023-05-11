@@ -3,7 +3,6 @@ import { generatePicture } from '$lib/server/picture';
 import { generateId } from '$lib/utils/generateId';
 import type { Actions } from './$types';
 import { pipeline } from 'node:stream/promises';
-import { Decimal128 } from 'mongodb';
 import busboy from 'busboy';
 import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
 import { error, redirect } from '@sveltejs/kit';
@@ -97,7 +96,7 @@ export const actions: Actions = {
 						name: parsed.name,
 						price: {
 							currency: parsed.priceCurrency,
-							amount: new Decimal128(parsed.priceAmount)
+							amount: parseFloat(parsed.priceAmount)
 						},
 						type: parsed.type,
 						availableDate: parsed.availableDate || undefined,

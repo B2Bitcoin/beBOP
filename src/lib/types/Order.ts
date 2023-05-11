@@ -1,4 +1,3 @@
-import type { Decimal128 } from 'mongodb';
 import type { Product } from './Product';
 import type { Currency } from './Currency';
 import type { CountryAlpha3 } from './Country';
@@ -29,7 +28,7 @@ export interface Order extends Timestamps {
 	};
 
 	totalPrice: {
-		amount: Decimal128;
+		amount: number;
 		currency: Currency;
 	};
 
@@ -38,7 +37,7 @@ export interface Order extends Timestamps {
 		status: 'pending' | 'paid' | 'expired';
 		expiresAt: Date;
 		address: string;
-		transactions?: Array<{ txid: string; amount: Decimal128 }>;
+		transactions?: Array<{ txid: string; amount: number }>;
 		paidAt?: Date;
 	};
 }

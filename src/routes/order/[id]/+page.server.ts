@@ -1,6 +1,5 @@
 import { collections } from '$lib/server/database.js';
 import type { Picture } from '$lib/types/Picture.js';
-import { productToFrontend } from '$lib/types/Product.js';
 import { UrlDependency } from '$lib/types/UrlDependency.js';
 import { error } from '@sveltejs/kit';
 
@@ -35,7 +34,7 @@ export async function load({ params, depends }) {
 			payment: order.payment,
 			items: order.items.map((item) => ({
 				quantity: item.quantity,
-				product: productToFrontend({
+				product: {
 					_id: item.product._id,
 					price: item.product.price,
 					name: item.product.name,
@@ -43,7 +42,7 @@ export async function load({ params, depends }) {
 					type: item.product.type,
 					preorder: item.product.preorder,
 					availableDate: item.product.availableDate
-				}),
+				},
 				picture: pictures.find((picture) => picture.productId === item.product._id)
 			})),
 			totalPrice: {

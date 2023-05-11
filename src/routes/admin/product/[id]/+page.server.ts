@@ -2,9 +2,7 @@ import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
-import { Decimal128 } from 'mongodb';
 import { deletePicture } from '$lib/server/picture';
-import { productToFrontend } from '$lib/types/Product';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -24,7 +22,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		.toArray();
 
 	return {
-		product: productToFrontend(product),
+		product,
 		pictures,
 		digitalFiles
 	};
@@ -91,7 +89,7 @@ export const actions: Actions = {
 					shortDescription: update.shortDescription,
 					price: update.priceAmount
 						? {
-								amount: new Decimal128(update.priceAmount),
+								amount: parseFloat(update.priceAmount),
 								currency: update.priceCurrency
 						  }
 						: undefined,

@@ -3,7 +3,6 @@ import { collections, withTransaction } from '$lib/server/database';
 import { COUNTRY_ALPHA3S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { addHours } from 'date-fns';
-import { Decimal128 } from 'mongodb';
 import { z } from 'zod';
 
 export const actions = {
@@ -113,7 +112,7 @@ export const actions = {
 					})),
 					...(shipping && { shippingAddress: shipping }),
 					totalPrice: {
-						amount: new Decimal128(String(total)),
+						amount: total,
 						currency: products[0].price.currency
 					},
 					payment: {
