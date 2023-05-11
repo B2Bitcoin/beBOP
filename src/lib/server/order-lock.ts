@@ -6,6 +6,7 @@ import { listTransactions, orderAddressLabel } from './bitcoin';
 import { sum } from '$lib/utils/sum';
 import { Lock } from './lock';
 import { inspect } from 'node:util';
+import { Decimal128 } from 'mongodb';
 
 const lock = new Lock('orders');
 
@@ -36,7 +37,10 @@ async function maintainOrders() {
 							$set: {
 								'payment.status': 'paid',
 								'payment.paidAt': new Date(),
-								'payment.transactionIds': transactions.map((transaction) => transaction.txid)
+								'payment.transactions': transactions.map((transaction) => ({
+									txid: transaction.txid,
+									amount: new Decimal128(String(transaction.amount))
+								}))
 							}
 						}
 					);
