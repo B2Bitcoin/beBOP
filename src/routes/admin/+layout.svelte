@@ -22,6 +22,10 @@
 				href="/admin/bitcoin"
 				class={$page.url.pathname.startsWith('/admin/bitcoin') ? 'underline' : ''}>Bitcoin node</a
 			>
+			<a
+				href="/admin/order"
+				class={$page.url.pathname.startsWith('/admin/order') ? 'underline' : ''}>Orders</a
+			>
 		</nav>
 	</div>
 </header>
