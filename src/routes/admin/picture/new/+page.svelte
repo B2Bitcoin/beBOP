@@ -15,7 +15,13 @@
 
 		<label>
 			JPEG or PNG file
-			<input type="file" name="picture" accept="image/jpeg" class="block" required />
+			<input
+				type="file"
+				name="picture"
+				accept="image/jpeg,image/png,image/webp"
+				class="block"
+				required
+			/>
 		</label>
 
 		{#if productId}

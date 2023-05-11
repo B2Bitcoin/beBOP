@@ -126,7 +126,13 @@
 
 		<label>
 			Picture
-			<input type="file" name="picture" accept="image/jpeg,image/png" class="block" required />
+			<input
+				type="file"
+				name="picture"
+				accept="image/jpeg,image/png,image/webp"
+				class="block"
+				required
+			/>
 		</label>
 
 		<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
