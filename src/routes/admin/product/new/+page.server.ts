@@ -56,6 +56,10 @@ export const actions: Actions = {
 			throw error(409, 'Product with same slug already exists');
 		}
 
+		if (!fields.availableDate) {
+			delete fields.availableDate;
+		}
+
 		const parsed = z
 			.object({
 				name: z.string().trim().min(1).max(100),
