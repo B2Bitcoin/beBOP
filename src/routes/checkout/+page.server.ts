@@ -122,7 +122,7 @@ export const actions = {
 							? { address: await getNewAddress(orderAddressLabel(orderId)) }
 							: await (async () => {
 									const invoice = await lndCreateInvoice(
-										total * SATOSHIS_PER_BTC,
+										Math.floor(total * SATOSHIS_PER_BTC),
 										differenceInSeconds(expiresAt, new Date()),
 										`${new URL(request.url).origin}/order/${orderId}`
 									);

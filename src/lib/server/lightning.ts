@@ -149,6 +149,7 @@ export async function lndCreateInvoice(
 	});
 
 	if (!response.ok) {
+		console.error(await response.text());
 		throw error(500, 'Could not create invoice');
 	}
 
