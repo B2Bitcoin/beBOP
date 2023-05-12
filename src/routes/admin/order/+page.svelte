@@ -23,10 +23,9 @@
 				>
 					{order.payment.status}</span
 				>
-				- received: {sum(order.payment.transactions?.map((t) => t.amount) ?? []).toLocaleString(
-					'en',
-					{ maximumFractionDigits: 8 }
-				)} BTC
+				- received: {(order.payment.totalReceived ?? 0).toLocaleString('en', {
+					maximumFractionDigits: 8
+				})} BTC
 			</li>
 		{:else}
 			<li>No orders yet</li>

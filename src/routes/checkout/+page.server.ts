@@ -1,8 +1,10 @@
 import { getNewAddress, orderAddressLabel } from '$lib/server/bitcoin';
 import { collections, withTransaction } from '$lib/server/database';
+import { lndCreateInvoice } from '$lib/server/lightning.js';
 import { COUNTRY_ALPHA3S } from '$lib/types/Country';
+import { SATOSHIS_PER_BTC } from '$lib/types/Currency.js';
 import { error, redirect } from '@sveltejs/kit';
-import { addHours } from 'date-fns';
+import { addHours, differenceInSeconds } from 'date-fns';
 import { z } from 'zod';
 
 export const actions = {
@@ -69,10 +71,6 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 
-		if (paymentMethod === 'lightning') {
-			throw error(400, 'Lightning payments are not yet supported');
-		}
-
 		let total = 0;
 
 		for (const item of cart.items) {
@@ -99,6 +97,8 @@ export const actions = {
 
 			const orderNumber = res.value.data as number;
 
+			const expiresAt = addHours(new Date(), 2);
+
 			await collections.orders.insertOne(
 				{
 					_id: orderId,
@@ -118,8 +118,21 @@ export const actions = {
 					payment: {
 						method: paymentMethod,
 						status: 'pending',
-						address: await getNewAddress(orderAddressLabel(orderId)),
-						expiresAt: addHours(new Date(), 2)
+						...(paymentMethod === 'bitcoin'
+							? { address: await getNewAddress(orderAddressLabel(orderId)) }
+							: await (async () => {
+									const invoice = await lndCreateInvoice(
+										total * SATOSHIS_PER_BTC,
+										differenceInSeconds(expiresAt, new Date()),
+										`${new URL(request.url).origin}/order/${orderId}`
+									);
+
+									return {
+										address: invoice.payment_request,
+										invoiceId: invoice.r_hash
+									};
+							  })()),
+						expiresAt
 					}
 				},
 				{ session }

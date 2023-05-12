@@ -9,7 +9,14 @@ export async function GET({ params }) {
 		throw error(404, 'Order not found');
 	}
 
-	const address = `bitcoin:${order.payment.address}?amount=${order.totalPrice.amount.toString()}`;
+	if (order.payment.method !== 'bitcoin' && order.payment.method !== 'lightning') {
+		throw error(400, 'Invalid payment method for QR Code generation');
+	}
+
+	const address =
+		order.payment.method === 'bitcoin'
+			? `bitcoin:${order.payment.address}?amount=${order.totalPrice.amount.toString()}`
+			: order.payment.address;
 
 	return new Response(await qrcode.toString(address, { type: 'svg' }), {
 		headers: { 'content-type': 'image/svg+xml' },

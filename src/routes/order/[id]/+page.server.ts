@@ -39,7 +39,12 @@ export async function load({ params, depends }) {
 	return {
 		order: {
 			number: order.number,
-			payment: order.payment,
+			payment: {
+				method: order.payment.method,
+				status: order.payment.status,
+				address: order.payment.address,
+				expiresAt: order.payment.expiresAt
+			},
 			items: order.items.map((item) => ({
 				quantity: item.quantity,
 				product: {

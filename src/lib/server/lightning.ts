@@ -133,3 +133,46 @@ export async function lndActivateAutopilot() {
 		throw error(500, 'Could not activate lnd autopilot');
 	}
 }
+
+export async function lndCreateInvoice(
+	amountSatoshis: number,
+	expireAfterSeconds: number,
+	label: string
+) {
+	const response = await lndRpc('/v1/invoices', {
+		method: 'POST',
+		body: JSON.stringify({
+			memo: label,
+			value: String(amountSatoshis),
+			expiry: String(expireAfterSeconds)
+		})
+	});
+
+	if (!response.ok) {
+		throw error(500, 'Could not create invoice');
+	}
+
+	const json = await response.json();
+	return z
+		.object({ payment_request: z.string(), r_hash: z.string(), payment_addr: z.string() })
+		.parse(json);
+}
+
+export async function lndLookupInvoice(invoiceId: string) {
+	const response = await lndRpc(`/v1/invoice/${invoiceId}`);
+
+	if (!response.ok) {
+		throw error(500, 'Could not lookup invoice');
+	}
+
+	const json = await response.json();
+	const ret = z
+		.object({
+			amt_paid_sat: z.number({ coerce: true }).int(),
+			state: z.enum(['SETTLED', 'CANCELED', 'ACCEPTED', 'OPEN']),
+			settled_at: z.number({ coerce: true }).int().optional()
+		})
+		.parse(json);
+
+	return { ...ret, settled_at: ret.settled_at ? new Date(ret.settled_at * 1000) : undefined };
+}

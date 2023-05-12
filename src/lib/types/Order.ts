@@ -37,6 +37,10 @@ export interface Order extends Timestamps {
 		status: 'pending' | 'paid' | 'expired';
 		expiresAt: Date;
 		address: string;
+		/** For lightning addresses, contains the hash to look up the invoice */
+		invoiceId?: string;
+		totalReceived?: number;
+		/** For bitcoin transation */
 		transactions?: Array<{ txid: string; amount: number }>;
 		paidAt?: Date;
 	};
