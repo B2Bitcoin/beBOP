@@ -34,6 +34,9 @@ dependencies:
   sharp:
     specifier: ^0.32.0
     version: 0.32.0
+  undici:
+    specifier: ^5.22.1
+    version: 5.22.1
   zod:
     specifier: ^3.21.4
     version: 3.21.4
@@ -3802,6 +3805,13 @@ packages:
     dependencies:
       busboy: 1.6.0
     dev: true
+
+  /undici@5.22.1:
+    resolution: {integrity: sha512-Ji2IJhFXZY0x/0tVBXeQwgPlLWw13GVzpsWPQ3rV50IFMMof2I55PZZxtm4P6iNq+L5znYN9nSTAq0ZyE6lSJw==}
+    engines: {node: '>=14.0'}
+    dependencies:
+      busboy: 1.6.0
+    dev: false
 
   /update-browserslist-db@1.0.10(browserslist@4.21.5):
     resolution: {integrity: sha512-OztqDenkfFkbSG+tRxBeAnCVPckDBcvibKd35yDONx6OU8N7sqgwc7rCbkJ/WcYtVRZ4ba68d6byhC21GFh7sQ==}
