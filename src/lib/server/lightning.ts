@@ -149,7 +149,6 @@ export async function lndCreateInvoice(
 	});
 
 	if (!response.ok) {
-		console.error(await response.text());
 		throw error(500, 'Could not create invoice');
 	}
 
@@ -160,10 +159,10 @@ export async function lndCreateInvoice(
 }
 
 export async function lndLookupInvoice(invoiceId: string) {
-	const response = await lndRpc(`/v1/invoice/${invoiceId}`);
+	const response = await lndRpc(`/v1/invoice/${Buffer.from(invoiceId, 'base64').toString('hex')}`);
 
 	if (!response.ok) {
-		throw error(500, 'Could not lookup invoice');
+		throw error(500, 'Could not lookup invoice: ' + invoiceId);
 	}
 
 	const json = await response.json();
@@ -177,3 +176,34 @@ export async function lndLookupInvoice(invoiceId: string) {
 
 	return { ...ret, settled_at: ret.settled_at ? new Date(ret.settled_at * 1000) : undefined };
 }
+
+export async function lndListInvoices() {
+	const response = await lndRpc('/v1/invoices');
+
+	if (!response.ok) {
+		throw error(500, 'Could not list invoices');
+	}
+
+	const json = await response.json();
+	const ret = z
+		.object({
+			invoices: z.array(
+				z.object({
+					r_hash: z.string(),
+					amt_paid_sat: z.number({ coerce: true }).int(),
+					state: z.enum(['SETTLED', 'CANCELED', 'ACCEPTED', 'OPEN']),
+					settled_at: z.number({ coerce: true }).int().optional()
+				})
+			)
+		})
+		.parse(json);
+
+	return ret.invoices.map((invoice) => ({
+		...invoice,
+		settled_at: invoice.settled_at ? new Date(invoice.settled_at * 1000) : undefined
+	}));
+}
+
+lndListInvoices();
+
+lndLookupInvoice('b0FpgVqg8RJFQA/B4LjB2ZODckdlKTCA4FNyG8ha2Qg=');

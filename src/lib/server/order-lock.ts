@@ -18,13 +18,17 @@ async function maintainOrders() {
 			continue;
 		}
 
-		try {
-			const bitcoinOrders = await collections.orders
-				.find({ 'payment.status': 'pending', 'payment.method': 'bitcoin' })
-				.project<Pick<Order, 'payment' | 'totalPrice' | '_id'>>({ payment: 1, totalPrice: 1 })
-				.toArray();
+		const bitcoinOrders = await collections.orders
+			.find({ 'payment.status': 'pending', 'payment.method': 'bitcoin' })
+			.project<Pick<Order, 'payment' | 'totalPrice' | '_id'>>({ payment: 1, totalPrice: 1 })
+			.toArray()
+			.catch((err) => {
+				console.error(inspect(err, { depth: 10 }));
+				return [];
+			});
 
-			for (const order of bitcoinOrders) {
+		for (const order of bitcoinOrders) {
+			try {
 				const transactions = await listTransactions(orderAddressLabel(order._id));
 
 				const received = sum(
@@ -52,18 +56,22 @@ async function maintainOrders() {
 						{ $set: { 'payment.status': 'expired' } }
 					);
 				}
+			} catch (err) {
+				console.error(inspect(err, { depth: 10 }));
 			}
-		} catch (err) {
-			console.error(inspect(err, { depth: 10 }));
 		}
 
-		try {
-			const lightningOrders = await collections.orders
-				.find({ 'payment.status': 'pending', 'payment.method': 'lightning' })
-				.project<Pick<Order, 'payment' | 'totalPrice' | '_id'>>({ payment: 1, totalPrice: 1 })
-				.toArray();
+		const lightningOrders = await collections.orders
+			.find({ 'payment.status': 'pending', 'payment.method': 'lightning' })
+			.project<Pick<Order, 'payment' | 'totalPrice' | '_id'>>({ payment: 1, totalPrice: 1 })
+			.toArray()
+			.catch((err) => {
+				console.error(inspect(err, { depth: 10 }));
+				return [];
+			});
 
-			for (const order of lightningOrders) {
+		for (const order of lightningOrders) {
+			try {
 				const invoice = await lndLookupInvoice(order.payment.invoiceId!);
 
 				if (invoice.state === 'SETTLED') {
@@ -83,9 +91,9 @@ async function maintainOrders() {
 						{ $set: { 'payment.status': 'expired' } }
 					);
 				}
+			} catch (err) {
+				console.error(inspect(err, { depth: 10 }));
 			}
-		} catch (err) {
-			console.error(inspect(err, { depth: 10 }));
 		}
 
 		await setTimeout(5_000);
