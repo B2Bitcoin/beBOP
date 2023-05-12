@@ -4,7 +4,7 @@
 	import IconSatoshi from './icons/IconSatoshi.svelte';
 
 	export let amount: number;
-	export let currency: Currency;
+	export let currency: Currency | 'SAT';
 	export let exchangeRate = 0;
 	export let rawBtc = false;
 	export let convertedTo: Currency | undefined = undefined;

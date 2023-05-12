@@ -40,9 +40,13 @@ export async function lndWalletBalance() {
 	});
 
 	const json = await response.json();
-	return z.object({ total_balance: z.number().int() }).parse(json).total_balance;
+	return z
+		.object({
+			total_balance: z.number({ coerce: true }).int(),
+			confirmed_balance: z.number({ coerce: true }).int()
+		})
+		.parse(json).total_balance;
 }
-
 export async function lndGetInfo() {
 	const response = await fetch(`${LND_REST_URL}/v1/getinfo`, {
 		headers: {
@@ -62,5 +66,5 @@ export async function lndChannelsBalance() {
 	});
 
 	const json = await response.json();
-	return z.object({ balance: z.number().int() }).parse(json).balance;
+	return z.object({ balance: z.number({ coerce: true }).int() }).parse(json).balance;
 }
