@@ -53,10 +53,10 @@ export async function lndListChannels() {
 		.object({
 			channels: z.array(
 				z.object({
-					capacity: z.number().int(),
-					chan_id: z.number().int(),
-					local_balance: z.number().int(),
-					remote_balance: z.number().int()
+					capacity: z.number({ coerce: true }).int(),
+					chan_id: z.number({ coerce: true }).int(),
+					local_balance: z.number({ coerce: true }).int(),
+					remote_balance: z.number({ coerce: true }).int()
 				})
 			)
 		})
@@ -87,7 +87,6 @@ export async function lndGetInfo() {
 
 	const json = await response.json();
 
-	console.log(json);
 	return z
 		.object({
 			alias: z.string(),

@@ -34,7 +34,7 @@
 			<PriceTag amount={data.walletBalance} currency="SAT" short class="inline-flex" /> in the wallet
 		</li>
 		<li class="flex items-center gap-2">
-			<PriceTag amount={data.channelsBalance} currency="SAT" short class="inline-flex" /> in the channels
+			<PriceTag amount={data.channelsBalance} currency="SAT" short class="inline-flex" /> in channels
 		</li>
 	</ul>
 
@@ -42,7 +42,12 @@
 
 	<ul>
 		{#each data.channels as channel}
-			<li>JSON.stringify(channel)</li>
+			<li>
+				Channel {channel.chan_id}: {channel.capacity.toLocaleString('en')} capacity / {channel.local_balance.toLocaleString(
+					'en'
+				)} local balance /
+				{channel.remote_balance.toLocaleString('en')} remote balance
+			</li>
 		{:else}
 			No channels open
 		{/each}
