@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PriceTag from '$lib/components/PriceTag.svelte';
+
 	export let data;
 </script>
 
@@ -16,6 +18,10 @@
 			</form>
 		{/each}
 	</ul>
+
+	<h2 class="text-2xl">Balance</h2>
+
+	<PriceTag amount={data.balance} currency="BTC" />
 
 	<h2 class="text-2xl">Transactions</h2>
 

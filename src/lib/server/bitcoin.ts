@@ -2,7 +2,12 @@ import { BITCOIN_RPC_URL, BITCOIN_RPC_PASSWORD, BITCOIN_RPC_USER } from '$env/st
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 
-type BitcoinCommand = 'listtransactions' | 'listwallets' | 'createwallet' | 'getnewaddress';
+type BitcoinCommand =
+	| 'listtransactions'
+	| 'listwallets'
+	| 'createwallet'
+	| 'getnewaddress'
+	| 'getbalance';
 
 export function bitcoinRpc(command: BitcoinCommand, params: unknown[]) {
 	const authorization = `Basic ${Buffer.from(
@@ -80,6 +85,17 @@ export async function listTransactions(label?: string) {
 			)
 		})
 		.parse(json).result;
+}
+
+export async function getBalance(confirmations = 1) {
+	const response = await bitcoinRpc('getbalance', ['*', confirmations]);
+
+	if (!response.ok) {
+		throw error(500, 'Could not get balance');
+	}
+
+	const json = await response.json();
+	return z.object({ result: z.number() }).parse(json).result;
 }
 
 export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[number];

@@ -1,23 +1,13 @@
-import {
-	createWallet,
-	listWallets,
-	type BitcoinTransaction,
-	listTransactions
-} from '$lib/server/bitcoin';
+import { createWallet, listWallets, listTransactions, getBalance } from '$lib/server/bitcoin';
 import { error } from '@sveltejs/kit';
 
 export async function load() {
 	const wallets = await listWallets();
 
-	let transactions: BitcoinTransaction[] = [];
-
-	if (wallets.length) {
-		transactions = await listTransactions();
-	}
-
 	return {
 		wallets,
-		transactions
+		transactions: wallets.length ? listTransactions() : [],
+		balance: wallets.length ? getBalance() : 0
 	};
 }
 
