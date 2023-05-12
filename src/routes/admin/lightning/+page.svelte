@@ -7,6 +7,26 @@
 <main class="p-4 flex flex-col gap-4">
 	<h1 class="text-3xl">Lightning node</h1>
 
+	<h2 class="text-2xl">Status</h2>
+
+	<ul>
+		<li>testnet: {data.info.testnet}</li>
+		<li>alias: {data.info.alias}</li>
+		<li>autopilot active: {data.autopilotActive}</li>
+		<li>pending channels: {data.info.num_pending_channels}</li>
+		<li>active channels: {data.info.num_active_channels}</li>
+		<li>inactive channels: {data.info.num_inactive_channels}</li>
+		<li>synced to chain: {data.info.synced_to_chain}</li>
+		<li>synced to graph: {data.info.synced_to_graph}</li>
+		<li>peers: {data.info.num_peers}</li>
+	</ul>
+
+	{#if !data.autopilotActive}
+		<form action="?/activateAutopilot" method="POST">
+			<button type="submit" class="btn btn-black">Activate autopilot</button>
+		</form>
+	{/if}
+
 	<h2 class="text-2xl">Balance</h2>
 
 	<ul>

@@ -1,4 +1,6 @@
 import {
+	lndActivateAutopilot,
+	lndAutopilotActive,
 	lndChannelsBalance,
 	lndGetInfo,
 	lndListChannels,
@@ -10,6 +12,13 @@ export async function load() {
 		info: lndGetInfo(),
 		walletBalance: lndWalletBalance(),
 		channelsBalance: lndChannelsBalance(),
-		channels: lndListChannels()
+		channels: lndListChannels(),
+		autopilotActive: lndAutopilotActive()
 	};
 }
+
+export const actions = {
+	activateAutopilot: async function () {
+		await lndActivateAutopilot();
+	}
+};
