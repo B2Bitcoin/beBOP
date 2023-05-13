@@ -96,7 +96,8 @@ export async function lndGetInfo() {
 			num_active_channels: z.number().int(),
 			num_inactive_channels: z.number().int(),
 			synced_to_chain: z.boolean(),
-			synced_to_graph: z.boolean()
+			synced_to_graph: z.boolean(),
+			uris: z.array(z.string())
 		})
 		.parse(json);
 }
