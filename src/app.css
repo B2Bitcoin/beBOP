@@ -90,3 +90,12 @@
 	font-family: 'Gloock';
 	src: url('/fonts/Gloock-Regular.ttf') format('opentype');
 }
+
+.text-wrap {
+	max-width: 191px;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+  }

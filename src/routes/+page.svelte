@@ -15,7 +15,7 @@
 			<div class="flex flex-col text-center">
 				<a href="/product/{product._id}" class="flex flex-col items-center">
 					<Picture picture={picturesByProduct[product._id]} class="block h-36" />
-					<span class="mt-2">{product.name}</span>
+					<span class="mt-2 text-wrap">{product.name}</span>
 				</a>
 			</div>
 		{/each}
