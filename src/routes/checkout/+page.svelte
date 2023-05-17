@@ -131,10 +131,10 @@
 				<div class="flex justify-between">
 					<a href="/cart" class="text-blue hover:underline">&lt;&lt;Back to cart</a>
 					{#if data.cart?.length === 1}
-  <p>{data.cart.length} product</p>
-{:else}
-  <p>{data.cart.length} products</p>
-{/if}
+					<p>{data.cart?.length} product</p>
+					{:else}
+					<p>{data.cart?.length} products</p>
+					{/if}
 				</div>
 				{#each items as item}
 					<form
