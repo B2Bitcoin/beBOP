@@ -1,5 +1,10 @@
 {
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"editor.codeActionsOnSave": { "source.fixAll": true }
+	"editor.codeActionsOnSave": {
+		"source.fixAll": true
+	},
+	"[svelte]": {
+		"editor.defaultFormatter": "svelte.svelte-vscode"
+	}
 }
