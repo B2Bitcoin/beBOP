@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { sum } from '$lib/utils/sum.js';
-
 	export let data;
 </script>
 

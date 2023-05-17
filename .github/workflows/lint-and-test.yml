@@ -1,0 +1,29 @@
+name: Lint and test
+on:
+  pull_request:
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.3.1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+      - run: |
+          pnpm install --frozen-lockfile
+      - name: 'Checking lint/format errors'
+        run: |
+          pnpm run lint:ci
+      - name: 'Checking type errors'
+        run: |
+          pnpm run check

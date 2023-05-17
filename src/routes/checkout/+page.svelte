@@ -79,10 +79,22 @@
 					Payment method
 
 					<div class="grid grid-cols-2 gap-4 items-center">
-						<select name="paymentMethod" class="form-input" required>
-							<option value="bitcoin">Bitcoin</option>
-							<option value="lightning">Lightning</option>
+						<select
+							name="paymentMethod"
+							class="form-input"
+							disabled={data.paymentMethods.length === 0}
+							required
+						>
+							{#if data.paymentMethods.includes('bitcoin')}
+								<option value="bitcoin">Bitcoin</option>
+							{/if}
+							{#if data.paymentMethods.includes('lightning')}
+								<option value="lightning">Lightning</option>
+							{/if}
 						</select>
+						{#if data.paymentMethods.length === 0}
+							<p class="text-red-400">No payment methods available.</p>
+						{/if}
 						<a href="/connect" class="underline text-blue"> Connect another wallet </a>
 					</div>
 				</label>
@@ -118,7 +130,11 @@
 			>
 				<div class="flex justify-between">
 					<a href="/cart" class="text-blue hover:underline">&lt;&lt;Back to cart</a>
-					{data.cart?.length} products
+					{#if data.cart?.length === 1}
+						<p>{data.cart?.length} product</p>
+					{:else}
+						<p>{data.cart?.length} products</p>
+					{/if}
 				</div>
 				{#each items as item}
 					<form

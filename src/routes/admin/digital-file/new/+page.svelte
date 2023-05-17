@@ -4,7 +4,7 @@
 
 	const productId = $page.url.searchParams.get('productId');
 
-	let files: File[];
+	let files: FileList;
 	let name = '';
 
 	let uploading = false;

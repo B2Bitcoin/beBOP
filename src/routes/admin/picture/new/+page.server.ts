@@ -18,7 +18,7 @@ export const actions: Actions = {
 						'content-type': input.request.headers.get('content-type') ?? undefined
 					}
 				});
-				bb.on('file', async (name, file, info) => {
+				bb.on('file', async (name, file /*, info */) => {
 					// const { filename, encoding, mimeType } = info;
 					resolve(await streamToBuffer(file));
 				});

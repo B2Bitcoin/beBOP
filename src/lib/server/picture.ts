@@ -102,6 +102,10 @@ export async function generatePicture(
 				// Is it possible to get the new width and height as an intermediate step of the above call instead?
 				const { width: newWidth, height: newHeight } = await sharp(buffer).metadata();
 
+				if (!newWidth || !newHeight) {
+					throw error(500, 'Could not get resized width and height');
+				}
+
 				const key = `${pathPrefix}${_id}-${newWidth}x${newHeight}.webp`;
 				await s3client.send(
 					new PutObjectCommand({
@@ -115,8 +119,8 @@ export async function generatePicture(
 				uploadedKeys.push(key);
 
 				formats.push({
-					width: newWidth!,
-					height: newHeight!,
+					width: newWidth,
+					height: newHeight,
 					key,
 					size: buffer.length
 				});
