@@ -1,6 +1,6 @@
 import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database.js';
-import { s3client } from '$lib/server/s3.js';
+import { s3client, secureDownloadLink } from '$lib/server/s3.js';
 import { generateId } from '$lib/utils/generateId.js';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -33,7 +33,7 @@ export async function POST({ request }) {
 		extension ? `${digitalFileId}.${extension}` : digitalFileId
 	}`;
 
-	const presignedUrl = (
+	const presignedUrl = secureDownloadLink(
 		await getSignedUrl(
 			s3client,
 			new PutObjectCommand({
@@ -44,7 +44,7 @@ export async function POST({ request }) {
 			}),
 			{ expiresIn: 60 * 60 * 24 }
 		)
-	).replace('http:', 'https:');
+	);
 
 	await collections.pendingDigitalFiles.insertOne({
 		_id: digitalFileId,
