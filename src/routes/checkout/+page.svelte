@@ -189,10 +189,8 @@
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									class="text-2xl text-gray-800 truncate"
-									short
 								/>
 								<PriceTag
-									short
 									class="text-base text-gray-600 truncate"
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
@@ -211,14 +209,13 @@
 				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
 					<div class="flex justify-between">
 						<span class="text-xl text-gray-850">Total</span>
-						<PriceTag short class="text-2xl text-gray-800" amount={totalPrice} currency="BTC" />
+						<PriceTag class="text-2xl text-gray-800" amount={totalPrice} currency="BTC" />
 					</div>
 					<PriceTag
 						class="self-end text-gray-600"
 						amount={totalPrice}
 						convertedTo="EUR"
 						currency="BTC"
-						short
 						exchangeRate={data.exchangeRate}
 					/>
 				</div>
