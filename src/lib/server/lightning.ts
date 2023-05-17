@@ -204,7 +204,3 @@ export async function lndListInvoices() {
 		settled_at: invoice.settled_at ? new Date(invoice.settled_at * 1000) : undefined
 	}));
 }
-
-lndListInvoices();
-
-lndLookupInvoice('b0FpgVqg8RJFQA/B4LjB2ZODckdlKTCA4FNyG8ha2Qg=');
