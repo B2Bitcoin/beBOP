@@ -2,6 +2,9 @@ import { BITCOIN_RPC_URL, BITCOIN_RPC_PASSWORD, BITCOIN_RPC_USER } from '$env/st
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 
+export const isBitcoinConfigured =
+	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
+
 type BitcoinCommand =
 	| 'listtransactions'
 	| 'listwallets'
@@ -10,6 +13,10 @@ type BitcoinCommand =
 	| 'getbalance';
 
 export function bitcoinRpc(command: BitcoinCommand, params: unknown[]) {
+	if (!isBitcoinConfigured) {
+		throw error(500, 'Bitcoin RPC is not configured');
+	}
+
 	const authorization = `Basic ${Buffer.from(
 		`${BITCOIN_RPC_USER}:${BITCOIN_RPC_PASSWORD}`
 	).toString('base64')}`;
