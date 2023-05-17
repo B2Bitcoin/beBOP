@@ -79,3 +79,9 @@ S3_KEY_SECRET=<Secret Key> #for example: GhNSZXUMiZsJl6LTvSCWPW0ZbCwHVL17
 S3_ENDPOINT_URL=http://127.0.0.1:9000
 S3_REGION="localhost"
 ```
+
+### Configuring MongoDB
+
+The simplest way is to get a free tier on [MongoDB Atlas](https://www.mongodb.com/atlas/database).
+
+Alternatively, you need to configure a local MongoDB with ReplicaSet enabled. ReplicaSet is needed for change streams and ACID transactions.
