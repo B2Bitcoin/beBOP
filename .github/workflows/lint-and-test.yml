@@ -23,7 +23,7 @@ jobs:
           pnpm install --frozen-lockfile
       - name: 'Checking lint/format errors'
         run: |
-          pnpm run lint
+          pnpm run lint:ci
       - name: 'Checking type errors'
         run: |
           pnpm run check
