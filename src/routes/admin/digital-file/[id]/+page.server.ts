@@ -14,7 +14,7 @@ export async function load({ params }) {
 		throw error(404, 'Digital file not found');
 	}
 
-	let downloadLink = secureDownloadLink(
+	const downloadLink = secureDownloadLink(
 		await getSignedUrl(
 			s3client,
 			new GetObjectCommand({
