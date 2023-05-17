@@ -97,6 +97,7 @@ export const actions = {
 		await withTransaction(async (session) => {
 			const res = await collections.runtimeConfig.findOneAndUpdate(
 				{ _id: 'orderNumber' },
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				{ $inc: { data: 1 } as any },
 				{ upsert: true, session, returnDocument: 'after' }
 			);

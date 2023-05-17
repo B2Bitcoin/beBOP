@@ -72,7 +72,10 @@ async function maintainOrders() {
 
 		for (const order of lightningOrders) {
 			try {
-				const invoice = await lndLookupInvoice(order.payment.invoiceId!);
+				if (!order.payment.invoiceId) {
+					throw new Error('Missing invoice ID on lightning order');
+				}
+				const invoice = await lndLookupInvoice(order.payment.invoiceId);
 
 				if (invoice.state === 'SETTLED') {
 					await collections.orders.updateOne(

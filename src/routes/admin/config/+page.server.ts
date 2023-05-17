@@ -1,6 +1,5 @@
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export async function load() {
@@ -10,7 +9,7 @@ export async function load() {
 }
 
 export const actions = {
-	default: async function ({ request, url }) {
+	default: async function ({ request }) {
 		const formData = await request.formData();
 
 		const result = z

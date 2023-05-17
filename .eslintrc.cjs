@@ -13,7 +13,10 @@ module.exports = {
 		ecmaVersion: 2020
 	},
 	rules: {
-		'no-empty': 'off'
+		'no-empty': 'off',
+		'@typescript-eslint/no-explicit-any': 'error',
+		'@typescript-eslint/no-non-null-assertion': 'error',
+		'@typescript-eslint/no-unused-vars': 'error'
 	},
 	env: {
 		browser: true,
