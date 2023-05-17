@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Picture from '$lib/components/Picture.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

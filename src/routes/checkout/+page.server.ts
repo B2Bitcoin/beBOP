@@ -1,14 +1,24 @@
 import { getNewAddress, orderAddressLabel } from '$lib/server/bitcoin';
 import { collections, withTransaction } from '$lib/server/database';
 import { lndCreateInvoice } from '$lib/server/lightning.js';
+import { paymentMethods } from '$lib/server/payment-methods.js';
 import { COUNTRY_ALPHA3S } from '$lib/types/Country';
 import { SATOSHIS_PER_BTC } from '$lib/types/Currency.js';
 import { error, redirect } from '@sveltejs/kit';
 import { addHours, differenceInSeconds } from 'date-fns';
 import { z } from 'zod';
 
+export function load() {
+	return {
+		paymentMethods
+	};
+}
+
 export const actions = {
 	default: async ({ request, locals }) => {
+		if (!paymentMethods.length) {
+			throw error(500, 'No payment methods configured for the bootik');
+		}
 		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
 
 		if (!cart?.items.length) {
@@ -67,7 +77,7 @@ export const actions = {
 
 		const paymentMethod = z
 			.object({
-				paymentMethod: z.enum(['bitcoin', 'lightning'])
+				paymentMethod: z.enum([paymentMethods[0], ...paymentMethods.slice(1)])
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 
@@ -87,6 +97,7 @@ export const actions = {
 		await withTransaction(async (session) => {
 			const res = await collections.runtimeConfig.findOneAndUpdate(
 				{ _id: 'orderNumber' },
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				{ $inc: { data: 1 } as any },
 				{ upsert: true, session, returnDocument: 'after' }
 			);

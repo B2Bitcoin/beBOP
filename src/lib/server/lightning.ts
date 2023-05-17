@@ -9,27 +9,40 @@ if (LND_MACAROON_PATH && LND_MACAROON_VALUE) {
 	throw new Error('Cannot specify both LND_MACAROON_PATH and LND_MACAROON_VALUE');
 }
 
+export const isLightningConfigured = !!LND_REST_URL;
+
 const macaroon = LND_MACAROON_PATH
 	? readFileSync(LND_MACAROON_PATH).toString('hex')
 	: LND_MACAROON_VALUE;
 
-const url = new URL(LND_REST_URL);
-
 // For https://localhost or https://127.0.0.1, we need to disable TLS verification
-const dispatcher =
-	url.protocol === 'https:' &&
-	(url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname === '[::1]')
-		? new Agent({
-				connect: {
-					rejectUnauthorized: false
-				}
-		  })
-		: undefined;
+const dispatcher: Agent | null = (() => {
+	if (!LND_REST_URL) {
+		return null;
+	}
+	const url = new URL(LND_REST_URL);
+
+	if (
+		url.protocol === 'https:' &&
+		(url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname === '[::1]')
+	) {
+		return new Agent({
+			connect: {
+				rejectUnauthorized: false
+			}
+		});
+	}
+
+	return null;
+})();
 
 function lndRpc(
 	path: string,
 	options: { method?: string; headers?: Record<string, string>; body?: string } = {}
 ) {
+	if (!isLightningConfigured) {
+		throw error(500, 'LND Rest is not configured');
+	}
 	return fetch(`${LND_REST_URL}${path}`, {
 		headers: {
 			...options.headers,

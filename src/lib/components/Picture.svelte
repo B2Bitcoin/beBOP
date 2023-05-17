@@ -9,20 +9,32 @@
 	let matchedWidth: number | null = null;
 	let matchedHeight: number | null = null;
 
-	$: if (/(\s|^)w-(\d+)(\s|$)/.test(className)) {
-		matchedWidth = parseInt(className.match(/(\s|^)w-(\d+)(\s|$)/)![2]) * 4;
-	} else if (/(\s|^)w-\[(\d+)px](\s|$)/.test(className)) {
-		matchedWidth = parseInt(className.match(/(\s|^)w-\[(\d+)px](\s|$)/)![2]);
-	} else {
-		matchedWidth = null;
+	$: {
+		const match4px = className.match(/(\s|^)w-(\d+)(\s|$)/);
+		if (match4px) {
+			matchedWidth = parseInt(match4px[2]) * 4;
+		} else {
+			const matchPx = className.match(/(\s|^)w-\[(\d+)px](\s|$)/);
+			if (matchPx) {
+				matchedWidth = parseInt(matchPx[2]);
+			} else {
+				matchedWidth = null;
+			}
+		}
 	}
 
-	$: if (/(\s|^)h-(\d+)(\s|$)/.test(className)) {
-		matchedHeight = parseInt(className.match(/(\s|^)h-(\d+)(\s|$)/)![2]) * 4;
-	} else if (/(\s|^)h-\[(\d+)px](\s|$)/.test(className)) {
-		matchedHeight = parseInt(className.match(/(\s|^)h-\[(\d+)px](\s|$)/)![2]) * 4;
-	} else {
-		matchedHeight = null;
+	$: {
+		const match4px = className.match(/(\s|^)h-(\d+)(\s|$)/);
+		if (match4px) {
+			matchedHeight = parseInt(match4px[2]) * 4;
+		} else {
+			const matchPx = className.match(/(\s|^)h-\[(\d+)px](\s|$)/);
+			if (matchPx) {
+				matchedHeight = parseInt(matchPx[2]);
+			} else {
+				matchedHeight = null;
+			}
+		}
 	}
 
 	let computedWidth: number | null = null;
