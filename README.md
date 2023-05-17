@@ -33,7 +33,9 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `S3_KEY_SECRET` - Credentials for the S3-compatible object storage
 - `S3_REGION` - Region from the S3-compatible object storage
 
-## Running the app
+## Local development
+
+### Running the app
 
 Install pnpm, for example with `sudo corepack enable` if you're on linux/mac.
 
@@ -42,4 +44,38 @@ Then:
 ```
 pnpm install
 pnpm dev
+```
+
+### Configuring the Object Storage
+
+Many cloud-hosted object storages like AWS S3 or Scaleway have free tiers that are more than enough for local development.
+
+You can also use [MinIO](https://min.io/docs/minio/container/index.html):
+
+```
+mkdir -p ${HOME}/minio/data
+
+docker run \
+   -p 9000:9000 \
+   -p 9090:9090 \
+   --user $(id -u):$(id -g) \
+   --name minio1 \
+   -e "MINIO_ROOT_USER=ROOTUSER" \
+   -e "MINIO_ROOT_PASSWORD=CHANGEME123" \
+   -v ${HOME}/minio/data:/data \
+   quay.io/minio/minio server /data --console-address ":9090"
+```
+
+Then, go on http://127.0.0.1:9090 , login with the user/password above, and create a "bootik" S3 bucket.
+
+Then go on http://127.0.0.1:9090/access-keys and create an access key. Copy the "Access Key" and "Secret Key" safely.
+
+In your `.env.local` file, add the following:
+
+```dotenv
+S3_BUCKET="bootik"
+S3_KEY_ID=<Access key> #for example: uY2vtFFX7vBVucEs
+S3_KEY_SECRET=<Secret Key> #for example: GhNSZXUMiZsJl6LTvSCWPW0ZbCwHVL17
+S3_ENDPOINT_URL=http://127.0.0.1:9000
+S3_REGION="localhost"
 ```
