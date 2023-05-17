@@ -80,6 +80,8 @@ S3_ENDPOINT_URL=http://127.0.0.1:9000
 S3_REGION="localhost"
 ```
 
+Then restart `pnpm dev`.
+
 ### Configuring MongoDB
 
 The simplest way is to get a free tier on [MongoDB Atlas](https://www.mongodb.com/atlas/database).
