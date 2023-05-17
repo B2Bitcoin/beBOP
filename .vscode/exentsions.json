@@ -1,0 +1,9 @@
+{
+	"recommendations": [
+		"bradlc.vscode-tailwindcss",
+		"svelte.svelte-vscode",
+		"csstools.postcss",
+		"dbaeumer.vscode-eslint",
+		"rvest.vs-code-prettier-eslint"
+	]
+}
