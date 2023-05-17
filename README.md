@@ -32,3 +32,14 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `S3_KEY_ID` - Credentials for the S3-compatible object storage
 - `S3_KEY_SECRET` - Credentials for the S3-compatible object storage
 - `S3_REGION` - Region from the S3-compatible object storage
+
+## Running the app
+
+Install pnpm, for example with `sudo corepack enable` if you're on linux/mac.
+
+Then:
+
+```
+pnpm install
+pnpm dev
+```
