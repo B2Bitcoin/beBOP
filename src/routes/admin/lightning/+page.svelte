@@ -32,10 +32,10 @@
 
 	<ul>
 		<li class="flex items-center gap-2">
-			<PriceTag amount={data.walletBalance} currency="SAT" short class="inline-flex" /> in the wallet
+			<PriceTag amount={data.walletBalance} currency="SAT" class="inline-flex" /> in the wallet
 		</li>
 		<li class="flex items-center gap-2">
-			<PriceTag amount={data.channelsBalance} currency="SAT" short class="inline-flex" /> in channels
+			<PriceTag amount={data.channelsBalance} currency="SAT" class="inline-flex" /> in channels
 		</li>
 	</ul>
 

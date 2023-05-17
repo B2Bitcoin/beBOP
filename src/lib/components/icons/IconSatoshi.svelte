@@ -1,8 +1,8 @@
 <svg
 	{...$$restProps}
-	width="13"
-	height="16"
-	viewBox="0 0 13 16"
+	width="1em"
+	height="1em"
+	viewBox="-1.5 0 16 16"
 	fill="none"
 	xmlns="http://www.w3.org/2000/svg"
 >
