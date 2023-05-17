@@ -30,7 +30,7 @@
 	}
 
 	.btn-red:not([disabled]) {
-		@apply hover: bg-[#ff3d1a];
+		@apply hover:bg-[#ff3d1a];
 	}
 
 	.btn-blue {
@@ -38,7 +38,7 @@
 	}
 
 	.btn-blue:not([disabled]) {
-		@apply hover: bg-[#2d83ca];
+		@apply hover:bg-[#2d83ca];
 	}
 
 	.btn-gray {
@@ -46,7 +46,7 @@
 	}
 
 	.btn-gray:not([disabled]) {
-		@apply hover: bg-gray-400;
+		@apply hover:bg-gray-400;
 	}
 
 	.btn-black {
@@ -54,7 +54,7 @@
 	}
 
 	.btn-black:not([disabled]) {
-		@apply hover: bg-gray-800;
+		@apply hover:bg-gray-800;
 	}
 
 	.btn[disabled] {
