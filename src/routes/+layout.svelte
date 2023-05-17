@@ -91,13 +91,12 @@
 		<div class="flex items-center ml-auto gap-2">
 			<IconWallet />
 			<div class="flex flex-col">
-				<PriceTag gap={'gap-1'} currency="BTC" amount={0.00_220_625} short />
+				<PriceTag gap={'gap-1'} currency="BTC" amount={0.00_220_625} />
 				<PriceTag
 					gap={'gap-1'}
 					currency="EUR"
 					amount={1.22}
 					class="ml-auto text-sm text-gray-550"
-					short
 				/>
 			</div>
 			<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
@@ -177,7 +176,6 @@
 									</div>
 									<div class="flex flex-col items-end gap-[6px] ml-auto">
 										<PriceTag
-											short
 											class="text-gray-600 text-base"
 											amount={item.quantity * item.product.price.amount}
 											currency={item.product.price.currency}
@@ -190,7 +188,7 @@
 								</form>
 							{/each}
 							<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-								Total <PriceTag short currency="BTC" amount={totalPrice} />
+								Total <PriceTag currency="BTC" amount={totalPrice} />
 							</div>
 							<a href="/cart" class="btn btn-gray mt-1"> View cart </a>
 							<a href="/checkout" class="btn btn-black"> Checkout </a>
