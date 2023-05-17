@@ -32,4 +32,12 @@ await s3client
 	)
 	.catch((err) => console.error('S3 CORS error: ', err));
 
+export function secureDownloadLink(url: string) {
+	if (['127.0.0.1', 'localhost'].includes(new URL(url).hostname)) {
+		return url;
+	}
+
+	return url.replace('http:', 'https:');
+}
+
 export { s3client };
