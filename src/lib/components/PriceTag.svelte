@@ -8,7 +8,7 @@
 	export let exchangeRate = 0;
 	export let rawBtc = false;
 	export let convertedTo: Currency | undefined = undefined;
-	export let short = false;
+	export let short = true;
 	export let gap = 'gap-2';
 
 	let className = '';

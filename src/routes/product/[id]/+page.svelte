@@ -121,6 +121,7 @@
 				<PriceTag
 					currency={data.product.price.currency}
 					class="text-4xl"
+					short={false}
 					amount={data.product.price.amount}
 				/>
 				<PriceTag
