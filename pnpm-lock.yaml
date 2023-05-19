@@ -32,7 +32,7 @@ dependencies:
     specifier: ^1.5.3
     version: 1.5.3
   sharp:
-    specifier: ^0.32.1
+    specifier: ^0.32.0
     version: 0.32.1
   undici:
     specifier: ^5.22.1
@@ -1766,7 +1766,7 @@ packages:
       '@typescript-eslint/typescript-estree': 5.58.0(typescript@5.0.4)
       eslint: 8.40.0
       eslint-scope: 5.1.1
-      semver: 7.4.0
+      semver: 7.5.1
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -3376,7 +3376,6 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
-    dev: false
 
   /set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
