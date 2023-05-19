@@ -72,7 +72,7 @@
 
 		<div class="grid grid-cols-[70%_1fr] gap-2 grow pb-12">
 			<div class="flex flex-col gap-4">
-				<!-- adding product name -->
+				<!-- add product name -->
 				<h2 class="text-4xl">{data.product.name}</h2>
 				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
 				<div class="aspect-video w-full overflow-hidden">
