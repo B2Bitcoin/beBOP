@@ -57,7 +57,7 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
-		<div class="flex flex-col gap-2 w-12 min-w-[48px]">
+		<div class="flex flex-col gap-2 w-12 min-w-[48px] py-12">
 			{#each data.pictures as picture, i}
 				<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
 					<Picture
@@ -69,8 +69,11 @@
 				</a>
 			{/each}
 		</div>
+
 		<div class="grid grid-cols-[70%_1fr] gap-2 grow pb-12">
 			<div class="flex flex-col gap-4">
+				<!-- add product name -->
+				<h2 class="text-4xl">{data.product.name}</h2>
 				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
 				<div class="aspect-video w-full overflow-hidden">
 					<Picture
