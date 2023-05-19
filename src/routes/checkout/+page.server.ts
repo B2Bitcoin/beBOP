@@ -60,7 +60,7 @@ export const actions = {
 		const npubAddress = z
 			.string()
 			.startsWith('npub')
-			.refine((npubAddress) => !!bech32.decodeUnsafe(npubAddress), {
+			.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
 				message: 'Invalid npub address'
 			})
 			.parse(formData.get('paymentStatusNPUB'));
@@ -122,6 +122,7 @@ export const actions = {
 			await collections.orders.insertOne(
 				{
 					_id: orderId,
+					url: `${new URL(request.url).origin}/order/${orderId}`,
 					number: orderNumber,
 					sessionId: locals.sessionId,
 					createdAt: new Date(),
