@@ -44,4 +44,10 @@ export interface Order extends Timestamps {
 		transactions?: Array<{ txid: string; amount: number }>;
 		paidAt?: Date;
 	};
+
+	notifications: {
+		paymentStatus: {
+			npub: string;
+		};
+	};
 }

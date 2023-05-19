@@ -59,6 +59,11 @@
 		{#if data.order.payment.status === 'pending'}
 			<ul>
 				<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
+				{#if data.order.notifications?.paymentStatus?.npub}
+					<li>
+						NostR public address for payment status: {data.order.notifications.paymentStatus.npub}
+					</li>
+				{/if}
 				<li>
 					Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
 				</li>

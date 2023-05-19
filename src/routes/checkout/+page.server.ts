@@ -7,6 +7,7 @@ import { SATOSHIS_PER_BTC } from '$lib/types/Currency.js';
 import { error, redirect } from '@sveltejs/kit';
 import { addHours, differenceInSeconds } from 'date-fns';
 import { z } from 'zod';
+import { bech32 } from 'bech32';
 
 export function load() {
 	return {
@@ -55,6 +56,14 @@ export const actions = {
 		const isDigital = products.every((product) => !product.shipping);
 
 		const formData = await request.formData();
+
+		const npubAddress = z
+			.string()
+			.startsWith('npub')
+			.refine((npubAddress) => !!bech32.decodeUnsafe(npubAddress), {
+				message: 'Invalid npub address'
+			})
+			.parse(formData.get('paymentStatusNPUB'));
 
 		const shipping = isDigital
 			? null
@@ -144,6 +153,11 @@ export const actions = {
 									};
 							  })()),
 						expiresAt
+					},
+					notifications: {
+						paymentStatus: {
+							npub: npubAddress
+						}
 					}
 				},
 				{ session }
