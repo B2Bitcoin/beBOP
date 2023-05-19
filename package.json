@@ -12,6 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"lint:ci": "(prettier --plugin-search-dir . --check . || (git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier --plugin-search-dir . . -w --loglevel silent && git --no-pager diff; git restore .) && false)) && eslint .",
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
@@ -28,12 +29,12 @@
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
 		"autoprefixer": "^10.4.14",
-		"eslint": "^8.28.0",
-		"eslint-config-prettier": "^8.5.0",
+		"eslint": "^8.40.0",
+		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"postcss": "^8.4.21",
-		"prettier": "^2.8.0",
-		"prettier-plugin-svelte": "^2.8.1",
+		"prettier": "^2.8.8",
+		"prettier-plugin-svelte": "^2.10.0",
 		"svelte": "^3.54.0",
 		"svelte-check": "^3.0.1",
 		"tailwindcss": "^3.3.1",
@@ -54,7 +55,7 @@
 		"mongodb": "^5.2.0",
 		"nanoid": "^4.0.2",
 		"qrcode": "^1.5.3",
-		"sharp": "^0.32.0",
+		"sharp": "^0.32.1",
 		"undici": "^5.22.1",
 		"zod": "^3.21.4"
 	}
