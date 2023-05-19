@@ -1,4 +1,6 @@
 <script lang="ts">
+	import IconBitcoin from '$lib/components/icons/IconBitcoin.svelte';
+
 	export let data;
 </script>
 
@@ -8,10 +10,13 @@
 	<ul class="flex flex-col gap-4">
 		{#each data.orders as order}
 			<li class="text-lg">
-				<a href="/order/{order._id}" class="text-blue hover:underline">#{order.number}</a> - Total: {order.totalPrice.amount.toLocaleString(
-					'en',
-					{ maximumFractionDigits: 8 }
-				)} BTC -
+				<a href="/order/{order._id}" class="text-blue hover:underline">#{order.number}</a> - {#if order.payment.method === 'bitcoin'}
+					<IconBitcoin />
+				{:else if order.payment.method === 'lightning'}
+					⚡
+				{/if} - Total: {order.totalPrice.amount.toLocaleString('en', {
+					maximumFractionDigits: 8
+				})} BTC -
 				<span
 					class={order.payment.status === 'expired'
 						? 'text-gray-550'
