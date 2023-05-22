@@ -47,6 +47,7 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.312.0",
 		"@aws-sdk/s3-request-presigner": "^3.316.0",
+		"@fontsource/gloock": "^5.0.0",
 		"@fontsource/poppins": "^4.5.10",
 		"busboy": "^1.6.0",
 		"date-fns": "^2.29.3",
