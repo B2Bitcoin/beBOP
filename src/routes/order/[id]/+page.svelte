@@ -95,10 +95,14 @@
 				{/each}
 			</ul>
 		{/if}
-		<h2 class="text-xl">
-			{`Created ${formatDistance(data.order.createdAt, Date.now(), {
-				addSuffix: true
-			})}`}
-		</h2>
+		<p class="text-xl">
+			Created <time
+				datetime={data.order.createdAt.toJSON()}
+				title={data.order.createdAt.toLocaleString('en')}
+				>{formatDistance(data.order.createdAt, Date.now(), {
+					addSuffix: true
+				})}</time
+			>
+		</p>
 	</article>
 </main>

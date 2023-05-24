@@ -15,9 +15,13 @@
 				<IconBitcoin />
 			{:else if order.payment.method === 'lightning'}
 				⚡
-			{/if} - {formatDistance(order.createdAt, Date.now(), {
-				addSuffix: true
-			})} - Total: {order.totalPrice.amount.toLocaleString('en', {
+			{/if} -
+			<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString('en')}
+				>{formatDistance(order.createdAt, Date.now(), {
+					addSuffix: true
+				})}</time
+			>
+			- Total: {order.totalPrice.amount.toLocaleString('en', {
 				maximumFractionDigits: 8
 			})} BTC -
 			<span
