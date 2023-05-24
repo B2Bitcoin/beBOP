@@ -39,6 +39,7 @@ export async function load({ params, depends }) {
 	return {
 		order: {
 			number: order.number,
+			createdAt: order.createdAt,
 			payment: {
 				method: order.payment.method,
 				status: order.payment.status,

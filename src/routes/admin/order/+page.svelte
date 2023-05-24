@@ -2,6 +2,7 @@
 	import IconBitcoin from '$lib/components/icons/IconBitcoin.svelte';
 
 	export let data;
+	import { formatDistance } from 'date-fns';
 </script>
 
 <h1 class="text-3xl">List of orders</h1>
@@ -14,7 +15,9 @@
 				<IconBitcoin />
 			{:else if order.payment.method === 'lightning'}
 				⚡
-			{/if} - Total: {order.totalPrice.amount.toLocaleString('en', {
+			{/if} - {formatDistance(order.createdAt, Date.now(), {
+				addSuffix: true
+			})} - Total: {order.totalPrice.amount.toLocaleString('en', {
 				maximumFractionDigits: 8
 			})} BTC -
 			<span
