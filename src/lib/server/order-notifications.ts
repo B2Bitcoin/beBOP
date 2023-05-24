@@ -10,17 +10,28 @@ collections.orders
 	.watch(
 		[
 			{
-				// Watch on updateDescription.updatedFields['payment.status'] change
+				// Watch on updateDescription.updatedFields['payment.status'] change, or when
+				// document inserted
 				$match: {
-					$expr: {
-						$not: {
-							$not: [
-								{
-									$getField: { input: '$updateDescription.updatedFields', field: 'payment.status' }
+					$or: [
+						{
+							$expr: {
+								$not: {
+									$not: [
+										{
+											$getField: {
+												input: '$updateDescription.updatedFields',
+												field: 'payment.status'
+											}
+										}
+									]
 								}
-							]
+							}
+						},
+						{
+							operationType: 'insert'
 						}
-					}
+					]
 				}
 			}
 		],
@@ -31,6 +42,7 @@ collections.orders
 	.on('change', (ev) => handleChanges(ev).catch(console.error));
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
+	console.log('change', change);
 	if (
 		!lock.ownsLock ||
 		!('fullDocument' in change) ||
