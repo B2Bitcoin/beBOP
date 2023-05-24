@@ -49,7 +49,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 	const content = change.fullDocument.content;
 	const receiverPublicKeyHex = nostrToHex(npub);
 
-	const event: Event = {
+	const event = {
 		id: '',
 		content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
 		created_at: getUnixTime(change.fullDocument.createdAt),
@@ -57,7 +57,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 		tags: [['p', receiverPublicKeyHex]],
 		kind: 4,
 		sig: ''
-	};
+	} satisfies Event;
 
 	event.id = getEventHash(event);
 	event.sig = getSignature(event, nostrPrivateKeyHex);
