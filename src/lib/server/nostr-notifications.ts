@@ -41,6 +41,10 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 		return;
 	}
 
+	if (change.fullDocument.processedAt) {
+		return;
+	}
+
 	const npub = change.fullDocument.dest;
 	const content = change.fullDocument.content;
 
@@ -59,6 +63,16 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 
 	relayPool ||= new RelayPool(nostrRelays, { reconnect: true });
 	relayPool.send(['EVENT', event]);
+
+	await collections.nostrNotifications.updateOne(
+		{ _id: change.fullDocument._id },
+		{
+			$set: {
+				processedAt: new Date(),
+				updatedAt: new Date()
+			}
+		}
+	);
 }
 
 maintainLock().catch(console.error);

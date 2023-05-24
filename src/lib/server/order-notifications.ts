@@ -1,5 +1,5 @@
 import type { Order } from '$lib/types/Order';
-import type { ChangeStreamDocument } from 'mongodb';
+import { ObjectId, type ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
 import { Lock } from './lock';
 
@@ -25,6 +25,7 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 	const { npub } = change.fullDocument.notifications.paymentStatus;
 
 	await collections.nostrNotifications.insertOne({
+		_id: new ObjectId(),
 		createdAt: new Date(),
 		updatedAt: new Date(),
 		content: `Order #${change.fullDocument.number} ${change.fullDocument.payment.status}, see ${change.fullDocument.url}`,
