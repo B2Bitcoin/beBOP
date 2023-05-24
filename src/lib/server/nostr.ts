@@ -24,3 +24,13 @@ if (NOSTR_PRIVATE_KEY) {
 export function nostrToHex(key: string): string {
 	return Buffer.from(bech32.fromWords(bech32.decode(key).words)).toString('hex');
 }
+
+export const nostrRelays = [
+	'wss://relay.nostr.info',
+	'wss://nostr.blocs.fr',
+	'wss://public.nostr.swissrouting.com',
+	'wss://nostr.wine',
+	'wss://nostr.lu.ke',
+	'wss://nos.lol',
+	'wss://relay.snort.social'
+];

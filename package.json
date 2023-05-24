@@ -56,7 +56,7 @@
 		"mime-types": "^2.1.35",
 		"mongodb": "^5.2.0",
 		"nanoid": "^4.0.2",
-		"nostr": "github:coyotte508/nostr-js#ts-def",
+		"nostr": "github:coyotte508/nostr-js#a9a682a42f84aacfbdfe30dae313a240ebcf5770",
 		"qrcode": "^1.5.3",
 		"sharp": "^0.32.0",
 		"undici": "^5.22.1",

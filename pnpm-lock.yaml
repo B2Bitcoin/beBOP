@@ -35,7 +35,7 @@ dependencies:
     specifier: ^4.0.2
     version: 4.0.2
   nostr:
-    specifier: github:coyotte508/nostr-js#ts-def
+    specifier: github:coyotte508/nostr-js#a9a682a42f84aacfbdfe30dae313a240ebcf5770
     version: github.com/coyotte508/nostr-js/a9a682a42f84aacfbdfe30dae313a240ebcf5770
   qrcode:
     specifier: ^1.5.3

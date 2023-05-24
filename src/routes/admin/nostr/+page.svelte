@@ -12,11 +12,19 @@
 <h1 class="text-3xl">NostR</h1>
 
 {#if data.nostrPrivateKey}
-	<p class="text-xl">Your NostR private key is: {data.nostrPrivateKey}</p>
-	<p class="text-xl">Your NostR public key is: {data.nostrPublicKey}</p>
+	<p>Your NostR private key is: {data.nostrPrivateKey}</p>
+	<p>Your NostR public key is: {data.nostrPublicKey}</p>
 {:else}
-	<p class="text-xl">You don't have a NostR private key yet.</p>
+	<p>You don't have a NostR private key yet.</p>
 	<button class="btn btn-black self-start" type="button" on:click={createNostrKey}
 		>Create NostR private key</button
 	>
 {/if}
+
+<h2 class="text-2xl">Relays</h2>
+
+<ul>
+	{#each data.nostrRelays as relay}
+		<li>{relay}</li>
+	{/each}
+</ul>

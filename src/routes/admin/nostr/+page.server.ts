@@ -1,8 +1,9 @@
-import { nostrPrivateKey, nostrPublicKey } from '$lib/server/nostr';
+import { nostrPrivateKey, nostrPublicKey, nostrRelays } from '$lib/server/nostr';
 
 export function load() {
 	return {
 		nostrPrivateKey: nostrPrivateKey,
-		nostrPublicKey: nostrPublicKey
+		nostrPublicKey: nostrPublicKey,
+		nostrRelays: nostrRelays
 	};
 }
