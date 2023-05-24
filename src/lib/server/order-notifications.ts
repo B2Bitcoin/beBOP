@@ -1,5 +1,5 @@
 import type { Order } from '$lib/types/Order';
-import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
+import type { ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
 import { encryptDm, calculateId, signId, RelayPool } from 'nostr';
 import type { NostREvent } from 'nostr';
