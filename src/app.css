@@ -85,8 +85,3 @@
 		@apply flex flex-col gap-2 text-label;
 	}
 }
-
-@font-face {
-	font-family: 'Gloock';
-	src: url('/fonts/Gloock-Regular.ttf') format('opentype');
-}

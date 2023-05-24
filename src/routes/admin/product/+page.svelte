@@ -18,7 +18,7 @@
 		<div class="flex flex-col text-center">
 			<a href="/admin/product/{product._id}" class="flex flex-col items-center">
 				<Picture picture={picturesByProduct[product._id]} class="block h-36" />
-				<span class="mt-2 line-clamp-3 text-ellipsis max-w-[191px]">{product.name}</span>
+				<span class="mt-2 line-clamp-3 text-ellipsis max-w-[191px] break-words hyphens-auto">{product.name}</span>
 			</a>
 		</div>
 	{/each}
