@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
-	import { differenceInMinutes } from 'date-fns';
+	import { differenceInMinutes, formatDistance } from 'date-fns';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();
@@ -90,5 +90,10 @@
 				{/each}
 			</ul>
 		{/if}
+		<h2 class="text-xl">
+			{`Created ${formatDistance(data.order.createdAt, Date.now(), {
+				addSuffix: true
+			})}`}
+		</h2>
 	</article>
 </main>
