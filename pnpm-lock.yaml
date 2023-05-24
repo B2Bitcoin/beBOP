@@ -7,6 +7,9 @@ dependencies:
   '@aws-sdk/s3-request-presigner':
     specifier: ^3.316.0
     version: 3.316.0
+  '@fontsource/gloock':
+    specifier: ^5.0.0
+    version: 5.0.0
   '@fontsource/poppins':
     specifier: ^4.5.10
     version: 4.5.10
@@ -1339,6 +1342,10 @@ packages:
     resolution: {integrity: sha512-ElyB54bJIhXQYVKjDSvCkPO1iU1tSAeVQJbllWJq1XQSmmA4dgFk8CbiBGpiOPxleE48vDogxCtmMYku4HSVLA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@fontsource/gloock@5.0.0:
+    resolution: {integrity: sha512-/n26C8Z837MB5hX4pviNCwHnikmfPB1fYs3QXs1Xf/n5/MDFHt4aQwsJITjNMJ+wyXwdT0N49PGpxhrmQhuNoQ==}
+    dev: false
 
   /@fontsource/outfit@4.5.11:
     resolution: {integrity: sha512-msPqJLLmSyWj/YtJknO75RjoTHIep6mDjnDO5IrZUJea31bO4s1QCuepG54LsmMXLKs+gp603nPM8/SUv5ZgSg==}
