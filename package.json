@@ -49,7 +49,6 @@
 		"@aws-sdk/s3-request-presigner": "^3.316.0",
 		"@fontsource/gloock": "^5.0.0",
 		"@fontsource/poppins": "^4.5.10",
-		"@noble/secp256k1": "^2.0.0",
 		"bech32": "^2.0.0",
 		"busboy": "^1.6.0",
 		"date-fns": "^2.29.3",

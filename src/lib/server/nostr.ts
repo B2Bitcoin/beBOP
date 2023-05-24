@@ -1,6 +1,6 @@
 import { NOSTR_PRIVATE_KEY } from '$env/static/private';
 import { bech32 } from 'bech32';
-import { getPublicKey } from '@noble/secp256k1';
+import { getPublicKey } from 'nostr-tools';
 
 export const nostrPrivateKey = NOSTR_PRIVATE_KEY;
 export let nostrPublicKey = '';
@@ -15,9 +15,9 @@ if (NOSTR_PRIVATE_KEY) {
 
 	nostrPrivateKeyHex = nostrToHex(NOSTR_PRIVATE_KEY);
 
-	const publicKey = getPublicKey(new Uint8Array(Buffer.from(nostrPrivateKeyHex, 'hex'))).slice(1);
+	const publicKey = getPublicKey(nostrPrivateKeyHex);
 
-	nostrPublicKey = bech32.encode('npub', bech32.toWords(publicKey));
+	nostrPublicKey = bech32.encode('npub', bech32.toWords(Buffer.from(publicKey, 'hex')));
 	nostrPublicKeyHex = nostrToHex(nostrPublicKey);
 }
 
