@@ -7,9 +7,27 @@ const lock = new Lock('order-notifications');
 
 // todo: resume changestream on restart if possible
 collections.orders
-	.watch([{ $match: { 'updateDescription.updatedFields.payment.status': { $exists: true } } }], {
-		fullDocument: 'updateLookup'
-	})
+	.watch(
+		[
+			{
+				// Watch on updateDescription.updatedFields['payment.status'] change
+				$match: {
+					$expr: {
+						$not: {
+							$not: [
+								{
+									$getField: { input: '$updateDescription.updatedFields', field: 'payment.status' }
+								}
+							]
+						}
+					}
+				}
+			}
+		],
+		{
+			fullDocument: 'updateLookup'
+		}
+	)
 	.on('change', (ev) => handleChanges(ev).catch(console.error));
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
