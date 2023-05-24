@@ -38,12 +38,10 @@ if (nostrPrivateKeyHex) {
 
 async function handleChanges(change: ChangeStreamDocument<NostRNotification>): Promise<void> {
 	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
-		console.log('a');
 		return;
 	}
 
 	if (change.fullDocument.processedAt) {
-		console.log('b');
 		return;
 	}
 
@@ -63,12 +61,9 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 
 	event.id = getEventHash(event);
 	event.sig = getSignature(event, nostrPrivateKeyHex);
-	console.log('event', event);
 
 	relayPool ||= new RelayPool();
 	relayPool.publish(event, nostrRelays);
-
-	console.log('sent event', change.fullDocument._id);
 
 	await collections.nostrNotifications.updateOne(
 		{ _id: change.fullDocument._id },
