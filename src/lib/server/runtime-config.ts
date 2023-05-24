@@ -4,6 +4,7 @@ import { collections } from './database';
 import './currency-lock';
 import './order-lock';
 import './order-notifications';
+import './nostr-notifications';
 
 const defaultConfig = {
 	BTC_EUR: 30_000,
