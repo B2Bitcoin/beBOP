@@ -10,6 +10,9 @@ dependencies:
   '@fontsource/poppins':
     specifier: ^4.5.10
     version: 4.5.10
+  '@noble/secp256k1':
+    specifier: ^2.0.0
+    version: 2.0.0
   bech32:
     specifier: ^2.0.0
     version: 2.0.0
@@ -33,7 +36,7 @@ dependencies:
     version: 4.0.2
   nostr:
     specifier: github:coyotte508/nostr-js#ts-def
-    version: github.com/coyotte508/nostr-js/856018f9970e3463fbd61d718e87b2af22163d6d
+    version: github.com/coyotte508/nostr-js/a9a682a42f84aacfbdfe30dae313a240ebcf5770
   qrcode:
     specifier: ^1.5.3
     version: 1.5.3
@@ -1407,6 +1410,10 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@noble/secp256k1@2.0.0:
+    resolution: {integrity: sha512-rUGBd95e2a45rlmFTqQJYEFA4/gdIARFfuTuTqLglz0PZ6AKyzyXsEZZq7UZn8hZsvaBgpCzKKBJizT2cJERXw==}
+    dev: false
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -4057,8 +4064,8 @@ packages:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
     dev: false
 
-  github.com/coyotte508/nostr-js/856018f9970e3463fbd61d718e87b2af22163d6d:
-    resolution: {tarball: https://codeload.github.com/coyotte508/nostr-js/tar.gz/856018f9970e3463fbd61d718e87b2af22163d6d}
+  github.com/coyotte508/nostr-js/a9a682a42f84aacfbdfe30dae313a240ebcf5770:
+    resolution: {tarball: https://codeload.github.com/coyotte508/nostr-js/tar.gz/a9a682a42f84aacfbdfe30dae313a240ebcf5770}
     name: nostr
     version: 0.2.8
     dependencies:

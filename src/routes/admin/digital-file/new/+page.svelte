@@ -65,39 +65,37 @@
 	}
 </script>
 
-<main class="p-4">
-	<h1 class="text-3xl">Add a digital file</h1>
+<h1 class="text-3xl">Add a digital file</h1>
 
-	<form method="post" class="flex flex-col gap-4 mt-4" on:submit|preventDefault={handleSubmit}>
-		<label>
-			Name of the file
-			<input
-				class="form-input block"
-				type="text"
-				name="name"
-				placeholder="Final name"
-				bind:value={name}
-				required
-			/>
-		</label>
+<form method="post" class="flex flex-col gap-4" on:submit|preventDefault={handleSubmit}>
+	<label>
+		Name of the file
+		<input
+			class="form-input block"
+			type="text"
+			name="name"
+			placeholder="Final name"
+			bind:value={name}
+			required
+		/>
+	</label>
 
-		<label>
-			File
-			<input type="file" class="block" bind:files required />
-		</label>
+	<label>
+		File
+		<input type="file" class="block" bind:files required />
+	</label>
 
-		{#if productId}
-			<p>
-				Associated product: <a href="/admin/product/{productId}" class="hover:underline"
-					>{productId}</a
-				>
-			</p>
-		{/if}
+	{#if productId}
+		<p>
+			Associated product: <a href="/admin/product/{productId}" class="hover:underline"
+				>{productId}</a
+			>
+		</p>
+	{/if}
 
-		{#if !uploading}
-			<input type="submit" class="btn btn-gray self-start" value="Add" />
-		{:else}
-			<p>Uploading...</p>
-		{/if}
-	</form>
-</main>
+	{#if !uploading}
+		<input type="submit" class="btn btn-gray self-start" value="Add" />
+	{:else}
+		<p>Uploading...</p>
+	{/if}
+</form>

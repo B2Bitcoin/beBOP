@@ -9,19 +9,17 @@
 	);
 </script>
 
-<main class="p-4">
-	<a href="/admin/product/new" class="underline block">Add product</a>
+<a href="/admin/product/new" class="underline block">Add product</a>
 
-	<h1 class="text-3xl mt-6">List of products</h1>
+<h1 class="text-3xl">List of products</h1>
 
-	<div class="flex flex-row flex-wrap gap-6 mt-6">
-		{#each data.products as product}
-			<div class="flex flex-col text-center">
-				<a href="/admin/product/{product._id}" class="flex flex-col items-center">
-					<Picture picture={picturesByProduct[product._id]} class="block h-36" />
-					<span class="mt-2 line-clamp-3 text-ellipsis max-w-[191px]">{product.name}</span>
-				</a>
-			</div>
-		{/each}
-	</div>
-</main>
+<div class="flex flex-row flex-wrap gap-6">
+	{#each data.products as product}
+		<div class="flex flex-col text-center">
+			<a href="/admin/product/{product._id}" class="flex flex-col items-center">
+				<Picture picture={picturesByProduct[product._id]} class="block h-36" />
+				<span class="mt-2 line-clamp-3 text-ellipsis max-w-[191px]">{product.name}</span>
+			</a>
+		</div>
+	{/each}
+</div>
