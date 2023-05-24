@@ -1,9 +1,6 @@
 import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
 
-import './currency-lock';
-import './order-lock';
-
 const defaultConfig = {
 	BTC_EUR: 30_000,
 	orderNumber: 0,

@@ -5,10 +5,47 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { COUNTRIES } from '$lib/types/Country';
-	import { sum } from '$lib/utils/sum.js';
+	import { sum } from '$lib/utils/sum';
+	import { bech32 } from 'bech32';
+	import { typedValues } from '$lib/utils/typedValues';
 
 	let actionCount = 0;
 	export let data;
+
+	const feedItems = [
+		{ key: 'paymentStatus', label: 'Payment status' },
+		{ key: 'productChanges', label: 'Product changes' },
+		{ key: 'newsletter', label: 'Newsletter' }
+	] as const;
+
+	type FeedKey = (typeof feedItems)[number]['key'];
+
+	const npubInputs: Record<FeedKey, HTMLInputElement | null> = {
+		paymentStatus: null,
+		productChanges: null,
+		newsletter: null
+	};
+
+	function checkForm(event: SubmitEvent) {
+		for (const input of typedValues(npubInputs)) {
+			if (!input) continue;
+
+			input.value = input.value.trim();
+
+			if (
+				input.value &&
+				(!input.value.startsWith('npub1') || bech32.decodeUnsafe(input.value)?.prefix !== 'npub')
+			) {
+				input.setCustomValidity('Invalid NostR public address');
+				input.reportValidity();
+
+				event.preventDefault();
+				return;
+			} else {
+				input.setCustomValidity('');
+			}
+		}
+	}
 
 	$: items = data.cart || [];
 	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
@@ -16,7 +53,7 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 grid grid-cols-3 gap-2">
-		<form id="checkout" method="post" class="col-span-2 flex flex-col gap-4">
+		<form id="checkout" method="post" class="col-span-2 flex flex-col gap-4" on:submit={checkForm}>
 			<h1 class="page-title">Checkout</h1>
 
 			<section class="gap-4 grid grid-cols-6 w-4/5">
@@ -103,21 +140,28 @@
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">Feed & Notifications</h2>
 
-				{#each ['Payment status', 'Product changes', 'Newsletter'] as feedTitle}
+				{#each feedItems as { key, label }}
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
 						<div
 							class="pl-4 py-2 bg-gray-190 border-b border-gray-300 text-base font-light text-gray-800"
 						>
-							{feedTitle}
+							{label}
 						</div>
 						<div class="p-4 flex flex-col gap-3">
 							<label class="form-label">
-								Email
-								<input type="email" class="form-input" />
+								NostR public address
+								<input
+									type="text"
+									class="form-input"
+									bind:this={npubInputs[key]}
+									name="{key}NPUB"
+									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+									required={key === 'paymentStatus'}
+								/>
 							</label>
 							<label class="form-label">
-								Phone
-								<input type="email" class="form-input" />
+								Email
+								<input type="email" class="form-input" name="{key}Email" />
 							</label>
 						</div>
 					</article>

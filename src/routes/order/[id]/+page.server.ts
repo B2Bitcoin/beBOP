@@ -61,7 +61,8 @@ export async function load({ params, depends }) {
 			totalPrice: {
 				amount: parseFloat(order.totalPrice.amount.toString()),
 				currency: order.totalPrice.currency
-			}
+			},
+			notifications: order.notifications
 		},
 
 		digitalFiles: await Promise.all(
