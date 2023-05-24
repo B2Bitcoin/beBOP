@@ -1,14 +1,14 @@
 import type { ChangeStreamDocument } from 'mongodb';
 import { Lock } from './lock';
 import { processClosed } from './process';
-import { RelayPool, encryptDm, calculateId, signId } from 'nostr';
-import type { NostREvent } from 'nostr';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
 import { nostrPrivateKeyHex, nostrPublicKeyHex, nostrRelays, nostrToHex } from './nostr';
 import { getUnixTime } from 'date-fns';
 import { collections } from './database';
+import { RelayPool } from 'nostr-relaypool';
+import { getEventHash, getSignature, nip04, type Event } from 'nostr-tools';
 
-const lock = new Lock('nostr-notifications');
+const lock = new Lock('notifications.nostr');
 
 let relayPool: RelayPool | null = null;
 
@@ -38,31 +38,37 @@ if (nostrPrivateKeyHex) {
 
 async function handleChanges(change: ChangeStreamDocument<NostRNotification>): Promise<void> {
 	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
+		console.log('a');
 		return;
 	}
 
 	if (change.fullDocument.processedAt) {
+		console.log('b');
 		return;
 	}
 
 	const npub = change.fullDocument.dest;
 	const content = change.fullDocument.content;
+	const receiverPublicKeyHex = nostrToHex(npub);
 
-	const event: NostREvent = {
+	const event: Event = {
 		id: '',
-		content: encryptDm(nostrPrivateKeyHex, nostrToHex(npub), content),
+		content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
 		created_at: getUnixTime(change.fullDocument.createdAt),
 		pubkey: nostrPublicKeyHex,
-		tags: [],
-		kind: 1,
+		tags: [['p', receiverPublicKeyHex]],
+		kind: 4,
 		sig: ''
 	};
 
-	event.id = await calculateId(event);
-	event.sig = await signId(event.id, nostrPrivateKeyHex);
+	event.id = getEventHash(event);
+	event.sig = getSignature(event, nostrPrivateKeyHex);
+	console.log('event', event);
 
-	relayPool ||= new RelayPool(nostrRelays, { reconnect: true });
-	relayPool.send(['EVENT', event]);
+	relayPool ||= new RelayPool();
+	relayPool.publish(event, nostrRelays);
+
+	console.log('sent event', change.fullDocument._id);
 
 	await collections.nostrNotifications.updateOne(
 		{ _id: change.fullDocument._id },
@@ -76,3 +82,11 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 }
 
 maintainLock().catch(console.error);
+
+process.on('unhandledRejection', (err) => {
+	if (err instanceof ErrorEvent) {
+		// Happens because nostr-relaypool doesn't handled websocket upgrade errors for example
+	} else {
+		console.error('unhandledrejection', err);
+	}
+});

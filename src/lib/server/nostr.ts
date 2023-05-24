@@ -26,8 +26,6 @@ export function nostrToHex(key: string): string {
 }
 
 export const nostrRelays = [
-	'wss://relay.nostr.info',
-	'wss://nostr.blocs.fr',
 	'wss://public.nostr.swissrouting.com',
 	'wss://nostr.wine',
 	'wss://nostr.lu.ke',

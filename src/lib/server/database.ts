@@ -26,7 +26,7 @@ const locks = db.collection<Lock>('locks');
 const digitalFiles = db.collection<DigitalFile>('digitalFiles');
 const pendingDigitalFiles = db.collection<DigitalFile>('digitalFiles.pending');
 const orders = db.collection<Order>('orders');
-const nostrNotifications = db.collection<NostRNotification>('notifications');
+const nostrNotifications = db.collection<NostRNotification>('notifications.nostr');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
