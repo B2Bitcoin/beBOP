@@ -31,8 +31,14 @@
 				href="/admin/order"
 				class={$page.url.pathname.startsWith('/admin/order') ? 'underline' : ''}>Orders</a
 			>
+			<a
+				href="/admin/nostr"
+				class={$page.url.pathname.startsWith('/admin/nostr') ? 'underline' : ''}>NostR</a
+			>
 		</nav>
 	</div>
 </header>
 
-<slot />
+<main class="p-4 flex flex-col gap-4">
+	<slot />
+</main>

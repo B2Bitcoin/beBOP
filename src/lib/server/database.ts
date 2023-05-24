@@ -7,6 +7,7 @@ import type { Lock } from '$lib/types/Lock';
 import type { Cart } from '$lib/types/Cart';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { Order } from '$lib/types/Order';
+import type { NostRNotification } from '$lib/types/NostRNotifications';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -25,6 +26,7 @@ const locks = db.collection<Lock>('locks');
 const digitalFiles = db.collection<DigitalFile>('digitalFiles');
 const pendingDigitalFiles = db.collection<DigitalFile>('digitalFiles.pending');
 const orders = db.collection<Order>('orders');
+const nostrNotifications = db.collection<NostRNotification>('notifications.nostr');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -38,7 +40,8 @@ export const collections = {
 	carts,
 	digitalFiles,
 	pendingDigitalFiles,
-	orders
+	orders,
+	nostrNotifications
 };
 
 export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
