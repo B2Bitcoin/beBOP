@@ -29,5 +29,6 @@ export const nostrRelays = [
 	'wss://nostr.wine',
 	'wss://nostr.lu.ke',
 	'wss://nos.lol',
-	'wss://relay.snort.social'
+	'wss://relay.snort.social',
+	'wss://relay.nostr.ch'
 ];
