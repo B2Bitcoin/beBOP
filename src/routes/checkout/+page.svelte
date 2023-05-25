@@ -122,7 +122,7 @@
 							disabled={data.paymentMethods.length === 0}
 							required
 						>
-							{#if data.paymentMethods.includes('bitcoin')}
+							{#if data.paymentMethods.includes('bitcoin') && totalPrice >= 0.00001}
 								<option value="bitcoin">Bitcoin</option>
 							{/if}
 							{#if data.paymentMethods.includes('lightning')}
