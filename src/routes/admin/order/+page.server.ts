@@ -8,7 +8,8 @@ export async function load() {
 			_id: order._id,
 			payment: order.payment,
 			totalPrice: order.totalPrice,
-			number: order.number
+			number: order.number,
+			createdAt: order.createdAt
 		}))
 	};
 }

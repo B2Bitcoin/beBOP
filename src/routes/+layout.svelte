@@ -191,8 +191,8 @@
 							<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
 								Total <PriceTag currency="BTC" amount={totalPrice} />
 							</div>
-							<a href="/cart" class="btn btn-gray mt-1"> View cart </a>
-							<a href="/checkout" class="btn btn-black"> Checkout </a>
+							<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
+							{#if items.length > 0}<a href="/checkout" class="btn btn-black"> Checkout </a>{/if}
 						</div>
 					</Popup>
 				{/if}

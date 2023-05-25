@@ -39,6 +39,7 @@ export async function load({ params, depends }) {
 	return {
 		order: {
 			number: order.number,
+			createdAt: order.createdAt,
 			payment: {
 				method: order.payment.method,
 				status: order.payment.status,
@@ -61,7 +62,8 @@ export async function load({ params, depends }) {
 			totalPrice: {
 				amount: parseFloat(order.totalPrice.amount.toString()),
 				currency: order.totalPrice.currency
-			}
+			},
+			notifications: order.notifications
 		},
 
 		digitalFiles: await Promise.all(

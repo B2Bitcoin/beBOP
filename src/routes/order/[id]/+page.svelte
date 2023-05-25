@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
-	import { differenceInMinutes } from 'date-fns';
+	import { differenceInMinutes, formatDistance } from 'date-fns';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();
@@ -59,6 +59,11 @@
 		{#if data.order.payment.status === 'pending'}
 			<ul>
 				<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
+				{#if data.order.notifications?.paymentStatus?.npub}
+					<li>
+						NostR public address for payment status: {data.order.notifications.paymentStatus.npub}
+					</li>
+				{/if}
 				<li>
 					Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
 				</li>
@@ -90,5 +95,14 @@
 				{/each}
 			</ul>
 		{/if}
+		<p class="text-xl">
+			Created <time
+				datetime={data.order.createdAt.toJSON()}
+				title={data.order.createdAt.toLocaleString('en')}
+				>{formatDistance(data.order.createdAt, Date.now(), {
+					addSuffix: true
+				})}</time
+			>
+		</p>
 	</article>
 </main>
