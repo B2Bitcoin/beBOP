@@ -123,7 +123,9 @@
 							required
 						>
 							{#if data.paymentMethods.includes('bitcoin')}
-								<option value="bitcoin">Bitcoin</option>
+								{#if totalPrice >= 0.00001}
+									<option value="bitcoin">Bitcoin</option>
+								{/if}
 							{/if}
 							{#if data.paymentMethods.includes('lightning')}
 								<option value="lightning">Lightning</option>
