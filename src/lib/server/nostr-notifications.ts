@@ -2,11 +2,19 @@ import type { ChangeStreamDocument } from 'mongodb';
 import { Lock } from './lock';
 import { processClosed } from './process';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
-import { nostrPrivateKeyHex, nostrPublicKeyHex, nostrRelays, nostrToHex } from './nostr';
-import { getUnixTime } from 'date-fns';
+import { hexToNpub, nostrPrivateKeyHex, nostrPublicKeyHex, nostrRelays, nostrToHex } from './nostr';
+import { fromUnixTime, getUnixTime } from 'date-fns';
 import { collections } from './database';
 import { RelayPool } from 'nostr-relaypool';
-import { getEventHash, getSignature, nip04, type Event } from 'nostr-tools';
+import {
+	getEventHash,
+	getSignature,
+	nip04,
+	type Event,
+	Kind,
+	validateEvent,
+	verifySignature
+} from 'nostr-tools';
 
 const lock = new Lock('notifications.nostr');
 
@@ -21,6 +29,8 @@ async function maintainLock() {
 				console.error(err);
 			}
 			relayPool = null;
+		} else if (!relayPool) {
+			initRelayPool();
 		}
 
 		await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -34,6 +44,60 @@ if (nostrPrivateKeyHex) {
 			fullDocument: 'updateLookup'
 		})
 		.on('change', (ev) => handleChanges(ev).catch(console.error));
+}
+
+function initRelayPool() {
+	if (relayPool) {
+		return;
+	}
+
+	relayPool ||= new RelayPool(nostrRelays, { autoReconnect: true });
+
+	console.log('subscribe', nostrPublicKeyHex);
+	relayPool.subscribe(
+		[
+			// Messages sent to us
+			{
+				kinds: [Kind.EncryptedDirectMessage],
+				'#p': [nostrPublicKeyHex]
+			}
+		],
+		nostrRelays,
+		async (event /*, isAfterEose, relayURL*/) => {
+			// isAfterEose = live event
+			try {
+				if (!validateEvent(event) || !verifySignature(event)) {
+					return;
+				}
+				if (!event.tags.some((tag) => tag[0] === 'p' && tag[1] === nostrPublicKeyHex)) {
+					return;
+				}
+				if (event.kind !== Kind.EncryptedDirectMessage) {
+					return;
+				}
+
+				await collections.nostrReceivedMessages.replaceOne(
+					{
+						_id: event.id
+					},
+					{
+						createdAt: fromUnixTime(event.created_at),
+						content: await nip04.decrypt(nostrPrivateKeyHex, event.pubkey, event.content),
+						kind: event.kind,
+						source: hexToNpub(event.pubkey),
+						updatedAt: new Date()
+					},
+					{
+						upsert: true
+					}
+				);
+			} catch (err) {
+				console.error(err);
+			}
+		},
+		undefined,
+		undefined
+	);
 }
 
 async function handleChanges(change: ChangeStreamDocument<NostRNotification>): Promise<void> {
@@ -55,15 +119,15 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 		created_at: getUnixTime(change.fullDocument.createdAt),
 		pubkey: nostrPublicKeyHex,
 		tags: [['p', receiverPublicKeyHex]],
-		kind: 4,
+		kind: Kind.EncryptedDirectMessage,
 		sig: ''
 	} satisfies Event;
 
 	event.id = getEventHash(event);
 	event.sig = getSignature(event, nostrPrivateKeyHex);
 
-	relayPool ||= new RelayPool();
-	relayPool.publish(event, nostrRelays);
+	initRelayPool();
+	relayPool?.publish(event, nostrRelays);
 
 	await collections.nostrNotifications.updateOne(
 		{ _id: change.fullDocument._id },
@@ -78,10 +142,6 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 
 maintainLock().catch(console.error);
 
-process.on('unhandledRejection', (err) => {
-	if (err instanceof ErrorEvent) {
-		// Happens because nostr-relaypool doesn't handled websocket upgrade errors for example
-	} else {
-		console.error('unhandledrejection', err);
-	}
+process.on('unhandledRejection', () => {
+	// Happens because nostr-relaypool doesn't handled websocket upgrade errors for example
 });

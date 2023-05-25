@@ -57,3 +57,15 @@
 		<li>{relay}</li>
 	{/each}
 </ul>
+
+<h2 class="text-2xl">Received messages</h2>
+
+<ul>
+	{#each data.receivedMessages as message}
+		<li>
+			<time datetime={message.createdAt.toJSON()}>{message.createdAt.toLocaleString('en-UK')}</time>
+			|
+			{message.source} | {message.content}
+		</li>
+	{/each}
+</ul>

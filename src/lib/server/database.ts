@@ -8,6 +8,7 @@ import type { Cart } from '$lib/types/Cart';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { Order } from '$lib/types/Order';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
+import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -27,6 +28,7 @@ const digitalFiles = db.collection<DigitalFile>('digitalFiles');
 const pendingDigitalFiles = db.collection<DigitalFile>('digitalFiles.pending');
 const orders = db.collection<Order>('orders');
 const nostrNotifications = db.collection<NostRNotification>('notifications.nostr');
+const nostrReceivedMessages = db.collection<NostRReceivedMessage>('nostr.receivedMessage');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -41,7 +43,8 @@ export const collections = {
 	digitalFiles,
 	pendingDigitalFiles,
 	orders,
-	nostrNotifications
+	nostrNotifications,
+	nostrReceivedMessages
 };
 
 export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
@@ -55,6 +58,7 @@ client.on('open', () => {
 	orders.createIndex({ sessionId: 1 });
 	orders.createIndex({ number: 1 }, { unique: true });
 	digitalFiles.createIndex({ productId: 1 });
+	nostrReceivedMessages.createIndex({ createdAt: -1 });
 });
 
 export async function withTransaction(cb: WithSessionCallback) {
