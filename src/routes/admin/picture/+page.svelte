@@ -5,19 +5,17 @@
 	export let data: PageData;
 </script>
 
-<main class="p-4">
-	<h1 class="text-3xl">List of pictures with no associated product</h1>
+<h1 class="text-3xl">List of pictures with no associated product</h1>
 
-	<a href="/admin/picture/new" class="my-4 block underline">New picture</a>
+<a href="/admin/picture/new" class="block underline">New picture</a>
 
-	<div class="flex flex-row flex-wrap gap-6 mt-6">
-		{#each data.pictures as picture}
-			<div class="flex flex-col text-center">
-				<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
-					<Picture {picture} class="block h-36" />
-					<span>{picture.name}</span>
-				</a>
-			</div>
-		{/each}
-	</div>
-</main>
+<div class="flex flex-row flex-wrap gap-6">
+	{#each data.pictures as picture}
+		<div class="flex flex-col text-center">
+			<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
+				<Picture {picture} class="block h-36" />
+				<span>{picture.name}</span>
+			</a>
+		</div>
+	{/each}
+</div>

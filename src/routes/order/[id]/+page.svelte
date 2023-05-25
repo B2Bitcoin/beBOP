@@ -5,6 +5,7 @@
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { differenceInMinutes, formatDistance } from 'date-fns';
 	import { onMount } from 'svelte';
+	import moment from 'moment';
 
 	let currentDate = new Date();
 	export let data;
@@ -59,6 +60,11 @@
 		{#if data.order.payment.status === 'pending'}
 			<ul>
 				<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
+				{#if data.order.notifications?.paymentStatus?.npub}
+					<li>
+						NostR public address for payment status: {data.order.notifications.paymentStatus.npub}
+					</li>
+				{/if}
 				<li>
 					Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
 				</li>
@@ -91,9 +97,7 @@
 			</ul>
 		{/if}
 		<h2 class="text-xl">
-			{`Created ${formatDistance(data.order.createdAt, Date.now(), {
-				addSuffix: true
-			})}`}
+			{`Created at ${moment(data.order.createdAt).format('DD-MM-YYYY HH:m:s')}`}
 		</h2>
 	</article>
 </main>
