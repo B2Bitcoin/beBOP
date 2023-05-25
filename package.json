@@ -54,6 +54,7 @@
 		"date-fns": "^2.29.3",
 		"marked": "^4.3.0",
 		"mime-types": "^2.1.35",
+		"moment": "^2.29.4",
 		"mongodb": "^5.2.0",
 		"nanoid": "^4.0.2",
 		"nostr-relaypool": "^0.6.27",

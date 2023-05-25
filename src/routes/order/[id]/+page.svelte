@@ -3,8 +3,9 @@
 	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
-	import { differenceInMinutes, formatDistance } from 'date-fns';
+	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
+	import moment from 'moment';
 
 	let currentDate = new Date();
 	export let data;
@@ -99,9 +100,7 @@
 			Created <time
 				datetime={data.order.createdAt.toJSON()}
 				title={data.order.createdAt.toLocaleString('en')}
-				>{formatDistance(data.order.createdAt, Date.now(), {
-					addSuffix: true
-				})}</time
+				>{moment(data.order.createdAt).format('DD-MM-YYYY hh:mm:ss')}</time
 			>
 		</p>
 	</article>
