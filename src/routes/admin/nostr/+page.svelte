@@ -63,6 +63,9 @@
 <ul>
 	{#each data.receivedMessages as message}
 		<li>
+			{#if message.kind === 4}
+				<span title="Encrypted message">'🔐'</span>
+			{/if}
 			<time datetime={message.createdAt.toJSON()}>{message.createdAt.toLocaleString('en-UK')}</time>
 			|
 			{message.source} | {message.content}
