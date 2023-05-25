@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
-	import { differenceInMinutes, formatDistance } from 'date-fns';
+	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
 	import moment from 'moment';
 
