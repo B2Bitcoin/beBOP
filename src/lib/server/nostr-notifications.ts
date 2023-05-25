@@ -58,7 +58,7 @@ function initRelayPool() {
 		[
 			// Messages sent to us
 			{
-				kinds: [Kind.EncryptedDirectMessage],
+				kinds: [Kind.EncryptedDirectMessage, Kind.Text],
 				'#p': [nostrPublicKeyHex]
 			}
 		],
@@ -72,7 +72,7 @@ function initRelayPool() {
 				if (!event.tags.some((tag) => tag[0] === 'p' && tag[1] === nostrPublicKeyHex)) {
 					return;
 				}
-				if (event.kind !== Kind.EncryptedDirectMessage) {
+				if (![Kind.EncryptedDirectMessage, Kind.Text].includes(event.kind)) {
 					return;
 				}
 
@@ -82,7 +82,10 @@ function initRelayPool() {
 					},
 					{
 						createdAt: fromUnixTime(event.created_at),
-						content: await nip04.decrypt(nostrPrivateKeyHex, event.pubkey, event.content),
+						content:
+							event.kind === Kind.EncryptedDirectMessage
+								? await nip04.decrypt(nostrPrivateKeyHex, event.pubkey, event.content)
+								: event.content,
 						kind: event.kind,
 						source: hexToNpub(event.pubkey),
 						updatedAt: new Date()
