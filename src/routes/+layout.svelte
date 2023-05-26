@@ -14,7 +14,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
-	import { navigating } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import ProductAddedToCart from '$lib/components/ProductAddedToCart.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
@@ -105,7 +105,7 @@
 				<a
 					href="/cart"
 					on:click={(ev) => {
-						if (!data.cart) {
+						if (!data.cart || $page.url.pathname === '/checkout') {
 							return;
 						}
 						cartOpen = !cartOpen;
