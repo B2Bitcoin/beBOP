@@ -96,11 +96,11 @@
 			</ul>
 		{/if}
 		<p class="text-xl">
-			Created
+			Created at
 			<time
 				datetime={data.order.createdAt.toJSON()}
 				title={data.order.createdAt.toLocaleString('en')}
-				>{format(data.order.createdAt, 'dd-MM-yyyy hh:mm:ss')}</time
+				>{format(data.order.createdAt, 'dd-MM-yyyy HH:mm:ss')}</time
 			>
 		</p>
 	</article>
