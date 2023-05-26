@@ -10,7 +10,6 @@
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
 
-	let priceAmount: number;
 	let priceAmountElement: HTMLInputElement;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
