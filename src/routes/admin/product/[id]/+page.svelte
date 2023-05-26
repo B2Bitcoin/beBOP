@@ -10,6 +10,8 @@
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
 
+	let priceAmountElement: HTMLInputElement;
+
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
 
@@ -21,12 +23,23 @@
 		availableDateStr = undefined;
 		availableDate = undefined;
 	}
+
+	function checkForm(event: SubmitEvent) {
+		if (priceAmountElement.value && +priceAmountElement.value < 0.00000001) {
+			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
+			priceAmountElement.reportValidity();
+			event.preventDefault();
+			return;
+		} else {
+			priceAmountElement.setCustomValidity('');
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Edit a product</h1>
 
 <div class="flex flex-col">
-	<form method="post" class="flex flex-col gap-4" action="?/update">
+	<form method="post" class="flex flex-col gap-4" action="?/update" on:submit={checkForm}>
 		<label>
 			Name
 			<input type="text" name="name" class="form-input block" value={data.product.name} />
@@ -39,6 +52,7 @@
 				class="form-input block"
 				step="any"
 				value={data.product.price.amount.toLocaleString('en', { maximumFractionDigits: 8 })}
+				bind:this={priceAmountElement}
 			/>
 		</label>
 
