@@ -52,6 +52,7 @@
 				class="form-input block"
 				step="any"
 				value={data.product.price.amount.toLocaleString('en', { maximumFractionDigits: 8 })}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
 				bind:this={priceAmountElement}
 			/>
 		</label>
