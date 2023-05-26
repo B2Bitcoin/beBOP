@@ -50,7 +50,6 @@
 			step="any"
 			bind:value={priceAmount}
 			bind:this={priceAmountElement}
-			on:change={() => priceAmountElement?.setCustomValidity('')}
 			required
 		/>
 	</label>

@@ -53,7 +53,6 @@
 				step="any"
 				value={data.product.price.amount.toLocaleString('en', { maximumFractionDigits: 8 })}
 				bind:this={priceAmountElement}
-				on:change={() => priceAmountElement?.setCustomValidity('')}
 			/>
 		</label>
 
