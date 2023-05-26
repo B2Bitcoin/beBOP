@@ -7,6 +7,9 @@
 	let shipping = false;
 	let preorder = false;
 
+	let priceAmount: number;
+	let priceAmountElement: HTMLInputElement;
+
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
 	$: if (!enablePreorder) {
@@ -16,11 +19,22 @@
 	$: if (!availableDate || type !== 'resource') {
 		availableDate = undefined;
 	}
+
+	function checkForm(event: SubmitEvent) {
+		if (priceAmountElement.value && priceAmount < 0.00000001) {
+			priceAmountElement.setCustomValidity('price must be greater than 1 SAT');
+			priceAmountElement.reportValidity();
+			event.preventDefault();
+			return;
+		} else {
+			priceAmountElement.setCustomValidity('');
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Add a product</h1>
 
-<form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+<form method="post" enctype="multipart/form-data" class="flex flex-col gap-4" on:submit={checkForm}>
 	<label>
 		Product name
 		<input class="form-input block" type="text" name="name" placeholder="Product name" required />
@@ -34,6 +48,9 @@
 			name="priceAmount"
 			placeholder="Price (BTC)"
 			step="any"
+			bind:value={priceAmount}
+			bind:this={priceAmountElement}
+			on:change={() => priceAmountElement?.setCustomValidity('')}
 			required
 		/>
 	</label>
