@@ -26,7 +26,7 @@
 
 	function checkForm(event: SubmitEvent) {
 		if (priceAmountElement.value && +priceAmountElement.value < 0.00000001) {
-			priceAmountElement.setCustomValidity('price must be greater than 1 SAT');
+			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
 			priceAmountElement.reportValidity();
 			event.preventDefault();
 			return;
