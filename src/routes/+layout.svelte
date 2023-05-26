@@ -42,6 +42,8 @@
 
 	let cartOpen = false;
 
+	let checkoutPage = false;
+
 	$: if ($navigating) {
 		$productAddedToCart = null;
 	}
@@ -49,6 +51,10 @@
 	afterNavigate(({ from, to }) => {
 		if (from?.url.pathname !== to?.url.pathname) {
 			cartOpen = false;
+			checkoutPage = false;
+		}
+		if (to?.url.pathname === '/checkout') {
+			checkoutPage = true;
 		}
 	});
 </script>
@@ -102,20 +108,28 @@
 			</div>
 			<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
 			<div class="relative">
-				<a
-					href="/cart"
-					on:click={(ev) => {
-						if (!data.cart) {
-							return;
-						}
-						cartOpen = !cartOpen;
-						ev.preventDefault();
-					}}
-					class="flex gap-2 items-center"
-				>
-					<IconBasket />
-					{totalItems}
-				</a>
+				{#if checkoutPage}
+					<a href="/cart" class="flex gap-2 items-center">
+						<IconBasket />
+						{totalItems}
+					</a>
+				{:else}
+					<a
+						href="/cart"
+						on:click={(ev) => {
+							if (!data.cart) {
+								return;
+							}
+							cartOpen = !cartOpen;
+							ev.preventDefault();
+						}}
+						class="flex gap-2 items-center"
+					>
+						<IconBasket />
+						{totalItems}
+					</a>
+				{/if}
+
 				{#if $productAddedToCart}
 					<Popup>
 						<ProductAddedToCart
