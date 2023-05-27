@@ -148,5 +148,5 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 maintainLock().catch(console.error);
 
 process.on('unhandledRejection', () => {
-	// Happens because nostr-relaypool doesn't handled websocket upgrade errors for example
+	// Happens because nostr-relaypool doesn't handle websocket upgrade errors for example
 });
