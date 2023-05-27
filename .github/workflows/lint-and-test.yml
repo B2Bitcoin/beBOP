@@ -24,7 +24,6 @@ jobs:
       - name: 'Checking lint/format errors'
         run: |
           pnpm run lint:ci
-      # Wait until https://github.com/adamritter/nostr-relaypool-ts/pull/41 is merged
-      # - name: 'Checking type errors'
-      #   run: |
-      #     pnpm run check
+      - name: 'Checking type errors'
+        run: |
+          pnpm run check
