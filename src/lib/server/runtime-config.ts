@@ -5,7 +5,8 @@ const defaultConfig = {
 	BTC_EUR: 30_000,
 	orderNumber: 0,
 
-	checkoutButtonOnProductPage: true
+	checkoutButtonOnProductPage: true,
+	discovery: true
 };
 
 export type RuntimeConfig = typeof defaultConfig;
