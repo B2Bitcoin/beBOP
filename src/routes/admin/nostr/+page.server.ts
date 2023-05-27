@@ -8,7 +8,12 @@ export function load() {
 	return {
 		nostrPrivateKey: nostrPrivateKey,
 		nostrPublicKey: nostrPublicKey,
-		nostrRelays: nostrRelays
+		nostrRelays: nostrRelays,
+		receivedMessages: collections.nostrReceivedMessages
+			.find({})
+			.sort({ createdAt: -1 })
+			.limit(100)
+			.toArray()
 	};
 }
 

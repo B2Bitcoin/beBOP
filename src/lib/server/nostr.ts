@@ -25,10 +25,13 @@ export function nostrToHex(key: string): string {
 	return Buffer.from(bech32.fromWords(bech32.decode(key).words)).toString('hex');
 }
 
+export function hexToNpub(hex: string) {
+	return bech32.encode('npub', bech32.toWords(Buffer.from(hex, 'hex')));
+}
+
 export const nostrRelays = [
 	'wss://nostr.wine',
 	'wss://nostr.lu.ke',
 	'wss://nos.lol',
-	'wss://relay.snort.social',
-	'wss://relay.nostr.ch'
+	'wss://relay.snort.social'
 ];
