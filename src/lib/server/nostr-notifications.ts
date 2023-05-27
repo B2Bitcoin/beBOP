@@ -76,19 +76,21 @@ function initRelayPool() {
 					return;
 				}
 
-				await collections.nostrReceivedMessages.replaceOne(
+				await collections.nostrReceivedMessages.updateOne(
 					{
 						_id: event.id
 					},
 					{
-						createdAt: fromUnixTime(event.created_at),
-						content:
-							event.kind === Kind.EncryptedDirectMessage
-								? await nip04.decrypt(nostrPrivateKeyHex, event.pubkey, event.content)
-								: event.content,
-						kind: event.kind,
-						source: hexToNpub(event.pubkey),
-						updatedAt: new Date()
+						$setOnInsert: {
+							createdAt: fromUnixTime(event.created_at),
+							content:
+								event.kind === Kind.EncryptedDirectMessage
+									? await nip04.decrypt(nostrPrivateKeyHex, event.pubkey, event.content)
+									: event.content,
+							kind: event.kind,
+							source: hexToNpub(event.pubkey),
+							updatedAt: new Date()
+						}
 					},
 					{
 						upsert: true

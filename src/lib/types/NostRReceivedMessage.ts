@@ -8,4 +8,6 @@ export interface NostRReceivedMessage extends Timestamps {
 	source: string;
 
 	kind: Kind;
+
+	processedAt?: Date;
 }
