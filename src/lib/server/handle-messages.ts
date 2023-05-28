@@ -38,9 +38,9 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 				senderNpub,
 				`Commands:
 
-- orders: Send the list of orders associated to your npub
-- catalog: Send the catalog
-- detailed catalog: Send the catalog, with product descriptions
+- orders: Show the list of orders associated to your npub
+- catalog: Show the catalog
+- detailed catalog: Show the catalog, with product descriptions
 - subscribe: Subscribe to catalog updates
 - unsubscribe: Unsubscribe from catalog updates`
 			);
@@ -82,9 +82,9 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 						products
 							.map(
 								(product) =>
-									`- ${product.name} / ${
+									`- ${product.name} / ${Math.round(
 										product.price.amount * SATOSHIS_PER_BTC
-									} / ${ORIGIN}/product/${product._id}${
+									)} SAT / ${ORIGIN}/product/${product._id}${
 										content === 'detailed catalog'
 											? ` / ${product.shortDescription.replaceAll(/\s+/g, ' ')}`
 											: ''

@@ -7,6 +7,9 @@ import busboy from 'busboy';
 import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import { ObjectId } from 'mongodb';
+import { ORIGIN } from '$env/static/private';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -111,6 +114,24 @@ export const actions: Actions = {
 				);
 			}
 		});
+
+		if (runtimeConfig.discovery) {
+			(async function () {
+				for await (const subscription of collections.subscriptions.find({
+					npub: { $exists: true }
+				})) {
+					await collections.nostrNotifications
+						.insertOne({
+							_id: new ObjectId(),
+							dest: subscription.npub,
+							content: `New product "${parsed.name}": ${ORIGIN}/product/${productId}`,
+							createdAt: new Date(),
+							updatedAt: new Date()
+						})
+						.catch(console.error);
+				}
+			})().catch(console.error);
+		}
 
 		throw redirect(303, '/admin/product/' + productId);
 	}
