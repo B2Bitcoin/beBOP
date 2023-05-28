@@ -28,6 +28,7 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `MONGODB_URL` - The connection URL to the MongoDB replicaset
 - `MONGODB_DB` - The DB name, defaulting to "bootik"
 - `NOSTR_PRIVATE_KEY` - To send notifications
+- `ORIGIN` - The url of the bootik. For example, https://dev-bootik.pvh-labs.ch
 - `S3_BUCKET` - The name of the bucket for the S3-compatible object storage
 - `S3_ENDPOINT` - The endpoint for the S3-compatible object storage - eg http://s3-website.us-east-1.amazonaws.com or http://s3.fr-par.scw.cloud
 - `S3_KEY_ID` - Credentials for the S3-compatible object storage

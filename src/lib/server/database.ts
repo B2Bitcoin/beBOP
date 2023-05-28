@@ -9,6 +9,7 @@ import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { Order } from '$lib/types/Order';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
+import type { Subscription } from '$lib/types/Subscription';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -21,6 +22,7 @@ const db = client.db(MONGODB_DB);
 // const users = db.collection<User>('users');
 const pictures = db.collection<Picture>('pictures');
 const products = db.collection<Product>('products');
+const subscriptions = db.collection<Subscription>('subscriptions');
 const carts = db.collection<Cart>('carts');
 const runtimeConfig = db.collection<RuntimeConfigItem>('runtimeConfig');
 const locks = db.collection<Lock>('locks');
@@ -44,7 +46,8 @@ export const collections = {
 	pendingDigitalFiles,
 	orders,
 	nostrNotifications,
-	nostrReceivedMessages
+	nostrReceivedMessages,
+	subscriptions
 };
 
 export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
@@ -56,9 +59,15 @@ client.on('open', () => {
 	locks.createIndex({ updatedAt: 1 }, { expireAfterSeconds: 60 });
 	carts.createIndex({ sessionId: 1 }, { unique: true });
 	orders.createIndex({ sessionId: 1 });
+	orders.createIndex(
+		{ 'notifications.paymentStatus.npub': 1, createdAt: -1 },
+		{ partialFilterExpression: { 'notifications.paymentStatus.npub': { $exists: true } } }
+	);
 	orders.createIndex({ number: 1 }, { unique: true });
 	digitalFiles.createIndex({ productId: 1 });
 	nostrReceivedMessages.createIndex({ createdAt: -1 });
+	nostrNotifications.createIndex({ dest: 1 });
+	subscriptions.createIndex({ npub: 1 }, { sparse: true });
 });
 
 export async function withTransaction(cb: WithSessionCallback) {

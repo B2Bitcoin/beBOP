@@ -8,6 +8,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { addHours, differenceInSeconds } from 'date-fns';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
+import { ORIGIN } from '$env/static/private';
 
 export function load() {
 	return {
@@ -122,7 +123,6 @@ export const actions = {
 			await collections.orders.insertOne(
 				{
 					_id: orderId,
-					url: `${new URL(request.url).origin}/order/${orderId}`,
 					number: orderNumber,
 					sessionId: locals.sessionId,
 					createdAt: new Date(),
@@ -145,7 +145,7 @@ export const actions = {
 									const invoice = await lndCreateInvoice(
 										Math.floor(total * SATOSHIS_PER_BTC),
 										differenceInSeconds(expiresAt, new Date()),
-										`${new URL(request.url).origin}/order/${orderId}`
+										`${ORIGIN}/order/${orderId}`
 									);
 
 									return {
