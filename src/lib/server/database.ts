@@ -9,7 +9,7 @@ import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { Order } from '$lib/types/Order';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
-import { Subscription } from '$lib/types/Subscription';
+import type { Subscription } from '$lib/types/Subscription';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
