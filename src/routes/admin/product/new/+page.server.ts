@@ -115,6 +115,10 @@ export const actions: Actions = {
 			}
 		});
 
+		// This could be a change stream on collections.product, but for now a bit simpler
+		// to put it here.
+		// Later, if we have more notification types or more places where a product can be created,
+		// a change stream would probably be better
 		if (runtimeConfig.discovery) {
 			(async function () {
 				for await (const subscription of collections.subscriptions.find({
