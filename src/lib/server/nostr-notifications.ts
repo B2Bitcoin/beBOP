@@ -121,7 +121,12 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 	const event = {
 		id: '',
 		content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
-		created_at: getUnixTime(change.fullDocument.createdAt),
+		created_at: getUnixTime(
+			change.fullDocument.minCreatedAt &&
+				change.fullDocument.minCreatedAt > change.fullDocument.createdAt
+				? change.fullDocument.minCreatedAt
+				: change.fullDocument.createdAt
+		),
 		pubkey: nostrPublicKeyHex,
 		tags: [['p', receiverPublicKeyHex]],
 		kind: Kind.EncryptedDirectMessage,

@@ -6,6 +6,7 @@ import { Kind } from 'nostr-tools';
 import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from './runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
+import { addSeconds } from 'date-fns';
 
 const lock = new Lock('received-messages');
 
@@ -27,15 +28,17 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 
 	const content = change.fullDocument.content;
 	const senderNpub = change.fullDocument.source;
+	const minCreatedAt = addSeconds(change.fullDocument.createdAt, 1);
 
 	const isCustomer =
 		(await collections.nostrNotifications.countDocuments({ dest: senderNpub }, { limit: 1 })) > 0;
 	const isPrivateMessage = change.fullDocument.kind === Kind.EncryptedDirectMessage;
 
+	const send = (message: string) => sendMessage(senderNpub, message, minCreatedAt);
+
 	switch (content.trim().replaceAll(/\s+/g, ' ')) {
 		case 'help':
-			await sendMessage(
-				senderNpub,
+			await send(
 				`Commands:
 
 - orders: Show the list of orders associated to your npub
@@ -53,12 +56,11 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 				.toArray();
 
 			if (orders.length) {
-				await sendMessage(
-					senderNpub,
+				await send(
 					orders.map((order) => `- #${order.number}: ${ORIGIN}/order/${order._id}`).join('\n')
 				);
 			} else {
-				await sendMessage(senderNpub, 'No orders found for your npub');
+				await send('No orders found for your npub');
 			}
 
 			break;
@@ -66,19 +68,15 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 		case 'detailed catalog':
 		case 'catalog': {
 			if (!runtimeConfig.discovery) {
-				await sendMessage(
-					senderNpub,
-					'Discovery is not enabled for this bootik. You cannot access the catalog.'
-				);
+				await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
 			} else {
 				const products = await collections.products.find({}).toArray();
 
 				if (!products.length) {
-					await sendMessage(senderNpub, 'Catalog is empty');
+					await sendMessage(senderNpub, 'Catalog is empty', minCreatedAt);
 				} else {
 					// todo: proper price dependinc on currency
-					await sendMessage(
-						senderNpub,
+					await send(
 						products
 							.map(
 								(product) =>
@@ -100,10 +98,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 		}
 		case 'subscribe':
 			if (!runtimeConfig.discovery) {
-				await sendMessage(
-					senderNpub,
-					'Discovery is not enabled for the bootik, you cannot subscribe'
-				);
+				await send('Discovery is not enabled for the bootik, you cannot subscribe');
 			} else {
 				await collections.subscriptions.updateOne(
 					{ npub: senderNpub },
@@ -117,8 +112,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 					},
 					{ upsert: true }
 				);
-				await sendMessage(
-					senderNpub,
+				await send(
 					'You are subscribed to the catalog, you will receive messages when new products are added'
 				);
 			}
@@ -127,15 +121,14 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			const result = await collections.subscriptions.deleteOne({ npub: senderNpub });
 
 			if (result.deletedCount) {
-				await sendMessage(senderNpub, 'You were unsubscribed from the catalog');
+				await send('You were unsubscribed from the catalog');
 			} else {
-				await sendMessage(senderNpub, 'You were already unsubscribed from the catalog');
+				await send('You were already unsubscribed from the catalog');
 			}
 			break;
 		}
 		default:
-			await sendMessage(
-				senderNpub,
+			await send(
 				`Hello ${
 					!isPrivateMessage ? 'world' : isCustomer ? 'customer' : 'you'
 				}! To get the list of commands, say 'help'.`
@@ -147,12 +140,13 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 	);
 }
 
-function sendMessage(dest: string, content: string) {
+function sendMessage(dest: string, content: string, minCreatedAt: Date) {
 	return collections.nostrNotifications.insertOne({
 		dest,
 		_id: new ObjectId(),
 		createdAt: new Date(),
 		updatedAt: new Date(),
+		minCreatedAt,
 		content
 	});
 }
