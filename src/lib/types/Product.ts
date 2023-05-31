@@ -19,5 +19,6 @@ export interface Product extends Timestamps {
 export type BasicProductFrontend = Pick<Product, '_id' | 'shortDescription' | 'price' | 'name'>;
 
 export const MAX_NAME_LIMIT = 70;
+
 export const MAX_SHORT_DESCRIPTION_LIMIT = 160;
 
