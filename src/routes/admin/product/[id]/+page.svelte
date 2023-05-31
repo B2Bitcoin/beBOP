@@ -42,7 +42,13 @@
 	<form method="post" class="flex flex-col gap-4" action="?/update" on:submit={checkForm}>
 		<label>
 			Name
-			<input type="text" name="name" class="form-input block" value={data.product.name} />
+			<input
+				type="text"
+				name="name"
+				maxlength="70"
+				class="form-input block"
+				value={data.product.name}
+			/>
 		</label>
 		<label>
 			Price (BTC)
@@ -61,7 +67,7 @@
 
 		<label>
 			Short description
-			<textarea name="shortDescription" cols="30" rows="2" maxlength="250" class="block form-input"
+			<textarea name="shortDescription" cols="30" rows="2" maxlength="160" class="block form-input"
 				>{data.product.shortDescription}</textarea
 			>
 		</label>
