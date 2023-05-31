@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 
@@ -40,7 +41,7 @@
 		<input
 			class="form-input block"
 			type="text"
-			maxlength="70"
+			maxlength={MAX_NAME_LIMIT}
 			name="name"
 			placeholder="Product name"
 			required
@@ -70,7 +71,7 @@
 			name="shortDescription"
 			cols="30"
 			rows="2"
-			maxlength="160"
+			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
 			class="form-input block w-full"
 		/>
 	</label>
