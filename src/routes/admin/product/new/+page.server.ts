@@ -7,6 +7,9 @@ import busboy from 'busboy';
 import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import { ObjectId } from 'mongodb';
+import { ORIGIN } from '$env/static/private';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -111,6 +114,28 @@ export const actions: Actions = {
 				);
 			}
 		});
+
+		// This could be a change stream on collections.product, but for now a bit simpler
+		// to put it here.
+		// Later, if we have more notification types or more places where a product can be created,
+		// a change stream would probably be better
+		if (runtimeConfig.discovery) {
+			(async function () {
+				for await (const subscription of collections.subscriptions.find({
+					npub: { $exists: true }
+				})) {
+					await collections.nostrNotifications
+						.insertOne({
+							_id: new ObjectId(),
+							dest: subscription.npub,
+							content: `New product "${parsed.name}": ${ORIGIN}/product/${productId}`,
+							createdAt: new Date(),
+							updatedAt: new Date()
+						})
+						.catch(console.error);
+				}
+			})().catch(console.error);
+		}
 
 		throw redirect(303, '/admin/product/' + productId);
 	}

@@ -10,10 +10,6 @@ export interface Order extends Timestamps {
 	_id: string;
 	sessionId: string;
 
-	// Save URL from where the order was created, because no other way to get domain name for now
-	// other than through the request object
-	url: string;
-
 	number: number;
 
 	items: Array<{

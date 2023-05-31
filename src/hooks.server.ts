@@ -8,6 +8,7 @@ import '$lib/server/currency-lock';
 import '$lib/server/order-lock';
 import '$lib/server/order-notifications';
 import '$lib/server/nostr-notifications';
+import '$lib/server/handle-messages';
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);

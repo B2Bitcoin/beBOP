@@ -57,3 +57,18 @@
 		<li>{relay}</li>
 	{/each}
 </ul>
+
+<h2 class="text-2xl">Received messages</h2>
+
+<ul>
+	{#each data.receivedMessages as message}
+		<li>
+			{#if message.kind === 4}
+				<span title="Encrypted message">'🔐'</span>
+			{/if}
+			<time datetime={message.createdAt.toJSON()}>{message.createdAt.toLocaleString('en-UK')}</time>
+			|
+			{message.source} | {message.content}
+		</li>
+	{/each}
+</ul>

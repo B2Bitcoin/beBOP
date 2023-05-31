@@ -2,6 +2,7 @@ import type { Order } from '$lib/types/Order';
 import { ObjectId, type ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
 import { Lock } from './lock';
+import { ORIGIN } from '$env/static/private';
 
 const lock = new Lock('order-notifications');
 
@@ -52,13 +53,15 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 		return;
 	}
 
-	const { npub } = change.fullDocument.notifications.paymentStatus;
+	const order = change.fullDocument;
+
+	const { npub } = order.notifications.paymentStatus;
 
 	await collections.nostrNotifications.insertOne({
 		_id: new ObjectId(),
 		createdAt: new Date(),
 		updatedAt: new Date(),
-		content: `Order #${change.fullDocument.number} ${change.fullDocument.payment.status}, see ${change.fullDocument.url}`,
+		content: `Order #${order.number} ${order.payment.status}, see ${ORIGIN}/order/${order._id}`,
 		dest: npub
 	});
 }

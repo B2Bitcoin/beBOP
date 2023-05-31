@@ -35,8 +35,8 @@ dependencies:
     specifier: ^4.0.2
     version: 4.0.2
   nostr-relaypool:
-    specifier: ^0.6.27
-    version: 0.6.27(ws@8.13.0)
+    specifier: ^0.6.28
+    version: 0.6.28(ws@8.13.0)
   nostr-tools:
     specifier: ^1.11.1
     version: 1.11.1
@@ -84,6 +84,9 @@ devDependencies:
   '@types/qrcode':
     specifier: ^1.5.0
     version: 1.5.0
+  '@types/ws':
+    specifier: ^8.5.4
+    version: 8.5.4
   '@typescript-eslint/eslint-plugin':
     specifier: ^5.45.0
     version: 5.58.0(@typescript-eslint/parser@5.58.0)(eslint@8.40.0)(typescript@5.0.4)
@@ -1701,6 +1704,12 @@ packages:
       '@types/webidl-conversions': 7.0.0
     dev: false
 
+  /@types/ws@8.5.4:
+    resolution: {integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==}
+    dependencies:
+      '@types/node': 18.15.11
+    dev: true
+
   /@typescript-eslint/eslint-plugin@5.58.0(@typescript-eslint/parser@5.58.0)(eslint@8.40.0)(typescript@5.0.4):
     resolution: {integrity: sha512-vxHvLhH0qgBd3/tW6/VccptSfc8FxPQIkmNTVLWcCOVqSBvqpnKkBTYrhcGlXfSnd78azwe+PsjYFj0X34/njA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -3033,8 +3042,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /nostr-relaypool@0.6.27(ws@8.13.0):
-    resolution: {integrity: sha512-YtQxb8z9VHsPEQfC4rkxztqyGvWM1kcwiLhp/N8PpZX1+9mJhoIFctgpGxWB1LXhZgRiyJfY5Ml4EklvtWELuw==}
+  /nostr-relaypool@0.6.28(ws@8.13.0):
+    resolution: {integrity: sha512-kyLChBunf6IB2O3MSPHBe9iSokBGyqZHvAJXZ5+eh9C4znAu7iY8L/yh0V4Ta/P9TtzDna3QTEgFWVan4m0vBA==}
     dependencies:
       '@jest/source-map': 29.4.3
       isomorphic-ws: 5.0.0(ws@8.13.0)

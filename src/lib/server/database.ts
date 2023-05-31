@@ -8,6 +8,8 @@ import type { Cart } from '$lib/types/Cart';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { Order } from '$lib/types/Order';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
+import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
+import type { Subscription } from '$lib/types/Subscription';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -20,6 +22,7 @@ const db = client.db(MONGODB_DB);
 // const users = db.collection<User>('users');
 const pictures = db.collection<Picture>('pictures');
 const products = db.collection<Product>('products');
+const subscriptions = db.collection<Subscription>('subscriptions');
 const carts = db.collection<Cart>('carts');
 const runtimeConfig = db.collection<RuntimeConfigItem>('runtimeConfig');
 const locks = db.collection<Lock>('locks');
@@ -27,6 +30,7 @@ const digitalFiles = db.collection<DigitalFile>('digitalFiles');
 const pendingDigitalFiles = db.collection<DigitalFile>('digitalFiles.pending');
 const orders = db.collection<Order>('orders');
 const nostrNotifications = db.collection<NostRNotification>('notifications.nostr');
+const nostrReceivedMessages = db.collection<NostRReceivedMessage>('nostr.receivedMessage');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -41,7 +45,9 @@ export const collections = {
 	digitalFiles,
 	pendingDigitalFiles,
 	orders,
-	nostrNotifications
+	nostrNotifications,
+	nostrReceivedMessages,
+	subscriptions
 };
 
 export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
@@ -53,8 +59,15 @@ client.on('open', () => {
 	locks.createIndex({ updatedAt: 1 }, { expireAfterSeconds: 60 });
 	carts.createIndex({ sessionId: 1 }, { unique: true });
 	orders.createIndex({ sessionId: 1 });
+	orders.createIndex(
+		{ 'notifications.paymentStatus.npub': 1, createdAt: -1 },
+		{ partialFilterExpression: { 'notifications.paymentStatus.npub': { $exists: true } } }
+	);
 	orders.createIndex({ number: 1 }, { unique: true });
 	digitalFiles.createIndex({ productId: 1 });
+	nostrReceivedMessages.createIndex({ createdAt: -1 });
+	nostrNotifications.createIndex({ dest: 1 });
+	subscriptions.createIndex({ npub: 1 }, { sparse: true });
 });
 
 export async function withTransaction(cb: WithSessionCallback) {
