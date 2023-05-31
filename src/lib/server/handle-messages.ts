@@ -5,7 +5,7 @@ import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
 import { Kind } from 'nostr-tools';
 import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from './runtime-config';
-import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
+import { toSatoshis } from '$lib/utils/toSatoshis';
 
 const lock = new Lock('received-messages');
 
@@ -82,8 +82,10 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 						products
 							.map(
 								(product) =>
-									`- ${product.name} / ${Math.round(
-										product.price.amount * SATOSHIS_PER_BTC
+									`- ${product.name} / ${toSatoshis(
+										product.price.amount,
+										product.price.currency,
+										runtimeConfig.BTC_EUR
 									)} SAT / ${ORIGIN}/product/${product._id}${
 										content === 'detailed catalog'
 											? ` / ${product.shortDescription.replaceAll(/\s+/g, ' ')}`
