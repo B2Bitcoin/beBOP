@@ -1,5 +1,6 @@
 <script lang="ts">
 	import IconBitcoin from '$lib/components/icons/IconBitcoin.svelte';
+	import { toSatoshis } from '$lib/utils/toSatoshis';
 
 	export let data;
 	import { formatDistance } from 'date-fns';
@@ -21,9 +22,8 @@
 					addSuffix: true
 				})}</time
 			>
-			- Total: {order.totalPrice.amount.toLocaleString('en', {
-				maximumFractionDigits: 8
-			})} BTC -
+			- Total: {toSatoshis(order.totalPrice.amount, order.totalPrice.currency).toLocaleString('en')}
+			SAT -
 			<span
 				class={order.payment.status === 'expired'
 					? 'text-gray-550'
@@ -33,9 +33,10 @@
 			>
 				{order.payment.status}</span
 			>
-			- received: {(order.payment.totalReceived ?? 0).toLocaleString('en', {
-				maximumFractionDigits: 8
-			})} BTC
+			- received: {toSatoshis(order.totalPrice.amount, order.totalPrice.currency).toLocaleString(
+				'en'
+			)}
+			SAT
 		</li>
 	{:else}
 		<li>No orders yet</li>
