@@ -33,9 +33,7 @@
 			>
 				{order.payment.status}</span
 			>
-			- received: {toSatoshis(order.totalPrice.amount, order.totalPrice.currency).toLocaleString(
-				'en'
-			)}
+			- received: {(order.payment.totalReceived ?? 0).toLocaleString('en')}
 			SAT
 		</li>
 	{:else}
