@@ -6,8 +6,5 @@
 	},
 	"[svelte]": {
 		"editor.defaultFormatter": "svelte.svelte-vscode"
-	},
-	"[css]": {
-		"editor.defaultFormatter": "vscode.css-language-features"
 	}
 }
