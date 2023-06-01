@@ -6,7 +6,7 @@ export async function load() {
 	const wallets = await listWallets();
 
 	const getTransactionOrder: any = async (orderId: String) => {
-		await collections.orders.findOne({ _id: orderId })
+		await collections.orders.findOne({ _id: orderId });
 	};
 
 	return {
