@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { formatDistance } from 'date-fns';
+
 	export let data;
 </script>
 
@@ -24,6 +26,32 @@
 			checked={data.discovery}
 		/>
 		discovery
+	</label>
+	<label class="form-label">
+		Subscription duration
+		<select
+			name="subscriptionDuration"
+			class="form-input max-w-[25rem]"
+			value={data.subscriptionDuration}
+		>
+			{#each ['month', 'day', 'hour'] as duration}
+				<option value={duration}>{duration}</option>
+			{/each}
+		</select>
+	</label>
+	<label class="form-label">
+		Subscription reminder
+		<select
+			name="subscriptionReminderSeconds"
+			value={data.subscriptionReminderSeconds}
+			class="form-input max-w-[25rem]"
+		>
+			{#each [86400 * 7, 86400 * 3, 86400, 3600, 5 * 60] as seconds}
+				<option value={seconds}
+					>{formatDistance(0, seconds * 1000)} before the end of the subscription</option
+				>
+			{/each}
+		</select>
 	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>
