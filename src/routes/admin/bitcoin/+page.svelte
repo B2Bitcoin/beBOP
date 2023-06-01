@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PriceTag from '$lib/components/PriceTag.svelte';
+	import { formatDistance } from 'date-fns';
 
 	export let data;
 </script>
@@ -29,7 +30,23 @@
 		<li>
 			Amount: {transaction.amount} / Txid: {transaction.txid}
 			{#if transaction.label.startsWith('order:')}
-				/ <a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
+				/ Created <time
+					datetime={data
+						.getTransactionOrder(transaction.label.slice('order:'.length))
+						.createdAt.toJSON()}
+					title={data
+						.getTransactionOrder(transaction.label.slice('order:'.length))
+						.createdAt.toLocaleString('en')}
+					>{formatDistance(
+						data.getTransactionOrder(transaction.label.slice('order:'.length)).createdAt,
+						Date.now(),
+						{
+							addSuffix: true
+						}
+					)}</time
+				>
+				/
+				<a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
 					>Order</a
 				>{/if}
 		</li>
