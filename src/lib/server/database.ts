@@ -10,6 +10,7 @@ import type { Order } from '$lib/types/Order';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
 import type { BootikSubscription } from '$lib/types/BootikSubscription';
+import type { PaidSubscription } from '$lib/types/PaidSubscription';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -23,6 +24,7 @@ const db = client.db(MONGODB_DB);
 const pictures = db.collection<Picture>('pictures');
 const products = db.collection<Product>('products');
 const bootikSubscriptions = db.collection<BootikSubscription>('subscriptions');
+const paidSubscriptions = db.collection<PaidSubscription>('subscriptions.paid');
 const carts = db.collection<Cart>('carts');
 const runtimeConfig = db.collection<RuntimeConfigItem>('runtimeConfig');
 const locks = db.collection<Lock>('locks');
@@ -47,7 +49,8 @@ export const collections = {
 	orders,
 	nostrNotifications,
 	nostrReceivedMessages,
-	bootikSubscriptions
+	bootikSubscriptions,
+	paidSubscriptions
 };
 
 export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
@@ -68,6 +71,10 @@ client.on('open', () => {
 	nostrReceivedMessages.createIndex({ createdAt: -1 });
 	nostrNotifications.createIndex({ dest: 1 });
 	bootikSubscriptions.createIndex({ npub: 1 }, { sparse: true });
+	paidSubscriptions.createIndex(
+		{ npub: 1, productId: 1 },
+		{ unique: true, partialFilterExpression: { npub: { $exists: true } } }
+	);
 });
 
 export async function withTransaction(cb: WithSessionCallback) {
