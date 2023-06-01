@@ -12,8 +12,6 @@
 	let preorder = data.product.preorder;
 
 	let priceAmountElement: HTMLInputElement;
-	let delButton: HTMLButtonElement;
-	let formUpdate: HTMLFormElement;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -37,10 +35,9 @@
 			priceAmountElement.setCustomValidity('');
 		}
 	}
-	function confirmDelete() {
-		if (confirm('Voulez-vous supprimer ce produit ?')) {
-			delButton.formAction = '?/delete';
-			formUpdate.submit();
+	function confirmDelete(event: Event) {
+		if (!confirm('Would you like to delete this product?')) {
+			event.preventDefault();
 		}
 	}
 </script>
@@ -48,13 +45,7 @@
 <h1 class="text-3xl">Edit a product</h1>
 
 <div class="flex flex-col">
-	<form
-		method="post"
-		bind:this={formUpdate}
-		class="flex flex-col gap-4"
-		action="?/update"
-		on:submit={checkForm}
-	>
+	<form method="post" class="flex flex-col gap-4" action="?/update" on:submit={checkForm}>
 		<label>
 			Name
 			<input
@@ -162,7 +153,12 @@
 		<div class="flex justify-between gap-2">
 			<button type="submit" class="btn btn-blue">Update</button>
 			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
-			<button bind:this={delButton} class="ml-auto btn btn-red" on:click={confirmDelete}>
+			<button
+				type="submit"
+				class="ml-auto btn btn-red"
+				formaction="?/delete"
+				on:click={confirmDelete}
+			>
 				Delete
 			</button>
 		</div>
