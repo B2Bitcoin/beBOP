@@ -100,7 +100,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			if (!runtimeConfig.discovery) {
 				await send('Discovery is not enabled for the bootik, you cannot subscribe');
 			} else {
-				await collections.subscriptions.updateOne(
+				await collections.bootikSubscriptions.updateOne(
 					{ npub: senderNpub },
 					{
 						$set: {
@@ -118,7 +118,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			}
 			break;
 		case 'unsubscribe': {
-			const result = await collections.subscriptions.deleteOne({ npub: senderNpub });
+			const result = await collections.bootikSubscriptions.deleteOne({ npub: senderNpub });
 
 			if (result.deletedCount) {
 				await send('You were unsubscribed from the catalog');
