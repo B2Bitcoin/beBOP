@@ -10,5 +10,8 @@ export interface NostRNotification extends Timestamps {
 	content: string;
 	dest: string;
 
+	/** When replying to someone, we may want to increase seconds by 1 in our reply */
+	minCreatedAt?: Date;
+
 	processedAt?: Date;
 }

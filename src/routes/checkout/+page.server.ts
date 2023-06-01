@@ -3,12 +3,12 @@ import { collections, withTransaction } from '$lib/server/database';
 import { lndCreateInvoice } from '$lib/server/lightning.js';
 import { paymentMethods } from '$lib/server/payment-methods.js';
 import { COUNTRY_ALPHA3S } from '$lib/types/Country';
-import { SATOSHIS_PER_BTC } from '$lib/types/Currency.js';
 import { error, redirect } from '@sveltejs/kit';
 import { addHours, differenceInSeconds } from 'date-fns';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
 import { ORIGIN } from '$env/static/private';
+import { toSatoshis } from '$lib/utils/toSatoshis.js';
 
 export function load() {
 	return {
@@ -91,7 +91,7 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 
-		let total = 0;
+		let totalSatoshis = 0;
 
 		for (const item of cart.items) {
 			const product = byId[item.productId];
@@ -99,7 +99,7 @@ export const actions = {
 			const price = parseFloat(product.price.amount.toString());
 			const quantity = item.quantity;
 
-			total += price * quantity;
+			totalSatoshis += toSatoshis(price * quantity, product.price.currency);
 		}
 
 		const orderId = crypto.randomUUID();
@@ -133,8 +133,8 @@ export const actions = {
 					})),
 					...(shipping && { shippingAddress: shipping }),
 					totalPrice: {
-						amount: total,
-						currency: products[0].price.currency
+						amount: totalSatoshis,
+						currency: 'SAT'
 					},
 					payment: {
 						method: paymentMethod,
@@ -143,7 +143,7 @@ export const actions = {
 							? { address: await getNewAddress(orderAddressLabel(orderId)) }
 							: await (async () => {
 									const invoice = await lndCreateInvoice(
-										Math.floor(total * SATOSHIS_PER_BTC),
+										totalSatoshis,
 										differenceInSeconds(expiresAt, new Date()),
 										`${ORIGIN}/order/${orderId}`
 									);

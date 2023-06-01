@@ -3,6 +3,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
+import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -40,9 +41,9 @@ export const actions: Actions = {
 
 		const update = z
 			.object({
-				name: z.string().trim().min(1).max(100),
+				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				description: z.string().trim().max(10_000),
-				shortDescription: z.string().trim().max(250),
+				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
 				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
 				priceCurrency: z.enum(['BTC']),
 				availableDate: z.date({ coerce: true }).optional(),

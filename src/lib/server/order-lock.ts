@@ -7,7 +7,7 @@ import { sum } from '$lib/utils/sum';
 import { Lock } from './lock';
 import { inspect } from 'node:util';
 import { lndLookupInvoice } from './lightning';
-import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
+import { toSatoshis } from '$lib/utils/toSatoshis';
 
 const lock = new Lock('orders');
 
@@ -35,7 +35,9 @@ async function maintainOrders() {
 					transactions.filter((t) => t.amount > 0 && t.confirmations > 0).map((t) => t.amount)
 				);
 
-				if (received >= parseFloat(order.totalPrice.amount.toString())) {
+				const satReceived = toSatoshis(received, 'BTC');
+
+				if (satReceived >= toSatoshis(order.totalPrice.amount, order.totalPrice.currency)) {
 					await collections.orders.updateOne(
 						{ _id: order._id },
 						{
@@ -84,7 +86,7 @@ async function maintainOrders() {
 							$set: {
 								'payment.status': 'paid',
 								'payment.paidAt': invoice.settled_at,
-								'payment.totalReceived': invoice.amt_paid_sat / SATOSHIS_PER_BTC
+								'payment.totalReceived': invoice.amt_paid_sat
 							}
 						}
 					);

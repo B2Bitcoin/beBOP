@@ -3,6 +3,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import type { PageData } from './$types';
+	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data: PageData;
 
@@ -59,7 +60,7 @@
 			<input
 				type="text"
 				name="name"
-				maxlength="70"
+				maxlength={MAX_NAME_LIMIT}
 				class="form-input block"
 				value={data.product.name}
 			/>
@@ -81,8 +82,12 @@
 
 		<label>
 			Short description
-			<textarea name="shortDescription" cols="30" rows="2" maxlength="160" class="block form-input"
-				>{data.product.shortDescription}</textarea
+			<textarea
+				name="shortDescription"
+				cols="30"
+				rows="2"
+				maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+				class="block form-input">{data.product.shortDescription}</textarea
 			>
 		</label>
 
