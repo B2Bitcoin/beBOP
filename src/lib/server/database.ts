@@ -75,6 +75,7 @@ client.on('open', () => {
 		{ npub: 1, productId: 1 },
 		{ unique: true, partialFilterExpression: { npub: { $exists: true } } }
 	);
+	paidSubscriptions.createIndex({ number: 1 }, { unique: true });
 });
 
 export async function withTransaction(cb: WithSessionCallback) {

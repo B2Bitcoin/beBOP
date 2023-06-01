@@ -10,6 +10,7 @@ import { bech32 } from 'bech32';
 import { ORIGIN } from '$env/static/private';
 import { toSatoshis } from '$lib/utils/toSatoshis.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { generateOrderNumber } from '$lib/server/orders.js';
 
 export function load() {
 	return {
@@ -148,20 +149,9 @@ export const actions = {
 			}
 		}
 
+		const orderNumber = await generateOrderNumber();
+
 		await withTransaction(async (session) => {
-			const res = await collections.runtimeConfig.findOneAndUpdate(
-				{ _id: 'orderNumber' },
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				{ $inc: { data: 1 } as any },
-				{ upsert: true, session, returnDocument: 'after' }
-			);
-
-			if (!res.value) {
-				throw new Error('Failed to increment order number');
-			}
-
-			const orderNumber = res.value.data as number;
-
 			const expiresAt = addHours(new Date(), 2);
 
 			await collections.orders.insertOne(
