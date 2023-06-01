@@ -3,6 +3,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import type { PageData } from './$types';
+	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data: PageData;
 
@@ -42,7 +43,13 @@
 	<form method="post" class="flex flex-col gap-4" action="?/update" on:submit={checkForm}>
 		<label>
 			Name
-			<input type="text" name="name" class="form-input block" value={data.product.name} />
+			<input
+				type="text"
+				name="name"
+				maxlength={MAX_NAME_LIMIT}
+				class="form-input block"
+				value={data.product.name}
+			/>
 		</label>
 		<label>
 			Price (BTC)
@@ -61,8 +68,12 @@
 
 		<label>
 			Short description
-			<textarea name="shortDescription" cols="30" rows="2" maxlength="250" class="block form-input"
-				>{data.product.shortDescription}</textarea
+			<textarea
+				name="shortDescription"
+				cols="30"
+				rows="2"
+				maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+				class="block form-input">{data.product.shortDescription}</textarea
 			>
 		</label>
 

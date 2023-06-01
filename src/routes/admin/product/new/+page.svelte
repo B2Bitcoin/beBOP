@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 
@@ -37,7 +38,14 @@
 <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4" on:submit={checkForm}>
 	<label>
 		Product name
-		<input class="form-input block" type="text" name="name" placeholder="Product name" required />
+		<input
+			class="form-input block"
+			type="text"
+			maxlength={MAX_NAME_LIMIT}
+			name="name"
+			placeholder="Product name"
+			required
+		/>
 	</label>
 
 	<label>
@@ -63,7 +71,7 @@
 			name="shortDescription"
 			cols="30"
 			rows="2"
-			maxlength="250"
+			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
 			class="form-input block w-full"
 		/>
 	</label>

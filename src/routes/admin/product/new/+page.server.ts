@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -65,9 +66,9 @@ export const actions: Actions = {
 
 		const parsed = z
 			.object({
-				name: z.string().trim().min(1).max(100),
+				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				description: z.string().trim().max(10_000),
-				shortDescription: z.string().trim().max(250),
+				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
 				priceCurrency: z.enum(['BTC']),
 				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
 				type: z.enum(['resource', 'donation', 'subscription']),
