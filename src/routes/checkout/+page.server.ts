@@ -4,11 +4,12 @@ import { lndCreateInvoice } from '$lib/server/lightning.js';
 import { paymentMethods } from '$lib/server/payment-methods.js';
 import { COUNTRY_ALPHA3S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
-import { addHours, differenceInSeconds } from 'date-fns';
+import { addHours, differenceInSeconds, subSeconds } from 'date-fns';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
 import { ORIGIN } from '$env/static/private';
 import { toSatoshis } from '$lib/utils/toSatoshis.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export function load() {
 	return {
@@ -103,6 +104,49 @@ export const actions = {
 		}
 
 		const orderId = crypto.randomUUID();
+
+		const subscriptions = cart.items.filter((item) => byId[item.productId].type === 'subscription');
+
+		for (const subscription of subscriptions) {
+			const product = byId[subscription.productId];
+
+			if (subscription.quantity > 1) {
+				throw error(
+					400,
+					'Cannot order more than one of a subscription at a time for product: ' + product.name
+				);
+			}
+
+			const existingSubscription = await collections.paidSubscriptions.findOne({
+				npub: npubAddress,
+				productId: product._id
+			});
+
+			if (existingSubscription) {
+				if (
+					subSeconds(existingSubscription.paidUntil, runtimeConfig.subscriptionReminderSeconds) >
+					new Date()
+				) {
+					throw error(
+						400,
+						'You already have an active subscription for this product: ' + product.name
+					);
+				}
+			}
+
+			if (
+				await collections.orders.countDocuments(
+					{
+						'notifications.paymentStatus.npub': npubAddress,
+						'items.product._id': product._id,
+						'payment.status': 'pending'
+					},
+					{ limit: 1 }
+				)
+			) {
+				throw error(400, 'You already have a pending order for this product: ' + product.name);
+			}
+		}
 
 		await withTransaction(async (session) => {
 			const res = await collections.runtimeConfig.findOneAndUpdate(

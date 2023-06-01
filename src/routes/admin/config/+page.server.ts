@@ -21,8 +21,12 @@ export const actions = {
 			.object({
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),
-				subscriptionDuration: z.enum(["month", "day", "hour"]),
-				subscriptionReminderSeconds: z.number({coerce: true}).int().min(0).max(24 * 60 * 60 * 7)
+				subscriptionDuration: z.enum(['month', 'day', 'hour']),
+				subscriptionReminderSeconds: z
+					.number({ coerce: true })
+					.int()
+					.min(0)
+					.max(24 * 60 * 60 * 7)
 			})
 			.parse({
 				checkoutButtonOnProductPage: formData.get('checkoutButtonOnProductPage'),

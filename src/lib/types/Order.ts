@@ -2,7 +2,6 @@ import type { Product } from './Product';
 import type { Currency } from './Currency';
 import type { CountryAlpha3 } from './Country';
 import type { Timestamps } from './Timestamps';
-import type { ObjectId } from 'mongodb';
 
 export interface Order extends Timestamps {
 	/**
@@ -16,7 +15,6 @@ export interface Order extends Timestamps {
 	items: Array<{
 		product: Product;
 		quantity: number;
-		subscriptionId?: ObjectId;
 	}>;
 
 	shippingAddress?: {

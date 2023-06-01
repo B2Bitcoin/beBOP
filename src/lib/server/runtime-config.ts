@@ -4,7 +4,7 @@ import { collections } from './database';
 const defaultConfig = {
 	BTC_EUR: 30_000,
 	orderNumber: 0,
-	subscriptionDuration: "month" as "month" | "day" | "hour",
+	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
 
 	checkoutButtonOnProductPage: true,

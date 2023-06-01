@@ -11,6 +11,6 @@ export interface PaidSubscription extends Timestamps {
 	npub: string;
 	productId: string;
 
-	paidUntil?: Date;
+	paidUntil: Date;
 	lastRemindedAt?: Date;
 }
