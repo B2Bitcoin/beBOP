@@ -35,6 +35,11 @@
 			priceAmountElement.setCustomValidity('');
 		}
 	}
+	function confirmDelete(event: Event) {
+		if (!confirm('Would you like to delete this product?')) {
+			event.preventDefault();
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Edit a product</h1>
@@ -148,7 +153,14 @@
 		<div class="flex justify-between gap-2">
 			<button type="submit" class="btn btn-blue">Update</button>
 			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
-			<button type="submit" class="ml-auto btn btn-red" formaction="?/delete"> Delete </button>
+			<button
+				type="submit"
+				class="ml-auto btn btn-red"
+				formaction="?/delete"
+				on:click={confirmDelete}
+			>
+				Delete
+			</button>
 		</div>
 	</form>
 </div>
