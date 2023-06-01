@@ -16,7 +16,7 @@
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.picture.name} />
-	<Picture picture={data.picture} class="object-contain max-h-[500px] w-100" />
+	<Picture picture={data.picture} class="object-contain max-h-[500px] max-w-full" />
 	<div class="flex gap-4 justify-between">
 		<input type="submit" value="Update" class="btn btn-gray" />
 		<input type="submit" value="Delete" formaction="?/delete" class="btn btn-red" />
