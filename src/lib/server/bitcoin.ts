@@ -10,7 +10,8 @@ type BitcoinCommand =
 	| 'listwallets'
 	| 'createwallet'
 	| 'getnewaddress'
-	| 'getbalance';
+	| 'getbalance'
+	| 'getblockchaininfo';
 
 export function bitcoinRpc(command: BitcoinCommand, params: unknown[]) {
 	if (!isBitcoinConfigured) {
@@ -103,6 +104,18 @@ export async function getBalance(confirmations = 1) {
 
 	const json = await response.json();
 	return z.object({ result: z.number() }).parse(json).result;
+}
+
+export async function getBlockchainInfo() {
+	const response = await bitcoinRpc('getblockchaininfo', []);
+
+	if (!response.ok) {
+		throw error(500, 'Could not get blockchain info');
+	}
+
+	const json = await response.json();
+	return z.object({ result: z.object({ blocks: z.number(), chain: z.string() }) }).parse(json)
+		.result;
 }
 
 export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[number];

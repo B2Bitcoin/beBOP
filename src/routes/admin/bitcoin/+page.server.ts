@@ -1,13 +1,32 @@
-import { createWallet, listWallets, listTransactions, getBalance } from '$lib/server/bitcoin';
+import {
+	createWallet,
+	listWallets,
+	listTransactions,
+	getBalance,
+	getBlockchainInfo
+} from '$lib/server/bitcoin';
+import { collections } from '$lib/server/database.js';
 import { error } from '@sveltejs/kit';
 
 export async function load() {
 	const wallets = await listWallets();
 
+	const transactions = wallets.length ? await listTransactions() : [];
+
+	const orders = collections.orders.find({
+		_id: {
+			$in: transactions
+				.filter((item) => item.label.startsWith('order:'))
+				.map((item) => item.label.slice('order:'.length))
+		}
+	});
+
 	return {
 		wallets,
-		transactions: wallets.length ? listTransactions() : [],
-		balance: wallets.length ? getBalance() : 0
+		transactions,
+		balance: wallets.length ? getBalance() : 0,
+		orders: orders.toArray(),
+		blockchainInfo: getBlockchainInfo()
 	};
 }
 
