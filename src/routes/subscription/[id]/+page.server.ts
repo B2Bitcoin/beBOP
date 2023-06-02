@@ -34,7 +34,12 @@ export async function load({ params }) {
 	);
 
 	return {
-		subscription,
+		subscription: {
+			createdAt: subscription.createdAt,
+			npub: subscription.npub,
+			paidUntil: subscription.paidUntil,
+			number: subscription.number
+		},
 		product: {
 			_id: product._id,
 			name: product.name

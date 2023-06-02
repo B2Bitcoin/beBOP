@@ -4,12 +4,20 @@
 	export let data;
 </script>
 
-<main class="mx-auto max-w-7xl py-10 px-6">
+<main class="mx-auto max-w-7xl py-10 px-6 flex flex-col gap-4 items-start">
 	<h1 class="text-3xl">
 		Subscription {data.subscription.number}
 	</h1>
 
 	<ProductItem product={data.product} picture={data.picture} />
+
+	<p>Associated to npub: {data.subscription.npub}</p>
+
+	<p>
+		Initially created: <time datetime={data.subscription.createdAt.toJSON()}
+			>{new Date(data.subscription.createdAt).toLocaleString('en-UK')}</time
+		>
+	</p>
 
 	<p>
 		Paid until: <time datetime={data.subscription.paidUntil.toJSON()}
