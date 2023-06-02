@@ -61,6 +61,7 @@
 			min="0"
 			step="1"
 			name="confirmationBlocks"
+			class="form-input max-w-[25rem]"
 			value={data.confirmationBlocks}
 		/>
 	</label>
