@@ -3,6 +3,10 @@
 	import { formatDistance } from 'date-fns';
 
 	export let data;
+
+	let orderByTransaction = Object.fromEntries(
+		[...data.orders].reverse().map((order) => [order._id, order])
+	);
 </script>
 
 <h1 class="text-3xl">Bitcoin node</h1>
@@ -30,16 +34,22 @@
 		<li>
 			Amount: {transaction.amount} / Txid: {transaction.txid}
 			{#if transaction.label.startsWith('order:')}
-				{#each data.orders as order}
-					{#if transaction.label.slice('order:'.length) === order._id}
-						<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString('en')}
-							>{formatDistance(order.createdAt, Date.now(), {
-								addSuffix: true
-							})}</time
-						>
-					{/if}
-				{/each}
+				/ Created
+				<time
+					datetime={orderByTransaction[transaction.label.slice('order:'.length)].createdAt.toJSON()}
+					title={orderByTransaction[
+						transaction.label.slice('order:'.length)
+					].createdAt.toLocaleString('en')}
+					>{formatDistance(
+						orderByTransaction[transaction.label.slice('order:'.length)].createdAt,
+						Date.now(),
+						{
+							addSuffix: true
+						}
+					)}</time
+				>
 
+				/
 				<a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
 					>Order</a
 				>{/if}

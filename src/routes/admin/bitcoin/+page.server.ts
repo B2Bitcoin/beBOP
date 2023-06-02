@@ -5,7 +5,8 @@ import { error } from '@sveltejs/kit';
 export async function load() {
 	const wallets = await listWallets();
 
-	const orders = await collections.orders.find().toArray();
+	const Orderansactions = await listTransactions();
+	const orders = collections.orders.find({ _id: { $in: Orderansactions.map((item) => item.label.slice('order:'.length)) } }).toArray();
 
 	return {
 		wallets,
