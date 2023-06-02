@@ -46,7 +46,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 					{
 						$set: {
 							paidUntil: add(max([existingSubscription.paidUntil, new Date()]), {
-								[runtimeConfig.subscriptionDuration]: 1
+								[`${runtimeConfig.subscriptionDuration}s`]: 1
 							}),
 							updatedAt: new Date(),
 							notifications: []
@@ -66,7 +66,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 						number: await generateSubscriptionNumber(),
 						npub: order.notifications.paymentStatus.npub,
 						productId: subscription.product._id,
-						paidUntil: add(new Date(), { [runtimeConfig.subscriptionDuration]: 1 }),
+						paidUntil: add(new Date(), { [`${runtimeConfig.subscriptionDuration}s`]: 1 }),
 						createdAt: new Date(),
 						updatedAt: new Date(),
 						notifications: []
