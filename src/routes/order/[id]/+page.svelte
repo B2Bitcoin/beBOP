@@ -57,6 +57,10 @@
 			</div>
 		{/if}
 
+		<p>
+			Provided npub: <span class="font-mono">{data.order.notifications.paymentStatus.npub}</span>
+		</p>
+
 		{#if data.order.payment.status === 'pending'}
 			<ul>
 				<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
