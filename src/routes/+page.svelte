@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Picture from '$lib/components/Picture.svelte';
+	import ProductItem from '$lib/components/ProductItem.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -12,14 +12,7 @@
 <main class="p-4">
 	<div class="flex flex-row flex-wrap gap-6 mt-6">
 		{#each data.products as product}
-			<div class="flex flex-col text-center">
-				<a href="/product/{product._id}" class="flex flex-col items-center">
-					<Picture picture={picturesByProduct[product._id]} class="block h-36" />
-					<span class="mt-2 line-clamp-3 text-ellipsis max-w-[191px] break-words hyphens-auto"
-						>{product.name}</span
-					>
-				</a>
-			</div>
+			<ProductItem {product} picture={picturesByProduct[product._id]} />
 		{/each}
 	</div>
 </main>
