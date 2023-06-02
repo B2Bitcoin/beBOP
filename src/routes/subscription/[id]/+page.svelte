@@ -21,6 +21,10 @@
 	</p>
 
 	<form action="?/renew">
-		<button class="btn btn-black">Renew</button>
+		<button
+			class="btn btn-black"
+			disabled={!data.canRenew}
+			title={data.canRenew ? '' : 'Subscription not due for renewal'}>Renew</button
+		>
 	</form>
 </main>

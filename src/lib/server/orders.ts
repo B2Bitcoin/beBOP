@@ -138,7 +138,9 @@ export async function createOrder(
 			) {
 				throw error(
 					400,
-					'You already have an active subscription for this product: ' + product.name
+					'You already have an active subscription for this product: ' +
+						product.name +
+						', which is not due for renewal yet.'
 				);
 			}
 		}

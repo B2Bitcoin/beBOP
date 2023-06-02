@@ -1,6 +1,8 @@
 import { collections } from '$lib/server/database.js';
 import { createOrder } from '$lib/server/orders.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { error, redirect } from '@sveltejs/kit';
+import { subSeconds } from 'date-fns';
 
 export async function load({ params }) {
 	const subscription = await collections.paidSubscriptions.findOne({
@@ -26,10 +28,16 @@ export async function load({ params }) {
 		{ sort: { createdAt: 1 } }
 	);
 
+	const canRenewAfter = subSeconds(
+		subscription.paidUntil,
+		runtimeConfig.subscriptionReminderSeconds
+	);
+
 	return {
 		subscription,
 		product,
-		picture: picture ?? undefined
+		picture: picture ?? undefined,
+		canRenew: canRenewAfter < new Date()
 	};
 }
 
