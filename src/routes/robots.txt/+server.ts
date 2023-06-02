@@ -4,5 +4,6 @@ Disallow: /order/
 Disallow: /subscription/
 Disallow: /admin/
 Disallow: /checkout
-Disallow: /cart`);
+Disallow: /cart
+`);
 }
