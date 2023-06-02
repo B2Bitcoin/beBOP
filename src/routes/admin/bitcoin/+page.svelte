@@ -31,13 +31,13 @@
 	{#each data.transactions as transaction}
 		<li>
 			Amount: {transaction.amount} / Txid: {transaction.txid}
-			{#if transaction.label.startsWith('order:')}
-				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)]?.createdAt}
+			{#if transaction.label.startsWith('order:') && orderById[transaction.label.slice('order:'.length)]}
+				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)].createdAt}
 				/
 				<a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
 					>Order</a
 				>
-				Order created
+				created
 				<time datetime={orderCreatedAt.toJSON()} title={orderCreatedAt.toLocaleString('en')}
 					>{formatDistance(orderCreatedAt, Date.now(), {
 						addSuffix: true
