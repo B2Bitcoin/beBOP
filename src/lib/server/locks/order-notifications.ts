@@ -1,7 +1,7 @@
 import type { Order } from '$lib/types/Order';
 import { ObjectId, type ChangeStreamDocument } from 'mongodb';
-import { collections } from './database';
-import { Lock } from './lock';
+import { collections } from '../database';
+import { Lock } from '../lock';
 import { ORIGIN } from '$env/static/private';
 
 const lock = new Lock('order-notifications');

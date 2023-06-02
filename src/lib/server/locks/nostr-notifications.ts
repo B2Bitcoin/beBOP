@@ -1,10 +1,16 @@
 import type { ChangeStreamDocument } from 'mongodb';
-import { Lock } from './lock';
-import { processClosed } from './process';
+import { Lock } from '../lock';
+import { processClosed } from '../process';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
-import { hexToNpub, nostrPrivateKeyHex, nostrPublicKeyHex, nostrRelays, nostrToHex } from './nostr';
+import {
+	hexToNpub,
+	nostrPrivateKeyHex,
+	nostrPublicKeyHex,
+	nostrRelays,
+	nostrToHex
+} from '../nostr';
 import { fromUnixTime, getUnixTime, max } from 'date-fns';
-import { collections } from './database';
+import { collections } from '../database';
 import { RelayPool } from 'nostr-relaypool';
 import {
 	getEventHash,

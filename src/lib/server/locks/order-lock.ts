@@ -1,14 +1,14 @@
-import { collections, withTransaction } from './database';
+import { collections, withTransaction } from '../database';
 import { setTimeout } from 'node:timers/promises';
-import { processClosed } from './process';
+import { processClosed } from '../process';
 import type { Order } from '$lib/types/Order';
-import { listTransactions, orderAddressLabel } from './bitcoin';
+import { listTransactions, orderAddressLabel } from '../bitcoin';
 import { sum } from '$lib/utils/sum';
-import { Lock } from './lock';
+import { Lock } from '../lock';
 import { inspect } from 'node:util';
-import { lndLookupInvoice } from './lightning';
+import { lndLookupInvoice } from '../lightning';
 import { toSatoshis } from '$lib/utils/toSatoshis';
-import { onOrderPaid } from './orders';
+import { onOrderPaid } from '../orders';
 
 const lock = new Lock('orders');
 

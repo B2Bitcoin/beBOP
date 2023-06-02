@@ -1,10 +1,10 @@
 import { ObjectId, type ChangeStreamDocument } from 'mongodb';
-import { collections } from './database';
-import { Lock } from './lock';
+import { collections } from '../database';
+import { Lock } from '../lock';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
 import { Kind } from 'nostr-tools';
 import { ORIGIN } from '$env/static/private';
-import { runtimeConfig } from './runtime-config';
+import { runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds } from 'date-fns';
 
