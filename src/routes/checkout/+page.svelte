@@ -42,8 +42,6 @@
 
 				event.preventDefault();
 				return;
-			} else {
-				input.setCustomValidity('');
 			}
 		}
 	}
@@ -158,6 +156,7 @@
 									name="{key}NPUB"
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus'}
+									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
 							<label class="form-label">
