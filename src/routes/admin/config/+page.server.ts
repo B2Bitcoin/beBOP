@@ -9,6 +9,7 @@ export async function load() {
 		discovery: runtimeConfig.discovery,
 		subscriptionDuration: runtimeConfig.subscriptionDuration,
 		subscriptionReminderSeconds: runtimeConfig.subscriptionReminderSeconds,
+		confirmationBlocks: runtimeConfig.confirmationBlocks,
 		origin: ORIGIN
 	};
 }
@@ -26,13 +27,15 @@ export const actions = {
 					.number({ coerce: true })
 					.int()
 					.min(0)
-					.max(24 * 60 * 60 * 7)
+					.max(24 * 60 * 60 * 7),
+				confirmationBlocks: z.number({ coerce: true }).int().min(0)
 			})
 			.parse({
 				checkoutButtonOnProductPage: formData.get('checkoutButtonOnProductPage'),
 				discovery: formData.get('discovery'),
 				subscriptionDuration: formData.get('subscriptionDuration'),
-				subscriptionReminderSeconds: formData.get('subscriptionReminderSeconds')
+				subscriptionReminderSeconds: formData.get('subscriptionReminderSeconds'),
+				confirmationBlocks: formData.get('confirmationBlocks')
 			});
 
 		if (runtimeConfig.checkoutButtonOnProductPage !== result.checkoutButtonOnProductPage) {
@@ -64,6 +67,14 @@ export const actions = {
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'subscriptionReminderSeconds' },
 				{ $set: { data: result.subscriptionReminderSeconds, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+		if (runtimeConfig.confirmationBlocks !== result.confirmationBlocks) {
+			runtimeConfig.confirmationBlocks = result.confirmationBlocks;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'confirmationBlocks' },
+				{ $set: { data: result.confirmationBlocks, updatedAt: new Date() } },
 				{ upsert: true }
 			);
 		}

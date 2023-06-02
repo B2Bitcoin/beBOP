@@ -9,6 +9,7 @@ import { inspect } from 'node:util';
 import { lndLookupInvoice } from '../lightning';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { onOrderPaid } from '../orders';
+import { runtimeConfig } from '../runtime-config';
 
 const lock = new Lock('orders');
 
@@ -32,7 +33,9 @@ async function maintainOrders() {
 				const transactions = await listTransactions(orderAddressLabel(order._id));
 
 				const received = sum(
-					transactions.filter((t) => t.amount > 0 && t.confirmations > 0).map((t) => t.amount)
+					transactions
+						.filter((t) => t.amount > 0 && t.confirmations >= runtimeConfig.confirmationBlocks)
+						.map((t) => t.amount)
 				);
 
 				const satReceived = toSatoshis(received, 'BTC');

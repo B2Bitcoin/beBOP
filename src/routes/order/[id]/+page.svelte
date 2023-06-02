@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
+	import { pluralize } from '$lib/utils/pluralize';
 	import { differenceInMinutes, format } from 'date-fns';
 	import { onMount } from 'svelte';
 
@@ -71,7 +72,10 @@
 			<img src="{$page.url.pathname}/qrcode" class="w-40 h-40" alt="QR code" />
 			<div class="text-xl">
 				Pay to to complete the order. {#if data.order.payment.method === 'bitcoin'}
-					Order will be marked as paid after 1 confirmation.{/if}
+					Order will be marked as paid after {pluralize(
+						data.confirmationBlocksRequired,
+						'confirmation'
+					)}.{/if}
 			</div>
 		{:else if data.order.payment.status === 'paid'}
 			<p>Order <span class="text-green-500">paid</span>!</p>

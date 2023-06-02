@@ -35,7 +35,10 @@ export async function load({ params }) {
 
 	return {
 		subscription,
-		product,
+		product: {
+			_id: product._id,
+			name: product.name
+		},
 		picture: picture ?? undefined,
 		canRenew: canRenewAfter < new Date()
 	};

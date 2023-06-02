@@ -1,5 +1,6 @@
 import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { s3client } from '$lib/server/s3.js';
 import type { Picture } from '$lib/types/Picture.js';
 import { UrlDependency } from '$lib/types/UrlDependency.js';
@@ -37,6 +38,7 @@ export async function load({ params, depends }) {
 		.toArray();
 
 	return {
+		confirmationBlocksRequired: runtimeConfig.confirmationBlocks,
 		order: {
 			number: order.number,
 			createdAt: order.createdAt,
