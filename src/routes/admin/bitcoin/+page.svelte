@@ -4,9 +4,7 @@
 
 	export let data;
 
-	let orderByTransaction = Object.fromEntries(
-		[...data.orders].reverse().map((order) => [order._id, order])
-	);
+	let orderById = Object.fromEntries([...data.orders].map((order) => [order._id, order]));
 </script>
 
 <h1 class="text-3xl">Bitcoin node</h1>
@@ -36,12 +34,10 @@
 			{#if transaction.label.startsWith('order:')}
 				/ Created
 				<time
-					datetime={orderByTransaction[transaction.label.slice('order:'.length)].createdAt.toJSON()}
-					title={orderByTransaction[
-						transaction.label.slice('order:'.length)
-					].createdAt.toLocaleString('en')}
+					datetime={orderById[transaction.label.slice('order:'.length)].createdAt.toJSON()}
+					title={orderById[transaction.label.slice('order:'.length)].createdAt.toLocaleString('en')}
 					>{formatDistance(
-						orderByTransaction[transaction.label.slice('order:'.length)].createdAt,
+						orderById[transaction.label.slice('order:'.length)].createdAt,
 						Date.now(),
 						{
 							addSuffix: true

@@ -5,14 +5,15 @@ import { error } from '@sveltejs/kit';
 export async function load() {
 	const wallets = await listWallets();
 
-	const Orderansactions = await listTransactions();
+	const transactions = wallets.length ? await listTransactions() : [];
+
 	const orders = collections.orders
-		.find({ _id: { $in: Orderansactions.map((item) => item.label.slice('order:'.length)) } })
+		.find({ _id: { $in: transactions.filter(item => item.label.startsWith('order:')).map((item) => item.label.slice('order:'.length)) } })
 		.toArray();
 
 	return {
 		wallets,
-		transactions: wallets.length ? listTransactions() : [],
+		transactions,
 		balance: wallets.length ? getBalance() : 0,
 		orders
 	};
