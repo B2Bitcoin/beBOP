@@ -9,6 +9,13 @@
 
 <h1 class="text-3xl">Bitcoin node</h1>
 
+<h2 class="text-2xl">Chain</h2>
+
+<ul>
+	<li>Blocks: {data.blockchainInfo.blocks.toLocaleString('en')}</li>
+	<li>Chain: {data.blockchainInfo.chain}</li>
+</ul>
+
 <h2 class="text-2xl">Wallet</h2>
 
 <ul>
@@ -30,7 +37,14 @@
 <ul>
 	{#each data.transactions as transaction}
 		<li>
-			Amount: {transaction.amount} / Txid: {transaction.txid}
+			Amount: {transaction.amount} / Txid:
+			<a
+				class="underline text-blue"
+				href="https://www.blockchain.com/en/explorer/transactions/{data.blockchainInfo.chain ===
+				'test'
+					? 'btc-testnet'
+					: 'btc'}/{transaction.txid}">{transaction.txid}</a
+			>
 			{#if transaction.label.startsWith('order:') && orderById[transaction.label.slice('order:'.length)]}
 				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)].createdAt}
 				/
