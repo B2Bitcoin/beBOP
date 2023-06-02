@@ -6,7 +6,7 @@ import { Kind } from 'nostr-tools';
 import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
-import { addSeconds } from 'date-fns';
+import { addSeconds, formatDistance } from 'date-fns';
 
 const lock = new Lock('received-messages');
 
@@ -146,7 +146,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 							(subscription) =>
 								`- #${subscription.number}: ${ORIGIN}/subscription/${
 									subscription._id
-								}, paid until ${subscription.paidUntil.toISOString()}${
+								}, end: ${formatDistance(subscription.paidUntil, new Date(), { addSuffix: true })}${
 									subscription.cancelledAt ? ' [cancelled]' : ''
 								}`
 						)

@@ -50,6 +50,14 @@
 			/>
 		</div>
 
+		{#if data.order.notifications?.paymentStatus?.npub}
+			<p>
+				NostR public address for payment status: <span class="font-mono">
+					{data.order.notifications.paymentStatus.npub}</span
+				>
+			</p>
+		{/if}
+
 		{#if data.order.payment.status !== 'expired'}
 			<div>
 				Keep this link: <a class="underline text-blue" href={$page.url.href}>{$page.url.href}</a> to
@@ -57,18 +65,9 @@
 			</div>
 		{/if}
 
-		<p>
-			Provided npub: <span class="font-mono">{data.order.notifications.paymentStatus.npub}</span>
-		</p>
-
 		{#if data.order.payment.status === 'pending'}
 			<ul>
 				<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
-				{#if data.order.notifications?.paymentStatus?.npub}
-					<li>
-						NostR public address for payment status: {data.order.notifications.paymentStatus.npub}
-					</li>
-				{/if}
 				<li>
 					Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
 				</li>

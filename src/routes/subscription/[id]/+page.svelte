@@ -28,7 +28,7 @@
 		{/if}
 	</p>
 
-	<form action="?/renew">
+	<form action="?/renew" method="post">
 		<button
 			class="btn btn-black"
 			disabled={!data.canRenew}
