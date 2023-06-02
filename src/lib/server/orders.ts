@@ -43,7 +43,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 								[runtimeConfig.subscriptionDuration]: 1
 							}),
 							updatedAt: new Date(),
-							notifications: {}
+							notifications: []
 						},
 						$unset: { cancelledAt: 1 }
 					},
@@ -63,7 +63,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 						paidUntil: add(new Date(), { [runtimeConfig.subscriptionDuration]: 1 }),
 						createdAt: new Date(),
 						updatedAt: new Date(),
-						notifications: {}
+						notifications: []
 					},
 					{ session }
 				);
