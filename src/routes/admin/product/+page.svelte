@@ -15,6 +15,6 @@
 
 <div class="flex flex-row flex-wrap gap-6">
 	{#each data.products as product}
-		<ProductItem {product} picture={picturesByProduct[product._id]} />
+		<ProductItem {product} picture={picturesByProduct[product._id]} isAdmin />
 	{/each}
 </div>
