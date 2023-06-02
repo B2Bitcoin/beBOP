@@ -175,7 +175,7 @@
 			>
 				<div class="flex justify-between">
 					<a href="/cart" class="text-blue hover:underline">&lt;&lt;Back to cart</a>
-					<p>{pluralize(data.cart?.length ?? 0, 'product')}</p>
+					<p>{data.cart?.length} {pluralize(data.cart?.length ?? 0, 'product')}</p>
 				</div>
 				{#each items as item}
 					<form
