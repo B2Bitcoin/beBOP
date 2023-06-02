@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database.js';
+import { toBitcoins } from '$lib/utils/toBitcoins.js';
 import { error } from '@sveltejs/kit';
 import qrcode from 'qrcode';
 
@@ -15,7 +16,10 @@ export async function GET({ params }) {
 
 	const address =
 		order.payment.method === 'bitcoin'
-			? `bitcoin:${order.payment.address}?amount=${order.totalPrice.amount.toString()}`
+			? `bitcoin:${order.payment.address}?amount=${toBitcoins(
+					order.totalPrice.amount,
+					order.totalPrice.currency
+			  ).toLocaleString('en-US', { maximumFractionDigits: 8 })}`
 			: order.payment.address;
 
 	return new Response(await qrcode.toString(address, { type: 'svg' }), {

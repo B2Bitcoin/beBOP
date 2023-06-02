@@ -53,5 +53,16 @@
 			{/each}
 		</select>
 	</label>
+
+	<label class="form-label">
+		Confirmation blocks
+		<input
+			type="number"
+			min="0"
+			step="1"
+			name="confirmationBlocks"
+			value={data.confirmationBlocks}
+		/>
+	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>

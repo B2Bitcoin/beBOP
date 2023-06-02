@@ -8,6 +8,7 @@
 	import { sum } from '$lib/utils/sum';
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
+	import { pluralize } from '$lib/utils/pluralize';
 
 	let actionCount = 0;
 	export let data;
@@ -174,11 +175,7 @@
 			>
 				<div class="flex justify-between">
 					<a href="/cart" class="text-blue hover:underline">&lt;&lt;Back to cart</a>
-					{#if data.cart?.length === 1}
-						<p>{data.cart?.length} product</p>
-					{:else}
-						<p>{data.cart?.length} products</p>
-					{/if}
+					<p>{pluralize(data.cart?.length ?? 0, 'product')}</p>
 				</div>
 				{#each items as item}
 					<form

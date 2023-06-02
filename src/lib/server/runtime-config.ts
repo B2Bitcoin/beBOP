@@ -7,6 +7,7 @@ const defaultConfig = {
 	subscriptionNumber: 0,
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
+	confirmationBlocks: 1,
 
 	checkoutButtonOnProductPage: true,
 	discovery: true
