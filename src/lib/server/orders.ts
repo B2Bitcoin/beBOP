@@ -42,9 +42,10 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 							paidUntil: add(max([existingSubscription.paidUntil, new Date()]), {
 								[runtimeConfig.subscriptionDuration]: 1
 							}),
-							updatedAt: new Date()
+							updatedAt: new Date(),
+							notifications: {}
 						},
-						$unset: { canceledAt: 1 }
+						$unset: { cancelledAt: 1 }
 					},
 					{ session }
 				);
@@ -61,7 +62,8 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 						productId: subscription.product._id,
 						paidUntil: add(new Date(), { [runtimeConfig.subscriptionDuration]: 1 }),
 						createdAt: new Date(),
-						updatedAt: new Date()
+						updatedAt: new Date(),
+						notifications: {}
 					},
 					{ session }
 				);

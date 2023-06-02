@@ -2,6 +2,7 @@
  * For paid subscriptions
  */
 
+import type { ObjectId } from 'mongodb';
 import type { Timestamps } from './Timestamps';
 
 export interface PaidSubscription extends Timestamps {
@@ -12,6 +13,12 @@ export interface PaidSubscription extends Timestamps {
 	productId: string;
 
 	paidUntil: Date;
-	lastRemindedAt?: Date;
+
+	notifications: Array<{
+		type: 'reminder' | 'expiration';
+		createdAt: Date;
+		_id: ObjectId;
+	}>;
+
 	cancelledAt?: Date;
 }
