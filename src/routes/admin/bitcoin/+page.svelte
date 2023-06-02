@@ -32,23 +32,18 @@
 		<li>
 			Amount: {transaction.amount} / Txid: {transaction.txid}
 			{#if transaction.label.startsWith('order:')}
-				/ Created
-				<time
-					datetime={orderById[transaction.label.slice('order:'.length)].createdAt.toJSON()}
-					title={orderById[transaction.label.slice('order:'.length)].createdAt.toLocaleString('en')}
-					>{formatDistance(
-						orderById[transaction.label.slice('order:'.length)].createdAt,
-						Date.now(),
-						{
-							addSuffix: true
-						}
-					)}</time
-				>
-
+				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)]?.createdAt}
 				/
 				<a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
 					>Order</a
-				>{/if}
+				>
+				Order created
+				<time datetime={orderCreatedAt.toJSON()} title={orderCreatedAt.toLocaleString('en')}
+					>{formatDistance(orderCreatedAt, Date.now(), {
+						addSuffix: true
+					})}</time
+				>
+			{/if}
 		</li>
 	{:else}
 		No transactions yet
