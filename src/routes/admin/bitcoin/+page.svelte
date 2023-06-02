@@ -30,22 +30,16 @@
 		<li>
 			Amount: {transaction.amount} / Txid: {transaction.txid}
 			{#if transaction.label.startsWith('order:')}
-				/ Created <time
-					datetime={data
-						.getTransactionOrder(transaction.label.slice('order:'.length))
-						.createdAt.toJSON()}
-					title={data
-						.getTransactionOrder(transaction.label.slice('order:'.length))
-						.createdAt.toLocaleString('en')}
-					>{formatDistance(
-						data.getTransactionOrder(transaction.label.slice('order:'.length)).createdAt,
-						Date.now(),
-						{
-							addSuffix: true
-						}
-					)}</time
-				>
-				/
+				{#each data.orders as order}
+					{#if transaction.label.slice('order:'.length) === order._id}
+						<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString('en')}
+							>{formatDistance(order.createdAt, Date.now(), {
+								addSuffix: true
+							})}</time
+						>
+					{/if}
+				{/each}
+
 				<a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
 					>Order</a
 				>{/if}

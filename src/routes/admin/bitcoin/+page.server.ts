@@ -1,20 +1,17 @@
 import { createWallet, listWallets, listTransactions, getBalance } from '$lib/server/bitcoin';
 import { collections } from '$lib/server/database.js';
-import type { Order } from '$lib/types/Order.js';
 import { error } from '@sveltejs/kit';
 
 export async function load() {
 	const wallets = await listWallets();
 
-	const getTransactionOrder: any = async (orderId: string) => {
-		await collections.orders.findOne({ _id: orderId });
-	};
+	const orders = await collections.orders.find().toArray();
 
 	return {
 		wallets,
 		transactions: wallets.length ? listTransactions() : [],
 		balance: wallets.length ? getBalance() : 0,
-		getTransactionOrder
+		orders
 	};
 }
 
