@@ -1,8 +1,8 @@
-import { collections } from './database';
+import { collections } from '../database';
 import { differenceInMinutes } from 'date-fns';
 import { setTimeout } from 'node:timers/promises';
-import { processClosed } from './process';
-import { Lock } from './lock';
+import { processClosed } from '../process';
+import { Lock } from '../lock';
 
 const lock = new Lock('currency');
 

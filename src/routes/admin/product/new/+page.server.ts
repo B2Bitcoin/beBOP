@@ -122,7 +122,7 @@ export const actions: Actions = {
 		// a change stream would probably be better
 		if (runtimeConfig.discovery) {
 			(async function () {
-				for await (const subscription of collections.subscriptions.find({
+				for await (const subscription of collections.bootikSubscriptions.find({
 					npub: { $exists: true }
 				})) {
 					await collections.nostrNotifications

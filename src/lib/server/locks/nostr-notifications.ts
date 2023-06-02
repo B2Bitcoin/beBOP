@@ -1,10 +1,16 @@
 import type { ChangeStreamDocument } from 'mongodb';
-import { Lock } from './lock';
-import { processClosed } from './process';
+import { Lock } from '../lock';
+import { processClosed } from '../process';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
-import { hexToNpub, nostrPrivateKeyHex, nostrPublicKeyHex, nostrRelays, nostrToHex } from './nostr';
-import { fromUnixTime, getUnixTime } from 'date-fns';
-import { collections } from './database';
+import {
+	hexToNpub,
+	nostrPrivateKeyHex,
+	nostrPublicKeyHex,
+	nostrRelays,
+	nostrToHex
+} from '../nostr';
+import { fromUnixTime, getUnixTime, max } from 'date-fns';
+import { collections } from '../database';
 import { RelayPool } from 'nostr-relaypool';
 import {
 	getEventHash,
@@ -122,10 +128,10 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 		id: '',
 		content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
 		created_at: getUnixTime(
-			change.fullDocument.minCreatedAt &&
-				change.fullDocument.minCreatedAt > change.fullDocument.createdAt
-				? change.fullDocument.minCreatedAt
-				: change.fullDocument.createdAt
+			max([
+				change.fullDocument.minCreatedAt ?? change.fullDocument.createdAt,
+				change.fullDocument.createdAt
+			])
 		),
 		pubkey: nostrPublicKeyHex,
 		tags: [['p', receiverPublicKeyHex]],

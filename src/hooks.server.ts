@@ -4,11 +4,7 @@ import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 
-import '$lib/server/currency-lock';
-import '$lib/server/order-lock';
-import '$lib/server/order-notifications';
-import '$lib/server/nostr-notifications';
-import '$lib/server/handle-messages';
+import '$lib/server/locks';
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);

@@ -1,10 +1,10 @@
 import { ObjectId, type ChangeStreamDocument } from 'mongodb';
-import { collections } from './database';
-import { Lock } from './lock';
+import { collections } from '../database';
+import { Lock } from '../lock';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
 import { Kind } from 'nostr-tools';
 import { ORIGIN } from '$env/static/private';
-import { runtimeConfig } from './runtime-config';
+import { runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds } from 'date-fns';
 
@@ -36,7 +36,9 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 
 	const send = (message: string) => sendMessage(senderNpub, message, minCreatedAt);
 
-	switch (content.trim().replaceAll(/\s+/g, ' ')) {
+	const toMatch = content.trim().replaceAll(/\s+/g, ' ');
+
+	switch (toMatch) {
 		case 'help':
 			await send(
 				`Commands:
@@ -45,7 +47,9 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 - catalog: Show the catalog
 - detailed catalog: Show the catalog, with product descriptions
 - subscribe: Subscribe to catalog updates
-- unsubscribe: Unsubscribe from catalog updates`
+- unsubscribe: Unsubscribe from catalog updates
+- subscriptions: Show the list of paid subscriptions associated to your npub
+- cancel [subscription number]: Cancel a paid subscription to not be reminded anymore`
 			);
 			break;
 		case 'orders': {
@@ -100,7 +104,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			if (!runtimeConfig.discovery) {
 				await send('Discovery is not enabled for the bootik, you cannot subscribe');
 			} else {
-				await collections.subscriptions.updateOne(
+				await collections.bootikSubscriptions.updateOne(
 					{ npub: senderNpub },
 					{
 						$set: {
@@ -118,7 +122,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			}
 			break;
 		case 'unsubscribe': {
-			const result = await collections.subscriptions.deleteOne({ npub: senderNpub });
+			const result = await collections.bootikSubscriptions.deleteOne({ npub: senderNpub });
 
 			if (result.deletedCount) {
 				await send('You were unsubscribed from the catalog');
@@ -127,7 +131,63 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			}
 			break;
 		}
+		case 'subscriptions': {
+			const subscriptions = await collections.paidSubscriptions
+				.find({ npub: senderNpub, paidUntil: { $gt: new Date() } })
+				.sort({ number: 1 })
+				.toArray();
+
+			if (!subscriptions.length) {
+				await send('No active subscriptions found for your npub');
+			} else {
+				await send(
+					subscriptions
+						.map(
+							(subscription) =>
+								`- #${subscription.number}: ${ORIGIN}/subscription/${
+									subscription._id
+								}, paid until ${subscription.paidUntil.toISOString()}${
+									subscription.cancelledAt ? ' [cancelled]' : ''
+								}`
+						)
+						.join('\n')
+				);
+			}
+
+			break;
+		}
 		default:
+			if (toMatch.startsWith('cancel ')) {
+				const number = parseInt(toMatch.slice('cancel '.length), 10);
+
+				if (isNaN(number)) {
+					await send('Invalid subscription number: ' + toMatch.slice('cancel '.length));
+					break;
+				}
+
+				const subscription = await collections.paidSubscriptions.findOne({
+					npub: senderNpub,
+					number
+				});
+
+				if (!subscription) {
+					await send('No subscription found with number ' + number + ' for your npub');
+					break;
+				}
+
+				if (subscription.cancelledAt) {
+					await send('Subscription #' + number + ' was already cancelled');
+					break;
+				}
+
+				await collections.paidSubscriptions.updateOne(
+					{ _id: subscription._id },
+					{ $set: { cancelledAt: new Date() } }
+				);
+
+				await send('Subscription #' + number + ' was cancelled, you will not be reminded anymore');
+				break;
+			}
 			await send(
 				`Hello ${
 					!isPrivateMessage ? 'world' : isCustomer ? 'customer' : 'you'

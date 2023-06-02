@@ -1,13 +1,14 @@
-import { collections } from './database';
+import { collections, withTransaction } from '../database';
 import { setTimeout } from 'node:timers/promises';
-import { processClosed } from './process';
+import { processClosed } from '../process';
 import type { Order } from '$lib/types/Order';
-import { listTransactions, orderAddressLabel } from './bitcoin';
+import { listTransactions, orderAddressLabel } from '../bitcoin';
 import { sum } from '$lib/utils/sum';
-import { Lock } from './lock';
+import { Lock } from '../lock';
 import { inspect } from 'node:util';
-import { lndLookupInvoice } from './lightning';
+import { lndLookupInvoice } from '../lightning';
 import { toSatoshis } from '$lib/utils/toSatoshis';
+import { onOrderPaid } from '../orders';
 
 const lock = new Lock('orders');
 
@@ -20,7 +21,6 @@ async function maintainOrders() {
 
 		const bitcoinOrders = await collections.orders
 			.find({ 'payment.status': 'pending', 'payment.method': 'bitcoin' })
-			.project<Pick<Order, 'payment' | 'totalPrice' | '_id'>>({ payment: 1, totalPrice: 1 })
 			.toArray()
 			.catch((err) => {
 				console.error(inspect(err, { depth: 10 }));
@@ -38,20 +38,25 @@ async function maintainOrders() {
 				const satReceived = toSatoshis(received, 'BTC');
 
 				if (satReceived >= toSatoshis(order.totalPrice.amount, order.totalPrice.currency)) {
-					await collections.orders.updateOne(
-						{ _id: order._id },
-						{
-							$set: {
-								'payment.status': 'paid',
-								'payment.paidAt': new Date(),
-								'payment.transactions': transactions.map((transaction) => ({
-									txid: transaction.txid,
-									amount: transaction.amount
-								})),
-								'payment.totalReceived': received
-							}
-						}
-					);
+					await withTransaction(async (session) => {
+						await collections.orders.updateOne(
+							{ _id: order._id },
+							{
+								$set: {
+									'payment.status': 'paid',
+									'payment.paidAt': new Date(),
+									'payment.transactions': transactions.map((transaction) => ({
+										txid: transaction.txid,
+										amount: transaction.amount
+									})),
+									'payment.totalReceived': received
+								}
+							},
+							{ session }
+						);
+
+						await onOrderPaid(order, session);
+					});
 				} else if (order.payment.expiresAt < new Date()) {
 					await collections.orders.updateOne(
 						{ _id: order._id },
@@ -80,16 +85,23 @@ async function maintainOrders() {
 				const invoice = await lndLookupInvoice(order.payment.invoiceId);
 
 				if (invoice.state === 'SETTLED') {
-					await collections.orders.updateOne(
-						{ _id: order._id },
-						{
-							$set: {
-								'payment.status': 'paid',
-								'payment.paidAt': invoice.settled_at,
-								'payment.totalReceived': invoice.amt_paid_sat
-							}
+					await withTransaction(async (session) => {
+						const result = await collections.orders.findOneAndUpdate(
+							{ _id: order._id },
+							{
+								$set: {
+									'payment.status': 'paid',
+									'payment.paidAt': invoice.settled_at,
+									'payment.totalReceived': invoice.amt_paid_sat
+								}
+							},
+							{ returnDocument: 'after' }
+						);
+						if (!result.value) {
+							throw new Error('Failed to update order');
 						}
-					);
+						await onOrderPaid(result.value, session);
+					});
 				} else if (invoice.state === 'CANCELED') {
 					await collections.orders.updateOne(
 						{ _id: order._id },
