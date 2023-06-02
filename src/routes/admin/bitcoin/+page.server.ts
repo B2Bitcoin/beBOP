@@ -8,7 +8,11 @@ export async function load() {
 	const transactions = wallets.length ? await listTransactions() : [];
 
 	const orders = collections.orders
-		.find({ _id: { $in: transactions.filter(item => item.label.startsWith('order:')).map((item) => item.label.slice('order:'.length)) } })
+		.find({
+			_id: {
+				$in: transactions.filter(item => item.label.startsWith('order:')).map((item) => item.label.slice('order:'.length))
+			}
+		})
 		.toArray();
 
 	return {
