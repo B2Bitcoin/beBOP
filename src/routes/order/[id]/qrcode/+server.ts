@@ -19,7 +19,9 @@ export async function GET({ params }) {
 			? `bitcoin:${order.payment.address}?amount=${toBitcoins(
 					order.totalPrice.amount,
 					order.totalPrice.currency
-			  ).toLocaleString('en-US', { maximumFractionDigits: 8 })}`
+			  )
+					.toLocaleString('en-US', { maximumFractionDigits: 8 })
+					.replaceAll(',', '')}`
 			: order.payment.address;
 
 	return new Response(await qrcode.toString(address, { type: 'svg' }), {
