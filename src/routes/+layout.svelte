@@ -180,7 +180,6 @@
 											class="text-gray-600 text-base"
 											amount={item.quantity * item.product.price.amount}
 											currency={item.product.price.currency}
-											rawBtc={item.quantity * item.product.price.amount >= 0.01 ? true : false}
 										/>
 										<button formaction="/cart/{item.product._id}/?/remove">
 											<IconTrash class="text-gray-800" />
@@ -190,11 +189,7 @@
 								</form>
 							{/each}
 							<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-								Total <PriceTag
-									currency="BTC"
-									amount={totalPrice}
-									rawBtc={totalPrice >= 0.01 ? true : false}
-								/>
+								Total <PriceTag currency="BTC" amount={totalPrice} />
 							</div>
 							<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
 							{#if items.length > 0}<a href="/checkout" class="btn btn-black"> Checkout </a>{/if}

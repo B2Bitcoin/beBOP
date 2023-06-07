@@ -122,7 +122,6 @@
 					currency={data.product.price.currency}
 					class="text-4xl"
 					short={false}
-					rawBtc={data.product.price.amount >= 0.01 ? true : false}
 					amount={data.product.price.amount}
 				/>
 				<PriceTag

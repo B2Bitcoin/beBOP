@@ -79,7 +79,6 @@
 							<PriceTag
 								amount={item.quantity * item.product.price.amount}
 								currency={item.product.price.currency}
-								rawBtc={item.quantity * item.product.price.amount >= 0.01 ? true : false}
 								class="text-2xl text-gray-800"
 							/>
 							<PriceTag
@@ -98,12 +97,7 @@
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 				<h2 class="text-gray-800 text-[32px]">Total:</h2>
 				<div class="flex flex-col items-end">
-					<PriceTag
-						amount={totalPrice}
-						currency={'BTC'}
-						rawBtc={totalPrice >= 0.01 ? true : false}
-						class="text-[32px] text-gray-800"
-					/>
+					<PriceTag amount={totalPrice} currency={'BTC'} class="text-[32px] text-gray-800" />
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={totalPrice}
