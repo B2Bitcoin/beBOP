@@ -1,12 +1,11 @@
-import { collections } from "$lib/server/database";
-import type { Product } from "$lib/types/Product";
-import { error } from "@sveltejs/kit";
-import type { PageServerLoad } from "../$types";
-import { runtimeConfig } from "$lib/server/runtime-config";
+import { collections } from '$lib/server/database';
+import type { Product } from '$lib/types/Product';
+import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from '../$types';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const load: PageServerLoad = async ({ params }) => {
-
-    const product = await collections.products.findOne<
+	const product = await collections.products.findOne<
 		Pick<
 			Product,
 			| '_id'
@@ -34,7 +33,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		}
 	);
 
-    if (!product) {
+	if (!product) {
 		throw error(404, 'Resource not found');
 	}
 
@@ -48,4 +47,4 @@ export const load: PageServerLoad = async ({ params }) => {
 		picture: pictures[0],
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
-}
+};
