@@ -1,8 +1,7 @@
 <script lang="ts">
 	import ProductItem from '$lib/components/ProductItem.svelte';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	export let data;
 
 	let picturesByProduct = Object.fromEntries(
 		[...data.pictures].reverse().map((picture) => [picture.productId, picture])

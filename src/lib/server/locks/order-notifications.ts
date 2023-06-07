@@ -43,7 +43,6 @@ collections.orders
 	.on('change', (ev) => handleChanges(ev).catch(console.error));
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
-	console.log('change', change);
 	if (
 		!lock.ownsLock ||
 		!('fullDocument' in change) ||
