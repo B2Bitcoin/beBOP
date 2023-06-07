@@ -52,7 +52,7 @@ async function maintainOrders() {
 										txid: transaction.txid,
 										amount: transaction.amount
 									})),
-									'payment.totalReceived': received
+									'payment.totalReceived': satReceived
 								}
 							},
 							{ session }
