@@ -20,7 +20,7 @@
 	$: displayedAmount =
 		actualCurrency === 'BTC' && !rawBtc && amount < 0.01
 			? actualAmount * SATOSHIS_PER_BTC
-			: actualCurrency === 'SAT' && !rawBtc && amount > 1000000
+			: actualCurrency === 'SAT' && amount >= 1_000_000
 			? actualAmount / SATOSHIS_PER_BTC
 			: actualAmount;
 	$: displayedCurrency =
