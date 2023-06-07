@@ -2,6 +2,12 @@
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data;
+
+	function confirmDelete(event: Event) {
+		if (!confirm('Would you like to delete this CMS page?')) {
+			event.preventDefault();
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Edit a CMS Page</h1>
@@ -59,6 +65,14 @@
 
 	<div class="flex flex-row justify-between">
 		<input type="submit" class="btn btn-blue text-white" formaction="?/update" value="Update" />
-		<input type="submit" class="btn btn-red text-white" formaction="?/delete" value="Delete" />
+		<a href="/{data.cmsPage._id}" class="btn btn-gray">View</a>
+
+		<input
+			type="submit"
+			class="btn btn-red text-white ml-auto"
+			formaction="?/delete"
+			value="Delete"
+			on:click={confirmDelete}
+		/>
 	</div>
 </form>
