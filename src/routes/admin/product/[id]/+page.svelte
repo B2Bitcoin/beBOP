@@ -2,10 +2,9 @@
 	import PictureComponent from '$lib/components/Picture.svelte';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
-	import type { PageData } from './$types';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
-	export let data: PageData;
+	export let data;
 
 	let availableDate = data.product.availableDate;
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
@@ -127,7 +126,7 @@
 							? 'cursor-pointer'
 							: 'cursor-not-allowed border-gray-450'}"
 						type="checkbox"
-						bind:checked={data.product.preorder}
+						bind:checked={preorder}
 						name="preorder"
 						disabled={!enablePreorder}
 					/>

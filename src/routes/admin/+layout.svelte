@@ -35,6 +35,9 @@
 				href="/admin/nostr"
 				class={$page.url.pathname.startsWith('/admin/nostr') ? 'underline' : ''}>NostR</a
 			>
+			<a href="/admin/cms" class={$page.url.pathname.startsWith('/admin/cms') ? 'underline' : ''}
+				>CMS</a
+			>
 		</nav>
 	</div>
 </header>

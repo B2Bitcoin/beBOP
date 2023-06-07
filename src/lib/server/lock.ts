@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import { collections } from './database';
 import { processClosed } from './process';
 import { setTimeout } from 'node:timers/promises';
+import { NO_LOCK } from '$env/static/private';
 
 const processId = new ObjectId();
 
@@ -16,6 +17,9 @@ export class Lock {
 	}
 
 	private async maintain() {
+		if (NO_LOCK === 'true') {
+			return;
+		}
 		while (!processClosed) {
 			try {
 				let lock = await collections.locks.findOne({

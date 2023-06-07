@@ -70,7 +70,7 @@
 		</a>
 		<span class="grow" />
 		<nav class="flex gap-10 text-[22px] font-semibold">
-			<a href="/">Blog</a>
+			<a href="/blog">Blog</a>
 			<a href="/store">Store</a>
 			<a href="/mecenas">Mecenas</a>
 		</nav>

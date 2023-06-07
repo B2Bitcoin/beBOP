@@ -3,7 +3,6 @@
 	import { marked } from 'marked';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import type { PageData } from './$types';
 	import { applyAction, enhance } from '$app/forms';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import GoalProgress from '$lib/components/GoalProgress.svelte';
@@ -11,7 +10,7 @@
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 
-	export let data: PageData;
+	export let data;
 
 	let quantity = 1;
 	let loading = false;

@@ -11,6 +11,7 @@ import type { NostRNotification } from '$lib/types/NostRNotifications';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
 import type { BootikSubscription } from '$lib/types/BootikSubscription';
 import type { PaidSubscription } from '$lib/types/PaidSubscription';
+import type { CMSPage } from '$lib/types/CmsPage';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -33,6 +34,7 @@ const pendingDigitalFiles = db.collection<DigitalFile>('digitalFiles.pending');
 const orders = db.collection<Order>('orders');
 const nostrNotifications = db.collection<NostRNotification>('notifications.nostr');
 const nostrReceivedMessages = db.collection<NostRReceivedMessage>('nostr.receivedMessage');
+const cmsPages = db.collection<CMSPage>('cmsPages');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -50,7 +52,8 @@ export const collections = {
 	nostrNotifications,
 	nostrReceivedMessages,
 	bootikSubscriptions,
-	paidSubscriptions
+	paidSubscriptions,
+	cmsPages
 };
 
 export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
