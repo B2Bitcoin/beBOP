@@ -26,7 +26,7 @@
 	$: displayedCurrency =
 		actualCurrency === 'BTC' && !rawBtc && amount < 0.01
 			? 'SAT'
-			: actualCurrency === 'SAT' && !rawBtc && amount > 1000000
+			: actualCurrency === 'SAT' && amount >= 1_000_000
 			? 'BTC'
 			: actualCurrency;
 </script>
