@@ -6,6 +6,7 @@
 
 	export let picture: Picture | undefined;
 	export let product: Pick<Product, '_id' | 'name' | 'price' | 'description'>;
+	export let exchangeRate = 0;
 </script>
 
 <div class="flex flex-col text-center">
@@ -33,15 +34,14 @@
 				class="text-base text-gray-600"
 				amount={product.price.amount}
 				currency={product.price.currency}
+				{exchangeRate}
 				convertedTo="EUR"
 			/>
 		</div>
 	</div>
 	<a href="/product/{product._id}" class="flex flex-col items-center">
 		<p class="text-2xl mt-4 text-gray-800">
-			Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestias ex obcaecati voluptate nam
-			molestiae, cum natus sed! Quae quod sapiente eius exercitationem eaque, facilis officiis,
-			veniam quibusdam magnam, odit sed.
+			{product.description}
 		</p>
 	</a>
 	<div class="flex flex-row items-end justify-end">
