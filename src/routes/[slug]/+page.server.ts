@@ -43,7 +43,7 @@ export async function load({ params }) {
 		})
 		.project<Pick<Product, '_id' | 'price' | 'description' | 'name' | 'shortDescription'>>({
 			price: 1,
-			description: 1,
+			shortDescription: 1,
 			name: 1
 		})
 		.toArray();
