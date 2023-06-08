@@ -9,7 +9,7 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	export let picture: Picture | undefined;
-	export let product: Pick<Product, '_id' | 'name' | 'price' | 'description'>;
+	export let product: Pick<Product, '_id' | 'name' | 'price' | 'description' | 'preorder'>;
 	export let exchangeRate = 0;
 	let loading = false;
 
@@ -78,7 +78,7 @@
 			<button
 				type="submit"
 				value="Add to cart"
-				disabled={loading}
+				disabled={loading || !product.preorder}
 				formaction="/product/{product._id}?/addToCart"
 				class="btn btn-gray"
 			>
