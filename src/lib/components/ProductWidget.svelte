@@ -3,10 +3,23 @@
 	import type { Picture } from '$lib/types/Picture';
 	import PictureComponent from './Picture.svelte';
 	import PriceTag from './PriceTag.svelte';
+	import { applyAction, enhance } from '$app/forms';
+	import { invalidate } from '$app/navigation';
+	import { UrlDependency } from '$lib/types/UrlDependency';
+	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	export let picture: Picture | undefined;
 	export let product: Pick<Product, '_id' | 'name' | 'price' | 'description'>;
 	export let exchangeRate = 0;
+	let loading = false;
+
+	function addToCart() {
+		$productAddedToCart = {
+			product,
+			quantity: 1,
+			picture
+		};
+	}
 </script>
 
 <div class="flex flex-col text-center not-prose">
@@ -45,6 +58,31 @@
 		</p>
 	</a>
 	<div class="flex flex-row items-end justify-end">
-		<button value="Add to cart" formaction="?/addToCart" class="btn btn-gray"> Add to cart </button>
+		<form
+			method="post"
+			class="contents"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'error') {
+						return await applyAction(result);
+					}
+
+					await invalidate(UrlDependency.Cart);
+					addToCart();
+					document.body.scrollIntoView();
+				};
+			}}
+		>
+			<button
+				type="submit"
+				value="Add to cart"
+				formaction="/product/{product._id}?/addToCart"
+				class="btn btn-gray"
+			>
+				Add to cart
+			</button>
+		</form>
 	</div>
 </div>

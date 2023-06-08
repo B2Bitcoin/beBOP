@@ -4,6 +4,6 @@ import { writable } from 'svelte/store';
 
 export const productAddedToCart = writable<{
 	product: BasicProductFrontend;
-	picture: Picture;
+	picture: Picture | undefined;
 	quantity: number;
 } | null>(null);
