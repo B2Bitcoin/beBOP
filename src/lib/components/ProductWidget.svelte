@@ -9,7 +9,7 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	export let picture: Picture | undefined;
-	export let product: Pick<Product, '_id' | 'name' | 'price' | 'description'>;
+	export let product: Pick<Product, '_id' | 'name' | 'price' | 'shortDescription'>;
 	export let exchangeRate = 0;
 	let loading = false;
 
@@ -54,7 +54,7 @@
 	</div>
 	<a href="/product/{product._id}" class="flex flex-col items-center">
 		<p class="text-2xl mt-4 text-gray-800">
-			{product.description}
+			{product.shortDescription}
 		</p>
 	</a>
 	<div class="flex flex-row items-end justify-end">
