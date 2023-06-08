@@ -41,7 +41,7 @@ export async function load({ params }) {
 		.find({
 			_id: { $in: [...productSlugs] }
 		})
-		.project<Pick<Product, '_id' | 'price' | 'description' | 'name'>>({
+		.project<Pick<Product, '_id' | 'price' | 'description' | 'name' | 'shortDescription'>>({
 			price: 1,
 			description: 1,
 			name: 1
