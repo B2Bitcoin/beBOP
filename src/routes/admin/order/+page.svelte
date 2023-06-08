@@ -25,7 +25,7 @@
 			- Total: {toSatoshis(order.totalPrice.amount, order.totalPrice.currency).toLocaleString('en')}
 			SAT -
 			<span
-				class={order.payment.status === 'expired'
+				class={order.payment.status === 'expired' || order.payment.status === 'canceled'
 					? 'text-gray-550'
 					: order.payment.status === 'paid'
 					? 'text-green-500'
