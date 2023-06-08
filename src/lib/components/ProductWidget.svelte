@@ -9,13 +9,13 @@
 	export let exchangeRate = 0;
 </script>
 
-<div class="flex flex-col text-center">
+<div class="flex flex-col text-center not-prose">
 	<a href="/product/{product._id}" class="flex flex-col items-center">
 		<PictureComponent {picture} class="object-contain max-h-[250px] max-w-full" />
 	</a>
 </div>
 
-<div class="flex flex-col m-6">
+<div class="flex flex-col m-6 not-prose">
 	<div class="flex flex-row gap-2">
 		<a href="/product/{product._id}" class="flex flex-col items-center">
 			<h2 class="text-4xl">{product.name}</h2>

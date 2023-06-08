@@ -61,6 +61,11 @@
 			class="form-input block w-full"
 			value={data.cmsPage.content}
 		/>
+		<p class="text-gray-700">
+			To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code>,
+			where
+			<code class="font-mono">slug</code> is the slug of your product
+		</p>
 	</label>
 
 	<div class="flex flex-row justify-between gap-2">

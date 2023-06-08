@@ -42,12 +42,6 @@ export const actions = {
 				shortDescription: data.get('shortDescription')
 			});
 
-		const existing = await collections.cmsPages.countDocuments({ _id: cmsPage._id });
-
-		if (existing) {
-			throw error(409, 'Page with same slug already exists');
-		}
-
 		await collections.cmsPages.updateOne(
 			{
 				_id: cmsPage._id

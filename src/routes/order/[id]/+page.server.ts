@@ -1,8 +1,8 @@
 import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database.js';
+import { picturesForProducts } from '$lib/server/picture.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { s3client } from '$lib/server/s3.js';
-import type { Picture } from '$lib/types/Picture.js';
 import { UrlDependency } from '$lib/types/UrlDependency.js';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -19,19 +19,7 @@ export async function load({ params, depends }) {
 
 	depends(UrlDependency.Order);
 
-	const pictures = await collections.pictures
-		.aggregate<Picture>([
-			{ $match: { productId: { $in: order.items.map((item) => item.product._id) } } },
-			{ $sort: { createdAt: 1 } },
-			{
-				$group: {
-					_id: '$productId',
-					value: { $first: '$$ROOT' }
-				}
-			},
-			{ $replaceRoot: { newRoot: '$value' } }
-		])
-		.toArray();
+	const pictures = await picturesForProducts(order.items.map((item) => item.product._id));
 
 	const digitalFiles = await collections.digitalFiles
 		.find({ productId: { $in: order.items.map((item) => item.product._id) } })

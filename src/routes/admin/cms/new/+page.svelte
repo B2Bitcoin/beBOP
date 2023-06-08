@@ -48,9 +48,14 @@
 			cols="30"
 			rows="10"
 			maxlength="10000"
-			placeholder="Markdown content"
+			placeholder="Markdown content."
 			class="form-input block w-full"
 		/>
+		<p class="text-gray-700">
+			To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code>,
+			where
+			<code class="font-mono">slug</code> is the slug of your product
+		</p>
 	</label>
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
