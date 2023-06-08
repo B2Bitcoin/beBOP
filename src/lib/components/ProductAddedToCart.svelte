@@ -7,7 +7,7 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let product: BasicProductFrontend;
-	export let picture: PictureType;
+	export let picture: PictureType | undefined;
 
 	let className = '';
 	export { className as class };

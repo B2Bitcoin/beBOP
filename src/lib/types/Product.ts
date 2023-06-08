@@ -16,7 +16,7 @@ export interface Product extends Timestamps {
 	preorder: boolean;
 }
 
-export type BasicProductFrontend = Pick<Product, '_id' | 'shortDescription' | 'price' | 'name'>;
+export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
 
 export const MAX_NAME_LIMIT = 70;
 
