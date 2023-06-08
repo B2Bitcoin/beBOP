@@ -78,6 +78,7 @@
 			<button
 				type="submit"
 				value="Add to cart"
+				disabled={loading}
 				formaction="/product/{product._id}?/addToCart"
 				class="btn btn-gray"
 			>
