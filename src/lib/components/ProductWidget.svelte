@@ -9,7 +9,7 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	export let picture: Picture | undefined;
-	export let product: Pick<Product, '_id' | 'name' | 'price' | 'description' | 'shortDescription'>;
+	export let product: Pick<Product, '_id' | 'name' | 'price' | 'shortDescription'>;
 	export let exchangeRate = 0;
 	let loading = false;
 
