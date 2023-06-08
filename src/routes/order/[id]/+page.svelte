@@ -34,7 +34,7 @@
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex flex-col gap-2">
 		<h1 class="text-3xl">Order #{data.order.number}</h1>
 
-		<div class="flex gap-2">
+		<div class="flex gap-4">
 			{#each data.order.items as item}
 				<ProductItem class="relative" picture={item.picture} product={item.product}>
 					{#if item.quantity !== 1}
