@@ -9,11 +9,11 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	export let picture: Picture | undefined;
-	export let product: Pick<
-		Product,
-		'_id' | 'name' | 'price' | 'shortDescription' | 'preorder' | 'availableDate'
-	>;
+	export let product: Pick<Product, '_id' | 'name' | 'price' | 'shortDescription'>;
 	export let exchangeRate = 0;
+	let className = '';
+	export { className as class };
+
 	let loading = false;
 
 	function addToCart() {
@@ -23,47 +23,44 @@
 			picture
 		};
 	}
-
-	$: canAddToCart =
-		!product.availableDate || product.availableDate <= new Date() || !!product.preorder;
 </script>
 
-<div class="flex flex-col text-center not-prose">
-	<a href="/product/{product._id}" class="flex flex-col items-center">
-		<PictureComponent {picture} class="object-contain max-h-[250px] max-w-full" />
-	</a>
-</div>
-
-<div class="flex flex-col m-6 not-prose">
-	<div class="flex flex-row gap-2">
+<div class="mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
+	<div class="flex flex-col text-center">
 		<a href="/product/{product._id}" class="flex flex-col items-center">
-			<h2 class="text-4xl">{product.name}</h2>
+			<PictureComponent {picture} sizes="800px" class="object-contain max-h-[250px] max-w-full" />
 		</a>
-
-		<div class="grow" />
-
-		<div class="flex flex-row items-end justify-center">
-			<PriceTag
-				amount={product.price.amount}
-				currency={product.price.currency}
-				class="text-3xl text-gray-800"
-			/>
-			&nbsp; ~ &nbsp;
-			<PriceTag
-				class="text-base text-gray-600"
-				amount={product.price.amount}
-				currency={product.price.currency}
-				{exchangeRate}
-				convertedTo="EUR"
-			/>
-		</div>
 	</div>
-	<a href="/product/{product._id}" class="flex flex-col items-center">
-		<p class="text-2xl mt-4 text-gray-800">
-			{product.shortDescription}
-		</p>
-	</a>
-	{#if canAddToCart}
+
+	<div class="flex flex-col">
+		<div class="flex flex-row">
+			<a href="/product/{product._id}" class="flex flex-col items-center">
+				<h2 class="text-2xl">{product.name}</h2>
+			</a>
+
+			<div class="grow" />
+
+			<div class="flex flex-row items-end justify-center">
+				<PriceTag
+					amount={product.price.amount}
+					currency={product.price.currency}
+					class="text-2xl text-gray-800"
+				/>
+				&nbsp; ~ &nbsp;
+				<PriceTag
+					class="text-base text-gray-600"
+					amount={product.price.amount}
+					currency={product.price.currency}
+					{exchangeRate}
+					convertedTo="EUR"
+				/>
+			</div>
+		</div>
+		<a href="/product/{product._id}" class="flex flex-col">
+			<p class="mt-2 text-gray-800">
+				{product.shortDescription}
+			</p>
+		</a>
 		<div class="flex flex-row items-end justify-end">
 			<form
 				method="post"
@@ -93,5 +90,5 @@
 				</button>
 			</form>
 		</div>
-	{/if}
+	</div>
 </div>
