@@ -25,9 +25,7 @@
 	}
 </script>
 
-<div
-	class="mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 px-6 py-6 mb-6 rounded {className}"
->
+<div class="mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 px-6 py-12 rounded {className}">
 	<div class="flex flex-col text-center">
 		<a href="/product/{product._id}" class="flex flex-col items-center">
 			<PictureComponent {picture} sizes="800px" class="object-contain max-h-[250px] max-w-full" />
