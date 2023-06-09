@@ -22,68 +22,72 @@
 	}
 </script>
 
-<div class="flex flex-col text-center not-prose">
-	<a href="/product/{product._id}" class="flex flex-col items-center">
-		<PictureComponent {picture} class="object-contain max-h-[250px] max-w-full" />
-	</a>
-</div>
-
-<div class="flex flex-col m-6 not-prose">
-	<div class="flex flex-row gap-2">
-		<a href="/product/{product._id}" class="flex flex-col items-center">
-			<h2 class="text-4xl">{product.name}</h2>
-		</a>
-
-		<div class="grow" />
-
-		<div class="flex flex-row items-end justify-center">
-			<PriceTag
-				amount={product.price.amount}
-				currency={product.price.currency}
-				class="text-3xl text-gray-800"
-			/>
-			&nbsp; ~ &nbsp;
-			<PriceTag
-				class="text-base text-gray-600"
-				amount={product.price.amount}
-				currency={product.price.currency}
-				{exchangeRate}
-				convertedTo="EUR"
-			/>
+<div class="flex justify-center mb-6">
+	<div class="w-[800px] bg-gray-240">
+		<div class="flex flex-col text-center not-prose pt-4">
+			<a href="/product/{product._id}" class="flex flex-col items-center">
+				<PictureComponent {picture} class="object-contain max-h-[250px] max-w-full" />
+			</a>
 		</div>
-	</div>
-	<a href="/product/{product._id}" class="flex flex-col items-center">
-		<p class="text-2xl mt-4 text-gray-800">
-			{product.shortDescription}
-		</p>
-	</a>
-	<div class="flex flex-row items-end justify-end">
-		<form
-			method="post"
-			class="contents"
-			use:enhance={() => {
-				loading = true;
-				return async ({ result }) => {
-					loading = false;
-					if (result.type === 'error') {
-						return await applyAction(result);
-					}
 
-					await invalidate(UrlDependency.Cart);
-					addToCart();
-					document.body.scrollIntoView();
-				};
-			}}
-		>
-			<button
-				type="submit"
-				value="Add to cart"
-				disabled={loading}
-				formaction="/product/{product._id}?/addToCart"
-				class="btn btn-gray"
-			>
-				Add to cart
-			</button>
-		</form>
+		<div class="flex flex-col m-4 not-prose">
+			<div class="flex flex-row gap-2">
+				<a href="/product/{product._id}" class="flex flex-col items-center">
+					<h2 class="text-2xl">{product.name}</h2>
+				</a>
+
+				<div class="grow" />
+
+				<div class="flex flex-row items-end justify-center">
+					<PriceTag
+						amount={product.price.amount}
+						currency={product.price.currency}
+						class="text-2xl text-gray-800"
+					/>
+					&nbsp; ~ &nbsp;
+					<PriceTag
+						class="text-base text-gray-600"
+						amount={product.price.amount}
+						currency={product.price.currency}
+						{exchangeRate}
+						convertedTo="EUR"
+					/>
+				</div>
+			</div>
+			<a href="/product/{product._id}" class="flex flex-col">
+				<p class="text-1xl mt-2 text-gray-800">
+					{product.shortDescription}
+				</p>
+			</a>
+			<div class="flex flex-row items-end justify-end mb-4">
+				<form
+					method="post"
+					class="contents"
+					use:enhance={() => {
+						loading = true;
+						return async ({ result }) => {
+							loading = false;
+							if (result.type === 'error') {
+								return await applyAction(result);
+							}
+
+							await invalidate(UrlDependency.Cart);
+							addToCart();
+							document.body.scrollIntoView();
+						};
+					}}
+				>
+					<button
+						type="submit"
+						value="Add to cart"
+						disabled={loading}
+						formaction="/product/{product._id}?/addToCart"
+						class="btn btn-gray"
+					>
+						Add to cart
+					</button>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
