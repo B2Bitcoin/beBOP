@@ -22,7 +22,7 @@
 	}
 </script>
 
-<div class="flex justify-center mb-6">
+<div class="flex justify-center {className}">
 	<div class="w-[800px] bg-gray-240">
 		<div class="flex flex-col text-center not-prose pt-4">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
