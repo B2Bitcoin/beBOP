@@ -3,11 +3,9 @@
 	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductItem from '$lib/components/ProductItem.svelte';
-	import ProductWidget from '$lib/components/ProductWidget.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { differenceInMinutes, format } from 'date-fns';
-	import it from 'date-fns/locale/it';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();
