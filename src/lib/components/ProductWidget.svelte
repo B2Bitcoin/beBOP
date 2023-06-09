@@ -9,9 +9,13 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	export let picture: Picture | undefined;
-	export let product: Pick<Product, '_id' | 'name' | 'price' | 'shortDescription' | 'preorder'>;
+	export let product: Pick<
+		Product,
+		'_id' | 'name' | 'price' | 'shortDescription' | 'preorder' | 'availableDate'
+	>;
 	export let exchangeRate = 0;
 	let loading = false;
+	let isButtonDisabled = false;
 
 	function addToCart() {
 		$productAddedToCart = {
@@ -19,6 +23,15 @@
 			quantity: 1,
 			picture
 		};
+	}
+
+	function disableAddToCart() {
+		if (product.availableDate != null) {
+			isButtonDisabled =
+				product.availableDate.getTime() > Date.now() && product.preorder == false ? true : false;
+		}
+
+		return isButtonDisabled;
 	}
 </script>
 
@@ -78,7 +91,7 @@
 			<button
 				type="submit"
 				value="Add to cart"
-				disabled={loading || !product.preorder}
+				disabled={loading || disableAddToCart()}
 				formaction="/product/{product._id}?/addToCart"
 				class="btn btn-gray"
 			>
