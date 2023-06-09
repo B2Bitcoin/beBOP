@@ -59,7 +59,7 @@
 					{product.shortDescription}
 				</p>
 			</a>
-			<div class="flex flex-row items-end justify-end mb-4">
+			<div class="flex flex-row items-end justify-end">
 				<form
 					method="post"
 					class="contents"
