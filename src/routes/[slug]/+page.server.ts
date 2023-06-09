@@ -40,7 +40,7 @@ export async function load({ params }) {
 	const products = await collections.products
 		.find({
 			_id: { $in: [...productSlugs] }
-		})	
+		})
 		.project<
 			Pick<Product, '_id' | 'price' | 'name' | 'shortDescription' | 'preorder' | 'availableDate'>
 		>({
