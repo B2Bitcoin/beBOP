@@ -25,7 +25,7 @@
 	}
 
 	$: canAddToCart =
-		!product.availableDate || (product.availableDate > new Date() && !product.preorder);
+		!product.availableDate || product.availableDate <= new Date() || !!product.preorder;
 </script>
 
 <div class="flex flex-col text-center not-prose">
@@ -63,7 +63,7 @@
 			{product.shortDescription}
 		</p>
 	</a>
-	{#if !canAddToCart}
+	{#if canAddToCart}
 		<div class="flex flex-row items-end justify-end">
 			<form
 				method="post"
