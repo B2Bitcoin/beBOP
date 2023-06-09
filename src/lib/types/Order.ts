@@ -34,7 +34,7 @@ export interface Order extends Timestamps {
 
 	payment: {
 		method: 'bitcoin' | 'lightning';
-		status: 'pending' | 'paid' | 'expired';
+		status: 'pending' | 'paid' | 'expired' | 'canceled';
 		expiresAt: Date;
 		address: string;
 		/** For lightning addresses, contains the hash to look up the invoice */

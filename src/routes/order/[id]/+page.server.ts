@@ -6,7 +6,7 @@ import { s3client } from '$lib/server/s3.js';
 import { UrlDependency } from '$lib/types/UrlDependency.js';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, depends }) {
 	const order = await collections.orders.findOne({
@@ -75,3 +75,21 @@ export async function load({ params, depends }) {
 		)
 	};
 }
+
+export const actions = {
+	cancel: async function ({ params, request }) {
+		await collections.orders.updateOne(
+			{
+				_id: params.id,
+				'payment.status': 'pending'
+			},
+			{
+				$set: {
+					'payment.status': 'canceled'
+				}
+			}
+		);
+
+		throw redirect(303, request.headers.get('referer') || '/');
+	}
+};

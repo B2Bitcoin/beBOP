@@ -66,12 +66,14 @@
 
 	$: computedStyle = `${computedWidth !== null ? `width: ${computedWidth}px;` : ''} ${
 		computedHeight !== null ? `height: ${computedHeight}px;` : ''
-	} ${style}`;
+	} ${style};`;
 </script>
 
 {#if picture}
 	<img
 		alt={picture.name}
+		width={picture.storage.formats[0].width}
+		height={picture.storage.formats[0].height}
 		srcset={picture.storage.formats
 			.map((format) => `/picture/raw/${picture?._id}/format/${format.width} ${format.width}w`)
 			.join(', ')}
