@@ -9,7 +9,10 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	export let picture: Picture | undefined;
-	export let product: Pick<Product, '_id' | 'name' | 'price' | 'shortDescription'>;
+	export let product: Pick<
+		Product,
+		'_id' | 'name' | 'price' | 'shortDescription' | 'preorder' | 'availableDate'
+	>;
 	export let exchangeRate = 0;
 	let loading = false;
 
@@ -20,6 +23,9 @@
 			picture
 		};
 	}
+
+	$: canAddToCart =
+		!product.availableDate || product.availableDate <= new Date() || !!product.preorder;
 </script>
 
 <div class="flex flex-col text-center not-prose">
@@ -57,33 +63,35 @@
 			{product.shortDescription}
 		</p>
 	</a>
-	<div class="flex flex-row items-end justify-end">
-		<form
-			method="post"
-			class="contents"
-			use:enhance={() => {
-				loading = true;
-				return async ({ result }) => {
-					loading = false;
-					if (result.type === 'error') {
-						return await applyAction(result);
-					}
+	{#if canAddToCart}
+		<div class="flex flex-row items-end justify-end">
+			<form
+				method="post"
+				class="contents"
+				use:enhance={() => {
+					loading = true;
+					return async ({ result }) => {
+						loading = false;
+						if (result.type === 'error') {
+							return await applyAction(result);
+						}
 
-					await invalidate(UrlDependency.Cart);
-					addToCart();
-					document.body.scrollIntoView();
-				};
-			}}
-		>
-			<button
-				type="submit"
-				value="Add to cart"
-				disabled={loading}
-				formaction="/product/{product._id}?/addToCart"
-				class="btn btn-gray"
+						await invalidate(UrlDependency.Cart);
+						addToCart();
+						document.body.scrollIntoView();
+					};
+				}}
 			>
-				Add to cart
-			</button>
-		</form>
-	</div>
+				<button
+					type="submit"
+					value="Add to cart"
+					disabled={loading}
+					formaction="/product/{product._id}?/addToCart"
+					class="btn btn-gray"
+				>
+					Add to cart
+				</button>
+			</form>
+		</div>
+	{/if}
 </div>
