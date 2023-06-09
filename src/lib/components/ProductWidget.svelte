@@ -15,7 +15,6 @@
 	>;
 	export let exchangeRate = 0;
 	let loading = false;
-	let isButtonDisabled = false;
 
 	function addToCart() {
 		$productAddedToCart = {
