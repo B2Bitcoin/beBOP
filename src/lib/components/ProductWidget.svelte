@@ -25,14 +25,8 @@
 		};
 	}
 
-	function disableAddToCart() {
-		if (product.availableDate != null) {
-			isButtonDisabled =
-				product.availableDate.getTime() > Date.now() && product.preorder == false ? true : false;
-		}
-
-		return isButtonDisabled;
-	}
+	$: canAddToCart =
+		product.availableDate!.getTime() > Date.now() && product.preorder == false ? true : false;
 </script>
 
 <div class="flex flex-col text-center not-prose">
@@ -91,7 +85,7 @@
 			<button
 				type="submit"
 				value="Add to cart"
-				disabled={loading || disableAddToCart()}
+				disabled={loading || canAddToCart}
 				formaction="/product/{product._id}?/addToCart"
 				class="btn btn-gray"
 			>
