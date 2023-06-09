@@ -63,7 +63,7 @@
 			{product.shortDescription}
 		</p>
 	</a>
-	{#if !canAddToCart}
+	{#if canAddToCart}
 		<div class="flex flex-row items-end justify-end">
 			<form
 				method="post"
