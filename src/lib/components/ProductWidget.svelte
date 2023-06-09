@@ -25,14 +25,14 @@
 	}
 </script>
 
-<div class="mx-auto max-w-[800px] bg-gray-240 {className}">
+<div class="mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
 	<div class="flex flex-col text-center">
-		<a href="/product/{product._id}" class="flex flex-col items-center py-4">
+		<a href="/product/{product._id}" class="flex flex-col items-center">
 			<PictureComponent {picture} class="object-contain max-h-[250px] max-w-full" />
 		</a>
 	</div>
 
-	<div class="flex flex-col m-4">
+	<div class="flex flex-col">
 		<div class="flex flex-row">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
 				<h2 class="text-2xl">{product.name}</h2>

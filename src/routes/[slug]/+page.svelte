@@ -24,7 +24,7 @@
 						exchangeRate={data.exchangeRate}
 						product={productById[token.slug]}
 						picture={pictureByProduct[token.slug]}
-						class="py-4 mb-4 not-prose"
+						class="not-prose"
 					/>
 				{:else}
 					{@html marked(token.raw)}
