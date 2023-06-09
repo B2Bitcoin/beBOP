@@ -45,7 +45,8 @@ export async function load({ params }) {
 			price: 1,
 			shortDescription: 1,
 			preorder: 1,
-			name: 1
+			name: 1,
+			availableDate: 1,
 		})
 		.toArray();
 
