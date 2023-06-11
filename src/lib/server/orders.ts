@@ -7,7 +7,7 @@ import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
-import { getNewAddress, orderAddressLabel } from './bitcoin';
+import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
 import { lndCreateInvoice } from './lightning';
 import { ORIGIN } from '$env/static/private';
 
@@ -181,7 +181,10 @@ export async function createOrder(
 					method: paymentMethod,
 					status: 'pending',
 					...(paymentMethod === 'bitcoin'
-						? { address: await getNewAddress(orderAddressLabel(orderId)) }
+						? {
+								address: await getNewAddress(orderAddressLabel(orderId)),
+								wallet: await currentWallet()
+						  }
 						: await (async () => {
 								const invoice = await lndCreateInvoice(
 									totalSatoshis,
