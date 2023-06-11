@@ -1,10 +1,27 @@
 <script lang="ts">
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { formatDistance } from 'date-fns';
+	import { tick } from 'svelte';
 
 	export let data;
 
 	let orderById = Object.fromEntries([...data.orders].map((order) => [order._id, order]));
+
+	let walletToCreate = 'bootik';
+
+	async function inputWalletName(event: Event) {
+		const walletName = prompt('Wallet name')?.trim();
+
+		if (!walletName) {
+			return;
+		}
+
+		walletToCreate = walletName;
+
+		await tick();
+
+		(event.currentTarget as HTMLFormElement).submit();
+	}
 </script>
 
 <h1 class="text-3xl">Bitcoin node</h1>
@@ -20,13 +37,31 @@
 
 <ul>
 	{#each data.wallets as wallet}
-		<li>{wallet}</li>
-	{:else}
-		<form action="?/createWallet" method="post">
-			<button class="btn btn-black">Create wallet</button>
-		</form>
+		{#if data.currentWallet === wallet}
+			<li class="font-bold">{wallet}</li>
+		{:else}
+			<li class="flex gap-2">
+				{wallet}
+				<form action="?/setCurrentWallet" method="post">
+					<input type="hidden" value={wallet} name="wallet" /><button
+						type="submit"
+						class="text-blue underline">select</button
+					>
+				</form>
+			</li>
+		{/if}
 	{/each}
 </ul>
+
+<p>
+	Changing wallet in an active bootik means that incoming transactions in the old wallet will not be
+	detected
+</p>
+
+<form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>
+	<input type="hidden" name="wallet" value={walletToCreate} />
+	<button class="btn btn-black">Create wallet</button>
+</form>
 
 <h2 class="text-2xl">Balance</h2>
 

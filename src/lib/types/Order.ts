@@ -36,13 +36,15 @@ export interface Order extends Timestamps {
 		method: 'bitcoin' | 'lightning';
 		status: 'pending' | 'paid' | 'expired' | 'canceled';
 		expiresAt: Date;
+		/** Bitcoin / LN address */
 		address: string;
+		paidAt?: Date;
+		totalReceived?: number;
 		/** For lightning addresses, contains the hash to look up the invoice */
 		invoiceId?: string;
-		totalReceived?: number;
-		/** For bitcoin transation */
+		/** For bitcoin transactions */
+		wallet?: string;
 		transactions?: Array<{ txid: string; amount: number }>;
-		paidAt?: Date;
 	};
 
 	notifications: {
