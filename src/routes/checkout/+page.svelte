@@ -274,7 +274,7 @@
 					/>
 					<span class="ml-2">
 						I agree to the <a href="/terms" target="_blank" class="text-blue hover:underline"
-							>terms and conditions</a
+							>terms of service</a
 						></span
 					>
 				</label>
