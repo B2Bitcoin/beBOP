@@ -10,8 +10,20 @@ export async function load({ depends, locals }) {
 
 	const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
 
+	const logoPicture = runtimeConfig.logoPictureId
+		? await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId })
+		: null;
+
 	return {
 		exchangeRate: runtimeConfig.BTC_EUR,
+		brandName: runtimeConfig.brandName,
+		logoPicture,
+		links: {
+			footer: runtimeConfig.footerLinks,
+			navbar: runtimeConfig.navbarLinks,
+			topbar: runtimeConfig.topbarLinks
+		},
+		logo: runtimeConfig.logoPictureId,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {

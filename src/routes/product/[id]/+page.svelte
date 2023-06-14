@@ -81,38 +81,42 @@
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
-				<hr class="border-gray-300" />
-				<h2 class="text-gray-850 text-[22px]">Description</h2>
-				<p class="text-gray-800 prose">
-					{@html marked(data.product.description.replaceAll('<', '&lt;'))}
-				</p>
-				<hr class="border-gray-300" />
-				<h2 class="text-gray-850 text-[22px]">This product is part of a challenge</h2>
-				<p class="text-gray-800">
-					By purchasing this product, 20% of its price will go to the funds of the next
-					crowdfunding:
-				</p>
-				<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col">
-					<div class="flex justify-between items-center">
-						<h3 class="font-medium text-[22px] text-gray-850">
-							WACOM CINTIQ 24" for an emerging artist.
-						</h3>
-						<span class="text-base font-light text-gray-550">Ends April 25</span>
+				{#if data.product.description.trim()}
+					<hr class="border-gray-300" />
+					<h2 class="text-gray-850 text-[22px]">Description</h2>
+					<p class="text-gray-800 prose">
+						{@html marked(data.product.description.replaceAll('<', '&lt;'))}
+					</p>
+				{/if}
+				{#if 0}
+					<hr class="border-gray-300" />
+					<h2 class="text-gray-850 text-[22px]">This product is part of a challenge</h2>
+					<p class="text-gray-800">
+						By purchasing this product, 20% of its price will go to the funds of the next
+						crowdfunding:
+					</p>
+					<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col">
+						<div class="flex justify-between items-center">
+							<h3 class="font-medium text-[22px] text-gray-850">
+								WACOM CINTIQ 24" for an emerging artist.
+							</h3>
+							<span class="text-base font-light text-gray-550">Ends April 25</span>
+						</div>
+						<GoalProgress
+							class="font-bold mt-3"
+							text="{Number(7).toLocaleString('en', {
+								style: 'currency',
+								currency: 'EUR',
+								minimumFractionDigits: 0
+							})} 🙂"
+							percentage={700 / 600}
+						/>
+						<div class="flex justify-between mt-1 items-center">
+							<a href="/" class="text-blue underline">How can I contribute?</a>
+							<PriceTag amount={600} class="text-gray-800 text-base" currency="EUR" />
+						</div>
 					</div>
-					<GoalProgress
-						class="font-bold mt-3"
-						text="{Number(7).toLocaleString('en', {
-							style: 'currency',
-							currency: 'EUR',
-							minimumFractionDigits: 0
-						})} 🙂"
-						percentage={700 / 600}
-					/>
-					<div class="flex justify-between mt-1 items-center">
-						<a href="/" class="text-blue underline">How can I contribute?</a>
-						<PriceTag amount={600} class="text-gray-800 text-base" currency="EUR" />
-					</div>
-				</div>
+				{/if}
 			</div>
 			<div
 				class="flex flex-col text-gray-850 gap-2 border-gray-300 border-l border-b rounded pl-4 pb-4 h-fit"
@@ -130,20 +134,22 @@
 					exchangeRate={data.exchangeRate}
 					class="text-xl"
 				/>
-				<hr class="border-gray-300" />
-				<h3 class="text-gray-850 text-[22px]">50% off for 48h</h3>
-				<GoalProgress text="1h32min left" percentage={90} />
-				<hr class="border-gray-300" />
-				<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
-					<IconInfo class="text-[#E4C315]" />
-					<div>
-						<h3 class="font-semibold text-gray-800">Free with "xxxxx"</h3>
-						<p class="text-gray-700">
-							This product is available for free with your monthly subscription
-						</p>
-						<a href="/cabinet" class="text-[#E4C315] hover:underline">See in MyCabinet</a>
+				{#if 0}
+					<hr class="border-gray-300" />
+					<h3 class="text-gray-850 text-[22px]">50% off for 48h</h3>
+					<GoalProgress text="1h32min left" percentage={90} />
+					<hr class="border-gray-300" />
+					<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
+						<IconInfo class="text-[#E4C315]" />
+						<div>
+							<h3 class="font-semibold text-gray-800">Free with "xxxxx"</h3>
+							<p class="text-gray-700">
+								This product is available for free with your monthly subscription
+							</p>
+							<a href="/cabinet" class="text-[#E4C315] hover:underline">See in MyCabinet</a>
+						</div>
 					</div>
-				</div>
+				{/if}
 				<hr class="border-gray-300" />
 
 				{#if isPreorder && data.product.availableDate}
