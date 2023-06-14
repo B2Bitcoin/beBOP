@@ -12,6 +12,11 @@
 		<input type="text" name="brandName" class="form-input" value={data.brandName} />
 	</label>
 
+	<p>
+		To change the logo, go to <a href="/admin/picture" class="text-blue hover:underline">pictures</a
+		>, add a picture, and set it as logo
+	</p>
+
 	<h3 class="text-xl">Links</h3>
 
 	{#each [...data.links.topbar, { href: '', label: '' }] as link, i}

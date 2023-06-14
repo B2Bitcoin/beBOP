@@ -10,6 +10,7 @@ const defaultConfig = {
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	confirmationBlocks: 1,
 	bitcoinWallet: '',
+	logoPictureId: '',
 	topbarLinks: [
 		{ label: 'Blog', href: '/blog' },
 		{ label: 'Store', href: '/store' },
