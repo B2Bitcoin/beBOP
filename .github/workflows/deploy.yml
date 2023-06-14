@@ -15,4 +15,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
       - name: Deploy
-        run: ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik && echo '${{ vars.DOT_ENV }}' > .env.local && git fetch && git checkout $GITHUB_SHA && pnpm install && pnpm run build && pm2 reload bootik-instance"
+        run: ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik && echo '${{ vars.DOT_ENV }}' > .env.local && git fetch && git checkout $GITHUB_SHA && pnpm install && pnpm run build && pm2 reload bootik-instance && cd ../B2BitcoinBootik2 && echo '${{ vars.DOT_ENV_BOOTIK_2 }}' > .env.local && git fetch && git checkout $GITHUB_SHA && pnpm install && pnpm run build && pm2 reload bootik2"

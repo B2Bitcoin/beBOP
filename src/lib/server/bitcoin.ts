@@ -1,6 +1,7 @@
 import { BITCOIN_RPC_URL, BITCOIN_RPC_PASSWORD, BITCOIN_RPC_USER } from '$env/static/private';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
+import { runtimeConfig } from './runtime-config';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
@@ -13,7 +14,20 @@ type BitcoinCommand =
 	| 'getbalance'
 	| 'getblockchaininfo';
 
-export function bitcoinRpc(command: BitcoinCommand, params: unknown[]) {
+export async function bitcoinRpc(command: BitcoinCommand, params: unknown[]) {
+	let url = BITCOIN_RPC_URL;
+
+	if (!['listwallets', 'createwallet', 'getblockhaininfo'].includes(command)) {
+		const wallets = await listWallets();
+
+		if (wallets.length > 1) {
+			const wallet = wallets.includes(runtimeConfig.bitcoinWallet)
+				? runtimeConfig.bitcoinWallet
+				: wallets[0];
+			url = `${url.endsWith('/') ? url.slice(0, -1) : url}/wallet/${wallet}`;
+		}
+	}
+
 	if (!isBitcoinConfigured) {
 		throw error(500, 'Bitcoin RPC is not configured');
 	}
@@ -22,7 +36,7 @@ export function bitcoinRpc(command: BitcoinCommand, params: unknown[]) {
 		`${BITCOIN_RPC_USER}:${BITCOIN_RPC_PASSWORD}`
 	).toString('base64')}`;
 
-	return fetch(BITCOIN_RPC_URL, {
+	return fetch(url, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'text/plain',
@@ -41,6 +55,7 @@ export async function listWallets() {
 	const response = await bitcoinRpc('listwallets', []);
 
 	if (!response.ok) {
+		console.error(await response.text());
 		throw error(500, 'Could not list wallets');
 	}
 
@@ -48,10 +63,16 @@ export async function listWallets() {
 	return z.object({ result: z.string().array() }).parse(json).result;
 }
 
+export async function currentWallet() {
+	const wallets = await listWallets();
+	return wallets.includes(runtimeConfig.bitcoinWallet) ? runtimeConfig.bitcoinWallet : wallets[0];
+}
+
 export async function createWallet(name: string) {
 	const response = await bitcoinRpc('createwallet', [name, false, false, null, false, true]);
 
 	if (!response.ok) {
+		console.error(await response.text());
 		throw error(500, 'Could not create wallet');
 	}
 
@@ -63,6 +84,7 @@ export async function getNewAddress(label: string) {
 	const response = await bitcoinRpc('getnewaddress', [label, 'bech32']);
 
 	if (!response.ok) {
+		console.error(await response.text());
 		throw error(500, 'Could not get new address');
 	}
 
@@ -74,6 +96,7 @@ export async function listTransactions(label?: string) {
 	const response = await bitcoinRpc('listtransactions', [label || '*', 100]);
 
 	if (!response.ok) {
+		console.error(await response.text());
 		throw error(500, 'Could not list transactions');
 	}
 
@@ -99,6 +122,7 @@ export async function getBalance(confirmations = 1) {
 	const response = await bitcoinRpc('getbalance', ['*', confirmations]);
 
 	if (!response.ok) {
+		console.error(await response.text());
 		throw error(500, 'Could not get balance');
 	}
 
@@ -110,6 +134,7 @@ export async function getBlockchainInfo() {
 	const response = await bitcoinRpc('getblockchaininfo', []);
 
 	if (!response.ok) {
+		console.error(await response.text());
 		throw error(500, 'Could not get blockchain info');
 	}
 

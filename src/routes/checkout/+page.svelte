@@ -14,17 +14,17 @@
 	export let data;
 
 	const feedItems = [
-		{ key: 'paymentStatus', label: 'Payment status' },
-		{ key: 'productChanges', label: 'Product changes' },
-		{ key: 'newsletter', label: 'Newsletter' }
+		{ key: 'paymentStatus', label: 'Payment status' }
+		// { key: 'productChanges', label: 'Product changes' },
+		// { key: 'newsletter', label: 'Newsletter' }
 	] as const;
 
 	type FeedKey = (typeof feedItems)[number]['key'];
 
 	const npubInputs: Record<FeedKey, HTMLInputElement | null> = {
-		paymentStatus: null,
-		productChanges: null,
-		newsletter: null
+		paymentStatus: null
+		// productChanges: null,
+		// newsletter: null
 	};
 
 	function checkForm(event: SubmitEvent) {
@@ -131,7 +131,9 @@
 						{#if data.paymentMethods.length === 0}
 							<p class="text-red-400">No payment methods available.</p>
 						{/if}
-						<a href="/connect" class="underline text-blue"> Connect another wallet </a>
+						{#if 0}
+							<a href="/connect" class="underline text-blue"> Connect another wallet </a>
+						{/if}
 					</div>
 				</label>
 			</section>
@@ -159,10 +161,12 @@
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
-							<label class="form-label">
-								Email
-								<input type="email" class="form-input" name="{key}Email" />
-							</label>
+							{#if 0}
+								<label class="form-label">
+									Email
+									<input type="email" class="form-input" name="{key}Email" />
+								</label>
+							{/if}
 						</div>
 					</article>
 				{/each}
