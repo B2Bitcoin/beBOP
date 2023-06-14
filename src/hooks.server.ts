@@ -88,6 +88,21 @@ export const handle = (async ({ event, resolve }) => {
 
 	const response = await resolve(event);
 
+	if (response.status >= 500 && response.headers.get('Content-Type')?.includes('text/html')) {
+		const errorPages = await collections.cmsPages.countDocuments({
+			_id: 'error'
+		});
+
+		if (errorPages) {
+			return new Response(null, {
+				status: 302,
+				headers: {
+					location: '/error'
+				}
+			});
+		}
+	}
+
 	// Work around handleError which does not allow setting the header
 	const status = event.locals.status;
 	if (status) {
