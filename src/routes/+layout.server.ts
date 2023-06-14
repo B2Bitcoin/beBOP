@@ -12,6 +12,12 @@ export async function load({ depends, locals }) {
 
 	return {
 		exchangeRate: runtimeConfig.BTC_EUR,
+		brandName: runtimeConfig.brandName,
+		links: {
+			footer: runtimeConfig.footerLinks,
+			navbar: runtimeConfig.navbarLinks,
+			topbar: runtimeConfig.topbarLinks
+		},
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {

@@ -5,10 +5,24 @@ const defaultConfig = {
 	BTC_EUR: 30_000,
 	orderNumber: 0,
 	subscriptionNumber: 0,
+	brandName: 'My Space',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	confirmationBlocks: 1,
 	bitcoinWallet: '',
+	topbarLinks: [
+		{ label: 'Blog', href: '/blog' },
+		{ label: 'Store', href: '/store' },
+		{ label: 'Mecenas', href: '/mecenas' }
+	],
+	navbarLinks: [
+		{ label: 'Challenges', href: '/challenges' },
+		{ label: 'Rewards', href: '/rewards' }
+	],
+	footerLinks: [
+		{ label: 'Terms of Service', href: '/terms' },
+		{ label: 'Privacy Policy', href: '/privacy' }
+	],
 
 	checkoutButtonOnProductPage: true,
 	discovery: true

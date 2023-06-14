@@ -66,41 +66,50 @@
 				src="https://coyo.dev/icons/logo.png"
 				alt="Main logo"
 			/>
-			<span class="font-bold text-[32px]">Samdoesart</span>
+			<span class="font-bold text-[32px]">{data.brandName}</span>
 		</a>
 		<span class="grow" />
 		<nav class="flex gap-10 text-[22px] font-semibold">
-			<a href="/blog">Blog</a>
-			<a href="/store">Store</a>
-			<a href="/mecenas">Mecenas</a>
+			{#each data.links.topbar as link}
+				<a href={link.href}>{link.label}</a>
+			{/each}
 		</nav>
-		<div class="border-r-[1px] border-gray-700 h-8 border-solid" />
-		<a href="/admin" class="btn btn-blue font-bold">Connect your wallet</a>
+		{#if 0}
+			<div class="border-r-[1px] border-gray-700 h-8 border-solid" />
+			<a href="/admin" class="btn btn-blue font-bold">Connect your wallet</a>
+		{/if}
 	</div>
 </header>
 <header class="bg-gray-240 text-gray-800 h-[66px] items-center flex">
 	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 		<nav class="flex gap-6 font-light items-center">
-			<a href="/categories" class="flex gap-2 items-center">Categories <IconDownArrow /></a>
-			<a href="/challenges">Challenges</a>
-			<a href="/rewards">Rewards</a>
+			{#if 0}
+				<a href="/categories" class="flex gap-2 items-center">Categories <IconDownArrow /></a>
+			{/if}
+			{#each data.links.navbar as link}
+				<a href={link.href}>{link.label}</a>
+			{/each}
 		</nav>
-		<form action="/search" method="post" class="max-w-[520px] grow relative">
-			<input type="text" name="search" class="form-input pr-8 border-gray-300" />
-			<IconSearch class="absolute right-2 top-0 bottom-0 my-auto" />
-		</form>
+		{#if 0}
+			<form action="/search" method="post" class="max-w-[520px] grow relative">
+				<input type="text" name="search" class="form-input pr-8 border-gray-300" />
+				<IconSearch class="absolute right-2 top-0 bottom-0 my-auto" />
+			</form>
+		{/if}
 		<div class="flex items-center ml-auto gap-2">
-			<IconWallet />
-			<div class="flex flex-col">
-				<PriceTag gap={'gap-1'} currency="BTC" amount={0.00_220_625} />
-				<PriceTag
-					gap={'gap-1'}
-					currency="EUR"
-					amount={1.22}
-					class="ml-auto text-sm text-gray-550"
-				/>
-			</div>
-			<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
+			{#if 0}
+				<IconWallet />
+				<div class="flex flex-col">
+					<PriceTag gap={'gap-1'} currency="BTC" amount={0.00_220_625} />
+					<PriceTag
+						gap={'gap-1'}
+						currency="EUR"
+						amount={1.22}
+						class="ml-auto text-sm text-gray-550"
+					/>
+				</div>
+				<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
+			{/if}
 			<div class="relative">
 				<a
 					href="/cart"
@@ -208,5 +217,10 @@
 		<span class="font-light">Powered by</span><span class="font-display text-xl text-white">
 			LaBookinerie.
 		</span>
+		<div class="ml-auto flex gap-4 items-center">
+			{#each data.links.footer as link}
+				<a href={link.href} class="text-gray-550">{link.label}</a>
+			{/each}
+		</div>
 	</div>
 </footer>

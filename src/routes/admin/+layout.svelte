@@ -7,6 +7,10 @@
 		<span class="font-bold text-xl">Admin</span>
 		<nav class="flex gap-6 font-light items-center">
 			<a
+				href="/admin/layout"
+				class={$page.url.pathname.startsWith('/admin/layout') ? 'underline' : ''}>Layout</a
+			>
+			<a
 				href="/admin/config"
 				class={$page.url.pathname.startsWith('/admin/config') ? 'underline' : ''}>Config</a
 			>
