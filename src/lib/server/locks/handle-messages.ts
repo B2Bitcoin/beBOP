@@ -188,11 +188,11 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 				await send('Subscription #' + number + ' was cancelled, you will not be reminded anymore');
 				break;
 			}
-			await send(
+			/**await send(
 				`Hello ${
 					!isPrivateMessage ? 'world' : isCustomer ? 'customer' : 'you'
 				}! To get the list of commands, say 'help'.`
-			);
+			)**/;
 	}
 	await collections.nostrReceivedMessages.updateOne(
 		{ _id: change.fullDocument._id },
