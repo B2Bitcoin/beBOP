@@ -7,7 +7,7 @@
 <form method="post" class="flex flex-col gap-4">
 	<h2 class="text-2xl">Top bar</h2>
 
-	<label>
+	<label class="form-label">
 		Brand name
 		<input type="text" name="brandName" class="form-input" value={data.brandName} />
 	</label>
@@ -21,11 +21,11 @@
 
 	{#each [...data.links.topbar, { href: '', label: '' }] as link, i}
 		<div class="flex gap-4">
-			<label>
+			<label class="form-label">
 				Text
 				<input type="text" name="topbarLinks[{i}].label" class="form-input" value={link.label} />
 			</label>
-			<label>
+			<label class="form-label">
 				Url
 				<input type="text" name="topbarLinks[{i}].href" class="form-input" value={link.href} />
 			</label>
@@ -38,11 +38,11 @@
 
 	{#each [...data.links.navbar, { href: '', label: '' }] as link, i}
 		<div class="flex gap-4">
-			<label>
+			<label class="form-label">
 				Text
 				<input type="text" name="navbarLink[{i}].label" class="form-input" value={link.label} />
 			</label>
-			<label>
+			<label class="form-label">
 				Url
 				<input type="text" name="navbarLink[{i}].href" class="form-input" value={link.href} />
 			</label>
@@ -55,11 +55,11 @@
 
 	{#each [...data.links.footer, { href: '', label: '' }] as link, i}
 		<div class="flex gap-4">
-			<label>
+			<label class="form-label">
 				Text
 				<input type="text" name="footerLinks[{i}].label" class="form-input" value={link.label} />
 			</label>
-			<label>
+			<label class="form-label">
 				Url
 				<input type="text" name="footerLinks[{i}].href" class="form-input" value={link.href} />
 			</label>
