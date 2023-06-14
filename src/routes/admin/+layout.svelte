@@ -42,6 +42,10 @@
 			<a href="/admin/cms" class={$page.url.pathname.startsWith('/admin/cms') ? 'underline' : ''}
 				>CMS</a
 			>
+			<a
+				href="/admin/challenge"
+				class={$page.url.pathname.startsWith('/admin/challenge') ? 'underline' : ''}>Challenges</a
+			>
 		</nav>
 	</div>
 </header>
