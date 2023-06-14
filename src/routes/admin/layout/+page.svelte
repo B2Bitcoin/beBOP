@@ -40,11 +40,11 @@
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text
-				<input type="text" name="navbarLink[{i}].label" class="form-input" value={link.label} />
+				<input type="text" name="navbarLinks[{i}].label" class="form-input" value={link.label} />
 			</label>
 			<label class="form-label">
 				Url
-				<input type="text" name="navbarLink[{i}].href" class="form-input" value={link.href} />
+				<input type="text" name="navbarLinks[{i}].href" class="form-input" value={link.href} />
 			</label>
 		</div>
 	{/each}
