@@ -19,6 +19,8 @@ The app will automatically configure the S3 bucket to accept CORS PUT calls.
 
 Add `.env.local` or `.env.{development,test,production}.local` files for secrets not committed to git and to override the `.env`
 
+- `ADMIN_LOGIN` - Protect the admin page with this user
+- `ADMIN_PASSWORD` - Protect the admin page with this password
 - `BITCOIN_RPC_URL` - The RPC url for the bitcoin node. Set to http://127.0.0.1:8332 if you run a bitcoin node locally with default configuration
 - `BITCOIN_RPC_USER` - The RPC user
 - `BITCOIN_RPC_PASSWORD` - The RPC password
