@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 
 import '$lib/server/locks';
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
@@ -42,6 +43,36 @@ export const handleError = (({ error, event }) => {
 }) satisfies HandleServerError;
 
 export const handle = (async ({ event, resolve }) => {
+	if (
+		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
+		ADMIN_LOGIN &&
+		ADMIN_PASSWORD
+	) {
+		const authorization = event.request.headers.get('authorization');
+
+		if (!authorization?.startsWith('Basic ')) {
+			return new Response(null, {
+				status: 401,
+				headers: {
+					'WWW-Authenticate': 'Basic realm="Admin"'
+				}
+			});
+		}
+
+		const [login, password] = Buffer.from(authorization.split(' ')[1], 'base64')
+			.toString()
+			.split(':');
+
+		if (login !== ADMIN_LOGIN || password !== ADMIN_PASSWORD) {
+			return new Response(null, {
+				status: 401,
+				headers: {
+					'WWW-Authenticate': 'Basic realm="Admin"'
+				}
+			});
+		}
+	}
+
 	const token = event.cookies.get('bootik-session');
 
 	event.locals.sessionId = token || crypto.randomUUID();
