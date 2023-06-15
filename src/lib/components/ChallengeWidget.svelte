@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Challenge } from '$lib/types/Challenge';
 	import ChallengeProgress from './ChallengeProgress.svelte';
-	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
 
 	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>;
