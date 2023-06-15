@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	);
 
 	if (!challenge) {
-		throw error(404, 'Resource not found');
+		throw error(404, 'Challenge not found');
 	}
 
 	return {
