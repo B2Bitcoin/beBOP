@@ -57,6 +57,6 @@ export async function load({ params }) {
 		cmsPage: omit(cmsPage, ['content']),
 		tokens,
 		products,
-		pictures: picturesForProducts(products.map((product) => product._id))
+		pictures: await picturesForProducts(products.map((product) => product._id))
 	};
 }
