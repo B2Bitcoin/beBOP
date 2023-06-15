@@ -60,7 +60,7 @@
 
 	<div class="flex flex-wrap gap-4">
 		<label>
-			Available date
+			Ending date
 
 			<input
 				class="form-input"
