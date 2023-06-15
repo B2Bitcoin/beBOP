@@ -10,10 +10,7 @@ export interface Challenge extends Timestamps {
 		currency: Currency;
 		amount: number;
 	};
-	progress: {
-		currency: Currency;
-		amount: number;
-	};
+	progress: number;
 	mode: 'money amount' | 'order quantity';
 	endsAt: Date;
 }
