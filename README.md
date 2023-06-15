@@ -37,6 +37,25 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `S3_KEY_SECRET` - Credentials for the S3-compatible object storage
 - `S3_REGION` - Region from the S3-compatible object storage
 
+## Production
+
+### Running
+
+```shell
+pnpm run build
+node build/index.js
+```
+
+You can set the `PORT` environment variable to change from the default 3000 port to another port.
+
+You can also use [pm2](https://pm2.keymetrics.io/docs/usage/quick-start/) to manage your node application, and run it on multiple cores.
+
+### Maintenance mode
+
+It's possible to enable maintenance mode in the admin.
+
+To correctly recognize your IP, if you are behind a reverse proxy like nginx, you will need to set the `ADDRESS_HEADER` to `X-Forwaded-For` and the `XFF_DEPTH` header to `1` in the environment.
+
 ## Local development
 
 ### Running the app
