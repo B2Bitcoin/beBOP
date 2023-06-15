@@ -34,7 +34,20 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 				productId: { $in: order.items.map((item) => item.product._id) }
 			})
 			.toArray();
-
+		const challenges = await collections.challenges.find({}).toArray();
+		for (const challenge of challenges) {
+			await collections.challenges.updateOne(
+				{ _id: challenge._id },
+				{
+					$set: {
+						progress: {
+							amount: challenge.progress.amount + order.totalPrice.amount,
+							currency: 'SAT'
+						}
+					}
+				}
+			);
+		}
 		for (const subscription of order.items.filter((item) => item.product.type === 'subscription')) {
 			const existingSubscription = subscriptions.find(
 				(sub) => sub.productId === subscription.product._id
