@@ -6,7 +6,7 @@ import { Kind } from 'nostr-tools';
 import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
-import { addSeconds, formatDistance } from 'date-fns';
+import { addSeconds, formatDistance, subMinutes } from 'date-fns';
 
 const lock = new Lock('received-messages');
 
@@ -200,7 +200,18 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 	);
 }
 
-function sendMessage(dest: string, content: string, minCreatedAt: Date) {
+async function sendMessage(dest: string, content: string, minCreatedAt: Date) {
+	const lastMessage = await collections.nostrNotifications.countDocuments({
+		dest,
+		content,
+		createdAt: { $gt: subMinutes(new Date(), 1) }
+	});
+
+	// Do not send the same message twice in a minute, avoid larsen effect
+	if (lastMessage) {
+		return;
+	}
+
 	return collections.nostrNotifications.insertOne({
 		dest,
 		_id: new ObjectId(),

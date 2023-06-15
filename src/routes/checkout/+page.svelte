@@ -264,6 +264,21 @@
 					/>
 				</div>
 
+				<label class="cursor-pointer">
+					<input
+						type="checkbox"
+						class="form-checkbox rounded-sm cursor-pointer"
+						name="teecees"
+						form="checkout"
+						required
+					/>
+					<span class="ml-2">
+						I agree to the <a href="/terms" target="_blank" class="text-blue hover:underline"
+							>terms of service</a
+						></span
+					>
+				</label>
+
 				<input
 					type="submit"
 					class="btn btn-black btn-xl -mx-1 -mb-1 mt-1"
