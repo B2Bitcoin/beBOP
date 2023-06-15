@@ -8,7 +8,7 @@ export const actions: Actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 
-		const productId = [''];
+		const productIds: string[] = [];
 		const { name, goalAmount, mode, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
