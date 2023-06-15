@@ -75,6 +75,7 @@ export const handle = (async ({ event, resolve }) => {
 		runtimeConfig.isMaintenance &&
 		!isAdminUrl &&
 		event.url.pathname !== '/logo' &&
+		!event.url.pathname.startsWith('/picture/raw/') &&
 		!runtimeConfig.maintenanceIps.split(',').includes(event.getClientAddress())
 	) {
 		if (event.request.method !== 'GET') {
