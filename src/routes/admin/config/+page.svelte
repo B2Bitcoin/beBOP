@@ -8,6 +8,8 @@
 
 <p>Configured URL: {data.origin}</p>
 
+<p>Exchange Rate BTC/EUR: {data.exchangeRate}</p>
+
 <form method="post" class="flex flex-col gap-6">
 	<label class="flex gap-2 cursor-pointer items-center">
 		<input
