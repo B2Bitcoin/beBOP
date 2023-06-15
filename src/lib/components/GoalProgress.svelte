@@ -8,7 +8,9 @@
 
 <div class="pt-6 {className}">
 	<div
-		class="bg-gradient-to-r from-green-500 to-red-500 via-yellow-500 rounded-[3px] flex justify-end"
+		class={percentage >= 100
+			? 'bg-gradient-to-r from-green-500 to-green-500 via-green-500 rounded-[3px] flex justify-end'
+			: 'bg-gradient-to-r from-red-500 to-green-500  via-yellow-500 rounded-[3px] flex justify-end'}
 	>
 		<div
 			data-text={text}
