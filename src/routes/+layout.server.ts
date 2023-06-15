@@ -15,6 +15,7 @@ export async function load({ depends, locals }) {
 		: null;
 
 	return {
+		isMaintenance: runtimeConfig.isMaintenance,
 		exchangeRate: runtimeConfig.BTC_EUR,
 		brandName: runtimeConfig.brandName,
 		logoPicture,

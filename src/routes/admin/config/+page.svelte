@@ -29,6 +29,25 @@
 		/>
 		discovery
 	</label>
+	<label class="flex gap-2 cursor-pointer items-center">
+		<input
+			type="checkbox"
+			name="isMaintenance"
+			class="form-checkbox rounded-sm cursor-pointer"
+			checked={data.isMaintenance}
+		/>
+		isMaintenance
+	</label>
+	<label class="form-label">
+		Maintenance IPs, comma-separated
+		<input
+			type="text"
+			class="form-input max-w-[25rem]"
+			name="maintenanceIps"
+			placeholder="x.x.x.x,y.y.y.y"
+			value={data.maintenanceIps}
+		/>
+	</label>
 	<label class="form-label">
 		Subscription duration
 		<select
