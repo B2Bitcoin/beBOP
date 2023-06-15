@@ -83,6 +83,9 @@ export const actions: Actions = {
 						data: '',
 						updatedAt: new Date()
 					}
+				},
+				{
+					upsert: true
 				}
 			);
 			runtimeConfig.logoPictureId = '';
