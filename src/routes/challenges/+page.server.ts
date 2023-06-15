@@ -3,7 +3,7 @@ import type { PageServerLoad } from './$types';
 import { collections } from '$lib/server/database';
 import type { Challenge } from '$lib/types/Challenge';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async () => {
 	const challenges = await collections.challenges
 		.find({})
 		.project<Pick<Challenge, '_id' | 'name'>>({ _id: 1, name: 1 })
