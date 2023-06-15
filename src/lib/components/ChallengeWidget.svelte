@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Challenge } from '$lib/types/Challenge';
-	import ChallengeProgress from './ChallengeProgress.svelte';
+	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
 
 	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>;
@@ -13,7 +13,7 @@
 		</h3>
 		<span class="text-base font-light text-gray-550">Ends {challenge.endsAt}</span>
 	</div>
-	<ChallengeProgress
+	<GoalProgress
 		class="font-bold mt-3"
 		text="{Number(challenge.progress.amount).toLocaleString('en', {
 			style: 'currency',
@@ -29,7 +29,11 @@
 		{:else if challenge.progress.amount > challenge.goal.amount}
 			<p>You are amazing guys! 🤭</p>
 		{:else}
-			<PriceTag amount={challenge.goal.amount} class="text-gray-800 text-base" currency="EUR" />
+			<PriceTag
+				amount={challenge.goal.amount}
+				class="text-gray-800 text-base"
+				currency={challenge.goal.currency}
+			/>
 		{/if}
 	</div>
 </div>

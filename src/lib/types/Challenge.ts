@@ -15,7 +15,5 @@ export interface Challenge extends Timestamps {
 		currency: Currency;
 		amount: number;
 	};
-
-	description: string;
 	endsAt: Date;
 }
