@@ -12,7 +12,7 @@
 	<label>
 		Challenge name
 		<input
-			class="form-input block"
+			class="form-input"
 			type="text"
 			maxlength={MAX_NAME_LIMIT}
 			name="name"
