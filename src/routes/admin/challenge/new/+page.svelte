@@ -49,7 +49,6 @@
 				type="number"
 				name="goalAmount"
 				placeholder="Quantity"
-				step="any"
 				required
 			/>
 		</label>
