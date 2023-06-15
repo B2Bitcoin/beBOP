@@ -1,18 +1,21 @@
-import { collections } from '$lib/server/database';
-import type { Product } from '$lib/types/Product';
-import type { PageServerLoad } from './$types';
+import { load as cmsLoad } from './[slug]/+page.server';
+import { load as catalogLoad } from './catalog/+page.server';
 
-export const load: PageServerLoad = async () => {
-	const products = await collections.products
-		.find({})
-		.project<Pick<Product, '_id' | 'price' | 'name'>>({ price: 1, _id: 1, name: 1 })
-		.toArray();
+export const load = async () => {
+	try {
+		return {
+			// @ts-expect-error only params is needed
+			cms: await cmsLoad({ params: { slug: 'home' } })
+		};
+	} catch (e) {
+		// also, body: { message: 'CMS Page not found' }
+		const is404 = e && typeof e === 'object' && 'status' in e && e.status === 404;
+		if (!is404) {
+			throw e;
+		}
 
-	return {
-		products,
-		pictures: await collections.pictures
-			.find({ productId: { $exists: true } })
-			.sort({ createdAt: 1 })
-			.toArray()
-	};
+		return {
+			catalog: catalogLoad()
+		};
+	}
 };
