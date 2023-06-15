@@ -21,6 +21,10 @@ export const actions = {
 				shortDescription: data.get('shortDescription')
 			});
 
+		if (slug === 'catalog') {
+			throw error(409, 'Page with same slug already exists');
+		}
+
 		const existing = await collections.cmsPages.countDocuments({ _id: slug });
 
 		if (existing) {
