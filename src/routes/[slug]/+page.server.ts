@@ -3,6 +3,7 @@ import { error } from '@sveltejs/kit';
 import { marked } from 'marked';
 import type { Product } from '$lib/types/Product.js';
 import { picturesForProducts } from '$lib/server/picture.js';
+import { omit } from 'lodash-es';
 
 const PRODUCT_WIDGET_REGEX = /^\[Product=(?<slug>[a-z0-9-]+)\]$/i;
 
@@ -53,7 +54,7 @@ export async function load({ params }) {
 		.toArray();
 
 	return {
-		cmsPage,
+		cmsPage: omit(cmsPage, ['content']),
 		tokens,
 		products,
 		pictures: picturesForProducts(products.map((product) => product._id))
