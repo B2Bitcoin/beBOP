@@ -54,7 +54,6 @@
 		</label>
 	{/if}
 
-	<input type="hidden" name="priceCurrency" value="BTC" />
 
 	<div class="flex flex-wrap gap-4">
 		<label>
