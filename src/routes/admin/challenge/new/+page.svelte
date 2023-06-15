@@ -38,7 +38,6 @@
 				type="number"
 				name="goalAmount"
 				placeholder="Amount (SAT)"
-				step="any"
 				required
 			/>
 		</label>
