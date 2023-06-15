@@ -13,7 +13,7 @@
 	<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col">
 		<div class="flex justify-between items-center">
 			<h3 class="font-medium text-[22px] text-gray-850">
-				{challenge.description}
+				{challenge.name}
 			</h3>
 			<span class="text-base font-light text-gray-550"
 				>Ends at

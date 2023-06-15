@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Challenge } from '$lib/types/Challenge';
+	import { format } from 'date-fns';
 	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
 
@@ -11,7 +12,11 @@
 		<h3 class="font-medium text-[22px] text-gray-850">
 			{challenge.name}
 		</h3>
-		<span class="text-base font-light text-gray-550">Ends {challenge.endsAt}</span>
+		<span class="text-base font-light text-gray-550"
+			>Ends <time datetime={challenge.endsAt.toJSON()} title={challenge.endsAt.toLocaleString('en')}
+				>{format(challenge.endsAt, 'MMMM, dd')}</time
+			></span
+		>
 	</div>
 	<GoalProgress
 		class="font-bold mt-3"
