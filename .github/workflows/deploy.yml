@@ -30,8 +30,9 @@ jobs:
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
       - name: Deploy
         run: |
-          scp -r build ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && pm2 reload bootik-instance"
+          zip -r build.zip build
+          scp build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik/build.zip
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-instance"
   deploy-bootik2:
     runs-on: ubuntu-latest
     needs: [deploy-bootik]
@@ -57,5 +58,6 @@ jobs:
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
       - name: Deploy
         run: |
-          scp -r build ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik2
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik2 && git fetch && git checkout $GITHUB_SHA && pnpm install && pm2 reload bootik2"
+          zip -r build.zip build
+          scp -r build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik2/build.zip
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik2 && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik2"
