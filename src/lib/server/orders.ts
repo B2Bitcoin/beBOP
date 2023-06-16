@@ -37,7 +37,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 		const challenges = await collections.challenges
 			.find({
 				mode: 'moneyAmount',
-				beginsAt: { $exists: true, $lt: new Date() },
+				$or: [{beginsAt: {$exists: false}}, {beginsAt: {$lt: new Date()}}]
 				endsAt: { $gt: new Date() }
 			})
 			.toArray();
