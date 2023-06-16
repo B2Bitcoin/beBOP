@@ -38,8 +38,8 @@
 	<label class="form-label">
 		Mode
 		<select class="form-input" name="mode" bind:value={mode}>
-			{#each ['moneyAmount', 'totalProducts'] as mode}
-				<option value={mode}>{upperFirst(mode)}</option>
+			{#each ['moneyAmount', 'totalProducts'] as option}
+				<option value={option}>{upperFirst(option)}</option>
 			{/each}
 		</select>
 	</label>
