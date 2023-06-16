@@ -33,7 +33,15 @@
 		/>
 		<div class="flex justify-between mt-1 items-center">
 			<a href="/" class="text-blue underline">How can I contribute?</a>
-			<PriceTag amount={challenge.goal.amount} class="text-gray-800 text-base" currency="SAT" />
+			{#if challenge.goal.currency}
+				<PriceTag
+					amount={challenge.goal.amount}
+					class="text-gray-800 text-base"
+					currency={challenge.goal.currency}
+				/>
+			{:else}
+				{challenge.goal.amount} products
+			{/if}
 		</div>
 	</div>
 {:else}

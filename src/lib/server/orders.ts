@@ -36,16 +36,23 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 			.toArray();
 		const challenges = await collections.challenges
 			.find({
-				$or: [{beginsAt: {$exists: false}}, {beginsAt: {$lt: new Date()}}]
+				$or: [{ beginsAt: { $exists: false } }, { beginsAt: { $lt: new Date() } }],
 				endsAt: { $gt: new Date() }
 			})
 			.toArray();
+		let sumProduct = 0;
+		for (let i = 0; i < order.items.length; i++) {
+			sumProduct += order.items[i].quantity;
+		}
 		for (const challenge of challenges) {
 			await collections.challenges.updateOne(
 				{ _id: challenge._id },
 				{
 					$inc: {
-						progress: toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
+						progress:
+							challenge.mode === 'moneyAmount'
+								? toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
+								: sumProduct
 					}
 				},
 				{ session }
