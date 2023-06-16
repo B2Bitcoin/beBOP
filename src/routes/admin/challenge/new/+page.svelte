@@ -59,14 +59,7 @@
 		<label class="form-label">
 			Beginning date
 
-			<input
-				class="form-input"
-				type="date"
-				name="beginsAt"
-				required
-				min={addDays(new Date(), 1).toJSON().slice(0, 10)}
-				bind:value={beginsAt}
-			/>
+			<input class="form-input" type="date" name="beginsAt" required bind:value={beginsAt} />
 		</label>
 	</div>
 	<div class="flex flex-wrap gap-4">
