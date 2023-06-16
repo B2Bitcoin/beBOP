@@ -58,16 +58,9 @@
 	{:else}
 		<label class="form-label">
 			Goal
-			<input
-				class="form-input"
-				type="number"
-				name="goalAmount"
-				placeholder="Quantity"
-				required
-			/>
+			<input class="form-input" type="number" name="goalAmount" placeholder="Quantity" required />
 		</label>
 	{/if}
-
 
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
