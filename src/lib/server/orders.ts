@@ -12,6 +12,7 @@ import { lndCreateInvoice } from './lightning';
 import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
+import { sum } from '$lib/utils/sum';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -36,7 +37,27 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 				productId: { $in: order.items.map((item) => item.product._id) }
 			})
 			.toArray();
-
+		const challenges = await collections.challenges
+			.find({
+				$or: [{ beginsAt: { $exists: false } }, { beginsAt: { $lt: new Date() } }],
+				endsAt: { $gt: new Date() }
+			})
+			.toArray();
+		const numberOfProducts = sum(order.items.map((item) => item.quantity));
+		for (const challenge of challenges) {
+			await collections.challenges.updateOne(
+				{ _id: challenge._id },
+				{
+					$inc: {
+						progress:
+							challenge.mode === 'moneyAmount'
+								? toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
+								: numberOfProducts
+					}
+				},
+				{ session }
+			);
+		}
 		for (const subscription of order.items.filter((item) => item.product.type === 'subscription')) {
 			const existingSubscription = subscriptions.find(
 				(sub) => sub.productId === subscription.product._id
