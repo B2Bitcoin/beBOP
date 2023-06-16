@@ -34,11 +34,10 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 				productId: { $in: order.items.map((item) => item.product._id) }
 			})
 			.toArray();
-		const challenges = await collections.challenges.find({}).toArray();
-		for (const challenge of challenges.filter(
-			(chall) =>
-				chall.mode === 'moneyAmount' && chall.beginsAt! < new Date() && chall.endsAt > new Date()
-		)) {
+		const challenges = await collections.challenges
+			.find({ mode: 'moneyAmount', beginsAt: { $lt: new Date() }, endsAt: { $gt: new Date() } })
+			.toArray();
+		for (const challenge of challenges) {
 			await collections.challenges.updateOne(
 				{ _id: challenge._id },
 				{
