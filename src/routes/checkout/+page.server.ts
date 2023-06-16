@@ -51,22 +51,30 @@ export const actions = {
 						lastName: z.string().min(1),
 						address: z.string().min(1),
 						city: z.string().min(1),
-						paymentStatusNPUB: z
-							.string()
-							.startsWith('npub')
-							.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
-								message: 'Invalid npub address'
-							})
-							.optional(),
-						paymentStatusEmail: z.string().email().optional(),
 						state: z.string().optional(),
 						zip: z.string().min(1),
 						country: z.enum(COUNTRY_ALPHA3S)
 					})
 					.parse(Object.fromEntries(formData));
 
-		const npubAddress = shipping?.paymentStatusNPUB;
-		const email = shipping?.paymentStatusEmail;
+		const notifications = z
+			.object({
+				paymentStatusNPUB: z
+					.string()
+					.startsWith('npub')
+					.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
+						message: 'Invalid npub address'
+					})
+					.optional(),
+				paymentStatusEmail: z.string().email().optional()
+			})
+			.parse({
+				paymentStatusNPUB: formData.get('paymentStatusNPUB') || undefined,
+				paymentStatusEmail: formData.get('paymentStatusEmail') || undefined
+			});
+
+		const npubAddress = notifications?.paymentStatusNPUB;
+		const email = notifications?.paymentStatusEmail;
 
 		// Remove empty string
 		if (shipping && !shipping.state) {
