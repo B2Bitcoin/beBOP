@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import type { Actions } from './$types';
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { generateId } from '$lib/utils/generateId';
@@ -14,7 +14,7 @@ export const actions: Actions = {
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				// productId: z.string().array(),
-				goalAmount: z.number({coerce: true}).int().positive(),
+				goalAmount: z.number({ coerce: true }).int().positive(),
 				mode: z.enum(['totalProducts', 'moneyAmount']),
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
@@ -28,7 +28,7 @@ export const actions: Actions = {
 				endsAt: data.get('endsAt')
 			});
 
-            const slug = generateId(name, true);
+		const slug = generateId(name, true);
 
 		await collections.challenges.insertOne({
 			_id: slug,
@@ -36,10 +36,10 @@ export const actions: Actions = {
 			productIds: productId,
 			goal: { amount: goalAmount, currency: 'SAT' },
 			progress: 0,
-            beginsAt,
+			beginsAt,
 			endsAt,
 			mode,
-            recurring: false,
+			recurring: false,
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});
