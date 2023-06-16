@@ -40,7 +40,9 @@
 					currency={challenge.goal.currency}
 				/>
 			{:else}
-				{challenge.goal.amount} products
+				<span class="text-gray-800 text-base">
+					{challenge.goal.amount} products
+				</span>
 			{/if}
 		</div>
 	</div>
