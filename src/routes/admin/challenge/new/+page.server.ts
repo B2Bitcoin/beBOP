@@ -33,7 +33,7 @@ export const actions: Actions = {
 		await collections.challenges.insertOne({
 			_id: slug,
 			name,
-			productIds: productId,
+			productIds: productIds,
 			goal: { amount: goalAmount, currency: 'SAT' },
 			progress: 0,
 			beginsAt,

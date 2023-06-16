@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
-	import { addDays } from 'date-fns';
+	import { addDays, addMonths } from 'date-fns';
 
 	let mode = 'moneyAmount';
 	let beginsAt = '';
