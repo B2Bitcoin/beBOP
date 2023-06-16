@@ -54,13 +54,26 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 
 	const order = change.fullDocument;
 
-	const { npub } = order.notifications.paymentStatus;
+	const { npub, email } = order.notifications.paymentStatus;
 
-	await collections.nostrNotifications.insertOne({
-		_id: new ObjectId(),
-		createdAt: new Date(),
-		updatedAt: new Date(),
-		content: `Order #${order.number} ${order.payment.status}, see ${ORIGIN}/order/${order._id}`,
-		dest: npub
-	});
+	if (npub) {
+		await collections.nostrNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			content: `Order #${order.number} ${order.payment.status}, see ${ORIGIN}/order/${order._id}`,
+			dest: npub
+		});
+	}
+
+	if (email) {
+		await collections.emailNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			subject: `Order #${order.number} ${order.payment.status}`,
+			htmlContent: `Order #${order.number} status changed to ${order.payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a>`,
+			dest: email
+		});
+	}
 }

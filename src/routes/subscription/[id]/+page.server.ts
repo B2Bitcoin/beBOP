@@ -1,6 +1,7 @@
 import { collections } from '$lib/server/database.js';
 import { createOrder } from '$lib/server/orders.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { filterUndef } from '$lib/utils/filterUndef.js';
 import { error, redirect } from '@sveltejs/kit';
 import { subSeconds } from 'date-fns';
 
@@ -67,11 +68,20 @@ export const actions = {
 			throw error(500, 'Product associated to subscription not found');
 		}
 
+		const orConditions = filterUndef([
+			subscription.npub ? { 'notifications.paymentStatus.npub': subscription.npub } : undefined,
+			subscription.email ? { 'notifications.paymentStatus.email': subscription.email } : undefined
+		]);
+
+		if (!orConditions.length) {
+			throw error(500, 'No npub or email found for this subscription');
+		}
+
 		const lastOrder = await collections.orders.findOne(
 			{
 				'items.product._id': product._id,
 				'payment.status': 'paid',
-				'notifications.paymentStatus.npub': subscription.npub
+				$or: orConditions
 			},
 			{
 				sort: { createdAt: -1 }
@@ -93,7 +103,7 @@ export const actions = {
 			{
 				sessionId: locals.sessionId,
 				shippingAddress: lastOrder.shippingAddress,
-				npub: subscription.npub
+				notifications: lastOrder.notifications
 			}
 		);
 

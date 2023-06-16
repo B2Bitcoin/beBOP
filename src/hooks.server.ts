@@ -6,7 +6,7 @@ import { addYears } from 'date-fns';
 
 import '$lib/server/locks';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
-import { runtimeConfig } from '$lib/server/runtime-config';
+import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
@@ -44,6 +44,8 @@ export const handleError = (({ error, event }) => {
 }) satisfies HandleServerError;
 
 export const handle = (async ({ event, resolve }) => {
+	await refreshPromise;
+
 	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
 	if (isAdminUrl && ADMIN_LOGIN && ADMIN_PASSWORD) {
 		const authorization = event.request.headers.get('authorization');
