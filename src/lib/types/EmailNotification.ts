@@ -12,7 +12,7 @@ export interface EmailNotification extends Timestamps {
 
 	error?: {
 		message: string;
-		stack: string;
+		stack?: string;
 	};
 
 	dest: string;

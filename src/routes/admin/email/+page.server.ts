@@ -1,5 +1,24 @@
-import { sendEmail } from '$lib/server/email.js';
+import { collections } from '$lib/server/database.js';
+import type { EmailNotification } from '$lib/types/EmailNotification.js';
+import { ObjectId } from 'mongodb';
 import { z } from 'zod';
+
+export async function load() {
+	return {
+		emails: collections.emailNotifications
+			.find({})
+			.project<Pick<EmailNotification, 'subject' | 'dest' | 'error' | 'processedAt'>>({
+				subject: 1,
+				dest: 1,
+				error: 1,
+				processedAt: 1,
+				_id: 0
+			})
+			.sort({ _id: -1 })
+			.limit(100)
+			.toArray()
+	};
+}
 
 export const actions = {
 	default: async function ({ request }) {
@@ -11,7 +30,14 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(await request.formData()));
 
-		await sendEmail({ to, subject, html: body });
+		await collections.emailNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			subject,
+			htmlContent: body,
+			dest: to
+		});
 
 		return {
 			success: true
