@@ -35,7 +35,11 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 			})
 			.toArray();
 		const challenges = await collections.challenges
-			.find({ mode: 'moneyAmount', beginsAt: { $lt: new Date() }, endsAt: { $gt: new Date() } })
+			.find({
+				mode: 'moneyAmount',
+				beginsAt: { $exists: true, $lt: new Date() },
+				endsAt: { $gt: new Date() }
+			})
 			.toArray();
 		for (const challenge of challenges) {
 			await collections.challenges.updateOne(
