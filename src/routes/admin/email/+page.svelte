@@ -15,7 +15,7 @@
 	>
 	<label class="form-label">
 		Body
-		<textarea name="body" required class="form-input" />
+		<textarea name="body" class="form-input" />
 	</label>
 	<button type="submit" class="btn btn-black self-start">Send</button>
 </form>
