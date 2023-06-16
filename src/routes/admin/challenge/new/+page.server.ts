@@ -3,18 +3,20 @@ import type { Actions } from './$types';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
+import { generateId } from '$lib/utils/generateId';
 
 export const actions: Actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 
 		const productId = [''];
-		const { name, goalAmount, mode, endsAt } = z
+		const { name, goalAmount, mode, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				// productId: z.string().array(),
-				goalAmount: z.string().regex(/^\d+(\.\d+)?$/),
-				mode: z.enum(['money amount', 'order quantity']),
+				goalAmount: z.number({coerce: true}).int().positive(),
+				mode: z.enum(['totalProducts', 'moneyAmount']),
+				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
 			.parse({
@@ -22,23 +24,22 @@ export const actions: Actions = {
 				// productId: data.get('productId'),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
+				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
 
-		const existing = await collections.challenges.countDocuments({ _id: name });
-
-		if (existing) {
-			throw error(409, 'challenge with same slug already exists');
-		}
+            const slug = generateId(name, true);
 
 		await collections.challenges.insertOne({
-			_id: name,
+			_id: slug,
 			name,
 			productIds: productId,
-			goal: { amount: parseInt(goalAmount), currency: 'SAT' },
-			progress: { amount: 0, currency: 'SAT' },
+			goal: { amount: goalAmount, currency: 'SAT' },
+			progress: 0,
+            beginsAt,
 			endsAt,
 			mode,
+            recurring: false,
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});

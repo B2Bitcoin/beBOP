@@ -20,18 +20,18 @@
 	</div>
 	<GoalProgress
 		class="font-bold mt-3"
-		text="{Number(challenge.progress.amount).toLocaleString('en', {
+		text="{Number(challenge.progress).toLocaleString('en', {
 			style: 'currency',
-			currency: challenge.progress.currency,
+			currency: challenge.goal.currency,
 			minimumFractionDigits: 0
 		})} 🙂"
-		percentage={(challenge.progress.amount / challenge.goal.amount) * 100}
+		percentage={(challenge.progress / challenge.goal.amount) * 100}
 	/>
 	<div class="flex justify-between mt-1 items-center">
 		<a href="/" class="text-blue underline">How can I contribute?</a>
-		{#if challenge.progress.amount == challenge.goal.amount}
+		{#if challenge.progress == challenge.goal.amount}
 			<p>Good job guys! 👏👏</p>
-		{:else if challenge.progress.amount > challenge.goal.amount}
+		{:else if challenge.progress > challenge.goal.amount}
 			<p>You are amazing guys! 🤭</p>
 		{:else}
 			<PriceTag

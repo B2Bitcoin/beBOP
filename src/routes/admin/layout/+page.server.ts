@@ -39,6 +39,9 @@ export const actions = {
 						data: res.brandName,
 						updatedAt: new Date()
 					}
+				},
+				{
+					upsert: true
 				}
 			);
 		}
@@ -57,6 +60,9 @@ export const actions = {
 							data: array,
 							updatedAt: new Date()
 						}
+					},
+					{
+						upsert: true
 					}
 				);
 			}
