@@ -44,23 +44,16 @@
 		</select>
 	</label>
 
-	{#if mode == 'moneyAmount'}
-		<label class="form-label">
-			Goal
-			<input
-				class="form-input"
-				type="number"
-				name="goalAmount"
-				placeholder="Amount (SAT)"
-				required
-			/>
-		</label>
-	{:else}
-		<label class="form-label">
-			Goal
-			<input class="form-input" type="number" name="goalAmount" placeholder="Quantity" required />
-		</label>
-	{/if}
+	<label class="form-label">
+		Goal
+		<input
+			class="form-input"
+			type="number"
+			name="goalAmount"
+			placeholder={mode === 'moneyAmount' ? 'Amount (SAT)' : 'Quantity'}
+			required
+		/>
+	</label>
 
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
