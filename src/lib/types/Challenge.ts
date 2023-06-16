@@ -7,6 +7,7 @@ export interface Challenge extends Timestamps {
 
 	/* If empty, works on all products */
 	productIds: string[];
+	
 	goal: {
 		currency?: Currency;
 		amount: number;

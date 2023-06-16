@@ -3,6 +3,7 @@
 	import { format } from 'date-fns';
 	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
+
 	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>;
 </script>
 
