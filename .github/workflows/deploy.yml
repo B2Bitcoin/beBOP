@@ -34,6 +34,7 @@ jobs:
           ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && pm2 reload bootik-instance"
   deploy-bootik2:
     runs-on: ubuntu-latest
+    needs: [deploy-bootik]
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
