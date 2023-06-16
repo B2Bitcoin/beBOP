@@ -29,24 +29,23 @@ export const actions = {
 
 		const data = await request.formData();
 
-
-        const { name, goalAmount, mode, beginsAt, endsAt } = z
-        .object({
-            name: z.string().min(1).max(MAX_NAME_LIMIT),
-            // productId: z.string().array(),
-            goalAmount: z.number({ coerce: true }).int().positive(),
-            mode: z.enum(['totalProducts', 'moneyAmount']),
-            beginsAt: z.date({ coerce: true }).optional(),
-            endsAt: z.date({ coerce: true })
-        })
-        .parse({
-            name: data.get('name'),
-            // productId: data.get('productId'),
-            goalAmount: data.get('goalAmount'),
-            mode: data.get('mode'),
-            beginsAt: data.get('beginsAt') || undefined,
-            endsAt: data.get('endsAt')
-        });
+		const { name, goalAmount, mode, beginsAt, endsAt } = z
+			.object({
+				name: z.string().min(1).max(MAX_NAME_LIMIT),
+				// productId: z.string().array(),
+				goalAmount: z.number({ coerce: true }).int().positive(),
+				mode: z.enum(['totalProducts', 'moneyAmount']),
+				beginsAt: z.date({ coerce: true }).optional(),
+				endsAt: z.date({ coerce: true })
+			})
+			.parse({
+				name: data.get('name'),
+				// productId: data.get('productId'),
+				goalAmount: data.get('goalAmount'),
+				mode: data.get('mode'),
+				beginsAt: data.get('beginsAt') || undefined,
+				endsAt: data.get('endsAt')
+			});
 
 		await collections.challenges.updateOne(
 			{
@@ -57,14 +56,13 @@ export const actions = {
 					name,
 					goalAmount,
 					mode,
-                    beginsAt,
-                    endsAt,
+					beginsAt,
+					endsAt,
 					updatedAt: new Date()
 				}
 			}
 		);
 	},
-
 
 	delete: async function ({ params }) {
 		await collections.challenges.deleteOne({
