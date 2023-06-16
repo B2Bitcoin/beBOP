@@ -36,6 +36,10 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `S3_KEY_ID` - Credentials for the S3-compatible object storage
 - `S3_KEY_SECRET` - Credentials for the S3-compatible object storage
 - `S3_REGION` - Region from the S3-compatible object storage
+- `SMTP_HOST` - Specify all the SMTP variables to enable email notifications
+- `SMTP_PASSWORD` - Specify all the SMTP variables to enable email notifications
+- `SMTP_PORT` - Specify all the SMTP variables to enable email notifications
+- `SMTP_USER` - Specify all the SMTP variables to enable email notifications
 
 ## Production
 

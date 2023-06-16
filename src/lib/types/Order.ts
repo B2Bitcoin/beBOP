@@ -49,7 +49,9 @@ export interface Order extends Timestamps {
 
 	notifications: {
 		paymentStatus: {
-			npub: string;
+			// One of these two must be set
+			npub?: string;
+			email?: string;
 		};
 	};
 }

@@ -5,10 +5,12 @@ import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
 import { createOrder } from '$lib/server/orders.js';
+import { emailsEnabled } from '$lib/server/email.js';
 
 export function load() {
 	return {
-		paymentMethods
+		paymentMethods,
+		emailsEnabled
 	};
 }
 
@@ -39,14 +41,6 @@ export const actions = {
 
 		const formData = await request.formData();
 
-		const npubAddress = z
-			.string()
-			.startsWith('npub')
-			.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
-				message: 'Invalid npub address'
-			})
-			.parse(formData.get('paymentStatusNPUB'));
-
 		const isDigital = products.every((product) => !product.shipping);
 
 		const shipping = isDigital
@@ -62,6 +56,25 @@ export const actions = {
 						country: z.enum(COUNTRY_ALPHA3S)
 					})
 					.parse(Object.fromEntries(formData));
+
+		const notifications = z
+			.object({
+				paymentStatusNPUB: z
+					.string()
+					.startsWith('npub')
+					.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
+						message: 'Invalid npub address'
+					})
+					.optional(),
+				paymentStatusEmail: z.string().email().optional()
+			})
+			.parse({
+				paymentStatusNPUB: formData.get('paymentStatusNPUB') || undefined,
+				paymentStatusEmail: formData.get('paymentStatusEmail') || undefined
+			});
+
+		const npubAddress = notifications?.paymentStatusNPUB;
+		const email = notifications?.paymentStatusEmail;
 
 		// Remove empty string
 		if (shipping && !shipping.state) {
@@ -82,7 +95,12 @@ export const actions = {
 			paymentMethod,
 			{
 				sessionId: locals.sessionId,
-				npub: npubAddress,
+				notifications: {
+					paymentStatus: {
+						npub: npubAddress,
+						email
+					}
+				},
 				shippingAddress: shipping,
 				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
 			}

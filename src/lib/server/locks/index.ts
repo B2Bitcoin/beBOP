@@ -1,4 +1,5 @@
 import './currency-lock';
+import './email-notifications';
 import './order-lock';
 import './order-notifications';
 import './nostr-notifications';

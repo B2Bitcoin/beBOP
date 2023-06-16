@@ -28,38 +28,60 @@ async function maintainLock() {
 
 			for await (const subscription of subscriptionsToRemind) {
 				await withTransaction(async (session) => {
-					const notifId = new ObjectId();
+					if (subscription.npub) {
+						const notifId = new ObjectId();
+						await collections.nostrNotifications.insertOne(
+							{
+								_id: notifId,
+								dest: subscription.npub,
+								content: `Your subscription #${
+									subscription.number
+								} is going to expire ${formatDistance(subscription.paidUntil, new Date(), {
+									addSuffix: true
+								})}. Renew here: ${ORIGIN}/subscription/${subscription._id}`,
+								createdAt: new Date(),
+								updatedAt: new Date()
+							},
+							{ session }
+						);
 
-					await collections.nostrNotifications.insertOne(
-						{
-							_id: notifId,
-							dest: subscription.npub,
-							content: `Your subscription #${
-								subscription.number
-							} is going to expire ${formatDistance(subscription.paidUntil, new Date(), {
-								addSuffix: true
-							})}. Renew here: ${ORIGIN}/subscription/${subscription._id}`,
-							createdAt: new Date(),
-							updatedAt: new Date()
-						},
-						{ session }
-					);
-
-					await collections.paidSubscriptions.updateOne(
-						{
-							_id: subscription._id
-						},
-						{
-							$push: {
-								notifications: {
-									createdAt: new Date(),
-									_id: notifId,
-									type: 'reminder'
+						await collections.paidSubscriptions.updateOne(
+							{
+								_id: subscription._id
+							},
+							{
+								$push: {
+									notifications: {
+										createdAt: new Date(),
+										_id: notifId,
+										type: 'reminder',
+										medium: 'nostr'
+									}
 								}
-							}
-						},
-						{ session }
-					);
+							},
+							{ session }
+						);
+					}
+					if (subscription.email) {
+						const notifId = new ObjectId();
+						await collections.paidSubscriptions.updateOne(
+							{
+								_id: subscription._id
+							},
+							{
+								$push: {
+									notifications: {
+										createdAt: new Date(),
+										_id: notifId,
+										type: 'reminder',
+										medium: 'none' // todo: switch to "email"
+									}
+								}
+							},
+							{ session }
+						);
+						// todo
+					}
 				}).catch(console.error);
 			}
 		} catch (err) {
@@ -77,33 +99,55 @@ async function maintainLock() {
 
 			for await (const subscription of subscriptionsToNotifyEnd) {
 				await withTransaction(async (session) => {
-					const notifId = new ObjectId();
-					await collections.nostrNotifications.insertOne(
-						{
-							_id: notifId,
-							dest: subscription.npub,
-							content: `Your subscription #${subscription.number} expired. Renew here if you wish: ${ORIGIN}/subscription/${subscription._id}`,
-							createdAt: new Date(),
-							updatedAt: new Date()
-						},
-						{ session }
-					);
-
-					await collections.paidSubscriptions.updateOne(
-						{
-							_id: subscription._id
-						},
-						{
-							$push: {
-								notifications: {
-									createdAt: new Date(),
-									_id: notifId,
-									type: 'expiration'
+					if (subscription.npub) {
+						const notifId = new ObjectId();
+						await collections.nostrNotifications.insertOne(
+							{
+								_id: notifId,
+								dest: subscription.npub,
+								content: `Your subscription #${subscription.number} expired. Renew here if you wish: ${ORIGIN}/subscription/${subscription._id}`,
+								createdAt: new Date(),
+								updatedAt: new Date()
+							},
+							{ session }
+						);
+						await collections.paidSubscriptions.updateOne(
+							{
+								_id: subscription._id
+							},
+							{
+								$push: {
+									notifications: {
+										createdAt: new Date(),
+										_id: notifId,
+										type: 'expiration',
+										medium: 'nostr'
+									}
 								}
-							}
-						},
-						{ session }
-					);
+							},
+							{ session }
+						);
+					}
+					if (subscription.email) {
+						const notifId = new ObjectId();
+						// todo: send email & store in DB
+						await collections.paidSubscriptions.updateOne(
+							{
+								_id: subscription._id
+							},
+							{
+								$push: {
+									notifications: {
+										createdAt: new Date(),
+										_id: notifId,
+										type: 'expiration',
+										medium: 'none' // todo: set to 'email'
+									}
+								}
+							},
+							{ session }
+						);
+					}
 				}).catch(console.error);
 			}
 		} catch (err) {

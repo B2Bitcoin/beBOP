@@ -47,6 +47,11 @@
 			placeholder="x.x.x.x,y.y.y.y"
 			value={data.maintenanceIps}
 		/>
+		<p class="text-sm">
+			Your IP is <code class="font-mono bg-blue px-[2px] py-[1px] rounded text-white"
+				>{data.ip}</code
+			>
+		</p>
 	</label>
 	<label class="form-label">
 		Subscription duration

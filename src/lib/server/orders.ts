@@ -10,6 +10,8 @@ import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
 import { lndCreateInvoice } from './lightning';
 import { ORIGIN } from '$env/static/private';
+import { emailsEnabled } from './email';
+import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
 
 async function generateOrderNumber(): Promise<number> {
@@ -104,11 +106,22 @@ export async function createOrder(
 	paymentMethod: Order['payment']['method'],
 	params: {
 		sessionId: string;
-		npub: string;
+		notifications: {
+			paymentStatus: {
+				npub?: string;
+				email?: string;
+			};
+		};
 		shippingAddress: Order['shippingAddress'] | null;
 		cb?: (session: ClientSession) => Promise<unknown>;
 	}
 ): Promise<Order['_id']> {
+	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
+
+	if (!npubAddress && !(emailsEnabled && email)) {
+		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
+	}
+
 	const products = items.map((item) => item.product);
 	if (
 		products.some(
@@ -148,7 +161,10 @@ export async function createOrder(
 		}
 
 		const existingSubscription = await collections.paidSubscriptions.findOne({
-			npub: params.npub,
+			$or: filterUndef([
+				npubAddress ? { npub: npubAddress } : undefined,
+				email ? { email: email } : undefined
+			]),
 			productId: product._id
 		});
 
@@ -169,7 +185,10 @@ export async function createOrder(
 		if (
 			await collections.orders.countDocuments(
 				{
-					'notifications.paymentStatus.npub': params.npub,
+					$or: filterUndef([
+						npubAddress ? { 'notifications.paymentStatus.npub': npubAddress } : undefined,
+						email ? { 'notifications.paymentStatus.email': email } : undefined
+					]),
 					'items.product._id': product._id,
 					'payment.status': 'pending'
 				},
@@ -222,7 +241,8 @@ export async function createOrder(
 				},
 				notifications: {
 					paymentStatus: {
-						npub: params.npub
+						...(npubAddress && { npub: npubAddress }),
+						...(email && { email })
 					}
 				}
 			},

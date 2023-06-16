@@ -61,4 +61,4 @@ export function stop(): void {
 
 export const runtimeConfig = { ...defaultConfig };
 
-refresh();
+export const refreshPromise = refresh();

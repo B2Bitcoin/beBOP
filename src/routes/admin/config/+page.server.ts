@@ -3,8 +3,9 @@ import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { z } from 'zod';
 
-export async function load() {
+export async function load(event) {
 	return {
+		ip: event.getClientAddress(),
 		isMaintenance: runtimeConfig.isMaintenance,
 		maintenanceIps: runtimeConfig.maintenanceIps,
 		checkoutButtonOnProductPage: runtimeConfig.checkoutButtonOnProductPage,
