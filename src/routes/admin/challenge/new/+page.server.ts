@@ -34,7 +34,7 @@ export const actions: Actions = {
 			_id: slug,
 			name,
 			productIds: productIds,
-			goal: { amount: goalAmount, currency: 'SAT' },
+			goal: { amount: goalAmount, ...(mode === 'moneyAmount' && { currency: 'SAT' }) },
 			progress: 0,
 			beginsAt,
 			endsAt,
