@@ -13,6 +13,7 @@ import type { BootikSubscription } from '$lib/types/BootikSubscription';
 import type { PaidSubscription } from '$lib/types/PaidSubscription';
 import type { CMSPage } from '$lib/types/CmsPage';
 import type { Challenge } from '$lib/types/Challenge';
+import type { EmailNotification } from '$lib/types/EmailNotification';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -34,6 +35,7 @@ const digitalFiles = db.collection<DigitalFile>('digitalFiles');
 const pendingDigitalFiles = db.collection<DigitalFile>('digitalFiles.pending');
 const orders = db.collection<Order>('orders');
 const nostrNotifications = db.collection<NostRNotification>('notifications.nostr');
+const emailNotifications = db.collection<EmailNotification>('notifications.email');
 const nostrReceivedMessages = db.collection<NostRReceivedMessage>('nostr.receivedMessage');
 const cmsPages = db.collection<CMSPage>('cmsPages');
 const challenges = db.collection<Challenge>('challenges');
@@ -51,6 +53,7 @@ export const collections = {
 	digitalFiles,
 	pendingDigitalFiles,
 	orders,
+	emailNotifications,
 	nostrNotifications,
 	nostrReceivedMessages,
 	bootikSubscriptions,
@@ -84,6 +87,7 @@ client.on('open', () => {
 	digitalFiles.createIndex({ productId: 1 }).catch(console.error);
 	nostrReceivedMessages.createIndex({ createdAt: -1 }).catch(console.error);
 	nostrNotifications.createIndex({ dest: 1 }).catch(console.error);
+	emailNotifications.createIndex({ dest: 1 }).catch(console.error);
 	bootikSubscriptions.createIndex({ npub: 1 }, { sparse: true }).catch(console.error);
 	paidSubscriptions
 		.createIndex(

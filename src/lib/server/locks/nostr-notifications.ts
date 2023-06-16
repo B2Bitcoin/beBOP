@@ -22,13 +22,13 @@ import {
 	verifySignature
 } from 'nostr-tools';
 
-const lock = new Lock('notifications.nostr');
+const lock = nostrPrivateKeyHex ? new Lock('notifications.nostr') : null;
 
 let relayPool: RelayPool | null = null;
 
 async function maintainLock() {
 	while (!processClosed) {
-		if (!lock.ownsLock) {
+		if (!lock?.ownsLock) {
 			try {
 				relayPool?.close();
 			} catch (err) {
@@ -112,7 +112,7 @@ function initRelayPool() {
 }
 
 async function handleChanges(change: ChangeStreamDocument<NostRNotification>): Promise<void> {
-	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
+	if (!lock?.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
 		return;
 	}
 
