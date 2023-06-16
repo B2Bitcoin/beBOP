@@ -40,10 +40,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 				endsAt: { $gt: new Date() }
 			})
 			.toArray();
-		let sumProduct = 0;
-		for (let i = 0; i < order.items.length; i++) {
-			sumProduct += order.items[i].quantity;
-		}
+		let numberOfProducts = sum(order.items.map(item => item.quantity));
 		for (const challenge of challenges) {
 			await collections.challenges.updateOne(
 				{ _id: challenge._id },
