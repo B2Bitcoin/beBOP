@@ -10,6 +10,7 @@ import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
 import { lndCreateInvoice } from './lightning';
 import { ORIGIN } from '$env/static/private';
+import { sum } from '$lib/utils/sum';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -40,7 +41,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 				endsAt: { $gt: new Date() }
 			})
 			.toArray();
-		let numberOfProducts = sum(order.items.map(item => item.quantity));
+		let numberOfProducts = sum(order.items.map((item) => item.quantity));
 		for (const challenge of challenges) {
 			await collections.challenges.updateOne(
 				{ _id: challenge._id },
@@ -49,7 +50,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 						progress:
 							challenge.mode === 'moneyAmount'
 								? toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
-								: sumProduct
+								: numberOfProducts
 					}
 				},
 				{ session }
