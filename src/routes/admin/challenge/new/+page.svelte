@@ -4,8 +4,8 @@
 	import { addDays } from 'date-fns';
 
 	let mode = 'moneyAmount';
-	let beginsAt = new Date();
-	let endsAt = new Date();
+	let beginsAt = '';
+	let endsAt = addMonths(new Date(), 30).toJSON().slice(0, 10);
 	let endsAtElement: HTMLInputElement;
 
 	function checkForm(event: SubmitEvent) {
