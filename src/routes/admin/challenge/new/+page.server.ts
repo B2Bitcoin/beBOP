@@ -24,7 +24,7 @@ export const actions: Actions = {
 				// productId: data.get('productId'),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
-				beginsAt: data.get('beginsAt'),
+				beginsAt: data.get('beginsAt') || undefined,
 				endsAt: data.get('endsAt')
 			});
 
