@@ -26,7 +26,7 @@
 	<label class="form-label">
 		Challenge name
 		<input
-			class="form-input block"
+			class="form-input"
 			type="text"
 			maxlength={MAX_NAME_LIMIT}
 			name="name"
@@ -52,7 +52,6 @@
 				type="number"
 				name="goalAmount"
 				placeholder="Amount (SAT)"
-				step="any"
 				required
 			/>
 		</label>
@@ -64,13 +63,11 @@
 				type="number"
 				name="goalAmount"
 				placeholder="Quantity"
-				step="any"
 				required
 			/>
 		</label>
 	{/if}
 
-	<input type="hidden" name="priceCurrency" value="BTC" />
 
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
