@@ -27,6 +27,10 @@
 		// newsletter: null
 	};
 
+	const emails: Record<FeedKey, string> = {
+		paymentStatus: ''
+	};
+
 	function checkForm(event: SubmitEvent) {
 		for (const input of typedValues(npubInputs)) {
 			if (!input) continue;
@@ -157,14 +161,19 @@
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus'}
+									required={key === 'paymentStatus' && !emails[key]}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
-							{#if 0}
+							{#if data.emailsEnabled}
 								<label class="form-label">
 									Email
-									<input type="email" class="form-input" name="{key}Email" />
+									<input
+										type="email"
+										class="form-input"
+										name="{key}Email"
+										bind:value={emails[key]}
+									/>
 								</label>
 							{/if}
 						</div>

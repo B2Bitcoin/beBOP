@@ -74,6 +74,12 @@ client.on('open', () => {
 			{ partialFilterExpression: { 'notifications.paymentStatus.npub': { $exists: true } } }
 		)
 		.catch(console.error);
+	orders
+		.createIndex(
+			{ 'notifications.paymentStatus.email': 1, createdAt: -1 },
+			{ partialFilterExpression: { 'notifications.paymentStatus.email': { $exists: true } } }
+		)
+		.catch(console.error);
 	orders.createIndex({ number: 1 }, { unique: true }).catch(console.error);
 	digitalFiles.createIndex({ productId: 1 }).catch(console.error);
 	nostrReceivedMessages.createIndex({ createdAt: -1 }).catch(console.error);
@@ -83,6 +89,12 @@ client.on('open', () => {
 		.createIndex(
 			{ npub: 1, productId: 1 },
 			{ unique: true, partialFilterExpression: { npub: { $exists: true } } }
+		)
+		.catch(console.error);
+	paidSubscriptions
+		.createIndex(
+			{ email: 1, productId: 1 },
+			{ unique: true, partialFilterExpression: { email: { $exists: true } } }
 		)
 		.catch(console.error);
 	paidSubscriptions.createIndex({ number: 1 }, { unique: true }).catch(console.error);

@@ -5,10 +5,12 @@ import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
 import { createOrder } from '$lib/server/orders.js';
+import { emailsEnabled } from '$lib/server/email.js';
 
 export function load() {
 	return {
-		paymentMethods
+		paymentMethods,
+		emailsEnabled
 	};
 }
 
@@ -39,14 +41,6 @@ export const actions = {
 
 		const formData = await request.formData();
 
-		const npubAddress = z
-			.string()
-			.startsWith('npub')
-			.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
-				message: 'Invalid npub address'
-			})
-			.parse(formData.get('paymentStatusNPUB'));
-
 		const isDigital = products.every((product) => !product.shipping);
 
 		const shipping = isDigital
@@ -57,11 +51,22 @@ export const actions = {
 						lastName: z.string().min(1),
 						address: z.string().min(1),
 						city: z.string().min(1),
+						paymentStatusNPUB: z
+							.string()
+							.startsWith('npub')
+							.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
+								message: 'Invalid npub address'
+							})
+							.optional(),
+						paymentStatusEmail: z.string().email().optional(),
 						state: z.string().optional(),
 						zip: z.string().min(1),
 						country: z.enum(COUNTRY_ALPHA3S)
 					})
 					.parse(Object.fromEntries(formData));
+
+		const npubAddress = shipping?.paymentStatusNPUB;
+		const email = shipping?.paymentStatusEmail;
 
 		// Remove empty string
 		if (shipping && !shipping.state) {
@@ -82,7 +87,12 @@ export const actions = {
 			paymentMethod,
 			{
 				sessionId: locals.sessionId,
-				npub: npubAddress,
+				notifications: {
+					paymentStatus: {
+						npub: npubAddress,
+						email
+					}
+				},
 				shippingAddress: shipping,
 				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
 			}
