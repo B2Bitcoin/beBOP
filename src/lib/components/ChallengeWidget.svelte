@@ -3,7 +3,6 @@
 	import { format } from 'date-fns';
 	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
-
 	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>;
 </script>
 
@@ -14,17 +13,19 @@
 		</h3>
 		<span class="text-base font-light text-gray-550"
 			>Ends <time datetime={challenge.endsAt.toJSON()} title={challenge.endsAt.toLocaleString('en')}
-				>{format(challenge.endsAt, 'MMMM, dd')}</time
+				>{format(challenge.endsAt, 'MMMM dd')}</time
 			></span
 		>
 	</div>
 	<GoalProgress
 		class="font-bold mt-3"
-		text="{Number(challenge.progress).toLocaleString('en', {
-			style: 'currency',
-			currency: challenge.goal.currency,
-			minimumFractionDigits: 0
-		})} 🙂"
+		text="{challenge.goal.currency
+			? Number(challenge.progress).toLocaleString('en', {
+					style: 'currency',
+					currency: challenge.goal.currency,
+					minimumFractionDigits: 0
+			  })
+			: challenge.progress} 🙂"
 		percentage={(challenge.progress / challenge.goal.amount) * 100}
 	/>
 	<div class="flex justify-between mt-1 items-center">
@@ -33,12 +34,14 @@
 			<p>Good job guys! 👏👏</p>
 		{:else if challenge.progress > challenge.goal.amount}
 			<p>You are amazing guys! 🤭</p>
-		{:else}
+		{:else if challenge.goal.currency}
 			<PriceTag
 				amount={challenge.goal.amount}
 				class="text-gray-800 text-base"
 				currency={challenge.goal.currency}
 			/>
+		{:else}
+			{challenge.goal.amount} products
 		{/if}
 	</div>
 </div>
