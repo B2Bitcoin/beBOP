@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  deploy-bootik:
     runs-on: ubuntu-latest
     steps:
       - name: Install SSH Key

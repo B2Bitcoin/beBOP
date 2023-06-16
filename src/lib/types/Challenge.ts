@@ -22,6 +22,6 @@ export interface Challenge extends Timestamps {
 
 	progress: number;
 
-	beginsAt?: Date;
+	beginsAt: Date;
 	endsAt: Date;
 }
