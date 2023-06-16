@@ -1,11 +1,12 @@
 import { ZodError } from 'zod';
-import type { HandleServerError, Handle } from '@sveltejs/kit';
+import { type HandleServerError, type Handle, error } from '@sveltejs/kit';
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 
 import '$lib/server/locks';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
@@ -43,11 +44,8 @@ export const handleError = (({ error, event }) => {
 }) satisfies HandleServerError;
 
 export const handle = (async ({ event, resolve }) => {
-	if (
-		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
-		ADMIN_LOGIN &&
-		ADMIN_PASSWORD
-	) {
+	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
+	if (isAdminUrl && ADMIN_LOGIN && ADMIN_PASSWORD) {
 		const authorization = event.request.headers.get('authorization');
 
 		if (!authorization?.startsWith('Basic ')) {
@@ -71,6 +69,19 @@ export const handle = (async ({ event, resolve }) => {
 				}
 			});
 		}
+	}
+
+	if (
+		runtimeConfig.isMaintenance &&
+		!isAdminUrl &&
+		event.url.pathname !== '/logo' &&
+		!event.url.pathname.startsWith('/picture/raw/') &&
+		!runtimeConfig.maintenanceIps.split(',').includes(event.getClientAddress())
+	) {
+		if (event.request.method !== 'GET') {
+			throw error(405, 'Site is in maintenance mode. Please try again later.');
+		}
+		throw error(503, 'Site is in maintenance mode. Please try again later.');
 	}
 
 	const token = event.cookies.get('bootik-session');

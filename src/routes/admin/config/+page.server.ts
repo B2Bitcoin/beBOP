@@ -5,6 +5,8 @@ import { z } from 'zod';
 
 export async function load() {
 	return {
+		isMaintenance: runtimeConfig.isMaintenance,
+		maintenanceIps: runtimeConfig.maintenanceIps,
 		checkoutButtonOnProductPage: runtimeConfig.checkoutButtonOnProductPage,
 		discovery: runtimeConfig.discovery,
 		subscriptionDuration: runtimeConfig.subscriptionDuration,
@@ -20,6 +22,8 @@ export const actions = {
 
 		const result = z
 			.object({
+				isMaintenance: z.boolean({ coerce: true }),
+				maintenanceIps: z.string(),
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),
 				subscriptionDuration: z.enum(['month', 'day', 'hour']),
@@ -30,13 +34,25 @@ export const actions = {
 					.max(24 * 60 * 60 * 7),
 				confirmationBlocks: z.number({ coerce: true }).int().min(0)
 			})
-			.parse({
-				checkoutButtonOnProductPage: formData.get('checkoutButtonOnProductPage'),
-				discovery: formData.get('discovery'),
-				subscriptionDuration: formData.get('subscriptionDuration'),
-				subscriptionReminderSeconds: formData.get('subscriptionReminderSeconds'),
-				confirmationBlocks: formData.get('confirmationBlocks')
-			});
+			.parse(Object.fromEntries(formData));
+
+		if (runtimeConfig.isMaintenance !== result.isMaintenance) {
+			runtimeConfig.isMaintenance = result.isMaintenance;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'isMaintenance' },
+				{ $set: { data: result.isMaintenance, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.maintenanceIps !== result.maintenanceIps) {
+			runtimeConfig.maintenanceIps = result.maintenanceIps;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'maintenanceIps' },
+				{ $set: { data: result.maintenanceIps, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
 
 		if (runtimeConfig.checkoutButtonOnProductPage !== result.checkoutButtonOnProductPage) {
 			runtimeConfig.checkoutButtonOnProductPage = result.checkoutButtonOnProductPage;
