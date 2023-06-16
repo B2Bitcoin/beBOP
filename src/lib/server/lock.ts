@@ -56,5 +56,13 @@ export class Lock {
 
 			await setTimeout(5_000);
 		}
+
+		this.ownsLock = false;
+
+		collections.locks
+			.deleteMany({
+				ownerId: processId
+			})
+			.catch();
 	}
 }
