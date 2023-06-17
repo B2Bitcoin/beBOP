@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { client, collections } from '$lib/server/database';
+import { collections, withTransaction } from '$lib/server/database';
 import { generateId } from '$lib/utils/generateId';
 import type { ClientSession } from 'mongodb';
 import { error } from '@sveltejs/kit';
@@ -127,7 +127,7 @@ export async function generatePicture(
 			}
 		}
 
-		await client.withSession(async (session) => {
+		await withTransaction(async (session) => {
 			await collections.pictures.insertOne(
 				{
 					_id,

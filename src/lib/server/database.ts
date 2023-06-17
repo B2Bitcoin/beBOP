@@ -62,10 +62,6 @@ export const collections = {
 	challenges
 };
 
-export function transaction(dbTransactions: WithSessionCallback): Promise<void> {
-	return client.withSession((session) => session.withTransaction(dbTransactions));
-}
-
 client.on('open', () => {
 	pictures.createIndex({ productId: 1 }).catch(console.error);
 	locks.createIndex({ updatedAt: 1 }, { expireAfterSeconds: 60 }).catch(console.error);
