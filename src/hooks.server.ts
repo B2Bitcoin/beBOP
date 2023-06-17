@@ -93,7 +93,7 @@ export const handle = (async ({ event, resolve }) => {
 	// Refresh cookie expiration date
 	event.cookies.set('bootik-session', event.locals.sessionId, {
 		path: '/',
-		sameSite: 'none',
+		sameSite: 'lax',
 		secure: true,
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
