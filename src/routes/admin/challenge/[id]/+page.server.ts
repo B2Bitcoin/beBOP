@@ -35,7 +35,7 @@ export const actions = {
 				// productId: z.string().array(),
 				goalAmount: z.number({ coerce: true }).int().positive(),
 				mode: z.enum(['totalProducts', 'moneyAmount']),
-				beginsAt: z.date({ coerce: true }).optional(),
+				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
 			.parse({
