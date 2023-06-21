@@ -52,7 +52,7 @@ export const actions = {
 			{
 				$set: {
 					name,
-					goalAmount,
+					"goal.amount": goalAmount,
 					mode,
 					beginsAt,
 					endsAt,
