@@ -44,7 +44,7 @@
 
 	<label class="form-label">
 		Mode
-		<select class="form-input" name="mode" bind:value={data.challenge.mode}>
+		<select class="form-input" name="mode" bind:value={data.challenge.mode} disabled>
 			{#each ['moneyAmount', 'totalProducts'] as option}
 				<option value={option}>{upperFirst(option)}</option>
 			{/each}

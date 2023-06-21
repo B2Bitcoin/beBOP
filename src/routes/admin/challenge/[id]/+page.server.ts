@@ -34,12 +34,11 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { name, goalAmount, mode, beginsAt, endsAt } = z
+		const { name, goalAmount, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				// productId: z.string().array(),
 				goalAmount: z.number({ coerce: true }).int().positive(),
-				mode: z.enum(['totalProducts', 'moneyAmount']),
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
@@ -53,7 +52,6 @@ export const actions = {
 				$set: {
 					name,
 					"goal.amount": goalAmount,
-					mode,
 					beginsAt,
 					endsAt,
 					updatedAt: new Date()
