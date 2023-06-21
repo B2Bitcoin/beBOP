@@ -24,7 +24,7 @@ export const actions = {
 		});
 
 		if (!challenge) {
-			throw error(404, 'Page not found');
+			throw error(404, 'Challenge not found');
 		}
 
 		const data = await request.formData();
