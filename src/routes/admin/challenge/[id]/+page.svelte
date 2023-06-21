@@ -9,7 +9,7 @@
 	let endsAtElement: HTMLInputElement;
 
 	function checkForm(event: SubmitEvent) {
-		if (beginsAt && endsAt < beginsAt) {
+		if (endsAt < beginsAt) {
 			endsAtElement.setCustomValidity('End date must be after beginning date');
 			endsAtElement.reportValidity();
 			event.preventDefault();
