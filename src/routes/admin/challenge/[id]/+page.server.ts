@@ -9,7 +9,7 @@ export async function load({ params }) {
 	});
 
 	if (!challenge) {
-		throw error(404, 'Page not found');
+		throw error(404, 'Challenge not found');
 	}
 
 	return {
