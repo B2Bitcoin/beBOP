@@ -85,7 +85,6 @@
 				type="date"
 				required
 				name="endsAt"
-				min={addDays(new Date(), 1).toJSON().slice(0, 10)}
 				bind:value={endsAt}
 				bind:this={endsAtElement}
 				on:input={() => endsAtElement?.setCustomValidity('')}
