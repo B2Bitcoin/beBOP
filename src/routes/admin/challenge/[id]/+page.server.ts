@@ -9,7 +9,7 @@ export async function load({ params }) {
 	});
 
 	if (!challenge) {
-		throw error(404, 'Page not found');
+		throw error(404, 'Challenge not found');
 	}
 
 	return {
@@ -24,7 +24,7 @@ export const actions = {
 		});
 
 		if (!challenge) {
-			throw error(404, 'Page not found');
+			throw error(404, 'Challenge not found');
 		}
 
 		const data = await request.formData();
@@ -35,7 +35,7 @@ export const actions = {
 				// productId: z.string().array(),
 				goalAmount: z.number({ coerce: true }).int().positive(),
 				mode: z.enum(['totalProducts', 'moneyAmount']),
-				beginsAt: z.date({ coerce: true }).optional(),
+				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
 			.parse({
@@ -43,7 +43,7 @@ export const actions = {
 				// productId: data.get('productId'),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
-				beginsAt: data.get('beginsAt') || undefined,
+				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
 

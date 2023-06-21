@@ -9,7 +9,7 @@
 	let endsAtElement: HTMLInputElement;
 
 	function checkForm(event: SubmitEvent) {
-		if (beginsAt && endsAt < beginsAt) {
+		if (endsAt < beginsAt) {
 			endsAtElement.setCustomValidity('End date must be after beginning date');
 			endsAtElement.reportValidity();
 			event.preventDefault();
@@ -72,7 +72,7 @@
 				type="date"
 				name="beginsAt"
 				bind:value={beginsAt}
-				min={addDays(new Date(), 1).toJSON().slice(0, 10)}
+				required
 			/>
 		</label>
 	</div>
@@ -85,7 +85,6 @@
 				type="date"
 				required
 				name="endsAt"
-				min={addDays(new Date(), 1).toJSON().slice(0, 10)}
 				bind:value={endsAt}
 				bind:this={endsAtElement}
 				on:input={() => endsAtElement?.setCustomValidity('')}
