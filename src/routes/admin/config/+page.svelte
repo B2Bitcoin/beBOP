@@ -32,6 +32,15 @@
 	<label class="flex gap-2 cursor-pointer items-center">
 		<input
 			type="checkbox"
+			name="enableCashSales"
+			class="form-checkbox rounded-sm cursor-pointer"
+			checked={data.enableCashSales}
+		/>
+		enableCashSales
+	</label>
+	<label class="flex gap-2 cursor-pointer items-center">
+		<input
+			type="checkbox"
 			name="isMaintenance"
 			class="form-checkbox rounded-sm cursor-pointer"
 			checked={data.isMaintenance}

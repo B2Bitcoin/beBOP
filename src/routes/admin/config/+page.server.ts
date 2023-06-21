@@ -6,6 +6,7 @@ import { z } from 'zod';
 export async function load(event) {
 	return {
 		ip: event.getClientAddress(),
+		enableCashSales: runtimeConfig.enableCashSales,
 		isMaintenance: runtimeConfig.isMaintenance,
 		maintenanceIps: runtimeConfig.maintenanceIps,
 		checkoutButtonOnProductPage: runtimeConfig.checkoutButtonOnProductPage,
@@ -24,6 +25,7 @@ export const actions = {
 		const result = z
 			.object({
 				isMaintenance: z.boolean({ coerce: true }),
+				enableCashSales: z.boolean({ coerce: true }),
 				maintenanceIps: z.string(),
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),
@@ -42,6 +44,15 @@ export const actions = {
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'isMaintenance' },
 				{ $set: { data: result.isMaintenance, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.enableCashSales !== result.enableCashSales) {
+			runtimeConfig.enableCashSales = result.enableCashSales;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'enableCashSales' },
+				{ $set: { data: result.enableCashSales, updatedAt: new Date() } },
 				{ upsert: true }
 			);
 		}
