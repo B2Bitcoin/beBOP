@@ -43,14 +43,7 @@ export const actions = {
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
-			.parse({
-				name: data.get('name'),
-				// productId: data.get('productId'),
-				goalAmount: data.get('goalAmount'),
-				mode: data.get('mode'),
-				beginsAt: data.get('beginsAt'),
-				endsAt: data.get('endsAt')
-			});
+			.parse(Object.fromEntries(data));
 
 		await collections.challenges.updateOne(
 			{
