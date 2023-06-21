@@ -15,13 +15,10 @@ export async function load({ params }) {
 	const beginsAt = challenge.beginsAt?.toJSON().slice(0, 10);
 	const endsAt = challenge.endsAt.toJSON().slice(0, 10);
 
-	const isEndAtAfterBeginAt = endsAt < beginsAt ? true : false;
-
 	return {
 		challenge,
 		beginsAt,
-		endsAt,
-		isEndAtAfterBeginAt
+		endsAt
 	};
 }
 
