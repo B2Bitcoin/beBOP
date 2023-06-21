@@ -64,7 +64,7 @@
 		{/if}
 		{#if data.order.payment.status !== 'expired' && data.order.payment.status !== 'canceled'}
 			<div>
-				Keep this link: <a class="underline text-blue" href={$page.url.href}>{$page.url.href}</a> to
+				Keep this link: <a class="underline text-link" href={$page.url.href}>{$page.url.href}</a> to
 				access the order later.
 			</div>
 		{/if}
@@ -96,7 +96,7 @@
 				{#each data.digitalFiles as digitalFile}
 					<li>
 						{#if digitalFile.link}
-							<a href={digitalFile.link} class="text-blue hover:underline" target="_blank"
+							<a href={digitalFile.link} class="text-link hover:underline" target="_blank"
 								>{digitalFile.name}</a
 							>
 						{:else}

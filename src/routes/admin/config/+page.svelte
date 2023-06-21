@@ -57,7 +57,7 @@
 			value={data.maintenanceIps}
 		/>
 		<p class="text-sm">
-			Your IP is <code class="font-mono bg-blue px-[2px] py-[1px] rounded text-white"
+			Your IP is <code class="font-mono bg-link px-[2px] py-[1px] rounded text-white"
 				>{data.ip}</code
 			>
 		</p>

@@ -30,7 +30,7 @@
 		percentage={(challenge.progress / challenge.goal.amount) * 100}
 	/>
 	<div class="flex justify-between mt-1 items-center">
-		<a href="/" class="text-blue underline">How can I contribute?</a>
+		<a href="/" class="text-link underline">How can I contribute?</a>
 		{#if challenge.progress == challenge.goal.amount}
 			<p>Good job guys! 👏👏</p>
 		{:else if challenge.progress > challenge.goal.amount}

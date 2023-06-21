@@ -34,7 +34,7 @@
 	}
 
 	.btn-blue {
-		@apply bg-blue text-white;
+		@apply bg-link text-white;
 	}
 
 	.btn-blue:not([disabled]) {
@@ -65,6 +65,10 @@
 		@apply border-gray-300 border-[1px] bg-white w-full border-solid rounded pl-2 block text-gray-850 placeholder-gray-450;
 	}
 
+	select.form-input:not(.disabled) {
+		@apply cursor-pointer;
+	}
+
 	.form-input:not(textarea) {
 		@apply h-10;
 	}
@@ -83,5 +87,21 @@
 
 	.form-label {
 		@apply flex flex-col gap-2 text-label;
+	}
+
+	.alert-success {
+		@apply border border-green-400 p-2 text-green-600 rounded;
+	}
+
+	.alert-error {
+		@apply border border-red-400 p-2 text-red-600 rounded;
+	}
+
+	.alert-warning {
+		@apply border border-yellow-400 p-2 text-yellow-600 rounded;
+	}
+
+	.alert-info {
+		@apply border border-blue-400 p-2 text-blue-600 rounded;
 	}
 }

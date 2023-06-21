@@ -63,7 +63,7 @@
 
 							<button
 								formaction="/cart/{item.product._id}/?/remove"
-								class="mt-auto mr-auto hover:underline text-blue text-base font-light"
+								class="mt-auto mr-auto hover:underline text-link text-base font-light"
 							>
 								Discard
 							</button>

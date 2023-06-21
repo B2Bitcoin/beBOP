@@ -11,7 +11,7 @@
 <ul class="flex flex-col gap-4">
 	{#each data.orders as order}
 		<li class="text-lg flex items-center gap-1">
-			<a href="/order/{order._id}" class="text-blue hover:underline">#{order.number}</a>
+			<a href="/order/{order._id}" class="text-link hover:underline">#{order.number}</a>
 			- {#if order.payment.method === 'bitcoin'}
 				<IconBitcoin />
 			{:else if order.payment.method === 'lightning'}

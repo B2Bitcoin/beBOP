@@ -33,7 +33,7 @@ export interface Order extends Timestamps {
 	};
 
 	payment: {
-		method: 'bitcoin' | 'lightning';
+		method: 'bitcoin' | 'lightning' | 'cash';
 		status: 'pending' | 'paid' | 'expired' | 'canceled';
 		expiresAt: Date;
 		/** Bitcoin / LN address */

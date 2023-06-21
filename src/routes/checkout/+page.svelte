@@ -9,6 +9,8 @@
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
 	import { pluralize } from '$lib/utils/pluralize';
+	import { upperFirst } from '$lib/utils/upperFirst.js';
+	import { typedInclude } from '$lib/utils/typedIncludes.js';
 
 	let actionCount = 0;
 	export let data;
@@ -49,6 +51,15 @@
 			}
 		}
 	}
+
+	$: paymentMethods = data.paymentMethods.filter((method) =>
+		method === 'bitcoin' ? totalPrice >= 0.00001 : true
+	);
+
+	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
+	$: paymentMethod = typedInclude(paymentMethods, paymentMethod)
+		? paymentMethod
+		: paymentMethods[0];
 
 	$: items = data.cart || [];
 	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
@@ -140,24 +151,26 @@
 						<select
 							name="paymentMethod"
 							class="form-input"
-							disabled={data.paymentMethods.length === 0}
+							bind:value={paymentMethod}
+							disabled={paymentMethods.length === 0}
 							required
 						>
-							{#if data.paymentMethods.includes('bitcoin') && totalPrice >= 0.00001}
-								<option value="bitcoin">Bitcoin</option>
-							{/if}
-							{#if data.paymentMethods.includes('lightning')}
-								<option value="lightning">Lightning</option>
-							{/if}
+							{#each paymentMethods as paymentMethod}
+								<option value={paymentMethod}>{upperFirst(paymentMethod)}</option>
+							{/each}
 						</select>
-						{#if data.paymentMethods.length === 0}
+						{#if paymentMethods.length === 0}
 							<p class="text-red-400">No payment methods available.</p>
 						{/if}
 						{#if 0}
-							<a href="/connect" class="underline text-blue"> Connect another wallet </a>
+							<a href="/connect" class="underline text-link"> Connect another wallet </a>
 						{/if}
 					</div>
 				</label>
+
+				{#if paymentMethod === 'cash'}
+					<p class="alert-info">Cash payments need manual confirmation from the seller.</p>
+				{/if}
 			</section>
 
 			<section class="gap-4 flex flex-col">
@@ -204,7 +217,7 @@
 				class="rounded sticky top-4 -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
 				<div class="flex justify-between">
-					<a href="/cart" class="text-blue hover:underline">&lt;&lt;Back to cart</a>
+					<a href="/cart" class="text-link hover:underline">&lt;&lt;Back to cart</a>
 					<p>{data.cart?.length} {pluralize(data.cart?.length ?? 0, 'product')}</p>
 				</div>
 				{#each items as item}
@@ -300,7 +313,7 @@
 						required
 					/>
 					<span class="ml-2">
-						I agree to the <a href="/terms" target="_blank" class="text-blue hover:underline"
+						I agree to the <a href="/terms" target="_blank" class="text-link hover:underline"
 							>terms of service</a
 						></span
 					>
