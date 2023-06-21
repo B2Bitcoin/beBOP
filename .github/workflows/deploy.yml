@@ -6,13 +6,58 @@ on:
       - main
 
 jobs:
-  deploy:
+  deploy-bootik:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.3.1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+      - run: |
+          pnpm install --frozen-lockfile
+          echo $DOT_ENV > .env.local
+          pnpm build
+        env:
+          DOT_ENV: ${{ vars.DOT_ENV }}
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
       - name: Deploy
-        run: ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik && echo '${{ vars.DOT_ENV }}' > .env.local && git fetch && git checkout $GITHUB_SHA && pnpm install && pnpm run build && pm2 reload bootik-instance && cd ../B2BitcoinBootik2 && echo '${{ vars.DOT_ENV_BOOTIK_2 }}' > .env.local && git fetch && git checkout $GITHUB_SHA && pnpm install && pnpm run build && pm2 reload bootik2"
+        run: |
+          zip -r build.zip build
+          scp build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik/build.zip
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-instance"
+  deploy-bootik2:
+    runs-on: ubuntu-latest
+    needs: [deploy-bootik]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.3.1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+      - run: |
+          pnpm install --frozen-lockfile
+          echo $DOT_ENV > .env.local
+          pnpm build
+        env:
+          DOT_ENV: ${{ vars.DOT_ENV_BOOTIK_2 }}
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
+      - name: Deploy
+        run: |
+          zip -r build.zip build
+          scp -r build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik2/build.zip
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik2 && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik2"

@@ -48,7 +48,7 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 
 ```shell
 pnpm run build
-node build/index.js
+BODY_SIZE_LIMIT=20000000 node build/index.js
 ```
 
 You can set the `PORT` environment variable to change from the default 3000 port to another port.

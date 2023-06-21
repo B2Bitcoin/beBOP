@@ -16,7 +16,7 @@ export const actions: Actions = {
 				// productId: z.string().array(),
 				goalAmount: z.number({ coerce: true }).int().positive(),
 				mode: z.enum(['totalProducts', 'moneyAmount']),
-				beginsAt: z.date({ coerce: true }).optional(),
+				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
 			.parse({
@@ -24,7 +24,7 @@ export const actions: Actions = {
 				// productId: data.get('productId'),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
-				beginsAt: data.get('beginsAt') || undefined,
+				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
 
@@ -34,7 +34,7 @@ export const actions: Actions = {
 			_id: slug,
 			name,
 			productIds: productIds,
-			goal: { amount: goalAmount, currency: 'SAT' },
+			goal: { amount: goalAmount, ...(mode === 'moneyAmount' && { currency: 'SAT' }) },
 			progress: 0,
 			beginsAt,
 			endsAt,

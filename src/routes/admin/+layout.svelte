@@ -39,6 +39,10 @@
 				href="/admin/nostr"
 				class={$page.url.pathname.startsWith('/admin/nostr') ? 'underline' : ''}>NostR</a
 			>
+			<a
+				href="/admin/email"
+				class={$page.url.pathname.startsWith('/admin/email') ? 'underline' : ''}>Emails</a
+			>
 			<a href="/admin/cms" class={$page.url.pathname.startsWith('/admin/cms') ? 'underline' : ''}
 				>CMS</a
 			>

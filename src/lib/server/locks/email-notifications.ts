@@ -14,11 +14,18 @@ async function handleChanges(change: ChangeStreamDocument<EmailNotification>): P
 	if (change.fullDocument.processedAt) {
 		return;
 	}
-	await sendEmail({
-		to: change.fullDocument.dest,
-		subject: change.fullDocument.subject,
-		html: change.fullDocument.htmlContent
-	});
+
+	try {
+		await sendEmail({
+			to: change.fullDocument.dest,
+			subject: change.fullDocument.subject,
+			html: change.fullDocument.htmlContent
+		});
+	} catch (err) {
+		collections.emailNotifications
+			.updateOne({ _id: change.fullDocument._id }, { $set: { error: err as Error } })
+			.catch(console.error);
+	}
 
 	await collections.emailNotifications.updateOne(
 		{ _id: change.fullDocument._id },

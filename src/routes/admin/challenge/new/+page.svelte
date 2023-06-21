@@ -4,12 +4,12 @@
 	import { addDays, addMonths } from 'date-fns';
 
 	let mode = 'moneyAmount';
-	let beginsAt = '';
+	let beginsAt = new Date().toJSON().slice(0, 10);
 	let endsAt = addMonths(new Date(), 30).toJSON().slice(0, 10);
 	let endsAtElement: HTMLInputElement;
 
 	function checkForm(event: SubmitEvent) {
-		if (beginsAt && endsAt < beginsAt) {
+		if (endsAt < beginsAt) {
 			endsAtElement.setCustomValidity('End date must be after beginning date');
 			endsAtElement.reportValidity();
 			event.preventDefault();
@@ -59,13 +59,7 @@
 		<label class="form-label">
 			Beginning date
 
-			<input
-				class="form-input"
-				type="date"
-				name="beginsAt"
-				min={addDays(new Date(), 1).toJSON().slice(0, 10)}
-				bind:value={beginsAt}
-			/>
+			<input class="form-input" type="date" name="beginsAt" required bind:value={beginsAt} />
 		</label>
 	</div>
 	<div class="flex flex-wrap gap-4">
