@@ -51,7 +51,7 @@ export const actions = {
 			{
 				$set: {
 					name,
-					"goal.amount": goalAmount,
+					'goal.amount': goalAmount,
 					beginsAt,
 					endsAt,
 					updatedAt: new Date()
