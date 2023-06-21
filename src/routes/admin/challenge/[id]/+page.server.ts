@@ -12,8 +12,16 @@ export async function load({ params }) {
 		throw error(404, 'Challenge not found');
 	}
 
+	const beginsAt = challenge.beginsAt?.toJSON().slice(0, 10);
+	const endsAt = challenge.endsAt.toJSON().slice(0, 10);
+
+	const isEndAtAfterBeginAt = endsAt < beginsAt ? true : false;
+
 	return {
-		challenge
+		challenge,
+		beginsAt,
+		endsAt,
+		isEndAtAfterBeginAt
 	};
 }
 

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
-	import { addDays } from 'date-fns';
 
 	export let data;
-	let beginsAt = data.challenge.beginsAt?.toJSON().slice(0, 10);
-	let endsAt = data.challenge.endsAt.toJSON().slice(0, 10);
+
+	let beginsAt = data.beginsAt;
+	let endsAt = data.endsAt;
 	let endsAtElement: HTMLInputElement;
 
 	function checkForm(event: SubmitEvent) {
-		if (endsAt < beginsAt) {
+		if (data.isEndAtAfterBeginAt) {
 			endsAtElement.setCustomValidity('End date must be after beginning date');
 			endsAtElement.reportValidity();
 			event.preventDefault();
@@ -67,13 +67,7 @@
 		<label class="form-label">
 			Beginning date
 
-			<input
-				class="form-input"
-				type="date"
-				name="beginsAt"
-				bind:value={beginsAt}
-				required
-			/>
+			<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
 		</label>
 	</div>
 	<div class="flex flex-wrap gap-4">
