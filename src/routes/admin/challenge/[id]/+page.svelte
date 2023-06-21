@@ -70,6 +70,7 @@
 			<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
 		</label>
 	</div>
+
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
 			Ending date
