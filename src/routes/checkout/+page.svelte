@@ -202,6 +202,7 @@
 									<input
 										type="email"
 										class="form-input"
+										autocomplete="email"
 										name="{key}Email"
 										bind:value={emails[key]}
 									/>

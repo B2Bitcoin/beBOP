@@ -16,6 +16,8 @@
 				<IconBitcoin />
 			{:else if order.payment.method === 'lightning'}
 				⚡
+			{:else if order.payment.method === 'cash'}
+				💶
 			{/if} -
 			<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString('en')}
 				>{formatDistance(order.createdAt, Date.now(), {
@@ -35,6 +37,15 @@
 			>
 			- received: {(order.payment.totalReceived ?? 0).toLocaleString('en')}
 			SAT
+
+			{#if order.payment.status === 'pending' && order.payment.method === 'cash'}
+				<form action="/admin/order/{order._id}?/confirm" method="post">
+					<button type="submit" class="btn btn-black">Mark paid</button>
+				</form>
+				<form action="/admin/order/{order._id}?/cancel" method="post">
+					<button type="submit" class="btn btn-red">Cancel</button>
+				</form>
+			{/if}
 		</li>
 	{:else}
 		<li>No orders yet</li>

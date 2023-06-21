@@ -70,18 +70,22 @@
 		{/if}
 
 		{#if data.order.payment.status === 'pending'}
-			<ul>
-				<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
-				<li>
-					Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
-				</li>
-			</ul>
-			<img src="{$page.url.pathname}/qrcode" class="w-40 h-40" alt="QR code" />
-			<div class="text-xl">
-				Pay to to complete the order. {#if data.order.payment.method === 'bitcoin'}
-					Order will be marked as paid after {data.confirmationBlocksRequired}
-					{pluralize(data.confirmationBlocksRequired, 'confirmation')}.{/if}
-			</div>
+			{#if data.order.payment.method === 'cash'}
+				<p class="text-xl">Your order awaits confirmation from the seller.</p>
+			{:else}
+				<ul>
+					<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
+					<li>
+						Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
+					</li>
+				</ul>
+				<img src="{$page.url.pathname}/qrcode" class="w-40 h-40" alt="QR code" />
+				<div class="text-xl">
+					Pay to to complete the order. {#if data.order.payment.method === 'bitcoin'}
+						Order will be marked as paid after {data.confirmationBlocksRequired}
+						{pluralize(data.confirmationBlocksRequired, 'confirmation')}.{/if}
+				</div>
+			{/if}
 		{:else if data.order.payment.status === 'paid'}
 			<p>Order <span class="text-green-500">paid</span>!</p>
 		{:else if data.order.payment.status === 'expired'}
