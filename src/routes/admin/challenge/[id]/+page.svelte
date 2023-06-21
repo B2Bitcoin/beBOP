@@ -72,6 +72,7 @@
 				type="date"
 				name="beginsAt"
 				bind:value={beginsAt}
+				required
 				min={addDays(new Date(), 1).toJSON().slice(0, 10)}
 			/>
 		</label>
