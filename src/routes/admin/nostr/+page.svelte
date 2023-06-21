@@ -13,7 +13,7 @@
 <h1 class="text-3xl">NostR</h1>
 
 {#if form?.success}
-	<p class="border border-green-400 p-2 text-green-600 rounded">
+	<p class="alert-success">
 		{form.success}
 	</p>
 {/if}

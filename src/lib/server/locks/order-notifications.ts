@@ -66,7 +66,7 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			subject: `Order #${order.number} ${order.payment.status}`,
+			subject: `Order #${order.number}`,
 			htmlContent: `Order #${order.number} status changed to ${order.payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a>`,
 			dest: email
 		});

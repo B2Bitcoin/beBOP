@@ -9,14 +9,14 @@ import { emailsEnabled } from '$lib/server/email.js';
 
 export function load() {
 	return {
-		paymentMethods,
+		paymentMethods: paymentMethods(),
 		emailsEnabled
 	};
 }
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		if (!paymentMethods.length) {
+		if (!paymentMethods().length) {
 			throw error(500, 'No payment methods configured for the bootik');
 		}
 		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
@@ -83,7 +83,7 @@ export const actions = {
 
 		const paymentMethod = z
 			.object({
-				paymentMethod: z.enum([paymentMethods[0], ...paymentMethods.slice(1)])
+				paymentMethod: z.enum([paymentMethods()[0], ...paymentMethods().slice(1)])
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 

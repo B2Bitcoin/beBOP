@@ -45,7 +45,7 @@
 				<form action="?/setCurrentWallet" method="post">
 					<input type="hidden" value={wallet} name="wallet" /><button
 						type="submit"
-						class="text-blue underline">select</button
+						class="text-link underline">select</button
 					>
 				</form>
 			</li>
@@ -74,7 +74,7 @@
 		<li>
 			Amount: {transaction.amount} / Txid:
 			<a
-				class="underline text-blue"
+				class="underline text-link"
 				href="https://www.blockchain.com/en/explorer/transactions/{data.blockchainInfo.chain ===
 				'test'
 					? 'btc-testnet'
@@ -83,7 +83,7 @@
 			{#if transaction.label.startsWith('order:') && orderById[transaction.label.slice('order:'.length)]}
 				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)].createdAt}
 				/
-				<a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
+				<a class="underline text-link" href="/order/{transaction.label.slice('order:'.length)}"
 					>Order</a
 				>
 				created
