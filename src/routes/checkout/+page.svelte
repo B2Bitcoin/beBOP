@@ -70,17 +70,35 @@
 				{:else}
 					<label class="form-label col-span-3">
 						First name
-						<input type="text" class="form-input" name="firstName" required />
+						<input
+							type="text"
+							class="form-input"
+							name="firstName"
+							autocomplete="given-name"
+							required
+						/>
 					</label>
 
 					<label class="form-label col-span-3">
 						Last name
-						<input type="text" class="form-input" name="lastName" required />
+						<input
+							type="text"
+							class="form-input"
+							name="lastName"
+							autocomplete="family-name"
+							required
+						/>
 					</label>
 
 					<label class="form-label col-span-6">
 						Address
-						<input type="text" class="form-input" name="address" required />
+						<input
+							type="text"
+							class="form-input"
+							autocomplete="street-address"
+							name="address"
+							required
+						/>
 					</label>
 
 					<label class="form-label col-span-3">
@@ -107,7 +125,7 @@
 					<label class="form-label col-span-2">
 						Zip code
 
-						<input type="text" name="zip" class="form-input" required />
+						<input type="text" name="zip" class="form-input" required autocomplete="postal-code" />
 					</label>
 				{/if}
 			</section>
