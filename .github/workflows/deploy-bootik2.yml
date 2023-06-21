@@ -1,4 +1,4 @@
-name: deploy
+name: deploy-bootik2
 
 on:
   workflow_dispatch:
