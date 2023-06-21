@@ -43,7 +43,7 @@ export const actions = {
 				// productId: data.get('productId'),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
-				beginsAt: data.get('beginsAt') || undefined,
+				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
 
