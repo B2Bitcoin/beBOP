@@ -4,10 +4,12 @@
 	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
 
+	let className = '';
+	export { className as class };
 	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>;
 </script>
 
-<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col">
+<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col {className}">
 	<div class="flex justify-between items-center">
 		<h3 class="font-medium text-[22px] text-gray-850">
 			{challenge.name}
