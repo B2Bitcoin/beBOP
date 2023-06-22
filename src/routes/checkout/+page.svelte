@@ -9,8 +9,7 @@
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
 	import { pluralize } from '$lib/utils/pluralize';
-	import { upperFirst } from '$lib/utils/upperFirst.js';
-	import { typedInclude } from '$lib/utils/typedIncludes.js';
+	import { typedInclude } from '$lib/utils/typedIncludes';
 
 	let actionCount = 0;
 	export let data;
@@ -55,6 +54,12 @@
 	$: paymentMethods = data.paymentMethods.filter((method) =>
 		method === 'bitcoin' ? totalPrice >= 0.00001 : true
 	);
+
+	const paymentMethodDesc = {
+		bitcoin: 'Onchain',
+		lightning: 'Lightning',
+		cash: 'Cash'
+	};
 
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
 	$: paymentMethod = typedInclude(paymentMethods, paymentMethod)
@@ -156,7 +161,7 @@
 							required
 						>
 							{#each paymentMethods as paymentMethod}
-								<option value={paymentMethod}>{upperFirst(paymentMethod)}</option>
+								<option value={paymentMethod}>{paymentMethodDesc[paymentMethod]}</option>
 							{/each}
 						</select>
 						{#if paymentMethods.length === 0}
