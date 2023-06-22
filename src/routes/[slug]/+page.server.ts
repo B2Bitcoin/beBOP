@@ -7,7 +7,7 @@ import { omit } from 'lodash-es';
 import type { Challenge } from '$lib/types/Challenge.js';
 
 const PRODUCT_WIDGET_REGEX = /^\[Product=(?<slug>[a-z0-9-]+)\]$/i;
-const CHALLENGE_WIDGET_REGEX = /^\[Challenge=(?<id>[a-z0-9-]+)\]$/i;
+const CHALLENGE_WIDGET_REGEX = /^\[Challenge=(?<slug>[a-z0-9-]+)\]$/i;
 
 export async function load({ params }) {
 	const cmsPage = await collections.cmsPages.findOne({
@@ -19,26 +19,36 @@ export async function load({ params }) {
 	}
 
 	const productSlugs = new Set<string>();
-	const challengIds = new Set<string>();
+	const challengeSlugs = new Set<string>();
 
 	const tokens = marked.lexer(cmsPage.content).map((token) => {
 		if (token.type === 'paragraph') {
-			const match = token.raw.match(PRODUCT_WIDGET_REGEX || CHALLENGE_WIDGET_REGEX);
-			// const match1 = token.raw.match(CHALLENGE_WIDGET_REGEX);
+			let match = token.raw.match(PRODUCT_WIDGET_REGEX);
 
-			if (match?.groups?.slug || match?.groups?.id) {
+			if (match?.groups?.slug) {
 				const slug = match.groups.slug;
-				const id = match.groups.id;
 
 				productSlugs.add(slug);
-				challengIds.add(id);
 
 				return {
-					type: ['productWidget', 'challengeWidget'],
+					type: 'productWidget',
 					raw: token.raw,
-					slug,
-					id
-				};
+					slug
+				} as const;
+			}
+
+			match = token.raw.match(CHALLENGE_WIDGET_REGEX);
+
+			if (match?.groups?.slug) {
+				const slug = match.groups.slug;
+
+				challengeSlugs.add(slug);
+
+				return {
+					type: 'challengeWidget',
+					raw: token.raw,
+					slug
+				} as const;
 			}
 		}
 
@@ -62,7 +72,7 @@ export async function load({ params }) {
 
 	const challenges = await collections.challenges
 		.find({
-			_id: { $in: [...challengIds] }
+			_id: { $in: [...challengeSlugs] }
 		})
 		.project<Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>>({
 			name: 1,
@@ -72,6 +82,7 @@ export async function load({ params }) {
 		})
 		.toArray();
 
+	// Everything is awaited, because the home page can call this load function in a sub param
 	return {
 		cmsPage: omit(cmsPage, ['content']),
 		tokens,
