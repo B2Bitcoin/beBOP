@@ -23,16 +23,19 @@
 	<GoalProgress
 		class="font-bold mt-3"
 		text="{challenge.goal.currency
-			? Number(challenge.progress).toLocaleString('en', {
-					style: 'currency',
-					currency: challenge.goal.currency,
-					minimumFractionDigits: 0
-			  })
+			? challenge.progress < 0
+				? 0
+				: Number(challenge.progress).toLocaleString('en', {
+						style: 'currency',
+						currency: challenge.goal.currency,
+						minimumFractionDigits: 0
+				  })
 			: challenge.progress} 🙂"
 		percentage={(challenge.progress / challenge.goal.amount) * 100}
 	/>
-	<div class="flex justify-between mt-1 items-center">
-		<a href="/" class="text-link underline">How can I contribute?</a>
+	<div class="flex justify-between mt-1 items-right">
+		<!-- <a href="/" class="text-link underline">How can I contribute?</a> -->
+		<p />
 		{#if challenge.progress == challenge.goal.amount}
 			<p>Good job guys! 👏👏</p>
 		{:else if challenge.progress > challenge.goal.amount}
