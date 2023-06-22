@@ -11,6 +11,7 @@
 			<a href={'/admin/challenge/' + challenge._id} class="underline text-blue">
 				{challenge.name}
 			</a>
+			- <span class="text-gray-550">[Challenge={challenge._id}]</span>
 		</li>
 	{:else}
 		No challenges yet
