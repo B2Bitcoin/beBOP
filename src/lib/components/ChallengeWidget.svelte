@@ -23,13 +23,11 @@
 	<GoalProgress
 		class="font-bold mt-3"
 		text="{challenge.goal.currency
-			? challenge.progress < 0
-				? 0
-				: Number(challenge.progress).toLocaleString('en', {
-						style: 'currency',
-						currency: challenge.goal.currency,
-						minimumFractionDigits: 0
-				  })
+			? Number(Math.max(0, challenge.progress)).toLocaleString('en', {
+					style: 'currency',
+					currency: challenge.goal.currency,
+					minimumFractionDigits: 0
+			  })
 			: challenge.progress} 🙂"
 		percentage={(challenge.progress / challenge.goal.amount) * 100}
 	/>
