@@ -13,7 +13,8 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"lint:ci": "(prettier --plugin-search-dir . --check . || (git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier --plugin-search-dir . . -w --loglevel silent && git --no-pager diff; git restore .) && false)) && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"copy-bootik": "ts-node --esm scripts/copy-bootik.ts"
 	},
 	"devDependencies": {
 		"@fontsource/outfit": "^4.5.11",
@@ -67,6 +68,7 @@
 		"nostr-tools": "^1.11.1",
 		"qrcode": "^1.5.3",
 		"sharp": "^0.32.0",
+		"ts-node": "^10.9.1",
 		"type-fest": "^3.11.1",
 		"undici": "^5.22.1",
 		"zod": "^3.21.4"
