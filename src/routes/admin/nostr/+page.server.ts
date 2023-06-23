@@ -1,5 +1,6 @@
 import { ORIGIN } from '$env/static/private';
 import { collections } from '$lib/server/database.js';
+import { isLightningConfigured, lndGetInfo } from '$lib/server/lightning.js';
 import { nostrPrivateKey, nostrPublicKey, nostrRelays } from '$lib/server/nostr';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { bech32 } from 'bech32';
@@ -34,10 +35,16 @@ export const actions = {
 			  }`
 			: null;
 
+		const lndInfo = isLightningConfigured ? await lndGetInfo() : null;
+		const lnAddress = lndInfo?.uris?.[0];
+
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			content: JSON.stringify({
 				name: runtimeConfig.brandName,
+				display_name: runtimeConfig.brandName,
+				website: ORIGIN,
+				...(lnAddress && { lud16: lnAddress }),
 				// about: '',
 				...(runtimeConfig.logoPictureId && { picture: pictureUrl }),
 				nip05: `_@${domainName}`
