@@ -49,11 +49,21 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 ```shell
 pnpm run build
 BODY_SIZE_LIMIT=20000000 node build/index.js
+
+# If behind a reverse proxy, you can use the following config:
+# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 BODY_SIZE_LIMIT=20000000 node build/index.js
 ```
 
 You can set the `PORT` environment variable to change from the default 3000 port to another port.
 
 You can also use [pm2](https://pm2.keymetrics.io/docs/usage/quick-start/) to manage your node application, and run it on multiple cores.
+
+```shell
+BODY_SIZE_LIMIT=20000000 pm2 start --name bootik --update-env build/index.js
+
+# If behind a reverse proxy, you can use the following config:
+# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 BODY_SIZE_LIMIT=20000000 pm2 start --name bootik --update-env build/index.js
+```
 
 ### Maintenance mode
 

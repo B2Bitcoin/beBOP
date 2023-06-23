@@ -2,7 +2,6 @@ name: deploy-prod
 
 on:
   workflow_dispatch:
-  push:
 
 jobs:
   deploy-prod:
@@ -34,4 +33,4 @@ jobs:
         run: |
           zip -r build.zip build
           scp -r build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST_PROD }}:B2BitcoinBootik/build.zip
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST_PROD }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-prod"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST_PROD }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik"
