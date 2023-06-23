@@ -22,10 +22,16 @@
 	<p>Your NostR private key is: {data.nostrPrivateKey}</p>
 	<p>Your NostR public key is: {data.nostrPublicKey}</p>
 
+	{#if data.origin}
+		<form action="?/certify" class="flex flex-col gap-4" method="post">
+			<button class="btn btn-black self-start" type="submit">Certify</button>
+		</form>
+	{/if}
+
 	<h2 class="text-2xl">Send message</h2>
 
 	<form action="?/sendMessage" method="post" class="flex flex-col gap-4">
-		<label>
+		<label class="form-label">
 			NPUB
 			<input
 				class="form-input"
