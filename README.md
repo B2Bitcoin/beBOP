@@ -26,8 +26,8 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `BITCOIN_RPC_PASSWORD` - The RPC password
 - `EMAIL_REPLY_TO` - The "reply-to" for emails sent from the bootik
 - `LND_REST_URL` - The LND Rest interface URL. Set to http://127.0.0.1:8080 if you run a lnd node locally with default configuration
-- `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`
-- `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`
+- `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
+- `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`. Example command: `cat .lnd/data/chain/bitcoin/mainnet/admin.macaroon | hexdump -e '16/1 "%02X"'`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
 - `MONGODB_URL` - The connection URL to the MongoDB replicaset
 - `MONGODB_DB` - The DB name, defaulting to "bootik"
 - `NOSTR_PRIVATE_KEY` - To send notifications
@@ -49,11 +49,21 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 ```shell
 pnpm run build
 BODY_SIZE_LIMIT=20000000 node build/index.js
+
+# If behind a reverse proxy, you can use the following config:
+# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 BODY_SIZE_LIMIT=20000000 node build/index.js
 ```
 
 You can set the `PORT` environment variable to change from the default 3000 port to another port.
 
 You can also use [pm2](https://pm2.keymetrics.io/docs/usage/quick-start/) to manage your node application, and run it on multiple cores.
+
+```shell
+BODY_SIZE_LIMIT=20000000 pm2 start --name bootik --update-env build/index.js
+
+# If behind a reverse proxy, you can use the following config:
+# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 BODY_SIZE_LIMIT=20000000 pm2 start --name bootik --update-env build/index.js
+```
 
 ### Maintenance mode
 
