@@ -1,5 +1,6 @@
 import { nostrPublicKeyHex } from '$lib/server/nostr';
 import { error } from '@sveltejs/kit';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const OPTIONS = () => {
 	return new Response(null, {
@@ -19,7 +20,8 @@ export const GET = () => {
 	return new Response(
 		JSON.stringify({
 			names: {
-				_: nostrPublicKeyHex
+				_: nostrPublicKeyHex,
+				[runtimeConfig.brandName]: nostrPublicKeyHex
 			}
 		}),
 		{
