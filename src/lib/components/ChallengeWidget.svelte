@@ -28,7 +28,7 @@
 					currency: challenge.goal.currency,
 					minimumFractionDigits: 0
 			  })
-			: challenge.progress} 🙂"
+			: Math.max(challenge.progress, 0)} 🙂"
 		percentage={(challenge.progress / challenge.goal.amount) * 100}
 	/>
 	<div class="flex justify-between mt-1 items-right">
