@@ -10,7 +10,6 @@ import { z } from 'zod';
 export function load() {
 	return {
 		origin: ORIGIN,
-		nostrVerifiedName: runtimeConfig.nostrVerifiedName,
 		nostrPrivateKey: nostrPrivateKey,
 		nostrPublicKey: nostrPublicKey,
 		nostrRelays: nostrRelays,
@@ -23,37 +22,25 @@ export function load() {
 }
 
 export const actions = {
-	setVerifiedName: async ({ request }) => {
+	certify: async () => {
 		const domainName = new URL(ORIGIN).hostname;
 
-		const form = await request.formData();
-
-		const { verifiedName } = z
-			.object({
-				verifiedName: z.string().trim().min(1)
-			})
-			.parse(Object.fromEntries(form));
-
-		await collections.runtimeConfig.updateOne(
-			{ _id: 'nostrVerifiedName' },
-			{
-				$set: {
-					data: verifiedName,
-					updatedAt: new Date()
-				}
-			},
-			{
-				upsert: true
-			}
-		);
-
-		runtimeConfig.nostrVerifiedName = verifiedName;
+		const picture = runtimeConfig.logoPictureId
+			? await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId })
+			: null;
+		const pictureUrl = picture
+			? `${ORIGIN}/picture/raw/${picture._id}/format/${
+					picture.storage.formats.find((f) => f.width <= 512 || f.height <= 512)?.width
+			  }`
+			: null;
 
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			content: JSON.stringify({
-				name: verifiedName,
-				nip05: `${verifiedName}@${domainName}`
+				name: runtimeConfig.brandName,
+				// about: '',
+				...(runtimeConfig.logoPictureId && { picture: pictureUrl }),
+				nip05: `_@${domainName}`
 			}),
 			createdAt: new Date(),
 			updatedAt: new Date(),
@@ -61,7 +48,8 @@ export const actions = {
 		});
 
 		return {
-			success: 'Verified name updated'
+			success:
+				'Nostr Certification queued. When changing logo / brand name / ..., please certify again.'
 		};
 	},
 	sendMessage: async ({ request }) => {

@@ -1,4 +1,3 @@
-import { runtimeConfig } from '$lib/server/runtime-config';
 import { nostrPublicKeyHex } from '$lib/server/nostr';
 import { error } from '@sveltejs/kit';
 
@@ -13,14 +12,14 @@ export const OPTIONS = () => {
 };
 
 export const GET = () => {
-	if (!runtimeConfig.nostrVerifiedName || !nostrPublicKeyHex) {
+	if (!nostrPublicKeyHex) {
 		throw error(404);
 	}
 
 	return new Response(
 		JSON.stringify({
 			names: {
-				[runtimeConfig.nostrVerifiedName]: nostrPublicKeyHex
+				_: nostrPublicKeyHex
 			}
 		}),
 		{
