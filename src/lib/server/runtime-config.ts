@@ -28,6 +28,8 @@ const defaultConfig = {
 		{ label: 'Privacy Policy', href: '/privacy' }
 	],
 
+	nostrVerifiedName: '',
+
 	checkoutButtonOnProductPage: true,
 	discovery: true
 };

@@ -112,32 +112,63 @@ function initRelayPool() {
 }
 
 async function handleChanges(change: ChangeStreamDocument<NostRNotification>): Promise<void> {
-	if (!lock?.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
+	if (!lock?.ownsLock || !('fullDocument' in change)) {
 		return;
 	}
 
-	if (change.fullDocument.processedAt) {
+	const fullDocument = change.fullDocument;
+
+	if (!fullDocument) {
 		return;
 	}
 
-	const npub = change.fullDocument.dest;
-	const content = change.fullDocument.content;
-	const receiverPublicKeyHex = nostrToHex(npub);
+	if (fullDocument.processedAt) {
+		return;
+	}
 
-	const event = {
-		id: '',
-		content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
-		created_at: getUnixTime(
-			max([
-				change.fullDocument.minCreatedAt ?? change.fullDocument.createdAt,
-				change.fullDocument.createdAt
-			])
-		),
-		pubkey: nostrPublicKeyHex,
-		tags: [['p', receiverPublicKeyHex]],
-		kind: Kind.EncryptedDirectMessage,
-		sig: ''
-	} satisfies Event;
+	const event = await (async () => {
+		const content = fullDocument.content;
+
+		if (fullDocument.kind === Kind.Metadata) {
+			return {
+				id: '',
+				content,
+				created_at: getUnixTime(
+					max([fullDocument.minCreatedAt ?? fullDocument.createdAt, fullDocument.createdAt])
+				),
+				pubkey: nostrPublicKeyHex,
+				tags: [],
+				kind: Kind.Metadata,
+				sig: ''
+			} satisfies Event;
+		}
+
+		if (fullDocument.kind === Kind.EncryptedDirectMessage) {
+			const npub = fullDocument.dest;
+
+			if (!npub) {
+				return;
+			}
+
+			const receiverPublicKeyHex = nostrToHex(npub);
+
+			return {
+				id: '',
+				content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
+				created_at: getUnixTime(
+					max([fullDocument.minCreatedAt ?? fullDocument.createdAt, fullDocument.createdAt])
+				),
+				pubkey: nostrPublicKeyHex,
+				tags: [['p', receiverPublicKeyHex]],
+				kind: Kind.EncryptedDirectMessage,
+				sig: ''
+			} satisfies Event;
+		}
+	})();
+
+	if (!event) {
+		return;
+	}
 
 	event.id = getEventHash(event);
 	event.sig = getSignature(event, nostrPrivateKeyHex);
@@ -146,7 +177,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 	relayPool?.publish(event, nostrRelays);
 
 	await collections.nostrNotifications.updateOne(
-		{ _id: change.fullDocument._id },
+		{ _id: fullDocument._id },
 		{
 			$set: {
 				processedAt: new Date(),

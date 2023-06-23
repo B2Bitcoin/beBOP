@@ -218,6 +218,7 @@ async function sendMessage(dest: string, content: string, minCreatedAt: Date) {
 		createdAt: new Date(),
 		updatedAt: new Date(),
 		minCreatedAt,
+		kind: Kind.EncryptedDirectMessage,
 		content
 	});
 }

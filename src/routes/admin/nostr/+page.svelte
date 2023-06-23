@@ -22,10 +22,33 @@
 	<p>Your NostR private key is: {data.nostrPrivateKey}</p>
 	<p>Your NostR public key is: {data.nostrPublicKey}</p>
 
+	{#if data.origin}
+		<h2 class="text-2xl">Set verified name</h2>
+
+		<form action="?/setVerifiedName" class="flex flex-col gap-4" method="post">
+			<label class="form-label">
+				Verified name (@{new URL(data.origin).hostname})
+				<input
+					class="form-input"
+					type="text"
+					name="verifiedName"
+					placeholder="_"
+					value={data.nostrVerifiedName}
+					required
+				/>
+				<p class="text-gray-600 text-sm">
+					You can set "_" for a global verified name for the domain.
+				</p>
+			</label>
+
+			<button class="btn btn-black self-start" type="submit">Set</button>
+		</form>
+	{/if}
+
 	<h2 class="text-2xl">Send message</h2>
 
 	<form action="?/sendMessage" method="post" class="flex flex-col gap-4">
-		<label>
+		<label class="form-label">
 			NPUB
 			<input
 				class="form-input"
