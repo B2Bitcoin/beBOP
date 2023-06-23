@@ -81,7 +81,7 @@
 				</ul>
 				<img src="{$page.url.pathname}/qrcode" class="w-40 h-40" alt="QR code" />
 				<div class="text-xl">
-					Pay to to complete the order. {#if data.order.payment.method === 'bitcoin'}
+					Pay to complete the order. {#if data.order.payment.method === 'bitcoin'}
 						Order will be marked as paid after {data.confirmationBlocksRequired}
 						{pluralize(data.confirmationBlocksRequired, 'confirmation')}.{/if}
 				</div>
