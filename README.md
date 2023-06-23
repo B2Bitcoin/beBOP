@@ -61,6 +61,32 @@ It's possible to enable maintenance mode in the admin.
 
 To correctly recognize your IP, if you are behind a reverse proxy like nginx, you will need to set the `ADDRESS_HEADER` to `X-Forwaded-For` and the `XFF_DEPTH` header to `1` in the environment.
 
+### Copying DB & S3 to another instance
+
+You can run the following command to copy the DB and S3 to another instance:
+
+```shell
+export OLD_DB_URL="..."
+export OLD_DB_NAME="..."
+
+export NEW_DB_URL="..."
+export NEW_DB_NAME="..."
+
+export OLD_S3_ENDPOINT="..."
+export OLD_S3_BUCKET="..."
+export OLD_S3_REGION="..."
+export OLD_S3_KEY="..."
+export OLD_S3_SECRET="..."
+
+export NEW_S3_BUCKET="..."
+export NEW_S3_REGION="..."
+export NEW_S3_KEY="..."
+export NEW_S3_SECRET="..."
+export NEW_S3_ENDPOINT="..."
+
+pnpm run copy-bootik
+```
+
 ## Local development
 
 ### Running the app
