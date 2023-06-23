@@ -11,6 +11,7 @@ import { ObjectId } from 'mongodb';
 import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+import { Kind } from 'nostr-tools';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -129,6 +130,7 @@ export const actions: Actions = {
 						.insertOne({
 							_id: new ObjectId(),
 							dest: subscription.npub,
+							kind: Kind.EncryptedDirectMessage,
 							content: `New product "${parsed.name}": ${ORIGIN}/product/${productId}`,
 							createdAt: new Date(),
 							updatedAt: new Date()
