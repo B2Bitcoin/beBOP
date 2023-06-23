@@ -1,0 +1,36 @@
+name: deploy-prod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    environment:
+      name: bootik2
+      url: https://labookinerie.com
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.3.1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+      - run: |
+          pnpm install --frozen-lockfile
+          echo $DOT_ENV > .env.local
+          pnpm build
+        env:
+          DOT_ENV: ${{ vars.DOT_ENV_PROD_BOOTIK }}
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ vars.SSH_KNOWN_HOSTS_PROD }}
+      - name: Deploy
+        run: |
+          zip -r build.zip build
+          scp -r build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST_PROD }}:B2BitcoinBootik/build.zip
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST_PROD }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-prod"
