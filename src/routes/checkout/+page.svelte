@@ -255,7 +255,9 @@
 						}}
 					>
 						<h3 class="text-base text-gray-700">{item.product.name}</h3>
-
+						<div class="self-center flex flex-row">
+							<ProductType product={item.product} class="text-sm" />
+						</div>
 						<div class="flex gap-2">
 							<div class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center">
 								{#if item.picture}
@@ -267,16 +269,12 @@
 								{/if}
 							</div>
 							<div class="self-center">
-								<ProductType product={item.product} class="text-sm" />
-							</div>
-							<div class="self-center">
 								{#if 0}
 									<CartQuantity {item} sm />
 								{:else if item.quantity > 1}
 									Quantity: {item.quantity}
 								{/if}
 							</div>
-
 							<div class="flex flex-col ml-auto items-end justify-center">
 								<PriceTag
 									amount={item.quantity * item.product.price.amount}
