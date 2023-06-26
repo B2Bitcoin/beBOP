@@ -1,4 +1,4 @@
-import { nostrPublicKeyHex } from '$lib/server/nostr';
+import { nostrPublicKeyHex, nostrRelays } from '$lib/server/nostr';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from '$lib/server/runtime-config';
 
@@ -20,9 +20,10 @@ export const GET = () => {
 	return new Response(
 		JSON.stringify({
 			names: {
-				_: nostrPublicKeyHex,
+				// _: nostrPublicKeyHex,
 				[runtimeConfig.brandName]: nostrPublicKeyHex
-			}
+			},
+			relays: { [nostrPublicKeyHex]: nostrRelays }
 		}),
 		{
 			headers: {
