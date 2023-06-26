@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAX_NAME_LIMIT } from '$lib/types/Product';
+	import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays, addMonths } from 'date-fns';
 
@@ -7,6 +7,23 @@
 	let beginsAt = new Date().toJSON().slice(0, 10);
 	let endsAt = addMonths(new Date(), 30).toJSON().slice(0, 10);
 	let endsAtElement: HTMLInputElement;
+	let selectedProduct: Product;
+	let selectedProductList: Product[] = [];
+
+	function selectProduct(product: Product) {
+		selectedProduct = product;
+	}
+
+	function addToSelectedProduct(product: Product) {
+		selectedProductList = [...selectedProductList, product];
+	}
+
+	function removeFromAvailableProducts() {
+		data.products = data.products.filter((product) => product !== selectedProduct);
+		// selectedProduct = null; // Réinitialise l'élément sélectionné
+	}
+
+	export let data;
 
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
@@ -79,5 +96,55 @@
 		</label>
 	</div>
 
+	<div class="flex flex-row space-x-12">
+		<div class="flex flex-col gap-4 w-[25%]">
+			<h2 class="text-xl">Available items</h2>
+			<div class="overflow-y-scroll h-40 border border-gray-400">
+				<ul class="list-none">
+					{#each selectedProductList as product}
+						<li>{product.name}</li>
+					{/each}
+				</ul>
+			</div>
+			<button class="self-start border border-gray-400 py-2 px-4 rounded inline-flex items-center">
+				<span>Remove</span>
+			</button>
+		</div>
+
+		<div class="flex flex-col gap-4 w-[50%]">
+			<h2 class="text-xl">Selected items</h2>
+			<div class="overflow-y-scroll w-2/5 h-40 border border-gray-400">
+				<ul class="list-none">
+					{#each data.products as product}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<li
+							class:selected={selectedProduct === product}
+							on:click={(evt) => selectProduct(product)}
+						>
+							{product.name}
+						</li>
+					{/each}
+				</ul>
+			</div>
+			<button
+				class=" self-start border border-gray-400 py-2 px-4 rounded inline-flex items-center"
+				on:click={(evt) => {
+					console.log('selected item ===>', selectedProduct);
+					addToSelectedProduct(selectedProduct);
+					removeFromAvailableProducts();
+					evt.preventDefault();
+				}}
+			>
+				<span>Add</span>
+			</button>
+		</div>
+	</div>
+
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
 </form>
+
+<style>
+	.selected {
+		background-color: rgb(165, 165, 172);
+	}
+</style>

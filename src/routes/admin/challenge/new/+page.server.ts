@@ -4,6 +4,15 @@ import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { generateId } from '$lib/utils/generateId';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async () => {
+	const products = await collections.products.find({}).toArray();
+
+	return {
+		products
+	};
+};
 
 export const actions: Actions = {
 	default: async function ({ request }) {
@@ -45,5 +54,7 @@ export const actions: Actions = {
 		});
 
 		throw redirect(303, `/admin/challenge`);
+		
 	}
+	
 };
