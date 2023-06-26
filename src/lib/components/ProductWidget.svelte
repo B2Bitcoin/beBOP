@@ -7,11 +7,19 @@
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
+	import ProductType from './ProductType.svelte';
 
 	export let picture: Picture | undefined;
 	export let product: Pick<
 		Product,
-		'_id' | 'name' | 'price' | 'shortDescription' | 'preorder' | 'availableDate'
+		| '_id'
+		| 'name'
+		| 'price'
+		| 'shortDescription'
+		| 'preorder'
+		| 'availableDate'
+		| 'shipping'
+		| 'type'
 	>;
 	export let exchangeRate = 0;
 	let className = '';
@@ -31,7 +39,10 @@
 		!product.availableDate || product.availableDate <= new Date() || !!product.preorder;
 </script>
 
-<div class="mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
+<div class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
+	<div class="flex flex-row justify-end -mt-6 -mr-6">
+		<ProductType {product} class="last:rounded-tr first:rounded-bl pl-2" />
+	</div>
 	<div class="flex flex-col text-center">
 		<a href="/product/{product._id}" class="flex flex-col items-center">
 			<PictureComponent {picture} sizes="800px" class="object-contain max-h-[250px] max-w-full" />

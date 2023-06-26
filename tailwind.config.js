@@ -35,6 +35,22 @@ module.exports = {
 				700: '#656565',
 				800: '#4A4A4A',
 				850: '#292929'
+			},
+			jagger: {
+				200: '#efd8fc',
+				500: '#c160ec',
+				700: '#982ec2',
+				900: '#67247f'
+			},
+			rosebudcherry: {
+				200: '#ffcbe9',
+				500: '#fa3a9c',
+				700: '#cc0a5e'
+			},
+			roseofsharon: {
+				200: '#ffe984',
+				500: '#ffa000',
+				700: '#c25300'
 			}
 		},
 		fontFamily: {

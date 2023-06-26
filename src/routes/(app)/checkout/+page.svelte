@@ -10,6 +10,7 @@
 	import { typedValues } from '$lib/utils/typedValues';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
+	import ProductType from '$lib/components/ProductType.svelte';
 
 	let actionCount = 0;
 	export let data;
@@ -255,7 +256,7 @@
 					>
 						<h3 class="text-base text-gray-700">{item.product.name}</h3>
 
-						<div class="flex gap-2">
+						<div class="flex flex-row gap-2">
 							<div class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center">
 								{#if item.picture}
 									<Picture
@@ -265,27 +266,31 @@
 									/>
 								{/if}
 							</div>
-
-							<div class="self-center">
-								{#if 0}
-									<CartQuantity {item} sm />
-								{:else if item.quantity > 1}
-									Quantity: {item.quantity}
-								{/if}
+							<div class="flex flex-col">
+								<div class="flex flex-row gap-2">
+									<ProductType product={item.product} class="text-sm" />
+								</div>
+								<div>
+									{#if 0}
+										<CartQuantity {item} sm />
+									{:else if item.quantity > 1}
+										Quantity: {item.quantity}
+									{/if}
+								</div>
 							</div>
 
 							<div class="flex flex-col ml-auto items-end justify-center">
 								<PriceTag
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
 									class="text-2xl text-gray-800 truncate"
-								/>
-								<PriceTag
-									class="text-base text-gray-600 truncate"
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									convertedTo="EUR"
 									exchangeRate={data.exchangeRate}
+								/>
+								<PriceTag
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									class="text-base text-gray-600 truncate"
 								/>
 							</div>
 						</div>
@@ -299,15 +304,15 @@
 				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
 					<div class="flex justify-between">
 						<span class="text-xl text-gray-850">Total</span>
-						<PriceTag class="text-2xl text-gray-800" amount={totalPrice} currency="BTC" />
+						<PriceTag
+							class="text-2xl text-gray-800"
+							amount={totalPrice}
+							convertedTo="EUR"
+							currency="BTC"
+							exchangeRate={data.exchangeRate}
+						/>
 					</div>
-					<PriceTag
-						class="self-end text-gray-600"
-						amount={totalPrice}
-						convertedTo="EUR"
-						currency="BTC"
-						exchangeRate={data.exchangeRate}
-					/>
+					<PriceTag class="self-end text-gray-600" amount={totalPrice} currency="BTC" />
 				</div>
 
 				<label class="cursor-pointer">
