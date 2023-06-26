@@ -60,13 +60,25 @@ export async function load({ params }) {
 			_id: { $in: [...productSlugs] }
 		})
 		.project<
-			Pick<Product, '_id' | 'price' | 'name' | 'shortDescription' | 'preorder' | 'availableDate'>
+			Pick<
+				Product,
+				| '_id'
+				| 'price'
+				| 'name'
+				| 'shortDescription'
+				| 'preorder'
+				| 'availableDate'
+				| 'type'
+				| 'shipping'
+			>
 		>({
 			price: 1,
 			shortDescription: 1,
 			preorder: 1,
 			name: 1,
-			availableDate: 1
+			availableDate: 1,
+			type: 1,
+			shipping: 1
 		})
 		.toArray();
 

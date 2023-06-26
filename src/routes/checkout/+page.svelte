@@ -10,6 +10,7 @@
 	import { typedValues } from '$lib/utils/typedValues';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
+	import ProductType from '$lib/components/ProductType.svelte';
 
 	let actionCount = 0;
 	export let data;
@@ -265,7 +266,9 @@
 									/>
 								{/if}
 							</div>
-
+							<div class="self-center">
+								<ProductType product={item.product} class="text-sm" />
+							</div>
 							<div class="self-center">
 								{#if 0}
 									<CartQuantity {item} sm />

@@ -4,6 +4,7 @@
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
+	import ProductType from '$lib/components/ProductType.svelte';
 	import { sum } from '$lib/utils/sum';
 
 	export let data;
@@ -60,7 +61,9 @@
 							<h2 class="text-2xl text-gray-850">{item.product.name}</h2>
 							<p class="text-sm text-gray-600">{item.product.shortDescription}</p>
 							<div class="grow" />
-
+							<div class="flex flex-row gap-2">
+								<ProductType product={item.product} />
+							</div>
 							<button
 								formaction="/cart/{item.product._id}/?/remove"
 								class="mt-auto mr-auto hover:underline text-link text-base font-light"
