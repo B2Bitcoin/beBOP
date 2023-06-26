@@ -41,7 +41,7 @@
 		<span
 			class="pl-1 pr-3 flex gap-2 items-center {className}  text-green-700 bg-green-200 rounded-full"
 		>
-			<IconDownTo /> RESOUCE
+			<IconDownTo /> RESOURCE
 		</span>
 	{/if}
 {/if}
