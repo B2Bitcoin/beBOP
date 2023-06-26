@@ -38,8 +38,9 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 	const send = (message: string) => sendMessage(senderNpub, message, minCreatedAt);
 
 	const toMatch = content.trim().replaceAll(/\s+/g, ' ');
+	const toMatchLower = toMatch.toLowerCase();
 
-	switch (toMatch) {
+	switch (toMatchLower) {
 		case 'help':
 			await send(
 				`Commands:
@@ -191,7 +192,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			break;
 		}
 		default:
-			if (toMatch.startsWith('cancel ')) {
+			if (toMatchLower.startsWith('cancel ')) {
 				const number = parseInt(toMatch.slice('cancel '.length), 10);
 
 				if (isNaN(number)) {
@@ -221,8 +222,8 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 
 				await send('Subscription #' + number + ' was cancelled, you will not be reminded anymore');
 				break;
-			} else if (toMatch.startsWith('add ')) {
-				const data = toMatch.slice('order '.length).trim().replaceAll(/\s+/g, ' ').split(' ');
+			} else if (toMatchLower.startsWith('add ')) {
+				const data = toMatch.slice('order '.length).split(' ');
 
 				const ref = data[0];
 				const quantity = parseInt(data[1] || '1');
@@ -262,12 +263,13 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 				);
 				break;
 			} else if (toMatch.startsWith('remove ')) {
-				const data = toMatch.slice('remove '.length).trim().replaceAll(/\s+/g, ' ').split(' ');
+				const data = toMatch.slice('remove '.length).trim().split(' ');
 
 				const ref = data[0];
-				const quantity = parseInt(data[1] || '-1');
+				const quantity = data[1] ? parseInt(data[1]) : 0;
+				const totalQuantity = data[1] ? false : true;
 
-				if (isNaN(quantity)) {
+				if (isNaN(quantity) || quantity < 0) {
 					await send('Invalid quantity: ' + data[1]);
 					break;
 				}
@@ -281,9 +283,10 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 					break;
 				}
 
-				const cart = await removeFromCartInDb(product._id, quantity, { npub: senderNpub }).catch(
-					(e) => send(e.message).then(() => null)
-				);
+				const cart = await removeFromCartInDb(product._id, quantity, {
+					npub: senderNpub,
+					totalQuantity
+				}).catch((e) => send(e.message).then(() => null));
 
 				if (!cart) {
 					break;
