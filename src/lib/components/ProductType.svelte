@@ -21,7 +21,7 @@
 	export { className as class };
 
 	$: baseClasses =
-		'pl-1 pr-3 flex gap-2 items-center ' + className.includes('rounded') ? '' : 'rounded-full';
+		'pl-1 pr-3 flex gap-2 items-center ' + (className.includes('rounded') ? '' : 'rounded-full');
 </script>
 
 {#if product.preorder && product.availableDate && product.availableDate > new Date()}
