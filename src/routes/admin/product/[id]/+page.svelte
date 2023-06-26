@@ -188,7 +188,7 @@
 
 	<div class="flex flex-row flex-wrap gap-6 mt-6">
 		{#each data.digitalFiles as digitalFile}
-			<a href="/admin/digital-file/{digitalFile._id}" class="text-blue hover:underline">
+			<a href="/admin/digital-file/{digitalFile._id}" class="text-link hover:underline">
 				{digitalFile.name}
 			</a>
 		{/each}

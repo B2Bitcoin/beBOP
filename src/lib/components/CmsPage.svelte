@@ -2,15 +2,18 @@
 	import { marked } from 'marked';
 	import type { PageData } from '../../routes/[slug]/$types';
 	import ProductWidget from './ProductWidget.svelte';
+	import ChallengeWidget from './ChallengeWidget.svelte';
 
 	export let products: PageData['products'];
 	export let pictures: PageData['pictures'];
+	export let challenges: PageData['challenges'];
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
 	export let exchangeRate: PageData['exchangeRate'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
+	$: challengeById = Object.fromEntries(challenges.map((challenge) => [challenge._id, challenge]));
 </script>
 
 <svelte:head>
@@ -29,6 +32,8 @@
 						picture={pictureByProduct[token.slug]}
 						class="not-prose my-5"
 					/>
+				{:else if token.type === 'challengeWidget'}
+					<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
 				{:else}
 					{@html marked(token.raw)}
 				{/if}

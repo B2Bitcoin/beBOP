@@ -32,6 +32,15 @@
 	<label class="flex gap-2 cursor-pointer items-center">
 		<input
 			type="checkbox"
+			name="enableCashSales"
+			class="form-checkbox rounded-sm cursor-pointer"
+			checked={data.enableCashSales}
+		/>
+		enableCashSales
+	</label>
+	<label class="flex gap-2 cursor-pointer items-center">
+		<input
+			type="checkbox"
 			name="isMaintenance"
 			class="form-checkbox rounded-sm cursor-pointer"
 			checked={data.isMaintenance}
@@ -48,7 +57,7 @@
 			value={data.maintenanceIps}
 		/>
 		<p class="text-sm">
-			Your IP is <code class="font-mono bg-blue px-[2px] py-[1px] rounded text-white"
+			Your IP is <code class="font-mono bg-link px-[2px] py-[1px] rounded text-white"
 				>{data.ip}</code
 			>
 		</p>

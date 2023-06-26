@@ -8,7 +8,7 @@
 <h1 class="text-3xl">Emails</h1>
 
 {#if form?.success}
-	<p class="border border-green-400 p-2 text-green-600 rounded">Email queued</p>
+	<p class="alert-success">Email queued</p>
 {/if}
 
 <form method="post" class="flex flex-col gap-6">

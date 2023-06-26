@@ -3,6 +3,7 @@ import { ObjectId, type ChangeStreamDocument } from 'mongodb';
 import { collections } from '../database';
 import { Lock } from '../lock';
 import { ORIGIN } from '$env/static/private';
+import { Kind } from 'nostr-tools';
 
 const lock = new Lock('order-notifications');
 
@@ -55,6 +56,7 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
+			kind: Kind.EncryptedDirectMessage,
 			updatedAt: new Date(),
 			content: `Order #${order.number} ${order.payment.status}, see ${ORIGIN}/order/${order._id}`,
 			dest: npub
@@ -66,7 +68,7 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			subject: `Order #${order.number} ${order.payment.status}`,
+			subject: `Order #${order.number}`,
 			htmlContent: `Order #${order.number} status changed to ${order.payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a>`,
 			dest: email
 		});

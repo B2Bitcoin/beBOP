@@ -35,28 +35,30 @@
 
 <h2 class="text-2xl">Wallet</h2>
 
-<ul>
-	{#each data.wallets as wallet}
-		{#if data.currentWallet === wallet}
-			<li class="font-bold">{wallet}</li>
-		{:else}
-			<li class="flex gap-2">
-				{wallet}
-				<form action="?/setCurrentWallet" method="post">
-					<input type="hidden" value={wallet} name="wallet" /><button
-						type="submit"
-						class="text-blue underline">select</button
-					>
-				</form>
-			</li>
-		{/if}
-	{/each}
-</ul>
+{#if data.wallets.length}
+	<ul>
+		{#each data.wallets as wallet}
+			{#if data.currentWallet === wallet}
+				<li class="font-bold">{wallet}</li>
+			{:else}
+				<li class="flex gap-2">
+					{wallet}
+					<form action="?/setCurrentWallet" method="post">
+						<input type="hidden" value={wallet} name="wallet" /><button
+							type="submit"
+							class="text-link underline">select</button
+						>
+					</form>
+				</li>
+			{/if}
+		{/each}
+	</ul>
 
-<p>
-	Changing wallet in an active bootik means that incoming transactions in the old wallet will not be
-	detected
-</p>
+	<p>
+		Changing wallet in an active bootik means that incoming transactions in the old wallet will not
+		be detected
+	</p>
+{/if}
 
 <form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>
 	<input type="hidden" name="wallet" value={walletToCreate} />
@@ -74,7 +76,7 @@
 		<li>
 			Amount: {transaction.amount} / Txid:
 			<a
-				class="underline text-blue"
+				class="underline text-link"
 				href="https://www.blockchain.com/en/explorer/transactions/{data.blockchainInfo.chain ===
 				'test'
 					? 'btc-testnet'
@@ -83,7 +85,7 @@
 			{#if transaction.label.startsWith('order:') && orderById[transaction.label.slice('order:'.length)]}
 				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)].createdAt}
 				/
-				<a class="underline text-blue" href="/order/{transaction.label.slice('order:'.length)}"
+				<a class="underline text-link" href="/order/{transaction.label.slice('order:'.length)}"
 					>Order</a
 				>
 				created

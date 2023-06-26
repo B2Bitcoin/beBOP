@@ -5,6 +5,7 @@ const defaultConfig = {
 	BTC_EUR: 30_000,
 	orderNumber: 0,
 	subscriptionNumber: 0,
+	enableCashSales: false,
 	isMaintenance: false,
 	maintenanceIps: '',
 	brandName: 'My Space',

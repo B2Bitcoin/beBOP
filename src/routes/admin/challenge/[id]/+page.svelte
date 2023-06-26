@@ -30,6 +30,11 @@
 
 <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4" on:submit={checkForm}>
 	<label class="form-label">
+		Challenge slug for CMS integration
+		<input type="text" disabled class="form-input" value={data.challenge._id} />
+	</label>
+
+	<label class="form-label">
 		Challenge name
 		<input
 			class="form-input"
@@ -44,7 +49,7 @@
 
 	<label class="form-label">
 		Mode
-		<select class="form-input" name="mode" bind:value={data.challenge.mode} disabled>
+		<select class="form-input" value={data.challenge.mode} disabled>
 			{#each ['moneyAmount', 'totalProducts'] as option}
 				<option value={option}>{upperFirst(option)}</option>
 			{/each}
@@ -89,7 +94,7 @@
 
 	<div class="flex flex-row justify-between gap-2">
 		<input type="submit" class="btn btn-blue text-white" formaction="?/update" value="Update" />
-		<a href="/{data.challenge._id}" class="btn btn-gray">View</a>
+		<a href="/challenges/{data.challenge._id}" class="btn btn-gray">View</a>
 
 		<input
 			type="submit"

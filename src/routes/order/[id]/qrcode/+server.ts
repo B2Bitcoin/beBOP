@@ -14,6 +14,10 @@ export async function GET({ params }) {
 		throw error(400, 'Invalid payment method for QR Code generation');
 	}
 
+	if (!order.payment.address) {
+		throw error(400, 'Payment address not found');
+	}
+
 	const address =
 		order.payment.method === 'bitcoin'
 			? `bitcoin:${order.payment.address}?amount=${toBitcoins(

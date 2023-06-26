@@ -6,13 +6,13 @@
 
 <form method="post" action="?/update" use:enhance class="flex flex-col gap-4">
 	{#if data.digitalFile.productId}
-		<a href="/admin/product/{data.digitalFile.productId}" class="underline text-blue text-center"
+		<a href="/admin/product/{data.digitalFile.productId}" class="underline text-link text-center"
 			>Back to product</a
 		>
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.digitalFile.name} />
-	<a href={data.downloadLink} target="_blank" class="underline text-blue text-center"
+	<a href={data.downloadLink} target="_blank" class="underline text-link text-center"
 		>Download file</a
 	>
 	<div class="flex gap-4 justify-between">

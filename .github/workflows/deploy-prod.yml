@@ -1,16 +1,14 @@
-name: deploy
+name: deploy-prod
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  deploy-bootik:
+  deploy-prod:
     runs-on: ubuntu-latest
     environment:
-      name: bootik
-      url: https://dev-bootik.pvh-labs.ch
+      name: prod
+      url: https://labookinerie.com
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
@@ -25,14 +23,14 @@ jobs:
           echo $DOT_ENV > .env.local
           pnpm build
         env:
-          DOT_ENV: ${{ vars.DOT_ENV }}
+          DOT_ENV: ${{ vars.DOT_ENV_PROD_BOOTIK }}
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
+          known_hosts: ${{ vars.SSH_KNOWN_HOSTS_PROD }}
       - name: Deploy
         run: |
           zip -r build.zip build
-          scp build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik/build.zip
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-instance"
+          scp -r build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST_PROD }}:B2BitcoinBootik/build.zip
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST_PROD }} "hostnamectl && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik"

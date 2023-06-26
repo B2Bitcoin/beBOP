@@ -2,7 +2,7 @@ import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database.js';
 import { picturesForProducts } from '$lib/server/picture.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { s3client } from '$lib/server/s3.js';
+import { s3client, secureDownloadLink } from '$lib/server/s3.js';
 import { UrlDependency } from '$lib/types/UrlDependency.js';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -62,13 +62,15 @@ export async function load({ params, depends }) {
 				size: file.storage.size,
 				link:
 					order.payment.status === 'paid'
-						? await getSignedUrl(
-								s3client,
-								new GetObjectCommand({
-									Bucket: S3_BUCKET,
-									Key: file.storage.key
-								}),
-								{ expiresIn: 24 * 3600 }
+						? secureDownloadLink(
+								await getSignedUrl(
+									s3client,
+									new GetObjectCommand({
+										Bucket: S3_BUCKET,
+										Key: file.storage.key
+									}),
+									{ expiresIn: 24 * 3600 }
+								)
 						  )
 						: undefined
 			}))

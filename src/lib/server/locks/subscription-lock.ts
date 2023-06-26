@@ -6,6 +6,7 @@ import { setTimeout } from 'node:timers/promises';
 import { runtimeConfig } from '../runtime-config';
 import { ObjectId } from 'mongodb';
 import { ORIGIN } from '$env/static/private';
+import { Kind } from 'nostr-tools';
 
 const lock = new Lock('paid-subscriptions');
 
@@ -33,6 +34,7 @@ async function maintainLock() {
 						await collections.nostrNotifications.insertOne(
 							{
 								_id: notifId,
+								kind: Kind.EncryptedDirectMessage,
 								dest: subscription.npub,
 								content: `Your subscription #${
 									subscription.number
@@ -104,6 +106,7 @@ async function maintainLock() {
 						await collections.nostrNotifications.insertOne(
 							{
 								_id: notifId,
+								kind: Kind.EncryptedDirectMessage,
 								dest: subscription.npub,
 								content: `Your subscription #${subscription.number} expired. Renew here if you wish: ${ORIGIN}/subscription/${subscription._id}`,
 								createdAt: new Date(),

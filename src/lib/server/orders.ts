@@ -1,7 +1,7 @@
 import type { Order } from '$lib/types/Order';
 import type { ClientSession } from 'mongodb';
 import { collections, withTransaction } from './database';
-import { add, addHours, differenceInSeconds, max, subSeconds } from 'date-fns';
+import { add, addHours, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
@@ -202,7 +202,7 @@ export async function createOrder(
 	const orderNumber = await generateOrderNumber();
 
 	await withTransaction(async (session) => {
-		const expiresAt = addHours(new Date(), 2);
+		const expiresAt = paymentMethod === 'cash' ? addMonths(new Date(), 1) : addHours(new Date(), 2);
 
 		await collections.orders.insertOne(
 			{
@@ -220,12 +220,14 @@ export async function createOrder(
 				payment: {
 					method: paymentMethod,
 					status: 'pending',
-					...(paymentMethod === 'bitcoin'
-						? {
-								address: await getNewAddress(orderAddressLabel(orderId)),
-								wallet: await currentWallet()
-						  }
-						: await (async () => {
+					...(await (async () => {
+						switch (paymentMethod) {
+							case 'bitcoin':
+								return {
+									address: await getNewAddress(orderAddressLabel(orderId)),
+									wallet: await currentWallet()
+								};
+							case 'lightning': {
 								const invoice = await lndCreateInvoice(
 									totalSatoshis,
 									differenceInSeconds(expiresAt, new Date()),
@@ -236,7 +238,14 @@ export async function createOrder(
 									address: invoice.payment_request,
 									invoiceId: invoice.r_hash
 								};
-						  })()),
+							}
+							case 'cash': {
+								return {};
+							}
+							default:
+								throw error(400, 'Invalid payment method: ' + paymentMethod);
+						}
+					})()),
 					expiresAt
 				},
 				notifications: {
