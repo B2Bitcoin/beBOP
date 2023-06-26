@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { DigitalFile } from '$lib/types/DigitalFile';
 	import type { Product } from '$lib/types/Product';
 	import IconBoxTaped from './icons/IconBoxTaped.svelte';
 	import IconDollar from './icons/IconDollar.svelte';
@@ -16,6 +17,7 @@
 		| 'type'
 		| 'shipping'
 	>;
+
 	let className = '';
 	export { className as class };
 </script>
@@ -30,10 +32,15 @@
 		PREVIEW
 	</span>
 {/if}
-{#if product.type == 'resource'}
-	<span class="px-3 flex gap-2 items-center {className} text-green-700 bg-green-200 rounded-full">
-		<IconDownTo /> DIGITAL RESOUCE
-	</span>
+
+{#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping}
+	{#if product.type == 'resource'}
+		<span
+			class="px-3 flex gap-2 items-center {className}  text-roseofsharon-700 bg-roseofsharon-200 rounded-full"
+		>
+			<IconDownTo /> RESOUCE
+		</span>
+	{/if}
 {/if}
 
 {#if product.type == 'donation'}

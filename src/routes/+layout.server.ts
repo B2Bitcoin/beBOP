@@ -50,7 +50,8 @@ export async function load({ depends, locals }) {
 									shortDescription: 1,
 									type: 1,
 									shipping: 1,
-									availableDate: 1
+									availableDate: 1,
+									preorder: 1
 								}
 							}
 						);
