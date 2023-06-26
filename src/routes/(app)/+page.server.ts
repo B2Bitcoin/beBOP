@@ -4,6 +4,7 @@ import { load as catalogLoad } from './catalog/+page.server';
 export const load = async () => {
 	try {
 		return {
+			// @ts-expect-error only params is needed
 			cms: await cmsLoad({ params: { slug: 'home' } })
 		};
 	} catch (e) {
