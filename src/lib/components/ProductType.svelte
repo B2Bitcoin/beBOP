@@ -25,7 +25,11 @@
 		<IconDollar /> PREORDER
 	</span>
 {/if}
-
+{#if !product.preorder && product.availableDate && product.availableDate > new Date()}
+	<span class="px-3 flex gap-2 items-center {className} text-yellow-500 bg-yellow-100 rounded-full">
+		PREVIEW
+	</span>
+{/if}
 {#if product.type == 'resource'}
 	<span class="px-3 flex gap-2 items-center {className} text-green-700 bg-green-200 rounded-full">
 		<IconDownTo /> RESOUCE
