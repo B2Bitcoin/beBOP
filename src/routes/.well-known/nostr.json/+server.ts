@@ -27,7 +27,10 @@ export const GET = () => {
 		}),
 		{
 			headers: {
-				'content-type': 'application/json'
+				'content-type': 'application/json',
+				'access-control-allow-origin': '*',
+				'access-control-allow-methods': 'GET, HEAD, OPTIONS',
+				'access-control-allow-headers': 'Accept, Accept-Language, Content-Language, Content-Type'
 			}
 		}
 	);
