@@ -2,7 +2,7 @@
 	import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 	import IconChevronDown from './icons/IconChevronDown.svelte';
 	import IconChevronUp from './icons/IconChevronUp.svelte';
-	import type { LayoutData } from '../../routes/$types';
+	import type { LayoutData } from '../../routes/(app)/$types';
 
 	export let sm = false;
 	export let disabled = false;
