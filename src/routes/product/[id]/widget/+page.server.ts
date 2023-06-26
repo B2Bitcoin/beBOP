@@ -1,10 +1,9 @@
 import { collections } from '$lib/server/database';
 import type { Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from '../$types';
 import { runtimeConfig } from '$lib/server/runtime-config';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	const product = await collections.products.findOne<
 		Pick<
 			Product,

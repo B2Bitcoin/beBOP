@@ -1,10 +1,9 @@
-import { load as cmsLoad } from './(app)/[slug]/+page.server';
-import { load as catalogLoad } from './(app)/catalog/+page.server';
+import { load as cmsLoad } from './[slug]/+page.server';
+import { load as catalogLoad } from './catalog/+page.server';
 
 export const load = async () => {
 	try {
 		return {
-			// @ts-expect-error only params is needed
 			cms: await cmsLoad({ params: { slug: 'home' } })
 		};
 	} catch (e) {
