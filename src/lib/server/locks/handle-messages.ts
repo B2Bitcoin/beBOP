@@ -7,6 +7,7 @@ import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
+import { addToCartInDb, removeFromCartInDb } from '../cart';
 
 const lock = new Lock('received-messages');
 
@@ -43,6 +44,10 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			await send(
 				`Commands:
 
+- cart: Show the content of your cart
+- add [product ref] [quantity]: Add a product to your cart. Quantity defaults to 1. Type "catalog" to see the list of products.
+- remove [product ref] [quantity]: Remove a product from your cart. Quantity defaults to all. Type "cart" to see your cart.
+- checkout [bitcoin|lightning]: Checkout your cart, and pay with bitcoin or lightning
 - orders: Show the list of orders associated to your npub
 - catalog: Show the catalog
 - detailed catalog: Show the catalog, with product descriptions
@@ -69,6 +74,35 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 
 			break;
 		}
+		case 'cart': {
+			const cart = await collections.carts.findOne({ npub: senderNpub });
+
+			if (!cart || !cart.items.length) {
+				await send('Your cart is empty');
+			} else {
+				const products = await collections.products
+					.find({ _id: { $in: cart.items.map((item) => item.productId) } })
+					.toArray();
+				const productById = Object.fromEntries(products.map((product) => [product._id, product]));
+
+				let totalPrice = 0;
+				const items = cart.items
+					.filter((item) => productById[item.productId])
+					.map((item) => {
+						const product = productById[item.productId];
+						const price = toSatoshis(
+							product.price.amount * item.quantity,
+							product.price.currency,
+							runtimeConfig.BTC_EUR
+						);
+						totalPrice += price;
+						return `- ref: ${product._id}] / ${price} SAT / Quantity: ${item.quantity}`;
+					});
+				await send(items.join('\n') + `\n\nTotal: ${totalPrice.toLocaleString('en-US')} SAT`);
+			}
+
+			break;
+		}
 		case 'detailed catalog':
 		case 'catalog': {
 			if (!runtimeConfig.discovery) {
@@ -84,7 +118,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 						products
 							.map(
 								(product) =>
-									`- ${product.name} / ${toSatoshis(
+									`- ${product.name} [ref: ${product._id}] / ${toSatoshis(
 										product.price.amount,
 										product.price.currency,
 										runtimeConfig.BTC_EUR
@@ -186,6 +220,87 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 				);
 
 				await send('Subscription #' + number + ' was cancelled, you will not be reminded anymore');
+				break;
+			} else if (toMatch.startsWith('add ')) {
+				const data = toMatch.slice('order '.length).trim().replaceAll(/\s+/g, ' ').split(' ');
+
+				const ref = data[0];
+				const quantity = parseInt(data[1] || '1');
+
+				if (isNaN(quantity) || quantity <= 0) {
+					await send('Invalid quantity: ' + data[1]);
+					break;
+				}
+
+				const product = await collections.products.findOne({ _id: ref });
+
+				if (!product) {
+					await send(
+						'No product found with ref: ' + ref + '. Use "catalog" to get the list of products'
+					);
+					break;
+				}
+
+				const cart = await addToCartInDb(product, quantity, { npub: senderNpub }).catch((e) =>
+					send(e.message).then(() => null)
+				);
+
+				if (!cart) {
+					break;
+				}
+
+				const item = cart.value?.items.find((item) => item.productId === product._id);
+
+				if (!item) {
+					break;
+				}
+
+				await send(
+					`"${product.name}" x${item.quantity} added to cart for ${(
+						product.price.amount * item.quantity
+					).toLocaleString('en-US')} ${product.price.currency}`
+				);
+				break;
+			} else if (toMatch.startsWith('remove ')) {
+				const data = toMatch.slice('remove '.length).trim().replaceAll(/\s+/g, ' ').split(' ');
+
+				const ref = data[0];
+				const quantity = parseInt(data[1] || '-1');
+
+				if (isNaN(quantity)) {
+					await send('Invalid quantity: ' + data[1]);
+					break;
+				}
+
+				const product = await collections.products.findOne({ _id: ref });
+
+				if (!product) {
+					await send(
+						'No product found with ref: ' + ref + '. Use "catalog" to get the list of products'
+					);
+					break;
+				}
+
+				const cart = await removeFromCartInDb(product._id, quantity, { npub: senderNpub }).catch(
+					(e) => send(e.message).then(() => null)
+				);
+
+				if (!cart) {
+					break;
+				}
+
+				const item = cart.items.find((item) => item.productId === product._id);
+
+				if (!item) {
+					await send(`"${product.name}" removed from cart`);
+					break;
+				}
+
+				await send(
+					`"${product.name}" x${item.quantity} remaining in your cart for ${(
+						product.price.amount * item.quantity
+					).toLocaleString('en-US')} ${product.price.currency}`
+				);
 				break;
 			}
 			await send(
