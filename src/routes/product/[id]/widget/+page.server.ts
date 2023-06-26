@@ -45,6 +45,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	return {
 		product,
 		picture: pictures[0],
-		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
+		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage,
+		exchangeRate: runtimeConfig.BTC_EUR
 	};
 };

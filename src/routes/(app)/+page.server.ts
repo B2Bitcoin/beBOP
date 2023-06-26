@@ -1,5 +1,5 @@
-import { load as cmsLoad } from './[slug]/+page.server';
-import { load as catalogLoad } from './catalog/+page.server';
+import { load as cmsLoad } from './(app)/[slug]/+page.server';
+import { load as catalogLoad } from './(app)/catalog/+page.server';
 
 export const load = async () => {
 	try {
