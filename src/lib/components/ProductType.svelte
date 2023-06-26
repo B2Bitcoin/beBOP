@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { DigitalFile } from '$lib/types/DigitalFile';
 	import type { Product } from '$lib/types/Product';
 	import IconBoxTaped from './icons/IconBoxTaped.svelte';
 	import IconDollar from './icons/IconDollar.svelte';
