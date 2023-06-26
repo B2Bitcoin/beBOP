@@ -19,53 +19,42 @@
 
 	let className = '';
 	export { className as class };
+
+	$: baseClasses =
+		'pl-1 pr-3 flex gap-2 items-center ' + className.includes('rounded') ? '' : 'rounded-full';
 </script>
 
 {#if product.preorder && product.availableDate && product.availableDate > new Date()}
-	<span
-		class="pl-1 pr-3 flex flex-row gap-2 items-center {className} text-blue-500 bg-blue-200 rounded-full"
-	>
+	<span class="{baseClasses} {className} text-blue-500 bg-blue-200">
 		<IconDollar /> PREORDER
 	</span>
 {/if}
 {#if !product.preorder && product.availableDate && product.availableDate > new Date()}
-	<span
-		class="pl-1 pr-3 flex gap-2 items-center {className} text-yellow-500 bg-yellow-100 rounded-full"
-	>
-		PREVIEW
-	</span>
+	<span class="{baseClasses} {className} text-yellow-500 bg-yellow-100"> PREVIEW </span>
 {/if}
 
 {#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping}
 	{#if product.type == 'resource'}
-		<span
-			class="pl-1 pr-3 flex gap-2 items-center {className}  text-green-700 bg-green-200 rounded-full"
-		>
+		<span class="{baseClasses} {className}  text-green-700 bg-green-200">
 			<IconDownTo /> RESOURCE
 		</span>
 	{/if}
 {/if}
 
 {#if product.type == 'donation'}
-	<span
-		class="pl-1 pr-3 flex gap-2 items-center {className} text-rosebudcherry-700 bg-rosebudcherry-200 rounded-full"
-	>
+	<span class="{baseClasses} {className} text-rosebudcherry-700 bg-rosebudcherry-200">
 		<IconHandHeart /> DONATION
 	</span>
 {/if}
 
 {#if product.shipping}
-	<span
-		class="pl-1 pr-3 flex gap-2 items-center {className} text-roseofsharon-700 bg-roseofsharon-200 rounded-full"
-	>
+	<span class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200">
 		<IconBoxTaped /> PHYSICAL
 	</span>
 {/if}
 
 {#if product.type == 'subscription'}
-	<span
-		class="pl-1 px-3 flex gap-2 items-center {className} text-jagger-700 bg-jagger-200 rounded-full"
-	>
+	<span class="{baseClasses} {className} text-jagger-700 bg-jagger-200">
 		<IconDownTo /> MONTHLY SUB
 	</span>
 {/if}
