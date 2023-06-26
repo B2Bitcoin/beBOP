@@ -22,12 +22,16 @@
 </script>
 
 {#if product.preorder && product.availableDate && product.availableDate > new Date()}
-	<span class="px-3 flex gap-2 items-center {className} text-blue-500 bg-blue-200 rounded-full">
+	<span
+		class="pl-1 pr-3 flex flex-row gap-2 items-center {className} text-blue-500 bg-blue-200 rounded-full"
+	>
 		<IconDollar /> PREORDER
 	</span>
 {/if}
 {#if !product.preorder && product.availableDate && product.availableDate > new Date()}
-	<span class="px-3 flex gap-2 items-center {className} text-yellow-500 bg-yellow-100 rounded-full">
+	<span
+		class="pl-1 pr-3 flex gap-2 items-center {className} text-yellow-500 bg-yellow-100 rounded-full"
+	>
 		PREVIEW
 	</span>
 {/if}
@@ -35,7 +39,7 @@
 {#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping}
 	{#if product.type == 'resource'}
 		<span
-			class="px-3 flex gap-2 items-center {className}  text-roseofsharon-700 bg-roseofsharon-200 rounded-full"
+			class="pl-1 pr-3 flex gap-2 items-center {className}  text-roseofsharon-700 bg-roseofsharon-200 rounded-full"
 		>
 			<IconDownTo /> RESOUCE
 		</span>
@@ -44,7 +48,7 @@
 
 {#if product.type == 'donation'}
 	<span
-		class="px-3 flex gap-2 items-center {className} text-rosebudcherry-700 bg-rosebudcherry-200 rounded-full"
+		class="pl-1 pr-3 flex gap-2 items-center {className} text-rosebudcherry-700 bg-rosebudcherry-200 rounded-full"
 	>
 		<IconHandHeart /> DONATION
 	</span>
@@ -52,14 +56,16 @@
 
 {#if product.shipping}
 	<span
-		class="px-3 flex gap-2 items-center {className} text-roseofsharon-700 bg-roseofsharon-200 rounded-full"
+		class="pl-1 pr-3 flex gap-2 items-center {className} text-roseofsharon-700 bg-roseofsharon-200 rounded-full"
 	>
 		<IconBoxTaped /> PHYSICAL
 	</span>
 {/if}
 
 {#if product.type == 'subscription'}
-	<span class="px-3 flex gap-2 items-center {className} text-jagger-700 bg-jagger-200 rounded-full">
+	<span
+		class="pl-1 px-3 flex gap-2 items-center {className} text-jagger-700 bg-jagger-200 rounded-full"
+	>
 		<IconDownTo /> MONTHLY SUB
 	</span>
 {/if}
