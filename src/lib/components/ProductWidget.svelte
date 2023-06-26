@@ -40,8 +40,8 @@
 </script>
 
 <div class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
-	<div class="flex flex-row gap-2 absolute top-0 right-0">
-		<ProductType {product} />
+	<div class="flex flex-row justify-end -mt-6 -mr-6">
+		<ProductType {product} class="last:rounded-tr first:rounded-bl" />
 	</div>
 	<div class="flex flex-col text-center">
 		<a href="/product/{product._id}" class="flex flex-col items-center">
