@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { marked } from 'marked';
-	import type { PageData } from '../../routes/[slug]/$types';
+	import type { PageData } from '../../routes/(app)/[slug]/$types';
+	import type { LayoutData } from '../../routes/(app)/$types';
 	import ProductWidget from './ProductWidget.svelte';
 	import ChallengeWidget from './ChallengeWidget.svelte';
 
@@ -9,7 +10,7 @@
 	export let challenges: PageData['challenges'];
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
-	export let exchangeRate: PageData['exchangeRate'];
+	export let exchangeRate: LayoutData['exchangeRate'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));

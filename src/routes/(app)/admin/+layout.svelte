@@ -3,9 +3,9 @@
 </script>
 
 <header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
+	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-hidden">
 		<span class="font-bold text-xl">Admin</span>
-		<nav class="flex gap-6 font-light items-center">
+		<nav class="flex gap-6 font-light items-center overflow-x-auto">
 			<a
 				href="/admin/layout"
 				class={$page.url.pathname.startsWith('/admin/layout') ? 'underline' : ''}>Layout</a

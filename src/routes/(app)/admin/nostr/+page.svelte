@@ -18,14 +18,26 @@
 	</p>
 {/if}
 
+{#if form?.events}
+	{#each form.events as event}
+		<pre class="font-mono">{JSON.stringify(event, null, 2)}</pre>
+	{/each}
+{/if}
+
 {#if data.nostrPrivateKey}
 	<p>Your NostR private key is: {data.nostrPrivateKey}</p>
 	<p>Your NostR public key is: {data.nostrPublicKey}</p>
 
+	{#if data.origin}
+		<form action="?/certify" class="flex flex-col gap-4" method="post">
+			<button class="btn btn-black self-start" type="submit">Certify</button>
+		</form>
+	{/if}
+
 	<h2 class="text-2xl">Send message</h2>
 
 	<form action="?/sendMessage" method="post" class="flex flex-col gap-4">
-		<label>
+		<label class="form-label">
 			NPUB
 			<input
 				class="form-input"
@@ -49,6 +61,23 @@
 		>Create NostR private key</button
 	>
 {/if}
+
+<h2 class="text-2xl">Get metadata</h2>
+
+<form action="?/getMetadata" method="post" class="flex flex-col gap-4">
+	<label class="form-label">
+		NPUB
+		<input
+			class="form-input"
+			type="text"
+			name="npub"
+			placeholder="npubXXXXXXXXXXXXXXXXXXXXXXXXXX"
+			required
+		/>
+	</label>
+
+	<button class="btn btn-black self-start" type="submit">Get metadata</button>
+</form>
 
 <h2 class="text-2xl">Relays</h2>
 

@@ -30,75 +30,88 @@ async function generateOrderNumber(): Promise<number> {
 }
 
 export async function onOrderPaid(order: Order, session: ClientSession) {
-	if (order.notifications.paymentStatus.npub) {
-		const subscriptions = await collections.paidSubscriptions
-			.find({
-				npub: order.notifications.paymentStatus.npub,
-				productId: { $in: order.items.map((item) => item.product._id) }
-			})
-			.toArray();
-		const challenges = await collections.challenges
-			.find({
-				beginsAt: { $lt: new Date() },
-				endsAt: { $gt: new Date() }
-			})
-			.toArray();
-		const numberOfProducts = sum(order.items.map((item) => item.quantity));
-		for (const challenge of challenges) {
-			await collections.challenges.updateOne(
-				{ _id: challenge._id },
+	// #region subscriptions
+	const orConditions = filterUndef([
+		order.notifications.paymentStatus.npub
+			? { 'notifications.paymentStatus.npub': order.notifications.paymentStatus.npub }
+			: undefined,
+		order.notifications.paymentStatus.email
+			? { 'notifications.paymentStatus.email': order.notifications.paymentStatus.email }
+			: undefined
+	]);
+	const subscriptions = orConditions.length
+		? await collections.paidSubscriptions
+				.find({
+					$or: orConditions,
+					productId: { $in: order.items.map((item) => item.product._id) }
+				})
+				.toArray()
+		: [];
+	for (const subscription of order.items.filter((item) => item.product.type === 'subscription')) {
+		const existingSubscription = subscriptions.find(
+			(sub) => sub.productId === subscription.product._id
+		);
+
+		if (existingSubscription) {
+			const result = await collections.paidSubscriptions.updateOne(
+				{ _id: existingSubscription._id },
 				{
-					$inc: {
-						progress:
-							challenge.mode === 'moneyAmount'
-								? toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
-								: numberOfProducts
-					}
+					$set: {
+						paidUntil: add(max([existingSubscription.paidUntil, new Date()]), {
+							[`${runtimeConfig.subscriptionDuration}s`]: 1
+						}),
+						updatedAt: new Date(),
+						notifications: []
+					},
+					$unset: { cancelledAt: 1 }
+				},
+				{ session }
+			);
+
+			if (!result.modifiedCount) {
+				throw new Error('Failed to update subscription');
+			}
+		} else {
+			await collections.paidSubscriptions.insertOne(
+				{
+					_id: crypto.randomUUID(),
+					number: await generateSubscriptionNumber(),
+					npub: order.notifications.paymentStatus.npub,
+					productId: subscription.product._id,
+					paidUntil: add(new Date(), { [`${runtimeConfig.subscriptionDuration}s`]: 1 }),
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					notifications: []
 				},
 				{ session }
 			);
 		}
-		for (const subscription of order.items.filter((item) => item.product.type === 'subscription')) {
-			const existingSubscription = subscriptions.find(
-				(sub) => sub.productId === subscription.product._id
-			);
-
-			if (existingSubscription) {
-				const result = await collections.paidSubscriptions.updateOne(
-					{ _id: existingSubscription._id },
-					{
-						$set: {
-							paidUntil: add(max([existingSubscription.paidUntil, new Date()]), {
-								[`${runtimeConfig.subscriptionDuration}s`]: 1
-							}),
-							updatedAt: new Date(),
-							notifications: []
-						},
-						$unset: { cancelledAt: 1 }
-					},
-					{ session }
-				);
-
-				if (!result.modifiedCount) {
-					throw new Error('Failed to update subscription');
-				}
-			} else {
-				await collections.paidSubscriptions.insertOne(
-					{
-						_id: crypto.randomUUID(),
-						number: await generateSubscriptionNumber(),
-						npub: order.notifications.paymentStatus.npub,
-						productId: subscription.product._id,
-						paidUntil: add(new Date(), { [`${runtimeConfig.subscriptionDuration}s`]: 1 }),
-						createdAt: new Date(),
-						updatedAt: new Date(),
-						notifications: []
-					},
-					{ session }
-				);
-			}
-		}
 	}
+	//#endregion
+
+	//#region challenges
+	const challenges = await collections.challenges
+		.find({
+			beginsAt: { $lt: new Date() },
+			endsAt: { $gt: new Date() }
+		})
+		.toArray();
+	const numberOfProducts = sum(order.items.map((item) => item.quantity));
+	for (const challenge of challenges) {
+		await collections.challenges.updateOne(
+			{ _id: challenge._id },
+			{
+				$inc: {
+					progress:
+						challenge.mode === 'moneyAmount'
+							? toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
+							: numberOfProducts
+				}
+			},
+			{ session }
+		);
+	}
+	//#endregion
 }
 
 export async function createOrder(
