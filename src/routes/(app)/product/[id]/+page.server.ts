@@ -19,6 +19,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			| 'availableDate'
 			| 'preorder'
 			| 'type'
+			| 'shipping'
 		>
 	>(
 		{ _id: params.id },

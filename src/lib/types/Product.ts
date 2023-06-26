@@ -21,3 +21,10 @@ export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
 export const MAX_NAME_LIMIT = 70;
 
 export const MAX_SHORT_DESCRIPTION_LIMIT = 160;
+
+export function isPreorder(
+	availableDate: Date | undefined,
+	preorder: boolean | undefined
+): boolean {
+	return !!(preorder && availableDate && availableDate > new Date());
+}
