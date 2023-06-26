@@ -61,7 +61,7 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 				content += `\n\nPlease send ${toBitcoins(
 					order.totalPrice.amount,
 					order.totalPrice.currency
-				)} BTC to ${order.payment.address}`;
+				).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${order.payment.address}`;
 			} else if (order.payment.method === 'lightning') {
 				content += `\n\nPlease pay this invoice: ${order.payment.address}`;
 			}
@@ -85,7 +85,9 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 				htmlContent += `<p>Please send ${toBitcoins(
 					order.totalPrice.amount,
 					order.totalPrice.currency
-				)} BTC to ${order.payment.address}</p>`;
+				).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
+					order.payment.address
+				}</p>`;
 			} else if (order.payment.method === 'lightning') {
 				htmlContent += `<p>Please pay this invoice: ${order.payment.address}</p>`;
 			}
