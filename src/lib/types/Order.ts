@@ -8,7 +8,7 @@ export interface Order extends Timestamps {
 	 * A string - a crypto UUID. Anyone having access to the _id can access the order.
 	 */
 	_id: string;
-	sessionId: string;
+	sessionId?: string;
 
 	number: number;
 

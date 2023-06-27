@@ -92,7 +92,7 @@ export async function removeFromCartInDb(
 		return cart;
 	}
 
-	item.quantity = params.totalQuantity ? quantity : item.quantity - quantity;
+	item.quantity = params.totalQuantity ? quantity : Math.max(item.quantity - quantity, 0);
 
 	if (item.quantity === 0) {
 		cart.items = cart.items.filter((it) => it !== item);
