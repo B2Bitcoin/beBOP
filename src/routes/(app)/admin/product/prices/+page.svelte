@@ -22,7 +22,7 @@
 <form class="flex flex-col gap-2" method="post">
 	{#each data.products as product}
 		<label class="form-label">
-			Prix - {product.name}
+			{product.name} (price)
 			<input
 				type="number"
 				name={product._id}
