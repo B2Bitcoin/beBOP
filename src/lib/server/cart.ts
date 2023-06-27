@@ -20,7 +20,7 @@ export async function addToCartInDb(
 		throw new TypeError('No session ID or NPUB provided');
 	}
 
-	const query = params.npub ? { npub: params.npub } : { session: params.sessionId };
+	const query = params.npub ? { npub: params.npub } : { sessionId: params.sessionId };
 
 	let cart = await collections.carts.findOne(query);
 
@@ -78,7 +78,7 @@ export async function removeFromCartInDb(
 		throw new TypeError('No session ID or NPUB provided');
 	}
 
-	const query = params.npub ? { npub: params.npub } : { session: params.sessionId };
+	const query = params.npub ? { npub: params.npub } : { sessionId: params.sessionId };
 
 	const cart = await collections.carts.findOne(query);
 
