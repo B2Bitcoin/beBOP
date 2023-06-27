@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
+	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays, addMonths } from 'date-fns';
 
@@ -8,11 +8,7 @@
 	let beginsAt = new Date().toJSON().slice(0, 10);
 	let endsAt = addMonths(new Date(), 30).toJSON().slice(0, 10);
 	let endsAtElement: HTMLInputElement;
-	let availableProductList: Product[] = data.products;
-	let selectedProductList: Product[] = [];
-	let productIds: string[] = [];
-
-	selectedProductList.map((product) => [...productIds, product._id]);
+	let availableProductList = data.products;
 
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
@@ -85,16 +81,19 @@
 		</label>
 	</div>
 
-	<div class="flex flex-col gap-4 w-[30%]">
-		<h2 class="text-xl">Products</h2>
-		<select multiple name="productIds" value={selectedProductList}>
+	<label class="form-label"
+		>Products
+		<select multiple name="productIds" class="form-input min-h-[20rem]">
 			{#each availableProductList as product}
-				<option value={product.name}>
+				<option value={product._id}>
 					{product.name}
 				</option>
 			{/each}
 		</select>
-	</div>
+		<p class="text-gray-600 text-sm">
+			You can hold Ctrl to select indivdual items, or Shift to select multiple items at once
+		</p>
+	</label>
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
 </form>

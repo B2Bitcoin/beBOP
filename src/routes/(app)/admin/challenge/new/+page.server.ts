@@ -2,12 +2,14 @@ import { collections } from '$lib/server/database';
 import type { Actions } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import { MAX_NAME_LIMIT } from '$lib/types/Product';
+import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { generateId } from '$lib/utils/generateId';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
-	const products = await collections.products.find({}).toArray();
+export const load = async () => {
+	const products = await collections.products
+		.find({})
+		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
+		.toArray();
 
 	return {
 		products

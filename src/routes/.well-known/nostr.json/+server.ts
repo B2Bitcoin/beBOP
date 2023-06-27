@@ -20,7 +20,7 @@ export const GET = () => {
 	return new Response(
 		JSON.stringify({
 			names: {
-				// _: nostrPublicKeyHex,
+				_: nostrPublicKeyHex,
 				[runtimeConfig.brandName]: nostrPublicKeyHex
 			},
 			relays: { [nostrPublicKeyHex]: nostrRelays }
