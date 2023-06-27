@@ -9,6 +9,7 @@
 </script>
 
 <a href="/admin/product/new" class="underline block">Add product</a>
+<a href="/admin/product/prices" class="underline block">Products price</a>
 
 <h1 class="text-3xl">List of products</h1>
 
