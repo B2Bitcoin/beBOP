@@ -24,8 +24,6 @@
 			endsAtElement.setCustomValidity('');
 		}
 	}
-
-	console.log('productIds ==>>>', productIds);
 </script>
 
 <h1 class="text-3xl">Add a challenge</h1>
@@ -89,7 +87,7 @@
 
 	<div class="flex flex-col gap-4 w-[30%]">
 		<h2 class="text-xl">Products</h2>
-		<select multiple name="productIds" bind:value={selectedProductList}>
+		<select multiple name="productIds" value={selectedProductList}>
 			{#each availableProductList as product}
 				<option value={product.name}>
 					{product.name}
