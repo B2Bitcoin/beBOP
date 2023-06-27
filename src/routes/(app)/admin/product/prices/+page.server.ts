@@ -24,7 +24,7 @@ export const actions = {
 				{
 					$set: {
 						price: {
-							amount: parseFloat(price),
+							amount: isNaN(parseFloat(price)) ? 0 : parseFloat(price),
 							currency: 'BTC'
 						},
 						updatedAt: new Date()
