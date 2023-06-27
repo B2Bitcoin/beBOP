@@ -15,10 +15,15 @@ export async function load({ params }) {
 	const beginsAt = challenge.beginsAt?.toJSON().slice(0, 10);
 	const endsAt = challenge.endsAt.toJSON().slice(0, 10);
 
+	const productInChallenge = await collections.products.find({
+		_id: { $in: challenge?.productIds }
+	}).toArray();
+
 	return {
 		challenge,
 		beginsAt,
-		endsAt
+		endsAt,
+		productInChallenge
 	};
 }
 
@@ -34,15 +39,21 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { name, goalAmount, beginsAt, endsAt } = z
+		const { name, goalAmount, productIds, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
-				// productId: z.string().array(),
+				productIds: z.string().array(),
 				goalAmount: z.number({ coerce: true }).int().positive(),
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
-			.parse(Object.fromEntries(data));
+			.parse({
+				name: data.get('name'),
+				productIds: data.get('productIds')?.toString().split(','),
+				goalAmount: data.get('goalAmount'),
+				beginsAt: data.get('beginsAt'),
+				endsAt: data.get('endsAt')
+			});;
 
 		await collections.challenges.updateOne(
 			{
@@ -51,6 +62,7 @@ export const actions = {
 			{
 				$set: {
 					name,
+					productIds,
 					'goal.amount': goalAmount,
 					beginsAt,
 					endsAt,

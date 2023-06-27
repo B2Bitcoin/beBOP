@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAX_NAME_LIMIT } from '$lib/types/Product';
+	import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 
 	export let data;
@@ -7,6 +7,10 @@
 	let beginsAt = data.beginsAt;
 	let endsAt = data.endsAt;
 	let endsAtElement: HTMLInputElement;
+	let selectedProductList: Product[] = [];
+	let productIds: string[] = [];
+
+	selectedProductList.map((product) => [...productIds, product._id]);
 
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
@@ -90,6 +94,17 @@
 				on:input={() => endsAtElement?.setCustomValidity('')}
 			/>
 		</label>
+	</div>
+
+	<div class="flex flex-col gap-4 w-[30%]">
+		<h2 class="text-xl">Products</h2>
+		<select multiple name="productIds" bind:value={selectedProductList}>
+			{#each data.productInChallenge as product}
+				<option value={product.name}>
+					{product.name}
+				</option>
+			{/each}
+		</select>
 	</div>
 
 	<div class="flex flex-row justify-between gap-2">
