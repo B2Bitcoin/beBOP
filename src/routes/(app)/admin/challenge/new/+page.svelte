@@ -3,12 +3,15 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays, addMonths } from 'date-fns';
 
+	export let data;
 	let mode = 'moneyAmount';
 	let beginsAt = new Date().toJSON().slice(0, 10);
 	let endsAt = addMonths(new Date(), 30).toJSON().slice(0, 10);
 	let endsAtElement: HTMLInputElement;
-	let selectedProduct: Product;
+	let selectedProduct: Product | null;
+	let availableProductList: Product[] = data.products;
 	let selectedProductList: Product[] = [];
+	let productIds: String[] = [];
 
 	function selectProduct(product: Product) {
 		selectedProduct = product;
@@ -16,14 +19,13 @@
 
 	function addToSelectedProduct(product: Product) {
 		selectedProductList = [...selectedProductList, product];
+		productIds = [...productIds, product._id];
 	}
 
 	function removeFromAvailableProducts() {
-		data.products = data.products.filter((product) => product !== selectedProduct);
-		// selectedProduct = null; // Réinitialise l'élément sélectionné
+		availableProductList = availableProductList.filter((product) => product !== selectedProduct!);
+		selectedProduct = null; // Réinitialise l'élément sélectionné
 	}
-
-	export let data;
 
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
@@ -98,28 +100,48 @@
 
 	<div class="flex flex-row space-x-12">
 		<div class="flex flex-col gap-4 w-[25%]">
-			<h2 class="text-xl">Available items</h2>
+			<h2 class="text-xl">Selected items</h2>
 			<div class="overflow-y-scroll h-40 border border-gray-400">
-				<ul class="list-none">
+				<ul class="list-none cursor-default">
 					{#each selectedProductList as product}
-						<li>{product.name}</li>
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<li
+							class:selected={selectedProduct === product}
+							on:click={() => selectProduct(product)}
+						>
+							{product.name}
+						</li>
 					{/each}
 				</ul>
 			</div>
-			<button class="self-start border border-gray-400 py-2 px-4 rounded inline-flex items-center">
+			<button
+				class="self-start border border-gray-400 py-2 px-4 rounded inline-flex items-center"
+				on:click={(evt) => {
+					selectedProductList = selectedProductList.filter(
+						(product) => product !== selectedProduct
+					);
+					availableProductList = selectedProduct
+						? [...availableProductList, selectedProduct]
+						: availableProductList;
+					productIds = productIds.filter((productId) => productId !== selectedProduct?._id);
+					selectedProduct = null;
+
+					evt.preventDefault();
+				}}
+			>
 				<span>Remove</span>
 			</button>
 		</div>
 
 		<div class="flex flex-col gap-4 w-[50%]">
-			<h2 class="text-xl">Selected items</h2>
+			<h2 class="text-xl">Available items</h2>
 			<div class="overflow-y-scroll w-2/5 h-40 border border-gray-400">
-				<ul class="list-none">
-					{#each data.products as product}
+				<ul class="list-none cursor-default">
+					{#each availableProductList as product}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<li
 							class:selected={selectedProduct === product}
-							on:click={(evt) => selectProduct(product)}
+							on:click={() => selectProduct(product)}
 						>
 							{product.name}
 						</li>
@@ -129,9 +151,9 @@
 			<button
 				class=" self-start border border-gray-400 py-2 px-4 rounded inline-flex items-center"
 				on:click={(evt) => {
-					console.log('selected item ===>', selectedProduct);
-					addToSelectedProduct(selectedProduct);
+					selectedProduct ? addToSelectedProduct(selectedProduct) : null;
 					removeFromAvailableProducts();
+
 					evt.preventDefault();
 				}}
 			>
@@ -139,6 +161,7 @@
 			</button>
 		</div>
 	</div>
+	<input type="hidden" bind:value={productIds} name="productIds" />
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
 </form>

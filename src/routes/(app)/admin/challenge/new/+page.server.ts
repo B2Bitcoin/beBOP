@@ -17,12 +17,13 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
-
-		const productIds: string[] = [];
-		const { name, goalAmount, mode, beginsAt, endsAt } = z
+		console.log("data.productIds", data.get('productIds'));
+		
+		// const productIds: string[] = [];
+		const { name, goalAmount, mode, productIds, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
-				// productId: z.string().array(),
+				productIds: z.string().array(),
 				goalAmount: z.number({ coerce: true }).int().positive(),
 				mode: z.enum(['totalProducts', 'moneyAmount']),
 				beginsAt: z.date({ coerce: true }),
@@ -30,7 +31,7 @@ export const actions: Actions = {
 			})
 			.parse({
 				name: data.get('name'),
-				// productId: data.get('productId'),
+				productIds: data.get('productIds')?.toString().split(","),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
 				beginsAt: data.get('beginsAt'),
