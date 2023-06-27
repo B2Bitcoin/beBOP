@@ -7,6 +7,10 @@ import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
+import { addToCartInDb, removeFromCartInDb } from '../cart';
+import type { Product } from '$lib/types/Product';
+import { typedInclude } from '$lib/utils/typedIncludes';
+import { createOrder } from '../orders';
 
 const lock = new Lock('received-messages');
 
@@ -37,12 +41,17 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 	const send = (message: string) => sendMessage(senderNpub, message, minCreatedAt);
 
 	const toMatch = content.trim().replaceAll(/\s+/g, ' ');
+	const toMatchLower = toMatch.toLowerCase();
 
-	switch (toMatch) {
+	switch (toMatchLower) {
 		case 'help':
 			await send(
 				`Commands:
 
+- cart: Show the content of your cart
+- add [product ref] [quantity]: Add a product to your cart. Quantity defaults to 1. Type "catalog" to see the list of products.
+- remove [product ref] [quantity]: Remove a product from your cart. Quantity defaults to all. Type "cart" to see your cart.
+- checkout [bitcoin|lightning]: Checkout your cart, and pay with bitcoin or lightning
 - orders: Show the list of orders associated to your npub
 - catalog: Show the catalog
 - detailed catalog: Show the catalog, with product descriptions
@@ -69,6 +78,46 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 
 			break;
 		}
+		case 'cart': {
+			const cart = await collections.carts.findOne({ npub: senderNpub });
+
+			if (!cart || !cart.items.length) {
+				await send('Your cart is empty');
+			} else {
+				const products = await collections.products
+					.find({ _id: { $in: cart.items.map((item) => item.productId) } })
+					.toArray();
+				const productById = Object.fromEntries(products.map((product) => [product._id, product]));
+
+				let totalPrice = 0;
+				const items = cart.items
+					.filter((item) => productById[item.productId])
+					.map((item) => {
+						const product = productById[item.productId];
+						const price = toSatoshis(
+							product.price.amount * item.quantity,
+							product.price.currency,
+							runtimeConfig.BTC_EUR
+						);
+						totalPrice += price;
+						return `- ref: "${product._id}" / ${price.toLocaleString('en-US')} SAT / Quantity: ${
+							item.quantity
+						}`;
+					});
+				await send(
+					items.join('\n') +
+						`\n\nTotal: ${totalPrice.toLocaleString('en-US')} SAT. Type "checkout" to pay.`
+				);
+			}
+
+			break;
+		}
+		case 'checkout': {
+			await send(
+				'Type "checkout bitcoin" or "checkout lightning" to pay with bitcoin or lightning'
+			);
+			break;
+		}
 		case 'detailed catalog':
 		case 'catalog': {
 			if (!runtimeConfig.discovery) {
@@ -84,11 +133,11 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 						products
 							.map(
 								(product) =>
-									`- ${product.name} / ${toSatoshis(
+									`- ${product.name} [ref: "${product._id}"] / ${toSatoshis(
 										product.price.amount,
 										product.price.currency,
 										runtimeConfig.BTC_EUR
-									)} SAT / ${ORIGIN}/product/${product._id}${
+									).toLocaleString('en-US')} SAT / ${ORIGIN}/product/${product._id}${
 										content === 'detailed catalog'
 											? ` / ${product.shortDescription.replaceAll(/\s+/g, ' ')}`
 											: ''
@@ -157,7 +206,7 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 			break;
 		}
 		default:
-			if (toMatch.startsWith('cancel ')) {
+			if (toMatchLower.startsWith('cancel ')) {
 				const number = parseInt(toMatch.slice('cancel '.length), 10);
 
 				if (isNaN(number)) {
@@ -186,6 +235,160 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 				);
 
 				await send('Subscription #' + number + ' was cancelled, you will not be reminded anymore');
+				break;
+			} else if (toMatchLower.startsWith('add ')) {
+				const data = toMatch.slice('add '.length).split(' ');
+
+				const ref = data[0];
+				const quantity = parseInt(data[1] || '1');
+
+				if (isNaN(quantity) || quantity <= 0) {
+					await send('Invalid quantity: ' + data[1]);
+					break;
+				}
+
+				const product = await collections.products.findOne({ _id: ref });
+
+				if (!product) {
+					const products = await collections.products
+						.find({})
+						.project<Pick<Product, '_id'>>({ _id: 1 })
+						.toArray();
+					await send(
+						`No product found with ref "${ref}". Use "catalog" to get the list of products. Available refs: ${products
+							.map((p) => p._id)
+							.join(', ')}`
+					);
+					break;
+				}
+
+				const cart = await addToCartInDb(product, quantity, { npub: senderNpub }).catch(
+					async (e) => {
+						console.error(e);
+						await send(e.message);
+						return null;
+					}
+				);
+
+				if (!cart) {
+					break;
+				}
+
+				const item = cart.value?.items.find((item) => item.productId === product._id);
+
+				if (!item) {
+					break;
+				}
+
+				await send(
+					`"${product.name}" added to cart for a total quantity of ${
+						item.quantity
+					} and price of ${toSatoshis(
+						product.price.amount * item.quantity,
+						product.price.currency,
+						runtimeConfig.BTC_EUR
+					).toLocaleString('en-US')} SAT`
+				);
+				break;
+			} else if (toMatch.startsWith('remove ')) {
+				const data = toMatch.slice('remove '.length).trim().split(' ');
+
+				const ref = data[0];
+				const quantity = data[1] ? parseInt(data[1]) : 0;
+				const totalQuantity = data[1] ? false : true;
+
+				if (isNaN(quantity) || quantity < 0) {
+					await send('Invalid quantity: ' + data[1]);
+					break;
+				}
+
+				const product = await collections.products.findOne({ _id: ref });
+
+				if (!product) {
+					await send(
+						'No product found with ref: ' + ref + '. Use "catalog" to get the list of products'
+					);
+					break;
+				}
+
+				const cart = await removeFromCartInDb(product._id, quantity, {
+					npub: senderNpub,
+					totalQuantity
+				}).catch(async (e) => {
+					console.error(e);
+					await send(e.message);
+					return null;
+				});
+
+				if (!cart) {
+					break;
+				}
+
+				const item = cart.items.find((item) => item.productId === product._id);
+
+				if (!item) {
+					await send(`"${product.name}" removed from cart`);
+					break;
+				}
+
+				await send(
+					`"${product.name}" remaining in your cart for a total quantity of ${
+						item.quantity
+					} and price of ${toSatoshis(
+						item.quantity * product.price.amount,
+						product.price.currency,
+						runtimeConfig.BTC_EUR
+					).toLocaleString('en-US')} SAT`
+				);
+				break;
+			} else if (toMatchLower.startsWith('checkout ')) {
+				const paymentMethod = toMatchLower.slice('checkout '.length);
+
+				if (!typedInclude(['bitcoin', 'lightning'], paymentMethod)) {
+					await send('Invalid payment method: ' + paymentMethod + ', use "bitcoin" or "lightning"');
+					break;
+				}
+
+				const cart = await collections.carts.findOne({ npub: senderNpub });
+
+				if (!cart) {
+					await send("Your cart is empty, you can't checkout an empty cart");
+					break;
+				}
+
+				const products = await collections.products
+					.find({ _id: { $in: cart.items.map((i) => i.productId) } })
+					.toArray();
+
+				if (products.some((product) => product.shipping)) {
+					await send(
+						'Some products in your cart require shipping, this is not yet supported by the bot. Please remove them from your cart or use the website to checkout'
+					);
+					break;
+				}
+
+				const productById = Object.fromEntries(products.map((p) => [p._id, p]));
+
+				const items = cart.items
+					.filter((i) => productById[i.productId])
+					.map((i) => ({
+						quantity: i.quantity,
+						product: productById[i.productId]
+					}));
+
+				await createOrder(items, paymentMethod, {
+					notifications: {
+						paymentStatus: {
+							npub: senderNpub
+						}
+					},
+					shippingAddress: null,
+					cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
+				}).catch(async (e) => {
+					console.error(e);
+					await send(e.message);
+				});
+
 				break;
 			}
 			await send(

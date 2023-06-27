@@ -3,9 +3,9 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, RequestEvent } from './$types';
 import type { Product } from '$lib/types/Product';
 import { z } from 'zod';
-import { ObjectId } from 'mongodb';
 import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import { addToCartInDb } from '$lib/server/cart';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne<
@@ -60,10 +60,6 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		throw error(404, 'Product not found');
 	}
 
-	if (product.availableDate && !product.preorder && product.availableDate > new Date()) {
-		throw error(400, 'Product is not available for preorder');
-	}
-
 	const formData = await request.formData();
 	const { quantity } = z
 		.object({
@@ -73,51 +69,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			quantity: formData.get('quantity') || '1'
 		});
 
-	let cart = await collections.carts.findOne({ sessionId: locals.sessionId });
-
-	if (!cart) {
-		cart = {
-			_id: new ObjectId(),
-			sessionId: locals.sessionId,
-			items: [],
-			createdAt: new Date(),
-			updatedAt: new Date()
-		};
-	}
-
-	const existingItem = cart.items.find((item) => item.productId === params.id);
-
-	if (existingItem) {
-		existingItem.quantity += quantity;
-
-		if (existingItem.quantity > MAX_PRODUCT_QUANTITY) {
-			existingItem.quantity = MAX_PRODUCT_QUANTITY;
-		}
-
-		if (product.type === 'subscription') {
-			existingItem.quantity = 1;
-		}
-	} else {
-		cart.items.push({
-			productId: params.id,
-			quantity: product.type === 'subscription' ? 1 : quantity
-		});
-	}
-
-	await collections.carts.updateOne(
-		{ _id: cart._id },
-		{
-			$set: {
-				items: cart.items,
-				updatedAt: new Date()
-			},
-			$setOnInsert: {
-				createdAt: new Date(),
-				sessionId: locals.sessionId
-			}
-		},
-		{ upsert: true }
-	);
+	await addToCartInDb(product, quantity, { sessionId: locals.sessionId });
 }
 
 export const actions = {

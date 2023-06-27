@@ -65,7 +65,18 @@ export const collections = {
 client.on('open', () => {
 	pictures.createIndex({ productId: 1 }).catch(console.error);
 	locks.createIndex({ updatedAt: 1 }, { expireAfterSeconds: 60 }).catch(console.error);
-	carts.createIndex({ sessionId: 1 }, { unique: true }).catch(console.error);
+	carts
+		.createIndex(
+			{ sessionId: 1 },
+			{ unique: true, partialFilterExpression: { sessionId: { $exists: true } } }
+		)
+		.catch(console.error);
+	carts
+		.createIndex(
+			{ npub: 1 },
+			{ unique: true, partialFilterExpression: { npub: { $exists: true } } }
+		)
+		.catch(console.error);
 	orders.createIndex({ sessionId: 1 }).catch(console.error);
 	orders
 		.createIndex(

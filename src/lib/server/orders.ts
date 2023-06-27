@@ -118,7 +118,7 @@ export async function createOrder(
 	items: Array<{ quantity: number; product: Product }>,
 	paymentMethod: Order['payment']['method'],
 	params: {
-		sessionId: string;
+		sessionId?: string;
 		notifications: {
 			paymentStatus: {
 				npub?: string;
@@ -141,7 +141,17 @@ export async function createOrder(
 			(product) => product.availableDate && !product.preorder && product.availableDate > new Date()
 		)
 	) {
-		throw error(400, 'Cart contains products that are not yet available');
+		throw error(
+			400,
+			'Cart contains products that are not yet available: ' +
+				products
+					.filter(
+						(product) =>
+							product.availableDate && !product.preorder && product.availableDate > new Date()
+					)
+					.map((product) => product.name)
+					.join(', ')
+		);
 	}
 
 	const isDigital = products.every((product) => !product.shipping);
@@ -221,7 +231,7 @@ export async function createOrder(
 			{
 				_id: orderId,
 				number: orderNumber,
-				sessionId: params.sessionId,
+				...(params.sessionId && { sessionId: params.sessionId }),
 				createdAt: new Date(),
 				updatedAt: new Date(),
 				items,
