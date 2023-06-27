@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { bind } from 'svelte/internal';
-
 	export let data;
 
 	let priceAmount: number;

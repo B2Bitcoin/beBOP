@@ -1,9 +1,5 @@
 import { collections } from '$lib/server/database';
 import type { PageServerLoad } from './$types';
-import { runtimeConfig } from '$lib/server/runtime-config';
-import { z } from 'zod';
-import type { JsonObject } from 'type-fest';
-import { set, isEqual } from 'lodash-es';
 
 export const load: PageServerLoad = async () => {
 	const products = await collections.products.find({}).toArray();
