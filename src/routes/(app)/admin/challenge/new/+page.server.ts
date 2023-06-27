@@ -17,8 +17,8 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
-		console.log("data.productIds", data.get('productIds'));
-		
+		console.log('data.productIds', data.get('productIds'));
+
 		// const productIds: string[] = [];
 		const { name, goalAmount, mode, productIds, beginsAt, endsAt } = z
 			.object({
@@ -31,7 +31,7 @@ export const actions: Actions = {
 			})
 			.parse({
 				name: data.get('name'),
-				productIds: data.get('productIds')?.toString().split(","),
+				productIds: data.get('productIds')?.toString().split(','),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
 				beginsAt: data.get('beginsAt'),
@@ -55,7 +55,5 @@ export const actions: Actions = {
 		});
 
 		throw redirect(303, `/admin/challenge`);
-		
 	}
-	
 };

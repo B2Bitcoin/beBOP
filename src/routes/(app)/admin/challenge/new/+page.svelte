@@ -11,7 +11,7 @@
 	let selectedProduct: Product | null;
 	let availableProductList: Product[] = data.products;
 	let selectedProductList: Product[] = [];
-	let productIds: String[] = [];
+	let productIds: string[] = [];
 
 	function selectProduct(product: Product) {
 		selectedProduct = product;
@@ -23,7 +23,7 @@
 	}
 
 	function removeFromAvailableProducts() {
-		availableProductList = availableProductList.filter((product) => product !== selectedProduct!);
+		availableProductList = availableProductList.filter((product) => product !== selectedProduct);
 		selectedProduct = null; // Réinitialise l'élément sélectionné
 	}
 
