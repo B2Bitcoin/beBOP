@@ -15,9 +15,11 @@ export async function load({ params }) {
 	const beginsAt = challenge.beginsAt?.toJSON().slice(0, 10);
 	const endsAt = challenge.endsAt.toJSON().slice(0, 10);
 
-	const productInChallenge = await collections.products.find({
-		_id: { $in: challenge?.productIds }
-	}).toArray();
+	const productInChallenge = await collections.products
+		.find({
+			_id: { $in: challenge?.productIds }
+		})
+		.toArray();
 
 	return {
 		challenge,
@@ -53,7 +55,7 @@ export const actions = {
 				goalAmount: data.get('goalAmount'),
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
-			});;
+			});
 
 		await collections.challenges.updateOne(
 			{
