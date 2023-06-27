@@ -14,7 +14,7 @@ export const actions = {
 		const formData = await request.formData();
 
 		for (const [key, value] of formData) {
-			const res = await collections.products.updateOne(
+			await collections.products.updateOne(
 				{ _id: key },
 				{
 					$set: {
