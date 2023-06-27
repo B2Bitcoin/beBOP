@@ -17,9 +17,7 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
-		console.log('data.productIds', data.get('productIds'));
 
-		// const productIds: string[] = [];
 		const { name, goalAmount, mode, productIds, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
