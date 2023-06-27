@@ -9,6 +9,7 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
+	import { isPreorder as isPreorderFn } from '$lib/types/Product.js';
 
 	export let data;
 
@@ -19,10 +20,7 @@
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
 		data.pictures[0];
 
-	$: isPreorder =
-		!!data.product.availableDate &&
-		data.product.availableDate > new Date() &&
-		data.product.preorder;
+	$: isPreorder = isPreorderFn(data.product.availableDate, data.product.preorder);
 
 	function addToCart() {
 		$productAddedToCart = {

@@ -29,11 +29,30 @@ export async function load({ depends, locals }) {
 			? Promise.all(
 					cart.items.map(async (item) => {
 						const productDoc = await collections.products.findOne<
-							Pick<Product, '_id' | 'name' | 'price' | 'shortDescription' | 'type' | 'shipping'>
+							Pick<
+								Product,
+								| '_id'
+								| 'name'
+								| 'price'
+								| 'shortDescription'
+								| 'type'
+								| 'availableDate'
+								| 'shipping'
+								| 'preorder'
+							>
 						>(
 							{ _id: item.productId },
 							{
-								projection: { _id: 1, name: 1, price: 1, shortDescription: 1, type: 1, shipping: 1 }
+								projection: {
+									_id: 1,
+									name: 1,
+									price: 1,
+									shortDescription: 1,
+									type: 1,
+									shipping: 1,
+									availableDate: 1,
+									preorder: 1
+								}
 							}
 						);
 						if (productDoc) {
