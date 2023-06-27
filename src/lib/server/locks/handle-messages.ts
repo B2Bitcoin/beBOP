@@ -1,5 +1,5 @@
 import { ObjectId, type ChangeStreamDocument } from 'mongodb';
-import { collections, withTransaction } from '../database';
+import { collections } from '../database';
 import { Lock } from '../lock';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
 import { Kind } from 'nostr-tools';
