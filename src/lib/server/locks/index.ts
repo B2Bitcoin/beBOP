@@ -1,3 +1,4 @@
+import './cleanup-lock';
 import './currency-lock';
 import './email-notifications';
 import './order-lock';
