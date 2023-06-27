@@ -9,7 +9,6 @@
 		if (newPrice && parseFloat(newPrice) < 0.00000001) {
 			target.setCustomValidity('Price ' + productId + ' must be greater than 1 SAT');
 			target.reportValidity();
-			event.preventDefault();
 			return;
 		} else {
 			target.setCustomValidity('');
