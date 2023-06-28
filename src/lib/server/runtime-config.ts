@@ -17,7 +17,7 @@ const defaultConfig = {
 	topbarLinks: [
 		{ label: 'Blog', href: '/blog' },
 		{ label: 'Store', href: '/store' },
-		{ label: 'Mecenas', href: '/mecenas' }
+		{ label: 'Admin', href: '/admin' }
 	],
 	navbarLinks: [
 		{ label: 'Challenges', href: '/challenges' },

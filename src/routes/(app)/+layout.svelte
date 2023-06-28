@@ -119,10 +119,10 @@
 						<IconBasket />
 						{totalItems}
 					</a>
-					{#if $productAddedToCart}
+					{#if $productAddedToCart && !$productAddedToCart.widget}
 						<Popup>
 							<ProductAddedToCart
-								class="w-[562px]"
+								class="w-[562px] max-w-full"
 								on:dismiss={() => ($productAddedToCart = null)}
 								product={$productAddedToCart.product}
 								picture={$productAddedToCart.picture}
