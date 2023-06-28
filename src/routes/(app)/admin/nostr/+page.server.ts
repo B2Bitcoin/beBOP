@@ -51,7 +51,7 @@ export const actions = {
 				...(lnAddress && { lud16: lnAddress }),
 				// about: '',
 				...(runtimeConfig.logoPictureId && { picture: pictureUrl }),
-				nip05: `${runtimeConfig.brandName}@${domainName}` //`_@${domainName}`
+				nip05: `_@${domainName}` //`_@${domainName}`
 			}),
 			createdAt: new Date(),
 			updatedAt: new Date(),
