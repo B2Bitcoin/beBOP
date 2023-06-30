@@ -79,7 +79,7 @@
 						Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
 					</li>
 				</ul>
-				<img src="{$page.url.pathname}/qrcode" class="w-40 h-40" alt="QR code" />
+				<img src="{$page.url.pathname}/qrcode" class="w-96 h-96" alt="QR code" />
 				<div class="text-xl">
 					Pay to complete the order. {#if data.order.payment.method === 'bitcoin'}
 						Order will be marked as paid after {data.confirmationBlocksRequired}
