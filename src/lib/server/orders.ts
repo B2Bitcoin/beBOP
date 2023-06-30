@@ -254,7 +254,7 @@ export async function createOrder(
 								const invoice = await lndCreateInvoice(
 									totalSatoshis,
 									differenceInSeconds(expiresAt, new Date()),
-									`${ORIGIN}/order/${orderId}`
+									runtimeConfig.includeOrderUrlInQRCode ? `${ORIGIN}/order/${orderId}` : undefined
 								);
 
 								return {

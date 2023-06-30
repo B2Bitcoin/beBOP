@@ -7,6 +7,7 @@ const defaultConfig = {
 	subscriptionNumber: 0,
 	enableCashSales: false,
 	isMaintenance: false,
+	includeOrderUrlInQRCode: false,
 	maintenanceIps: '',
 	brandName: 'My Space',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',

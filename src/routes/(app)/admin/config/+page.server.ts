@@ -6,6 +6,7 @@ import { z } from 'zod';
 export async function load(event) {
 	return {
 		ip: event.getClientAddress(),
+		includeOrderUrlInQRCode: runtimeConfig.includeOrderUrlInQRCode,
 		enableCashSales: runtimeConfig.enableCashSales,
 		isMaintenance: runtimeConfig.isMaintenance,
 		maintenanceIps: runtimeConfig.maintenanceIps,
@@ -26,6 +27,7 @@ export const actions = {
 			.object({
 				isMaintenance: z.boolean({ coerce: true }),
 				enableCashSales: z.boolean({ coerce: true }),
+				includeOrderUrlInQRCode: z.boolean({ coerce: true }),
 				maintenanceIps: z.string(),
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),
@@ -38,6 +40,15 @@ export const actions = {
 				confirmationBlocks: z.number({ coerce: true }).int().min(0)
 			})
 			.parse(Object.fromEntries(formData));
+
+		if (runtimeConfig.includeOrderUrlInQRCode !== result.includeOrderUrlInQRCode) {
+			runtimeConfig.includeOrderUrlInQRCode = result.includeOrderUrlInQRCode;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'includeOrderUrlInQRCode' },
+				{ $set: { data: result.includeOrderUrlInQRCode, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
 
 		if (runtimeConfig.isMaintenance !== result.isMaintenance) {
 			runtimeConfig.isMaintenance = result.isMaintenance;
