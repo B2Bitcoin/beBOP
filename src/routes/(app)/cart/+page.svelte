@@ -20,7 +20,10 @@
 		<h1 class="page-title">Products</h1>
 
 		{#if items.length}
-			<div class="grid gap-x-4 gap-y-6" style="grid-template-columns: auto 1fr auto auto">
+			<div
+				class="grid gap-x-4 gap-y-6 overflow-hidden"
+				style="grid-template-columns: auto 1fr auto auto"
+			>
 				{#each items as item}
 					<form
 						method="POST"
@@ -82,10 +85,10 @@
 							<PriceTag
 								amount={item.quantity * item.product.price.amount}
 								currency={item.product.price.currency}
-								class="text-2xl text-gray-800"
+								class="text-2xl text-gray-800 truncate"
 							/>
 							<PriceTag
-								class="text-base text-gray-600"
+								class="text-base text-gray-600 truncate"
 								amount={item.quantity * item.product.price.amount}
 								currency={item.product.price.currency}
 								convertedTo="EUR"

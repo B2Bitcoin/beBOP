@@ -8,6 +8,8 @@
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import ProductType from './ProductType.svelte';
+	import Popup from './Popup.svelte';
+	import ProductAddedToCart from './ProductAddedToCart.svelte';
 
 	export let picture: Picture | undefined;
 	export let product: Pick<
@@ -27,11 +29,14 @@
 
 	let loading = false;
 
+	const widget = {};
+
 	function addToCart() {
 		$productAddedToCart = {
 			product,
 			quantity: 1,
-			picture
+			picture,
+			widget
 		};
 	}
 
@@ -93,19 +98,33 @@
 
 							await invalidate(UrlDependency.Cart);
 							addToCart();
-							document.body.scrollIntoView();
+							// Not for the widget, see https://github.com/B2Bitcoin/B2BitcoinBootik/issues/243
+							//document.body.scrollIntoView();
 						};
 					}}
 				>
-					<button
-						type="submit"
-						value="Add to cart"
-						disabled={loading}
-						formaction="/product/{product._id}?/addToCart"
-						class="btn btn-gray"
-					>
-						Add to cart
-					</button>
+					<div class="relative">
+						<button
+							type="submit"
+							value="Add to cart"
+							disabled={loading}
+							formaction="/product/{product._id}?/addToCart"
+							class="btn btn-gray"
+						>
+							Add to cart
+						</button>
+
+						{#if $productAddedToCart && $productAddedToCart.widget === widget}
+							<Popup>
+								<ProductAddedToCart
+									class="w-[562px] max-w-full"
+									on:dismiss={() => ($productAddedToCart = null)}
+									product={$productAddedToCart.product}
+									picture={$productAddedToCart.picture}
+								/>
+							</Popup>
+						{/if}
+					</div>
 				</form>
 			</div>
 		{/if}
