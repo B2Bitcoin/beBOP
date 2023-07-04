@@ -172,9 +172,7 @@
 			</div>
 			<a href="/product/{product._id}" class="flex flex-col">
 				<p class="mt-2 text-gray-800">
-					{product.shortDescription} Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos
-					iusto quis ad? Ipsam recusandae saepe ipsa, nobis id excepturi delectus, ullam laboriosam fuga
-					illo architecto, dicta voluptatem maxime rerum adipisci?
+					{product.shortDescription}
 				</p>
 			</a>
 			{#if canAddToCart}
