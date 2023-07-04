@@ -98,7 +98,7 @@
 
 	<div class="flex flex-col gap-4 w-[30%]">
 		<h2 class="text-xl">Products</h2>
-		<select multiple name="productIds" bind:value={selectedProductList}>
+		<select multiple name="productIds" value={data.challenge.productIds}>
 			{#each data.productInChallenge as product}
 				<option value={product.name}>
 					{product.name}
