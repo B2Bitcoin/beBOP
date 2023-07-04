@@ -29,27 +29,27 @@
 			: actualCurrency === 'SAT' && amount >= 1_000_000
 			? 'BTC'
 			: actualCurrency;
+
+	$: displayed =
+		displayedAmount.toLocaleString('en', {
+			style: displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : 'currency',
+			currency:
+				displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : displayedCurrency,
+			maximumFractionDigits: displayedCurrency === 'BTC' ? 8 : 2,
+			minimumFractionDigits: 0
+		}) + (displayedCurrency === 'SAT' && !short ? ' SAT' : '');
 </script>
 
 <div
 	class="{className} flex {gap} items-center"
-	title={convertedTo ? `Exchange rate: ${exchangeRate} ${convertedTo} per ${currency}` : undefined}
+	title={displayed +
+		(convertedTo ? `, exchange rate: ${exchangeRate} ${convertedTo} per ${currency}` : '')}
 >
 	{#if displayedCurrency === 'SAT'}
-		<IconSatoshi />
+		<IconSatoshi class="min-w-[1em]" />
 	{:else if displayedCurrency === 'BTC'}
-		<IconBitcoin />
+		<IconBitcoin class="min-w-[1em]" />
 	{/if}
 
-	{displayedAmount.toLocaleString('en', {
-		style: displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : 'currency',
-		currency:
-			displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : displayedCurrency,
-		maximumFractionDigits: displayedCurrency === 'BTC' ? 8 : 2,
-		minimumFractionDigits: 0
-	})}
-
-	{#if displayedCurrency === 'SAT' && !short}
-		<span>SAT</span>
-	{/if}
+	{displayed}
 </div>

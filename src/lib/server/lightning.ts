@@ -151,12 +151,12 @@ export async function lndActivateAutopilot() {
 export async function lndCreateInvoice(
 	amountSatoshis: number,
 	expireAfterSeconds: number,
-	label: string
+	label?: string
 ) {
 	const response = await lndRpc('/v1/invoices', {
 		method: 'POST',
 		body: JSON.stringify({
-			memo: label,
+			...(label && { memo: label }),
 			value: String(amountSatoshis),
 			expiry: String(expireAfterSeconds)
 		})

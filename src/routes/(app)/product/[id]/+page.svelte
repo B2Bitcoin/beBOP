@@ -67,7 +67,7 @@
 			{/each}
 		</div>
 
-		<div class="grid grid-cols-[70%_1fr] gap-2 grow pb-12">
+		<div class="flex flex-col md:grid md:grid-cols-[70%_1fr] gap-2 grow pb-12">
 			<div class="flex flex-col gap-4">
 				<!-- add product name -->
 				<h2 class="text-4xl">{data.product.name}</h2>
@@ -117,21 +117,25 @@
 				{/if}
 			</div>
 			<div
-				class="flex flex-col text-gray-850 gap-2 border-gray-300 border-l border-b rounded pl-4 pb-4 h-fit"
+				class="flex flex-col text-gray-850 gap-2 border-gray-300 md:border-l md:border-b md:rounded md:pl-4 md:pb-4 h-fit overflow-hidden"
 			>
-				<PriceTag
-					currency={data.product.price.currency}
-					class="text-4xl"
-					short={false}
-					amount={data.product.price.amount}
-				/>
-				<PriceTag
-					currency={data.product.price.currency}
-					amount={data.product.price.amount}
-					convertedTo="EUR"
-					exchangeRate={data.exchangeRate}
-					class="text-xl"
-				/>
+				<hr class="border-gray-300 md:hidden mt-4 pb-2" />
+				<div class="flex gap-2 md:flex-col md:items-start items-center justify-between">
+					<PriceTag
+						currency={data.product.price.currency}
+						class="text-2xl md:text-4xl truncate max-w-full"
+						short={false}
+						amount={data.product.price.amount}
+					/>
+					<PriceTag
+						currency={data.product.price.currency}
+						amount={data.product.price.amount}
+						convertedTo="EUR"
+						exchangeRate={data.exchangeRate}
+						class="text-xl"
+					/>
+				</div>
+
 				{#if 0}
 					<hr class="border-gray-300" />
 					<h3 class="text-gray-850 text-[22px]">50% off for 48h</h3>
@@ -148,7 +152,7 @@
 						</div>
 					</div>
 				{/if}
-				<hr class="border-gray-300" />
+				<hr class="border-gray-300 my-2" />
 
 				{#if isPreorder && data.product.availableDate}
 					<p>

@@ -23,6 +23,15 @@
 	<label class="flex gap-2 cursor-pointer items-center">
 		<input
 			type="checkbox"
+			name="includeOrderUrlInQRCode"
+			class="form-checkbox rounded-sm cursor-pointer"
+			checked={data.includeOrderUrlInQRCode}
+		/>
+		includeOrderUrlInQRCode
+	</label>
+	<label class="flex gap-2 cursor-pointer items-center">
+		<input
+			type="checkbox"
 			name="discovery"
 			class="form-checkbox rounded-sm cursor-pointer"
 			checked={data.discovery}

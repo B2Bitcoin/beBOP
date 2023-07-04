@@ -7,6 +7,7 @@ const defaultConfig = {
 	subscriptionNumber: 0,
 	enableCashSales: false,
 	isMaintenance: false,
+	includeOrderUrlInQRCode: false,
 	maintenanceIps: '',
 	brandName: 'My Space',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
@@ -17,7 +18,7 @@ const defaultConfig = {
 	topbarLinks: [
 		{ label: 'Blog', href: '/blog' },
 		{ label: 'Store', href: '/store' },
-		{ label: 'Mecenas', href: '/mecenas' }
+		{ label: 'Admin', href: '/admin' }
 	],
 	navbarLinks: [
 		{ label: 'Challenges', href: '/challenges' },

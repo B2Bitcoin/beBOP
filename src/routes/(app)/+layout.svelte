@@ -17,8 +17,14 @@
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import IconTrash from '$lib/components/icons/IconTrash.svelte';
 	import { DEFAULT_LOGO } from '$lib/types/Picture';
+	//import IconMenu from '~icons/ant-design/holder-outlined';
+	import IconMenu from '~icons/ant-design/menu-outlined';
+	import { slide } from 'svelte/transition';
 
 	export let data;
+
+	let topMenuOpen = false;
+	let navMenuOpen = false;
 
 	let actionCount = 0;
 
@@ -36,6 +42,8 @@
 	let cartOpen = false;
 
 	$: if ($navigating) {
+		topMenuOpen = false;
+		navMenuOpen = false;
 		$productAddedToCart = null;
 	}
 
@@ -65,23 +73,47 @@
 			<span class="grow" />
 			<nav class="flex gap-10 text-[22px] font-semibold">
 				{#each data.links.topbar as link}
-					<a href={link.href}>{link.label}</a>
+					<a href={link.href} class="hidden sm:inline">{link.label}</a>
 				{/each}
 			</nav>
 			{#if 0}
 				<div class="border-r-[1px] border-gray-700 h-8 border-solid" />
 				<a href="/admin" class="btn btn-blue font-bold">Connect your wallet</a>
 			{/if}
+			<button
+				class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-4xl transition"
+				class:rotate-90={topMenuOpen}
+				on:click={() => (topMenuOpen = !topMenuOpen)}
+			>
+				<IconMenu />
+			</button>
 		</div>
 	</header>
+	{#if topMenuOpen}
+		<nav
+			transition:slide
+			class="bg-gray-850 flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
+		>
+			{#each data.links.topbar as link}
+				<a class="py-4" href={link.href}>{link.label}</a>
+			{/each}
+		</nav>
+	{/if}
 	<header class="bg-gray-240 text-gray-800 h-[66px] items-center flex">
 		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 			<nav class="flex gap-6 font-light items-center">
+				<button
+					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
+					class:rotate-90={navMenuOpen}
+					on:click={() => (navMenuOpen = !navMenuOpen)}
+				>
+					<IconMenu />
+				</button>
 				{#if 0}
 					<a href="/categories" class="flex gap-2 items-center">Categories <IconDownArrow /></a>
 				{/if}
 				{#each data.links.navbar as link}
-					<a href={link.href}>{link.label}</a>
+					<a href={link.href} class="hidden sm:inline">{link.label}</a>
 				{/each}
 			</nav>
 			{#if 0}
@@ -119,10 +151,10 @@
 						<IconBasket />
 						{totalItems}
 					</a>
-					{#if $productAddedToCart}
+					{#if $productAddedToCart && !$productAddedToCart.widget}
 						<Popup>
 							<ProductAddedToCart
-								class="w-[562px]"
+								class="w-[562px] max-w-full"
 								on:dismiss={() => ($productAddedToCart = null)}
 								product={$productAddedToCart.product}
 								picture={$productAddedToCart.picture}
@@ -203,6 +235,16 @@
 			</div>
 		</div>
 	</header>
+	{#if navMenuOpen}
+		<nav
+			transition:slide
+			class="bg-gray-240 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
+		>
+			{#each data.links.navbar as link}
+				<a class="py-2 hover:underline" href={link.href}>{link.label}</a>
+			{/each}
+		</nav>
+	{/if}
 	<div class="grow bg-gray-75">
 		<slot />
 	</div>

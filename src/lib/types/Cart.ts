@@ -1,7 +1,8 @@
 import type { Timestamps } from './Timestamps';
 
 export interface Cart extends Timestamps {
-	sessionId: string;
+	sessionId?: string;
+	npub?: string;
 
 	items: Array<{
 		productId: string;
