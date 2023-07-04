@@ -312,7 +312,7 @@
 		</div>
 		<div class="flex flex-col text-center">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
-				<PictureComponent {picture} sizes="800px" class="object-contain max-h-[174px] max-w-full" />
+				<PictureComponent {picture} sizes="800px" class="object-contain max-h-[348px] max-w-full" />
 			</a>
 		</div>
 
