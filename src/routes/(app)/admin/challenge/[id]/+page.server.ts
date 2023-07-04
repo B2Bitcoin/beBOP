@@ -1,5 +1,5 @@
 import { collections } from '$lib/server/database.js';
-import { MAX_NAME_LIMIT } from '$lib/types/Product.js';
+import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product.js';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
@@ -20,12 +20,17 @@ export async function load({ params }) {
 			_id: { $in: challenge?.productIds }
 		})
 		.toArray();
+	const products = await collections.products
+		.find({})
+		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
+		.toArray();
 
 	return {
 		challenge,
 		beginsAt,
 		endsAt,
-		productInChallenge
+		productInChallenge,
+		products
 	};
 }
 
@@ -51,7 +56,7 @@ export const actions = {
 			})
 			.parse({
 				name: data.get('name'),
-				productIds: data.get('productIds')?.toString().split(','),
+				productIds: data.getAll('productIds'),
 				goalAmount: data.get('goalAmount'),
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')

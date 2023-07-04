@@ -31,7 +31,7 @@ export const actions: Actions = {
 			})
 			.parse({
 				name: data.get('name'),
-				productIds: data.get('productIds')?.toString().split(','),
+				productIds: data.getAll('productIds'),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
 				beginsAt: data.get('beginsAt'),
@@ -39,7 +39,6 @@ export const actions: Actions = {
 			});
 
 		const slug = generateId(name, true);
-
 		await collections.challenges.insertOne({
 			_id: slug,
 			name,
