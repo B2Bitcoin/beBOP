@@ -8,8 +8,10 @@
 
 <div class="pt-6 {className}">
 	<div
-		class="rounded-[3px] flex justify-end {percentage >= 100
+		class="rounded-[3px] flex justify-end {percentage == 100
 			? 'bg-green-500'
+			: percentage > 100
+			? 'bg-green-500 w-1/2'
 			: 'bg-gradient-to-r from-red-500 to-green-500 via-yellow-500'}"
 	>
 		<div
