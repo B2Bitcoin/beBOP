@@ -1,58 +1,93 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { navigating, page } from '$app/stores';
+	import IconMenu from '~icons/ant-design/menu-outlined';
+	import { slide } from 'svelte/transition';
+
+	let navMenuOpen = false;
+	const adminLinks = [
+		{
+			href: '/admin/layout',
+			label: 'Layout'
+		},
+		{
+			href: '/admin/config',
+			label: 'Config'
+		},
+		{
+			href: '/admin/product',
+			label: 'Products'
+		},
+		{
+			href: '/admin/picture',
+			label: 'Pictures'
+		},
+		{
+			href: '/admin/bitcoin',
+			label: 'Bitcoin node'
+		},
+		{
+			href: '/admin/lightning',
+			label: 'Lightning node'
+		},
+		{
+			href: '/admin/order',
+			label: 'Orders'
+		},
+		{
+			href: '/admin/nostr',
+			label: 'NostR'
+		},
+		{
+			href: '/admin/email',
+			label: 'Emails'
+		},
+		{
+			href: '/admin/cms',
+			label: 'CMS'
+		},
+		{
+			href: '/admin/challenge',
+			label: 'Challenges'
+		}
+	];
+	$: if ($navigating) {
+		navMenuOpen = false;
+	}
 </script>
 
 <header class="bg-gray-400 text-gray-800 py-2 items-center flex">
 	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-hidden">
-		<span class="font-bold text-xl">Admin</span>
-		<nav class="flex gap-6 font-light items-center overflow-x-auto">
-			<a
-				href="/admin/layout"
-				class={$page.url.pathname.startsWith('/admin/layout') ? 'underline' : ''}>Layout</a
+		<nav class="flex gap-6 font-light items-center">
+			<button
+				class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
+				class:rotate-90={navMenuOpen}
+				on:click={() => (navMenuOpen = !navMenuOpen)}
 			>
-			<a
-				href="/admin/config"
-				class={$page.url.pathname.startsWith('/admin/config') ? 'underline' : ''}>Config</a
-			>
-			<a
-				href="/admin/product"
-				class={$page.url.pathname.startsWith('/admin/product') ? 'underline' : ''}>Products</a
-			>
-			<a
-				href="/admin/picture"
-				class={$page.url.pathname.startsWith('/admin/picture') ? 'underline' : ''}>Pictures</a
-			>
-			<a
-				href="/admin/bitcoin"
-				class={$page.url.pathname.startsWith('/admin/bitcoin') ? 'underline' : ''}>Bitcoin node</a
-			>
-			<a
-				href="/admin/lightning"
-				class={$page.url.pathname.startsWith('/admin/lightning') ? 'underline' : ''}
-				>Lightning node</a
-			>
-			<a
-				href="/admin/order"
-				class={$page.url.pathname.startsWith('/admin/order') ? 'underline' : ''}>Orders</a
-			>
-			<a
-				href="/admin/nostr"
-				class={$page.url.pathname.startsWith('/admin/nostr') ? 'underline' : ''}>NostR</a
-			>
-			<a
-				href="/admin/email"
-				class={$page.url.pathname.startsWith('/admin/email') ? 'underline' : ''}>Emails</a
-			>
-			<a href="/admin/cms" class={$page.url.pathname.startsWith('/admin/cms') ? 'underline' : ''}
-				>CMS</a
-			>
-			<a
-				href="/admin/challenge"
-				class={$page.url.pathname.startsWith('/admin/challenge') ? 'underline' : ''}>Challenges</a
-			>
+				<IconMenu />
+			</button>
+			<span class="font-bold text-xl">Admin</span>
+			{#each adminLinks as link}
+				<a
+					href={link.href}
+					class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
+					>{link.label}</a
+				>
+			{/each}
 		</nav>
 	</div>
 </header>
+{#if navMenuOpen}
+	<nav
+		transition:slide
+		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
+	>
+		{#each adminLinks as link}
+			<a href={link.href} class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
+				>{link.label}</a
+			>
+		{/each}
+	</nav>
+{/if}
 
 <main class="p-4 flex flex-col gap-4">
 	<slot />
