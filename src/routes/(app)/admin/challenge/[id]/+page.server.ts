@@ -14,12 +14,6 @@ export async function load({ params }) {
 
 	const beginsAt = challenge.beginsAt?.toJSON().slice(0, 10);
 	const endsAt = challenge.endsAt.toJSON().slice(0, 10);
-
-	const productInChallenge = await collections.products
-		.find({
-			_id: { $in: challenge?.productIds }
-		})
-		.toArray();
 	const products = await collections.products
 		.find({})
 		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
@@ -29,7 +23,6 @@ export async function load({ params }) {
 		challenge,
 		beginsAt,
 		endsAt,
-		productInChallenge,
 		products
 	};
 }
