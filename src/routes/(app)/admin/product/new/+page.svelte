@@ -7,6 +7,7 @@
 	let availableDate: string | undefined = undefined;
 	let shipping = false;
 	let preorder = false;
+	let displayShortDescription = false;
 
 	let priceAmount: number;
 	let priceAmountElement: HTMLInputElement;
@@ -74,6 +75,16 @@
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
 			class="form-input block w-full"
 		/>
+	</label>
+
+	<label class="flex gap-2 items-center cursor-pointer">
+		<input
+			class="form-checkbox rounded-sm cursor-pointer"
+			type="checkbox"
+			name="displayShortDescription"
+			bind:checked={displayShortDescription}
+		/>
+		Display the short description on product page
 	</label>
 
 	<label class="block w-full mt-4">
