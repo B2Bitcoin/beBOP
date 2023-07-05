@@ -82,7 +82,9 @@
 				{#if data.product.description.trim()}
 					<hr class="border-gray-300" />
 					<h2 class="text-gray-850 text-[22px]">
-						{data.product.displayShortDescription && data.product.shortDescription ? data.product.shortDescription : 'Description'}
+						{data.product.displayShortDescription && data.product.shortDescription
+							? data.product.shortDescription
+							: 'Description'}
 					</h2>
 					<p class="text-gray-800 prose">
 						{@html marked(data.product.description.replaceAll('<', '&lt;'))}
