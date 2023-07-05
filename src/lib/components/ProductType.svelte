@@ -4,6 +4,7 @@
 	import IconDollar from './icons/IconDollar.svelte';
 	import IconDownTo from './icons/IconDownTo.svelte';
 	import IconHandHeart from './icons/IconHandHeart.svelte';
+	import IconRotate from './icons/IconRotate.svelte';
 
 	export let product: Pick<
 		Product,
@@ -56,6 +57,6 @@
 
 {#if product.type == 'subscription'}
 	<span class="{baseClasses} {className} text-jagger-700 bg-jagger-200">
-		<IconDownTo /> Monthly Sub
+		<IconRotate /> Monthly Sub
 	</span>
 {/if}
