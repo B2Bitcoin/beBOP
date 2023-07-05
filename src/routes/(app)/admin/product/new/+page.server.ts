@@ -113,7 +113,7 @@ export const actions: Actions = {
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
-						displayShortDescription: parsed.displayShortDescription,
+						displayShortDescription: parsed.displayShortDescription
 					},
 					{ session }
 				);
