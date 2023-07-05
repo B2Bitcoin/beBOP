@@ -2,18 +2,28 @@ import { collections } from '$lib/server/database';
 import type { Actions } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import { MAX_NAME_LIMIT } from '$lib/types/Product';
+import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { generateId } from '$lib/utils/generateId';
+
+export const load = async () => {
+	const products = await collections.products
+		.find({})
+		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
+		.toArray();
+
+	return {
+		products
+	};
+};
 
 export const actions: Actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 
-		const productIds: string[] = [];
-		const { name, goalAmount, mode, beginsAt, endsAt } = z
+		const { name, goalAmount, mode, productIds, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
-				// productId: z.string().array(),
+				productIds: z.string().array(),
 				goalAmount: z.number({ coerce: true }).int().positive(),
 				mode: z.enum(['totalProducts', 'moneyAmount']),
 				beginsAt: z.date({ coerce: true }),
@@ -21,7 +31,7 @@ export const actions: Actions = {
 			})
 			.parse({
 				name: data.get('name'),
-				// productId: data.get('productId'),
+				productIds: data.getAll('productIds'),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
 				beginsAt: data.get('beginsAt'),
@@ -29,7 +39,6 @@ export const actions: Actions = {
 			});
 
 		const slug = generateId(name, true);
-
 		await collections.challenges.insertOne({
 			_id: slug,
 			name,

@@ -125,8 +125,8 @@
 	<div
 		class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-row gap-4 p-6 rounded {className}"
 	>
-		<div class="flex flex-col gap-2 justify-between">
-			<div class="flex flex-col gap-2">
+		<div class="flex flex-col gap-2">
+			<div class="flex flex-col gap-2 justify-between">
 				<a href="/product/{product._id}" class="flex flex-col">
 					<h2 class="text-2xl">{product.name}</h2>
 				</a>

@@ -92,6 +92,17 @@
 		</label>
 	</div>
 
+	<div class="flex flex-col gap-4 w-[30%]">
+		<h2 class="text-xl">Products</h2>
+		<select multiple name="productIds" value={data.challenge.productIds}>
+			{#each data.products as product}
+				<option value={product._id}>
+					{product.name}
+				</option>
+			{/each}
+		</select>
+	</div>
+
 	<div class="flex flex-row justify-between gap-2">
 		<input type="submit" class="btn btn-blue text-white" formaction="?/update" value="Update" />
 		<a href="/challenges/{data.challenge._id}" class="btn btn-gray">View</a>
