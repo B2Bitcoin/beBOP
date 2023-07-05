@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
+	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 
 	export let data;
