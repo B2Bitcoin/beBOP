@@ -3,13 +3,12 @@
 	import { page } from '$app/stores';
 
 	export let data;
-	const img = $page.url.searchParams.get('img');
-	const txt = $page.url.searchParams.get('txt');
+	const display = $page.url.searchParams.get('display');
 </script>
 
 <ProductWidget
 	product={data.product}
 	picture={data.picture}
 	exchangeRate={data.exchangeRate}
-	displayOption={ $page.url.searchParams.get('display')}
+	displayOption={display ? display : 'img-0'}
 />
