@@ -4,7 +4,52 @@
 	import { slide } from 'svelte/transition';
 
 	let navMenuOpen = false;
-
+	const adminLinks = [
+		{
+			href: '/admin/layout',
+			label: 'Layout'
+		},
+		{
+			href: '/admin/config',
+			label: 'Config'
+		},
+		{
+			href: '/admin/product',
+			label: 'Products'
+		},
+		{
+			href: '/admin/picture',
+			label: 'Pictures'
+		},
+		{
+			href: '/admin/bitcoin',
+			label: 'Bitcoin node'
+		},
+		{
+			href: '/admin/lightning',
+			label: 'Lightning node'
+		},
+		{
+			href: '/admin/order',
+			label: 'Orders'
+		},
+		{
+			href: '/admin/nostr',
+			label: 'NostR'
+		},
+		{
+			href: '/admin/email',
+			label: 'Emails'
+		},
+		{
+			href: '/admin/cms',
+			label: 'CMS'
+		},
+		{
+			href: '/admin/challenge',
+			label: 'Challenges'
+		}
+	];
 	$: if ($navigating) {
 		navMenuOpen = false;
 	}
@@ -21,67 +66,13 @@
 				<IconMenu />
 			</button>
 			<span class="font-bold text-xl">Admin</span>
-
-			<a
-				href="/admin/layout"
-				class="{$page.url.pathname.startsWith('/admin/layout') ? 'underline' : ''} hidden sm:inline"
-				>Layout</a
-			>
-			<a
-				href="/admin/config"
-				class="{$page.url.pathname.startsWith('/admin/config') ? 'underline' : ''} hidden sm:inline"
-				>Config</a
-			>
-			<a
-				href="/admin/product"
-				class="{$page.url.pathname.startsWith('/admin/product')
-					? 'underline'
-					: ''} hidden sm:inline">Products</a
-			>
-			<a
-				href="/admin/picture"
-				class="{$page.url.pathname.startsWith('/admin/picture')
-					? 'underline'
-					: ''} hidden sm:inline">Pictures</a
-			>
-			<a
-				href="/admin/bitcoin"
-				class="{$page.url.pathname.startsWith('/admin/bitcoin')
-					? 'underline'
-					: ''} hidden sm:inline">Bitcoin node</a
-			>
-			<a
-				href="/admin/lightning"
-				class="{$page.url.pathname.startsWith('/admin/lightning')
-					? 'underline'
-					: ''} hidden sm:inline">Lightning node</a
-			>
-			<a
-				href="/admin/order"
-				class="{$page.url.pathname.startsWith('/admin/order') ? 'underline' : ''} hidden sm:inline"
-				>Orders</a
-			>
-			<a
-				href="/admin/nostr"
-				class="{$page.url.pathname.startsWith('/admin/nostr') ? 'underline' : ''} hidden sm:inline"
-				>NostR</a
-			>
-			<a
-				href="/admin/email"
-				class="{$page.url.pathname.startsWith('/admin/email') ? 'underline' : ''} hidden sm:inline"
-				>Emails</a
-			>
-			<a
-				href="/admin/cms"
-				class="{$page.url.pathname.startsWith('/admin/cms') ? 'underline' : ''} hidden sm:inline"
-				>CMS</a
-			>
-			<a
-				href="/admin/challenge"
-				class="{$page.url.pathname.startsWith('/admin/challenge')
-					? 'underline'
-					: ''} hidden sm:inline">Challenges</a
-			>
+			{#each adminLinks as link}
+				<a
+					href={link.href}
+					class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
+					>{link.label}</a
+				>
+			{/each}
 		</nav>
 	</div>
 </header>
@@ -90,46 +81,11 @@
 		transition:slide
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 	>
-		<a
-			href="/admin/layout"
-			class={$page.url.pathname.startsWith('/admin/layout') ? 'underline' : ''}>Layout</a
-		>
-		<a
-			href="/admin/config"
-			class={$page.url.pathname.startsWith('/admin/config') ? 'underline' : ''}>Config</a
-		>
-		<a
-			href="/admin/product"
-			class={$page.url.pathname.startsWith('/admin/product') ? 'underline' : ''}>Products</a
-		>
-		<a
-			href="/admin/picture"
-			class={$page.url.pathname.startsWith('/admin/picture') ? 'underline' : ''}>Pictures</a
-		>
-		<a
-			href="/admin/bitcoin"
-			class={$page.url.pathname.startsWith('/admin/bitcoin') ? 'underline' : ''}>Bitcoin node</a
-		>
-		<a
-			href="/admin/lightning"
-			class={$page.url.pathname.startsWith('/admin/lightning') ? 'underline' : ''}>Lightning node</a
-		>
-		<a href="/admin/order" class={$page.url.pathname.startsWith('/admin/order') ? 'underline' : ''}
-			>Orders</a
-		>
-		<a href="/admin/nostr" class={$page.url.pathname.startsWith('/admin/nostr') ? 'underline' : ''}
-			>NostR</a
-		>
-		<a href="/admin/email" class={$page.url.pathname.startsWith('/admin/email') ? 'underline' : ''}
-			>Emails</a
-		>
-		<a href="/admin/cms" class={$page.url.pathname.startsWith('/admin/cms') ? 'underline' : ''}
-			>CMS</a
-		>
-		<a
-			href="/admin/challenge"
-			class={$page.url.pathname.startsWith('/admin/challenge') ? 'underline' : ''}>Challenges</a
-		>
+		{#each adminLinks as link}
+			<a href={link.href} class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
+				>{link.label}</a
+			>
+		{/each}
 	</nav>
 {/if}
 
