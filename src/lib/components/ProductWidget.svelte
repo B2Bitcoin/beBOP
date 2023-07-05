@@ -28,7 +28,7 @@
 	$: baseClasses = 'relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded';
 </script>
 
-{#if displayOption === 'img-1'}
+{#if displayOption === 'img-1' || displayOption === 'txt-1'}
 	<div class="{baseClasses} {className}">
 		<div class="flex flex-row justify-end -mt-6 -mr-6">
 			<ProductType {product} class="last:rounded-tr first:rounded-bl pl-2" />
@@ -40,20 +40,17 @@
 		</div>
 
 		<div class="flex flex-col">
-			<div class="flex flex-row">
+			<div class="flex flex-row justify-between">
 				<a href="/product/{product._id}" class="flex flex-col items-center">
 					<h2 class="text-2xl">{product.name}</h2>
 				</a>
 
-				<div class="grow" />
-
-				<div class="flex flex-row items-end justify-center">
+				<div class="flex flex-row gap-2 items-end justify-center">
 					<PriceTag
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
 					/>
-					&nbsp; ~ &nbsp;
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
@@ -63,11 +60,14 @@
 					/>
 				</div>
 			</div>
-			<a href="/product/{product._id}" class="flex flex-col">
-				<p class="mt-2 text-gray-800">
-					{product.shortDescription}
-				</p>
-			</a>
+			{#if displayOption == 'img-1'}
+				<a href="/product/{product._id}" class="flex flex-col">
+					<p class="mt-2 text-gray-800">
+						{product.shortDescription}
+					</p>
+				</a>
+			{/if}
+
 			{#if canAddToCart}
 				<AddToCart {product} {picture} />
 			{/if}
@@ -91,20 +91,17 @@
 		</div>
 
 		<div class="flex flex-col gap-2">
-			<div class="flex flex-col gap-2">
+			<div class="flex flex-col gap-2 justify-between">
 				<a href="/product/{product._id}" class="flex flex-col">
 					<h2 class="text-2xl">{product.name}</h2>
 				</a>
 
-				<div class="grow" />
-
-				<div class="flex flex-row">
+				<div class="flex flex-row gap-2">
 					<PriceTag
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
 					/>
-					&nbsp; ~ &nbsp;
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
@@ -128,21 +125,18 @@
 	<div
 		class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-row gap-4 p-6 rounded {className}"
 	>
-		<div class="flex flex-col gap-2">
+		<div class="flex flex-col gap-2 justify-between">
 			<div class="flex flex-col gap-2">
 				<a href="/product/{product._id}" class="flex flex-col">
 					<h2 class="text-2xl">{product.name}</h2>
 				</a>
 
-				<div class="grow" />
-
-				<div class="flex flex-row">
+				<div class="flex flex-row gap-2">
 					<PriceTag
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
 					/>
-					&nbsp; ~ &nbsp;
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
@@ -186,61 +180,17 @@
 		</div>
 
 		<div class="flex flex-col gap-2">
-			<div class="flex flex-col gap-2">
+			<div class="flex flex-col gap-2 justify-between">
 				<a href="/product/{product._id}" class="flex flex-col">
 					<h2 class="text-2xl">{product.name}</h2>
 				</a>
 
-				<div class="grow" />
-
-				<div class="flex flex-row">
+				<div class="flex flex-row gap-2">
 					<PriceTag
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
 					/>
-					&nbsp; ~ &nbsp;
-					<PriceTag
-						class="text-base text-gray-600"
-						amount={product.price.amount}
-						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
-					/>
-				</div>
-			</div>
-
-			{#if canAddToCart}
-				<AddToCart {product} {picture} />
-			{/if}
-		</div>
-	</div>
-{:else if displayOption === 'txt-1'}
-	<div class="{baseClasses} {className}">
-		<div class="flex flex-row justify-end -mt-6 -mr-6">
-			<ProductType {product} class="last:rounded-tr first:rounded-bl pl-2" />
-		</div>
-		<div class="flex flex-col text-center">
-			<a href="/product/{product._id}" class="flex flex-col items-center">
-				<PictureComponent {picture} sizes="800px" class="object-contain max-h-[348px] max-w-full" />
-			</a>
-		</div>
-
-		<div class="flex flex-col">
-			<div class="flex flex-row">
-				<a href="/product/{product._id}" class="flex flex-col items-center">
-					<h2 class="text-2xl">{product.name}</h2>
-				</a>
-
-				<div class="grow" />
-
-				<div class="flex flex-row items-end justify-center">
-					<PriceTag
-						amount={product.price.amount}
-						currency={product.price.currency}
-						class="text-2xl text-gray-800"
-					/>
-					&nbsp; ~ &nbsp;
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
@@ -268,20 +218,17 @@
 		</div>
 
 		<div class="flex flex-col">
-			<div class="flex flex-row">
+			<div class="flex flex-row justify-between">
 				<a href="/product/{product._id}" class="flex flex-col items-center">
 					<h2 class="text-2xl">{product.name}</h2>
 				</a>
 
-				<div class="grow" />
-
-				<div class="flex flex-row items-end justify-center">
+				<div class="flex flex-row gap-2 items-end justify-center">
 					<PriceTag
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
 					/>
-					&nbsp; ~ &nbsp;
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
