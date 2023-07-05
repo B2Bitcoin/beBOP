@@ -11,5 +11,5 @@
 	product={data.product}
 	picture={data.picture}
 	exchangeRate={data.exchangeRate}
-	displayOption={img ? 'img-' + img : txt ? 'txt-' + txt : 'img-0'}
+	displayOption={ $page.url.searchParams.get('display')}
 />
