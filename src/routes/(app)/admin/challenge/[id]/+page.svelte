@@ -7,10 +7,6 @@
 	let beginsAt = data.beginsAt;
 	let endsAt = data.endsAt;
 	let endsAtElement: HTMLInputElement;
-	let selectedProductList: Product[] = [];
-	let productIds: string[] = [];
-
-	selectedProductList.map((product) => [...productIds, product._id]);
 
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
