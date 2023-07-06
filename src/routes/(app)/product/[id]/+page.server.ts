@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			| 'preorder'
 			| 'type'
 			| 'shipping'
+			| 'displayShortDescription'
 		>
 	>(
 		{ _id: params.id },
@@ -32,7 +33,8 @@ export const load: PageServerLoad = async ({ params }) => {
 				description: 1,
 				availableDate: 1,
 				preorder: 1,
-				type: 1
+				type: 1,
+				displayShortDescription: 1
 			}
 		}
 	);

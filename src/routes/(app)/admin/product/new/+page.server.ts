@@ -24,7 +24,8 @@ export const actions: Actions = {
 			type: 'resource',
 			availableDate: undefined as undefined | string,
 			preorder: undefined as undefined | string,
-			shipping: undefined as undefined | string
+			shipping: undefined as undefined | string,
+			displayShortDescription: undefined as undefined | string
 		};
 
 		// eslint-disable-next-line no-async-promise-executor
@@ -75,7 +76,8 @@ export const actions: Actions = {
 				type: z.enum(['resource', 'donation', 'subscription']),
 				availableDate: z.date({ coerce: true }).optional(),
 				preorder: z.boolean({ coerce: true }).default(false),
-				shipping: z.boolean({ coerce: true }).default(false)
+				shipping: z.boolean({ coerce: true }).default(false),
+				displayShortDescription: z.boolean({ coerce: true }).default(false)
 			})
 			.parse(fields);
 
@@ -110,7 +112,8 @@ export const actions: Actions = {
 						type: parsed.type,
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
-						shipping: parsed.shipping
+						shipping: parsed.shipping,
+						displayShortDescription: parsed.displayShortDescription
 					},
 					{ session }
 				);

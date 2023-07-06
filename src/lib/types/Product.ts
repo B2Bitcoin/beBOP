@@ -14,6 +14,7 @@ export interface Product extends Timestamps {
 	shipping: boolean;
 	availableDate?: Date;
 	preorder: boolean;
+	displayShortDescription: boolean;
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
