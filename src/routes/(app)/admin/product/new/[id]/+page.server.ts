@@ -43,19 +43,19 @@ export const actions: Actions = {
 
 		const product = await collections.products.findOne({ _id: params.id });
 
-        const fields = {
-            name: formData.get('name'),
-            description: formData.get('description'),
-            shortDescription: formData.get('shortDescription'),
-            priceAmount: formData.get('priceAmount'),
-            priceCurrency: formData.get('priceCurrency'),
-            type: formData.get('type'),
-            preorder: formData.get('preorder'),
-            shipping: formData.get('shipping'),
-            availableDate: formData.get('availableDate') || undefined,
-            changedDate: formData.get('changedDate'),
-            displayShortDescription: formData.get('displayShortDescription')
-        };
+		const fields = {
+			name: formData.get('name'),
+			description: formData.get('description'),
+			shortDescription: formData.get('shortDescription'),
+			priceAmount: formData.get('priceAmount'),
+			priceCurrency: formData.get('priceCurrency'),
+			type: formData.get('type'),
+			preorder: formData.get('preorder'),
+			shipping: formData.get('shipping'),
+			availableDate: formData.get('availableDate') || undefined,
+			changedDate: formData.get('changedDate'),
+			displayShortDescription: formData.get('displayShortDescription')
+		};
 
 		if (!product) {
 			throw error(404, 'Product not found');
@@ -68,7 +68,7 @@ export const actions: Actions = {
 				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
 				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
 				priceCurrency: z.enum(['BTC']),
-                type: z.enum(['resource', 'donation', 'subscription']),
+				type: z.enum(['resource', 'donation', 'subscription']),
 				availableDate: z.date({ coerce: true }).optional(),
 				changedDate: z.boolean({ coerce: true }).default(false),
 				preorder: z.boolean({ coerce: true }).default(false),
@@ -81,7 +81,7 @@ export const actions: Actions = {
 				shortDescription: formData.get('shortDescription'),
 				priceAmount: formData.get('priceAmount'),
 				priceCurrency: formData.get('priceCurrency'),
-                type: formData.get('type'),
+				type: formData.get('type'),
 				preorder: formData.get('preorder'),
 				shipping: formData.get('shipping'),
 				availableDate: formData.get('availableDate') || undefined,
@@ -107,7 +107,7 @@ export const actions: Actions = {
 			parsed.shipping = false;
 		}
 
-        const productId = generateId(parsed.name, false);
+		const productId = generateId(parsed.name, false);
 
 		if (!productId) {
 			throw error(400, 'Could not generate product ID');
@@ -117,7 +117,7 @@ export const actions: Actions = {
 			throw error(409, 'Product with same slug already exists');
 		}
 
-        // eslint-disable-next-line no-async-promise-executor
+		// eslint-disable-next-line no-async-promise-executor
 		const buffer = await new Promise<Buffer>(async (resolve, reject) => {
 			try {
 				const bb = busboy({
@@ -167,7 +167,6 @@ export const actions: Actions = {
 			}
 		});
 
-
 		// This could be a change stream on collections.product, but for now a bit simpler
 		// to put it here.
 		// Later, if we have more notification types or more places where a product can be created,
@@ -192,5 +191,5 @@ export const actions: Actions = {
 		}
 
 		throw redirect(303, '/admin/product/' + productId);
-    }
+	}
 };
