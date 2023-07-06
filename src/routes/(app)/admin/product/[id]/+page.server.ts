@@ -62,7 +62,7 @@ export const actions: Actions = {
 				shipping: formData.get('shipping'),
 				availableDate: formData.get('availableDate') || undefined,
 				changedDate: formData.get('changedDate'),
-				displayShortDescription: formData.get('displayShortDescription'),
+				displayShortDescription: formData.get('displayShortDescription')
 			});
 
 		if (product.type !== 'resource') {
