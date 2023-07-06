@@ -16,7 +16,7 @@
 		</h3>
 		<span class="text-base font-light text-gray-550"
 			>Ends <time datetime={challenge.endsAt.toJSON()} title={challenge.endsAt.toLocaleString('en')}
-				>{format(challenge.endsAt, 'MMMM dd')}</time
+				>{format(challenge.endsAt, 'MMMM dd, Y')}</time
 			></span
 		>
 	</div>

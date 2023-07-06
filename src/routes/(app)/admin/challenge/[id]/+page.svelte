@@ -62,6 +62,7 @@
 			class="form-input"
 			type="number"
 			name="goalAmount"
+			min="0"
 			value={data.challenge.goal.amount}
 			placeholder={data.challenge.mode === 'moneyAmount' ? 'Amount (SAT)' : 'Quantity'}
 			required
