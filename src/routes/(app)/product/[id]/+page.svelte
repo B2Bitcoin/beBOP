@@ -107,9 +107,8 @@
 								currency: 'EUR',
 								minimumFractionDigits: 0
 							})} 🙂"
-							percentage={700 / 600}
 							goal={600}
-							score={422}
+							progress={422}
 						/>
 						<div class="flex justify-between mt-1 items-center">
 							<a href="/" class="text-link underline">How can I contribute?</a>
@@ -141,7 +140,7 @@
 				{#if 0}
 					<hr class="border-gray-300" />
 					<h3 class="text-gray-850 text-[22px]">50% off for 48h</h3>
-					<GoalProgress text="1h32min left" percentage={90} goal={600} score={444} />
+					<GoalProgress text="1h32min left" goal={600} progress={444} />
 					<hr class="border-gray-300" />
 					<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
 						<IconInfo class="text-[#E4C315]" />
