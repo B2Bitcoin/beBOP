@@ -1,12 +1,12 @@
 <script lang="ts">
 	export let text: string;
 	export let goal: number;
-	export let score: number;
+	export let progress: number;
 	let className = '';
 	export { className as class };
 
-	$: percentage = (score * 100) / goal;
-	$: newPercentage = (goal * 100) / score;
+	$: percentage = (progress * 100) / goal;
+	$: newPercentage = (goal * 100) / progress;
 </script>
 
 <div class="relative mt-6 pt-6 {className}">
