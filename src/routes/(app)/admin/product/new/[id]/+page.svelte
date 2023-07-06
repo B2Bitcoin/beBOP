@@ -41,10 +41,10 @@
 	}
 </script>
 
-<h1 class="text-3xl">Edit a product</h1>
+<h1 class="text-3xl">Add a product</h1>
 
 <div class="flex flex-col">
-	<form method="post" class="flex flex-col gap-4" action="?/update" on:submit={checkForm}>
+	<form method="post" class="flex flex-col gap-4" on:submit={checkForm}>
 		<label>
 			Name
 			<input
@@ -98,10 +98,12 @@
 			>
 		</label>
 
-		<label class="text-gray-450">
+		<label>
 			Type
-			<select class="form-input text-gray-450" disabled value={data.product.type}>
-				<option value={data.product.type}>{upperFirst(data.product.type)}</option>
+			<select class="form-input" value={data.product.type} name="type">
+				{#each ['resource', 'donation', 'subscription'] as type}
+					<option value={type}>{upperFirst(type)}</option>
+				{/each}
 			</select>
 		</label>
 
@@ -159,19 +161,7 @@
 			</label>
 		{/if}
 
-		<div class="flex justify-between gap-2">
-			<button type="submit" class="btn btn-blue">Update</button>
-			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
-			<a href="/admin/product/new/{data.product._id}" class="btn btn-gray">Duplicate</a>
-			<button
-				type="submit"
-				class="ml-auto btn btn-red"
-				formaction="?/delete"
-				on:click={confirmDelete}
-			>
-				Delete
-			</button>
-		</div>
+		<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
 	</form>
 </div>
 
