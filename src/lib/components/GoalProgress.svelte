@@ -10,9 +10,7 @@
 
 <div class="relative mt-6 pt-6 {className}">
 	<div
-		class="absolute inset-0 rounded-[3px] flex justify-end {percentage == 100
-			? 'bg-green-500'
-			: percentage > 100
+		class="absolute inset-0 rounded-[3px] flex justify-end {percentage > 100
 			? 'bg-jagger-900'
 			: 'bg-gradient-to-r from-red-500 to-green-500 via-yellow-500'}"
 	>
