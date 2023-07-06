@@ -30,6 +30,8 @@
 			  })
 			: Math.max(challenge.progress, 0)} 🙂"
 		percentage={(challenge.progress / challenge.goal.amount) * 100}
+		goal={challenge.goal.amount}
+		score={challenge.progress}
 	/>
 	<div class="flex justify-between mt-1 items-right">
 		<!-- <a href="/" class="text-link underline">How can I contribute?</a> -->
