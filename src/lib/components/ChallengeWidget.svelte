@@ -16,7 +16,7 @@
 		</h3>
 		<span class="text-base font-light text-gray-550"
 			>Ends <time datetime={challenge.endsAt.toJSON()} title={challenge.endsAt.toLocaleString('en')}
-				>{format(challenge.endsAt, 'MMMM dd')}</time
+				>{format(challenge.endsAt, 'MMMM dd, Y')}</time
 			></span
 		>
 	</div>
@@ -29,7 +29,8 @@
 					minimumFractionDigits: 0
 			  })
 			: Math.max(challenge.progress, 0)} 🙂"
-		percentage={(challenge.progress / challenge.goal.amount) * 100}
+		goal={challenge.goal.amount}
+		progress={challenge.progress}
 	/>
 	<div class="flex justify-between mt-1 items-right">
 		<!-- <a href="/" class="text-link underline">How can I contribute?</a> -->
