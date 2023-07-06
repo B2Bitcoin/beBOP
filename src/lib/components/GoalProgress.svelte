@@ -35,9 +35,7 @@
 			: ''}"
 		style="width: calc({Math.round(newPercentage)}%);"
 	>
-		{#if percentage <= 100}
-			<div data-text={text} style="background-position: {percentage}% 0%" />
-		{:else}
+		{#if percentage > 100}
 			<div
 				data-text={goal}
 				style="background-position: {percentage}% 0%"
