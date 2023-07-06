@@ -34,11 +34,6 @@
 			priceAmountElement.setCustomValidity('');
 		}
 	}
-	function confirmDelete(event: Event) {
-		if (!confirm('Would you like to delete this product?')) {
-			event.preventDefault();
-		}
-	}
 </script>
 
 <h1 class="text-3xl">Add a product</h1>
