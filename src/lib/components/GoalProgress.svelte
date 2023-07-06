@@ -19,7 +19,9 @@
 		<div
 			data-text={text}
 			style="background-position: {percentage}% 0%"
-			class="-mt-6 h-6 bg-[length:100px_50px] {percentage >= 100
+			class="-mt-6 h-6 bg-[length:100px_50px] {percentage == 100
+				? 'bg-green-500'
+				: percentage > 100
 				? 'bg-jagger-900'
 				: ' bg-gradient-to-r from-red-500 to-green-500 via-yellow-500'} w-[2px] relative before:content-[attr(data-text)] before:text-gray-800 before:absolute {percentage <
 			50
@@ -41,7 +43,7 @@
 			<div data-text={text} style="background-position: {percentage}% 0%" />
 		{:else}
 			<div
-				data-text={Math.round(newPercentage)}
+				data-text={goal}
 				style="background-position: {percentage}% 0%"
 				class="bg-[length:100px_50px] w-[2px] relative before:content-[attr(data-text)] before:text-white items-center before:absolute {percentage <
 				50
