@@ -49,7 +49,8 @@ export const actions: Actions = {
 				availableDate: z.date({ coerce: true }).optional(),
 				changedDate: z.boolean({ coerce: true }).default(false),
 				preorder: z.boolean({ coerce: true }).default(false),
-				shipping: z.boolean({ coerce: true }).default(false)
+				shipping: z.boolean({ coerce: true }).default(false),
+				displayShortDescription: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				name: formData.get('name'),
@@ -60,7 +61,8 @@ export const actions: Actions = {
 				preorder: formData.get('preorder'),
 				shipping: formData.get('shipping'),
 				availableDate: formData.get('availableDate') || undefined,
-				changedDate: formData.get('changedDate')
+				changedDate: formData.get('changedDate'),
+				displayShortDescription: formData.get('displayShortDescription')
 			});
 
 		if (product.type !== 'resource') {
@@ -97,6 +99,7 @@ export const actions: Actions = {
 					...(update.changedDate &&
 						update.availableDate && { availableDate: update.availableDate }),
 					shipping: update.shipping,
+					displayShortDescription: update.displayShortDescription,
 					preorder: update.preorder,
 					updatedAt: new Date()
 				},

@@ -81,6 +81,16 @@
 			>
 		</label>
 
+		<label class="flex gap-2 items-center cursor-pointer">
+			<input
+				class="form-checkbox rounded-sm cursor-pointer"
+				type="checkbox"
+				name="displayShortDescription"
+				value={data.product.displayShortDescription}
+			/>
+			Display the short description on product page
+		</label>
+
 		<label>
 			Description
 			<textarea name="description" cols="30" rows="10" maxlength="10000" class="block form-input"
