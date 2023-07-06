@@ -29,7 +29,6 @@
 					minimumFractionDigits: 0
 			  })
 			: Math.max(challenge.progress, 0)} 🙂"
-		percentage={(challenge.progress / challenge.goal.amount) * 100}
 		goal={challenge.goal.amount}
 		score={challenge.progress}
 	/>
