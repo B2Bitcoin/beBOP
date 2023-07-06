@@ -30,7 +30,8 @@ const defaultConfig = {
 	],
 
 	checkoutButtonOnProductPage: true,
-	discovery: true
+	discovery: true,
+	orderNotificationsResumeToken: null as unknown
 };
 
 export type RuntimeConfig = typeof defaultConfig;
@@ -47,10 +48,14 @@ process.on('SIGINT', () => {
 	changeStream?.close().catch(console.error);
 });
 
-async function refresh(): Promise<void> {
-	const configs = await collections.runtimeConfig.find().toArray();
+async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<void> {
+	if (item && !('documentKey' in item)) {
+		return;
+	}
 
-	for (const config of configs) {
+	const configs = collections.runtimeConfig.find(item ? { _id: item.documentKey._id } : {});
+
+	for await (const config of configs) {
 		if (config._id in defaultConfig) {
 			Object.assign(runtimeConfig, { [config._id]: config.data });
 		}
