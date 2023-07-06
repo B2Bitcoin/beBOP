@@ -23,6 +23,7 @@ import {
 } from 'nostr-tools';
 
 const lock = nostrPrivateKeyHex ? new Lock('notifications.nostr') : null;
+const processingIds = new Set<string>();
 
 let relayPool: RelayPool | null = null;
 
@@ -44,7 +45,18 @@ async function maintainLock() {
 }
 
 if (nostrPrivateKeyHex) {
-	// todo: resume changestream on restart if possible
+	if (lock) {
+		lock.onAcquire = async () => {
+			const unprocessedNotifications = collections.nostrNotifications.find({
+				processedAt: { $exists: false }
+			});
+
+			for await (const notification of unprocessedNotifications) {
+				await handleNostrNotification(notification);
+			}
+		};
+	}
+
 	collections.nostrNotifications
 		.watch([{ $match: { operationType: 'insert' } }], {
 			fullDocument: 'updateLookup'
@@ -122,69 +134,95 @@ async function handleChanges(change: ChangeStreamDocument<NostRNotification>): P
 		return;
 	}
 
-	if (fullDocument.processedAt) {
+	await handleNostrNotification(fullDocument);
+}
+
+async function handleNostrNotification(nostrNotification: NostRNotification): Promise<void> {
+	if (nostrNotification.processedAt || processingIds.has(nostrNotification._id.toHexString())) {
 		return;
 	}
 
-	const event = await (async () => {
-		const content = fullDocument.content;
+	try {
+		processingIds.add(nostrNotification._id.toHexString());
 
-		if (fullDocument.kind === Kind.Metadata) {
-			return {
-				id: '',
-				content,
-				created_at: getUnixTime(
-					max([fullDocument.minCreatedAt ?? fullDocument.createdAt, fullDocument.createdAt])
-				),
-				pubkey: nostrPublicKeyHex,
-				tags: [],
-				kind: Kind.Metadata,
-				sig: ''
-			} satisfies Event;
+		const updatedNotification = await collections.nostrNotifications.findOne({
+			_id: nostrNotification._id
+		});
+
+		if (!updatedNotification || updatedNotification.processedAt) {
+			return;
 		}
 
-		if (fullDocument.kind === Kind.EncryptedDirectMessage) {
-			const npub = fullDocument.dest;
+		nostrNotification = updatedNotification;
 
-			if (!npub) {
-				return;
+		const event = await (async () => {
+			const content = nostrNotification.content;
+
+			if (nostrNotification.kind === Kind.Metadata) {
+				return {
+					id: '',
+					content,
+					created_at: getUnixTime(
+						max([
+							nostrNotification.minCreatedAt ?? nostrNotification.createdAt,
+							nostrNotification.createdAt
+						])
+					),
+					pubkey: nostrPublicKeyHex,
+					tags: [],
+					kind: Kind.Metadata,
+					sig: ''
+				} satisfies Event;
 			}
 
-			const receiverPublicKeyHex = nostrToHex(npub);
+			if (nostrNotification.kind === Kind.EncryptedDirectMessage) {
+				const npub = nostrNotification.dest;
 
-			return {
-				id: '',
-				content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
-				created_at: getUnixTime(
-					max([fullDocument.minCreatedAt ?? fullDocument.createdAt, fullDocument.createdAt])
-				),
-				pubkey: nostrPublicKeyHex,
-				tags: [['p', receiverPublicKeyHex]],
-				kind: Kind.EncryptedDirectMessage,
-				sig: ''
-			} satisfies Event;
+				if (!npub) {
+					return;
+				}
+
+				const receiverPublicKeyHex = nostrToHex(npub);
+
+				return {
+					id: '',
+					content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
+					created_at: getUnixTime(
+						max([
+							nostrNotification.minCreatedAt ?? nostrNotification.createdAt,
+							nostrNotification.createdAt
+						])
+					),
+					pubkey: nostrPublicKeyHex,
+					tags: [['p', receiverPublicKeyHex]],
+					kind: Kind.EncryptedDirectMessage,
+					sig: ''
+				} satisfies Event;
+			}
+		})();
+
+		if (!event) {
+			return;
 		}
-	})();
 
-	if (!event) {
-		return;
+		event.id = getEventHash(event);
+		event.sig = getSignature(event, nostrPrivateKeyHex);
+
+		initRelayPool();
+		relayPool?.publish(event, nostrRelays);
+
+		await collections.nostrNotifications.updateOne(
+			{ _id: nostrNotification._id },
+			{
+				$set: {
+					processedAt: new Date(),
+					updatedAt: new Date()
+				}
+			}
+		);
+	} finally {
+		processingIds.delete(nostrNotification._id.toHexString());
 	}
-
-	event.id = getEventHash(event);
-	event.sig = getSignature(event, nostrPrivateKeyHex);
-
-	initRelayPool();
-	relayPool?.publish(event, nostrRelays);
-
-	await collections.nostrNotifications.updateOne(
-		{ _id: fullDocument._id },
-		{
-			$set: {
-				processedAt: new Date(),
-				updatedAt: new Date()
-			}
-		}
-	);
 }
 
 maintainLock().catch(console.error);

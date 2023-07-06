@@ -10,6 +10,8 @@ export class Lock {
 	id: string;
 	ownsLock = false;
 
+	onAcquire?: () => void;
+
 	constructor(id: string) {
 		this.id = id;
 
@@ -36,6 +38,9 @@ export class Lock {
 
 					await collections.locks.insertOne(lock);
 					this.ownsLock = true;
+					try {
+						this.onAcquire?.();
+					} catch {}
 				} else {
 					const res = await collections.locks.updateOne(
 						{
@@ -48,7 +53,14 @@ export class Lock {
 							}
 						}
 					);
+					const ownedLock = this.ownsLock;
 					this.ownsLock = res.matchedCount > 0;
+
+					if (!ownedLock && this.ownsLock) {
+						try {
+							this.onAcquire?.();
+						} catch {}
+					}
 				}
 			} catch {
 				this.ownsLock = false;
@@ -58,6 +70,7 @@ export class Lock {
 		}
 
 		this.ownsLock = false;
+		this.onAcquire = undefined;
 
 		collections.locks
 			.deleteMany({

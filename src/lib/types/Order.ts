@@ -3,6 +3,8 @@ import type { Currency } from './Currency';
 import type { CountryAlpha3 } from './Country';
 import type { Timestamps } from './Timestamps';
 
+export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
+
 export interface Order extends Timestamps {
 	/**
 	 * A string - a crypto UUID. Anyone having access to the _id can access the order.
@@ -34,7 +36,7 @@ export interface Order extends Timestamps {
 
 	payment: {
 		method: 'bitcoin' | 'lightning' | 'cash';
-		status: 'pending' | 'paid' | 'expired' | 'canceled';
+		status: OrderPaymentStatus;
 		expiresAt: Date;
 		/** Bitcoin / LN address */
 		address?: string;
@@ -54,4 +56,6 @@ export interface Order extends Timestamps {
 			email?: string;
 		};
 	};
+
+	lastPaymentStatusNotified?: OrderPaymentStatus;
 }

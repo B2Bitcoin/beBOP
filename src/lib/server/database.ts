@@ -93,8 +93,11 @@ client.on('open', () => {
 	orders.createIndex({ number: 1 }, { unique: true }).catch(console.error);
 	digitalFiles.createIndex({ productId: 1 }).catch(console.error);
 	nostrReceivedMessages.createIndex({ createdAt: -1 }).catch(console.error);
+	nostrReceivedMessages.createIndex({ processedAt: 1 }).catch(console.error);
 	nostrNotifications.createIndex({ dest: 1 }).catch(console.error);
+	nostrNotifications.createIndex({ processedAt: 1 }).catch(console.error);
 	emailNotifications.createIndex({ dest: 1 }).catch(console.error);
+	emailNotifications.createIndex({ processedAt: 1 }).catch(console.error);
 	bootikSubscriptions.createIndex({ npub: 1 }, { sparse: true }).catch(console.error);
 	paidSubscriptions
 		.createIndex(

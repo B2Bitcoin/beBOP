@@ -14,7 +14,8 @@ import { createOrder } from '../orders';
 
 const lock = new Lock('received-messages');
 
-// todo: resume changestream on restart if possible
+const processingIds = new Set<string>();
+
 collections.nostrReceivedMessages
 	.watch([{ $match: { operationType: 'insert' } }], {
 		fullDocument: 'updateLookup'
@@ -26,27 +27,52 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 		return;
 	}
 
-	if (change.fullDocument.processedAt) {
+	await handleReceivedMessage(change.fullDocument);
+}
+
+lock.onAcquire = async () => {
+	const unprocessedMessages = collections.nostrReceivedMessages.find({
+		processedAt: { $exists: false }
+	});
+
+	for await (const message of unprocessedMessages) {
+		await handleReceivedMessage(message).catch(console.error);
+	}
+};
+
+async function handleReceivedMessage(message: NostRReceivedMessage): Promise<void> {
+	if (message.processedAt || processingIds.has(message._id)) {
 		return;
 	}
 
-	const content = change.fullDocument.content;
-	const senderNpub = change.fullDocument.source;
-	const minCreatedAt = addSeconds(change.fullDocument.createdAt, 1);
+	processingIds.add(message._id);
 
-	const isCustomer =
-		(await collections.nostrNotifications.countDocuments({ dest: senderNpub }, { limit: 1 })) > 0;
-	const isPrivateMessage = change.fullDocument.kind === Kind.EncryptedDirectMessage;
+	try {
+		const updatedMessage = await collections.nostrReceivedMessages.findOne({ _id: message._id });
 
-	const send = (message: string) => sendMessage(senderNpub, message, minCreatedAt);
+		if (!updatedMessage || updatedMessage.processedAt) {
+			return;
+		}
 
-	const toMatch = content.trim().replaceAll(/\s+/g, ' ');
-	const toMatchLower = toMatch.toLowerCase();
+		message = updatedMessage;
 
-	switch (toMatchLower) {
-		case 'help':
-			await send(
-				`Commands:
+		const content = message.content;
+		const senderNpub = message.source;
+		const minCreatedAt = addSeconds(message.createdAt, 1);
+
+		const isCustomer =
+			(await collections.nostrNotifications.countDocuments({ dest: senderNpub }, { limit: 1 })) > 0;
+		const isPrivateMessage = message.kind === Kind.EncryptedDirectMessage;
+
+		const send = (message: string) => sendMessage(senderNpub, message, minCreatedAt);
+
+		const toMatch = content.trim().replaceAll(/\s+/g, ' ');
+		const toMatchLower = toMatch.toLowerCase();
+
+		switch (toMatchLower) {
+			case 'help':
+				await send(
+					`Commands:
 
 - cart: Show the content of your cart
 - add [product ref] [quantity]: Add a product to your cart. Quantity defaults to 1. Type "catalog" to see the list of products.
@@ -59,348 +85,355 @@ async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>)
 - unsubscribe: Unsubscribe from catalog updates
 - subscriptions: Show the list of paid subscriptions associated to your npub
 - cancel [subscription number]: Cancel a paid subscription to not be reminded anymore`
-			);
-			break;
-		case 'orders': {
-			const orders = await collections.orders
-				.find({ 'notifications.paymentStatus.npub': senderNpub })
-				.sort({ createdAt: -1 })
-				.limit(100)
-				.toArray();
-
-			if (orders.length) {
-				await send(
-					orders.map((order) => `- #${order.number}: ${ORIGIN}/order/${order._id}`).join('\n')
 				);
-			} else {
-				await send('No orders found for your npub');
-			}
-
-			break;
-		}
-		case 'cart': {
-			const cart = await collections.carts.findOne({ npub: senderNpub });
-
-			if (!cart || !cart.items.length) {
-				await send('Your cart is empty');
-			} else {
-				const products = await collections.products
-					.find({ _id: { $in: cart.items.map((item) => item.productId) } })
+				break;
+			case 'orders': {
+				const orders = await collections.orders
+					.find({ 'notifications.paymentStatus.npub': senderNpub })
+					.sort({ createdAt: -1 })
+					.limit(100)
 					.toArray();
-				const productById = Object.fromEntries(products.map((product) => [product._id, product]));
 
-				let totalPrice = 0;
-				const items = cart.items
-					.filter((item) => productById[item.productId])
-					.map((item) => {
-						const product = productById[item.productId];
-						const price = toSatoshis(
-							product.price.amount * item.quantity,
-							product.price.currency,
-							runtimeConfig.BTC_EUR
-						);
-						totalPrice += price;
-						return `- ref: "${product._id}" / ${price.toLocaleString('en-US')} SAT / Quantity: ${
-							item.quantity
-						}`;
-					});
-				await send(
-					items.join('\n') +
-						`\n\nTotal: ${totalPrice.toLocaleString('en-US')} SAT. Type "checkout" to pay.`
-				);
-			}
-
-			break;
-		}
-		case 'checkout': {
-			await send(
-				'Type "checkout bitcoin" or "checkout lightning" to pay with bitcoin or lightning'
-			);
-			break;
-		}
-		case 'detailed catalog':
-		case 'catalog': {
-			if (!runtimeConfig.discovery) {
-				await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
-			} else {
-				const products = await collections.products.find({}).toArray();
-
-				if (!products.length) {
-					await sendMessage(senderNpub, 'Catalog is empty', minCreatedAt);
-				} else {
-					// todo: proper price dependinc on currency
+				if (orders.length) {
 					await send(
-						products
+						orders.map((order) => `- #${order.number}: ${ORIGIN}/order/${order._id}`).join('\n')
+					);
+				} else {
+					await send('No orders found for your npub');
+				}
+
+				break;
+			}
+			case 'cart': {
+				const cart = await collections.carts.findOne({ npub: senderNpub });
+
+				if (!cart || !cart.items.length) {
+					await send('Your cart is empty');
+				} else {
+					const products = await collections.products
+						.find({ _id: { $in: cart.items.map((item) => item.productId) } })
+						.toArray();
+					const productById = Object.fromEntries(products.map((product) => [product._id, product]));
+
+					let totalPrice = 0;
+					const items = cart.items
+						.filter((item) => productById[item.productId])
+						.map((item) => {
+							const product = productById[item.productId];
+							const price = toSatoshis(
+								product.price.amount * item.quantity,
+								product.price.currency,
+								runtimeConfig.BTC_EUR
+							);
+							totalPrice += price;
+							return `- ref: "${product._id}" / ${price.toLocaleString('en-US')} SAT / Quantity: ${
+								item.quantity
+							}`;
+						});
+					await send(
+						items.join('\n') +
+							`\n\nTotal: ${totalPrice.toLocaleString('en-US')} SAT. Type "checkout" to pay.`
+					);
+				}
+
+				break;
+			}
+			case 'checkout': {
+				await send(
+					'Type "checkout bitcoin" or "checkout lightning" to pay with bitcoin or lightning'
+				);
+				break;
+			}
+			case 'detailed catalog':
+			case 'catalog': {
+				if (!runtimeConfig.discovery) {
+					await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
+				} else {
+					const products = await collections.products.find({}).toArray();
+
+					if (!products.length) {
+						await sendMessage(senderNpub, 'Catalog is empty', minCreatedAt);
+					} else {
+						// todo: proper price dependinc on currency
+						await send(
+							products
+								.map(
+									(product) =>
+										`- ${product.name} [ref: "${product._id}"] / ${toSatoshis(
+											product.price.amount,
+											product.price.currency,
+											runtimeConfig.BTC_EUR
+										).toLocaleString('en-US')} SAT / ${ORIGIN}/product/${product._id}${
+											content === 'detailed catalog'
+												? ` / ${product.shortDescription.replaceAll(/\s+/g, ' ')}`
+												: ''
+										}`
+								)
+								.join('\n')
+						);
+					}
+				}
+				break;
+			}
+			case 'subscribe':
+				if (!runtimeConfig.discovery) {
+					await send('Discovery is not enabled for the bootik, you cannot subscribe');
+				} else {
+					await collections.bootikSubscriptions.updateOne(
+						{ npub: senderNpub },
+						{
+							$set: {
+								updatedAt: new Date()
+							},
+							$setOnInsert: {
+								createdAt: new Date()
+							}
+						},
+						{ upsert: true }
+					);
+					await send(
+						'You are subscribed to the catalog, you will receive messages when new products are added'
+					);
+				}
+				break;
+			case 'unsubscribe': {
+				const result = await collections.bootikSubscriptions.deleteOne({ npub: senderNpub });
+
+				if (result.deletedCount) {
+					await send('You were unsubscribed from the catalog');
+				} else {
+					await send('You were already unsubscribed from the catalog');
+				}
+				break;
+			}
+			case 'subscriptions': {
+				const subscriptions = await collections.paidSubscriptions
+					.find({ npub: senderNpub, paidUntil: { $gt: new Date() } })
+					.sort({ number: 1 })
+					.toArray();
+
+				if (!subscriptions.length) {
+					await send('No active subscriptions found for your npub');
+				} else {
+					await send(
+						subscriptions
 							.map(
-								(product) =>
-									`- ${product.name} [ref: "${product._id}"] / ${toSatoshis(
-										product.price.amount,
-										product.price.currency,
-										runtimeConfig.BTC_EUR
-									).toLocaleString('en-US')} SAT / ${ORIGIN}/product/${product._id}${
-										content === 'detailed catalog'
-											? ` / ${product.shortDescription.replaceAll(/\s+/g, ' ')}`
-											: ''
-									}`
+								(subscription) =>
+									`- #${subscription.number}: ${ORIGIN}/subscription/${
+										subscription._id
+									}, end: ${formatDistance(subscription.paidUntil, new Date(), {
+										addSuffix: true
+									})}${subscription.cancelledAt ? ' [cancelled]' : ''}`
 							)
 							.join('\n')
 					);
 				}
-			}
-			break;
-		}
-		case 'subscribe':
-			if (!runtimeConfig.discovery) {
-				await send('Discovery is not enabled for the bootik, you cannot subscribe');
-			} else {
-				await collections.bootikSubscriptions.updateOne(
-					{ npub: senderNpub },
-					{
-						$set: {
-							updatedAt: new Date()
-						},
-						$setOnInsert: {
-							createdAt: new Date()
-						}
-					},
-					{ upsert: true }
-				);
-				await send(
-					'You are subscribed to the catalog, you will receive messages when new products are added'
-				);
-			}
-			break;
-		case 'unsubscribe': {
-			const result = await collections.bootikSubscriptions.deleteOne({ npub: senderNpub });
 
-			if (result.deletedCount) {
-				await send('You were unsubscribed from the catalog');
-			} else {
-				await send('You were already unsubscribed from the catalog');
-			}
-			break;
-		}
-		case 'subscriptions': {
-			const subscriptions = await collections.paidSubscriptions
-				.find({ npub: senderNpub, paidUntil: { $gt: new Date() } })
-				.sort({ number: 1 })
-				.toArray();
-
-			if (!subscriptions.length) {
-				await send('No active subscriptions found for your npub');
-			} else {
-				await send(
-					subscriptions
-						.map(
-							(subscription) =>
-								`- #${subscription.number}: ${ORIGIN}/subscription/${
-									subscription._id
-								}, end: ${formatDistance(subscription.paidUntil, new Date(), { addSuffix: true })}${
-									subscription.cancelledAt ? ' [cancelled]' : ''
-								}`
-						)
-						.join('\n')
-				);
-			}
-
-			break;
-		}
-		default:
-			if (toMatchLower.startsWith('cancel ')) {
-				const number = parseInt(toMatch.slice('cancel '.length), 10);
-
-				if (isNaN(number)) {
-					await send('Invalid subscription number: ' + toMatch.slice('cancel '.length));
-					break;
-				}
-
-				const subscription = await collections.paidSubscriptions.findOne({
-					npub: senderNpub,
-					number
-				});
-
-				if (!subscription) {
-					await send('No subscription found with number ' + number + ' for your npub');
-					break;
-				}
-
-				if (subscription.cancelledAt) {
-					await send('Subscription #' + number + ' was already cancelled');
-					break;
-				}
-
-				await collections.paidSubscriptions.updateOne(
-					{ _id: subscription._id },
-					{ $set: { cancelledAt: new Date() } }
-				);
-
-				await send('Subscription #' + number + ' was cancelled, you will not be reminded anymore');
 				break;
-			} else if (toMatchLower.startsWith('add ')) {
-				const data = toMatch.slice('add '.length).split(' ');
+			}
+			default:
+				if (toMatchLower.startsWith('cancel ')) {
+					const number = parseInt(toMatch.slice('cancel '.length), 10);
 
-				const ref = data[0];
-				const quantity = parseInt(data[1] || '1');
+					if (isNaN(number)) {
+						await send('Invalid subscription number: ' + toMatch.slice('cancel '.length));
+						break;
+					}
 
-				if (isNaN(quantity) || quantity <= 0) {
-					await send('Invalid quantity: ' + data[1]);
-					break;
-				}
+					const subscription = await collections.paidSubscriptions.findOne({
+						npub: senderNpub,
+						number
+					});
 
-				const product = await collections.products.findOne({ _id: ref });
+					if (!subscription) {
+						await send('No subscription found with number ' + number + ' for your npub');
+						break;
+					}
 
-				if (!product) {
-					const products = await collections.products
-						.find({})
-						.project<Pick<Product, '_id'>>({ _id: 1 })
-						.toArray();
+					if (subscription.cancelledAt) {
+						await send('Subscription #' + number + ' was already cancelled');
+						break;
+					}
+
+					await collections.paidSubscriptions.updateOne(
+						{ _id: subscription._id },
+						{ $set: { cancelledAt: new Date() } }
+					);
+
 					await send(
-						`No product found with ref "${ref}". Use "catalog" to get the list of products. Available refs: ${products
-							.map((p) => p._id)
-							.join(', ')}`
+						'Subscription #' + number + ' was cancelled, you will not be reminded anymore'
 					);
 					break;
-				}
+				} else if (toMatchLower.startsWith('add ')) {
+					const data = toMatch.slice('add '.length).split(' ');
 
-				const cart = await addToCartInDb(product, quantity, { npub: senderNpub }).catch(
-					async (e) => {
+					const ref = data[0];
+					const quantity = parseInt(data[1] || '1');
+
+					if (isNaN(quantity) || quantity <= 0) {
+						await send('Invalid quantity: ' + data[1]);
+						break;
+					}
+
+					const product = await collections.products.findOne({ _id: ref });
+
+					if (!product) {
+						const products = await collections.products
+							.find({})
+							.project<Pick<Product, '_id'>>({ _id: 1 })
+							.toArray();
+						await send(
+							`No product found with ref "${ref}". Use "catalog" to get the list of products. Available refs: ${products
+								.map((p) => p._id)
+								.join(', ')}`
+						);
+						break;
+					}
+
+					const cart = await addToCartInDb(product, quantity, { npub: senderNpub }).catch(
+						async (e) => {
+							console.error(e);
+							await send(e.message);
+							return null;
+						}
+					);
+
+					if (!cart) {
+						break;
+					}
+
+					const item = cart.value?.items.find((item) => item.productId === product._id);
+
+					if (!item) {
+						break;
+					}
+
+					await send(
+						`"${product.name}" added to cart for a total quantity of ${
+							item.quantity
+						} and price of ${toSatoshis(
+							product.price.amount * item.quantity,
+							product.price.currency,
+							runtimeConfig.BTC_EUR
+						).toLocaleString('en-US')} SAT`
+					);
+					break;
+				} else if (toMatch.startsWith('remove ')) {
+					const data = toMatch.slice('remove '.length).trim().split(' ');
+
+					const ref = data[0];
+					const quantity = data[1] ? parseInt(data[1]) : 0;
+					const totalQuantity = data[1] ? false : true;
+
+					if (isNaN(quantity) || quantity < 0) {
+						await send('Invalid quantity: ' + data[1]);
+						break;
+					}
+
+					const product = await collections.products.findOne({ _id: ref });
+
+					if (!product) {
+						await send(
+							'No product found with ref: ' + ref + '. Use "catalog" to get the list of products'
+						);
+						break;
+					}
+
+					const cart = await removeFromCartInDb(product._id, quantity, {
+						npub: senderNpub,
+						totalQuantity
+					}).catch(async (e) => {
 						console.error(e);
 						await send(e.message);
 						return null;
+					});
+
+					if (!cart) {
+						break;
 					}
-				);
 
-				if (!cart) {
-					break;
-				}
+					const item = cart.items.find((item) => item.productId === product._id);
 
-				const item = cart.value?.items.find((item) => item.productId === product._id);
+					if (!item) {
+						await send(`"${product.name}" removed from cart`);
+						break;
+					}
 
-				if (!item) {
-					break;
-				}
-
-				await send(
-					`"${product.name}" added to cart for a total quantity of ${
-						item.quantity
-					} and price of ${toSatoshis(
-						product.price.amount * item.quantity,
-						product.price.currency,
-						runtimeConfig.BTC_EUR
-					).toLocaleString('en-US')} SAT`
-				);
-				break;
-			} else if (toMatch.startsWith('remove ')) {
-				const data = toMatch.slice('remove '.length).trim().split(' ');
-
-				const ref = data[0];
-				const quantity = data[1] ? parseInt(data[1]) : 0;
-				const totalQuantity = data[1] ? false : true;
-
-				if (isNaN(quantity) || quantity < 0) {
-					await send('Invalid quantity: ' + data[1]);
-					break;
-				}
-
-				const product = await collections.products.findOne({ _id: ref });
-
-				if (!product) {
 					await send(
-						'No product found with ref: ' + ref + '. Use "catalog" to get the list of products'
+						`"${product.name}" remaining in your cart for a total quantity of ${
+							item.quantity
+						} and price of ${toSatoshis(
+							item.quantity * product.price.amount,
+							product.price.currency,
+							runtimeConfig.BTC_EUR
+						).toLocaleString('en-US')} SAT`
 					);
 					break;
-				}
+				} else if (toMatchLower.startsWith('checkout ')) {
+					const paymentMethod = toMatchLower.slice('checkout '.length);
 
-				const cart = await removeFromCartInDb(product._id, quantity, {
-					npub: senderNpub,
-					totalQuantity
-				}).catch(async (e) => {
-					console.error(e);
-					await send(e.message);
-					return null;
-				});
+					if (!typedInclude(['bitcoin', 'lightning'], paymentMethod)) {
+						await send(
+							'Invalid payment method: ' + paymentMethod + ', use "bitcoin" or "lightning"'
+						);
+						break;
+					}
 
-				if (!cart) {
+					const cart = await collections.carts.findOne({ npub: senderNpub });
+
+					if (!cart) {
+						await send("Your cart is empty, you can't checkout an empty cart");
+						break;
+					}
+
+					const products = await collections.products
+						.find({ _id: { $in: cart.items.map((i) => i.productId) } })
+						.toArray();
+
+					if (products.some((product) => product.shipping)) {
+						await send(
+							'Some products in your cart require shipping, this is not yet supported by the bot. Please remove them from your cart or use the website to checkout'
+						);
+						break;
+					}
+
+					const productById = Object.fromEntries(products.map((p) => [p._id, p]));
+
+					const items = cart.items
+						.filter((i) => productById[i.productId])
+						.map((i) => ({
+							quantity: i.quantity,
+							product: productById[i.productId]
+						}));
+
+					await createOrder(items, paymentMethod, {
+						notifications: {
+							paymentStatus: {
+								npub: senderNpub
+							}
+						},
+						shippingAddress: null,
+						cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
+					}).catch(async (e) => {
+						console.error(e);
+						await send(e.message);
+					});
+
 					break;
 				}
-
-				const item = cart.items.find((item) => item.productId === product._id);
-
-				if (!item) {
-					await send(`"${product.name}" removed from cart`);
-					break;
-				}
-
 				await send(
-					`"${product.name}" remaining in your cart for a total quantity of ${
-						item.quantity
-					} and price of ${toSatoshis(
-						item.quantity * product.price.amount,
-						product.price.currency,
-						runtimeConfig.BTC_EUR
-					).toLocaleString('en-US')} SAT`
+					`Hello ${
+						!isPrivateMessage ? 'world' : isCustomer ? 'customer' : 'you'
+					}! To get the list of commands, say 'help'.`
 				);
-				break;
-			} else if (toMatchLower.startsWith('checkout ')) {
-				const paymentMethod = toMatchLower.slice('checkout '.length);
-
-				if (!typedInclude(['bitcoin', 'lightning'], paymentMethod)) {
-					await send('Invalid payment method: ' + paymentMethod + ', use "bitcoin" or "lightning"');
-					break;
-				}
-
-				const cart = await collections.carts.findOne({ npub: senderNpub });
-
-				if (!cart) {
-					await send("Your cart is empty, you can't checkout an empty cart");
-					break;
-				}
-
-				const products = await collections.products
-					.find({ _id: { $in: cart.items.map((i) => i.productId) } })
-					.toArray();
-
-				if (products.some((product) => product.shipping)) {
-					await send(
-						'Some products in your cart require shipping, this is not yet supported by the bot. Please remove them from your cart or use the website to checkout'
-					);
-					break;
-				}
-
-				const productById = Object.fromEntries(products.map((p) => [p._id, p]));
-
-				const items = cart.items
-					.filter((i) => productById[i.productId])
-					.map((i) => ({
-						quantity: i.quantity,
-						product: productById[i.productId]
-					}));
-
-				await createOrder(items, paymentMethod, {
-					notifications: {
-						paymentStatus: {
-							npub: senderNpub
-						}
-					},
-					shippingAddress: null,
-					cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
-				}).catch(async (e) => {
-					console.error(e);
-					await send(e.message);
-				});
-
-				break;
-			}
-			await send(
-				`Hello ${
-					!isPrivateMessage ? 'world' : isCustomer ? 'customer' : 'you'
-				}! To get the list of commands, say 'help'.`
-			);
+		}
+		await collections.nostrReceivedMessages.updateOne(
+			{ _id: message._id },
+			{ $set: { processedAt: new Date(), updatedAt: new Date() } }
+		);
+	} finally {
+		processingIds.delete(message._id);
 	}
-	await collections.nostrReceivedMessages.updateOne(
-		{ _id: change.fullDocument._id },
-		{ $set: { processedAt: new Date(), updatedAt: new Date() } }
-	);
 }
 
 async function sendMessage(dest: string, content: string, minCreatedAt: Date) {
