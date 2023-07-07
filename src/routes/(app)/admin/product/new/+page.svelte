@@ -11,10 +11,11 @@
 	export let data;
 	let product = data.product;
 
-	let type = product ? product.type : 'resource';
-	let priceAmount = product ? product.price.amount : 0;
-	let availableDate = product ? product.availableDate : '';
-	let displayShortDescription = product ? product.displayShortDescription : false;
+	let type = product?.type ?? 'resource';
+	let priceAmount = product?.price.amount ?? 0;
+	let availableDate = product?.availableDate ?? '';
+	// let availableDate = product ? product.availableDate : '';
+	let displayShortDescription = product?.displayShortDescription ?? false;
 
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
@@ -49,7 +50,7 @@
 			maxlength={MAX_NAME_LIMIT}
 			name="name"
 			placeholder="Product name"
-			value={product ? product.name : ''}
+			value={product?.name ?? ''}
 			required
 		/>
 	</label>
@@ -78,7 +79,7 @@
 			cols="30"
 			rows="2"
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
-			value={product ? product.shortDescription : ''}
+			value={product?.shortDescription ?? ''}
 			class="form-input block w-full"
 		/>
 	</label>
@@ -100,14 +101,14 @@
 			cols="30"
 			rows="10"
 			maxlength="10000"
-			value={product ? product.description : ''}
+			value={product?.description ?? ''}
 			class="form-input block w-full"
 		/>
 	</label>
 
 	<label class={product ? 'text-gray-450' : ''}>
 		Type
-		<select class="form-input" bind:value={type} disabled={product} name="type">
+		<select class="form-input" bind:value={type} disabled={!!product} name="type">
 			{#each ['resource', 'donation', 'subscription'] as type}
 				<option value={type}>{upperFirst(type)}</option>
 			{/each}
@@ -166,34 +167,37 @@
 		</label>
 	{/if}
 
-	<label hidden={product}>
-		Picture
-		<input
-			type="file"
-			name="picture"
-			accept="image/jpeg,image/png,image/webp"
-			class="block"
-			required
-		/>
-	</label>
+	{#if !product}
+		<label>
+			Picture
+			<input
+				type="file"
+				name="picture"
+				accept="image/jpeg,image/png,image/webp"
+				class="block"
+				required
+			/>
+		</label>
+	{/if}
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
 </form>
+{#if data.pictures?.length}
+	<h2 class="text-2xl my-4">Photos</h2>
 
-<h2 class="text-2xl my-4">Photos</h2>
+	<div class="flex flex-row flex-wrap gap-6 mt-6">
+		{#each data.pictures as picture}
+			<div class="flex flex-col text-center">
+				<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
+					<PictureComponent {picture} class="h-36 block" style="object-fit: scale-down;" />
+					<span>{picture.name}</span>
+				</a>
+			</div>
+		{/each}
+	</div>
+{/if}
 
-<div class="flex flex-row flex-wrap gap-6 mt-6">
-	{#each data.pictures as picture}
-		<div class="flex flex-col text-center">
-			<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
-				<PictureComponent {picture} class="h-36 block" style="object-fit: scale-down;" />
-				<span>{picture.name}</span>
-			</a>
-		</div>
-	{/each}
-</div>
-
-{#if product.type !== 'donation'}
+{#if data.digitalFiles?.length}
 	<h2 class="text-2xl my-4">Digital Files</h2>
 
 	<div class="flex flex-row flex-wrap gap-6 mt-6">

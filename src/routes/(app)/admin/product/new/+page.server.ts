@@ -15,23 +15,29 @@ import { Kind } from 'nostr-tools';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
-	const product = await collections.products.findOne({ _id: productId });
+	let product;
+	let pictures;
+	let digitalFiles;
 
-	const pictures = await collections.pictures
-		.find({ productId: productId })
-		.sort({ createdAt: 1 })
-		.toArray();
+	if(productId) {
+		product = await collections.products.findOne({ _id: productId });
 
-	const digitalFiles = await collections.digitalFiles
-		.find({ productId: productId })
-		.sort({ createdAt: 1 })
-		.toArray();
+		pictures = await collections.pictures
+			.find({ productId: productId })
+			.sort({ createdAt: 1 })
+			.toArray();
 
-	return {
-		product,
-		pictures,
-		digitalFiles
-	};
+		digitalFiles = await collections.digitalFiles
+			.find({ productId: productId })
+			.sort({ createdAt: 1 })
+			.toArray();
+
+		return {
+			product,
+			pictures,
+			digitalFiles
+		};
+	}
 };
 
 export const actions: Actions = {
