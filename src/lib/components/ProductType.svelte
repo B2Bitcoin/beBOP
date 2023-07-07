@@ -37,12 +37,12 @@
 {/if}
 
 {#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping}
-	{#if product.type == 'resource' && !hasDigitalFiles}
+	{#if product.type === 'resource' && !hasDigitalFiles}
 		<span class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200">
 			<IconDownTo /> Resource
 		</span>
 	{/if}
-	{#if product.type == 'resource' && hasDigitalFiles}
+	{#if product.type === 'resource' && hasDigitalFiles}
 		<span class="{baseClasses} {className} text-green-700 bg-green-200">
 			<IconDownTo /> Digital Resource
 		</span>
