@@ -271,7 +271,7 @@
 									<ProductType
 										product={item.product}
 										class="text-sm"
-										hasDigitalFiles={item.digitalFiles.length > 1}
+										hasDigitalFiles={item.digitalFiles.length >= 1}
 									/>
 								</div>
 								<div>
