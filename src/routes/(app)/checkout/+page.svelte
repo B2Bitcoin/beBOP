@@ -198,7 +198,7 @@
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus' && !emails[key]}
+									required={key === 'paymentStatus' && !emails[key] && paymentMethod !== 'cash'}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>

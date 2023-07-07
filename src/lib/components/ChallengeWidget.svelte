@@ -35,7 +35,7 @@
 	<div class="flex justify-between mt-1 items-right">
 		<!-- <a href="/" class="text-link underline">How can I contribute?</a> -->
 		<p />
-		{#if challenge.progress == challenge.goal.amount}
+		{#if challenge.progress === challenge.goal.amount}
 			<p>Good job guys! 👏👏</p>
 		{:else if challenge.progress > challenge.goal.amount}
 			<p>You are amazing guys! 🤭</p>

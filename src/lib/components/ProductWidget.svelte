@@ -62,7 +62,7 @@
 					/>
 				</div>
 			</div>
-			{#if displayOption == 'img-1'}
+			{#if displayOption === 'img-1'}
 				<a href="/product/{product._id}" class="flex flex-col">
 					<p class="mt-2 text-gray-800">
 						{product.shortDescription}

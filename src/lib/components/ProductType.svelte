@@ -49,7 +49,7 @@
 	{/if}
 {/if}
 
-{#if product.type == 'donation'}
+{#if product.type === 'donation'}
 	<span class="{baseClasses} {className} text-rosebudcherry-700 bg-rosebudcherry-200">
 		<IconHandHeart /> Donation
 	</span>
@@ -61,7 +61,7 @@
 	</span>
 {/if}
 
-{#if product.type == 'subscription'}
+{#if product.type === 'subscription'}
 	<span class="{baseClasses} {className} text-jagger-700 bg-jagger-200">
 		<IconRotate /> Monthly Sub
 	</span>
