@@ -18,7 +18,7 @@
 		| 'type'
 		| 'shipping'
 	>;
-	export let digitalFiles: Pick<DigitalFile, '_id'>[];
+	export let digitalFiles: boolean;
 
 	let className = '';
 	export { className as class };
@@ -38,12 +38,12 @@
 {/if}
 
 {#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping}
-	{#if product.type == 'resource' && digitalFiles.length == 0}
+	{#if product.type == 'resource' && !digitalFiles}
 		<span class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200">
 			<IconDownTo /> Resource
 		</span>
 	{/if}
-	{#if product.type == 'resource' && digitalFiles.length >= 1}
+	{#if product.type == 'resource' && digitalFiles}
 		<span class="{baseClasses} {className} text-green-700 bg-green-200">
 			<IconDownTo /> Digital Resource
 		</span>

@@ -19,7 +19,7 @@
 		| 'shipping'
 		| 'type'
 	>;
-	export let digitalFiles: Pick<DigitalFile, '_id' | 'name' | 'productId'>[];
+	export let digitalFiles: boolean;
 
 	export let exchangeRate = 0;
 	let className = '';

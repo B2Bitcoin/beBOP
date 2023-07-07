@@ -65,7 +65,7 @@
 							<p class="text-sm text-gray-600">{item.product.shortDescription}</p>
 							<div class="grow" />
 							<div class="flex flex-row gap-2">
-								<ProductType product={item.product} />
+								<ProductType product={item.product} digitalFiles={item.digitalFiles.length >= 1} />
 							</div>
 							<button
 								formaction="/cart/{item.product._id}/?/remove"

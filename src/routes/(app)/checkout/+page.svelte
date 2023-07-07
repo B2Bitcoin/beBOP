@@ -271,7 +271,7 @@
 									<ProductType
 										product={item.product}
 										class="text-sm"
-										digitalFiles={item.digitalFiles}
+										digitalFiles={item.digitalFiles.length > 1}
 									/>
 								</div>
 								<div>

@@ -11,5 +11,5 @@
 	picture={data.picture}
 	exchangeRate={data.exchangeRate}
 	displayOption={display ? display : 'img-0'}
-	digitalFiles={data.digitalFiles}
+	digitalFiles={data.digitalFiles.length >= 1}
 />
