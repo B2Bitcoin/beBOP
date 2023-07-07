@@ -1,10 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { RequestHandler } from './$types';
 import { collections } from '$lib/server/database';
-import { s3client, secureDownloadLink } from '$lib/server/s3';
-import { GetObjectCommand } from '@aws-sdk/client-s3';
-import { S3_BUCKET } from '$env/static/private';
+import { getS3DownloadLink } from '$lib/server/s3';
 
 export const GET: RequestHandler = async ({ params }) => {
 	const picture = await collections.pictures.findOne({
@@ -22,17 +19,5 @@ export const GET: RequestHandler = async ({ params }) => {
 		throw error(500, "Error when finding picture's format");
 	}
 
-	throw redirect(
-		302,
-		secureDownloadLink(
-			await getSignedUrl(
-				s3client,
-				new GetObjectCommand({
-					Bucket: S3_BUCKET,
-					Key: format.key
-				}),
-				{ expiresIn: 24 * 3600 }
-			)
-		)
-	);
+	throw redirect(302, await getS3DownloadLink(format.key));
 };

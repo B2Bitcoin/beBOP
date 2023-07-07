@@ -257,11 +257,12 @@ export async function createOrder(
 									wallet: await currentWallet()
 								};
 							case 'lightning': {
-								const invoice = await lndCreateInvoice(
-									totalSatoshis,
-									differenceInSeconds(expiresAt, new Date()),
-									runtimeConfig.includeOrderUrlInQRCode ? `${ORIGIN}/order/${orderId}` : undefined
-								);
+								const invoice = await lndCreateInvoice(totalSatoshis, {
+									expireAfterSeconds: differenceInSeconds(expiresAt, new Date()),
+									label: runtimeConfig.includeOrderUrlInQRCode
+										? `${ORIGIN}/order/${orderId}`
+										: undefined
+								});
 
 								return {
 									address: invoice.payment_request,
