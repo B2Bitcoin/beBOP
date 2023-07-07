@@ -10,12 +10,12 @@ import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT, type Product } from '$lib/types/Product';
+import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 
 
 export const load: PageServerLoad = async ({ url }) => {
-	let productId = url.searchParams.get('duplicate_from');
+	const productId = url.searchParams.get('duplicate_from');
 	const product = await collections.products.findOne({ _id: productId });
 
 	const pictures = await collections.pictures
