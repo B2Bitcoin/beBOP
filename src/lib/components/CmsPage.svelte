@@ -35,7 +35,7 @@
 						{exchangeRate}
 						product={productById[token.slug]}
 						picture={pictureByProduct[token.slug]}
-						hasDigitalFiles={digitalFilesByProduct[token.slug] != null}
+						hasDigitalFiles={!!digitalFilesByProduct[token.slug]}
 						class="not-prose my-5"
 					/>
 				{:else if token.type === 'challengeWidget'}
