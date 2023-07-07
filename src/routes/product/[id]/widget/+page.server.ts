@@ -42,10 +42,14 @@ export const load = async ({ params }) => {
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
 		.toArray();
-
+	const digitalFiles = await collections.digitalFiles
+		.find({ productId: params.id })
+		.sort({ createdAt: 1 })
+		.toArray();
 	return {
 		product,
 		picture: pictures[0],
+		digitalFiles,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage,
 		exchangeRate: runtimeConfig.BTC_EUR
 	};

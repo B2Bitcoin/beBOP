@@ -11,10 +11,14 @@
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
 	export let exchangeRate: LayoutData['exchangeRate'];
+	export let digitalFiles: PageData['digitalFiles'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
 	$: challengeById = Object.fromEntries(challenges.map((challenge) => [challenge._id, challenge]));
+	$: digitalFilesByProduct = Object.fromEntries(
+		digitalFiles.map((digitalFile) => [digitalFile.productId, digitalFile])
+	);
 </script>
 
 <svelte:head>
@@ -31,6 +35,7 @@
 						{exchangeRate}
 						product={productById[token.slug]}
 						picture={pictureByProduct[token.slug]}
+						hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 						class="not-prose my-5"
 					/>
 				{:else if token.type === 'challengeWidget'}

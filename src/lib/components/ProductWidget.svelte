@@ -18,6 +18,8 @@
 		| 'shipping'
 		| 'type'
 	>;
+	export let hasDigitalFiles: boolean;
+
 	export let exchangeRate = 0;
 	let className = '';
 	export { className as class };
@@ -31,7 +33,7 @@
 {#if displayOption === 'img-1' || displayOption === 'txt-1'}
 	<div class="{baseClasses} {className}">
 		<div class="flex flex-row justify-end -mt-6 -mr-6">
-			<ProductType {product} class="last:rounded-tr first:rounded-bl pl-2" />
+			<ProductType {product} {hasDigitalFiles} class="last:rounded-tr first:rounded-bl pl-2" />
 		</div>
 		<div class="flex flex-col text-center">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
@@ -79,7 +81,11 @@
 	>
 		<div class="flex flex-col">
 			<div class="flex flex-row justify-start -mt-6 -ml-6">
-				<ProductType {product} class="last:rounded-tr first:rounded-bl pl-2 text-sm" />
+				<ProductType
+					{product}
+					{hasDigitalFiles}
+					class="last:rounded-tr first:rounded-bl pl-2 text-sm"
+				/>
 			</div>
 			<a href="/product/{product._id}" class="-ml-6">
 				<PictureComponent
@@ -157,7 +163,11 @@
 		</div>
 		<div class="flex flex-col">
 			<div class="flex flex-row justify-end -mt-6 -mr-6">
-				<ProductType {product} class="last:rounded-tr first:rounded-bl pl-2 text-sm" />
+				<ProductType
+					{product}
+					{hasDigitalFiles}
+					class="last:rounded-tr first:rounded-bl pl-2 text-sm"
+				/>
 			</div>
 			<a href="/product/{product._id}" class="-mr-6">
 				<PictureComponent
@@ -172,7 +182,11 @@
 	<div class="relative mx-auto w-264px bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
 		<div class="flex flex-col">
 			<div class="flex flex-row justify-end -mt-6 -mr-6">
-				<ProductType {product} class="last:rounded-tr first:rounded-bl pl-2 text-sm" />
+				<ProductType
+					{product}
+					{hasDigitalFiles}
+					class="last:rounded-tr first:rounded-bl pl-2 text-sm"
+				/>
 			</div>
 			<a href="/product/{product._id}" class="-mx-6">
 				<PictureComponent {picture} sizes="800px" class="object-contain" />
@@ -209,7 +223,7 @@
 {:else}
 	<div class="{baseClasses} {className}">
 		<div class="flex flex-row justify-end -mt-6 -mr-6">
-			<ProductType {product} class="last:rounded-tr first:rounded-bl pl-2" />
+			<ProductType {product} {hasDigitalFiles} class="last:rounded-tr first:rounded-bl pl-2" />
 		</div>
 		<div class="flex flex-col text-center">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
