@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	let pictures;
 	let digitalFiles;
 
-	if(productId) {
+	if (productId) {
 		product = await collections.products.findOne({ _id: productId });
 
 		pictures = await collections.pictures
