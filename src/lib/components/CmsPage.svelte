@@ -11,6 +11,7 @@
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
 	export let exchangeRate: LayoutData['exchangeRate'];
+	export let digitalFiles: PageData['digitalFiles'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
@@ -31,6 +32,9 @@
 						{exchangeRate}
 						product={productById[token.slug]}
 						picture={pictureByProduct[token.slug]}
+						digitalFiles={digitalFiles.filter(
+							(digitalFile) => digitalFile.productId === token.slug
+						)}
 						class="not-prose my-5"
 					/>
 				{:else if token.type === 'challengeWidget'}

@@ -268,7 +268,11 @@
 							</div>
 							<div class="flex flex-col">
 								<div class="flex flex-row gap-2">
-									<ProductType product={item.product} class="text-sm" />
+									<ProductType
+										product={item.product}
+										class="text-sm"
+										digitalFiles={item.digitalFiles}
+									/>
 								</div>
 								<div>
 									{#if 0}

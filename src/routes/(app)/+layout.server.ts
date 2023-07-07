@@ -62,6 +62,10 @@ export async function load({ depends, locals }) {
 									{ productId: item.productId },
 									{ sort: { createdAt: 1 } }
 								),
+								digitalFiles: await collections.digitalFiles
+									.find({ productId: item.productId })
+									.sort({ createdAt: 1 })
+									.toArray(),
 								quantity: item.quantity
 							};
 						}
