@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { DigitalFile } from '$lib/types/DigitalFile';
 	import { isPreorder, type Product } from '$lib/types/Product';
 	import IconBoxTaped from './icons/IconBoxTaped.svelte';
 	import IconDollar from './icons/IconDollar.svelte';
@@ -18,7 +17,7 @@
 		| 'type'
 		| 'shipping'
 	>;
-	export let digitalFiles: boolean;
+	export let hasDigitalFiles: boolean;
 
 	let className = '';
 	export { className as class };
@@ -38,12 +37,12 @@
 {/if}
 
 {#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping}
-	{#if product.type == 'resource' && !digitalFiles}
+	{#if product.type == 'resource' && !hasDigitalFiles}
 		<span class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200">
 			<IconDownTo /> Resource
 		</span>
 	{/if}
-	{#if product.type == 'resource' && digitalFiles}
+	{#if product.type == 'resource' && hasDigitalFiles}
 		<span class="{baseClasses} {className} text-green-700 bg-green-200">
 			<IconDownTo /> Digital Resource
 		</span>
