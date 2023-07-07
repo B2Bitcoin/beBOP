@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import { generatePicture } from '$lib/server/picture';
 import { generateId } from '$lib/utils/generateId';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { pipeline } from 'node:stream/promises';
 import busboy from 'busboy';
 import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
@@ -10,8 +10,30 @@ import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT, type Product } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
+
+
+export const load: PageServerLoad = async ({ url }) => {
+	let productId = url.searchParams.get('duplicate_from');
+	const product = await collections.products.findOne({ _id: productId });
+
+	const pictures = await collections.pictures
+	.find({ productId: productId })
+	.sort({ createdAt: 1 })
+	.toArray();
+
+const digitalFiles = await collections.digitalFiles
+	.find({ productId: productId })
+	.sort({ createdAt: 1 })
+	.toArray();
+
+	return {
+		product,
+		pictures,
+		digitalFiles
+	};
+};
 
 export const actions: Actions = {
 	default: async ({ request }) => {

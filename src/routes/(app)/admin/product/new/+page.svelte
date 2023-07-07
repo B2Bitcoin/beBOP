@@ -2,15 +2,19 @@
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
+	import PictureComponent from '$lib/components/Picture.svelte';
 
-	let type = 'resource';
-	let availableDate: string | undefined = undefined;
 	let shipping = false;
 	let preorder = false;
-	let displayShortDescription = false;
 
-	let priceAmount: number;
 	let priceAmountElement: HTMLInputElement;
+	export let data;
+	let product = data.product;
+
+	let type = product ? product.type : 'resource';
+	let priceAmount = product ? product.price.amount : 0;
+	let availableDate = product ? product.availableDate : '';
+	let displayShortDescription = product ? product.displayShortDescription : false;
 
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
@@ -45,6 +49,7 @@
 			maxlength={MAX_NAME_LIMIT}
 			name="name"
 			placeholder="Product name"
+			value={product ? product.name : ''}
 			required
 		/>
 	</label>
@@ -73,6 +78,7 @@
 			cols="30"
 			rows="2"
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+			value={product ? product.shortDescription : ''}
 			class="form-input block w-full"
 		/>
 	</label>
@@ -94,13 +100,14 @@
 			cols="30"
 			rows="10"
 			maxlength="10000"
+			value={product ? product.description : ''}
 			class="form-input block w-full"
 		/>
 	</label>
 
-	<label>
+	<label class={product ? 'text-gray-450' : ''}>
 		Type
-		<select class="form-input" bind:value={type} name="type">
+		<select class="form-input" bind:value={type} disabled={product} name="type">
 			{#each ['resource', 'donation', 'subscription'] as type}
 				<option value={type}>{upperFirst(type)}</option>
 			{/each}
@@ -159,7 +166,7 @@
 		</label>
 	{/if}
 
-	<label>
+	<label hidden={product}>
 		Picture
 		<input
 			type="file"
@@ -172,3 +179,28 @@
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
 </form>
+
+<h2 class="text-2xl my-4">Photos</h2>
+
+<div class="flex flex-row flex-wrap gap-6 mt-6">
+	{#each data.pictures as picture}
+		<div class="flex flex-col text-center">
+			<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
+				<PictureComponent {picture} class="h-36 block" style="object-fit: scale-down;" />
+				<span>{picture.name}</span>
+			</a>
+		</div>
+	{/each}
+</div>
+
+{#if product.type !== 'donation'}
+	<h2 class="text-2xl my-4">Digital Files</h2>
+
+	<div class="flex flex-row flex-wrap gap-6 mt-6">
+		{#each data.digitalFiles as digitalFile}
+			<a href="/admin/digital-file/{digitalFile._id}" class="text-link hover:underline">
+				{digitalFile.name}
+			</a>
+		{/each}
+	</div>
+{/if}
