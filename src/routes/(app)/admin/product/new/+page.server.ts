@@ -13,20 +13,19 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 
-
 export const load: PageServerLoad = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
 	const product = await collections.products.findOne({ _id: productId });
 
 	const pictures = await collections.pictures
-	.find({ productId: productId })
-	.sort({ createdAt: 1 })
-	.toArray();
+		.find({ productId: productId })
+		.sort({ createdAt: 1 })
+		.toArray();
 
-const digitalFiles = await collections.digitalFiles
-	.find({ productId: productId })
-	.sort({ createdAt: 1 })
-	.toArray();
+	const digitalFiles = await collections.digitalFiles
+		.find({ productId: productId })
+		.sort({ createdAt: 1 })
+		.toArray();
 
 	return {
 		product,
