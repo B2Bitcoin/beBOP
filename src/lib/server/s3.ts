@@ -6,6 +6,7 @@ import {
 	S3_BUCKET
 } from '$env/static/private';
 import * as AWS from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const s3client = new AWS.S3({
 	endpoint: S3_ENDPOINT_URL,
@@ -32,12 +33,25 @@ await s3client
 	)
 	.catch((err) => console.error('S3 CORS error: ', err));
 
-export function secureDownloadLink(url: string) {
+export function secureLink(url: string) {
 	if (['127.0.0.1', 'localhost'].includes(new URL(url).hostname)) {
 		return url;
 	}
 
 	return url.replace('http:', 'https:');
+}
+
+export async function getS3DownloadLink(key: string) {
+	return secureLink(
+		await getSignedUrl(
+			s3client,
+			new AWS.GetObjectCommand({
+				Bucket: S3_BUCKET,
+				Key: key
+			}),
+			{ expiresIn: 24 * 3600 }
+		)
+	);
 }
 
 export { s3client };

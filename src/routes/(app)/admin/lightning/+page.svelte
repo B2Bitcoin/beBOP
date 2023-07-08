@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 
 	export let data;
@@ -19,6 +20,13 @@
 	<li>synced to graph: {data.info.synced_to_graph}</li>
 	<li>peers: {data.info.num_peers}</li>
 	<li>node url: {data.info.uris.join(' / ')}</li>
+	{#if data.info.uris.length}
+		<li>
+			<b>LN url:</b>
+			<a href="lightning:ln@{$page.url.hostname}" class="text-link">ln@{$page.url.hostname}</a>
+			- any other @{$page.url.hostname} address will also work
+		</li>
+	{/if}
 </ul>
 
 {#if !data.autopilotActive}

@@ -150,15 +150,21 @@ export async function lndActivateAutopilot() {
 
 export async function lndCreateInvoice(
 	amountSatoshis: number,
-	expireAfterSeconds: number,
-	label?: string
+	opts?: {
+		expireAfterSeconds?: number;
+		label?: string;
+		descriptionHash?: ArrayBuffer;
+	}
 ) {
 	const response = await lndRpc('/v1/invoices', {
 		method: 'POST',
 		body: JSON.stringify({
-			...(label && { memo: label }),
+			...(opts?.label && { memo: opts.label }),
 			value: String(amountSatoshis),
-			expiry: String(expireAfterSeconds)
+			...(opts?.expireAfterSeconds && { expiry: String(opts.expireAfterSeconds) }),
+			...(opts?.descriptionHash && {
+				description_hash: Buffer.from(opts.descriptionHash).toString('base64')
+			})
 		})
 	});
 

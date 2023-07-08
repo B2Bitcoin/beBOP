@@ -60,6 +60,7 @@
 		"busboy": "^1.6.0",
 		"date-fns": "^2.29.3",
 		"html-to-text": "^9.0.5",
+		"jose": "^4.14.4",
 		"lodash-es": "^4.17.21",
 		"marked": "^4.3.0",
 		"mime-types": "^2.1.35",
