@@ -23,7 +23,7 @@ export const GET = async ({ url }) => {
 	const { amount, metadata: metadataJwt } = z
 		.object({
 			amount: z
-				.number()
+				.number({ coerce: true })
 				.int()
 				.min(1)
 				.max(SATOSHIS_PER_BTC * 1000),
