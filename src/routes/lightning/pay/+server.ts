@@ -43,7 +43,8 @@ export const GET = async ({ url }) => {
 		.parse(result.payload);
 
 	const invoice = await lndCreateInvoice(amount, {
-		descriptionHash: await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata))
+		descriptionHash: await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata)),
+		milliSatoshis: true
 	});
 
 	return new Response(

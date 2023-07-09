@@ -148,11 +148,15 @@ export async function lndActivateAutopilot() {
 	}
 }
 
+/**
+ * @param amount Amount in satoshis, or msat if `opts.milliSatoshis` is true
+ */
 export async function lndCreateInvoice(
-	amountSatoshis: number,
+	amount: number,
 	opts?: {
 		expireAfterSeconds?: number;
 		label?: string;
+		milliSatoshis?: boolean;
 		descriptionHash?: ArrayBuffer;
 	}
 ) {
@@ -160,7 +164,7 @@ export async function lndCreateInvoice(
 		method: 'POST',
 		body: JSON.stringify({
 			...(opts?.label && { memo: opts.label }),
-			value: String(amountSatoshis),
+			...(opts?.milliSatoshis ? { value_msat: String(amount) } : { value: String(amount) }),
 			...(opts?.expireAfterSeconds && { expiry: String(opts.expireAfterSeconds) }),
 			...(opts?.descriptionHash && {
 				description_hash: Buffer.from(opts.descriptionHash).toString('base64')
