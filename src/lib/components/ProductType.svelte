@@ -63,6 +63,6 @@
 
 {#if product.type === 'subscription'}
 	<span class="{baseClasses} {className} text-jagger-700 bg-jagger-200">
-		<IconRotate /> Monthly Sub
+		<IconRotate /> Subscription
 	</span>
 {/if}
