@@ -13,8 +13,7 @@
 
 	let type = product?.type ?? 'resource';
 	let priceAmount = product?.price.amount ?? 0;
-	let availableDate = product?.availableDate ?? '';
-	// let availableDate = product ? product.availableDate : '';
+	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
 
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
@@ -41,7 +40,12 @@
 
 <h1 class="text-3xl">Add a product</h1>
 
-<form method="post" enctype="multipart/form-data" class="flex flex-col gap-4" on:submit={checkForm}>
+<form
+	method="post"
+	action="/admin/product/[id]?/duplicate"
+	class="flex flex-col gap-4"
+	on:submit={checkForm}
+>
 	<label>
 		Product name
 		<input
@@ -179,6 +183,8 @@
 			/>
 		</label>
 	{/if}
+
+	<input type="hidden" name="productId" value={data.productId || ''} />
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
 </form>
