@@ -198,7 +198,7 @@
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus' && !emails[key]}
+									required={key === 'paymentStatus' && !emails[key] && paymentMethod !== 'cash'}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
@@ -268,7 +268,11 @@
 							</div>
 							<div class="flex flex-col">
 								<div class="flex flex-row gap-2">
-									<ProductType product={item.product} class="text-sm" />
+									<ProductType
+										product={item.product}
+										class="text-sm"
+										hasDigitalFiles={item.digitalFiles.length >= 1}
+									/>
 								</div>
 								<div>
 									{#if 0}

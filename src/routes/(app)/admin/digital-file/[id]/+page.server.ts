@@ -1,8 +1,7 @@
 import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database';
-import { s3client, secureDownloadLink } from '$lib/server/s3.js';
-import { DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { getS3DownloadLink, s3client } from '$lib/server/s3.js';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params }) {
@@ -14,16 +13,7 @@ export async function load({ params }) {
 		throw error(404, 'Digital file not found');
 	}
 
-	const downloadLink = secureDownloadLink(
-		await getSignedUrl(
-			s3client,
-			new GetObjectCommand({
-				Bucket: S3_BUCKET,
-				Key: digitalFile.storage.key
-			}),
-			{ expiresIn: 60 * 60 * 24 }
-		)
-	);
+	const downloadLink = getS3DownloadLink(digitalFile.storage.key);
 
 	return {
 		digitalFile,

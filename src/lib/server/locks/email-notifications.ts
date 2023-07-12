@@ -11,38 +11,69 @@ async function handleChanges(change: ChangeStreamDocument<EmailNotification>): P
 		return;
 	}
 
-	if (change.fullDocument.processedAt) {
+	await handleEmailNotification(change.fullDocument);
+}
+
+const processingIds = new Set<string>();
+
+async function handleEmailNotification(email: EmailNotification): Promise<void> {
+	if (email.processedAt || processingIds.has(email._id.toString())) {
 		return;
 	}
 
 	try {
-		await sendEmail({
-			to: change.fullDocument.dest,
-			subject: change.fullDocument.subject,
-			html: change.fullDocument.htmlContent
-		});
-	} catch (err) {
-		collections.emailNotifications
-			.updateOne({ _id: change.fullDocument._id }, { $set: { error: err as Error } })
-			.catch(console.error);
-	}
+		processingIds.add(email._id.toString());
 
-	await collections.emailNotifications.updateOne(
-		{ _id: change.fullDocument._id },
-		{
-			$set: {
-				processedAt: new Date(),
-				updatedAt: new Date()
-			}
+		const updatedEmail = await collections.emailNotifications.findOne({
+			_id: email._id
+		});
+		if (!updatedEmail || updatedEmail.processedAt) {
+			return;
 		}
-	);
+		email = updatedEmail;
+
+		try {
+			await sendEmail({
+				to: email.dest,
+				subject: email.subject,
+				html: email.htmlContent
+			});
+		} catch (err) {
+			collections.emailNotifications
+				.updateOne({ _id: email._id }, { $set: { error: err as Error } })
+				.catch(console.error);
+		}
+
+		await collections.emailNotifications.updateOne(
+			{ _id: email._id },
+			{
+				$set: {
+					processedAt: new Date(),
+					updatedAt: new Date()
+				}
+			}
+		);
+	} finally {
+		processingIds.delete(email._id.toString());
+	}
 }
 
 if (emailsEnabled) {
-	// todo: resume changestream on restart if possible
 	collections.emailNotifications
 		.watch([{ $match: { operationType: 'insert' } }], {
 			fullDocument: 'updateLookup'
 		})
 		.on('change', (ev) => handleChanges(ev).catch(console.error));
+
+	if (lock) {
+		lock.onAcquire = async () => {
+			const docs = collections.emailNotifications.find({
+				processedAt: { $exists: false }
+			});
+
+			for await (const doc of docs) {
+				await handleEmailNotification(doc);
+			}
+		};
+	}
 }

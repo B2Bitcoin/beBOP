@@ -5,6 +5,7 @@ import type { Product } from '$lib/types/Product.js';
 import { picturesForProducts } from '$lib/server/picture.js';
 import { omit } from 'lodash-es';
 import type { Challenge } from '$lib/types/Challenge.js';
+import type { DigitalFile } from '$lib/types/DigitalFile';
 
 const PRODUCT_WIDGET_REGEX = /^\[Product=(?<slug>[a-z0-9-]+)\]$/i;
 const CHALLENGE_WIDGET_REGEX = /^\[Challenge=(?<slug>[a-z0-9-]+)\]$/i;
@@ -93,13 +94,21 @@ export async function load({ params }) {
 			endsAt: 1
 		})
 		.toArray();
-
+	const digitalFiles = await collections.digitalFiles
+		.find({})
+		.project<Pick<DigitalFile, '_id' | 'name' | 'productId'>>({
+			name: 1,
+			productId: 1
+		})
+		.sort({ createdAt: 1 })
+		.toArray();
 	// Everything is awaited, because the home page can call this load function in a sub param
 	return {
 		cmsPage: omit(cmsPage, ['content']),
 		tokens,
 		products,
 		pictures: await picturesForProducts(products.map((product) => product._id)),
-		challenges
+		challenges,
+		digitalFiles
 	};
 }
