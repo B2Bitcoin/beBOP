@@ -282,7 +282,7 @@ export const actions: Actions = {
 		  _id: productId,
 				name: duplicate.name,
 				storage: picture.storage,
-				productId: productId,pnpm 
+				productId: productId, 
 				createdAt: new Date(),
 				updatedAt: new Date()
 		};
