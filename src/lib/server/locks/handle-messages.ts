@@ -590,9 +590,7 @@ function usage(commandName: string) {
 	return `${commandName} ${(command.args || [])
 		.map(
 			(arg) =>
-				` [${arg.name}${arg.enum ? `(${arg.enum.join('|')})` : ''}${
-					arg.default ? `=${arg.default}` : ''
-				}]`
+				` [${arg.enum ? arg.enum.join('|') : arg.name}${arg.default ? `=${arg.default}` : ''}]`
 		)
 		.join('')}`.trim();
 }
