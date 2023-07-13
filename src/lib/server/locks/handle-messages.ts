@@ -76,6 +76,13 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 			if (toMatchLower === commandName || toMatchLower.startsWith(`${commandName} `)) {
 				matched = true;
 
+				if (command.maintenanceBlocked && runtimeConfig.isMaintenance) {
+					await send(
+						`Sorry, ${runtimeConfig.brandName} / ${ORIGIN} is currently under maintenance, try again later.`
+					);
+					break;
+				}
+
 				if (command.args?.length) {
 					const rawArgs = toMatchLower
 						.slice(commandName.length + 1)
@@ -185,6 +192,7 @@ const commands: Record<
 			send: (message: string) => Promise<unknown>,
 			params: { senderNpub: string; args: Record<string, string> }
 		) => Promise<void>;
+		maintenanceBlocked?: boolean;
 	}
 > = {
 	help: {
@@ -258,6 +266,7 @@ const commands: Record<
 	},
 	cart: {
 		description: 'Show the contents of your cart',
+		maintenanceBlocked: true,
 		execute: async (send, { senderNpub }) => {
 			const cart = await collections.carts.findOne({ npub: senderNpub });
 
@@ -293,6 +302,7 @@ const commands: Record<
 	},
 	add: {
 		description: 'Add a product to your cart',
+		maintenanceBlocked: true,
 		args: [{ name: 'ref' }, { name: 'quantity', default: '1' }],
 		execute: async (send, { senderNpub, args }) => {
 			const ref = args.ref;
@@ -346,6 +356,7 @@ const commands: Record<
 	},
 	remove: {
 		description: 'Remove a product from your cart',
+		maintenanceBlocked: true,
 		args: [{ name: 'ref' }, { name: 'quantity', default: 'all' }],
 		execute: async (send, { senderNpub, args }) => {
 			const ref = args.ref;
@@ -397,6 +408,7 @@ const commands: Record<
 	},
 	checkout: {
 		description: 'Checkout your cart',
+		maintenanceBlocked: true,
 		args: [{ name: 'paymentMethod', enum: ['bitcoin', 'lightning'] }],
 		execute: async (send, { senderNpub, args }) => {
 			const paymentMethod = args.paymentMethod;
