@@ -8,12 +8,10 @@ import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
-import { ORIGIN, S3_BUCKET } from '$env/static/private';
+import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
-import { s3client } from '$lib/server/s3';
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -284,7 +282,7 @@ export const actions: Actions = {
 		  _id: productId,
 				name: duplicate.name,
 				storage: picture.storage,
-				productId: productId,
+				productId: productId,pnpm 
 				createdAt: new Date(),
 				updatedAt: new Date()
 		};
