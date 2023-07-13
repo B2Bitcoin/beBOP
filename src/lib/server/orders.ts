@@ -96,42 +96,26 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 			endsAt: { $gt: new Date() }
 		})
 		.toArray();
-	const numberOfProducts = sum(order.items.map((item) => item.quantity));
 	for (const challenge of challenges) {
-		if (challenge.productIds.length <= 0) {
-			await collections.challenges.updateOne(
-				{ _id: challenge._id },
-				{
-					$inc: {
-						progress:
-							challenge.mode === 'moneyAmount'
-								? toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
-								: numberOfProducts
-					}
-				},
-				{ session }
-			);
-		} else {
-			order.items.map(async (item) => {
-				if (challenge.productIds.includes(item.product._id)) {
-					await collections.challenges.updateOne(
-						{ _id: challenge._id },
-						{
-							$inc: {
-								progress:
-									challenge.mode === 'moneyAmount'
-										? toSatoshis(
-												item.product.price.amount * item.quantity,
-												item.product.price.currency
-										  )
-										: item.quantity
-							}
-						},
-						{ session }
-					);
-				}
-			});
-		}
+		const productIds = new Set(challenge.productIds);
+		const items = productIds.size
+			? order.items.filter((item) => productIds.has(item.product._id))
+			: order.items;
+		const increase = sum(
+			items.map((item) =>
+				challenge.mode === 'moneyAmount'
+					? toSatoshis(item.product.price.amount * item.quantity, item.product.price.currency)
+					: item.quantity
+			)
+		);
+
+		await collections.challenges.updateOne(
+			{ _id: challenge._id },
+			{
+				$inc: { progress: increase }
+			},
+			{ session }
+		);
 	}
 	//#endregion
 }
@@ -153,9 +137,7 @@ export async function createOrder(
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
 
-	const canBeNotified = !!(npubAddress || (emailsEnabled && email));
-
-	if (!canBeNotified && paymentMethod !== 'cash') {
+	if (!npubAddress && !(emailsEnabled && email)) {
 		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
 	}
 
@@ -196,10 +178,6 @@ export async function createOrder(
 	const orderId = crypto.randomUUID();
 
 	const subscriptions = items.filter((item) => item.product.type === 'subscription');
-
-	if (subscriptions.length && !canBeNotified) {
-		throw error(400, 'Missing npub address or email for subscription');
-	}
 
 	for (const subscription of subscriptions) {
 		const product = subscription.product;
@@ -279,12 +257,11 @@ export async function createOrder(
 									wallet: await currentWallet()
 								};
 							case 'lightning': {
-								const invoice = await lndCreateInvoice(totalSatoshis, {
-									expireAfterSeconds: differenceInSeconds(expiresAt, new Date()),
-									label: runtimeConfig.includeOrderUrlInQRCode
-										? `${ORIGIN}/order/${orderId}`
-										: undefined
-								});
+								const invoice = await lndCreateInvoice(
+									totalSatoshis,
+									differenceInSeconds(expiresAt, new Date()),
+									runtimeConfig.includeOrderUrlInQRCode ? `${ORIGIN}/order/${orderId}` : undefined
+								);
 
 								return {
 									address: invoice.payment_request,
