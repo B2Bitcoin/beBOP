@@ -183,7 +183,7 @@ export const actions: Actions = {
 			: undefined;
 
 		if (!product) {
-			throw error(404, 'Product not found');
+			throw error(404, 'Duplicated product not found');
 		}
 		const pictures = duplicatedProductId
 			? await collections.pictures
