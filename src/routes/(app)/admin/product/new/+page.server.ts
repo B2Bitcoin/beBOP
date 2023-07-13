@@ -176,7 +176,7 @@ export const actions: Actions = {
 
 	duplicate: async ({ request }) => {
 		const formData = await request.formData();
-		const duplicatedProductId = formData.get('productId');
+		const {productId: duplicatedProductId} = z.object({productId: z.string()}).parse(formData.get('productId'));
 
 		const product = duplicatedProductId
 			? await collections.products.findOne({ _id: duplicatedProductId })
