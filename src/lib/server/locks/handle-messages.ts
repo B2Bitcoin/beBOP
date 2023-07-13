@@ -584,7 +584,7 @@ const commands: Record<
 	}
 };
 
-async function usage(commandName: string) {
+function usage(commandName: string) {
 	const command = commands[commandName];
 
 	return `${commandName} ${(command.args || [])
