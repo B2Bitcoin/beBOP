@@ -184,6 +184,16 @@ export const actions: Actions = {
 		if (!product) {
 			throw error(404, 'Product not found');
 		}
+		const pictures = duplicatedProductId ? await collections.pictures
+		.find({ productId: duplicatedProductId })
+		.sort({ createdAt: 1 })
+		.toArray() : undefined;
+
+		if (!pictures) {
+			throw error(404, 'Pictures not found');
+		}
+
+
 
 		const duplicate = z
 			.object({
@@ -212,7 +222,7 @@ export const actions: Actions = {
 			});
 
 
-		const productId = generateId(update.name, false);
+		const productId = generateId(duplicate.name, false);
 
 		if (!productId) {
 			throw error(400, 'Could not generate product ID');
@@ -254,6 +264,18 @@ export const actions: Actions = {
 				displayShortDescription: duplicate.displayShortDescription
 			},
 		);
+			pictures.map(async (picture) => {
+				await collections.pictures.insertOne(
+					{
+						_id: productId,
+						name: duplicate.name,
+						storage: picture.storage,
+						productId: productId,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					},
+				);
+			})
 
 
 		// This could be a change stream on collections.product, but for now a bit simpler
