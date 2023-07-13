@@ -179,7 +179,9 @@
 		</div>
 	</div>
 {:else if displayOption === 'img-4'}
-	<div class="relative mx-auto w-264px bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
+	<div
+		class="relative mx-auto max-w-[264px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}"
+	>
 		<div class="flex flex-col">
 			<div class="flex flex-row justify-end -mt-6 -mr-6">
 				<ProductType

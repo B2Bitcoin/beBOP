@@ -36,6 +36,7 @@
 						product={productById[token.slug]}
 						picture={pictureByProduct[token.slug]}
 						hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
+						displayOption={token.display}
 						class="not-prose my-5"
 					/>
 				{:else if token.type === 'challengeWidget'}
