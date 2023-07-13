@@ -13,7 +13,6 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 
-
 export const load: PageServerLoad = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
 	let product;
@@ -177,7 +176,9 @@ export const actions: Actions = {
 
 	duplicate: async ({ request }) => {
 		const formData = await request.formData();
-		const {productId: duplicatedProductId} = z.object({productId: z.string()}).parse(formData.get('productId'));
+		const { productId: duplicatedProductId } = z
+			.object({ productId: z.string() })
+			.parse(formData.get('productId'));
 
 		const product = duplicatedProductId
 			? await collections.products.findOne({ _id: duplicatedProductId })
@@ -255,53 +256,50 @@ export const actions: Actions = {
 		});
 
 		const picturesToDuplicate = duplicatedProductId
-		? await collections.pictures
-				.find({ productId: duplicatedProductId })
-				.sort({ createdAt: 1 })
-				.toArray()
-		: undefined;
+			? await collections.pictures
+					.find({ productId: duplicatedProductId })
+					.sort({ createdAt: 1 })
+					.toArray()
+			: undefined;
 
-	if (!picturesToDuplicate) {
-		throw error(404, 'Pictures not found');
-	}
+		if (!picturesToDuplicate) {
+			throw error(404, 'Pictures not found');
+		}
 
 		const digitalFilesToDuplicate = duplicatedProductId
-		? await collections.digitalFiles
-				.find({ productId: duplicatedProductId })
-				.sort({ createdAt: 1 })
-				.toArray()
-		: undefined;
+			? await collections.digitalFiles
+					.find({ productId: duplicatedProductId })
+					.sort({ createdAt: 1 })
+					.toArray()
+			: undefined;
 
-	if (!digitalFilesToDuplicate) {
-		throw error(404, 'Pictures not found');
-	}
+		if (!digitalFilesToDuplicate) {
+			throw error(404, 'Pictures not found');
+		}
 
-
-	const picturesToInsert = picturesToDuplicate.map((picture) => {
-		return {
-		  _id: productId,
+		const picturesToInsert = picturesToDuplicate.map((picture) => {
+			return {
+				_id: productId,
 				name: duplicate.name,
 				storage: picture.storage,
-				productId: productId, 
+				productId: productId,
 				createdAt: new Date(),
 				updatedAt: new Date()
-		};
-	  });
-	const digitalFilesToInsert = digitalFilesToDuplicate.map((picture) => {
-		return {
-		  	_id: productId,
-			name: duplicate.name,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			storage: picture.storage,
-			productId: productId,
-		};
-	  });
+			};
+		});
+		const digitalFilesToInsert = digitalFilesToDuplicate.map((picture) => {
+			return {
+				_id: productId,
+				name: duplicate.name,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				storage: picture.storage,
+				productId: productId
+			};
+		});
 
-
-	await collections.pictures.insertMany(picturesToInsert);
-	await collections.digitalFiles.insertMany(digitalFilesToInsert);
-
+		await collections.pictures.insertMany(picturesToInsert);
+		await collections.digitalFiles.insertMany(digitalFilesToInsert);
 
 		// This could be a change stream on collections.product, but for now a bit simpler
 		// to put it here.
