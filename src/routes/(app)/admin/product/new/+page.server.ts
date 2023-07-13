@@ -12,7 +12,6 @@ import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
-import { update } from 'lodash-es';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
@@ -179,21 +178,23 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const duplicatedProductId = formData.get('productId');
 
-		const product = duplicatedProductId ? await collections.products.findOne({ _id: duplicatedProductId }) : undefined;
+		const product = duplicatedProductId
+			? await collections.products.findOne({ _id: duplicatedProductId })
+			: undefined;
 
 		if (!product) {
 			throw error(404, 'Product not found');
 		}
-		const pictures = duplicatedProductId ? await collections.pictures
-		.find({ productId: duplicatedProductId })
-		.sort({ createdAt: 1 })
-		.toArray() : undefined;
+		const pictures = duplicatedProductId
+			? await collections.pictures
+					.find({ productId: duplicatedProductId })
+					.sort({ createdAt: 1 })
+					.toArray()
+			: undefined;
 
 		if (!pictures) {
 			throw error(404, 'Pictures not found');
 		}
-
-
 
 		const duplicate = z
 			.object({
@@ -221,7 +222,6 @@ export const actions: Actions = {
 				displayShortDescription: formData.get('displayShortDescription')
 			});
 
-
 		const productId = generateId(duplicate.name, false);
 
 		if (!productId) {
@@ -245,38 +245,33 @@ export const actions: Actions = {
 			duplicate.shipping = false;
 		}
 
-		await collections.products.insertOne(
-			{
-				_id: productId,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-				description: duplicate.description.replaceAll('\r', ''),
-				shortDescription: duplicate.shortDescription.replaceAll('\r', ''),
-				name: duplicate.name,
-				price: {
-					currency: duplicate.priceCurrency,
-					amount: parseFloat(duplicate.priceAmount)
-				},
-				type: product.type,
-				availableDate: duplicate.availableDate || undefined,
-				preorder: duplicate.preorder,
-				shipping: duplicate.shipping,
-				displayShortDescription: duplicate.displayShortDescription
+		await collections.products.insertOne({
+			_id: productId,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			description: duplicate.description.replaceAll('\r', ''),
+			shortDescription: duplicate.shortDescription.replaceAll('\r', ''),
+			name: duplicate.name,
+			price: {
+				currency: duplicate.priceCurrency,
+				amount: parseFloat(duplicate.priceAmount)
 			},
-		);
-			pictures.map(async (picture) => {
-				await collections.pictures.insertOne(
-					{
-						_id: productId,
-						name: duplicate.name,
-						storage: picture.storage,
-						productId: productId,
-						createdAt: new Date(),
-						updatedAt: new Date()
-					},
-				);
-			})
-
+			type: product.type,
+			availableDate: duplicate.availableDate || undefined,
+			preorder: duplicate.preorder,
+			shipping: duplicate.shipping,
+			displayShortDescription: duplicate.displayShortDescription
+		});
+		pictures.map(async (picture) => {
+			await collections.pictures.insertOne({
+				_id: productId,
+				name: duplicate.name,
+				storage: picture.storage,
+				productId: productId,
+				createdAt: new Date(),
+				updatedAt: new Date()
+			});
+		});
 
 		// This could be a change stream on collections.product, but for now a bit simpler
 		// to put it here.
