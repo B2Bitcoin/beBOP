@@ -41,8 +41,9 @@
 <h1 class="text-3xl">Add a product</h1>
 
 <form
+	action={product ? '?/duplicate' : '?/add'}
 	method="post"
-	action="/admin/product/[id]?/duplicate"
+	enctype={product ? '' : 'multipart/form-data'}
 	class="flex flex-col gap-4"
 	on:submit={checkForm}
 >
