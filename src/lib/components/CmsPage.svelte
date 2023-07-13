@@ -30,7 +30,7 @@
 	<article class="w-full rounded-xl bg-white border-gray-300 border p-6">
 		<div class="prose max-w-full">
 			{#each tokens as token}
-				{#if token.type === 'productWidget'}
+				{#if token.type === 'productWidget' && productById[token.slug]}
 					<ProductWidget
 						{exchangeRate}
 						product={productById[token.slug]}
