@@ -8,10 +8,13 @@ import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
-import { ORIGIN } from '$env/static/private';
+import { ORIGIN, S3_BUCKET } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
+import { s3client } from '$lib/server/s3';
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+
 
 export const load: PageServerLoad = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
@@ -185,16 +188,6 @@ export const actions: Actions = {
 		if (!product) {
 			throw error(404, 'Duplicated product not found');
 		}
-		const pictures = duplicatedProductId
-			? await collections.pictures
-					.find({ productId: duplicatedProductId })
-					.sort({ createdAt: 1 })
-					.toArray()
-			: undefined;
-
-		if (!pictures) {
-			throw error(404, 'Pictures not found');
-		}
 
 		const duplicate = z
 			.object({
@@ -262,16 +255,55 @@ export const actions: Actions = {
 			shipping: duplicate.shipping,
 			displayShortDescription: duplicate.displayShortDescription
 		});
-		pictures.map(async (picture) => {
-			await collections.pictures.insertOne({
-				_id: productId,
+
+		const picturesToDuplicate = duplicatedProductId
+		? await collections.pictures
+				.find({ productId: duplicatedProductId })
+				.sort({ createdAt: 1 })
+				.toArray()
+		: undefined;
+
+	if (!picturesToDuplicate) {
+		throw error(404, 'Pictures not found');
+	}
+
+		const digitalFilesToDuplicate = duplicatedProductId
+		? await collections.digitalFiles
+				.find({ productId: duplicatedProductId })
+				.sort({ createdAt: 1 })
+				.toArray()
+		: undefined;
+
+	if (!digitalFilesToDuplicate) {
+		throw error(404, 'Pictures not found');
+	}
+
+
+	const picturesToInsert = picturesToDuplicate.map((picture) => {
+		return {
+		  _id: productId,
 				name: duplicate.name,
 				storage: picture.storage,
 				productId: productId,
 				createdAt: new Date(),
 				updatedAt: new Date()
-			});
-		});
+		};
+	  });
+	const digitalFilesToInsert = digitalFilesToDuplicate.map((picture) => {
+		return {
+		  	_id: productId,
+			name: duplicate.name,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			storage: picture.storage,
+			productId: productId,
+		};
+	  });
+
+
+	await collections.pictures.insertMany(picturesToInsert);
+	await collections.digitalFiles.insertMany(digitalFilesToInsert);
+
 
 		// This could be a change stream on collections.product, but for now a bit simpler
 		// to put it here.
