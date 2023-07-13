@@ -137,7 +137,9 @@ export async function createOrder(
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
 
-	if (!npubAddress && !(emailsEnabled && email)) {
+	const canBeNotified = !!(npubAddress || (emailsEnabled && email));
+
+	if (!canBeNotified && paymentMethod !== 'cash') {
 		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
 	}
 
@@ -178,6 +180,10 @@ export async function createOrder(
 	const orderId = crypto.randomUUID();
 
 	const subscriptions = items.filter((item) => item.product.type === 'subscription');
+
+	if (subscriptions.length && !canBeNotified) {
+		throw error(400, 'Missing npub address or email for subscription');
+	}
 
 	for (const subscription of subscriptions) {
 		const product = subscription.product;
@@ -257,11 +263,12 @@ export async function createOrder(
 									wallet: await currentWallet()
 								};
 							case 'lightning': {
-								const invoice = await lndCreateInvoice(
-									totalSatoshis,
-									differenceInSeconds(expiresAt, new Date()),
-									runtimeConfig.includeOrderUrlInQRCode ? `${ORIGIN}/order/${orderId}` : undefined
-								);
+								const invoice = await lndCreateInvoice(totalSatoshis, {
+									expireAfterSeconds: differenceInSeconds(expiresAt, new Date()),
+									label: runtimeConfig.includeOrderUrlInQRCode
+										? `${ORIGIN}/order/${orderId}`
+										: undefined
+								});
 
 								return {
 									address: invoice.payment_request,
