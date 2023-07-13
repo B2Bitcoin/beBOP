@@ -39,7 +39,7 @@
 						displayOption={token.display}
 						class="not-prose my-5"
 					/>
-				{:else if token.type === 'challengeWidget'}
+				{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 					<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
 				{:else}
 					{@html marked(token.raw)}
