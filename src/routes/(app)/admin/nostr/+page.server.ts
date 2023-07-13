@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { setTimeout } from 'node:timers/promises';
 import type { Event } from 'nostr-tools';
 import { uniqBy } from '$lib/utils/uniqBy.js';
+import { NOSTR_PROTOCOL_VERSION } from '$lib/server/locks/handle-messages.js';
 
 export function load() {
 	return {
@@ -51,7 +52,8 @@ export const actions = {
 				...(lnAddress && { lud16: `ln@${domainName}` }),
 				// about: '',
 				...(runtimeConfig.logoPictureId && { picture: pictureUrl }),
-				nip05: `_@${domainName}` //`_@${domainName}`
+				nip05: `_@${domainName}`,
+				bootikVersion: NOSTR_PROTOCOL_VERSION
 			}),
 			createdAt: new Date(),
 			updatedAt: new Date(),

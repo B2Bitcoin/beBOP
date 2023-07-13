@@ -21,6 +21,7 @@ import {
 	validateEvent,
 	verifySignature
 } from 'nostr-tools';
+import { NOSTR_PROTOCOL_VERSION } from './handle-messages';
 
 const lock = nostrPrivateKeyHex ? new Lock('notifications.nostr') : null;
 const processingIds = new Set<string>();
@@ -106,6 +107,7 @@ function initRelayPool() {
 									? await nip04.decrypt(nostrPrivateKeyHex, event.pubkey, event.content)
 									: event.content,
 							kind: event.kind,
+							tags: event.tags,
 							source: hexToNpub(event.pubkey),
 							updatedAt: new Date()
 						}
@@ -194,7 +196,10 @@ async function handleNostrNotification(nostrNotification: NostRNotification): Pr
 						])
 					),
 					pubkey: nostrPublicKeyHex,
-					tags: [['p', receiverPublicKeyHex]],
+					tags: [
+						['p', receiverPublicKeyHex],
+						['bootikVersion', String(NOSTR_PROTOCOL_VERSION)]
+					],
 					kind: Kind.EncryptedDirectMessage,
 					sig: ''
 				} satisfies Event;
