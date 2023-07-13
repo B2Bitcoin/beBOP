@@ -17,6 +17,8 @@ const lock = new Lock('received-messages');
 
 const processingIds = new Set<string>();
 
+export const NOSTR_PROTOCOL_VERSION = 1;
+
 collections.nostrReceivedMessages
 	.watch([{ $match: { operationType: 'insert' } }], {
 		fullDocument: 'updateLookup'
@@ -140,7 +142,7 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 			}
 		}
 
-		if (!matched) {
+		if (!matched && !message.tags?.some(([key]) => key === 'bootikVersion')) {
 			await send(
 				`Hello ${
 					!isPrivateMessage ? 'world' : isCustomer ? 'customer' : 'you'

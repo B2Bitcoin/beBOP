@@ -9,5 +9,7 @@ export interface NostRReceivedMessage extends Timestamps {
 
 	kind: Kind;
 
+	tags: string[][];
+
 	processedAt?: Date;
 }
