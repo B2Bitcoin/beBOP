@@ -57,7 +57,7 @@
 
 		{#if data.order.notifications?.paymentStatus?.npub}
 			<p>
-				NostR public address for payment status: <span class="font-mono">
+				NostR public address for payment status: <span class="font-mono break-words">
 					{data.order.notifications.paymentStatus.npub}</span
 				>
 			</p>

@@ -76,7 +76,7 @@
 		<li>
 			Amount: {transaction.amount} / Txid:
 			<a
-				class="underline text-link"
+				class="underline text-link break-words"
 				href="https://www.blockchain.com/en/explorer/transactions/{data.blockchainInfo.chain ===
 				'test'
 					? 'btc-testnet'
@@ -85,8 +85,9 @@
 			{#if transaction.label.startsWith('order:') && orderById[transaction.label.slice('order:'.length)]}
 				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)].createdAt}
 				/
-				<a class="underline text-link" href="/order/{transaction.label.slice('order:'.length)}"
-					>Order</a
+				<a
+					class="underline text-link break-words"
+					href="/order/{transaction.label.slice('order:'.length)}">Order</a
 				>
 				created
 				<time datetime={orderCreatedAt.toJSON()} title={orderCreatedAt.toLocaleString('en')}
