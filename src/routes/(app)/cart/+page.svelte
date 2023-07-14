@@ -51,21 +51,22 @@
 							};
 						}}
 					>
-						<div class="w-[138px] h-[138px] min-w-[138px] min-h-[138px] rounded flex items-center">
+						<a
+							href="/product/{item.product._id}"
+							class="w-[138px] h-[138px] min-w-[138px] min-h-[138px] rounded flex items-center"
+						>
 							{#if item.picture}
-								<a href="/product/{item.product._id}"
-									><Picture
-										picture={item.picture}
-										class="rounded grow object-cover h-full w-full"
-										sizes="138px"
-									/></a
-								>
+								<Picture
+									picture={item.picture}
+									class="rounded grow object-cover h-full w-full"
+									sizes="138px"
+								/>
 							{/if}
-						</div>
+						</a>
 						<div class="flex flex-col gap-2">
 							<a href="/product/{item.product._id}"
-								><h2 class="text-2xl text-gray-850">{item.product.name}</h2></a
-							>
+								><h2 class="text-2xl text-gray-850">{item.product.name}</h2>
+							</a>
 							<p class="text-sm text-gray-600">{item.product.shortDescription}</p>
 							<div class="grow" />
 							<div class="flex flex-row gap-2">

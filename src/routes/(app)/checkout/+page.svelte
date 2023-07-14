@@ -255,21 +255,22 @@
 						}}
 					>
 						<a href="/product/{item.product._id}"
-							><h3 class="text-base text-gray-700">{item.product.name}</h3></a
-						>
+							><h3 class="text-base text-gray-700">{item.product.name}</h3>
+						</a>
 
 						<div class="flex flex-row gap-2">
-							<div class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center">
+							<a
+								href="/product/{item.product._id}"
+								class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center"
+							>
 								{#if item.picture}
-									<a href="/product/{item.product._id}">
-										<Picture
-											picture={item.picture}
-											class="rounded grow object-cover h-full w-full"
-											sizes="50px"
-										/></a
-									>
+									<Picture
+										picture={item.picture}
+										class="rounded grow object-cover h-full w-full"
+										sizes="50px"
+									/>
 								{/if}
-							</div>
+							</a>
 							<div class="flex flex-col">
 								<div class="flex flex-row gap-2">
 									<ProductType
