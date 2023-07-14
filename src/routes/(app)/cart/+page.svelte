@@ -64,8 +64,8 @@
 							{/if}
 						</a>
 						<div class="flex flex-col gap-2">
-							<a href="/product/{item.product._id}"
-								><h2 class="text-2xl text-gray-850">{item.product.name}</h2>
+							<a href="/product/{item.product._id}">
+								<h2 class="text-2xl text-gray-850">{item.product.name}</h2>
 							</a>
 							<p class="text-sm text-gray-600">{item.product.shortDescription}</p>
 							<div class="grow" />
