@@ -3,6 +3,8 @@ import { collections } from './database';
 
 const defaultConfig = {
 	BTC_EUR: 30_000,
+	BTC_CHF: 30_000,
+	BTC_USD: 30_000,
 	orderNumber: 0,
 	subscriptionNumber: 0,
 	enableCashSales: false,
