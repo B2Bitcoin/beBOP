@@ -13,7 +13,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 import { s3client } from '$lib/server/s3';
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { CopyObjectCommand, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
@@ -297,12 +297,10 @@ export const actions: Actions = {
 			);
 
 			await s3client.send(
-				new PutObjectCommand({
+				new CopyObjectCommand({
 					Bucket: S3_BUCKET,
+					CopySource: `/${S3_BUCKET}/${sourceObject}`,
 					Key: duplicate.name.split(' ').join('-'),
-					Body: sourceObject.Body,
-					ContentType: sourceObject.ContentType,
-					Metadata: sourceObject.Metadata
 				})
 			);
 			console.log('Document duplicated successfully');
