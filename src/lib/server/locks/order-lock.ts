@@ -9,11 +9,13 @@ import { inspect } from 'node:util';
 import { lndLookupInvoice } from '../lightning';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { onOrderPaid } from '../orders';
-import { runtimeConfig } from '../runtime-config';
+import { refreshPromise, runtimeConfig } from '../runtime-config';
 
 const lock = new Lock('orders');
 
 async function maintainOrders() {
+	await refreshPromise;
+
 	while (!processClosed) {
 		if (!lock.ownsLock) {
 			await setTimeout(5_000);

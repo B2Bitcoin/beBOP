@@ -9,7 +9,6 @@
 <ProductWidget
 	product={data.product}
 	picture={data.picture}
-	exchangeRate={data.exchangeRate}
 	displayOption={display ? display : 'img-0'}
 	hasDigitalFiles={data.digitalFiles.length >= 1}
 />

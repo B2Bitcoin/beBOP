@@ -1,6 +1,7 @@
 import { ORIGIN } from '$env/static/private';
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import { CURRENCIES } from '$lib/types/Currency.js';
 import { z } from 'zod';
 
 export async function load(event) {
@@ -15,6 +16,7 @@ export async function load(event) {
 		subscriptionDuration: runtimeConfig.subscriptionDuration,
 		subscriptionReminderSeconds: runtimeConfig.subscriptionReminderSeconds,
 		confirmationBlocks: runtimeConfig.confirmationBlocks,
+		priceReferenceCurrency: runtimeConfig.priceReferenceCurrency,
 		origin: ORIGIN
 	};
 }
@@ -32,6 +34,11 @@ export const actions = {
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),
 				subscriptionDuration: z.enum(['month', 'day', 'hour']),
+				mainCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT')]),
+				secondaryCurrency: z
+					.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT'), ''])
+					.optional(),
+				priceReferenceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
 				subscriptionReminderSeconds: z
 					.number({ coerce: true })
 					.int()
@@ -40,6 +47,8 @@ export const actions = {
 				confirmationBlocks: z.number({ coerce: true }).int().min(0)
 			})
 			.parse(Object.fromEntries(formData));
+
+		const secondaryCurrency = result.secondaryCurrency || null;
 
 		if (runtimeConfig.includeOrderUrlInQRCode !== result.includeOrderUrlInQRCode) {
 			runtimeConfig.includeOrderUrlInQRCode = result.includeOrderUrlInQRCode;
@@ -114,6 +123,33 @@ export const actions = {
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'confirmationBlocks' },
 				{ $set: { data: result.confirmationBlocks, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.mainCurrency !== result.mainCurrency) {
+			runtimeConfig.mainCurrency = result.mainCurrency;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'mainCurrency' },
+				{ $set: { data: result.mainCurrency, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.secondaryCurrency !== secondaryCurrency) {
+			runtimeConfig.secondaryCurrency = secondaryCurrency;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'secondaryCurrency' },
+				{ $set: { data: secondaryCurrency, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.priceReferenceCurrency !== result.priceReferenceCurrency) {
+			runtimeConfig.priceReferenceCurrency = result.priceReferenceCurrency;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'priceReferenceCurrency' },
+				{ $set: { data: result.priceReferenceCurrency, updatedAt: new Date() } },
 				{ upsert: true }
 			);
 		}
