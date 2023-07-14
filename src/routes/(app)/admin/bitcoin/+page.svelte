@@ -76,7 +76,7 @@
 		<li>
 			Amount: {transaction.amount} / Txid:
 			<a
-				class="underline text-link"
+				class="underline text-link break-words"
 				href="https://www.blockchain.com/en/explorer/transactions/{data.blockchainInfo.chain ===
 				'test'
 					? 'btc-testnet'

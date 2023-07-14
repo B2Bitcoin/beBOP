@@ -19,7 +19,7 @@
 	<li>synced to chain: {data.info.synced_to_chain}</li>
 	<li>synced to graph: {data.info.synced_to_graph}</li>
 	<li>peers: {data.info.num_peers}</li>
-	<li>node url: {data.info.uris.join(' / ')}</li>
+	<li class="break-words">node url: {data.info.uris.join(' / ')}</li>
 	{#if data.info.uris.length}
 		<li>
 			<b>LN url:</b>
