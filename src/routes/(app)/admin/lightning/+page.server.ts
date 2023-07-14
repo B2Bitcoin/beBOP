@@ -6,6 +6,7 @@ import {
 	lndListChannels,
 	lndWalletBalance
 } from '$lib/server/lightning.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export async function load() {
 	return {
@@ -13,7 +14,8 @@ export async function load() {
 		walletBalance: lndWalletBalance(),
 		channelsBalance: lndChannelsBalance(),
 		channels: lndListChannels(),
-		autopilotActive: lndAutopilotActive()
+		autopilotActive: lndAutopilotActive(),
+		priceReferenceCurrency: runtimeConfig.priceReferenceCurrency
 	};
 }
 

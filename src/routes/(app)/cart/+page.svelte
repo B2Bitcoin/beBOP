@@ -6,13 +6,20 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import { sum } from '$lib/utils/sum';
+	import { toCurrency } from '$lib/utils/toCurrency.js';
 
 	export let data;
 
 	let actionCount = 0;
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
+	$: totalPrice = sum(
+		items.map(
+			(item) =>
+				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				item.quantity
+		)
+	);
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
@@ -93,14 +100,14 @@
 							<PriceTag
 								amount={item.quantity * item.product.price.amount}
 								currency={item.product.price.currency}
+								main
 								class="text-2xl text-gray-800 truncate"
 							/>
 							<PriceTag
 								class="text-base text-gray-600 truncate"
 								amount={item.quantity * item.product.price.amount}
 								currency={item.product.price.currency}
-								convertedTo="EUR"
-								exchangeRate={data.exchangeRate}
+								secondary
 							/>
 						</div>
 					</form>
@@ -111,13 +118,17 @@
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 				<h2 class="text-gray-800 text-[32px]">Total:</h2>
 				<div class="flex flex-col items-end">
-					<PriceTag amount={totalPrice} currency={'BTC'} class="text-[32px] text-gray-800" />
+					<PriceTag
+						amount={totalPrice}
+						currency={data.mainCurrency}
+						main
+						class="text-[32px] text-gray-800"
+					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={totalPrice}
-						currency={'BTC'}
-						convertedTo="EUR"
-						exchangeRate={data.exchangeRate}
+						currency={data.mainCurrency}
+						secondary
 					/>
 				</div>
 			</div>

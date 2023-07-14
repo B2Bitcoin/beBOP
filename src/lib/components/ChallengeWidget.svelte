@@ -44,6 +44,7 @@
 				amount={challenge.goal.amount}
 				class="text-gray-800 text-base"
 				currency={challenge.goal.currency}
+				main
 			/>
 		{:else}
 			{challenge.goal.amount} products

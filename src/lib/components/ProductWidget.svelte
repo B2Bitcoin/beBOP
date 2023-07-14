@@ -20,7 +20,6 @@
 	>;
 	export let hasDigitalFiles: boolean;
 
-	export let exchangeRate = 0;
 	let className = '';
 	export { className as class };
 	export let displayOption = 'img-0';
@@ -52,13 +51,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -105,13 +104,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -138,13 +137,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -202,13 +201,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -240,13 +239,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>

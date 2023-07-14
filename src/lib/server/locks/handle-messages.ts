@@ -4,7 +4,7 @@ import { Lock } from '../lock';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
 import { Kind } from 'nostr-tools';
 import { ORIGIN } from '$env/static/private';
-import { runtimeConfig } from '../runtime-config';
+import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
 import { addToCartInDb, removeFromCartInDb } from '../cart';
@@ -56,6 +56,8 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 		if (!updatedMessage || updatedMessage.processedAt) {
 			return;
 		}
+
+		await refreshPromise;
 
 		message = updatedMessage;
 
@@ -226,8 +228,7 @@ const commands: Record<
 								(product) =>
 									`- ${product.name} [ref: "${product._id}"] / ${toSatoshis(
 										product.price.amount,
-										product.price.currency,
-										runtimeConfig.BTC_EUR
+										product.price.currency
 									).toLocaleString('en-US')} SAT / ${ORIGIN}/product/${product._id}`
 							)
 							.join('\n')
@@ -254,8 +255,7 @@ const commands: Record<
 								(product) =>
 									`- ${product.name} [ref: "${product._id}"] / ${toSatoshis(
 										product.price.amount,
-										product.price.currency,
-										runtimeConfig.BTC_EUR
+										product.price.currency
 									).toLocaleString('en-US')} SAT / ${ORIGIN}/product/${
 										product._id
 									} / ${product.shortDescription.replaceAll(/\s+/g, ' ')}`
@@ -285,11 +285,7 @@ const commands: Record<
 					.filter((item) => productById[item.productId])
 					.map((item) => {
 						const product = productById[item.productId];
-						const price = toSatoshis(
-							product.price.amount * item.quantity,
-							product.price.currency,
-							runtimeConfig.BTC_EUR
-						);
+						const price = toSatoshis(product.price.amount * item.quantity, product.price.currency);
 						totalPrice += price;
 						return `- ref: "${product._id}" / ${price.toLocaleString('en-US')} SAT / Quantity: ${
 							item.quantity
@@ -350,8 +346,7 @@ const commands: Record<
 					item.quantity
 				} and price of ${toSatoshis(
 					product.price.amount * item.quantity,
-					product.price.currency,
-					runtimeConfig.BTC_EUR
+					product.price.currency
 				).toLocaleString('en-US')} SAT`
 			);
 		}
@@ -402,8 +397,7 @@ const commands: Record<
 					item.quantity
 				} and price of ${toSatoshis(
 					item.quantity * product.price.amount,
-					product.price.currency,
-					runtimeConfig.BTC_EUR
+					product.price.currency
 				).toLocaleString('en-US')} SAT`
 			);
 		}

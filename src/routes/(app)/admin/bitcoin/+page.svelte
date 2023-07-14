@@ -74,9 +74,14 @@
 <ul>
 	{#each data.transactions as transaction}
 		<li>
-			Amount: {transaction.amount} / Txid:
+			Amount: {transaction.amount}
+			{#if data.priceReferenceCurrency !== 'BTC'}(<PriceTag
+					currency="BTC"
+					amount={transaction.amount}
+					convertedTo={data.priceReferenceCurrency}
+				/>){/if} / Txid:
 			<a
-				class="underline text-link"
+				class="underline text-link break-words"
 				href="https://www.blockchain.com/en/explorer/transactions/{data.blockchainInfo.chain ===
 				'test'
 					? 'btc-testnet'

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { marked } from 'marked';
 	import type { PageData } from '../../routes/(app)/[slug]/$types';
-	import type { LayoutData } from '../../routes/(app)/$types';
 	import ProductWidget from './ProductWidget.svelte';
 	import ChallengeWidget from './ChallengeWidget.svelte';
 
@@ -10,7 +9,6 @@
 	export let challenges: PageData['challenges'];
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
-	export let exchangeRate: LayoutData['exchangeRate'];
 	export let digitalFiles: PageData['digitalFiles'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
@@ -32,7 +30,6 @@
 			{#each tokens as token}
 				{#if token.type === 'productWidget' && productById[token.slug]}
 					<ProductWidget
-						{exchangeRate}
 						product={productById[token.slug]}
 						picture={pictureByProduct[token.slug]}
 						hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}

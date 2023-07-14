@@ -4,7 +4,7 @@
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { navigating, page } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';
@@ -20,6 +20,8 @@
 	//import IconMenu from '~icons/ant-design/holder-outlined';
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import { slide } from 'svelte/transition';
+	import { exchangeRate } from '$lib/stores/exchangeRate';
+	import { toCurrency } from '$lib/utils/toCurrency';
 
 	export let data;
 
@@ -28,13 +30,26 @@
 
 	let actionCount = 0;
 
+	$exchangeRate = data.exchangeRate;
+
+	$: $exchangeRate = data.exchangeRate;
+
+	setContext('mainCurrency', data.mainCurrency);
+	setContext('secondaryCurrency', data.secondaryCurrency);
+
 	$: items = data.cart || [];
-	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
+	$: totalPrice = sum(
+		items.map(
+			(item) =>
+				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				item.quantity
+		)
+	);
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
 		// Update exchange rate every 5 minutes
-		const interval = setInterval(() => invalidate(UrlDependency.ExchangeRate), 1000 * 60 * 5);
+		const interval = setInterval(() => invalidate(UrlDependency.ExchangeRate), 1000 * 5 * 60);
 
 		return () => clearInterval(interval);
 	});
@@ -126,11 +141,12 @@
 				{#if 0}
 					<IconWallet />
 					<div class="flex flex-col">
-						<PriceTag gap={'gap-1'} currency="BTC" amount={0.00_220_625} />
+						<PriceTag gap={'gap-1'} currency="BTC" amount={0.00_220_625} main />
 						<PriceTag
 							gap={'gap-1'}
-							currency="EUR"
-							amount={1.22}
+							currency="BTC"
+							amount={0.00_220_625}
+							secondary
 							class="ml-auto text-sm text-gray-550"
 						/>
 					</div>
@@ -215,6 +231,7 @@
 												class="text-gray-600 text-base"
 												amount={item.quantity * item.product.price.amount}
 												currency={item.product.price.currency}
+												main
 											/>
 											<button formaction="/cart/{item.product._id}/?/remove">
 												<IconTrash class="text-gray-800" />
@@ -224,7 +241,7 @@
 									</form>
 								{/each}
 								<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-									Total <PriceTag currency="BTC" amount={totalPrice} />
+									Total <PriceTag currency={data.mainCurrency} amount={totalPrice} main />
 								</div>
 								<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
 								{#if items.length > 0}<a href="/checkout" class="btn btn-black"> Checkout </a>{/if}

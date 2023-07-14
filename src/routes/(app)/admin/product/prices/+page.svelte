@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
+
 	export let data;
 
 	function handleInputChange(event: Event) {
@@ -6,7 +8,7 @@
 		const productId = target.name;
 		const newPrice = target.value;
 
-		if (newPrice && parseFloat(newPrice) < 0.00000001) {
+		if (newPrice && parseFloat(newPrice) < 1 / SATOSHIS_PER_BTC) {
 			target.setCustomValidity('Price ' + productId + ' must be greater than 1 SAT');
 			target.reportValidity();
 			return;
@@ -21,13 +23,13 @@
 <form class="flex flex-col gap-2" method="post">
 	{#each data.products as product}
 		<label class="form-label">
-			{product.name} (price)
+			{product.name} ({product.price.currency})
 			<input
 				type="number"
 				name={product._id}
 				value={product.price.amount}
 				class="form-input"
-				placeholder="Price (BTC)"
+				placeholder="Price ({product.price.currency})"
 				step="any"
 				required
 				on:input={handleInputChange}
