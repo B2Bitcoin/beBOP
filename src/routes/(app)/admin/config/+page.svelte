@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
-	import { filter } from 'lodash-es';
 
 	export let data;
 </script>

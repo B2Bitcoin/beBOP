@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
+
 	export let data;
 
 	function handleInputChange(event: Event) {
@@ -6,7 +8,7 @@
 		const productId = target.name;
 		const newPrice = target.value;
 
-		if (newPrice && parseFloat(newPrice) < 0.00000001) {
+		if (newPrice && parseFloat(newPrice) < 1 / SATOSHIS_PER_BTC) {
 			target.setCustomValidity('Price ' + productId + ' must be greater than 1 SAT');
 			target.reportValidity();
 			return;

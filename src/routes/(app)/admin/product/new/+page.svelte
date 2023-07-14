@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CURRENCIES } from '$lib/types/Currency.js';
+	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
@@ -26,7 +26,7 @@
 	}
 
 	function checkForm(event: SubmitEvent) {
-		if (priceAmountElement.value && priceAmount < 0.00000001) {
+		if (priceAmountElement.value && priceAmount < 1 / SATOSHIS_PER_BTC) {
 			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
 			priceAmountElement.reportValidity();
 			event.preventDefault();
