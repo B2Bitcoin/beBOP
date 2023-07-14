@@ -300,7 +300,7 @@ export const actions: Actions = {
 				new CopyObjectCommand({
 					Bucket: S3_BUCKET,
 					CopySource: `/${S3_BUCKET}/${sourceObject}`,
-					Key: duplicate.name.split(' ').join('-'),
+					Key: duplicate.name.split(' ').join('-')
 				})
 			);
 			console.log('Document duplicated successfully');
