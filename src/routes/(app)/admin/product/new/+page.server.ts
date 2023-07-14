@@ -255,12 +255,10 @@ export const actions: Actions = {
 			displayShortDescription: duplicate.displayShortDescription
 		});
 
-		const picturesToDuplicate = duplicatedProductId
-			? await collections.pictures
+		const picturesToDuplicate =  await collections.pictures
 					.find({ productId: duplicatedProductId })
 					.sort({ createdAt: 1 })
-					.toArray()
-			: undefined;
+					.toArray();
 
 		if (!picturesToDuplicate) {
 			throw error(404, 'Pictures not found');
