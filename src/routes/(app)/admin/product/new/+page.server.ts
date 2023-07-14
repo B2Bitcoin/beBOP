@@ -257,15 +257,15 @@ export const actions: Actions = {
 			displayShortDescription: duplicate.displayShortDescription
 		});
 
-		const picturesToDuplicate =  await collections.pictures
-					.find({ productId: duplicatedProductId })
-					.sort({ createdAt: 1 })
-					.toArray();
+		const picturesToDuplicate = await collections.pictures
+			.find({ productId: duplicatedProductId })
+			.sort({ createdAt: 1 })
+			.toArray();
 
 		const digitalFilesToDuplicate = await collections.digitalFiles
-					.find({ productId: duplicatedProductId })
-					.sort({ createdAt: 1 })
-					.toArray();
+			.find({ productId: duplicatedProductId })
+			.sort({ createdAt: 1 })
+			.toArray();
 
 		const picturesToInsert = picturesToDuplicate.map((picture) => {
 			return {
@@ -289,19 +289,23 @@ export const actions: Actions = {
 		});
 
 		try {
-			const sourceObject = await s3client.send(new GetObjectCommand({
-				Bucket: S3_BUCKET,
-				Key: picturesToDuplicate[0].storage.original.key
-				}));
-			
-			await s3client.send(new PutObjectCommand({
-				Bucket: S3_BUCKET,
-				Key: duplicate.name.split(' ').join('-'),
-				Body: sourceObject.Body,
-				ContentType: sourceObject.ContentType,
-				Metadata: sourceObject.Metadata,
-				}));
-				console.log('Document duplicated successfully');
+			const sourceObject = await s3client.send(
+				new GetObjectCommand({
+					Bucket: S3_BUCKET,
+					Key: picturesToDuplicate[0].storage.original.key
+				})
+			);
+
+			await s3client.send(
+				new PutObjectCommand({
+					Bucket: S3_BUCKET,
+					Key: duplicate.name.split(' ').join('-'),
+					Body: sourceObject.Body,
+					ContentType: sourceObject.ContentType,
+					Metadata: sourceObject.Metadata
+				})
+			);
+			console.log('Document duplicated successfully');
 		} catch (error) {
 			console.error('Error duplicating document: ', error);
 		}
