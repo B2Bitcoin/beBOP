@@ -254,8 +254,8 @@
 							};
 						}}
 					>
-						<a href="/product/{item.product._id}"
-							><h3 class="text-base text-gray-700">{item.product.name}</h3>
+						<a href="/product/{item.product._id}">
+							<h3 class="text-base text-gray-700">{item.product.name}</h3>
 						</a>
 
 						<div class="flex flex-row gap-2">
