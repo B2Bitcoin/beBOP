@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CURRENCIES } from '$lib/types/Currency.js';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
@@ -11,6 +12,8 @@
 
 	let priceAmount: number;
 	let priceAmountElement: HTMLInputElement;
+
+	export let data;
 
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
@@ -49,22 +52,32 @@
 		/>
 	</label>
 
-	<label>
-		Price
-		<input
-			class="form-input"
-			type="number"
-			name="priceAmount"
-			placeholder="Price (BTC)"
-			step="any"
-			bind:value={priceAmount}
-			bind:this={priceAmountElement}
-			on:input={() => priceAmountElement?.setCustomValidity('')}
-			required
-		/>
-	</label>
+	<div class="gap-4 flex flex-col md:flex-row">
+		<label class="w-full">
+			Price amount
+			<input
+				class="form-input"
+				type="number"
+				name="priceAmount"
+				placeholder="Price"
+				step="any"
+				bind:value={priceAmount}
+				bind:this={priceAmountElement}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+				required
+			/>
+		</label>
 
-	<input type="hidden" name="priceCurrency" value="BTC" />
+		<label class="w-full">
+			Price currency
+
+			<select name="priceCurrency" class="form-input">
+				{#each CURRENCIES as currency}
+					<option value={currency} selected={data.currency === currency}>{currency}</option>
+				{/each}
+			</select>
+		</label>
+	</div>
 
 	<label>
 		Short description

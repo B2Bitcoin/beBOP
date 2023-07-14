@@ -1,19 +1,19 @@
 import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
 import { exchangeRate } from '$lib/stores/exchangeRate';
-import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
+import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 
 const defaultConfig = {
 	BTC_EUR: 30_000,
 	BTC_CHF: 30_000,
 	BTC_USD: 30_000,
 	BTC_SAT: SATOSHIS_PER_BTC,
-	mainCurrency: 'BTC',
-	secondCurrency: 'EUR',
+	mainCurrency: 'BTC' as Currency,
+	secondCurrency: 'EUR' as Currency,
 	/**
 	 * Prices are defined in this currency in the database
 	 */
-	underlyingCurrency: 'BTC',
+	productPriceReferenceCurrency: 'SAT' as Currency,
 	orderNumber: 0,
 	subscriptionNumber: 0,
 	enableCashSales: false,
