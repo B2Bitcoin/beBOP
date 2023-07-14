@@ -4,6 +4,11 @@ import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+import {
+	CURRENCIES,
+	FRACTION_DIGITS_PER_CURRENCY,
+	MININUM_PER_CURRENCY
+} from '$lib/types/Currency';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -39,13 +44,20 @@ export const actions: Actions = {
 			throw error(404, 'Product not found');
 		}
 
+		const { priceCurrency } = z
+			.object({
+				priceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)])
+			})
+			.parse({
+				priceCurrency: formData.get('priceCurrency')
+			});
+
 		const update = z
 			.object({
 				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				description: z.string().trim().max(10_000),
 				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
 				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
-				priceCurrency: z.enum(['BTC']),
 				availableDate: z.date({ coerce: true }).optional(),
 				changedDate: z.boolean({ coerce: true }).default(false),
 				preorder: z.boolean({ coerce: true }).default(false),
@@ -57,7 +69,6 @@ export const actions: Actions = {
 				description: formData.get('description'),
 				shortDescription: formData.get('shortDescription'),
 				priceAmount: formData.get('priceAmount'),
-				priceCurrency: formData.get('priceCurrency'),
 				preorder: formData.get('preorder'),
 				shipping: formData.get('shipping'),
 				availableDate: formData.get('availableDate') || undefined,
@@ -83,6 +94,18 @@ export const actions: Actions = {
 			update.shipping = false;
 		}
 
+		const priceAmount =
+			Math.round(
+				parseFloat(update.priceAmount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency])
+			) / Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency]);
+
+		if (priceAmount <= MININUM_PER_CURRENCY[priceCurrency]) {
+			throw error(
+				400,
+				`Price must be greater than ${MININUM_PER_CURRENCY[priceCurrency]} ${priceCurrency}`
+			);
+		}
+
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -90,12 +113,10 @@ export const actions: Actions = {
 					name: update.name,
 					description: update.description,
 					shortDescription: update.shortDescription,
-					price: update.priceAmount
-						? {
-								amount: parseFloat(update.priceAmount),
-								currency: update.priceCurrency
-						  }
-						: undefined,
+					price: {
+						amount: priceAmount,
+						currency: priceCurrency
+					},
 					...(update.changedDate &&
 						update.availableDate && { availableDate: update.availableDate }),
 					shipping: update.shipping,

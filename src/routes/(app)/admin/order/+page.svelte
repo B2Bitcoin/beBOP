@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PriceTag from '$lib/components/PriceTag.svelte';
 	import IconBitcoin from '$lib/components/icons/IconBitcoin.svelte';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 
@@ -25,7 +26,11 @@
 				})}</time
 			>
 			- Total: {toSatoshis(order.totalPrice.amount, order.totalPrice.currency).toLocaleString('en')}
-			SAT -
+			SAT {#if data.priceReferenceCurrency !== 'SAT'}(<PriceTag
+					currency={order.totalPrice.currency}
+					amount={order.totalPrice.amount}
+					convertedTo={data.priceReferenceCurrency}
+				/>){/if}-
 			<span
 				class={order.payment.status === 'expired' || order.payment.status === 'canceled'
 					? 'text-gray-550'

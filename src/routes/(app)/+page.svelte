@@ -6,7 +6,7 @@
 </script>
 
 {#if data.cms}
-	<CmsPage exchangeRate={data.exchangeRate} {...data.cms} />
+	<CmsPage {...data.cms} />
 {:else}
 	<Catalog {...data.catalog} />
 {/if}

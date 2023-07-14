@@ -3,7 +3,7 @@ import { collections, withTransaction } from '../database';
 import { Lock } from '../lock';
 import { processClosed } from '../process';
 import { setTimeout } from 'node:timers/promises';
-import { runtimeConfig } from '../runtime-config';
+import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { ObjectId } from 'mongodb';
 import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
@@ -11,6 +11,8 @@ import { Kind } from 'nostr-tools';
 const lock = new Lock('paid-subscriptions');
 
 async function maintainLock() {
+	await refreshPromise;
+
 	while (!processClosed) {
 		if (!lock.ownsLock) {
 			await setTimeout(5_000);
