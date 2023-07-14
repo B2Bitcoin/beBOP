@@ -57,8 +57,6 @@
 			/>
 		</label>
 
-		<input type="hidden" name="priceCurrency" value={data.product.price.currency} />
-
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Price amount
@@ -68,7 +66,9 @@
 					name="priceAmount"
 					placeholder="Price"
 					step="any"
-					value={data.product.price.amount.toLocaleString('en', { maximumFractionDigits: 8 })}
+					value={data.product.price.amount
+						.toLocaleString('en', { maximumFractionDigits: 8 })
+						.replace(/,/g, '')}
 					bind:this={priceAmountElement}
 					on:input={() => priceAmountElement?.setCustomValidity('')}
 					required

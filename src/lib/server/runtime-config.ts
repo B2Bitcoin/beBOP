@@ -9,11 +9,11 @@ const defaultConfig = {
 	BTC_USD: 30_000,
 	BTC_SAT: SATOSHIS_PER_BTC,
 	mainCurrency: 'BTC' as Currency,
-	secondCurrency: 'EUR' as Currency,
+	secondaryCurrency: 'EUR' as Currency | null,
 	/**
 	 * Prices are defined in this currency in the database
 	 */
-	productPriceReferenceCurrency: 'SAT' as Currency,
+	priceReferenceCurrency: 'SAT' as Currency,
 	orderNumber: 0,
 	subscriptionNumber: 0,
 	enableCashSales: false,

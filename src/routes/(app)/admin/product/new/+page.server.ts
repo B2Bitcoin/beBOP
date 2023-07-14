@@ -20,7 +20,7 @@ import {
 
 export async function load() {
 	return {
-		currency: runtimeConfig.productPriceReferenceCurrency
+		currency: runtimeConfig.priceReferenceCurrency
 	};
 }
 

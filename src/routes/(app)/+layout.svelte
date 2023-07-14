@@ -39,7 +39,7 @@
 
 	onMount(() => {
 		// Update exchange rate every 5 minutes
-		const interval = setInterval(() => invalidate(UrlDependency.ExchangeRate), 1000 * 5);
+		const interval = setInterval(() => invalidate(UrlDependency.ExchangeRate), 1000 * 5 * 60);
 
 		return () => clearInterval(interval);
 	});

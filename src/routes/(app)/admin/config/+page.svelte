@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
+	import { filter } from 'lodash-es';
 
 	export let data;
 </script>
@@ -8,9 +10,41 @@
 
 <p>Configured URL: {data.origin}</p>
 
-<p>Exchange Rate BTC/EUR: {data.exchangeRate}</p>
+<div>
+	Exchange Rate: <pre>{JSON.stringify(data.exchangeRate, null, 2)}</pre>
+</div>
 
 <form method="post" class="flex flex-col gap-6">
+	<label class="form-label">
+		Main currency
+		<select name="mainCurrency" class="form-input max-w-[25rem]">
+			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
+				<option value={currency} selected={data.mainCurrency === currency}>{currency}</option>
+			{/each}
+		</select>
+	</label>
+
+	<label class="form-label">
+		Secondary currency
+		<select name="secondaryCurrency" class="form-input max-w-[25rem]">
+			<option value="" selected={!data.secondaryCurrency} />
+			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
+				<option value={currency} selected={data.secondaryCurrency === currency}>{currency}</option>
+			{/each}
+		</select>
+	</label>
+
+	<label class="form-label">
+		Price reference currency (to avoid exchange rate fluctuations)
+		<select name="priceReferenceCurrency" class="form-input max-w-[25rem]">
+			{#each CURRENCIES as currency}
+				<option value={currency} selected={data.priceReferenceCurrency === currency}>
+					{currency}
+				</option>
+			{/each}
+		</select>
+	</label>
+
 	<label class="flex gap-2 cursor-pointer items-center">
 		<input
 			type="checkbox"
