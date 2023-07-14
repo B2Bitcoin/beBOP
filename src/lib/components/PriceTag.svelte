@@ -31,15 +31,15 @@
 	$: actualAmount = actualCurrency === null ? 0 : toCurrency(actualCurrency, amount, currency);
 
 	$: displayedAmount =
-		actualCurrency === 'BTC' && !rawBtc && amount < 0.01
+		actualCurrency === 'BTC' && !rawBtc && actualAmount < 0.01
 			? actualAmount * SATOSHIS_PER_BTC
-			: actualCurrency === 'SAT' && amount >= 1_000_000
+			: actualCurrency === 'SAT' && actualAmount >= 1_000_000
 			? actualAmount / SATOSHIS_PER_BTC
 			: actualAmount;
 	$: displayedCurrency =
-		actualCurrency === 'BTC' && !rawBtc && amount < 0.01
+		actualCurrency === 'BTC' && !rawBtc && actualAmount < 0.01
 			? 'SAT'
-			: actualCurrency === 'SAT' && amount >= 1_000_000
+			: actualCurrency === 'SAT' && actualAmount >= 1_000_000
 			? 'BTC'
 			: actualCurrency || 'BTC';
 
