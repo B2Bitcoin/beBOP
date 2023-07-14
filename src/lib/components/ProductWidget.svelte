@@ -5,6 +5,7 @@
 	import PriceTag from './PriceTag.svelte';
 	import ProductType from './ProductType.svelte';
 	import AddToCart from './AddToCart.svelte';
+	import type { LayoutData } from '../../routes/(app)/$types';
 
 	export let picture: Picture | undefined;
 	export let product: Pick<
@@ -20,7 +21,6 @@
 	>;
 	export let hasDigitalFiles: boolean;
 
-	export let exchangeRate = 0;
 	let className = '';
 	export { className as class };
 	export let displayOption = 'img-0';
@@ -57,7 +57,6 @@
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
 						convertedTo="EUR"
 					/>
 				</div>
@@ -110,7 +109,6 @@
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
 						convertedTo="EUR"
 					/>
 				</div>
@@ -143,7 +141,6 @@
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
 						convertedTo="EUR"
 					/>
 				</div>
@@ -207,7 +204,6 @@
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
 						convertedTo="EUR"
 					/>
 				</div>
@@ -245,7 +241,6 @@
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
 						convertedTo="EUR"
 					/>
 				</div>

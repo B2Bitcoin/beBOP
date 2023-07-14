@@ -95,7 +95,6 @@
 								amount={item.quantity * item.product.price.amount}
 								currency={item.product.price.currency}
 								convertedTo="EUR"
-								exchangeRate={data.exchangeRate}
 							/>
 						</div>
 					</form>
@@ -112,7 +111,6 @@
 						amount={totalPrice}
 						currency={'BTC'}
 						convertedTo="EUR"
-						exchangeRate={data.exchangeRate}
 					/>
 				</div>
 			</div>

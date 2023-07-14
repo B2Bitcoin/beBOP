@@ -136,7 +136,6 @@
 						currency={data.product.price.currency}
 						amount={data.product.price.amount}
 						convertedTo="EUR"
-						exchangeRate={data.exchangeRate}
 						class="text-xl"
 					/>
 				</div>

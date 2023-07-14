@@ -20,6 +20,7 @@
 	//import IconMenu from '~icons/ant-design/holder-outlined';
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import { slide } from 'svelte/transition';
+	import { exchangeRate } from '$lib/stores/exchangeRate';
 
 	export let data;
 
@@ -28,13 +29,17 @@
 
 	let actionCount = 0;
 
+	$exchangeRate = data.exchangeRate;
+
+	$: $exchangeRate = data.exchangeRate;
+
 	$: items = data.cart || [];
 	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
 		// Update exchange rate every 5 minutes
-		const interval = setInterval(() => invalidate(UrlDependency.ExchangeRate), 1000 * 60 * 5);
+		const interval = setInterval(() => invalidate(UrlDependency.ExchangeRate), 1000 * 5);
 
 		return () => clearInterval(interval);
 	});

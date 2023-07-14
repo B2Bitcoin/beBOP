@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
+	import { toCurrency } from '$lib/utils/toCurrency';
 	import IconBitcoin from './icons/IconBitcoin.svelte';
 	import IconSatoshi from './icons/IconSatoshi.svelte';
 
 	export let amount: number;
-	export let currency: Currency | 'SAT';
-	export let exchangeRate = 0;
+	export let currency: Currency;
 	export let rawBtc = false;
 	export let convertedTo: Currency | undefined = undefined;
 	export let short = true;
@@ -14,7 +14,7 @@
 	let className = '';
 	export { className as class };
 
-	$: actualAmount = convertedTo ? amount * exchangeRate : amount;
+	$: actualAmount = toCurrency(convertedTo ?? currency, amount, currency);
 	$: actualCurrency = convertedTo ?? currency;
 
 	$: displayedAmount =
@@ -40,11 +40,7 @@
 		}) + (displayedCurrency === 'SAT' && !short ? ' SAT' : '');
 </script>
 
-<div
-	class="{className} flex {gap} items-center"
-	title={displayed +
-		(convertedTo ? `, exchange rate: ${exchangeRate} ${convertedTo} per ${currency}` : '')}
->
+<div class="{className} flex {gap} items-center" title={displayed}>
 	{#if displayedCurrency === 'SAT'}
 		<IconSatoshi class="min-w-[1em]" />
 	{:else if displayedCurrency === 'BTC'}

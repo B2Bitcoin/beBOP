@@ -5,6 +5,7 @@
 	import PriceTag from './PriceTag.svelte';
 	import IconCross from './icons/IconCross.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import type { LayoutData } from '../../routes/(app)/$types';
 
 	export let product: BasicProductFrontend;
 	export let picture: PictureType | undefined;

@@ -6,6 +6,7 @@ import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
+import { refreshPromise } from '../runtime-config';
 
 const lock = new Lock('order-notifications');
 
@@ -94,6 +95,8 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 }
 
 async function handleOrderNotification(order: Order): Promise<void> {
+	await refreshPromise;
+
 	if (
 		processingIds.has(order._id.toString()) ||
 		order.lastPaymentStatusNotified === order.payment.status

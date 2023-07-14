@@ -289,7 +289,6 @@
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									convertedTo="EUR"
-									exchangeRate={data.exchangeRate}
 								/>
 								<PriceTag
 									amount={item.quantity * item.product.price.amount}
@@ -313,7 +312,6 @@
 							amount={totalPrice}
 							convertedTo="EUR"
 							currency="BTC"
-							exchangeRate={data.exchangeRate}
 						/>
 					</div>
 					<PriceTag class="self-end text-gray-600" amount={totalPrice} currency="BTC" />
