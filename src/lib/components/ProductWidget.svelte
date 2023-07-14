@@ -51,12 +51,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -103,12 +104,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -135,12 +137,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -198,12 +201,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -235,12 +239,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>

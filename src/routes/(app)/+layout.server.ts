@@ -22,6 +22,8 @@ export async function load({ depends, locals }) {
 			BTC_CHF: runtimeConfig.BTC_CHF,
 			BTC_SAT: runtimeConfig.BTC_SAT
 		},
+		mainCurrency: runtimeConfig.mainCurrency,
+		secondaryCurrency: runtimeConfig.secondaryCurrency,
 		brandName: runtimeConfig.brandName,
 		logoPicture,
 		links: {

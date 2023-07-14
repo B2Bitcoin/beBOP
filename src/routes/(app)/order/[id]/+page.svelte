@@ -51,6 +51,7 @@
 				gap="gap-1"
 				amount={data.order.totalPrice.amount}
 				currency={data.order.totalPrice.currency}
+				convertedTo="BTC"
 				rawBtc
 			/>
 		</div>

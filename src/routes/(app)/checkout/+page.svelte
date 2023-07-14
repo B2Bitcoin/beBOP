@@ -11,6 +11,7 @@
 	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import { toCurrency } from '$lib/utils/toCurrency.js';
 
 	let actionCount = 0;
 	export let data;
@@ -68,7 +69,13 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
+	$: totalPrice = sum(
+		items.map(
+			(item) =>
+				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				item.quantity
+		)
+	);
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -288,12 +295,13 @@
 									class="text-2xl text-gray-800 truncate"
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
-									convertedTo="EUR"
+									main
 								/>
 								<PriceTag
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									class="text-base text-gray-600 truncate"
+									secondary
 								/>
 							</div>
 						</div>
@@ -310,11 +318,16 @@
 						<PriceTag
 							class="text-2xl text-gray-800"
 							amount={totalPrice}
-							convertedTo="EUR"
-							currency="BTC"
+							currency={data.mainCurrency}
+							main
 						/>
 					</div>
-					<PriceTag class="self-end text-gray-600" amount={totalPrice} currency="BTC" />
+					<PriceTag
+						class="self-end text-gray-600"
+						amount={totalPrice}
+						currency={data.mainCurrency}
+						secondary
+					/>
 				</div>
 
 				<label class="cursor-pointer">

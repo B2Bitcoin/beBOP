@@ -1,5 +1,5 @@
 import { exchangeRate } from '$lib/stores/exchangeRate';
-import type { Currency } from '$lib/types/Currency';
+import { FRACTION_DIGITS_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { get } from 'svelte/store';
 
 export function toCurrency(
@@ -14,7 +14,13 @@ export function toCurrency(
 	const bitcoinAmount =
 		fromCurrency === 'BTC' ? amount : amount / get(exchangeRate)[`BTC_${fromCurrency}` as const];
 
-	return targetCurrency === 'BTC'
-		? bitcoinAmount
-		: bitcoinAmount * get(exchangeRate)[`BTC_${targetCurrency}` as const];
+	const ret =
+		targetCurrency === 'BTC'
+			? bitcoinAmount
+			: bitcoinAmount * get(exchangeRate)[`BTC_${targetCurrency}` as const];
+
+	return (
+		Math.round(ret * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
+		Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])
+	);
 }

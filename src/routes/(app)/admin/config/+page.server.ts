@@ -16,8 +16,6 @@ export async function load(event) {
 		subscriptionDuration: runtimeConfig.subscriptionDuration,
 		subscriptionReminderSeconds: runtimeConfig.subscriptionReminderSeconds,
 		confirmationBlocks: runtimeConfig.confirmationBlocks,
-		mainCurrency: runtimeConfig.mainCurrency,
-		secondaryCurrency: runtimeConfig.secondaryCurrency,
 		priceReferenceCurrency: runtimeConfig.priceReferenceCurrency,
 		origin: ORIGIN
 	};
