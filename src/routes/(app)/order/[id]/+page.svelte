@@ -47,7 +47,7 @@
 			{/each}
 		</div>
 
-		<div class="text-xl flex items-center gap-2">
+		<div class="text-xl flex items-end gap-2">
 			Total <PriceTag
 				class="text-xl inline-flex"
 				gap="gap-1"
