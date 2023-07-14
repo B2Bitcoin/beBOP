@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { marked } from 'marked';
 	import type { PageData } from '../../routes/(app)/[slug]/$types';
-	import type { LayoutData } from '../../routes/(app)/$types';
 	import ProductWidget from './ProductWidget.svelte';
 	import ChallengeWidget from './ChallengeWidget.svelte';
 
@@ -10,7 +9,6 @@
 	export let challenges: PageData['challenges'];
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
-	export let exchangeRate: LayoutData['exchangeRate'];
 	export let digitalFiles: PageData['digitalFiles'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
@@ -30,15 +28,15 @@
 	<article class="w-full rounded-xl bg-white border-gray-300 border p-6">
 		<div class="prose max-w-full">
 			{#each tokens as token}
-				{#if token.type === 'productWidget'}
+				{#if token.type === 'productWidget' && productById[token.slug]}
 					<ProductWidget
-						{exchangeRate}
 						product={productById[token.slug]}
 						picture={pictureByProduct[token.slug]}
 						hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
+						displayOption={token.display}
 						class="not-prose my-5"
 					/>
-				{:else if token.type === 'challengeWidget'}
+				{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 					<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
 				{:else}
 					{@html marked(token.raw)}

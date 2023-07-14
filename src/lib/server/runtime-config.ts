@@ -1,8 +1,19 @@
 import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
+import { exchangeRate } from '$lib/stores/exchangeRate';
+import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 
 const defaultConfig = {
 	BTC_EUR: 30_000,
+	BTC_CHF: 30_000,
+	BTC_USD: 30_000,
+	BTC_SAT: SATOSHIS_PER_BTC,
+	mainCurrency: 'BTC' as Currency,
+	secondaryCurrency: 'EUR' as Currency | null,
+	/**
+	 * Prices are defined in this currency in the database
+	 */
+	priceReferenceCurrency: 'SAT' as Currency,
 	orderNumber: 0,
 	subscriptionNumber: 0,
 	enableCashSales: false,
@@ -35,6 +46,13 @@ const defaultConfig = {
 	orderNotificationsResumeToken: null as unknown
 };
 
+exchangeRate.set({
+	BTC_EUR: defaultConfig.BTC_EUR,
+	BTC_CHF: defaultConfig.BTC_CHF,
+	BTC_USD: defaultConfig.BTC_USD,
+	BTC_SAT: defaultConfig.BTC_SAT
+});
+
 export type RuntimeConfig = typeof defaultConfig;
 type ConfigKey = keyof RuntimeConfig;
 export type RuntimeConfigItem = {
@@ -61,6 +79,13 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 			Object.assign(runtimeConfig, { [config._id]: config.data });
 		}
 	}
+
+	exchangeRate.set({
+		BTC_EUR: runtimeConfig.BTC_EUR,
+		BTC_CHF: runtimeConfig.BTC_CHF,
+		BTC_USD: runtimeConfig.BTC_USD,
+		BTC_SAT: runtimeConfig.BTC_SAT
+	});
 
 	if (!runtimeConfig.lnurlPayMetadataJwtSigningKey) {
 		await collections.runtimeConfig.updateOne(

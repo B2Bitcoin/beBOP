@@ -20,7 +20,6 @@
 	>;
 	export let hasDigitalFiles: boolean;
 
-	export let exchangeRate = 0;
 	let className = '';
 	export { className as class };
 	export let displayOption = 'img-0';
@@ -52,13 +51,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -76,9 +75,7 @@
 		</div>
 	</div>
 {:else if displayOption === 'img-2'}
-	<div
-		class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-row gap-4 p-6 rounded {className}"
-	>
+	<div class="relative mx-auto max-w-max bg-gray-240 flex flex-row gap-4 p-6 rounded {className}">
 		<div class="flex flex-col">
 			<div class="flex flex-row justify-start -mt-6 -ml-6">
 				<ProductType
@@ -97,7 +94,7 @@
 		</div>
 
 		<div class="flex flex-col gap-2">
-			<div class="flex flex-col gap-2 justify-between">
+			<div class="flex flex-col gap-2">
 				<a href="/product/{product._id}" class="flex flex-col">
 					<h2 class="text-2xl">{product.name}</h2>
 				</a>
@@ -107,18 +104,18 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
 			<a href="/product/{product._id}" class="flex flex-col">
-				<p class="mt-2 text-gray-800">
+				<p class="mt-2 text-gray-800 max-w-[500px]">
 					{product.shortDescription}
 				</p>
 			</a>
@@ -128,9 +125,7 @@
 		</div>
 	</div>
 {:else if displayOption === 'img-3'}
-	<div
-		class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-row gap-4 p-6 rounded {className}"
-	>
+	<div class="relative mx-auto max-w-max bg-gray-240 flex flex-row gap-4 p-6 rounded {className}">
 		<div class="flex flex-col gap-2">
 			<div class="flex flex-col gap-2 justify-between">
 				<a href="/product/{product._id}" class="flex flex-col">
@@ -142,18 +137,18 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
 			<a href="/product/{product._id}" class="flex flex-col">
-				<p class="mt-2 text-gray-800">
+				<p class="mt-2 text-gray-800 max-w-[500px]">
 					{product.shortDescription}
 				</p>
 			</a>
@@ -179,7 +174,9 @@
 		</div>
 	</div>
 {:else if displayOption === 'img-4'}
-	<div class="relative mx-auto w-264px bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
+	<div
+		class="relative mx-auto max-w-[264px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}"
+	>
 		<div class="flex flex-col">
 			<div class="flex flex-row justify-end -mt-6 -mr-6">
 				<ProductType
@@ -204,13 +201,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>
@@ -242,13 +239,13 @@
 						amount={product.price.amount}
 						currency={product.price.currency}
 						class="text-2xl text-gray-800"
+						main
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={product.price.amount}
 						currency={product.price.currency}
-						{exchangeRate}
-						convertedTo="EUR"
+						secondary
 					/>
 				</div>
 			</div>

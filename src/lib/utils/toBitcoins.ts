@@ -1,17 +1,6 @@
-import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
+import type { Currency } from '$lib/types/Currency';
+import { toCurrency } from './toCurrency';
 
-export function toBitcoins(amount: number, currency: Currency, rate?: number) {
-	if (currency === 'SAT') {
-		return amount / SATOSHIS_PER_BTC;
-	}
-
-	if (currency === 'BTC') {
-		return amount;
-	}
-
-	if (!rate) {
-		throw new Error('exchange rate needed');
-	}
-
-	return amount / rate;
+export function toBitcoins(amount: number, currency: Currency) {
+	return toCurrency('BTC', amount, currency);
 }

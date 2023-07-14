@@ -5,6 +5,8 @@
 	import ProductItem from '$lib/components/ProductItem.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { pluralize } from '$lib/utils/pluralize';
+	import { toBitcoins } from '$lib/utils/toBitcoins';
+	import { toSatoshis } from '$lib/utils/toSatoshis.js';
 	import { differenceInMinutes, format } from 'date-fns';
 	import { onMount } from 'svelte';
 
@@ -45,19 +47,26 @@
 			{/each}
 		</div>
 
-		<div class="text-xl flex items-center gap-2">
+		<div class="text-xl flex items-end gap-2">
 			Total <PriceTag
 				class="text-xl inline-flex"
 				gap="gap-1"
 				amount={data.order.totalPrice.amount}
 				currency={data.order.totalPrice.currency}
-				rawBtc
+				main
+			/>
+			<PriceTag
+				class="text-base inline-flex"
+				gap="gap-1"
+				amount={data.order.totalPrice.amount}
+				currency={data.order.totalPrice.currency}
+				secondary
 			/>
 		</div>
 
 		{#if data.order.notifications?.paymentStatus?.npub}
 			<p>
-				NostR public address for payment status: <span class="font-mono">
+				NostR public address for payment status: <span class="font-mono break-words">
 					{data.order.notifications.paymentStatus.npub}</span
 				>
 			</p>
@@ -75,6 +84,15 @@
 			{:else}
 				<ul>
 					<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
+					<li>
+						Payment amount: <code class="break-words">
+							{(data.order.payment.method === 'bitcoin'
+								? toBitcoins(data.order.totalPrice.amount, data.order.totalPrice.currency)
+								: toSatoshis(data.order.totalPrice.amount, data.order.totalPrice.currency)
+							).toLocaleString('en-US', { maximumFractionDigits: 8 })}
+							{data.order.payment.method === 'bitcoin' ? 'BTC' : 'sats'}
+						</code>
+					</li>
 					<li>
 						Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
 					</li>

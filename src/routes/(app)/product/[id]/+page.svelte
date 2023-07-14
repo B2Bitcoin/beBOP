@@ -131,12 +131,12 @@
 						class="text-2xl md:text-4xl truncate max-w-full"
 						short={false}
 						amount={data.product.price.amount}
+						main
 					/>
 					<PriceTag
 						currency={data.product.price.currency}
 						amount={data.product.price.amount}
-						convertedTo="EUR"
-						exchangeRate={data.exchangeRate}
+						secondary
 						class="text-xl"
 					/>
 				</div>

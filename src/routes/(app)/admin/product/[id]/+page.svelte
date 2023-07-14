@@ -3,6 +3,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 
 	export let data;
 
@@ -25,7 +26,7 @@
 	}
 
 	function checkForm(event: SubmitEvent) {
-		if (priceAmountElement.value && +priceAmountElement.value < 0.00000001) {
+		if (priceAmountElement.value && +priceAmountElement.value < 1 / SATOSHIS_PER_BTC) {
 			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
 			priceAmountElement.reportValidity();
 			event.preventDefault();
@@ -55,20 +56,37 @@
 				value={data.product.name}
 			/>
 		</label>
-		<label>
-			Price (BTC)
-			<input
-				type="number"
-				name="priceAmount"
-				class="form-input block"
-				step="any"
-				value={data.product.price.amount.toLocaleString('en', { maximumFractionDigits: 8 })}
-				on:input={() => priceAmountElement?.setCustomValidity('')}
-				bind:this={priceAmountElement}
-			/>
-		</label>
 
-		<input type="hidden" name="priceCurrency" value={data.product.price.currency} />
+		<div class="gap-4 flex flex-col md:flex-row">
+			<label class="w-full">
+				Price amount
+				<input
+					class="form-input"
+					type="number"
+					name="priceAmount"
+					placeholder="Price"
+					step="any"
+					value={data.product.price.amount
+						.toLocaleString('en', { maximumFractionDigits: 8 })
+						.replace(/,/g, '')}
+					bind:this={priceAmountElement}
+					on:input={() => priceAmountElement?.setCustomValidity('')}
+					required
+				/>
+			</label>
+
+			<label class="w-full">
+				Price currency
+
+				<select name="priceCurrency" class="form-input">
+					{#each CURRENCIES as currency}
+						<option value={currency} selected={data.product.price.currency === currency}
+							>{currency}</option
+						>
+					{/each}
+				</select>
+			</label>
+		</div>
 
 		<label>
 			Short description

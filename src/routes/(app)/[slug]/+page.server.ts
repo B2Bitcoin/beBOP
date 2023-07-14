@@ -7,7 +7,9 @@ import { omit } from 'lodash-es';
 import type { Challenge } from '$lib/types/Challenge.js';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 
-const PRODUCT_WIDGET_REGEX = /^\[Product=(?<slug>[a-z0-9-]+)\]$/i;
+const PRODUCT_WIDGET_REGEX =
+	/^\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]$/i;
+
 const CHALLENGE_WIDGET_REGEX = /^\[Challenge=(?<slug>[a-z0-9-]+)\]$/i;
 
 export async function load({ params }) {
@@ -28,13 +30,15 @@ export async function load({ params }) {
 
 			if (match?.groups?.slug) {
 				const slug = match.groups.slug;
+				const display = match.groups.display;
 
 				productSlugs.add(slug);
 
 				return {
 					type: 'productWidget',
 					raw: token.raw,
-					slug
+					slug,
+					display
 				} as const;
 			}
 

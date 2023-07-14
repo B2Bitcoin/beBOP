@@ -24,6 +24,7 @@
 			currency={product.price.currency}
 			class="text-xl text-gray-800"
 			amount={product.price.amount}
+			main
 		/>
 		<div class="flex gap-2">
 			<a href="/cart" class="grow basis-0 btn btn-gray"> View cart </a>

@@ -14,6 +14,11 @@ import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product'
 import { Kind } from 'nostr-tools';
 import { s3client } from '$lib/server/s3';
 import { CopyObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import {
+	CURRENCIES,
+	FRACTION_DIGITS_PER_CURRENCY,
+	MININUM_PER_CURRENCY
+} from '$lib/types/Currency';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
@@ -38,10 +43,12 @@ export const load: PageServerLoad = async ({ url }) => {
 			product,
 			productId,
 			pictures,
-			digitalFiles
+			digitalFiles,
+			currency: runtimeConfig.priceReferenceCurrency
 		};
 	}
 };
+
 
 export const actions: Actions = {
 	add: async ({ request }) => {
@@ -96,12 +103,17 @@ export const actions: Actions = {
 			delete fields.availableDate;
 		}
 
+		const { priceCurrency } = z
+			.object({
+				priceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)])
+			})
+			.parse(fields);
+
 		const parsed = z
 			.object({
 				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				description: z.string().trim().max(10_000),
 				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
-				priceCurrency: z.enum(['BTC']),
 				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
 				type: z.enum(['resource', 'donation', 'subscription']),
 				availableDate: z.date({ coerce: true }).optional(),
@@ -110,6 +122,18 @@ export const actions: Actions = {
 				displayShortDescription: z.boolean({ coerce: true }).default(false)
 			})
 			.parse(fields);
+
+		const priceAmount =
+			Math.round(
+				parseFloat(parsed.priceAmount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency])
+			) / Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency]);
+
+		if (priceAmount <= MININUM_PER_CURRENCY[priceCurrency]) {
+			throw error(
+				400,
+				`Price must be greater than ${MININUM_PER_CURRENCY[priceCurrency]} ${priceCurrency}`
+			);
+		}
 
 		if (!parsed.availableDate) {
 			parsed.preorder = false;
@@ -136,8 +160,8 @@ export const actions: Actions = {
 						shortDescription: parsed.shortDescription.replaceAll('\r', ''),
 						name: parsed.name,
 						price: {
-							currency: parsed.priceCurrency,
-							amount: parseFloat(parsed.priceAmount)
+							currency: priceCurrency,
+							amount: priceAmount
 						},
 						type: parsed.type,
 						availableDate: parsed.availableDate || undefined,

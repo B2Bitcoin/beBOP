@@ -1,11 +1,12 @@
 import type { Order } from '$lib/types/Order';
-import { ObjectId, type ChangeStreamDocument, Timestamp } from 'mongodb';
+import { ObjectId, type ChangeStreamDocument, Timestamp, MongoServerError } from 'mongodb';
 import { collections, withTransaction } from '../database';
 import { Lock } from '../lock';
 import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
+import { refreshPromise } from '../runtime-config';
 
 const lock = new Lock('order-notifications');
 
@@ -48,16 +49,36 @@ let changeStream = collections.orders
 				.then((val) => val?.data)) || undefined
 	})
 	.on('change', (ev) => handleChanges(ev).catch(console.error))
-	.once('error', async () => {
+	.once('error', async (err) => {
 		// In case it couldn't resume correctly, start from 1 hour ago
 		await changeStream.close().catch(console.error);
 
-		changeStream = collections.orders
-			.watch(watch, {
-				fullDocument: 'updateLookup',
-				startAtOperationTime: Timestamp.fromBits(getUnixTime(subHours(new Date(), 1)), 0)
-			})
-			.on('change', (ev) => handleChanges(ev).catch(console.error));
+		if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
+			changeStream = collections.orders
+				.watch(watch, {
+					fullDocument: 'updateLookup',
+					startAtOperationTime: Timestamp.fromBits(0, getUnixTime(subHours(new Date(), 1)))
+				})
+				.on('change', (ev) => handleChanges(ev).catch(console.error))
+				.once('error', async (err) => {
+					// This time, start from now
+					await changeStream.close().catch(console.error);
+
+					if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
+						changeStream = collections.orders
+							.watch(watch, {
+								fullDocument: 'updateLookup'
+							})
+							.on('change', (ev) => handleChanges(ev).catch(console.error));
+					} else {
+						console.error(err);
+						process.exit(1);
+					}
+				});
+		} else {
+			console.error(err);
+			process.exit(1);
+		}
 	});
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
@@ -74,6 +95,8 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 }
 
 async function handleOrderNotification(order: Order): Promise<void> {
+	await refreshPromise;
+
 	if (
 		processingIds.has(order._id.toString()) ||
 		order.lastPaymentStatusNotified === order.payment.status

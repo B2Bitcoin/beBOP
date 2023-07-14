@@ -11,6 +11,7 @@
 	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import { toCurrency } from '$lib/utils/toCurrency.js';
 
 	let actionCount = 0;
 	export let data;
@@ -68,7 +69,13 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(items.map((item) => item.product.price.amount * item.quantity));
+	$: totalPrice = sum(
+		items.map(
+			(item) =>
+				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				item.quantity
+		)
+	);
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -254,10 +261,15 @@
 							};
 						}}
 					>
-						<h3 class="text-base text-gray-700">{item.product.name}</h3>
+						<a href="/product/{item.product._id}">
+							<h3 class="text-base text-gray-700">{item.product.name}</h3>
+						</a>
 
 						<div class="flex flex-row gap-2">
-							<div class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center">
+							<a
+								href="/product/{item.product._id}"
+								class="w-[50px] h-[50px] min-w-[50px] min-h-[50px] rounded flex items-center"
+							>
 								{#if item.picture}
 									<Picture
 										picture={item.picture}
@@ -265,7 +277,7 @@
 										sizes="50px"
 									/>
 								{/if}
-							</div>
+							</a>
 							<div class="flex flex-col">
 								<div class="flex flex-row gap-2">
 									<ProductType
@@ -288,13 +300,13 @@
 									class="text-2xl text-gray-800 truncate"
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
-									convertedTo="EUR"
-									exchangeRate={data.exchangeRate}
+									main
 								/>
 								<PriceTag
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									class="text-base text-gray-600 truncate"
+									secondary
 								/>
 							</div>
 						</div>
@@ -311,12 +323,16 @@
 						<PriceTag
 							class="text-2xl text-gray-800"
 							amount={totalPrice}
-							convertedTo="EUR"
-							currency="BTC"
-							exchangeRate={data.exchangeRate}
+							currency={data.mainCurrency}
+							main
 						/>
 					</div>
-					<PriceTag class="self-end text-gray-600" amount={totalPrice} currency="BTC" />
+					<PriceTag
+						class="self-end text-gray-600"
+						amount={totalPrice}
+						currency={data.mainCurrency}
+						secondary
+					/>
 				</div>
 
 				<label class="cursor-pointer">
