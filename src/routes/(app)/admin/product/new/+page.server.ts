@@ -8,10 +8,12 @@ import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
-import { ORIGIN } from '$env/static/private';
+import { ORIGIN, S3_BUCKET } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
+import { s3client } from '$lib/server/s3';
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
@@ -260,20 +262,10 @@ export const actions: Actions = {
 					.sort({ createdAt: 1 })
 					.toArray();
 
-		if (!picturesToDuplicate) {
-			throw error(404, 'Pictures not found');
-		}
-
-		const digitalFilesToDuplicate = duplicatedProductId
-			? await collections.digitalFiles
+		const digitalFilesToDuplicate = await collections.digitalFiles
 					.find({ productId: duplicatedProductId })
 					.sort({ createdAt: 1 })
-					.toArray()
-			: undefined;
-
-		if (!digitalFilesToDuplicate) {
-			throw error(404, 'Pictures not found');
-		}
+					.toArray();
 
 		const picturesToInsert = picturesToDuplicate.map((picture) => {
 			return {
@@ -295,6 +287,24 @@ export const actions: Actions = {
 				productId: productId
 			};
 		});
+
+		try {
+			const sourceObject = await s3client.send(new GetObjectCommand({
+				Bucket: S3_BUCKET,
+				Key: picturesToDuplicate[0].storage.original.key
+				}));
+			
+			await s3client.send(new PutObjectCommand({
+				Bucket: S3_BUCKET,
+				Key: duplicate.name.split(' ').join('-'),
+				Body: sourceObject.Body,
+				ContentType: sourceObject.ContentType,
+				Metadata: sourceObject.Metadata,
+				}));
+				console.log('Document duplicated successfully');
+		} catch (error) {
+			console.error('Error duplicating document: ', error);
+		}
 
 		await collections.pictures.insertMany(picturesToInsert);
 		await collections.digitalFiles.insertMany(digitalFilesToInsert);
