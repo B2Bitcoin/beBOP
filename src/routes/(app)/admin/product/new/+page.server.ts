@@ -12,11 +12,7 @@ import { ORIGIN } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
-import {
-	CURRENCIES,
-	FRACTION_DIGITS_PER_CURRENCY,
-	MININUM_PER_CURRENCY
-} from '$lib/types/Currency';
+import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 
 export async function load() {
 	return {
@@ -97,17 +93,7 @@ export const actions: Actions = {
 			})
 			.parse(fields);
 
-		const priceAmount =
-			Math.round(
-				parseFloat(parsed.priceAmount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency])
-			) / Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency]);
-
-		if (priceAmount <= MININUM_PER_CURRENCY[priceCurrency]) {
-			throw error(
-				400,
-				`Price must be greater than ${MININUM_PER_CURRENCY[priceCurrency]} ${priceCurrency}`
-			);
-		}
+		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency);
 
 		if (!parsed.availableDate) {
 			parsed.preorder = false;
