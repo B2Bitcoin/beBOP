@@ -22,6 +22,7 @@
 
 <form class="flex flex-col gap-2" method="post">
 	{#each data.products as product}
+		<h2 class="text-2xl">{product.name}</h2>
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Price amount
@@ -52,5 +53,5 @@
 			</label>
 		</div>
 	{/each}
-	<button class="btn btn-black self-start" type="submit">Update</button>
+	<button class="btn btn-black self-start mt-4" type="submit">Update</button>
 </form>
