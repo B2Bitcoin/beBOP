@@ -4,11 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-import {
-	CURRENCIES,
-	FRACTION_DIGITS_PER_CURRENCY,
-	MININUM_PER_CURRENCY
-} from '$lib/types/Currency';
+import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -94,17 +90,7 @@ export const actions: Actions = {
 			update.shipping = false;
 		}
 
-		const priceAmount =
-			Math.round(
-				parseFloat(update.priceAmount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency])
-			) / Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency]);
-
-		if (priceAmount <= MININUM_PER_CURRENCY[priceCurrency]) {
-			throw error(
-				400,
-				`Price must be greater than ${MININUM_PER_CURRENCY[priceCurrency]} ${priceCurrency}`
-			);
-		}
+		const priceAmount = parsePriceAmount(update.priceAmount, priceCurrency);
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },

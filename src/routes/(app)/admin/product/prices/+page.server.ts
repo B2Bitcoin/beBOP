@@ -1,6 +1,9 @@
 import { collections } from '$lib/server/database';
 import { z } from 'zod';
 import type { PageServerLoad } from './$types';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
+import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 
 export const load: PageServerLoad = async () => {
 	const products = await collections.products.find({}).toArray();
@@ -14,18 +17,28 @@ export const actions = {
 	default: async function ({ request }) {
 		const formData = await request.formData();
 
+		const json: JsonObject = {};
 		for (const [key, value] of formData) {
-			const price = z
-				.string()
-				.regex(/^\d+(\.\d+)?$/)
+			set(json, key, value);
+		}
+
+		for (const [key, value] of Object.entries(json)) {
+			const { price, currency } = z
+				.object({
+					price: z.string().regex(/^\d+(\.\d+)?$/),
+					currency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)])
+				})
 				.parse(value);
+
+			const priceAmount = parsePriceAmount(price, currency);
+
 			await collections.products.updateOne(
 				{ _id: key },
 				{
 					$set: {
 						price: {
-							amount: parseFloat(price),
-							currency: 'BTC'
+							amount: priceAmount,
+							currency
 						},
 						updatedAt: new Date()
 					}

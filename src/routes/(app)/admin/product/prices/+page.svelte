@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
+	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 
 	export let data;
 
@@ -22,19 +22,36 @@
 
 <form class="flex flex-col gap-2" method="post">
 	{#each data.products as product}
-		<label class="form-label">
-			{product.name} ({product.price.currency})
-			<input
-				type="number"
-				name={product._id}
-				value={product.price.amount}
-				class="form-input"
-				placeholder="Price ({product.price.currency})"
-				step="any"
-				required
-				on:input={handleInputChange}
-			/>
-		</label>
+		<h2 class="text-2xl">{product.name}</h2>
+		<div class="gap-4 flex flex-col md:flex-row">
+			<label class="w-full">
+				Price amount
+				<input
+					class="form-input"
+					type="number"
+					name="{product._id}.price"
+					placeholder="Price"
+					step="any"
+					value={product.price.amount
+						.toLocaleString('en', { maximumFractionDigits: 8 })
+						.replace(/,/g, '')}
+					on:input={handleInputChange}
+					required
+				/>
+			</label>
+
+			<label class="w-full">
+				Price currency
+
+				<select name="{product._id}.currency" class="form-input">
+					{#each CURRENCIES as currency}
+						<option value={currency} selected={product.price.currency === currency}>
+							{currency}
+						</option>
+					{/each}
+				</select>
+			</label>
+		</div>
 	{/each}
-	<button class="btn btn-black self-start" type="submit">Update</button>
+	<button class="btn btn-black self-start mt-4" type="submit">Update</button>
 </form>
