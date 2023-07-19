@@ -168,7 +168,10 @@
 			</label>
 
 			{#if shipping && data.deliveryFees.mode === 'perItem'}
-				<DeliveryFeesSelector deliveryFees={data.product.deliveryFees} />
+				<DeliveryFeesSelector
+					deliveryFees={data.product.deliveryFees || {}}
+					defaultCurrency={data.product.price.currency}
+				/>
 			{/if}
 		{/if}
 

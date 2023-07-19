@@ -110,7 +110,7 @@ export const actions: Actions = {
 					shipping: update.shipping,
 					displayShortDescription: update.displayShortDescription,
 					preorder: update.preorder,
-					deliveryFees: update.deliveryFees,
+					...(update.deliveryFees && { deliveryFees: update.deliveryFees }),
 					updatedAt: new Date()
 				},
 				$unset: {

@@ -2,13 +2,10 @@
 	import { COUNTRIES, COUNTRY_ALPHA3S, type CountryAlpha3 } from '$lib/types/Country';
 	import { CURRENCIES, type Currency } from '$lib/types/Currency';
 	import { typedEntries } from '$lib/utils/typedEntries';
-	import { getContext } from 'svelte';
-	import type { LayoutData } from '../../routes/(app)/$types';
 	import type { DeliveryFees } from '$lib/types/DeliveryFees';
 
 	export let deliveryFees: DeliveryFees = {};
-
-	let mainCurrency = getContext<LayoutData['mainCurrency']>('mainCurrency');
+	export let defaultCurrency: Currency;
 
 	let feeCountryToAdd: CountryAlpha3 | 'default' = 'default';
 
@@ -34,7 +31,7 @@
 			on:click={() =>
 				(deliveryFees[feeCountryToAdd] = structuredClone(deliveryFees.default) || {
 					amount: 0,
-					currency: mainCurrency
+					currency: defaultCurrency
 				})}
 			class="text-link underline"
 		>

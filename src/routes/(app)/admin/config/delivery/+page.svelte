@@ -55,7 +55,7 @@
 		</label>
 	{/if}
 
-	<DeliveryFeesSelector {deliveryFees} />
+	<DeliveryFeesSelector {deliveryFees} defaultCurrency={data.priceReferenceCurrency} />
 
 	<button type="submit" class="btn btn-black self-start"> Save config </button>
 </form>

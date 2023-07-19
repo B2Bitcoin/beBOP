@@ -164,7 +164,7 @@
 		</label>
 
 		{#if shipping && data.deliveryFees.mode === 'perItem'}
-			<DeliveryFeesSelector />
+			<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} />
 		{/if}
 	{/if}
 
