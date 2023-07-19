@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
