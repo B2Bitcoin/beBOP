@@ -99,9 +99,9 @@
 			>
 		</label>
 
-		<label class="flex gap-2 items-center cursor-pointer">
+		<label class="checkbox-label">
 			<input
-				class="form-checkbox rounded-sm cursor-pointer"
+				class="form-checkbox"
 				type="checkbox"
 				name="displayShortDescription"
 				value={data.product.displayShortDescription}
@@ -144,15 +144,9 @@
 					>
 				</label>
 
-				<label
-					class="flex gap-2 items-center {enablePreorder
-						? 'cursor-pointer'
-						: 'cursor-not-allowed text-gray-450'}"
-				>
+				<label class="checkbox-label {enablePreorder ? '' : 'cursor-not-allowed text-gray-450'}">
 					<input
-						class="form-checkbox rounded-sm {enablePreorder
-							? 'cursor-pointer'
-							: 'cursor-not-allowed border-gray-450'}"
+						class="form-checkbox {enablePreorder ? '' : 'cursor-not-allowed border-gray-450'}"
 						type="checkbox"
 						bind:checked={preorder}
 						name="preorder"
@@ -166,9 +160,9 @@
 		{/if}
 
 		{#if data.product.type !== 'donation'}
-			<label class="flex gap-2 items-center cursor-pointer">
+			<label class="checkbox-label">
 				<input
-					class="form-checkbox rounded-sm cursor-pointer"
+					class="form-checkbox"
 					type="checkbox"
 					name="shipping"
 					checked={data.product.shipping}

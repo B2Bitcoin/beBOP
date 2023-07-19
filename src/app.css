@@ -93,6 +93,18 @@
 		@apply flex flex-col gap-2 text-label;
 	}
 
+	.checkbox-label {
+		@apply flex items-center gap-2 cursor-pointer;
+	}
+
+	.form-checkbox {
+		@apply cursor-pointer rounded-sm;
+	}
+
+	.form-radio {
+		@apply cursor-pointer;
+	}
+
 	.alert-success {
 		@apply border border-green-400 p-2 text-green-600 rounded;
 	}

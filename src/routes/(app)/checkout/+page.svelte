@@ -335,19 +335,13 @@
 					/>
 				</div>
 
-				<label class="cursor-pointer">
-					<input
-						type="checkbox"
-						class="form-checkbox rounded-sm cursor-pointer"
-						name="teecees"
-						form="checkout"
-						required
-					/>
-					<span class="ml-2">
+				<label class="checkbox-label">
+					<input type="checkbox" class="form-checkbox" name="teecees" form="checkout" required />
+					<span>
 						I agree to the <a href="/terms" target="_blank" class="text-link hover:underline"
 							>terms of service</a
-						></span
-					>
+						>
+					</span>
 				</label>
 
 				<input

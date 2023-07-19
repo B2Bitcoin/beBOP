@@ -90,9 +90,9 @@
 		/>
 	</label>
 
-	<label class="flex gap-2 items-center cursor-pointer">
+	<label class="checkbox-label">
 		<input
-			class="form-checkbox rounded-sm cursor-pointer"
+			class="form-checkbox"
 			type="checkbox"
 			name="displayShortDescription"
 			bind:checked={displayShortDescription}
@@ -141,15 +141,9 @@
 				>
 			</label>
 
-			<label
-				class="flex gap-2 items-center {enablePreorder
-					? 'cursor-pointer'
-					: 'cursor-not-allowed text-gray-450'}"
-			>
+			<label class="checkbox-label {enablePreorder ? '' : 'cursor-not-allowed text-gray-450'}">
 				<input
-					class="form-checkbox rounded-sm {enablePreorder
-						? 'cursor-pointer'
-						: 'cursor-not-allowed border-gray-450'}"
+					class="form-checkbox {enablePreorder ? '' : 'cursor-not-allowed border-gray-450'}"
 					type="checkbox"
 					bind:checked={preorder}
 					name="preorder"
@@ -161,13 +155,8 @@
 	{/if}
 
 	{#if type !== 'donation'}
-		<label class="flex gap-2 items-center cursor-pointer">
-			<input
-				class="form-checkbox rounded-sm cursor-pointer"
-				type="checkbox"
-				name="shipping"
-				bind:checked={shipping}
-			/>
+		<label class="checkbox-label">
+			<input class="form-checkbox" type="checkbox" name="shipping" bind:checked={shipping} />
 			The product has a physical component that will be shipped to the customer's address
 		</label>
 	{/if}
