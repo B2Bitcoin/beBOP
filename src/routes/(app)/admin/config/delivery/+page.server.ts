@@ -2,15 +2,8 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { z } from 'zod';
-import { COUNTRY_ALPHA3S } from '$lib/types/Country.js';
-import { CURRENCIES } from '$lib/types/Currency.js';
 import { collections } from '$lib/server/database.js';
-
-export function load() {
-	return {
-		deliveryFees: runtimeConfig.deliveryFees
-	};
-}
+import { deliveryFeesSchema } from './schema.js';
 
 export const actions = {
 	default: async function ({ request }) {
@@ -25,15 +18,7 @@ export const actions = {
 			.object({
 				mode: z.enum(['flatFee', 'perItem']),
 				onlyPayHighest: z.boolean({ coerce: true }),
-				deliveryFees: z
-					.record(
-						z.enum(['default', ...COUNTRY_ALPHA3S]),
-						z.object({
-							amount: z.number({ coerce: true }).min(0),
-							currency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)])
-						})
-					)
-					.default({})
+				deliveryFees: deliveryFeesSchema.default({})
 			})
 			.parse(json);
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
@@ -161,6 +162,10 @@
 			<input class="form-checkbox" type="checkbox" name="shipping" bind:checked={shipping} />
 			The product has a physical component that will be shipped to the customer's address
 		</label>
+
+		{#if shipping && data.deliveryFees.mode === 'perItem'}
+			<DeliveryFeesSelector />
+		{/if}
 	{/if}
 
 	<label>

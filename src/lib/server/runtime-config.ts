@@ -2,7 +2,7 @@ import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
 import { exchangeRate } from '$lib/stores/exchangeRate';
 import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
-import type { CountryAlpha3 } from '$lib/types/Country';
+import type { DeliveryFees } from '$lib/types/DeliveryFees';
 
 const defaultConfig = {
 	BTC_EUR: 30_000,
@@ -53,7 +53,7 @@ const defaultConfig = {
 				amount: 0,
 				currency: 'EUR'
 			}
-		} as Partial<Record<CountryAlpha3 | 'default', { amount: number; currency: Currency }>>
+		} as DeliveryFees
 	}
 };
 

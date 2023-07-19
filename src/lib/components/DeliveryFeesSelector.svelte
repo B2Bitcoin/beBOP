@@ -1,16 +1,51 @@
 <script lang="ts">
-	import { COUNTRIES, type CountryAlpha3 } from '$lib/types/Country';
+	import { COUNTRIES, COUNTRY_ALPHA3S, type CountryAlpha3 } from '$lib/types/Country';
 	import { CURRENCIES, type Currency } from '$lib/types/Currency';
 	import { typedEntries } from '$lib/utils/typedEntries';
+	import { getContext } from 'svelte';
+	import type { LayoutData } from '../../routes/(app)/$types';
+	import type { DeliveryFees } from '$lib/types/DeliveryFees';
 
-	export let deliveryFees: Partial<
-		Record<CountryAlpha3 | 'default', { amount: number; currency: Currency }>
-	> = {};
+	export let deliveryFees: DeliveryFees = {};
+
+	let mainCurrency = getContext<LayoutData['mainCurrency']>('mainCurrency');
+
+	let feeCountryToAdd: CountryAlpha3 | 'default' = 'default';
+
+	$: countriesWithNoFee = ['default' as const, ...COUNTRY_ALPHA3S].filter(
+		(country) => !deliveryFees[country]
+	);
+	$: feeCountryToAdd = countriesWithNoFee.includes(feeCountryToAdd)
+		? feeCountryToAdd
+		: countriesWithNoFee[0];
 </script>
+
+{#if countriesWithNoFee.length}
+	<div class="checkbox-label">
+		<select class="form-input max-w-[25rem]" bind:value={feeCountryToAdd}>
+			{#each countriesWithNoFee as country}
+				<option value={country}>
+					{country === 'default' ? 'Other countries' : COUNTRIES[country]}
+				</option>
+			{/each}
+		</select>
+		<button
+			type="button"
+			on:click={() =>
+				(deliveryFees[feeCountryToAdd] = structuredClone(deliveryFees.default) || {
+					amount: 0,
+					currency: mainCurrency
+				})}
+			class="text-link underline"
+		>
+			Add fee option
+		</button>
+	</div>
+{/if}
 
 {#each typedEntries(deliveryFees) as [country, deliveryFee]}
 	<div class="flex flex-col gap-2">
-		<h3 class="text-xl">{country === 'default' ? 'Default value' : COUNTRIES[country]}</h3>
+		<h3 class="text-xl">{country === 'default' ? 'Other countries' : COUNTRIES[country]}</h3>
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Amount

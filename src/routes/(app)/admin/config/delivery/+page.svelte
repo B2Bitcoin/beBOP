@@ -1,6 +1,5 @@
 <script lang="ts">
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
-	import { COUNTRIES, COUNTRY_ALPHA3S, type CountryAlpha3 } from '$lib/types/Country';
 
 	export let data;
 	export let form;
@@ -9,15 +8,6 @@
 	let onlyPayHighest = data.deliveryFees.onlyPayHighest;
 
 	let deliveryFees = data.deliveryFees.deliveryFees || {};
-
-	let feeCountryToAdd: CountryAlpha3 | 'default' = 'default';
-
-	$: countriesWithNoFee = ['default' as const, ...COUNTRY_ALPHA3S].filter(
-		(country) => !deliveryFees[country]
-	);
-	$: feeCountryToAdd = countriesWithNoFee.includes(feeCountryToAdd)
-		? feeCountryToAdd
-		: countriesWithNoFee[0];
 
 	export const snapshot = {
 		capture: () => ({ deliveryFees, mode }),
@@ -63,27 +53,6 @@
 			For orders with multiple products, only apply the delivery fee of the product with the highest
 			delivery fee
 		</label>
-	{/if}
-
-	{#if countriesWithNoFee.length}
-		<div class="checkbox-label">
-			<select class="form-input max-w-[25rem]" bind:value={feeCountryToAdd}>
-				{#each countriesWithNoFee as country}
-					<option value={country}>{country === 'default' ? 'default' : COUNTRIES[country]}</option>
-				{/each}
-			</select>
-			<button
-				type="button"
-				on:click={() =>
-					(deliveryFees[feeCountryToAdd] = structuredClone(deliveryFees.default) || {
-						amount: 0,
-						currency: data.priceReferenceCurrency
-					})}
-				class="text-link underline"
-			>
-				Add flat fee option
-			</button>
-		</div>
 	{/if}
 
 	<DeliveryFeesSelector {deliveryFees} />

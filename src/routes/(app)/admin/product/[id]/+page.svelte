@@ -4,12 +4,14 @@
 	import { addDays } from 'date-fns';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
+	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 
 	export let data;
 
 	let availableDate = data.product.availableDate;
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
+	let shipping = data.product.shipping;
 
 	let priceAmountElement: HTMLInputElement;
 
@@ -161,14 +163,13 @@
 
 		{#if data.product.type !== 'donation'}
 			<label class="checkbox-label">
-				<input
-					class="form-checkbox"
-					type="checkbox"
-					name="shipping"
-					checked={data.product.shipping}
-				/>
+				<input class="form-checkbox" type="checkbox" name="shipping" bind:checked={shipping} />
 				The product has a physical component that will be shipped to the customer's address
 			</label>
+
+			{#if shipping && data.deliveryFees.mode === 'perItem'}
+				<DeliveryFeesSelector />
+			{/if}
 		{/if}
 
 		<div class="flex justify-between gap-2">
