@@ -206,7 +206,8 @@
 											};
 										}}
 									>
-										<div
+										<a
+											href="/product/{item.product._id}"
 											class="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded flex items-center"
 										>
 											{#if item.picture}
@@ -216,9 +217,11 @@
 													sizes="44px"
 												/>
 											{/if}
-										</div>
+										</a>
 										<div class="flex flex-col">
-											<h3 class="text-base text-gray-850 font-medium">{item.product.name}</h3>
+											<a href="/product/{item.product._id}">
+												<h3 class="text-base text-gray-850 font-medium">{item.product.name}</h3>
+											</a>
 											{#if item.product.type !== 'subscription'}
 												<div class="flex items-center gap-2 text-gray-700">
 													<span class="text-xs">Quantity: </span>
