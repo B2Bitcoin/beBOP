@@ -73,7 +73,9 @@
 
 			<select name="priceCurrency" class="form-input">
 				{#each CURRENCIES as currency}
-					<option value={currency} selected={data.currency === currency}>{currency}</option>
+					<option value={currency} selected={data.priceReferenceCurrency === currency}
+						>{currency}</option
+					>
 				{/each}
 			</select>
 		</label>
