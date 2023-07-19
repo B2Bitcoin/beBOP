@@ -5,6 +5,9 @@ import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
+import { deliveryFeesSchema } from '../../config/delivery/schema';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -33,6 +36,11 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
+		const json: JsonObject = {};
+
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 
 		const product = await collections.products.findOne({ _id: params.id });
 
@@ -58,18 +66,12 @@ export const actions: Actions = {
 				changedDate: z.boolean({ coerce: true }).default(false),
 				preorder: z.boolean({ coerce: true }).default(false),
 				shipping: z.boolean({ coerce: true }).default(false),
-				displayShortDescription: z.boolean({ coerce: true }).default(false)
+				displayShortDescription: z.boolean({ coerce: true }).default(false),
+				deliveryFees: deliveryFeesSchema.optional()
 			})
 			.parse({
-				name: formData.get('name'),
-				description: formData.get('description'),
-				shortDescription: formData.get('shortDescription'),
-				priceAmount: formData.get('priceAmount'),
-				preorder: formData.get('preorder'),
-				shipping: formData.get('shipping'),
-				availableDate: formData.get('availableDate') || undefined,
-				changedDate: formData.get('changedDate'),
-				displayShortDescription: formData.get('displayShortDescription')
+				...json,
+				availableDate: formData.get('availableDate') || undefined
 			});
 
 		if (product.type !== 'resource') {
@@ -108,10 +110,12 @@ export const actions: Actions = {
 					shipping: update.shipping,
 					displayShortDescription: update.displayShortDescription,
 					preorder: update.preorder,
+					...(update.deliveryFees && { deliveryFees: update.deliveryFees }),
 					updatedAt: new Date()
 				},
 				$unset: {
-					...(update.changedDate && !update.availableDate && { availableDate: '' })
+					...(update.changedDate && !update.availableDate && { availableDate: '' }),
+					...(!update.deliveryFees && { deliveryFees: '' })
 				}
 			}
 		);

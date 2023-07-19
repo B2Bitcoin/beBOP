@@ -1,4 +1,5 @@
 <script lang="ts">
+	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
@@ -73,7 +74,9 @@
 
 			<select name="priceCurrency" class="form-input">
 				{#each CURRENCIES as currency}
-					<option value={currency} selected={data.currency === currency}>{currency}</option>
+					<option value={currency} selected={data.priceReferenceCurrency === currency}
+						>{currency}</option
+					>
 				{/each}
 			</select>
 		</label>
@@ -90,9 +93,9 @@
 		/>
 	</label>
 
-	<label class="flex gap-2 items-center cursor-pointer">
+	<label class="checkbox-label">
 		<input
-			class="form-checkbox rounded-sm cursor-pointer"
+			class="form-checkbox"
 			type="checkbox"
 			name="displayShortDescription"
 			bind:checked={displayShortDescription}
@@ -141,15 +144,9 @@
 				>
 			</label>
 
-			<label
-				class="flex gap-2 items-center {enablePreorder
-					? 'cursor-pointer'
-					: 'cursor-not-allowed text-gray-450'}"
-			>
+			<label class="checkbox-label {enablePreorder ? '' : 'cursor-not-allowed text-gray-450'}">
 				<input
-					class="form-checkbox rounded-sm {enablePreorder
-						? 'cursor-pointer'
-						: 'cursor-not-allowed border-gray-450'}"
+					class="form-checkbox {enablePreorder ? '' : 'cursor-not-allowed border-gray-450'}"
 					type="checkbox"
 					bind:checked={preorder}
 					name="preorder"
@@ -161,15 +158,14 @@
 	{/if}
 
 	{#if type !== 'donation'}
-		<label class="flex gap-2 items-center cursor-pointer">
-			<input
-				class="form-checkbox rounded-sm cursor-pointer"
-				type="checkbox"
-				name="shipping"
-				bind:checked={shipping}
-			/>
+		<label class="checkbox-label">
+			<input class="form-checkbox" type="checkbox" name="shipping" bind:checked={shipping} />
 			The product has a physical component that will be shipped to the customer's address
 		</label>
+
+		{#if shipping && data.deliveryFees.mode === 'perItem'}
+			<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} />
+		{/if}
 	{/if}
 
 	<label>

@@ -1,4 +1,5 @@
 import type { Currency } from './Currency';
+import type { DeliveryFees } from './DeliveryFees';
 import type { Timestamps } from './Timestamps';
 
 export interface Product extends Timestamps {
@@ -12,6 +13,7 @@ export interface Product extends Timestamps {
 	};
 	type: 'subscription' | 'resource' | 'donation';
 	shipping: boolean;
+	deliveryFees?: DeliveryFees;
 	availableDate?: Date;
 	preorder: boolean;
 	displayShortDescription: boolean;

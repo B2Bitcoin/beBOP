@@ -2,6 +2,7 @@ import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
 import { exchangeRate } from '$lib/stores/exchangeRate';
 import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
+import type { DeliveryFees } from '$lib/types/DeliveryFees';
 
 const defaultConfig = {
 	BTC_EUR: 30_000,
@@ -43,7 +44,17 @@ const defaultConfig = {
 
 	checkoutButtonOnProductPage: true,
 	discovery: true,
-	orderNotificationsResumeToken: null as unknown
+	orderNotificationsResumeToken: null as unknown,
+	deliveryFees: {
+		mode: 'flatFee' as 'flatFee' | 'perItem',
+		onlyPayHighest: false,
+		deliveryFees: {
+			default: {
+				amount: 0,
+				currency: 'EUR'
+			}
+		} as DeliveryFees
+	}
 };
 
 exchangeRate.set({

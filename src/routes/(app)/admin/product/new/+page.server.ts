@@ -14,12 +14,6 @@ import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product'
 import { Kind } from 'nostr-tools';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 
-export async function load() {
-	return {
-		currency: runtimeConfig.priceReferenceCurrency
-	};
-}
-
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const fields = {
