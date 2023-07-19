@@ -48,7 +48,7 @@ const defaultConfig = {
 	deliveryFees: {
 		mode: 'flatFee' as 'flatFee' | 'perItem',
 		onlyPayHighest: false,
-		fees: {
+		deliveryFees: {
 			default: {
 				amount: 0,
 				currency: 'EUR'

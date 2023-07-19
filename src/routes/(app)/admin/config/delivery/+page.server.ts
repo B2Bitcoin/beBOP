@@ -25,7 +25,7 @@ export const actions = {
 			.object({
 				mode: z.enum(['flatFee', 'perItem']),
 				onlyPayHighest: z.boolean({ coerce: true }),
-				fees: z
+				deliveryFees: z
 					.record(
 						z.enum(['default', ...COUNTRY_ALPHA3S]),
 						z.object({
