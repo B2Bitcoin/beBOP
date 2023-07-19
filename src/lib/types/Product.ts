@@ -13,7 +13,7 @@ export interface Product extends Timestamps {
 	};
 	type: 'subscription' | 'resource' | 'donation';
 	shipping: boolean;
-	deliveryFees?: DeliveryFees | null;
+	deliveryFees?: DeliveryFees;
 	availableDate?: Date;
 	preorder: boolean;
 	displayShortDescription: boolean;

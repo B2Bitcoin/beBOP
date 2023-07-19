@@ -110,11 +110,12 @@ export const actions: Actions = {
 					shipping: update.shipping,
 					displayShortDescription: update.displayShortDescription,
 					preorder: update.preorder,
-					deliveryFees: update.deliveryFees || null,
+					deliveryFees: update.deliveryFees,
 					updatedAt: new Date()
 				},
 				$unset: {
-					...(update.changedDate && !update.availableDate && { availableDate: '' })
+					...(update.changedDate && !update.availableDate && { availableDate: '' }),
+					...(!update.deliveryFees && { deliveryFees: '' })
 				}
 			}
 		);
