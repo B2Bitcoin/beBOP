@@ -120,7 +120,8 @@
 				class="rounded sticky top-4 -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
 				<div class="flex justify-between">
-					<p>{data.order.items.length} {pluralize(data.order.items.length ?? 0, 'product')}</p>
+					{data.order.items.length}
+					{pluralize(data.order.items.length ?? 0, 'product')}
 				</div>
 				{#each data.order.items as item}
 					<a href="/product/{item.product._id}">
