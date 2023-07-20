@@ -273,7 +273,7 @@
 								{#if item.picture}
 									<Picture
 										picture={item.picture}
-										class="rounded grow object-cover h-full w-full"
+										class="mx-auto rounded h-full object-contain"
 										sizes="50px"
 									/>
 								{/if}
