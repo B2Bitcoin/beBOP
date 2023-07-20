@@ -50,6 +50,16 @@
 		/>
 	</label>
 
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="fullScreen"
+			checked={data.cmsPage.fullScreen}
+			class="form-checkbox"
+		/>
+		Full screen
+	</label>
+
 	<label class="block w-full mt-4">
 		Content
 		<textarea
