@@ -12,8 +12,12 @@
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
+	import { computeDeliveryFees } from '$lib/types/Cart.js';
+	import { typedKeys } from '$lib/utils/typedKeys.js';
 
 	let actionCount = 0;
+	let country = typedKeys(COUNTRIES)[0];
+
 	export let data;
 
 	const feedItems = [
@@ -69,13 +73,16 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(
-		items.map(
-			(item) =>
-				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				item.quantity
-		)
-	);
+	$: deliveryFees = computeDeliveryFees(data.mainCurrency, country, items, data.deliveryFees);
+
+	$: totalPrice =
+		sum(
+			items.map(
+				(item) =>
+					toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+					item.quantity
+			)
+		) + (deliveryFees || 0);
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -127,7 +134,7 @@
 
 					<label class="form-label col-span-3">
 						Country
-						<select name="country" class="form-input" required>
+						<select name="country" class="form-input" required bind:value={country}>
 							{#each Object.entries(COUNTRIES) as [code, country]}
 								<option value={code}>{country}</option>
 							{/each}
@@ -315,6 +322,32 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 
+				{#if deliveryFees}
+					<div class="flex justify-between items-center">
+						<h3 class="text-base text-gray-700">Delivery fees</h3>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl text-gray-800 truncate"
+								amount={deliveryFees}
+								currency={data.mainCurrency}
+								main
+							/>
+							<PriceTag
+								amount={deliveryFees}
+								currency={data.mainCurrency}
+								class="text-base text-gray-600 truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{:else if isNaN(deliveryFees)}
+					<div class="alert-error mt-3">
+						Delivery is not available in your country for some of the items of your cart.
+					</div>
+				{/if}
+
 				<span class="py-1" />
 
 				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
@@ -338,9 +371,9 @@
 				<label class="checkbox-label">
 					<input type="checkbox" class="form-checkbox" name="teecees" form="checkout" required />
 					<span>
-						I agree to the <a href="/terms" target="_blank" class="text-link hover:underline"
-							>terms of service</a
-						>
+						I agree to the <a href="/terms" target="_blank" class="text-link hover:underline">
+							terms of service
+						</a>
 					</span>
 				</label>
 
@@ -349,6 +382,7 @@
 					class="btn btn-black btn-xl -mx-1 -mb-1 mt-1"
 					value="Proceed"
 					form="checkout"
+					disabled={isNaN(deliveryFees)}
 				/>
 			</article>
 		</div>
