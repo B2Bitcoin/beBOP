@@ -10,10 +10,18 @@ import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product'
 import { Kind } from 'nostr-tools';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { getS3DownloadLink, s3client } from '$lib/server/s3';
+import { deliveryFeesSchema } from '../../config/delivery/schema';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
+		const json: JsonObject = {};
+
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 
 		const parsed = z
 			.object({
@@ -28,12 +36,15 @@ export const actions: Actions = {
 				availableDate: z.date({ coerce: true }).optional(),
 				preorder: z.boolean({ coerce: true }).default(false),
 				shipping: z.boolean({ coerce: true }).default(false),
-				displayShortDescription: z.boolean({ coerce: true }).default(false)
+				displayShortDescription: z.boolean({ coerce: true }).default(false),
+				deliveryFees: deliveryFeesSchema.optional()
 			})
 			.parse({
-				...Object.fromEntries(formData),
+				...json,
 				availableDate: formData.get('availableDate') || undefined
 			});
+
+		console.log(json, parsed.deliveryFees);
 
 		if (await collections.products.countDocuments({ _id: parsed.slug })) {
 			throw error(409, 'Product with same slug already exists');
@@ -89,7 +100,8 @@ export const actions: Actions = {
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
-						displayShortDescription: parsed.displayShortDescription
+						displayShortDescription: parsed.displayShortDescription,
+						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees })
 					},
 					{ session }
 				);
