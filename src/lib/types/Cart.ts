@@ -28,8 +28,8 @@ export function computeDeliveryFees(
 
 	const fees = items.map(({ product, quantity }) => {
 		const cfg =
-			product.deliveryFees?.[country] ||
-			product.deliveryFees?.default ||
+			(deliveryFeesConfig.mode === 'perItem' &&
+				(product.deliveryFees?.[country] || product.deliveryFees?.default)) ||
 			deliveryFeesConfig.deliveryFees[country] ||
 			deliveryFeesConfig.deliveryFees.default;
 
@@ -48,5 +48,5 @@ export function computeDeliveryFees(
 		return NaN;
 	}
 
-	return sum(fees);
+	return deliveryFeesConfig.onlyPayHighest ? Math.max(...fees) : sum(fees);
 }
