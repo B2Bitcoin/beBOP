@@ -44,6 +44,8 @@ export const actions: Actions = {
 				availableDate: formData.get('availableDate') || undefined
 			});
 
+		console.log(json, parsed.deliveryFees);
+
 		if (await collections.products.countDocuments({ _id: parsed.slug })) {
 			throw error(409, 'Product with same slug already exists');
 		}

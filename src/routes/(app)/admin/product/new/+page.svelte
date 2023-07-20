@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { applyAction, deserialize } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
@@ -15,7 +17,6 @@
 	let priceAmount: number;
 	let name = '';
 	let slug = '';
-	let pictureId = '';
 	let priceAmountElement: HTMLInputElement;
 	let formElement: HTMLFormElement;
 	let submitting = false;
@@ -35,6 +36,9 @@
 
 	async function checkForm(event: SubmitEvent) {
 		submitting = true;
+
+		// Need to load here, or for some reason, some inputs disappear afterwards
+		const formData = new FormData(formElement);
 
 		try {
 			if (priceAmountElement.value && priceAmount < 1 / SATOSHIS_PER_BTC) {
@@ -66,8 +70,7 @@
 
 			const body = await response.json();
 
-			const { uploadUrl } = body;
-			pictureId = body.pictureId;
+			const { uploadUrl, pictureId } = body;
 
 			const uploadResponse = await fetch(uploadUrl, {
 				method: 'PUT',
@@ -78,7 +81,21 @@
 				throw new Error(await uploadResponse.text());
 			}
 
-			formElement.submit();
+			formData.set('pictureId', pictureId);
+
+			const finalResponse = await fetch(formElement.action, {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = deserialize(await finalResponse.text());
+
+			if (result.type === 'success') {
+				// rerun all `load` functions, following the successful update
+				await invalidateAll();
+			}
+
+			applyAction(result);
 		} finally {
 			submitting = false;
 		}
@@ -248,8 +265,6 @@
 			disabled={submitting}
 		/>
 	</label>
-
-	<input type="hidden" name="pictureId" value={pictureId} />
 
 	<input
 		type="submit"
