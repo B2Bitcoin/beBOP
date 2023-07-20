@@ -41,6 +41,41 @@ async function cleanup() {
 			console.error(err);
 		}
 
+		try {
+			const expiredPictures = await collections.pendingPictures
+				.find({
+					createdAt: {
+						// 1 day should be enough, 2 days to be sure
+						$lt: subDays(new Date(), 2)
+					}
+				})
+				.toArray();
+
+			for (const picture of expiredPictures) {
+				await s3client
+					.deleteObject({
+						Bucket: S3_BUCKET,
+						Key: picture.storage.original.key
+					})
+					.catch();
+
+				for (const format of picture.storage.formats) {
+					await s3client
+						.deleteObject({
+							Bucket: S3_BUCKET,
+							Key: format.key
+						})
+						.catch();
+				}
+
+				await collections.pendingPictures.deleteOne({
+					_id: picture._id
+				});
+			}
+		} catch (err) {
+			console.error(err);
+		}
+
 		await setTimeout(5_000);
 	}
 }
