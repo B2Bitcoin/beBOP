@@ -20,7 +20,7 @@ export async function POST({ request }) {
 	const contentType = mimeTypes.lookup(body.fileName);
 	const extension = contentType ? mimeTypes.extension(contentType) : '';
 
-	const key = `pending/${extension ? `${pictureId}.${extension}` : pictureId}`;
+	const key = `pending/picture/${extension ? `${pictureId}.${extension}` : pictureId}`;
 
 	const presignedUrl = secureLink(
 		await getSignedUrl(

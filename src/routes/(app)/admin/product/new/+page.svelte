@@ -49,7 +49,7 @@
 			const fileSize = files[0].size;
 			const fileName = files[0].name;
 
-			const response = await fetch('/admin/product/new/prepare-picture', {
+			const response = await fetch('/admin/picture/prepare', {
 				method: 'POST',
 				body: JSON.stringify({
 					fileName,
