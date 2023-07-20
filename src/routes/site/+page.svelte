@@ -13,9 +13,8 @@
 	import IconNech from '$lib/components/icons/siteIcons/IconNech.svelte';
 	import { slide } from 'svelte/transition';
 
-	export let data;
-
 	let topMenuOpen = false;
+	let isMaintenance = false;
 
 	let topbarLinks = [
 		{ label: 'Store', href: '/store' },
@@ -37,7 +36,7 @@
 	<meta name="description" content="B2Bitcoin's official bootik" />
 </svelte:head>
 
-<div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
+<div data-sveltekit-preload-data={isMaintenance ? 'tap' : 'hover'} style="display: contents;">
 	<header class="bg-purple-100 items-center flex h-[50px]">
 		<div class="mx-auto max-w-4xl flex items-center gap-6 px-6 grow">
 			<a class="flex items-center gap-4" href="/">
