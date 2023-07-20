@@ -65,8 +65,8 @@
 							{#if item.picture}
 								<Picture
 									picture={item.picture}
-									class="rounded grow object-cover h-full w-full"
-									sizes="138px"
+									class="mx-auto rounded h-full object-contain"
+									sizes="(min-width: 1280px) 896px, 70vw"
 								/>
 							{/if}
 						</a>
