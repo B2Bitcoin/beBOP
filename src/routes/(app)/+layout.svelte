@@ -214,7 +214,7 @@
 												<Picture
 													picture={item.picture}
 													class="mx-auto rounded h-full object-contain"
-													sizes="(min-width: 1280px) 896px, 70vw"
+													sizes="44px"
 												/>
 											{/if}
 										</a>
