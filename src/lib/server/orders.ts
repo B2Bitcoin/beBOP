@@ -13,6 +13,7 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
+import { computeDeliveryFees } from '$lib/types/Cart';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -163,12 +164,28 @@ export async function createOrder(
 	}
 
 	const isDigital = products.every((product) => !product.shipping);
+	let deliveryFees = 0;
 
-	if (!isDigital && !params.shippingAddress) {
-		throw error(400, 'Shipping address is required');
+	if (!isDigital) {
+		if (!params.shippingAddress) {
+			throw error(400, 'Shipping address is required');
+		} else {
+			const { country } = params.shippingAddress;
+
+			deliveryFees = computeDeliveryFees(
+				runtimeConfig.mainCurrency,
+				country,
+				items,
+				runtimeConfig.deliveryFees
+			);
+
+			if (isNaN(deliveryFees)) {
+				throw error(400, 'Some products are not available in your country');
+			}
+		}
 	}
 
-	let totalSatoshis = 0;
+	let totalSatoshis = toSatoshis(deliveryFees, runtimeConfig.mainCurrency);
 
 	for (const item of items) {
 		const price = parseFloat(item.product.price.amount.toString());
@@ -252,6 +269,14 @@ export async function createOrder(
 					amount: totalSatoshis,
 					currency: 'SAT'
 				},
+				...(deliveryFees
+					? {
+							shippingPrice: {
+								amount: deliveryFees,
+								currency: runtimeConfig.mainCurrency
+							}
+					  }
+					: undefined),
 				payment: {
 					method: paymentMethod,
 					status: 'pending',

@@ -46,6 +46,7 @@ export async function load({ depends, locals }) {
 								| 'availableDate'
 								| 'shipping'
 								| 'preorder'
+								| 'deliveryFees'
 							>
 						>(
 							{ _id: item.productId },
@@ -58,11 +59,15 @@ export async function load({ depends, locals }) {
 									type: 1,
 									shipping: 1,
 									availableDate: 1,
-									preorder: 1
+									preorder: 1,
+									deliveryFees: 1
 								}
 							}
 						);
 						if (productDoc) {
+							if (runtimeConfig.deliveryFees.mode !== 'perItem') {
+								delete productDoc.deliveryFees;
+							}
 							return {
 								product: productDoc,
 								picture: await collections.pictures.findOne(
