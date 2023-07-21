@@ -167,11 +167,23 @@
 				The product has a physical component that will be shipped to the customer's address
 			</label>
 
-			{#if shipping && data.deliveryFees.mode === 'perItem'}
-				<DeliveryFeesSelector
-					deliveryFees={data.product.deliveryFees || {}}
-					defaultCurrency={data.product.price.currency}
-				/>
+			{#if shipping}
+				{#if data.deliveryFees.mode === 'perItem'}
+					<DeliveryFeesSelector
+						deliveryFees={data.product.deliveryFees || {}}
+						defaultCurrency={data.product.price.currency}
+					/>
+				{/if}
+
+				{#if data.deliveryFees.mode === 'perItem' || data.deliveryFees.applyFlatFeeToEachItem}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							name="applyDeliveryFeesOnlyOnce"
+							bind:checked={data.product.applyDeliveryFeesOnlyOnce}
+						/> Apply delivery fee only once, even if the customer orders multiple items
+					</label>
+				{/if}
 			{/if}
 		{/if}
 

@@ -249,8 +249,17 @@
 			The product has a physical component that will be shipped to the customer's address
 		</label>
 
-		{#if shipping && data.deliveryFees.mode === 'perItem'}
-			<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} disabled={submitting} />
+		{#if shipping}
+			{#if data.deliveryFees.mode === 'perItem'}
+				<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} disabled={submitting} />
+			{/if}
+
+			{#if data.deliveryFees.mode === 'perItem' || data.deliveryFees.applyFlatFeeToEachItem}
+				<label class="checkbox-label">
+					<input type="checkbox" name="applyDeliveryFeesOnlyOnce" disabled={submitting} /> Apply delivery
+					fee only once, even if the customer orders multiple items
+				</label>
+			{/if}
 		{/if}
 	{/if}
 

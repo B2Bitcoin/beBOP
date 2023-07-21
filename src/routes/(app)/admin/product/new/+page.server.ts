@@ -37,7 +37,8 @@ export const actions: Actions = {
 				preorder: z.boolean({ coerce: true }).default(false),
 				shipping: z.boolean({ coerce: true }).default(false),
 				displayShortDescription: z.boolean({ coerce: true }).default(false),
-				deliveryFees: deliveryFeesSchema.optional()
+				deliveryFees: deliveryFeesSchema.optional(),
+				applyDeliveryFeesOnlyOnce: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				...json,
@@ -101,7 +102,10 @@ export const actions: Actions = {
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
 						displayShortDescription: parsed.displayShortDescription,
-						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees })
+						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
+						...(parsed.applyDeliveryFeesOnlyOnce && {
+							applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce
+						})
 					},
 					{ session }
 				);

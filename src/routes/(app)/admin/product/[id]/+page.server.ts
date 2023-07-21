@@ -56,7 +56,7 @@ export const actions: Actions = {
 				priceCurrency: formData.get('priceCurrency')
 			});
 
-		const update = z
+		const parsed = z
 			.object({
 				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				description: z.string().trim().max(10_000),
@@ -67,7 +67,8 @@ export const actions: Actions = {
 				preorder: z.boolean({ coerce: true }).default(false),
 				shipping: z.boolean({ coerce: true }).default(false),
 				displayShortDescription: z.boolean({ coerce: true }).default(false),
-				deliveryFees: deliveryFeesSchema.optional()
+				deliveryFees: deliveryFeesSchema.optional(),
+				applyDeliveryFeesOnlyOnce: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				...json,
@@ -75,47 +76,50 @@ export const actions: Actions = {
 			});
 
 		if (product.type !== 'resource') {
-			delete update.availableDate;
-			update.preorder = false;
+			delete parsed.availableDate;
+			parsed.preorder = false;
 		}
 
-		if (!update.changedDate) {
-			delete update.availableDate;
+		if (!parsed.changedDate) {
+			delete parsed.availableDate;
 		}
 
-		const availableDate = product.availableDate || update.availableDate;
+		const availableDate = product.availableDate || parsed.availableDate;
 		if (!availableDate || availableDate < new Date()) {
-			update.preorder = false;
+			parsed.preorder = false;
 		}
 
 		if (product.type === 'donation') {
-			update.shipping = false;
+			parsed.shipping = false;
 		}
 
-		const priceAmount = parsePriceAmount(update.priceAmount, priceCurrency);
+		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency);
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
 				$set: {
-					name: update.name,
-					description: update.description,
-					shortDescription: update.shortDescription,
+					name: parsed.name,
+					description: parsed.description,
+					shortDescription: parsed.shortDescription,
 					price: {
 						amount: priceAmount,
 						currency: priceCurrency
 					},
-					...(update.changedDate &&
-						update.availableDate && { availableDate: update.availableDate }),
-					shipping: update.shipping,
-					displayShortDescription: update.displayShortDescription,
-					preorder: update.preorder,
-					...(update.deliveryFees && { deliveryFees: update.deliveryFees }),
+					...(parsed.changedDate &&
+						parsed.availableDate && { availableDate: parsed.availableDate }),
+					shipping: parsed.shipping,
+					displayShortDescription: parsed.displayShortDescription,
+					preorder: parsed.preorder,
+					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
+					...(parsed.applyDeliveryFeesOnlyOnce && {
+						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce
+					}),
 					updatedAt: new Date()
 				},
 				$unset: {
-					...(update.changedDate && !update.availableDate && { availableDate: '' }),
-					...(!update.deliveryFees && { deliveryFees: '' })
+					...(parsed.changedDate && !parsed.availableDate && { availableDate: '' }),
+					...(!parsed.deliveryFees && { deliveryFees: '' })
 				}
 			}
 		);

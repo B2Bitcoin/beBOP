@@ -21,10 +21,27 @@ export const MAX_PRODUCT_QUANTITY = 100;
 export function computeDeliveryFees(
 	currency: Currency,
 	country: CountryAlpha3,
-	items: Array<{ product: Pick<Product, 'price' | 'deliveryFees' | 'shipping'>; quantity: number }>,
+	items: Array<{
+		product: Pick<Product, 'price' | 'deliveryFees' | 'applyDeliveryFeesOnlyOnce' | 'shipping'>;
+		quantity: number;
+	}>,
 	deliveryFeesConfig: RuntimeConfig['deliveryFees']
 ) {
 	items = items.filter(({ product }) => product.shipping);
+
+	if (!items.length) {
+		return 0;
+	}
+
+	if (deliveryFeesConfig.mode === 'flatFee' && !deliveryFeesConfig.applyFlatFeeToEachItem) {
+		const cfg = deliveryFeesConfig.deliveryFees[country] || deliveryFeesConfig.deliveryFees.default;
+
+		if (!cfg) {
+			return NaN;
+		}
+
+		return toCurrency(currency, cfg.amount, cfg.currency);
+	}
 
 	const fees = items.map(({ product, quantity }) => {
 		const cfg =
@@ -37,12 +54,11 @@ export function computeDeliveryFees(
 			return NaN;
 		}
 
-		return toCurrency(currency, cfg.amount, cfg.currency) * quantity;
+		return (
+			toCurrency(currency, cfg.amount, cfg.currency) *
+			(product.applyDeliveryFeesOnlyOnce ? 1 : quantity)
+		);
 	});
-
-	if (fees.length === 0) {
-		return 0;
-	}
 
 	if (fees.some((fee) => isNaN(fee))) {
 		return NaN;

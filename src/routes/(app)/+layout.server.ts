@@ -47,6 +47,7 @@ export async function load({ depends, locals }) {
 								| 'shipping'
 								| 'preorder'
 								| 'deliveryFees'
+								| 'applyDeliveryFeesOnlyOnce'
 							>
 						>(
 							{ _id: item.productId },
@@ -60,7 +61,8 @@ export async function load({ depends, locals }) {
 									shipping: 1,
 									availableDate: 1,
 									preorder: 1,
-									deliveryFees: 1
+									deliveryFees: 1,
+									applyDeliveryFeesOnlyOnce: 1
 								}
 							}
 						);

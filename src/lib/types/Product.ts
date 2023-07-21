@@ -14,6 +14,7 @@ export interface Product extends Timestamps {
 	type: 'subscription' | 'resource' | 'donation';
 	shipping: boolean;
 	deliveryFees?: DeliveryFees;
+	applyDeliveryFeesOnlyOnce?: boolean;
 	availableDate?: Date;
 	preorder: boolean;
 	displayShortDescription: boolean;
