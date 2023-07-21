@@ -1,14 +1,40 @@
 <script lang="ts">
-	import PictureComponent from '$lib/components/Picture.svelte';
-	import { upperFirst } from '$lib/utils/upperFirst';
-	import { addDays } from 'date-fns';
-	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
-	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { page } from '$app/stores';
-	import { subscribe } from 'svelte/internal';
+	import { format } from 'date-fns';
+	import type { PaidSubscription } from '$lib/types/PaidSubscription.js';
 
 	export let data;
+	function subscriptionStatus(subscription: PaidSubscription) {
+		if (subscription.updatedAt.getTime() + subscription.paidUntil.getTime() >= Date.now()) {
+			// if( subscription.updatedAt.getTime() + subscription.paidUntil.getTime() - subscription.notifications. )
+			return 'active';
+		} else subscription.updatedAt.getTime() + subscription.paidUntil.getTime() < Date.now();
+		return 'expired';
+	}
+
+	function exportcsv() {
+		const table = document.getElementById('subscription-table');
+		if (!table) return;
+
+		const rows = table.querySelectorAll('tr');
+		const data = Array.from(rows).map((row) =>
+			Array.from(row.querySelectorAll('td')).map((cell) => cell.innerText.trim())
+		);
+
+		const csvRows = data.map((row) => row.join(',')).join('\n');
+		const csvData = 'ID,Status,Last Payment,NostR,Email\n' + csvRows;
+
+		downloadCSV(csvData, 'subscriptions.csv');
+	}
+
+	function downloadCSV(csvData: string, filename: string) {
+		const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvData);
+		const link = document.createElement('a');
+		link.setAttribute('href', csvContent);
+		link.setAttribute('download', filename);
+		document.body.appendChild(link);
+		link.click();
+	}
 </script>
 
 <!-- <h1 class="text-3xl">Edit a product</h1> -->
@@ -35,16 +61,17 @@
 		>
 	</li>
 </ul>
-
+<button
+	on:click={exportcsv}
+	id="export-button"
+	class="bg-blue-500 mx-auto hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+>
+	Export CSV
+</button>
 <div class="container mx-auto p-4">
-	<table class="min-w-full divide-y divide-gray-200">
+	<table class="min-w-full divide-y divide-gray-200" id="subscription-table">
 		<thead>
 			<tr>
-				<th
-					class="px-6 py-3 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider"
-				>
-					order
-				</th>
 				<th
 					class="px-6 py-3 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider"
 				>
@@ -75,12 +102,19 @@
 		<tbody class="bg-white divide-y divide-gray-200">
 			{#each data.subscriptions as subscription}
 				<tr>
-					<td class="px-6 py-4 whitespace-no-wrap"> {subscription._id} </td>
 					<td class="px-6 py-4 whitespace-no-wrap"> {subscription._id}</td>
-					<td class="px-6 py-4 whitespace-no-wrap"> status </td>
-					<td class="px-6 py-4 whitespace-no-wrap"> {subscription.npub}</td>
-					<td class="px-6 py-4 whitespace-no-wrap"> {subscription.updatedAt} </td>
-					<td class="px-6 py-4 whitespace-no-wrap"> {subscription.email} </td>
+					<td class="px-6 py-4 whitespace-no-wrap">
+						{subscriptionStatus(subscription)}
+					</td>
+					<td class="px-6 py-4 whitespace-no-wrap">
+						{format(subscription.updatedAt, 'MMMM dd, Y')}</td
+					>
+					<td class="px-6 py-4 whitespace-no-wrap">
+						{subscription.npub ? subscription.npub : ''}</td
+					>
+					<td class="px-6 py-4 whitespace-no-wrap">
+						{subscription.email ? subscription.email : ''}</td
+					>
 				</tr>
 			{/each}
 		</tbody>
