@@ -1,16 +1,5 @@
 <script>
 	import IconMenu from '~icons/ant-design/menu-outlined';
-	import IconBeyond from '$lib/components/icons/siteIcons/IconBeyond.svelte';
-	import IconLeax from '$lib/components/icons/siteIcons/IconLeax.svelte';
-	import IconBity from '$lib/components/icons/siteIcons/IconBity.svelte';
-	import IconHolding from '$lib/components/icons/siteIcons/IconHolding.svelte';
-	import IconPvhEditions from '$lib/components/icons/siteIcons/IconPvhEditions.svelte';
-	import IconDenali from '$lib/components/icons/siteIcons/IconDenali.svelte';
-	import IconDecouvreBitcoin from '$lib/components/icons/siteIcons/IconDecouvreBitcoin.svelte';
-	import IconCoyotech from '$lib/components/icons/siteIcons/IconCoyotech.svelte';
-	import IconAgiltoo from '$lib/components/icons/siteIcons/IconAgiltoo.svelte';
-	import IconNpr from '$lib/components/icons/siteIcons/IconNpr.svelte';
-	import IconNech from '$lib/components/icons/siteIcons/IconNech.svelte';
 	import { slide } from 'svelte/transition';
 
 	let topMenuOpen = false;
@@ -94,7 +83,7 @@
 					showcase based on LaBootikerie’s peer-2-peer product.
 				</p>
 				<h2 class="text-3xl mb-6 mt-6 font-display">The product.</h2>
-				<p class="text-sm text-purple-500">It’s not BtoC, it’s P2P”</p>
+				<p class="text-sm text-purple-500">"It’s not BtoC, it’s P2P”</p>
 				<p class="text-sm mt-2 mb-4 text-purple-500">
 					Bootiks are simple, easy-to-use online selling platforms, based on peer-to-peer payment
 					solutions and architecture philosophy. From the classical modular eshop frameworks to
@@ -127,21 +116,45 @@
 				<hr class="w-[620px] h-px mt-4 bg-gray-200 border-0 dark:bg-gray-400" />
 			</div>
 			<div class="grid grid-cols-5 mt-2 mb-8 gap-6 flex justify-center items-center">
-				<IconPvhEditions />
-				<IconBeyond />
-				<IconLeax />
-				<IconHolding />
-				<IconBity />
-				<IconDenali />
-				<IconDecouvreBitcoin />
+				<a class="flex items-center gap-4" href="https://www.pvh-editions.com/">
+					<img class="" src="pvhEditions.png" alt="PVH editions" />
+				</a>
+				<a class="flex items-center gap-4" href="https://beyond-blockchain.org/">
+					<img class="h-[40px] w-[100px]" src="beyond.png" alt="Beyond" />
+				</a>
+				<a class="flex items-center gap-4" href="https://www.leax.ch/">
+					<img class="h-[40px] w-[90px]" src="leax.png" alt="leax" />
+				</a>
+				<a class="flex items-center gap-4" href="https://hodling.ch/">
+					<img src="hodling.png" alt="Hodling" />
+				</a>
+				<a class="flex items-center gap-4" href="https://bity.com/">
+					<img src="bity.png" alt="Bity" />
+				</a>
+				<a class="flex items-center gap-4" href="https://www.denali.swiss/">
+					<img src="denali.png" alt="Denali" />
+				</a>
+				<a class="flex items-center gap-4" href="/">
+					<img src="pvhLabs.png" alt="PVH labs" />
+				</a>
+				<a class="flex items-center gap-4" href="/">
+					<img class="h-[50px] w-[100px]" src="nodl.png" alt="Nodl" />
+				</a>
+				<a class="flex items-center gap-4" href="https://decouvrebitcoin.fr/">
+					<img src="decouvreBitcoin.png" alt="Découvre Bitcoin" />
+				</a>
 			</div>
 			<div class="flex gap-4">
 				<h1 class="text-l uppercase">Bootik helpers</h1>
 				<hr class="w-[700px] h-px mt-4 bg-gray-200 border-0 dark:bg-gray-400" />
 			</div>
 			<div class="grid grid-cols-5 mt-2 gap-6 flex justify-center items-center">
-				<IconCoyotech />
-				<IconAgiltoo />
+				<a class="flex items-center gap-4" href="/">
+					<img src="coyotech.png" alt="Coyotech" />
+				</a>
+				<a class="flex items-center gap-4" href="https://agiltoo.fr">
+					<img src="agiltoo.png" alt="Agiltoo" />
+				</a>
 			</div>
 		</div>
 	</div>
@@ -273,8 +286,12 @@
 			</div>
 			<h1 class="text-4xl mt-12 mb-12 font-display">Our Partners.</h1>
 			<div class="grid grid-cols-2 mt-2 mb-8 gap-10 flex justify-center items-center">
-				<IconNpr />
-				<IconNech />
+				<a class="flex items-center gap-4" href="/">
+					<img src="npr.png" alt="Nouvelle politique régionale" />
+				</a>
+				<a class="flex items-center gap-4" href="ne.ch">
+					<img src="nech.png" alt="Nech" />
+				</a>
 			</div>
 		</div>
 	</div>
