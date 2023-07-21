@@ -5,4 +5,5 @@ export interface CMSPage extends Timestamps {
 	title: string;
 	shortDescription: string;
 	content: string;
+	fullScreen: boolean;
 }
