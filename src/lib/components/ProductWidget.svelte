@@ -75,7 +75,7 @@
 		</div>
 	</div>
 {:else if displayOption === 'img-2'}
-	<div class="relative mx-auto max-w-full bg-gray-240 flex flex-row gap-4 p-6 rounded {className}">
+	<div class="relative mx-auto max-w-max bg-gray-240 flex flex-row gap-4 p-6 rounded {className}">
 		<div class="flex flex-col">
 			<div class="flex flex-row justify-start -mt-6 -ml-6">
 				<ProductType
@@ -125,7 +125,7 @@
 		</div>
 	</div>
 {:else if displayOption === 'img-3'}
-	<div class="relative mx-auto max-w-full bg-gray-240 flex flex-row gap-4 p-6 rounded {className}">
+	<div class="relative mx-auto max-w-max bg-gray-240 flex flex-row gap-4 p-6 rounded {className}">
 		<div class="flex flex-col gap-2">
 			<div class="flex flex-col gap-2 justify-between">
 				<a href="/product/{product._id}" class="flex flex-col">
