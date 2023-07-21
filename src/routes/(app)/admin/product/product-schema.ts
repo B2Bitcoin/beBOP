@@ -1,0 +1,19 @@
+import { CURRENCIES } from '$lib/types/Currency';
+import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+import { z } from 'zod';
+import { deliveryFeesSchema } from '../config/delivery/schema';
+
+export const productBaseSchema = {
+	name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+	description: z.string().trim().max(10_000),
+	shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
+	priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
+	priceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
+	availableDate: z.date({ coerce: true }).optional(),
+	preorder: z.boolean({ coerce: true }).default(false),
+	shipping: z.boolean({ coerce: true }).default(false),
+	displayShortDescription: z.boolean({ coerce: true }).default(false),
+	deliveryFees: deliveryFeesSchema.optional(),
+	applyDeliveryFeesOnlyOnce: z.boolean({ coerce: true }).default(false),
+	requireSpecificDeliveryFee: z.boolean({ coerce: true }).default(false)
+};

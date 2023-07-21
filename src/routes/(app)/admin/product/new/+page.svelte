@@ -252,6 +252,12 @@
 		{#if shipping}
 			{#if data.deliveryFees.mode === 'perItem'}
 				<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} disabled={submitting} />
+
+				<label class="checkbox-label">
+					<input type="checkbox" name="requireSpecificDeliveryFee" disabled={submitting} /> Do not use
+					globally-defined fees as fallback — prevent order if no delivery fee is set above for the customer's
+					country
+				</label>
 			{/if}
 
 			{#if data.deliveryFees.mode === 'perItem' || data.deliveryFees.applyFlatFeeToEachItem}

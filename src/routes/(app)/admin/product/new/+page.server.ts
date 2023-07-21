@@ -6,13 +6,13 @@ import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { ORIGIN, S3_BUCKET } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
-import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
+import { parsePriceAmount } from '$lib/types/Currency';
 import { getS3DownloadLink, s3client } from '$lib/server/s3';
-import { deliveryFeesSchema } from '../../config/delivery/schema';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
+import { productBaseSchema } from '../product-schema';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -27,18 +27,8 @@ export const actions: Actions = {
 			.object({
 				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				pictureId: z.string().trim().min(1).max(500),
-				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				description: z.string().trim().max(10_000),
-				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
-				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
-				priceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
 				type: z.enum(['resource', 'donation', 'subscription']),
-				availableDate: z.date({ coerce: true }).optional(),
-				preorder: z.boolean({ coerce: true }).default(false),
-				shipping: z.boolean({ coerce: true }).default(false),
-				displayShortDescription: z.boolean({ coerce: true }).default(false),
-				deliveryFees: deliveryFeesSchema.optional(),
-				applyDeliveryFeesOnlyOnce: z.boolean({ coerce: true }).default(false)
+				...productBaseSchema
 			})
 			.parse({
 				...json,
@@ -103,9 +93,8 @@ export const actions: Actions = {
 						shipping: parsed.shipping,
 						displayShortDescription: parsed.displayShortDescription,
 						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
-						...(parsed.applyDeliveryFeesOnlyOnce && {
-							applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce
-						})
+						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
+						requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee
 					},
 					{ session }
 				);

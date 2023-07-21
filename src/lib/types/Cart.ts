@@ -22,7 +22,14 @@ export function computeDeliveryFees(
 	currency: Currency,
 	country: CountryAlpha3,
 	items: Array<{
-		product: Pick<Product, 'price' | 'deliveryFees' | 'applyDeliveryFeesOnlyOnce' | 'shipping'>;
+		product: Pick<
+			Product,
+			| 'price'
+			| 'deliveryFees'
+			| 'applyDeliveryFeesOnlyOnce'
+			| 'shipping'
+			| 'requireSpecificDeliveryFee'
+		>;
 		quantity: number;
 	}>,
 	deliveryFeesConfig: RuntimeConfig['deliveryFees']
@@ -44,11 +51,21 @@ export function computeDeliveryFees(
 	}
 
 	const fees = items.map(({ product, quantity }) => {
-		const cfg =
-			(deliveryFeesConfig.mode === 'perItem' &&
-				(product.deliveryFees?.[country] || product.deliveryFees?.default)) ||
-			deliveryFeesConfig.deliveryFees[country] ||
-			deliveryFeesConfig.deliveryFees.default;
+		const cfg = (() => {
+			const defaultConfig =
+				deliveryFeesConfig.deliveryFees[country] || deliveryFeesConfig.deliveryFees.default;
+			if (deliveryFeesConfig.mode === 'flatFee') {
+				return defaultConfig;
+			}
+
+			let cfg = product.deliveryFees?.[country] || product.deliveryFees?.default;
+
+			if (!product.requireSpecificDeliveryFee) {
+				cfg ||= defaultConfig;
+			}
+
+			return cfg;
+		})();
 
 		if (!cfg) {
 			return NaN;

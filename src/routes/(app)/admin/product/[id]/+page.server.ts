@@ -3,11 +3,10 @@ import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
-import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
-import { deliveryFeesSchema } from '../../config/delivery/schema';
+import { productBaseSchema } from '../product-schema';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -58,17 +57,8 @@ export const actions: Actions = {
 
 		const parsed = z
 			.object({
-				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				description: z.string().trim().max(10_000),
-				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
-				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
-				availableDate: z.date({ coerce: true }).optional(),
-				changedDate: z.boolean({ coerce: true }).default(false),
-				preorder: z.boolean({ coerce: true }).default(false),
-				shipping: z.boolean({ coerce: true }).default(false),
-				displayShortDescription: z.boolean({ coerce: true }).default(false),
-				deliveryFees: deliveryFeesSchema.optional(),
-				applyDeliveryFeesOnlyOnce: z.boolean({ coerce: true }).default(false)
+				...productBaseSchema,
+				changedDate: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				...json,
@@ -106,19 +96,17 @@ export const actions: Actions = {
 						amount: priceAmount,
 						currency: priceCurrency
 					},
-					...(parsed.changedDate &&
-						parsed.availableDate && { availableDate: parsed.availableDate }),
+					...(parsed.availableDate && { availableDate: parsed.availableDate }),
 					shipping: parsed.shipping,
 					displayShortDescription: parsed.displayShortDescription,
 					preorder: parsed.preorder,
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
-					...(parsed.applyDeliveryFeesOnlyOnce && {
-						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce
-					}),
+					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
+					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
 					updatedAt: new Date()
 				},
 				$unset: {
-					...(parsed.changedDate && !parsed.availableDate && { availableDate: '' }),
+					...(!parsed.availableDate && { availableDate: '' }),
 					...(!parsed.deliveryFees && { deliveryFees: '' })
 				}
 			}

@@ -173,6 +173,15 @@
 						deliveryFees={data.product.deliveryFees || {}}
 						defaultCurrency={data.product.price.currency}
 					/>
+
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							name="requireSpecificDeliveryFee"
+							bind:checked={data.product.requireSpecificDeliveryFee}
+						/> Do not use globally-defined fees as fallback — prevent order if no delivery fee is set
+						above for the customer's country
+					</label>
 				{/if}
 
 				{#if data.deliveryFees.mode === 'perItem' || data.deliveryFees.applyFlatFeeToEachItem}
