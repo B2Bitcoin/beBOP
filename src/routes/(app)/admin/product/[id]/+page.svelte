@@ -162,6 +162,7 @@
 		{/if}
 
 		{#if data.product.type !== 'donation'}
+			<h3 class="text-xl">Delivery</h3>
 			<label class="checkbox-label">
 				<input class="form-checkbox" type="checkbox" name="shipping" bind:checked={shipping} />
 				The product has a physical component that will be shipped to the customer's address
@@ -179,8 +180,11 @@
 							type="checkbox"
 							name="requireSpecificDeliveryFee"
 							bind:checked={data.product.requireSpecificDeliveryFee}
-						/> Do not use globally-defined fees as fallback — prevent order if no delivery fee is set
-						above for the customer's country
+						/>
+						Prevent order if no specific delivery fee matches the customer's country (do not use
+						<a href="/admin/config/delivery" class="text-link hover:underline" target="_blank">
+							globally defined fees
+						</a> as fallback)
 					</label>
 				{/if}
 

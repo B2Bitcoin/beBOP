@@ -238,6 +238,8 @@
 	{/if}
 
 	{#if type !== 'donation'}
+		<h3 class="text-xl">Delivery</h3>
+
 		<label class="checkbox-label">
 			<input
 				class="form-checkbox"
@@ -254,9 +256,11 @@
 				<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} disabled={submitting} />
 
 				<label class="checkbox-label">
-					<input type="checkbox" name="requireSpecificDeliveryFee" disabled={submitting} /> Do not use
-					globally-defined fees as fallback — prevent order if no delivery fee is set above for the customer's
-					country
+					<input type="checkbox" name="requireSpecificDeliveryFee" disabled={submitting} /> Prevent
+					order if no specific delivery fee matches the customer's country (do not use
+					<a href="/admin/config/delivery" class="text-link hover:underline" target="_blank">
+						globally defined fees
+					</a> as fallback)
 				</label>
 			{/if}
 
