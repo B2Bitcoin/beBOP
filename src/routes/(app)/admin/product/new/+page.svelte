@@ -13,12 +13,12 @@
 	let product = data.product;
 
 	let submitting = false;
-	let preorder = false;
 
 	let priceAmountElement: HTMLInputElement;
 	let formElement: HTMLFormElement;
 	let files: FileList;
 
+	let preorder = product?.preorder ?? false;
 	let name = product?.name ? product.name + ' (duplicate)' : '';
 	let slug = generateId(name, false);
 	let shipping = product?.shipping ?? false;
@@ -267,11 +267,20 @@
 
 		{#if shipping}
 			{#if data.deliveryFees.mode === 'perItem'}
-				<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} disabled={submitting} />
+				<DeliveryFeesSelector
+					defaultCurrency={product?.price.currency ?? data.priceReferenceCurrency}
+					deliveryFees={product?.deliveryFees ?? {}}
+					disabled={submitting}
+				/>
 
 				<label class="checkbox-label">
-					<input type="checkbox" name="requireSpecificDeliveryFee" disabled={submitting} /> Prevent
-					order if no specific delivery fee matches the customer's country (do not use
+					<input
+						type="checkbox"
+						name="requireSpecificDeliveryFee"
+						checked={product?.requireSpecificDeliveryFee ?? false}
+						disabled={submitting}
+					/>
+					Prevent order if no specific delivery fee matches the customer's country (do not use
 					<a href="/admin/config/delivery" class="text-link hover:underline" target="_blank">
 						globally defined fees
 					</a> as fallback)
@@ -280,8 +289,12 @@
 
 			{#if data.deliveryFees.mode === 'perItem' || data.deliveryFees.applyFlatFeeToEachItem}
 				<label class="checkbox-label">
-					<input type="checkbox" name="applyDeliveryFeesOnlyOnce" disabled={submitting} /> Apply delivery
-					fee only once, even if the customer orders multiple items
+					<input
+						type="checkbox"
+						name="applyDeliveryFeesOnlyOnce"
+						checked={product?.applyDeliveryFeesOnlyOnce ?? false}
+						disabled={submitting}
+					/> Apply delivery fee only once, even if the customer orders multiple items
 				</label>
 			{/if}
 		{/if}

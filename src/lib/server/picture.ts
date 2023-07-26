@@ -3,7 +3,7 @@ import { collections, withTransaction } from '$lib/server/database';
 import { generateId } from '$lib/utils/generateId';
 import type { ClientSession } from 'mongodb';
 import { error } from '@sveltejs/kit';
-import { s3client } from './s3';
+import { s3ProductPrefix, s3client } from './s3';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { S3_BUCKET } from '$env/static/private';
 import * as mimeTypes from 'mime-types';
@@ -46,7 +46,7 @@ export async function generatePicture(
 
 	const uploadedKeys: string[] = [];
 
-	const pathPrefix = opts?.productId ? `products/${opts.productId}/` : `pictures/`;
+	const pathPrefix = opts?.productId ? s3ProductPrefix(opts.productId) : `pictures/`;
 
 	const path = `${pathPrefix}${_id}${extension}`;
 
