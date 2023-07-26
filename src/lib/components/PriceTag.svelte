@@ -5,6 +5,7 @@
 	import IconBitcoin from './icons/IconBitcoin.svelte';
 	import IconSatoshi from './icons/IconSatoshi.svelte';
 	import type { LayoutData } from '../../routes/(app)/$types';
+	import { toSatoshis } from '$lib/utils/toSatoshis';
 
 	export let amount: number;
 	export let currency: Currency;
@@ -43,13 +44,18 @@
 			: actualCurrency || 'BTC';
 
 	$: displayed =
-		displayedAmount.toLocaleString('en', {
-			style: displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : 'currency',
-			currency:
-				displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : displayedCurrency,
-			maximumFractionDigits: displayedCurrency === 'BTC' ? 8 : 2,
-			minimumFractionDigits: 0
-		}) + (displayedCurrency === 'SAT' && !short ? ' SAT' : '');
+		displayedCurrency !== 'BTC' && toSatoshis(displayedAmount, displayedCurrency) < 0.01
+			? '< ' + displayedCurrency + ' 0.01'
+			: displayedAmount.toLocaleString('en', {
+					style:
+						displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : 'currency',
+					currency:
+						displayedCurrency === 'SAT' || displayedCurrency === 'BTC'
+							? undefined
+							: displayedCurrency,
+					maximumFractionDigits: displayedCurrency === 'BTC' ? 8 : 2,
+					minimumFractionDigits: 0
+			  }) + (displayedCurrency === 'SAT' && !short ? ' SAT' : '');
 </script>
 
 {#if actualCurrency}
