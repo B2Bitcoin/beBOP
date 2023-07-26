@@ -1,5 +1,6 @@
 import { ORIGIN } from '$env/static/private';
 import { collections } from '$lib/server/database.js';
+import { countryFromIp } from '$lib/server/geoip/geoip.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { CURRENCIES } from '$lib/types/Currency.js';
 import { z } from 'zod';
@@ -7,6 +8,7 @@ import { z } from 'zod';
 export async function load(event) {
 	return {
 		ip: event.getClientAddress(),
+		ipCountry: countryFromIp(event.getClientAddress()),
 		includeOrderUrlInQRCode: runtimeConfig.includeOrderUrlInQRCode,
 		enableCashSales: runtimeConfig.enableCashSales,
 		isMaintenance: runtimeConfig.isMaintenance,

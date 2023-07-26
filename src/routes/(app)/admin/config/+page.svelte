@@ -99,6 +99,7 @@
 			Your IP is <code class="font-mono bg-link px-[2px] py-[1px] rounded text-white"
 				>{data.ip}</code
 			>
+			({data.ipCountry})
 		</p>
 	</label>
 	<label class="form-label">
@@ -141,3 +142,9 @@
 	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>
+
+<p>
+	IP2Location LITE data available from <a href="”https://lite.ip2location.com”">
+		https://lite.ip2location.com
+	</a> is used to determine your country from your IP.
+</p>
