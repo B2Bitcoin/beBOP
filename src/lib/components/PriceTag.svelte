@@ -44,7 +44,7 @@
 			: actualCurrency || 'BTC';
 
 	$: displayed =
-		displayedCurrency !== 'BTC' && toSatoshis(displayedAmount, displayedCurrency) < 0.01
+		displayedCurrency !== 'BTC' && displayedAmount < 0.01
 			? '< ' + displayedCurrency + ' 0.01'
 			: displayedAmount.toLocaleString('en', {
 					style:
