@@ -5,7 +5,6 @@
 	import IconBitcoin from './icons/IconBitcoin.svelte';
 	import IconSatoshi from './icons/IconSatoshi.svelte';
 	import type { LayoutData } from '../../routes/(app)/$types';
-	import { toSatoshis } from '$lib/utils/toSatoshis';
 
 	export let amount: number;
 	export let currency: Currency;
