@@ -10,6 +10,7 @@ P2P Bootik for merch, subscribers and crowdfunding
 - A MongoDB replica set. You can run it inside docker or use MongoDB Atlas.
 - A bitcoin node, and lnd
 - Node version 18+, corepack enabled with `corepack enable`
+- Git LFS installed with `git lfs install`
 
 ### S3 configuration
 
