@@ -47,6 +47,7 @@ const defaultConfig = {
 	orderNotificationsResumeToken: null as unknown,
 	deliveryFees: {
 		mode: 'flatFee' as 'flatFee' | 'perItem',
+		applyFlatFeeToEachItem: false,
 		onlyPayHighest: false,
 		deliveryFees: {
 			default: {

@@ -6,19 +6,9 @@
 
 	let mode: 'flatFee' | 'perItem' = data.deliveryFees.mode;
 	let onlyPayHighest = data.deliveryFees.onlyPayHighest;
+	let applyFlatFeeToEachItem = data.deliveryFees.applyFlatFeeToEachItem;
 
 	let deliveryFees = data.deliveryFees.deliveryFees || {};
-
-	export const snapshot = {
-		capture: () => ({ deliveryFees, mode }),
-		restore: (value) => {
-			if (form?.success) {
-				return;
-			}
-			deliveryFees = value.deliveryFees || {};
-			mode = value.mode;
-		}
-	};
 </script>
 
 {#if form?.success}
@@ -52,6 +42,18 @@
 			<input type="checkbox" class="form-checkbox" name="onlyPayHighest" checked={onlyPayHighest} />
 			For orders with multiple products, only apply the delivery fee of the product with the highest
 			delivery fee
+		</label>
+	{/if}
+
+	{#if mode === 'flatFee'}
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				class="form-checkbox"
+				name="applyFlatFeeToEachItem"
+				checked={applyFlatFeeToEachItem}
+			/>
+			Apply flat fee for each item instead of once for the whole order
 		</label>
 	{/if}
 

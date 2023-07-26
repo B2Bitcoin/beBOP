@@ -1,99 +1,53 @@
 import { collections } from '$lib/server/database';
 import { generatePicture } from '$lib/server/picture';
-import { generateId } from '$lib/utils/generateId';
 import type { Actions } from './$types';
-import { pipeline } from 'node:stream/promises';
-import busboy from 'busboy';
-import { streamToBuffer } from '$lib/server/utils/streamToBuffer';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
-import { ORIGIN } from '$env/static/private';
+import { ORIGIN, S3_BUCKET } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
-import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
+import { parsePriceAmount } from '$lib/types/Currency';
+import { getS3DownloadLink, s3client } from '$lib/server/s3';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
+import { productBaseSchema } from '../product-schema';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const fields = {
-			name: '',
-			shortDescription: '',
-			description: '',
-			priceAmount: '',
-			priceCurrency: '',
-			type: 'resource',
-			availableDate: undefined as undefined | string,
-			preorder: undefined as undefined | string,
-			shipping: undefined as undefined | string,
-			displayShortDescription: undefined as undefined | string
-		};
+		const formData = await request.formData();
+		const json: JsonObject = {};
 
-		// eslint-disable-next-line no-async-promise-executor
-		const buffer = await new Promise<Buffer>(async (resolve, reject) => {
-			try {
-				const bb = busboy({
-					headers: {
-						'content-type': request.headers.get('content-type') ?? undefined
-					}
-				});
-				bb.on('file', async (name, file /*, info */) => {
-					// const { filename, encoding, mimeType } = info;
-					resolve(await streamToBuffer(file));
-				});
-				bb.on('field', (name, val) => {
-					if (name in fields) {
-						fields[name as keyof typeof fields] = val;
-					}
-				});
-
-				await pipeline(request.body as unknown as AsyncIterable<Buffer>, bb);
-			} catch (err) {
-				reject(err);
-			}
-		});
-
-		const productId = generateId(fields.name, false);
-
-		if (!productId) {
-			throw error(400, 'Could not generate product ID');
+		for (const [key, value] of formData) {
+			set(json, key, value);
 		}
-
-		if (await collections.products.countDocuments({ _id: productId })) {
-			throw error(409, 'Product with same slug already exists');
-		}
-
-		if (!fields.availableDate) {
-			delete fields.availableDate;
-		}
-
-		const { priceCurrency } = z
-			.object({
-				priceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)])
-			})
-			.parse(fields);
 
 		const parsed = z
 			.object({
-				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				description: z.string().trim().max(10_000),
-				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
-				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
+				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				pictureId: z.string().trim().min(1).max(500),
 				type: z.enum(['resource', 'donation', 'subscription']),
-				availableDate: z.date({ coerce: true }).optional(),
-				preorder: z.boolean({ coerce: true }).default(false),
-				shipping: z.boolean({ coerce: true }).default(false),
-				displayShortDescription: z.boolean({ coerce: true }).default(false)
+				...productBaseSchema
 			})
-			.parse(fields);
+			.parse({
+				...json,
+				availableDate: formData.get('availableDate') || undefined
+			});
 
-		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency);
+		console.log(json, parsed.deliveryFees);
 
-		if (!parsed.availableDate) {
-			parsed.preorder = false;
+		if (await collections.products.countDocuments({ _id: parsed.slug })) {
+			throw error(409, 'Product with same slug already exists');
 		}
 
+		const priceAmount = parsePriceAmount(parsed.priceAmount, parsed.priceCurrency);
+
 		if (parsed.type !== 'resource') {
+			delete parsed.availableDate;
+		}
+
+		if (!parsed.availableDate) {
 			delete parsed.availableDate;
 			parsed.preorder = false;
 		}
@@ -102,29 +56,57 @@ export const actions: Actions = {
 			parsed.shipping = false;
 		}
 
-		await generatePicture(buffer, fields.name, {
-			productId,
+		const pendingPicture = await collections.pendingPictures.findOne({
+			_id: parsed.pictureId
+		});
+
+		if (!pendingPicture) {
+			throw error(400, 'Error when uploading picture');
+		}
+
+		const resp = await fetch(await getS3DownloadLink(pendingPicture.storage.original.key));
+
+		if (!resp.ok) {
+			throw error(400, 'Error when uploading picture');
+		}
+
+		const buffer = await resp.arrayBuffer();
+
+		await generatePicture(Buffer.from(buffer), parsed.name, {
+			productId: parsed.slug,
 			cb: async (session) => {
 				await collections.products.insertOne(
 					{
-						_id: productId,
+						_id: parsed.slug,
 						createdAt: new Date(),
 						updatedAt: new Date(),
 						description: parsed.description.replaceAll('\r', ''),
 						shortDescription: parsed.shortDescription.replaceAll('\r', ''),
 						name: parsed.name,
 						price: {
-							currency: priceCurrency,
+							currency: parsed.priceCurrency,
 							amount: priceAmount
 						},
 						type: parsed.type,
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
-						displayShortDescription: parsed.displayShortDescription
+						displayShortDescription: parsed.displayShortDescription,
+						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
+						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
+						requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee
 					},
 					{ session }
 				);
+
+				await s3client
+					.deleteObject({
+						Key: pendingPicture.storage.original.key,
+						Bucket: S3_BUCKET
+					})
+					.catch();
+
+				await collections.pendingPictures.deleteOne({ _id: parsed.pictureId }, { session });
 			}
 		});
 
@@ -142,7 +124,7 @@ export const actions: Actions = {
 							_id: new ObjectId(),
 							dest: subscription.npub,
 							kind: Kind.EncryptedDirectMessage,
-							content: `New product "${parsed.name}": ${ORIGIN}/product/${productId}`,
+							content: `New product "${parsed.name}": ${ORIGIN}/product/${parsed.slug}`,
 							createdAt: new Date(),
 							updatedAt: new Date()
 						})
@@ -151,6 +133,6 @@ export const actions: Actions = {
 			})().catch(console.error);
 		}
 
-		throw redirect(303, '/admin/product/' + productId);
+		throw redirect(303, '/admin/product/' + parsed.slug);
 	}
 };
