@@ -45,7 +45,13 @@
 
 	$: displayed =
 		displayedCurrency !== 'BTC' && displayedAmount < 0.01
-			? '< ' + Number(0.01).toLocaleString(...)
+			? '< ' +
+			  Number(0.01).toLocaleString('en', {
+					style: displayedCurrency === 'SAT' ? undefined : 'currency',
+					currency: displayedCurrency === 'SAT' ? undefined : displayedCurrency,
+					maximumFractionDigits: 2,
+					minimumFractionDigits: 0
+			  })
 			: displayedAmount.toLocaleString('en', {
 					style:
 						displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : 'currency',
