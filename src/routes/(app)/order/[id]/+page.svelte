@@ -109,6 +109,16 @@
 				>
 			</p>
 
+			{#if data.order.shippingAddress}
+				<div>
+					Shipping address: <pre class="break-words">{JSON.stringify(
+							data.order.shippingAddress,
+							null,
+							2
+						)}</pre>
+				</div>
+			{/if}
+
 			{#if data.order.payment.status === 'pending'}
 				<form method="post" action="?/cancel">
 					<button type="submit" class="btn btn-red">Cancel</button>
@@ -174,6 +184,28 @@
 
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
+
+				{#if data.order.shippingPrice}
+					<div class="flex justify-between items-center">
+						<h3 class="text-base text-gray-700">Delivery fees</h3>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl text-gray-800 truncate"
+								amount={data.order.shippingPrice.amount}
+								currency={data.order.shippingPrice.currency}
+								main
+							/>
+							<PriceTag
+								amount={data.order.shippingPrice.amount}
+								currency={data.order.shippingPrice.currency}
+								class="text-base text-gray-600 truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{/if}
 
 				<span class="py-1" />
 

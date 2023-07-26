@@ -6,11 +6,13 @@ import { z } from 'zod';
 import { bech32 } from 'bech32';
 import { createOrder } from '$lib/server/orders.js';
 import { emailsEnabled } from '$lib/server/email.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export function load() {
 	return {
 		paymentMethods: paymentMethods(),
-		emailsEnabled
+		emailsEnabled,
+		deliveryFees: runtimeConfig.deliveryFees
 	};
 }
 

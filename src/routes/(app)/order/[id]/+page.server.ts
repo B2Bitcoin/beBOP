@@ -51,9 +51,14 @@ export async function load({ params, depends }) {
 				)
 			})),
 			totalPrice: {
-				amount: parseFloat(order.totalPrice.amount.toString()),
+				amount: order.totalPrice.amount,
 				currency: order.totalPrice.currency
 			},
+			shippingPrice: order.shippingPrice && {
+				amount: order.shippingPrice.amount,
+				currency: order.shippingPrice.currency
+			},
+			shippingAddress: order.shippingAddress,
 			notifications: order.notifications
 		},
 
