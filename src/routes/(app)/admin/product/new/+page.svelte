@@ -208,11 +208,11 @@
 		/>
 	</label>
 
-	<label class={product ? 'text-gray-450' : ''}>
+	<label class="form-label">
 		Type
-		<select class="form-input" bind:value={type} disabled={!!product} name="type">
-			{#each ['resource', 'donation', 'subscription'] as type}
-				<option value={type}>{upperFirst(type)}</option>
+		<select class="form-input" bind:value={type} disabled={!!product} name="type" required>
+			{#each ['resource', 'donation', 'subscription'] as opt}
+				<option value={opt} selected={type === opt}>{upperFirst(opt)}</option>
 			{/each}
 		</select>
 	</label>

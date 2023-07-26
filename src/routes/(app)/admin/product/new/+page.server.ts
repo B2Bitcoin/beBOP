@@ -46,7 +46,7 @@ export const load = async ({ url }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	add: async ({ request }) => {
 		const formData = await request.formData();
 		const json: JsonObject = {};
 
@@ -167,8 +167,6 @@ export const actions: Actions = {
 		const duplicate = z
 			.object({
 				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				pictureId: z.string().trim().min(1).max(500),
-				type: z.enum(['resource', 'donation', 'subscription']),
 				...productBaseSchema
 			})
 			.parse({
