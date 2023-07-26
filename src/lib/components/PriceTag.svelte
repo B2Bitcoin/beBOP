@@ -45,7 +45,7 @@
 
 	$: displayed =
 		displayedCurrency !== 'BTC' && displayedAmount < 0.01
-			? '< ' + displayedCurrency + ' 0.01'
+			? '< ' + Number(0.01).toLocaleString(...)
 			: displayedAmount.toLocaleString('en', {
 					style:
 						displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : 'currency',
