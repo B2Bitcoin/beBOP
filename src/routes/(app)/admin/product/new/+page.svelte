@@ -24,6 +24,7 @@
 	let shipping = product?.shipping ?? false;
 	let type = product?.type ?? 'resource';
 	let priceAmount = product?.price.amount ?? 0;
+	let priceCurrency = product?.price.currency ?? data.priceReferenceCurrency;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
 
@@ -166,9 +167,9 @@
 
 			<select name="priceCurrency" class="form-input">
 				{#each CURRENCIES as currency}
-					<option value={currency} selected={data.priceReferenceCurrency === currency}
-						>{currency}</option
-					>
+					<option value={currency} selected={priceCurrency === currency}>
+						{currency}
+					</option>
 				{/each}
 			</select>
 		</label>
