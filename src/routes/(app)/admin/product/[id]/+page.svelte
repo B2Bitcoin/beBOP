@@ -203,6 +203,9 @@
 		<div class="flex justify-between gap-2">
 			<button type="submit" class="btn btn-blue">Update</button>
 			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
+			<a href="/admin/product/new?duplicate_from={data.product._id}" class="btn btn-gray">
+				Duplicate
+			</a>
 			<button
 				type="submit"
 				class="ml-auto btn btn-red"

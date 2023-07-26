@@ -7,22 +7,25 @@
 	import { generateId } from '$lib/utils/generateId.js';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
-
-	let type = 'resource';
-	let availableDate: string | undefined = undefined;
-	let shipping = false;
-	let preorder = false;
-	let displayShortDescription = false;
-
-	let priceAmount: number;
-	let name = '';
-	let slug = '';
-	let priceAmountElement: HTMLInputElement;
-	let formElement: HTMLFormElement;
-	let submitting = false;
-	let files: FileList;
+	import PictureComponent from '$lib/components/Picture.svelte';
 
 	export let data;
+	let product = data.product;
+
+	let submitting = false;
+
+	let priceAmountElement: HTMLInputElement;
+	let formElement: HTMLFormElement;
+	let files: FileList;
+
+	let preorder = product?.preorder ?? false;
+	let name = product?.name ? product.name + ' (duplicate)' : '';
+	let slug = generateId(name, false);
+	let shipping = product?.shipping ?? false;
+	let type = product?.type ?? 'resource';
+	let priceAmount = product?.price.amount ?? 0;
+	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
+	let displayShortDescription = product?.displayShortDescription ?? false;
 
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
@@ -50,38 +53,40 @@
 				priceAmountElement.setCustomValidity('');
 			}
 
-			const fileSize = files[0].size;
-			const fileName = files[0].name;
+			if (!product) {
+				const fileSize = files[0].size;
+				const fileName = files[0].name;
 
-			const response = await fetch('/admin/picture/prepare', {
-				method: 'POST',
-				body: JSON.stringify({
-					fileName,
-					fileSize
-				}),
-				headers: {
-					'Content-Type': 'application/json'
+				const response = await fetch('/admin/picture/prepare', {
+					method: 'POST',
+					body: JSON.stringify({
+						fileName,
+						fileSize
+					}),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+
+				if (!response.ok) {
+					throw new Error(await response.text());
 				}
-			});
 
-			if (!response.ok) {
-				throw new Error(await response.text());
+				const body = await response.json();
+
+				const { uploadUrl, pictureId } = body;
+
+				const uploadResponse = await fetch(uploadUrl, {
+					method: 'PUT',
+					body: files[0]
+				});
+
+				if (!uploadResponse.ok) {
+					throw new Error(await uploadResponse.text());
+				}
+
+				formData.set('pictureId', pictureId);
 			}
-
-			const body = await response.json();
-
-			const { uploadUrl, pictureId } = body;
-
-			const uploadResponse = await fetch(uploadUrl, {
-				method: 'PUT',
-				body: files[0]
-			});
-
-			if (!uploadResponse.ok) {
-				throw new Error(await uploadResponse.text());
-			}
-
-			formData.set('pictureId', pictureId);
 
 			const finalResponse = await fetch(formElement.action, {
 				method: 'POST',
@@ -105,6 +110,7 @@
 <h1 class="text-3xl">Add a product</h1>
 
 <form
+	action={product ? '?/duplicate' : '?/add'}
 	method="post"
 	class="flex flex-col gap-4"
 	bind:this={formElement}
@@ -175,7 +181,8 @@
 			cols="30"
 			rows="2"
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
-			class="form-input block"
+			value={product?.shortDescription ?? ''}
+			class="form-input"
 		/>
 	</label>
 
@@ -191,14 +198,21 @@
 
 	<label class="form-label">
 		Description
-		<textarea name="description" cols="30" rows="10" maxlength="10000" class="form-input" />
+		<textarea
+			name="description"
+			cols="30"
+			rows="10"
+			maxlength="10000"
+			value={product?.description ?? ''}
+			class="form-input"
+		/>
 	</label>
 
-	<label>
+	<label class="form-label">
 		Type
-		<select class="form-input" bind:value={type} name="type">
-			{#each ['resource', 'donation', 'subscription'] as type}
-				<option value={type}>{upperFirst(type)}</option>
+		<select class="form-input" bind:value={type} disabled={!!product} name="type" required>
+			{#each ['resource', 'donation', 'subscription'] as opt}
+				<option value={opt} selected={type === opt}>{upperFirst(opt)}</option>
 			{/each}
 		</select>
 	</label>
@@ -253,11 +267,20 @@
 
 		{#if shipping}
 			{#if data.deliveryFees.mode === 'perItem'}
-				<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} disabled={submitting} />
+				<DeliveryFeesSelector
+					defaultCurrency={product?.price.currency ?? data.priceReferenceCurrency}
+					deliveryFees={product?.deliveryFees ?? {}}
+					disabled={submitting}
+				/>
 
 				<label class="checkbox-label">
-					<input type="checkbox" name="requireSpecificDeliveryFee" disabled={submitting} /> Prevent
-					order if no specific delivery fee matches the customer's country (do not use
+					<input
+						type="checkbox"
+						name="requireSpecificDeliveryFee"
+						checked={product?.requireSpecificDeliveryFee ?? false}
+						disabled={submitting}
+					/>
+					Prevent order if no specific delivery fee matches the customer's country (do not use
 					<a href="/admin/config/delivery" class="text-link hover:underline" target="_blank">
 						globally defined fees
 					</a> as fallback)
@@ -266,24 +289,31 @@
 
 			{#if data.deliveryFees.mode === 'perItem' || data.deliveryFees.applyFlatFeeToEachItem}
 				<label class="checkbox-label">
-					<input type="checkbox" name="applyDeliveryFeesOnlyOnce" disabled={submitting} /> Apply delivery
-					fee only once, even if the customer orders multiple items
+					<input
+						type="checkbox"
+						name="applyDeliveryFeesOnlyOnce"
+						checked={product?.applyDeliveryFeesOnlyOnce ?? false}
+						disabled={submitting}
+					/> Apply delivery fee only once, even if the customer orders multiple items
 				</label>
 			{/if}
 		{/if}
 	{/if}
 
-	<label class="form-label">
-		Picture
-		<input
-			type="file"
-			accept="image/jpeg,image/png,image/webp"
-			class="block"
-			bind:files
-			required
-			disabled={submitting}
-		/>
-	</label>
+	<input type="hidden" name="productId" value={data.productId || ''} />
+	{#if !product}
+		<label class="form-label">
+			Picture
+			<input
+				type="file"
+				accept="image/jpeg,image/png,image/webp"
+				class="block"
+				bind:files
+				required
+				disabled={submitting}
+			/>
+		</label>
+	{/if}
 
 	<input
 		type="submit"
@@ -292,3 +322,29 @@
 		value="Submit"
 	/>
 </form>
+{#if data.pictures?.length}
+	<h2 class="text-2xl my-4">Photos</h2>
+
+	<div class="flex flex-row flex-wrap gap-6 mt-6">
+		{#each data.pictures as picture}
+			<div class="flex flex-col text-center">
+				<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
+					<PictureComponent {picture} class="h-36 block" style="object-fit: scale-down;" />
+					<span>{picture.name}</span>
+				</a>
+			</div>
+		{/each}
+	</div>
+{/if}
+
+{#if data.digitalFiles?.length}
+	<h2 class="text-2xl my-4">Digital Files</h2>
+
+	<div class="flex flex-row flex-wrap gap-6 mt-6">
+		{#each data.digitalFiles as digitalFile}
+			<a href="/admin/digital-file/{digitalFile._id}" class="text-link hover:underline">
+				{digitalFile.name}
+			</a>
+		{/each}
+	</div>
+{/if}

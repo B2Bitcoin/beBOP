@@ -54,4 +54,8 @@ export async function getS3DownloadLink(key: string) {
 	);
 }
 
+export function s3ProductPrefix(productId: string): string {
+	return `products/${productId}/`;
+}
+
 export { s3client };

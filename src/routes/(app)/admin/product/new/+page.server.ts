@@ -1,4 +1,4 @@
-import { collections } from '$lib/server/database';
+import { collections, withTransaction } from '$lib/server/database';
 import { generatePicture } from '$lib/server/picture';
 import type { Actions } from './$types';
 import { error, redirect } from '@sveltejs/kit';
@@ -6,16 +6,47 @@ import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { ORIGIN, S3_BUCKET } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { MAX_NAME_LIMIT } from '$lib/types/Product';
+import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 import { parsePriceAmount } from '$lib/types/Currency';
-import { getS3DownloadLink, s3client } from '$lib/server/s3';
+import { getS3DownloadLink, s3ProductPrefix, s3client } from '$lib/server/s3';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
+import { generateId } from '$lib/utils/generateId';
+import { CopyObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
+
+export const load = async ({ url }) => {
+	const productId = url.searchParams.get('duplicate_from');
+	let product;
+	let pictures;
+	let digitalFiles;
+
+	if (productId) {
+		product = await collections.products.findOne({ _id: productId });
+
+		pictures = await collections.pictures
+			.find({ productId: productId })
+			.sort({ createdAt: 1 })
+			.toArray();
+
+		digitalFiles = await collections.digitalFiles
+			.find({ productId: productId })
+			.sort({ createdAt: 1 })
+			.toArray();
+
+		return {
+			product,
+			productId,
+			pictures,
+			digitalFiles,
+			currency: runtimeConfig.priceReferenceCurrency
+		};
+	}
+};
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	add: async ({ request }) => {
 		const formData = await request.formData();
 		const json: JsonObject = {};
 
@@ -34,8 +65,6 @@ export const actions: Actions = {
 				...json,
 				availableDate: formData.get('availableDate') || undefined
 			});
-
-		console.log(json, parsed.deliveryFees);
 
 		if (await collections.products.countDocuments({ _id: parsed.slug })) {
 			throw error(409, 'Product with same slug already exists');
@@ -110,29 +139,200 @@ export const actions: Actions = {
 			}
 		});
 
-		// This could be a change stream on collections.product, but for now a bit simpler
-		// to put it here.
-		// Later, if we have more notification types or more places where a product can be created,
-		// a change stream would probably be better
-		if (runtimeConfig.discovery) {
-			(async function () {
-				for await (const subscription of collections.bootikSubscriptions.find({
-					npub: { $exists: true }
-				})) {
-					await collections.nostrNotifications
-						.insertOne({
-							_id: new ObjectId(),
-							dest: subscription.npub,
-							kind: Kind.EncryptedDirectMessage,
-							content: `New product "${parsed.name}": ${ORIGIN}/product/${parsed.slug}`,
-							createdAt: new Date(),
-							updatedAt: new Date()
-						})
-						.catch(console.error);
-				}
-			})().catch(console.error);
-		}
+		onProductCreated({ _id: parsed.slug, name: parsed.name });
 
 		throw redirect(303, '/admin/product/' + parsed.slug);
+	},
+
+	duplicate: async ({ request }) => {
+		const formData = await request.formData();
+		const json: JsonObject = {};
+
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
+
+		const { productId: duplicatedProductId } = z
+			.object({ productId: z.string() })
+			.parse(Object.fromEntries(formData));
+
+		const product = duplicatedProductId
+			? await collections.products.findOne({ _id: duplicatedProductId })
+			: undefined;
+
+		if (!product) {
+			throw error(404, 'Duplicated product not found');
+		}
+
+		const duplicate = z
+			.object({
+				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				...productBaseSchema
+			})
+			.parse({
+				...json,
+				availableDate: formData.get('availableDate') || undefined
+			});
+
+		if (await collections.products.countDocuments({ _id: duplicate.slug })) {
+			throw error(409, 'Product with same slug already exists');
+		}
+
+		if (!duplicate.availableDate) {
+			duplicate.preorder = false;
+		}
+
+		if (product.type !== 'resource') {
+			delete duplicate.availableDate;
+			duplicate.preorder = false;
+		}
+
+		if (product.type === 'donation') {
+			duplicate.shipping = false;
+		}
+
+		const insertedS3Keys: string[] = [];
+
+		await withTransaction(async (session) => {
+			await collections.products.insertOne(
+				{
+					_id: duplicate.slug,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					description: duplicate.description.replaceAll('\r', ''),
+					shortDescription: duplicate.shortDescription.replaceAll('\r', ''),
+					name: duplicate.name,
+					price: {
+						currency: duplicate.priceCurrency,
+						amount: parseFloat(duplicate.priceAmount)
+					},
+					type: product.type,
+					availableDate: duplicate.availableDate || undefined,
+					preorder: duplicate.preorder,
+					shipping: duplicate.shipping,
+					displayShortDescription: duplicate.displayShortDescription
+				},
+				{ session }
+			);
+
+			const picturesToDuplicate = await collections.pictures
+				.find({ productId: duplicatedProductId })
+				.sort({ createdAt: 1 })
+				.toArray();
+
+			const digitalFilesToDuplicate = await collections.digitalFiles
+				.find({ productId: duplicatedProductId })
+				.sort({ createdAt: 1 })
+				.toArray();
+
+			const oldS3Prefix = s3ProductPrefix(duplicatedProductId);
+			const newS3Prefix = s3ProductPrefix(duplicate.slug);
+
+			for (const picture of picturesToDuplicate) {
+				const pictureToInsert = {
+					_id: generateId(picture._id.split('-').slice(0, -1).join('-'), true),
+					name: picture.name,
+					storage: {
+						original: {
+							...picture.storage.original,
+							key: picture.storage.original.key.replace(oldS3Prefix, newS3Prefix)
+						},
+						formats: picture.storage.formats.map((format) => ({
+							...format,
+							key: format.key.replace(oldS3Prefix, newS3Prefix)
+						}))
+					},
+					productId: duplicate.slug,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				};
+
+				insertedS3Keys.push(pictureToInsert.storage.original.key);
+				await s3client.send(
+					new CopyObjectCommand({
+						Bucket: S3_BUCKET,
+						CopySource: `/${S3_BUCKET}/${picture.storage.original.key}`,
+						Key: pictureToInsert.storage.original.key
+					})
+				);
+
+				let formatIndex = 0;
+				for (const format of picture.storage.formats) {
+					insertedS3Keys.push(format.key);
+					await s3client.send(
+						new CopyObjectCommand({
+							Bucket: S3_BUCKET,
+							CopySource: `/${S3_BUCKET}/${format.key}`,
+							Key: pictureToInsert.storage.formats[formatIndex++].key
+						})
+					);
+				}
+
+				await collections.pictures.insertOne(pictureToInsert, { session });
+			}
+
+			for (const file of digitalFilesToDuplicate) {
+				const digitalFileToInsert = {
+					_id: generateId(file._id.split('-').slice(0, -1).join('-'), true),
+					name: file.name,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					storage: {
+						...file.storage,
+						key: file.storage.key.replace(oldS3Prefix, newS3Prefix)
+					},
+					productId: duplicate.slug
+				};
+
+				insertedS3Keys.push(digitalFileToInsert.storage.key);
+				await s3client.send(
+					new CopyObjectCommand({
+						Bucket: S3_BUCKET,
+						CopySource: `/${S3_BUCKET}/${file.storage.key}`,
+						Key: digitalFileToInsert.storage.key
+					})
+				);
+
+				await collections.digitalFiles.insertOne(digitalFileToInsert, { session });
+			}
+		}).catch((err) => {
+			s3client
+				.send(
+					new DeleteObjectsCommand({
+						Bucket: S3_BUCKET,
+						Delete: {
+							Objects: insertedS3Keys.map((key) => ({ Key: key }))
+						}
+					})
+				)
+				.catch(console.error);
+			return err;
+		});
+
+		onProductCreated({ _id: duplicate.slug, name: duplicate.name });
+
+		throw redirect(303, '/admin/product/' + duplicate.slug);
 	}
 };
+
+// This could be a change stream on collections.product
+function onProductCreated(product: Pick<Product, '_id' | 'name'>) {
+	if (runtimeConfig.discovery) {
+		(async function () {
+			for await (const subscription of collections.bootikSubscriptions.find({
+				npub: { $exists: true }
+			})) {
+				await collections.nostrNotifications
+					.insertOne({
+						_id: new ObjectId(),
+						dest: subscription.npub,
+						kind: Kind.EncryptedDirectMessage,
+						content: `New product "${product.name}": ${ORIGIN}/product/${product._id}`,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					})
+					.catch(console.error);
+			}
+		})().catch(console.error);
+	}
+}
