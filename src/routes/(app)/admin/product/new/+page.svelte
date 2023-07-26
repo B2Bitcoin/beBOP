@@ -1,23 +1,31 @@
 <script lang="ts">
+	import { applyAction, deserialize } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import { generateId } from '$lib/utils/generateId.js';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import PictureComponent from '$lib/components/Picture.svelte';
 
-	let shipping = false;
-	let preorder = false;
-
-	let priceAmountElement: HTMLInputElement;
 	export let data;
 	let product = data.product;
 
+	let submitting = false;
+	let preorder = false;
+
+	let priceAmountElement: HTMLInputElement;
+	let formElement: HTMLFormElement;
+	let files: FileList;
+
+	let name = product?.name ? product.name + ' (duplicate)' : '';
+	let slug = generateId(name, false);
+	let shipping = product?.shipping ?? false;
 	let type = product?.type ?? 'resource';
 	let priceAmount = product?.price.amount ?? 0;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
-
-	export let data;
 
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
@@ -29,14 +37,72 @@
 		availableDate = undefined;
 	}
 
-	function checkForm(event: SubmitEvent) {
-		if (priceAmountElement.value && priceAmount < 1 / SATOSHIS_PER_BTC) {
-			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
-			priceAmountElement.reportValidity();
-			event.preventDefault();
-			return;
-		} else {
-			priceAmountElement.setCustomValidity('');
+	async function checkForm(event: SubmitEvent) {
+		submitting = true;
+
+		// Need to load here, or for some reason, some inputs disappear afterwards
+		const formData = new FormData(formElement);
+
+		try {
+			if (priceAmountElement.value && priceAmount < 1 / SATOSHIS_PER_BTC) {
+				priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
+				priceAmountElement.reportValidity();
+				event.preventDefault();
+				return;
+			} else {
+				priceAmountElement.setCustomValidity('');
+			}
+
+			if (!product) {
+				const fileSize = files[0].size;
+				const fileName = files[0].name;
+
+				const response = await fetch('/admin/picture/prepare', {
+					method: 'POST',
+					body: JSON.stringify({
+						fileName,
+						fileSize
+					}),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+
+				if (!response.ok) {
+					throw new Error(await response.text());
+				}
+
+				const body = await response.json();
+
+				const { uploadUrl, pictureId } = body;
+
+				const uploadResponse = await fetch(uploadUrl, {
+					method: 'PUT',
+					body: files[0]
+				});
+
+				if (!uploadResponse.ok) {
+					throw new Error(await uploadResponse.text());
+				}
+
+				formData.set('pictureId', pictureId);
+			}
+
+			const finalResponse = await fetch(formElement.action, {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = deserialize(await finalResponse.text());
+
+			if (result.type === 'success') {
+				// rerun all `load` functions, following the successful update
+				await invalidateAll();
+			}
+
+			applyAction(result);
+		} finally {
+			submitting = false;
 		}
 	}
 </script>
@@ -46,25 +112,41 @@
 <form
 	action={product ? '?/duplicate' : '?/add'}
 	method="post"
-	enctype={product ? '' : 'multipart/form-data'}
 	class="flex flex-col gap-4"
-	on:submit={checkForm}
+	bind:this={formElement}
+	on:submit|preventDefault={checkForm}
 >
-	<label>
+	<label class="form-label">
 		Product name
 		<input
-			class="form-input block"
+			class="form-input"
 			type="text"
 			maxlength={MAX_NAME_LIMIT}
 			name="name"
 			placeholder="Product name"
-			value={product?.name ?? ''}
+			bind:value={name}
+			on:change={() => (slug = generateId(name, false))}
+			on:input={() => (slug = generateId(name, false))}
+			required
+		/>
+	</label>
+
+	<label class="form-label">
+		Slug
+
+		<input
+			class="form-input block"
+			type="text"
+			name="slug"
+			placeholder="Slug"
+			bind:value={slug}
+			title="Only lowercase letters, numbers and dashes are allowed"
 			required
 		/>
 	</label>
 
 	<div class="gap-4 flex flex-col md:flex-row">
-		<label class="w-full">
+		<label class="w-full form-label">
 			Price amount
 			<input
 				class="form-input"
@@ -79,18 +161,20 @@
 			/>
 		</label>
 
-		<label class="w-full">
+		<label class="w-full form-label">
 			Price currency
 
 			<select name="priceCurrency" class="form-input">
 				{#each CURRENCIES as currency}
-					<option value={currency} selected={data.currency === currency}>{currency}</option>
+					<option value={currency} selected={data.priceReferenceCurrency === currency}
+						>{currency}</option
+					>
 				{/each}
 			</select>
 		</label>
 	</div>
 
-	<label>
+	<label class="form-label">
 		Short description
 		<textarea
 			name="shortDescription"
@@ -98,13 +182,13 @@
 			rows="2"
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
 			value={product?.shortDescription ?? ''}
-			class="form-input block w-full"
+			class="form-input"
 		/>
 	</label>
 
-	<label class="flex gap-2 items-center cursor-pointer">
+	<label class="checkbox-label">
 		<input
-			class="form-checkbox rounded-sm cursor-pointer"
+			class="form-checkbox"
 			type="checkbox"
 			name="displayShortDescription"
 			bind:checked={displayShortDescription}
@@ -112,7 +196,7 @@
 		Display the short description on product page
 	</label>
 
-	<label class="block w-full mt-4">
+	<label class="form-label">
 		Description
 		<textarea
 			name="description"
@@ -120,7 +204,7 @@
 			rows="10"
 			maxlength="10000"
 			value={product?.description ?? ''}
-			class="form-input block w-full"
+			class="form-input"
 		/>
 	</label>
 
@@ -135,7 +219,7 @@
 
 	{#if type === 'resource'}
 		<div class="flex flex-wrap gap-4">
-			<label>
+			<label class="form-label">
 				Available date
 
 				<input
@@ -145,24 +229,18 @@
 					bind:value={availableDate}
 					min={addDays(new Date(), 1).toJSON().slice(0, 10)}
 				/>
-				<span class="text-sm text-gray-600 mt-2 block"
-					>Leave empty if your product is immediately available. Press
+				<span class="text-sm text-gray-600 mt-2 block">
+					Leave empty if your product is immediately available. Press
 					<kbd
 						class="px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg"
 						>backspace</kbd
-					> to remove the date.</span
-				>
+					> to remove the date.
+				</span>
 			</label>
 
-			<label
-				class="flex gap-2 items-center {enablePreorder
-					? 'cursor-pointer'
-					: 'cursor-not-allowed text-gray-450'}"
-			>
+			<label class="checkbox-label {enablePreorder ? '' : 'cursor-not-allowed text-gray-450'}">
 				<input
-					class="form-checkbox rounded-sm {enablePreorder
-						? 'cursor-pointer'
-						: 'cursor-not-allowed border-gray-450'}"
+					class="form-checkbox {enablePreorder ? '' : 'cursor-not-allowed border-gray-450'}"
 					type="checkbox"
 					bind:checked={preorder}
 					name="preorder"
@@ -174,33 +252,62 @@
 	{/if}
 
 	{#if type !== 'donation'}
-		<label class="flex gap-2 items-center cursor-pointer">
+		<h3 class="text-xl">Delivery</h3>
+
+		<label class="checkbox-label">
 			<input
-				class="form-checkbox rounded-sm cursor-pointer"
+				class="form-checkbox"
 				type="checkbox"
 				name="shipping"
 				bind:checked={shipping}
+				disabled={submitting}
 			/>
 			The product has a physical component that will be shipped to the customer's address
 		</label>
+
+		{#if shipping}
+			{#if data.deliveryFees.mode === 'perItem'}
+				<DeliveryFeesSelector defaultCurrency={data.priceReferenceCurrency} disabled={submitting} />
+
+				<label class="checkbox-label">
+					<input type="checkbox" name="requireSpecificDeliveryFee" disabled={submitting} /> Prevent
+					order if no specific delivery fee matches the customer's country (do not use
+					<a href="/admin/config/delivery" class="text-link hover:underline" target="_blank">
+						globally defined fees
+					</a> as fallback)
+				</label>
+			{/if}
+
+			{#if data.deliveryFees.mode === 'perItem' || data.deliveryFees.applyFlatFeeToEachItem}
+				<label class="checkbox-label">
+					<input type="checkbox" name="applyDeliveryFeesOnlyOnce" disabled={submitting} /> Apply delivery
+					fee only once, even if the customer orders multiple items
+				</label>
+			{/if}
+		{/if}
 	{/if}
 
+	<input type="hidden" name="productId" value={data.productId || ''} />
 	{#if !product}
-		<label>
+		<label class="form-label">
 			Picture
 			<input
 				type="file"
-				name="picture"
 				accept="image/jpeg,image/png,image/webp"
 				class="block"
+				bind:files
 				required
+				disabled={submitting}
 			/>
 		</label>
 	{/if}
 
-	<input type="hidden" name="productId" value={data.productId || ''} />
-
-	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
+	<input
+		type="submit"
+		class="btn btn-blue self-start text-white"
+		disabled={submitting}
+		value="Submit"
+	/>
 </form>
 {#if data.pictures?.length}
 	<h2 class="text-2xl my-4">Photos</h2>

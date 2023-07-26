@@ -109,6 +109,7 @@ export async function load({ params }) {
 	// Everything is awaited, because the home page can call this load function in a sub param
 	return {
 		cmsPage: omit(cmsPage, ['content']),
+		layoutReset: cmsPage.fullScreen,
 		tokens,
 		products,
 		pictures: await picturesForProducts(products.map((product) => product._id)),

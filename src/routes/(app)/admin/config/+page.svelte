@@ -7,6 +7,8 @@
 
 <h1 class="text-3xl">Config</h1>
 
+<a href="/admin/config/delivery" class="underline">Deliver fees</a>
+
 <p>Configured URL: {data.origin}</p>
 
 <div>
@@ -44,47 +46,42 @@
 		</select>
 	</label>
 
-	<label class="flex gap-2 cursor-pointer items-center">
+	<label class="checkbox-label">
 		<input
 			type="checkbox"
 			name="checkoutButtonOnProductPage"
-			class="form-checkbox rounded-sm cursor-pointer"
+			class="form-checkbox"
 			checked={data.checkoutButtonOnProductPage}
 		/>
 		checkoutButtonOnProductPage
 	</label>
-	<label class="flex gap-2 cursor-pointer items-center">
+	<label class="checkbox-label">
 		<input
 			type="checkbox"
 			name="includeOrderUrlInQRCode"
-			class="form-checkbox rounded-sm cursor-pointer"
+			class="form-checkbox"
 			checked={data.includeOrderUrlInQRCode}
 		/>
 		includeOrderUrlInQRCode
 	</label>
-	<label class="flex gap-2 cursor-pointer items-center">
-		<input
-			type="checkbox"
-			name="discovery"
-			class="form-checkbox rounded-sm cursor-pointer"
-			checked={data.discovery}
-		/>
+	<label class="checkbox-label">
+		<input type="checkbox" name="discovery" class="form-checkbox" checked={data.discovery} />
 		discovery
 	</label>
-	<label class="flex gap-2 cursor-pointer items-center">
+	<label class="checkbox-label">
 		<input
 			type="checkbox"
 			name="enableCashSales"
-			class="form-checkbox rounded-sm cursor-pointer"
+			class="form-checkbox"
 			checked={data.enableCashSales}
 		/>
 		enableCashSales
 	</label>
-	<label class="flex gap-2 cursor-pointer items-center">
+	<label class="checkbox-label">
 		<input
 			type="checkbox"
 			name="isMaintenance"
-			class="form-checkbox rounded-sm cursor-pointer"
+			class="form-checkbox"
 			checked={data.isMaintenance}
 		/>
 		isMaintenance

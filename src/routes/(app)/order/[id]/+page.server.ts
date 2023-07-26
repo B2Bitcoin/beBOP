@@ -42,14 +42,23 @@ export async function load({ params, depends }) {
 					shortDescription: item.product.shortDescription,
 					type: item.product.type,
 					preorder: item.product.preorder,
-					availableDate: item.product.availableDate
+					availableDate: item.product.availableDate,
+					shipping: item.product.shipping
 				},
-				picture: pictures.find((picture) => picture.productId === item.product._id)
+				picture: pictures.find((picture) => picture.productId === item.product._id),
+				digitalFiles: digitalFiles.filter(
+					(digitalFile) => digitalFile.productId === item.product._id
+				)
 			})),
 			totalPrice: {
-				amount: parseFloat(order.totalPrice.amount.toString()),
+				amount: order.totalPrice.amount,
 				currency: order.totalPrice.currency
 			},
+			shippingPrice: order.shippingPrice && {
+				amount: order.shippingPrice.amount,
+				currency: order.shippingPrice.currency
+			},
+			shippingAddress: order.shippingAddress,
 			notifications: order.notifications
 		},
 

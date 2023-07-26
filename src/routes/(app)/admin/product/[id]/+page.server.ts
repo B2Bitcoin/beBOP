@@ -3,12 +3,10 @@ import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
-import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-import {
-	CURRENCIES,
-	FRACTION_DIGITS_PER_CURRENCY,
-	MININUM_PER_CURRENCY
-} from '$lib/types/Currency';
+import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
+import { productBaseSchema } from '../product-schema';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -37,6 +35,11 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
+		const json: JsonObject = {};
+
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 
 		const product = await collections.products.findOne({ _id: params.id });
 
@@ -52,80 +55,59 @@ export const actions: Actions = {
 				priceCurrency: formData.get('priceCurrency')
 			});
 
-		const update = z
+		const parsed = z
 			.object({
-				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				description: z.string().trim().max(10_000),
-				shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
-				priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
-				availableDate: z.date({ coerce: true }).optional(),
-				changedDate: z.boolean({ coerce: true }).default(false),
-				preorder: z.boolean({ coerce: true }).default(false),
-				shipping: z.boolean({ coerce: true }).default(false),
-				displayShortDescription: z.boolean({ coerce: true }).default(false)
+				...productBaseSchema,
+				changedDate: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
-				name: formData.get('name'),
-				description: formData.get('description'),
-				shortDescription: formData.get('shortDescription'),
-				priceAmount: formData.get('priceAmount'),
-				preorder: formData.get('preorder'),
-				shipping: formData.get('shipping'),
-				availableDate: formData.get('availableDate') || undefined,
-				changedDate: formData.get('changedDate'),
-				displayShortDescription: formData.get('displayShortDescription')
+				...json,
+				availableDate: formData.get('availableDate') || undefined
 			});
 
 		if (product.type !== 'resource') {
-			delete update.availableDate;
-			update.preorder = false;
+			delete parsed.availableDate;
+			parsed.preorder = false;
 		}
 
-		if (!update.changedDate) {
-			delete update.availableDate;
+		if (!parsed.changedDate) {
+			delete parsed.availableDate;
 		}
 
-		const availableDate = product.availableDate || update.availableDate;
+		const availableDate = product.availableDate || parsed.availableDate;
 		if (!availableDate || availableDate < new Date()) {
-			update.preorder = false;
+			parsed.preorder = false;
 		}
 
 		if (product.type === 'donation') {
-			update.shipping = false;
+			parsed.shipping = false;
 		}
 
-		const priceAmount =
-			Math.round(
-				parseFloat(update.priceAmount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency])
-			) / Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[priceCurrency]);
-
-		if (priceAmount <= MININUM_PER_CURRENCY[priceCurrency]) {
-			throw error(
-				400,
-				`Price must be greater than ${MININUM_PER_CURRENCY[priceCurrency]} ${priceCurrency}`
-			);
-		}
+		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency);
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
 				$set: {
-					name: update.name,
-					description: update.description,
-					shortDescription: update.shortDescription,
+					name: parsed.name,
+					description: parsed.description,
+					shortDescription: parsed.shortDescription,
 					price: {
 						amount: priceAmount,
 						currency: priceCurrency
 					},
-					...(update.changedDate &&
-						update.availableDate && { availableDate: update.availableDate }),
-					shipping: update.shipping,
-					displayShortDescription: update.displayShortDescription,
-					preorder: update.preorder,
+					...(parsed.availableDate && { availableDate: parsed.availableDate }),
+					shipping: parsed.shipping,
+					displayShortDescription: parsed.displayShortDescription,
+					preorder: parsed.preorder,
+					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
+					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
+					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
 					updatedAt: new Date()
 				},
 				$unset: {
-					...(update.changedDate && !update.availableDate && { availableDate: '' })
+					...(!parsed.availableDate && { availableDate: '' }),
+					...(!parsed.deliveryFees && { deliveryFees: '' })
 				}
 			}
 		);

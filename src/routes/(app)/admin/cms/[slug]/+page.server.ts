@@ -29,18 +29,14 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { title, content, shortDescription } = z
+		const { title, content, shortDescription, fullScreen } = z
 			.object({
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
 				content: z.string().max(10_000),
-				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT)
+				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),
+				fullScreen: z.boolean({ coerce: true })
 			})
-			.parse({
-				slug: data.get('slug'),
-				title: data.get('title'),
-				content: data.get('content'),
-				shortDescription: data.get('shortDescription')
-			});
+			.parse(Object.fromEntries(data));
 
 		await collections.cmsPages.updateOne(
 			{
@@ -51,6 +47,7 @@ export const actions = {
 					title,
 					content,
 					shortDescription,
+					fullScreen,
 					updatedAt: new Date()
 				}
 			}

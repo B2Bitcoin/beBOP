@@ -29,6 +29,11 @@ export interface Order extends Timestamps {
 		country: CountryAlpha3;
 	};
 
+	shippingPrice?: {
+		amount: number;
+		currency: Currency;
+	};
+
 	totalPrice: {
 		amount: number;
 		currency: Currency;

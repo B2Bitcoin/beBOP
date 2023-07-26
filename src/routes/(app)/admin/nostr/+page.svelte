@@ -25,8 +25,8 @@
 {/if}
 
 {#if data.nostrPrivateKey}
-	<p>Your NostR private key is: {data.nostrPrivateKey}</p>
-	<p>Your NostR public key is: {data.nostrPublicKey}</p>
+	<p class="break-words">Your NostR private key is: {data.nostrPrivateKey}</p>
+	<p class="break-words">Your NostR public key is: {data.nostrPublicKey}</p>
 
 	{#if data.origin}
 		<form action="?/certify" class="flex flex-col gap-4" method="post">
@@ -91,7 +91,7 @@
 
 <ul>
 	{#each data.receivedMessages as message}
-		<li>
+		<li class="break-words">
 			{#if message.kind === 4}
 				<span title="Encrypted message">'🔐'</span>
 			{/if}
