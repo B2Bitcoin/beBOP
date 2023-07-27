@@ -34,6 +34,15 @@ export interface Order extends Timestamps {
 		currency: Currency;
 	};
 
+	vat?: {
+		price: {
+			amount: number;
+			currency: Currency;
+		};
+		rate: number;
+		country: string;
+	};
+
 	totalPrice: {
 		amount: number;
 		currency: Currency;

@@ -15,7 +15,6 @@
 	import { computeDeliveryFees } from '$lib/types/Cart.js';
 	import { typedKeys } from '$lib/utils/typedKeys.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import { vatRates } from '$lib/server/vat-rates.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -79,9 +78,7 @@
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital ? data.countryCode : country;
-	$: actualVatRate = isDigital
-		? data.vatRate
-		: vatRates[actualCountry as keyof typeof vatRates] ?? 0;
+	$: actualVatRate = isDigital ? data.vatRate : data.vatRates[actualCountry] ?? 0;
 
 	$: totalPrice =
 		sum(

@@ -106,6 +106,7 @@ export const actions = {
 					}
 				},
 				shippingAddress: shipping,
+				vatCountry: shipping?.country ?? locals.countryCode,
 				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
 			}
 		);
