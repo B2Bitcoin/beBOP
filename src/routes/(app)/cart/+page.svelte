@@ -132,7 +132,9 @@
 					/>
 				</div>
 			</div>
-			<a href="/checkout" class="btn btn-black w-80 ml-auto">Checkout</a>
+			<div class="flex justify-end">
+				<a href="/checkout" class="btn btn-black w-80">Checkout</a>
+			</div>
 		{:else}
 			<p>Cart is empty</p>
 		{/if}
