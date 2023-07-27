@@ -32,7 +32,7 @@ export const actions = {
 		const { title, content, shortDescription, fullScreen } = z
 			.object({
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
-				content: z.string().max(10_000),
+				content: z.string().max(20_000),
 				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),
 				fullScreen: z.boolean({ coerce: true })
 			})
