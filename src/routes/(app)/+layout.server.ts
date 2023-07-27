@@ -1,5 +1,7 @@
+import { countryNameByAlpha2 } from '$lib/server/country-codes.js';
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import { vatRates } from '$lib/server/vat-rates.js';
 import type { Product } from '$lib/types/Product.js';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef.js';
@@ -22,6 +24,10 @@ export async function load({ depends, locals }) {
 			BTC_CHF: runtimeConfig.BTC_CHF,
 			BTC_SAT: runtimeConfig.BTC_SAT
 		},
+		countryCode: locals.countryCode,
+		countryName: countryNameByAlpha2[locals.countryCode] || '-',
+		vatRate:
+			locals.countryCode in vatRates ? vatRates[locals.countryCode as keyof typeof vatRates] : 0,
 		mainCurrency: runtimeConfig.mainCurrency,
 		secondaryCurrency: runtimeConfig.secondaryCurrency,
 		brandName: runtimeConfig.brandName,

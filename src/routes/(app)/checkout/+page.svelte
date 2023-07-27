@@ -14,6 +14,8 @@
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { computeDeliveryFees } from '$lib/types/Cart.js';
 	import { typedKeys } from '$lib/utils/typedKeys.js';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import { vatRates } from '$lib/server/vat-rates.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -75,6 +77,12 @@
 	$: items = data.cart || [];
 	$: deliveryFees = computeDeliveryFees(data.mainCurrency, country, items, data.deliveryFees);
 
+	$: isDigital = items.every((item) => !item.product.shipping);
+	$: actualCountry = isDigital ? data.countryCode : country;
+	$: actualVatRate = isDigital
+		? data.vatRate
+		: vatRates[actualCountry as keyof typeof vatRates] ?? 0;
+
 	$: totalPrice =
 		sum(
 			items.map(
@@ -83,6 +91,9 @@
 					item.quantity
 			)
 		) + (deliveryFees || 0);
+
+	$: vat = totalPrice * (actualVatRate / 100);
+	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -93,7 +104,7 @@
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">Shipment info</h2>
 
-				{#if items.every((item) => !item.product.shipping)}
+				{#if isDigital}
 					<p class="col-span-6 text-gray-800">
 						All products in your cart are digital products. You don't need to provide any shipping
 						information.
@@ -135,8 +146,8 @@
 					<label class="form-label col-span-3">
 						Country
 						<select name="country" class="form-input" required bind:value={country}>
-							{#each Object.entries(COUNTRIES) as [code, country]}
-								<option value={code}>{country}</option>
+							{#each Object.entries(COUNTRIES) as [code, countryTxt]}
+								<option value={code} selected={code === country}>{countryTxt}</option>
 							{/each}
 						</select>
 					</label>
@@ -348,6 +359,37 @@
 					</div>
 				{/if}
 
+				{#if data.countryCode !== '-'}
+					<div class="flex justify-between items-center">
+						<div class="flex flex-col">
+							<h3 class="text-base text-gray-700 flex flex-row gap-2 items-center">
+								Vat ({data.vatRate}%)
+								<div
+									title="VAT rate for {actualCountry}. Your country is determined by shipping address, or with data from https://lite.ip2location.com"
+								>
+									<IconInfo class="cursor-pointer" />
+								</div>
+							</h3>
+						</div>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl text-gray-800 truncate"
+								amount={vat}
+								currency={data.mainCurrency}
+								main
+							/>
+							<PriceTag
+								amount={vat}
+								currency={data.mainCurrency}
+								class="text-base text-gray-600 truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{/if}
+
 				<span class="py-1" />
 
 				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
@@ -355,14 +397,14 @@
 						<span class="text-xl text-gray-850">Total</span>
 						<PriceTag
 							class="text-2xl text-gray-800"
-							amount={totalPrice}
+							amount={totalPriceWithVat}
 							currency={data.mainCurrency}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end text-gray-600"
-						amount={totalPrice}
+						amount={totalPriceWithVat}
 						currency={data.mainCurrency}
 						secondary
 					/>

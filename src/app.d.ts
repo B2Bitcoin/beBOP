@@ -12,6 +12,7 @@ declare global {
 		interface Locals {
 			status?: number;
 			sessionId: string;
+			countryCode: string;
 		}
 		// interface PageData {}
 		// interface Platform {}

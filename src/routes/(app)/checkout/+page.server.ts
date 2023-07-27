@@ -7,12 +7,14 @@ import { bech32 } from 'bech32';
 import { createOrder } from '$lib/server/orders.js';
 import { emailsEnabled } from '$lib/server/email.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { vatRates } from '$lib/server/vat-rates.js';
 
 export function load() {
 	return {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
-		deliveryFees: runtimeConfig.deliveryFees
+		deliveryFees: runtimeConfig.deliveryFees,
+		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
 	};
 }
 

@@ -73,7 +73,17 @@ function ipToInt(ip: string): { type: 'v4' | 'v6'; value: number | bigint } {
 	};
 }
 
-export function countryFromIp(ip: string): string | undefined {
+const cache = new Map<string, string>();
+
+export function countryFromIp(ip: string): string {
+	if (ip === '::1' || ip === '127.0.0.1') {
+		return 'FR';
+	}
+	const cached = cache.get(ip);
+	if (cached) {
+		return cached;
+	}
+
 	const ipInt = ipToInt(ip);
 
 	const array = ipInt.type === 'v4' ? ipv4s : ipv6s;
@@ -87,6 +97,11 @@ export function countryFromIp(ip: string): string | undefined {
 		const mid = Math.floor((left + right) / 2);
 
 		if (value >= array[mid].start && value <= array[mid].end) {
+			cache.set(ip, array[mid].country);
+			if (cache.size > 10_000) {
+				cache.delete(cache.keys().next().value);
+			}
+
 			return array[mid].country;
 		}
 
@@ -96,4 +111,7 @@ export function countryFromIp(ip: string): string | undefined {
 			left = mid + 1;
 		}
 	}
+
+	cache.set(ip, '-');
+	return '-';
 }
