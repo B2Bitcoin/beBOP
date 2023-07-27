@@ -144,7 +144,7 @@
 </form>
 
 <p>
-	IP2Location LITE data available from <a href="”https://lite.ip2location.com”">
+	IP2Location LITE data available from <a href="https://lite.ip2location.com" class="text-blue">
 		https://lite.ip2location.com
 	</a> is used to determine your country from your IP.
 </p>

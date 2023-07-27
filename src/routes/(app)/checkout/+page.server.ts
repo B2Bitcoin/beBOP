@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { paymentMethods } from '$lib/server/payment-methods.js';
-import { COUNTRY_ALPHA3S } from '$lib/types/Country';
+import { COUNTRY_ALPHA2S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
@@ -55,7 +55,7 @@ export const actions = {
 						city: z.string().min(1),
 						state: z.string().optional(),
 						zip: z.string().min(1),
-						country: z.enum(COUNTRY_ALPHA3S)
+						country: z.enum(COUNTRY_ALPHA2S)
 					})
 					.parse(Object.fromEntries(formData));
 
