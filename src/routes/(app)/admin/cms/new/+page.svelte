@@ -52,7 +52,7 @@
 			name="content"
 			cols="30"
 			rows="10"
-			maxlength="10000"
+			maxlength="20000"
 			placeholder="Markdown content."
 			class="form-input block w-full"
 		/>
