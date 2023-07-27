@@ -2,7 +2,7 @@ import { isIPv4 } from 'node:net';
 import { building } from '$app/environment';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { rootDir } from '../root-dir';
+import { rootDir } from './root-dir';
 
 const ipv4s: { start: bigint; end: bigint; country: string }[] = [];
 const ipv6s: { start: bigint; end: bigint; country: string }[] = [];
