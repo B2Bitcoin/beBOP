@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data;
@@ -66,7 +67,7 @@
 			name="content"
 			cols="30"
 			rows="10"
-			maxlength="20000"
+			maxlength={MAX_CONTENT_LIMIT}
 			placeholder="Markdown content"
 			class="form-input block w-full"
 			value={data.cmsPage.content}

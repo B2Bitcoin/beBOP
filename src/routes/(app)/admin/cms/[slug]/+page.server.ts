@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database.js';
+import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product.js';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -32,7 +33,7 @@ export const actions = {
 		const { title, content, shortDescription, fullScreen } = z
 			.object({
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
-				content: z.string().max(20_000),
+				content: z.string().max(MAX_CONTENT_LIMIT),
 				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),
 				fullScreen: z.boolean({ coerce: true })
 			})
