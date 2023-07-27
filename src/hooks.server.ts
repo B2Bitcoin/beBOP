@@ -102,7 +102,11 @@ export const handle = (async ({ event, resolve }) => {
 
 	const response = await resolve(event);
 
-	if (response.status >= 500 && response.headers.get('Content-Type')?.includes('text/html')) {
+	if (
+		response.status >= 500 &&
+		(!event.locals.status || event.locals.status >= 500) &&
+		response.headers.get('Content-Type')?.includes('text/html')
+	) {
 		const errorPages = await collections.cmsPages.countDocuments({
 			_id: 'error'
 		});
