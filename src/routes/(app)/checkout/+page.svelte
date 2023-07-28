@@ -78,7 +78,8 @@
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
-	$: actualVatRate = isDigital ? data.vatRate : data.vatRates[actualCountry] ?? 0;
+	$: actualVatRate =
+		isDigital || data.vatSingleCountry ? data.vatRate : data.vatRates[actualCountry] ?? 0;
 
 	$: totalPrice =
 		sum(
@@ -360,7 +361,7 @@
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base text-gray-700 flex flex-row gap-2 items-center">
-								Vat ({data.vatRate}%)
+								Vat ({actualVatRate}%)
 								<div
 									title="VAT rate for {actualCountry}. {data.vatSingleCountry
 										? "The VAT country is the seller's country"
