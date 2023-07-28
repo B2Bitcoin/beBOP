@@ -99,7 +99,7 @@
 			Your IP is <code class="font-mono bg-link px-[2px] py-[1px] rounded text-white"
 				>{data.ip}</code
 			>
-			({data.ipCountry})
+			({data.countryName})
 		</p>
 	</label>
 	<label class="form-label">
