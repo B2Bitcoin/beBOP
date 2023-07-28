@@ -1,10 +1,27 @@
-import { BITCOIN_RPC_URL, BITCOIN_RPC_PASSWORD, BITCOIN_RPC_USER } from '$env/static/private';
+import {
+	BITCOIN_RPC_URL,
+	BITCOIN_RPC_PASSWORD,
+	BITCOIN_RPC_USER,
+	TOR_PROXY_URL
+} from '$env/static/private';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 import { runtimeConfig } from './runtime-config';
+import { socksDispatcher } from 'fetch-socks';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
+
+const dispatcher =
+	TOR_PROXY_URL &&
+	new URL(TOR_PROXY_URL).protocol === 'socks5:' &&
+	new URL(BITCOIN_RPC_URL).hostname.endsWith('.onion')
+		? socksDispatcher({
+				type: 5,
+				host: new URL(TOR_PROXY_URL).hostname,
+				port: parseInt(new URL(TOR_PROXY_URL).port)
+		  })
+		: undefined;
 
 type BitcoinCommand =
 	| 'listtransactions'
@@ -47,7 +64,8 @@ export async function bitcoinRpc(command: BitcoinCommand, params: unknown[]) {
 			id: crypto.randomUUID(),
 			method: command,
 			params
-		})
+		}),
+		...{ dispatcher }
 	});
 }
 

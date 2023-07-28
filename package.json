@@ -59,6 +59,7 @@
 		"bech32": "^2.0.0",
 		"busboy": "^1.6.0",
 		"date-fns": "^2.29.3",
+		"fetch-socks": "^1.2.0",
 		"html-to-text": "^9.0.5",
 		"jose": "^4.14.4",
 		"lodash-es": "^4.17.21",
