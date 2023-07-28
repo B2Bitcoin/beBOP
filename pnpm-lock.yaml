@@ -22,6 +22,9 @@ dependencies:
   date-fns:
     specifier: ^2.29.3
     version: 2.29.3
+  fetch-socks:
+    specifier: ^1.2.0
+    version: 1.2.0
   html-to-text:
     specifier: ^9.0.5
     version: 9.0.5
@@ -2640,6 +2643,13 @@ packages:
     dependencies:
       reusify: 1.0.4
     dev: true
+
+  /fetch-socks@1.2.0:
+    resolution: {integrity: sha512-UlBTuReX1Hrnejx92Uhe0iR2OUL8f//2KNQNXaGhlWWZD5a+uFR/jd1Gf3Nshbc54KQdigUozeevdF6+p5r0cQ==}
+    dependencies:
+      socks: 2.7.1
+      undici: 5.22.1
+    dev: false
 
   /file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
