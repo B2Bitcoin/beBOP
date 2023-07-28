@@ -210,6 +210,10 @@ export async function createOrder(
 					rate: vatRates[params.vatCountry as keyof typeof vatRates] || 0
 			  };
 
+	if (vat) {
+		totalSatoshis += vat.price.amount;
+	}
+
 	const orderId = crypto.randomUUID();
 
 	const subscriptions = items.filter((item) => item.product.type === 'subscription');
