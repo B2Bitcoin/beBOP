@@ -248,7 +248,7 @@
 											</div>
 										</form>
 									{/each}
-									{#if data.countryCode !== '-'}
+									{#if data.countryCode !== '-' && !data.vatExempted}
 										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
 											Vat ({data.vatRate}%) <PriceTag
 												currency={data.mainCurrency}

@@ -117,7 +117,7 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
-			{#if data.countryCode !== '-'}
+			{#if data.countryCode !== '-' && !data.vatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<h2 class="text-gray-800 text-[28px]">Vat ({data.vatRate}%):</h2>

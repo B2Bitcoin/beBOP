@@ -3,6 +3,8 @@
 	import { formatDistance } from 'date-fns';
 
 	export let data;
+
+	let vatExempted = data.vatExempted;
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -102,6 +104,24 @@
 			({data.countryName})
 		</p>
 	</label>
+	<div class="flex flex-col gap-2">
+		<label class="checkbox-label">
+			<input type="checkbox" name="vatExempted" class="form-checkbox" bind:checked={vatExempted} />
+			Disable VAT for my bootik
+		</label>
+		{#if vatExempted}
+			<label class="form-label">
+				VAT exemption reason (appears on the invoice)
+
+				<input
+					type="text"
+					name="vatExemptionReason"
+					class="form-input max-w-[25rem]"
+					value={data.vatExemptionReason}
+				/>
+			</label>
+		{/if}
+	</div>
 	<label class="form-label">
 		Subscription duration
 		<select

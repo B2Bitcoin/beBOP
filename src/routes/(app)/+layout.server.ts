@@ -18,6 +18,7 @@ export async function load({ depends, locals }) {
 
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
+		vatExempted: runtimeConfig.vatExempted,
 		exchangeRate: {
 			BTC_EUR: runtimeConfig.BTC_EUR,
 			BTC_USD: runtimeConfig.BTC_USD,
@@ -26,8 +27,11 @@ export async function load({ depends, locals }) {
 		},
 		countryCode: locals.countryCode,
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
-		vatRate:
-			locals.countryCode in vatRates ? vatRates[locals.countryCode as keyof typeof vatRates] : 0,
+		vatRate: runtimeConfig.vatExempted
+			? 0
+			: locals.countryCode in vatRates
+			? vatRates[locals.countryCode as keyof typeof vatRates]
+			: 0,
 		mainCurrency: runtimeConfig.mainCurrency,
 		secondaryCurrency: runtimeConfig.secondaryCurrency,
 		brandName: runtimeConfig.brandName,

@@ -356,7 +356,7 @@
 					</div>
 				{/if}
 
-				{#if data.countryCode !== '-'}
+				{#if data.countryCode !== '-' && !data.vatExempted}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base text-gray-700 flex flex-row gap-2 items-center">

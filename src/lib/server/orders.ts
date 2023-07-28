@@ -197,7 +197,7 @@ export async function createOrder(
 	}
 
 	const vat: Order['vat'] =
-		params.vatCountry === '-'
+		params.vatCountry === '-' || runtimeConfig.vatExempted
 			? undefined
 			: {
 					country: params.vatCountry,

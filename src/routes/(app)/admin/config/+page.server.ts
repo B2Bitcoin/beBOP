@@ -16,6 +16,7 @@ export async function load(event) {
 		subscriptionDuration: runtimeConfig.subscriptionDuration,
 		subscriptionReminderSeconds: runtimeConfig.subscriptionReminderSeconds,
 		confirmationBlocks: runtimeConfig.confirmationBlocks,
+		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		origin: ORIGIN
 	};
 }
@@ -38,6 +39,8 @@ export const actions = {
 					.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT'), ''])
 					.optional(),
 				priceReferenceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
+				vatExempted: z.boolean({ coerce: true }),
+				vatExemptionReason: z.string().default(runtimeConfig.vatExemptionReason),
 				subscriptionReminderSeconds: z
 					.number({ coerce: true })
 					.int()
@@ -149,6 +152,24 @@ export const actions = {
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'priceReferenceCurrency' },
 				{ $set: { data: result.priceReferenceCurrency, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.vatExempted !== result.vatExempted) {
+			runtimeConfig.vatExempted = result.vatExempted;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'vatExempted' },
+				{ $set: { data: result.vatExempted, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.vatExemptionReason !== result.vatExemptionReason) {
+			runtimeConfig.vatExemptionReason = result.vatExemptionReason;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'vatExemptionReason' },
+				{ $set: { data: result.vatExemptionReason, updatedAt: new Date() } },
 				{ upsert: true }
 			);
 		}
