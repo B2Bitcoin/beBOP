@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { COUNTRIES, COUNTRY_ALPHA3S, type CountryAlpha3 } from '$lib/types/Country';
+	import { COUNTRIES, COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
 	import { CURRENCIES, type Currency } from '$lib/types/Currency';
 	import { typedEntries } from '$lib/utils/typedEntries';
 	import type { DeliveryFees } from '$lib/types/DeliveryFees';
@@ -8,9 +8,9 @@
 	export let defaultCurrency: Currency;
 	export let disabled = false;
 
-	let feeCountryToAdd: CountryAlpha3 | 'default' = 'default';
+	let feeCountryToAdd: CountryAlpha2 | 'default' = 'default';
 
-	$: countriesWithNoFee = ['default' as const, ...COUNTRY_ALPHA3S].filter(
+	$: countriesWithNoFee = ['default' as const, ...COUNTRY_ALPHA2S].filter(
 		(country) => !deliveryFees[country]
 	);
 	$: feeCountryToAdd = countriesWithNoFee.includes(feeCountryToAdd)

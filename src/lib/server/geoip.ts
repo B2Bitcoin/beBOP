@@ -2,7 +2,7 @@ import { isIPv4 } from 'node:net';
 import { building } from '$app/environment';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { rootDir } from '../root-dir';
+import { rootDir } from './root-dir';
 
 const ipv4s: { start: bigint; end: bigint; country: string }[] = [];
 const ipv6s: { start: bigint; end: bigint; country: string }[] = [];
@@ -73,7 +73,21 @@ function ipToInt(ip: string): { type: 'v4' | 'v6'; value: number | bigint } {
 	};
 }
 
-export function countryFromIp(ip: string): string | undefined {
+const cache = new Map<string, string>();
+
+export function countryFromIp(ip: string): string {
+	if (ip === '::1' || ip === '127.0.0.1') {
+		return 'FR';
+	}
+	const cached = cache.get(ip);
+	if (cached) {
+		// This moves the entry to the end of the Map, making it the most recently used
+		cache.delete(ip);
+		cache.set(ip, cached);
+
+		return cached;
+	}
+
 	const ipInt = ipToInt(ip);
 
 	const array = ipInt.type === 'v4' ? ipv4s : ipv6s;
@@ -87,7 +101,17 @@ export function countryFromIp(ip: string): string | undefined {
 		const mid = Math.floor((left + right) / 2);
 
 		if (value >= array[mid].start && value <= array[mid].end) {
-			return array[mid].country;
+			let result = array[mid].country;
+			if (result === '-') {
+				result = '';
+			}
+			cache.set(ip, result);
+			if (cache.size > 10_000) {
+				// This deletes the oldest entry
+				cache.delete(cache.keys().next().value);
+			}
+
+			return result;
 		}
 
 		if (value < array[mid].start) {
@@ -96,4 +120,7 @@ export function countryFromIp(ip: string): string | undefined {
 			left = mid + 1;
 		}
 	}
+
+	cache.set(ip, '');
+	return '';
 }

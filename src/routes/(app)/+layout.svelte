@@ -45,6 +45,8 @@
 				item.quantity
 		)
 	);
+	$: vat = totalPrice * (data.vatRate / 100);
+	$: totalPriceWithVat = totalPrice + vat;
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
@@ -246,8 +248,17 @@
 											</div>
 										</form>
 									{/each}
+									{#if data.countryCode && !data.vatExempted}
+										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
+											Vat ({data.vatRate}%) <PriceTag
+												currency={data.mainCurrency}
+												amount={vat}
+												main
+											/>
+										</div>
+									{/if}
 									<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-										Total <PriceTag currency={data.mainCurrency} amount={totalPrice} main />
+										Total <PriceTag currency={data.mainCurrency} amount={totalPriceWithVat} main />
 									</div>
 									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
 									{#if items.length > 0}<a href="/checkout" class="btn btn-black">

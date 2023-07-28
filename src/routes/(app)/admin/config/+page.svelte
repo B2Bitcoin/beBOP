@@ -3,6 +3,9 @@
 	import { formatDistance } from 'date-fns';
 
 	export let data;
+
+	let vatExempted = data.vatExempted;
+	let vatSingleCountry = data.vatSingleCountry;
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -99,9 +102,49 @@
 			Your IP is <code class="font-mono bg-link px-[2px] py-[1px] rounded text-white"
 				>{data.ip}</code
 			>
-			({data.ipCountry})
+			({data.countryName})
 		</p>
 	</label>
+	<div class="flex flex-col gap-2">
+		<label class="checkbox-label">
+			<input type="checkbox" name="vatExempted" class="form-checkbox" bind:checked={vatExempted} />
+			Disable VAT for my bootik
+		</label>
+		{#if vatExempted}
+			<label class="form-label">
+				VAT exemption reason (appears on the invoice)
+
+				<input
+					type="text"
+					name="vatExemptionReason"
+					class="form-input max-w-[25rem]"
+					value={data.vatExemptionReason}
+				/>
+			</label>
+		{:else}
+			<label class="checkbox-label">
+				<input
+					type="checkbox"
+					name="vatSingleCountry"
+					class="form-checkbox"
+					bind:checked={vatSingleCountry}
+				/>
+				Use VAT rate from seller's country
+			</label>
+			{#if vatSingleCountry}
+				<label class="form-label">
+					Seller's country for VAT purposes
+					<select name="vatCountry">
+						{#each Object.entries(data.countryCodes) as [countryCode, countryName]}
+							<option value={countryCode} selected={data.vatCountry === countryCode}>
+								{countryName}
+							</option>
+						{/each}
+					</select>
+				</label>
+			{/if}
+		{/if}
+	</div>
 	<label class="form-label">
 		Subscription duration
 		<select
@@ -144,7 +187,7 @@
 </form>
 
 <p>
-	IP2Location LITE data available from <a href="”https://lite.ip2location.com”">
+	IP2Location LITE data available from <a href="https://lite.ip2location.com" class="text-blue">
 		https://lite.ip2location.com
 	</a> is used to determine your country from your IP.
 </p>

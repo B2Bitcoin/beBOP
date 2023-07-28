@@ -103,6 +103,7 @@ export const actions = {
 			{
 				sessionId: locals.sessionId,
 				shippingAddress: lastOrder.shippingAddress,
+				vatCountry: lastOrder.vat?.country ?? '',
 				notifications: lastOrder.notifications
 			}
 		);

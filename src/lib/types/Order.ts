@@ -1,6 +1,6 @@
 import type { Product } from './Product';
 import type { Currency } from './Currency';
-import type { CountryAlpha3 } from './Country';
+import type { CountryAlpha2 } from './Country';
 import type { Timestamps } from './Timestamps';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
@@ -26,12 +26,21 @@ export interface Order extends Timestamps {
 		city: string;
 		state?: string;
 		zip: string;
-		country: CountryAlpha3;
+		country: CountryAlpha2;
 	};
 
 	shippingPrice?: {
 		amount: number;
 		currency: Currency;
+	};
+
+	vat?: {
+		price: {
+			amount: number;
+			currency: Currency;
+		};
+		rate: number;
+		country: string;
 	};
 
 	totalPrice: {
