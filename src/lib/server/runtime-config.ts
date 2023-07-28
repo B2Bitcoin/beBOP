@@ -44,6 +44,8 @@ const defaultConfig = {
 
 	vatExempted: false,
 	vatExemptionReason: '',
+	vatSingleCountry: false,
+	vatCountry: '',
 
 	checkoutButtonOnProductPage: true,
 	discovery: true,

@@ -117,13 +117,18 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
-			{#if data.countryCode !== '-' && !data.vatExempted}
+			{#if data.vatCountry && !data.vatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<h2 class="text-gray-800 text-[28px]">Vat ({data.vatRate}%):</h2>
 						<p class="text-sm text-gray-600">
-							VAT rate for {data.countryName}. Your country is determined through data from
-							<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+							VAT rate for {data.vatCountry}.
+							{#if data.vatSingleCountry}
+								The country is the seller's country.
+							{:else}
+								The country is determined through data from
+								<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+							{/if}
 						</p>
 					</div>
 					<div class="flex flex-col items-end">

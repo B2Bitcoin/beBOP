@@ -196,18 +196,19 @@ export async function createOrder(
 		totalSatoshis += toSatoshis(price * quantity, item.product.price.currency);
 	}
 
+	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
-		params.vatCountry === '-' || runtimeConfig.vatExempted
+		!vatCountry || runtimeConfig.vatExempted
 			? undefined
 			: {
-					country: params.vatCountry,
+					country: vatCountry,
 					price: {
 						currency: 'SAT',
 						amount: Math.round(
-							totalSatoshis * ((vatRates[params.vatCountry as keyof typeof vatRates] || 0) / 100)
+							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100)
 						)
 					},
-					rate: vatRates[params.vatCountry as keyof typeof vatRates] || 0
+					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
 			  };
 
 	if (vat) {

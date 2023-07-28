@@ -81,6 +81,10 @@ export function countryFromIp(ip: string): string {
 	}
 	const cached = cache.get(ip);
 	if (cached) {
+		// This moves the entry to the end of the Map, making it the most recently used
+		cache.delete(ip);
+		cache.set(ip, cached);
+
 		return cached;
 	}
 
@@ -97,12 +101,17 @@ export function countryFromIp(ip: string): string {
 		const mid = Math.floor((left + right) / 2);
 
 		if (value >= array[mid].start && value <= array[mid].end) {
-			cache.set(ip, array[mid].country);
+			let result = array[mid].country;
+			if (result === '-') {
+				result = '';
+			}
+			cache.set(ip, result);
 			if (cache.size > 10_000) {
+				// This deletes the oldest entry
 				cache.delete(cache.keys().next().value);
 			}
 
-			return array[mid].country;
+			return result;
 		}
 
 		if (value < array[mid].start) {
@@ -112,6 +121,6 @@ export function countryFromIp(ip: string): string {
 		}
 	}
 
-	cache.set(ip, '-');
-	return '-';
+	cache.set(ip, '');
+	return '';
 }

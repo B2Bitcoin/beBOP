@@ -452,7 +452,7 @@ const commands: Record<
 						npub: senderNpub
 					}
 				},
-				vatCountry: '-',
+				vatCountry: '',
 				shippingAddress: null,
 				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
 			}).catch(async (e) => {

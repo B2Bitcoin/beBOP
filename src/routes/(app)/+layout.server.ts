@@ -29,9 +29,15 @@ export async function load({ depends, locals }) {
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0
+			: runtimeConfig.vatSingleCountry
+			? runtimeConfig.vatCountry in vatRates
+				? vatRates[runtimeConfig.vatCountry as keyof typeof vatRates]
+				: 0
 			: locals.countryCode in vatRates
 			? vatRates[locals.countryCode as keyof typeof vatRates]
 			: 0,
+		vatSingleCountry: runtimeConfig.vatSingleCountry,
+		vatCountry: runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : locals.countryCode,
 		mainCurrency: runtimeConfig.mainCurrency,
 		secondaryCurrency: runtimeConfig.secondaryCurrency,
 		brandName: runtimeConfig.brandName,

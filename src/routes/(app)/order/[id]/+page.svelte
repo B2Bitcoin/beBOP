@@ -212,10 +212,7 @@
 					<div class="flex justify-between items-center">
 						<h3 class="text-base text-gray-700 flex items-center gap-2">
 							Vat ({data.order.vat.rate}%)
-							<div
-								title="VAT rate for {data.order.vat
-									.country}. The country is determined by the shipping address, or with data from https://lite.ip2location.com"
-							>
+							<div title="VAT rate for {data.order.vat.country}">
 								<IconInfo class="cursor-pointer" />
 							</div>
 						</h3>

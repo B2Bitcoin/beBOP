@@ -5,6 +5,7 @@
 	export let data;
 
 	let vatExempted = data.vatExempted;
+	let vatSingleCountry = data.vatSingleCountry;
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -120,6 +121,28 @@
 					value={data.vatExemptionReason}
 				/>
 			</label>
+		{:else}
+			<label class="checkbox-label">
+				<input
+					type="checkbox"
+					name="vatSingleCountry"
+					class="form-checkbox"
+					bind:checked={vatSingleCountry}
+				/>
+				Use VAT rate from seller's country
+			</label>
+			{#if vatSingleCountry}
+				<label class="form-label">
+					Seller's country for VAT purposes
+					<select name="vatCountry">
+						{#each Object.entries(data.countryCodes) as [countryCode, countryName]}
+							<option value={countryCode} selected={data.vatCountry === countryCode}>
+								{countryName}
+							</option>
+						{/each}
+					</select>
+				</label>
+			{/if}
 		{/if}
 	</div>
 	<label class="form-label">

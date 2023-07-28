@@ -77,7 +77,7 @@
 	$: deliveryFees = computeDeliveryFees(data.mainCurrency, country, items, data.deliveryFees);
 
 	$: isDigital = items.every((item) => !item.product.shipping);
-	$: actualCountry = isDigital ? data.countryCode : country;
+	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
 	$: actualVatRate = isDigital ? data.vatRate : data.vatRates[actualCountry] ?? 0;
 
 	$: totalPrice =
@@ -356,13 +356,17 @@
 					</div>
 				{/if}
 
-				{#if data.countryCode !== '-' && !data.vatExempted}
+				{#if data.vatCountry && !data.vatExempted}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base text-gray-700 flex flex-row gap-2 items-center">
 								Vat ({data.vatRate}%)
 								<div
-									title="VAT rate for {actualCountry}. The country is determined by the shipping address, or with data from https://lite.ip2location.com"
+									title="VAT rate for {actualCountry}. {data.vatSingleCountry
+										? "The VAT country is the seller's country"
+										: isDigital
+										? 'The country is determined with data from https://lite.ip2location.com'
+										: 'The country is determined by the shipping address'}"
 								>
 									<IconInfo class="cursor-pointer" />
 								</div>

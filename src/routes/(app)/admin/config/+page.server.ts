@@ -1,4 +1,5 @@
 import { ORIGIN } from '$env/static/private';
+import { countryNameByAlpha2 } from '$lib/server/country-codes.js';
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { CURRENCIES } from '$lib/types/Currency.js';
@@ -17,6 +18,7 @@ export async function load(event) {
 		subscriptionReminderSeconds: runtimeConfig.subscriptionReminderSeconds,
 		confirmationBlocks: runtimeConfig.confirmationBlocks,
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
+		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN
 	};
 }
@@ -41,6 +43,8 @@ export const actions = {
 				priceReferenceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
 				vatExempted: z.boolean({ coerce: true }),
 				vatExemptionReason: z.string().default(runtimeConfig.vatExemptionReason),
+				vatSingleCountry: z.boolean({ coerce: true }).default(runtimeConfig.vatSingleCountry),
+				vatCountry: z.string().default(runtimeConfig.vatCountry),
 				subscriptionReminderSeconds: z
 					.number({ coerce: true })
 					.int()
@@ -170,6 +174,24 @@ export const actions = {
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'vatExemptionReason' },
 				{ $set: { data: result.vatExemptionReason, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.vatSingleCountry !== result.vatSingleCountry) {
+			runtimeConfig.vatSingleCountry = result.vatSingleCountry;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'vatSingleCountry' },
+				{ $set: { data: result.vatSingleCountry, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.vatCountry !== result.vatCountry) {
+			runtimeConfig.vatCountry = result.vatCountry;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'vatCountry' },
+				{ $set: { data: result.vatCountry, updatedAt: new Date() } },
 				{ upsert: true }
 			);
 		}
