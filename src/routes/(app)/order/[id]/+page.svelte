@@ -4,6 +4,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
@@ -199,6 +200,36 @@
 							<PriceTag
 								amount={data.order.shippingPrice.amount}
 								currency={data.order.shippingPrice.currency}
+								class="text-base text-gray-600 truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{/if}
+
+				{#if data.order.vat}
+					<div class="flex justify-between items-center">
+						<h3 class="text-base text-gray-700 flex items-center gap-2">
+							Vat ({data.order.vat.rate}%)
+							<div
+								title="VAT rate for {data.order.vat
+									.country}. The country is determined by the shipping address, or with data from https://lite.ip2location.com"
+							>
+								<IconInfo class="cursor-pointer" />
+							</div>
+						</h3>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl text-gray-800 truncate"
+								amount={data.order.vat.price.amount}
+								currency={data.order.vat.price.currency}
+								main
+							/>
+							<PriceTag
+								amount={data.order.vat.price.amount}
+								currency={data.order.vat.price.currency}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>

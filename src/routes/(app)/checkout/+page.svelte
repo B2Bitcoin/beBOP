@@ -362,7 +362,7 @@
 							<h3 class="text-base text-gray-700 flex flex-row gap-2 items-center">
 								Vat ({data.vatRate}%)
 								<div
-									title="VAT rate for {actualCountry}. Your country is determined by shipping address, or with data from https://lite.ip2location.com"
+									title="VAT rate for {actualCountry}. The country is determined by the shipping address, or with data from https://lite.ip2location.com"
 								>
 									<IconInfo class="cursor-pointer" />
 								</div>
