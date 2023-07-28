@@ -1,9 +1,15 @@
 import { readFileSync } from 'node:fs';
 // We use undici instead of native fetch to be able to accept self-signed certificates
 import { Agent, fetch } from 'undici';
-import { LND_MACAROON_PATH, LND_MACAROON_VALUE, LND_REST_URL } from '$env/static/private';
+import {
+	LND_MACAROON_PATH,
+	LND_MACAROON_VALUE,
+	LND_REST_URL,
+	TOR_PROXY_URL
+} from '$env/static/private';
 import { z } from 'zod';
 import { error } from '@sveltejs/kit';
+import { socksDispatcher } from 'fetch-socks';
 
 if (LND_MACAROON_PATH && LND_MACAROON_VALUE) {
 	throw new Error('Cannot specify both LND_MACAROON_PATH and LND_MACAROON_VALUE');
@@ -15,26 +21,43 @@ const macaroon = LND_MACAROON_PATH
 	? readFileSync(LND_MACAROON_PATH).toString('hex')
 	: LND_MACAROON_VALUE;
 
-// For https://localhost or https://127.0.0.1, we need to disable TLS verification
-const dispatcher: Agent | null = (() => {
-	if (!LND_REST_URL) {
-		return null;
-	}
-	const url = new URL(LND_REST_URL);
+const dispatcher =
+	isLightningConfigured &&
+	TOR_PROXY_URL &&
+	new URL(TOR_PROXY_URL).protocol === 'socks5:' &&
+	new URL(LND_REST_URL).hostname.endsWith('.onion')
+		? socksDispatcher(
+				{
+					type: 5,
+					host: new URL(TOR_PROXY_URL).hostname,
+					port: parseInt(new URL(TOR_PROXY_URL).port)
+				},
+				{
+					connect: {
+						rejectUnauthorized: false
+					}
+				}
+		  )
+		: (() => {
+				// For https://localhost or https://127.0.0.1, we need to disable TLS verification
+				if (!LND_REST_URL) {
+					return null;
+				}
+				const url = new URL(LND_REST_URL);
 
-	if (
-		url.protocol === 'https:' &&
-		(url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname === '[::1]')
-	) {
-		return new Agent({
-			connect: {
-				rejectUnauthorized: false
-			}
-		});
-	}
+				if (
+					url.protocol === 'https:' &&
+					(url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname === '[::1]')
+				) {
+					return new Agent({
+						connect: {
+							rejectUnauthorized: false
+						}
+					});
+				}
 
-	return null;
-})();
+				return null;
+		  })();
 
 function lndRpc(
 	path: string,

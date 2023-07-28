@@ -13,6 +13,7 @@ export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
 
 const dispatcher =
+	isBitcoinConfigured &&
 	TOR_PROXY_URL &&
 	new URL(TOR_PROXY_URL).protocol === 'socks5:' &&
 	new URL(BITCOIN_RPC_URL).hostname.endsWith('.onion')
