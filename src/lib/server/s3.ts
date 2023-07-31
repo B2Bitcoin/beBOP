@@ -31,7 +31,7 @@ await s3client
 			}
 		})
 	)
-	.catch((err) => console.error('S3 CORS error: ', err));
+	.catch(() => {} /* (err) => console.error('S3 CORS error: ', err) */);
 
 export function secureLink(url: string) {
 	if (['127.0.0.1', 'localhost'].includes(new URL(url).hostname)) {
