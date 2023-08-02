@@ -41,7 +41,9 @@ export const actions: Actions = {
 			throw error(409, 'Product with same slug already exists');
 		}
 
-		const priceAmount = parsePriceAmount(parsed.priceAmount, parsed.priceCurrency);
+		const priceAmount = parsed.priceAmount
+			? parsePriceAmount(parsed.priceAmount, parsed.priceCurrency)
+			: 0;
 
 		if (parsed.type !== 'resource') {
 			delete parsed.availableDate;
@@ -83,14 +85,17 @@ export const actions: Actions = {
 						description: parsed.description.replaceAll('\r', ''),
 						shortDescription: parsed.shortDescription.replaceAll('\r', ''),
 						name: parsed.name,
-						price: {
-							currency: parsed.priceCurrency,
-							amount: priceAmount
-						},
+						...(!parsed.payWhatYouWant && {
+							price: {
+								currency: parsed.priceCurrency,
+								amount: priceAmount
+							}
+						}),
 						type: parsed.type,
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
+						payWhatYouWant: parsed.payWhatYouWant,
 						displayShortDescription: parsed.displayShortDescription,
 						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,

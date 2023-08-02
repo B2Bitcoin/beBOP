@@ -12,8 +12,10 @@
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
 	let shipping = data.product.shipping;
+	let payWhatYouWant = data.product.payWhatYouWant;
 
 	let priceAmountElement: HTMLInputElement;
+	let typeElement: HTMLSelectElement;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -31,6 +33,13 @@
 		if (priceAmountElement.value && +priceAmountElement.value < 1 / SATOSHIS_PER_BTC) {
 			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
 			priceAmountElement.reportValidity();
+			event.preventDefault();
+			return;
+		} else if (payWhatYouWant && typeElement.value === 'subscription') {
+			typeElement.setCustomValidity(
+				'You cannot create a subscription type product with a pay-what-you-want price '
+			);
+			typeElement.reportValidity();
 			event.preventDefault();
 			return;
 		} else {
@@ -68,12 +77,15 @@
 					name="priceAmount"
 					placeholder="Price"
 					step="any"
-					value={data.product.price.amount
-						.toLocaleString('en', { maximumFractionDigits: 8 })
-						.replace(/,/g, '')}
+					value={data.product.price
+						? data.product.price.amount
+								.toLocaleString('en', { maximumFractionDigits: 8 })
+								.replace(/,/g, '')
+						: ''}
 					bind:this={priceAmountElement}
 					on:input={() => priceAmountElement?.setCustomValidity('')}
 					required
+					disabled={payWhatYouWant}
 				/>
 			</label>
 
@@ -82,14 +94,25 @@
 
 				<select name="priceCurrency" class="form-input">
 					{#each CURRENCIES as currency}
-						<option value={currency} selected={data.product.price.currency === currency}
-							>{currency}</option
+						<option
+							value={currency}
+							selected={data.product.price
+								? data.product.price.currency === currency
+								: data.priceReferenceCurrency === currency}>{currency}</option
 						>
 					{/each}
 				</select>
 			</label>
 		</div>
-
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={payWhatYouWant}
+				name="payWhatYouWant"
+			/>
+			This is a pay-what-you-want product
+		</label>
 		<label>
 			Short description
 			<textarea
@@ -120,7 +143,13 @@
 
 		<label class="text-gray-450">
 			Type
-			<select class="form-input text-gray-450" disabled value={data.product.type}>
+			<select
+				class="form-input text-gray-450"
+				disabled
+				value={data.product.type}
+				bind:this={typeElement}
+				on:select={() => typeElement?.setCustomValidity('')}
+			>
 				<option value={data.product.type}>{upperFirst(data.product.type)}</option>
 			</select>
 		</label>
@@ -172,7 +201,9 @@
 				{#if data.deliveryFees.mode === 'perItem'}
 					<DeliveryFeesSelector
 						deliveryFees={data.product.deliveryFees || {}}
-						defaultCurrency={data.product.price.currency}
+						defaultCurrency={data.product.price
+							? data.product.price.currency
+							: data.priceReferenceCurrency}
 					/>
 
 					<label class="checkbox-label">

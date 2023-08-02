@@ -83,7 +83,9 @@ export const actions: Actions = {
 			parsed.shipping = false;
 		}
 
-		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency);
+		const priceAmount = parsed.priceAmount
+			? parsePriceAmount(parsed.priceAmount, priceCurrency)
+			: 0;
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
@@ -92,14 +94,17 @@ export const actions: Actions = {
 					name: parsed.name,
 					description: parsed.description,
 					shortDescription: parsed.shortDescription,
-					price: {
-						amount: priceAmount,
-						currency: priceCurrency
-					},
+					...(!parsed.payWhatYouWant && {
+						price: {
+							currency: parsed.priceCurrency,
+							amount: priceAmount
+						}
+					}),
 					...(parsed.availableDate && { availableDate: parsed.availableDate }),
 					shipping: parsed.shipping,
 					displayShortDescription: parsed.displayShortDescription,
 					preorder: parsed.preorder,
+					payWhatYouWant: parsed.payWhatYouWant,
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
 					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
