@@ -154,25 +154,7 @@
 				</label>
 			{/if}
 		{/if}
-		<label class="checkbox-label">
-			<input
-				type="checkbox"
-				name="isActivityTvaFree"
-				class="form-checkbox"
-				bind:checked={isActivityTvaFree}
-			/>
-			I apply VAT on my company's country
-		</label>
-		<label class="checkbox-label">
-			<input
-				type="checkbox"
-				name="isCompanyCountryVta"
-				class="form-checkbox"
-				bind:checked={isCompanyCountryVta}
-			/>
-			My activity is TVA free
-		</label>
-		<input type="button" value="VTA" class="btn btn-blue self-start" />
+		<input type="button" value="VAT" class="btn btn-blue self-start" />
 		<label class="checkbox-label">
 			<input
 				type="checkbox"

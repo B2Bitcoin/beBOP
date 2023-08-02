@@ -111,10 +111,11 @@
 								currency={item.product.price.currency}
 								secondary
 							/>
+							TVA excluded:
 							<PriceTag
 								class="text-base text-gray-600 truncate"
 								amount={item.product.price.amount * (data.vatRate / 100)}
-								currency={item.product.price.currency}
+								currency={data.mainCurrency}
 								secondary
 							/>
 						</div>

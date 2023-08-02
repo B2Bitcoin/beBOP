@@ -365,10 +365,11 @@
 									class="text-base text-gray-600 truncate"
 									secondary
 								/>
+								TVA excluded:
 								<PriceTag
 									class="text-base text-gray-600 truncate"
 									amount={item.product.price.amount * (actualVatRate / 100)}
-									currency={item.product.price.currency}
+									currency={data.mainCurrency}
 									secondary
 								/>
 							</div>

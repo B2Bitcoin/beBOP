@@ -43,7 +43,7 @@
 			- VAT: <PriceTag
 				currency={order.totalPrice.currency}
 				amount={order.totalPrice.amount * (data.vatRate / 100)}
-				convertedTo={data.priceReferenceCurrency}
+				convertedTo={data.mainCurrency}
 				secondary
 			/> - received: {(order.payment.totalReceived ?? 0).toLocaleString('en')}
 			SAT
