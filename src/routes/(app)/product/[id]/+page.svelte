@@ -10,6 +10,7 @@
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { isPreorder as isPreorderFn } from '$lib/types/Product.js';
+	import { toSatoshis } from '$lib/utils/toSatoshis.js';
 
 	export let data;
 
@@ -195,6 +196,23 @@
 						}}
 						class="flex flex-col gap-2"
 					>
+						{#if data.product.payWhatYouWant}
+							<hr class="border-gray-300 md:hidden mt-4 pb-2" />
+							<div class="flex flex-col gap-2 justify-between">
+								<label class="w-full form-label">
+									Name your price (in SATs): <input
+										class="form-input"
+										type="number"
+										value={toSatoshis(data.product.price.amount, data.product.price.currency)}
+										min={toSatoshis(data.product.price.amount, data.product.price.currency)}
+										name="customPrice"
+										placeholder="Price"
+										required
+										step="any"
+									/>
+								</label>
+							</div>
+						{/if}
 						{#if data.product.type !== 'subscription'}
 							<label class="mb-2">
 								Amount: <select

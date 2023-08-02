@@ -70,7 +70,11 @@ export const actions: Actions = {
 			throw error(409, 'Product with same slug already exists');
 		}
 
-		const priceAmount = parsePriceAmount(parsed.priceAmount, parsed.priceCurrency);
+		const priceAmount = parsePriceAmount(
+			parsed.priceAmount,
+			parsed.priceCurrency,
+			parsed.payWhatYouWant
+		);
 
 		if (parsed.type !== 'resource') {
 			delete parsed.availableDate;

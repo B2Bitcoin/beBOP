@@ -13,6 +13,7 @@ export interface Cart extends Timestamps {
 	items: Array<{
 		productId: string;
 		quantity: number;
+		customPrice?: { amount: number; currency: Currency };
 	}>;
 }
 

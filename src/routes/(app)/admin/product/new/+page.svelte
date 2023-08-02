@@ -14,7 +14,6 @@
 
 	let submitting = false;
 
-	let priceAmountElement: HTMLInputElement;
 	let formElement: HTMLFormElement;
 	let files: FileList;
 	let payWhatYouWant = false;
@@ -25,7 +24,6 @@
 	let slug = generateId(name, false);
 	let shipping = product?.shipping ?? false;
 	let type = product?.type ?? 'resource';
-	let priceAmount = product?.price.amount ?? 0;
 	let priceCurrency = product?.price.currency ?? data.priceReferenceCurrency;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
@@ -47,12 +45,7 @@
 		const formData = new FormData(formElement);
 
 		try {
-			if (priceAmountElement.value && priceAmount < 1 / SATOSHIS_PER_BTC) {
-				priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
-				priceAmountElement.reportValidity();
-				event.preventDefault();
-				return;
-			} else if (payWhatYouWant && typeElement.value === 'subscription') {
+			if (payWhatYouWant && typeElement.value === 'subscription') {
 				typeElement.setCustomValidity(
 					'You cannot create a subscription type product with a pay-what-you-want price '
 				);
@@ -60,7 +53,7 @@
 				event.preventDefault();
 				return;
 			} else {
-				priceAmountElement.setCustomValidity('');
+				typeElement.setCustomValidity('');
 			}
 
 			if (!product) {
@@ -164,9 +157,6 @@
 				name="priceAmount"
 				placeholder="Price"
 				step="any"
-				bind:value={priceAmount}
-				bind:this={priceAmountElement}
-				on:input={() => priceAmountElement?.setCustomValidity('')}
 				required
 			/>
 		</label>
@@ -234,7 +224,7 @@
 			bind:value={type}
 			name="type"
 			bind:this={typeElement}
-			on:select={() => typeElement?.setCustomValidity('')}
+			on:input={() => typeElement?.setCustomValidity('')}
 		>
 			{#each ['resource', 'donation', 'subscription'] as type}
 				<option value={type}>{upperFirst(type)}</option>

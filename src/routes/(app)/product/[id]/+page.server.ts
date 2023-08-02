@@ -21,6 +21,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			| 'type'
 			| 'shipping'
 			| 'displayShortDescription'
+			| 'payWhatYouWant'
 		>
 	>(
 		{ _id: params.id },
@@ -34,7 +35,8 @@ export const load: PageServerLoad = async ({ params }) => {
 				availableDate: 1,
 				preorder: 1,
 				type: 1,
-				displayShortDescription: 1
+				displayShortDescription: 1,
+				payWhatYouWant: 1
 			}
 		}
 	);
@@ -63,15 +65,17 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	}
 
 	const formData = await request.formData();
-	const { quantity } = z
+	const { quantity, customPrice } = z
 		.object({
-			quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY)
+			quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY),
+			customPrice: z.number({ coerce: true }).int().min(1).min(product.price.amount)
 		})
 		.parse({
-			quantity: formData.get('quantity') || '1'
+			quantity: formData.get('quantity') || '1',
+			customPrice: formData.get('customPrice')
 		});
 
-	await addToCartInDb(product, quantity, { sessionId: locals.sessionId });
+	await addToCartInDb(product, quantity, customPrice, { sessionId: locals.sessionId });
 }
 
 export const actions = {

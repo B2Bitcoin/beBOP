@@ -13,7 +13,6 @@
 	let preorder = data.product.preorder;
 	let shipping = data.product.shipping;
 	let payWhatYouWant = data.product.payWhatYouWant;
-	let priceAmountElement: HTMLInputElement;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -27,16 +26,6 @@
 		availableDate = undefined;
 	}
 
-	function checkForm(event: SubmitEvent) {
-		if (priceAmountElement.value && +priceAmountElement.value < 1 / SATOSHIS_PER_BTC) {
-			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
-			priceAmountElement.reportValidity();
-			event.preventDefault();
-			return;
-		} else {
-			priceAmountElement.setCustomValidity('');
-		}
-	}
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this product?')) {
 			event.preventDefault();
@@ -47,7 +36,7 @@
 <h1 class="text-3xl">Edit a product</h1>
 
 <div class="flex flex-col">
-	<form method="post" class="flex flex-col gap-4" action="?/update" on:submit={checkForm}>
+	<form method="post" class="flex flex-col gap-4" action="?/update">
 		<label>
 			Name
 			<input
@@ -71,8 +60,6 @@
 					value={data.product.price.amount
 						.toLocaleString('en', { maximumFractionDigits: 8 })
 						.replace(/,/g, '')}
-					bind:this={priceAmountElement}
-					on:input={() => priceAmountElement?.setCustomValidity('')}
 					required
 				/>
 			</label>

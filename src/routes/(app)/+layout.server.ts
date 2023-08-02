@@ -98,7 +98,8 @@ export async function load({ depends, locals }) {
 									.find({ productId: item.productId })
 									.sort({ createdAt: 1 })
 									.toArray(),
-								quantity: item.quantity
+								quantity: item.quantity,
+								...(item.customPrice && { customPrice: item.customPrice })
 							};
 						}
 					})
