@@ -93,11 +93,8 @@
 
 				<select name="priceCurrency" class="form-input">
 					{#each CURRENCIES as currency}
-						<option
-							value={currency}
-							selected={data.product.price
-								? data.product.price.currency === currency
-								: data.priceReferenceCurrency === currency}>{currency}</option
+						<option value={currency} selected={data.product.price.currency === currency}
+							>{currency}</option
 						>
 					{/each}
 				</select>
@@ -200,9 +197,7 @@
 				{#if data.deliveryFees.mode === 'perItem'}
 					<DeliveryFeesSelector
 						deliveryFees={data.product.deliveryFees || {}}
-						defaultCurrency={data.product.price
-							? data.product.price.currency
-							: data.priceReferenceCurrency}
+						defaultCurrency={data.product.price.currency}
 					/>
 
 					<label class="checkbox-label">
