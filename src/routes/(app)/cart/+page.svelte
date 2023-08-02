@@ -20,6 +20,8 @@
 				item.quantity
 		)
 	);
+	$: vat = totalPrice * (data.vatRate / 100);
+	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
@@ -115,18 +117,48 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
+			{#if data.vatCountry && !data.vatExempted}
+				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
+					<div class="flex flex-col">
+						<h2 class="text-gray-800 text-[28px]">Vat ({data.vatRate}%):</h2>
+						<p class="text-sm text-gray-600">
+							VAT rate for {data.vatCountry}.
+							{#if data.vatSingleCountry}
+								The country is the seller's country.
+							{:else}
+								The country is determined through data from
+								<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+							{/if}
+						</p>
+					</div>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							amount={vat}
+							currency={data.mainCurrency}
+							main
+							class="text-[28px] text-gray-800"
+						/>
+						<PriceTag
+							class="text-base text-gray-600"
+							amount={vat}
+							currency={data.mainCurrency}
+							secondary
+						/>
+					</div>
+				</div>
+			{/if}
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 				<h2 class="text-gray-800 text-[32px]">Total:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={totalPrice}
+						amount={totalPriceWithVat}
 						currency={data.mainCurrency}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
-						amount={totalPrice}
+						amount={totalPriceWithVat}
 						currency={data.mainCurrency}
 						secondary
 					/>

@@ -15,6 +15,7 @@ module.exports = {
 	rules: {
 		'no-empty': 'off',
 		eqeqeq: 'error',
+		'@typescript-eslint/no-empty-function': 'off',
 		'@typescript-eslint/no-explicit-any': 'error',
 		'@typescript-eslint/no-non-null-assertion': 'error',
 		'@typescript-eslint/no-unused-vars': 'error'

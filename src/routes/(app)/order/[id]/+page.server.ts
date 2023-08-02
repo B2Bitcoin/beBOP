@@ -58,6 +58,14 @@ export async function load({ params, depends }) {
 				amount: order.shippingPrice.amount,
 				currency: order.shippingPrice.currency
 			},
+			vat: order.vat && {
+				country: order.vat.country,
+				price: {
+					amount: order.vat.price.amount,
+					currency: order.vat.price.currency
+				},
+				rate: order.vat.rate
+			},
 			shippingAddress: order.shippingAddress,
 			notifications: order.notifications
 		},

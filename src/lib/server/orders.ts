@@ -14,6 +14,7 @@ import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees } from '$lib/types/Cart';
+import { vatRates } from './vat-rates';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -132,6 +133,7 @@ export async function createOrder(
 				email?: string;
 			};
 		};
+		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
 		cb?: (session: ClientSession) => Promise<unknown>;
 	}
@@ -192,6 +194,25 @@ export async function createOrder(
 		const quantity = item.quantity;
 
 		totalSatoshis += toSatoshis(price * quantity, item.product.price.currency);
+	}
+
+	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
+	const vat: Order['vat'] =
+		!vatCountry || runtimeConfig.vatExempted
+			? undefined
+			: {
+					country: vatCountry,
+					price: {
+						currency: 'SAT',
+						amount: Math.round(
+							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100)
+						)
+					},
+					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
+			  };
+
+	if (vat) {
+		totalSatoshis += vat.price.amount;
 	}
 
 	const orderId = crypto.randomUUID();
@@ -265,6 +286,7 @@ export async function createOrder(
 				updatedAt: new Date(),
 				items,
 				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
+				...(vat && { vat }),
 				totalPrice: {
 					amount: totalSatoshis,
 					currency: 'SAT'

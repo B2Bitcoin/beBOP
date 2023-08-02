@@ -42,6 +42,11 @@ const defaultConfig = {
 		{ label: 'Privacy Policy', href: '/privacy' }
 	],
 
+	vatExempted: false,
+	vatExemptionReason: '',
+	vatSingleCountry: false,
+	vatCountry: '',
+
 	checkoutButtonOnProductPage: true,
 	discovery: true,
 	orderNotificationsResumeToken: null as unknown,

@@ -1,7 +1,7 @@
 import type { RuntimeConfig } from '$lib/server/runtime-config';
 import { sum } from '$lib/utils/sum';
 import { toCurrency } from '$lib/utils/toCurrency';
-import type { CountryAlpha3 } from './Country';
+import type { CountryAlpha2 } from './Country';
 import type { Currency } from './Currency';
 import type { Product } from './Product';
 import type { Timestamps } from './Timestamps';
@@ -20,7 +20,7 @@ export const MAX_PRODUCT_QUANTITY = 100;
 
 export function computeDeliveryFees(
 	currency: Currency,
-	country: CountryAlpha3,
+	country: CountryAlpha2,
 	items: Array<{
 		product: Pick<
 			Product,
