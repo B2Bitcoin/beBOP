@@ -12,7 +12,7 @@
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
 	let shipping = data.product.shipping;
-
+	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
@@ -89,7 +89,15 @@
 				</select>
 			</label>
 		</div>
-
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={payWhatYouWant}
+				name="payWhatYouWant"
+			/>
+			This is a pay-what-you-want product
+		</label>
 		<label>
 			Short description
 			<textarea

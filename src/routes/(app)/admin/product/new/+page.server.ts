@@ -120,6 +120,7 @@ export const actions: Actions = {
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
+						payWhatYouWant: parsed.payWhatYouWant,
 						displayShortDescription: parsed.displayShortDescription,
 						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
@@ -210,6 +211,7 @@ export const actions: Actions = {
 					availableDate: duplicate.availableDate || undefined,
 					preorder: duplicate.preorder,
 					shipping: duplicate.shipping,
+					payWhatYouWant: duplicate.payWhatYouWant,
 					displayShortDescription: duplicate.displayShortDescription
 				},
 				{ session }

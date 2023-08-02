@@ -17,6 +17,8 @@
 	let priceAmountElement: HTMLInputElement;
 	let formElement: HTMLFormElement;
 	let files: FileList;
+	let payWhatYouWant = false;
+	let typeElement: HTMLSelectElement;
 
 	let preorder = product?.preorder ?? false;
 	let name = product?.name ? product.name + ' (duplicate)' : '';
@@ -48,6 +50,13 @@
 			if (priceAmountElement.value && priceAmount < 1 / SATOSHIS_PER_BTC) {
 				priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
 				priceAmountElement.reportValidity();
+				event.preventDefault();
+				return;
+			} else if (payWhatYouWant && typeElement.value === 'subscription') {
+				typeElement.setCustomValidity(
+					'You cannot create a subscription type product with a pay-what-you-want price '
+				);
+				typeElement.reportValidity();
 				event.preventDefault();
 				return;
 			} else {
@@ -174,6 +183,15 @@
 			</select>
 		</label>
 	</div>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={payWhatYouWant}
+			name="payWhatYouWant"
+		/>
+		This is a pay-what-you-want product
+	</label>
 
 	<label class="form-label">
 		Short description
@@ -209,11 +227,17 @@
 		/>
 	</label>
 
-	<label class="form-label">
+	<label>
 		Type
-		<select class="form-input" bind:value={type} disabled={!!product} name="type" required>
-			{#each ['resource', 'donation', 'subscription'] as opt}
-				<option value={opt} selected={type === opt}>{upperFirst(opt)}</option>
+		<select
+			class="form-input"
+			bind:value={type}
+			name="type"
+			bind:this={typeElement}
+			on:select={() => typeElement?.setCustomValidity('')}
+		>
+			{#each ['resource', 'donation', 'subscription'] as type}
+				<option value={type}>{upperFirst(type)}</option>
 			{/each}
 		</select>
 	</label>
