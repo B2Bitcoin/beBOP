@@ -94,12 +94,10 @@ export const actions: Actions = {
 					name: parsed.name,
 					description: parsed.description,
 					shortDescription: parsed.shortDescription,
-					...(!parsed.payWhatYouWant && {
-						price: {
-							currency: parsed.priceCurrency,
-							amount: priceAmount
-						}
-					}),
+					price: {
+						currency: parsed.priceCurrency,
+						amount: priceAmount
+					},
 					...(parsed.availableDate && { availableDate: parsed.availableDate }),
 					shipping: parsed.shipping,
 					displayShortDescription: parsed.displayShortDescription,

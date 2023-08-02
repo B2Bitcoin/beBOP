@@ -85,12 +85,10 @@ export const actions: Actions = {
 						description: parsed.description.replaceAll('\r', ''),
 						shortDescription: parsed.shortDescription.replaceAll('\r', ''),
 						name: parsed.name,
-						...(!parsed.payWhatYouWant && {
-							price: {
-								currency: parsed.priceCurrency,
-								amount: priceAmount
-							}
-						}),
+						price: {
+							currency: parsed.priceCurrency,
+							amount: priceAmount
+						},
 						type: parsed.type,
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,

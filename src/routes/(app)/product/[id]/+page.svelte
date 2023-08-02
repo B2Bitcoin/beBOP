@@ -47,7 +47,10 @@
 				.formats[0].width}"
 		/>
 	{/if}
-	<meta property="product:price:amount" content={String(data.product.price.amount)} />
+	<meta
+		property="product:price:amount"
+		content={String(data.product.price ? data.product.price.amount : '')}
+	/>
 	<meta property="product:price:currency" content={data.product.price.currency} />
 	<meta property="og:type" content="og:product" />
 </svelte:head>

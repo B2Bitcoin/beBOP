@@ -162,7 +162,6 @@
 				bind:this={priceAmountElement}
 				on:input={() => priceAmountElement?.setCustomValidity('')}
 				required
-				disabled={payWhatYouWant}
 			/>
 		</label>
 

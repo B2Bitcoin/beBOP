@@ -7,7 +7,7 @@ export interface Product extends Timestamps {
 	name: string;
 	description: string;
 	shortDescription: string;
-	price?: {
+	price: {
 		amount: number;
 		currency: Currency;
 	};
