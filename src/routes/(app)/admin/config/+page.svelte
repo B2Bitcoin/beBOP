@@ -7,8 +7,6 @@
 
 	let vatExempted = data.vatExempted;
 	let vatSingleCountry = data.vatSingleCountry;
-	let isActivityTvaFree = false;
-	let isCompanyCountryVta = false;
 	let enableRelayPoint = false;
 	let restrictBootikAge = false;
 	let enableCardPayment = false;
