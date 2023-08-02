@@ -136,12 +136,12 @@
 						<a href={link.href} class="hidden sm:inline">{link.label}</a>
 					{/each}
 				</nav>
-				{#if 0}
-					<form action="/search" method="post" class="max-w-[520px] grow relative">
-						<input type="text" name="search" class="form-input pr-8 border-gray-300" />
-						<IconSearch class="absolute right-2 top-0 bottom-0 my-auto" />
-					</form>
-				{/if}
+
+				<form action="/search" method="post" class="max-w-[520px] grow relative">
+					<input type="text" name="search" class="form-input pr-8 border-gray-300" />
+					<IconSearch class="absolute right-2 top-0 bottom-0 my-auto" />
+				</form>
+
 				<div class="flex items-center ml-auto gap-2">
 					{#if 0}
 						<IconWallet />

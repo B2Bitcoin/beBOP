@@ -48,6 +48,10 @@
 		{
 			href: '/admin/challenge',
 			label: 'Challenges'
+		},
+		{
+			href: '/admin/request',
+			label: 'Requests'
 		}
 	];
 	$: if ($navigating) {

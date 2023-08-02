@@ -304,8 +304,8 @@
 		{/if}
 	{/if}
 
-	<label for="shopTags" class="form-label"
-		>Shop tags
+	<label for="productTags" class="form-label"
+		>Product tags
 		<div class="max-w-[50rem]">
 			<Tags />
 		</div>
