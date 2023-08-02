@@ -1,11 +1,21 @@
 <script lang="ts">
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
+	import Tags from 'svelte-tags-input';
 
 	export let data;
 
 	let vatExempted = data.vatExempted;
 	let vatSingleCountry = data.vatSingleCountry;
+	let isActivityTvaFree = false;
+	let isCompanyCountryVta = false;
+	let enableRelayPoint = false;
+	let restrictBootikAge = false;
+	let enableCardPayment = false;
+	let applyUpdatesAuto = false;
+	let saveIp = false;
+	let mandatoryBilingAddress = false;
+	let enableGoogleShoppingExport = false;
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -144,6 +154,89 @@
 				</label>
 			{/if}
 		{/if}
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="isActivityTvaFree"
+				class="form-checkbox"
+				bind:checked={isActivityTvaFree}
+			/>
+			I apply VAT on my company's country
+		</label>
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="isCompanyCountryVta"
+				class="form-checkbox"
+				bind:checked={isCompanyCountryVta}
+			/>
+			My activity is TVA free
+		</label>
+		<input type="button" value="VTA" class="btn btn-blue self-start" />
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="enableRelayPoint"
+				class="form-checkbox"
+				bind:checked={enableRelayPoint}
+			/>
+			Enable relay point delivery
+		</label>
+		<label for="shoptags" class="form-label"
+			>Shop tags
+			<div class="max-w-[25rem]">
+				<Tags />
+			</div>
+		</label>
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="restrictBootikAge"
+				class="form-checkbox"
+				bind:checked={restrictBootikAge}
+			/>
+			Make bootik age-restricted
+		</label>
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="enableCardPayment"
+				class="form-checkbox"
+				bind:checked={enableCardPayment}
+			/>
+			Enable credit card payment (with Bity)
+		</label>
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="applyUpdatesAuto"
+				class="form-checkbox"
+				bind:checked={applyUpdatesAuto}
+			/>
+			Automatically apply updates from official repo
+		</label>
+		<label class="checkbox-label">
+			<input type="checkbox" name="saveIp" class="form-checkbox" bind:checked={saveIp} />
+			Save IP on order
+		</label>
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="mandatoryBilingAddress"
+				class="form-checkbox"
+				bind:checked={mandatoryBilingAddress}
+			/>
+			Mandatory biling address
+		</label>
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="enableGoogleShoppingExport"
+				class="form-checkbox"
+				bind:checked={enableGoogleShoppingExport}
+			/>
+			Enable Google Shopping export
+		</label>
 	</div>
 	<label class="form-label">
 		Subscription duration

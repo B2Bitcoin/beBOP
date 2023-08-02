@@ -5,6 +5,7 @@
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
+	import Tags from 'svelte-tags-input';
 
 	export let data;
 
@@ -42,6 +43,7 @@
 			event.preventDefault();
 		}
 	}
+	let hasSpecificDelay = false;
 </script>
 
 <h1 class="text-3xl">Edit a product</h1>
@@ -200,18 +202,40 @@
 			{/if}
 		{/if}
 
+		<label for="shoptags" class="form-label"
+			>Shop tags
+			<div class="max-w-[50rem]">
+				<Tags />
+			</div>
+		</label>
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="hasSpecificDelay"
+				bind:checked={hasSpecificDelay}
+			/>
+			This product has a specific delivery delay to communicate
+		</label>
+		<label class="w-full form-label">
+			Delivery delay (days)
+			<input
+				class="form-input"
+				type="number"
+				name="deliveryDelay"
+				placeholder="Delivery Delay"
+				step="any"
+			/>
+		</label>
+
 		<div class="flex justify-between gap-2">
 			<button type="submit" class="btn btn-blue">Update</button>
 			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
 			<a href="/admin/product/new?duplicate_from={data.product._id}" class="btn btn-gray">
 				Duplicate
 			</a>
-			<button
-				type="submit"
-				class="ml-auto btn btn-red"
-				formaction="?/delete"
-				on:click={confirmDelete}
-			>
+			<button type="submit" class="ml-auto btn btn-black" formaction="?/archive"> Archive </button>
+			<button type="submit" class="btn btn-red" formaction="?/delete" on:click={confirmDelete}>
 				Delete
 			</button>
 		</div>

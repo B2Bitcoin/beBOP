@@ -8,6 +8,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import PictureComponent from '$lib/components/Picture.svelte';
+	import Tags from 'svelte-tags-input';
 
 	export let data;
 	let product = data.product;
@@ -106,6 +107,8 @@
 			submitting = false;
 		}
 	}
+
+	let hasSpecificDelay = false;
 </script>
 
 <h1 class="text-3xl">Add a product</h1>
@@ -300,6 +303,32 @@
 			{/if}
 		{/if}
 	{/if}
+
+	<label for="shopTags" class="form-label"
+		>Shop tags
+		<div class="max-w-[50rem]">
+			<Tags />
+		</div>
+	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			name="hasSpecificDelay"
+			bind:checked={hasSpecificDelay}
+		/>
+		This product has a specific delivery delay to communicate
+	</label>
+	<label class="w-full form-label">
+		Delivery delay (days)
+		<input
+			class="form-input"
+			type="number"
+			name="deliveryDelay"
+			placeholder="Delivery Delay"
+			step="any"
+		/>
+	</label>
 
 	<input type="hidden" name="productId" value={data.productId || ''} />
 	{#if !product}

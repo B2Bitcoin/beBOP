@@ -72,6 +72,7 @@
 		"nostr-tools": "^1.11.1",
 		"qrcode": "^1.5.3",
 		"sharp": "^0.32.0",
+		"svelte-tags-input": "^5.0.0",
 		"ts-node": "^10.9.1",
 		"type-fest": "^3.11.1",
 		"undici": "^5.22.1",

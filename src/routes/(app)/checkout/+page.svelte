@@ -92,6 +92,11 @@
 
 	$: vat = totalPrice * (actualVatRate / 100);
 	$: totalPriceWithVat = totalPrice + vat;
+
+	let isRelayPoint = false;
+	let isProfessional = false;
+	let mandatoryBilingAddress = false;
+	let addAddress = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -225,6 +230,24 @@
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
+							<label class="checkbox-label">
+								<input
+									type="checkbox"
+									name="isRelayPoint"
+									class="form-checkbox"
+									bind:checked={isRelayPoint}
+								/>
+								Enable relay point delivery
+							</label>
+							<label class="checkbox-label">
+								<input
+									type="checkbox"
+									name="addAddress"
+									class="form-checkbox"
+									bind:checked={addAddress}
+								/>
+								Add a different billing address
+							</label>
 							{#if data.emailsEnabled}
 								<label class="form-label">
 									Email
@@ -241,6 +264,24 @@
 					</article>
 				{/each}
 			</section>
+			<label class="checkbox-label">
+				<input
+					type="checkbox"
+					name="isRelayPoint"
+					class="form-checkbox"
+					bind:checked={isProfessional}
+				/>
+				This is a professional
+			</label>
+			<label class="checkbox-label">
+				<input
+					type="checkbox"
+					name="isRelayPoint"
+					class="form-checkbox"
+					bind:checked={mandatoryBilingAddress}
+				/>
+				Mandatory biling address
+			</label>
 		</form>
 		<div>
 			<article
@@ -322,6 +363,12 @@
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									class="text-base text-gray-600 truncate"
+									secondary
+								/>
+								<PriceTag
+									class="text-base text-gray-600 truncate"
+									amount={item.product.price.amount * (actualVatRate / 100)}
+									currency={item.product.price.currency}
 									secondary
 								/>
 							</div>

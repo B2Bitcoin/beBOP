@@ -111,6 +111,12 @@
 								currency={item.product.price.currency}
 								secondary
 							/>
+							<PriceTag
+								class="text-base text-gray-600 truncate"
+								amount={item.product.price.amount * (data.vatRate / 100)}
+								currency={item.product.price.currency}
+								secondary
+							/>
 						</div>
 					</form>
 

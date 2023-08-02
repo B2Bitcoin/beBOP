@@ -40,7 +40,12 @@
 			>
 				{order.payment.status}</span
 			>
-			- received: {(order.payment.totalReceived ?? 0).toLocaleString('en')}
+			- VAT: <PriceTag
+				currency={order.totalPrice.currency}
+				amount={order.totalPrice.amount * (data.vatRate / 100)}
+				convertedTo={data.priceReferenceCurrency}
+				secondary
+			/> - received: {(order.payment.totalReceived ?? 0).toLocaleString('en')}
 			SAT
 
 			{#if order.payment.status === 'pending' && order.payment.method === 'cash'}
