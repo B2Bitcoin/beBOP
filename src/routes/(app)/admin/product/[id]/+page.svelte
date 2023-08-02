@@ -3,7 +3,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
+	import { CURRENCIES } from '$lib/types/Currency';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 
 	export let data;
