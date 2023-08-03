@@ -2,7 +2,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
-	import { CURRENCIES } from '$lib/types/Currency';
+	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId.js';
 	import { upperFirst } from '$lib/utils/upperFirst';
@@ -14,6 +14,7 @@
 
 	let submitting = false;
 
+	let priceAmountElement: HTMLInputElement;
 	let formElement: HTMLFormElement;
 	let files: FileList;
 	let payWhatYouWant = false;
@@ -24,6 +25,7 @@
 	let slug = generateId(name, false);
 	let shipping = product?.shipping ?? false;
 	let type = product?.type ?? 'resource';
+	let priceAmount = product?.price.amount ?? 0;
 	let priceCurrency = product?.price.currency ?? data.priceReferenceCurrency;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
@@ -45,7 +47,16 @@
 		const formData = new FormData(formElement);
 
 		try {
-			if (payWhatYouWant && typeElement.value === 'subscription') {
+			if (
+				priceAmountElement.value &&
+				+priceAmountElement.value < 1 / SATOSHIS_PER_BTC &&
+				!payWhatYouWant
+			) {
+				priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
+				priceAmountElement.reportValidity();
+				event.preventDefault();
+				return;
+			} else if (payWhatYouWant && typeElement.value === 'subscription') {
 				typeElement.setCustomValidity(
 					'You cannot create a subscription type product with a pay-what-you-want price '
 				);
@@ -53,7 +64,7 @@
 				event.preventDefault();
 				return;
 			} else {
-				typeElement.setCustomValidity('');
+				priceAmountElement.setCustomValidity('');
 			}
 
 			if (!product) {
@@ -157,6 +168,9 @@
 				name="priceAmount"
 				placeholder="Price"
 				step="any"
+				bind:value={priceAmount}
+				bind:this={priceAmountElement}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
 				required
 			/>
 		</label>
@@ -178,6 +192,7 @@
 			class="form-checkbox"
 			type="checkbox"
 			bind:checked={payWhatYouWant}
+			on:input={() => priceAmountElement?.setCustomValidity('')}
 			name="payWhatYouWant"
 		/>
 		This is a pay-what-you-want product
