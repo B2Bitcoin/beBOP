@@ -97,6 +97,7 @@
 	let isProfessional = false;
 	let mandatoryBilingAddress = false;
 	let addAddress = false;
+	let collectMyIp = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -267,7 +268,7 @@
 			<label class="checkbox-label">
 				<input
 					type="checkbox"
-					name="isRelayPoint"
+					name="isProfessional"
 					class="form-checkbox"
 					bind:checked={isProfessional}
 				/>
@@ -276,11 +277,20 @@
 			<label class="checkbox-label">
 				<input
 					type="checkbox"
-					name="isRelayPoint"
+					name="mandatoryBilingAddress"
 					class="form-checkbox"
 					bind:checked={mandatoryBilingAddress}
 				/>
 				Mandatory biling address
+			</label>
+			<label class="checkbox-label">
+				<input
+					type="checkbox"
+					name="collectMyIp"
+					class="form-checkbox"
+					bind:checked={collectMyIp}
+				/>
+				I agree to the collection of my IP address (why ?)
 			</label>
 		</form>
 		<div>

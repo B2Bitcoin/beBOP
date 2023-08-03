@@ -60,10 +60,14 @@
 	</p>
 {/if}
 
-<form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>
-	<input type="hidden" name="wallet" value={walletToCreate} />
-	<button class="btn btn-black">Create wallet</button>
-</form>
+<div class="flex gap-2">
+	<form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>
+		<input type="hidden" name="wallet" value={walletToCreate} />
+		<button class="btn btn-black">Create wallet</button>
+	</form>
+	<button class="btn text-white bg-green-500">Cash-out</button>
+	<button class="btn btn-blue">Cash-in</button>
+</div>
 
 <h2 class="text-2xl">Balance</h2>
 

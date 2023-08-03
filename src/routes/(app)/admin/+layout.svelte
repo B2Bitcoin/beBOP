@@ -52,6 +52,32 @@
 		{
 			href: '/admin/request',
 			label: 'Requests'
+		},
+		{
+			href: '/admin/bity-integration',
+			label: 'Bity'
+		},
+		{
+			href: '/admin/security',
+			label: 'Security'
+		},
+		{
+			href: '/admin/delivery',
+			label: 'Delivery'
+		}
+	];
+	const adminRequestLinks = [
+		{
+			href: '/admin/request/refund',
+			label: 'Refund'
+		},
+		{
+			href: '/admin',
+			label: 'Return'
+		},
+		{
+			href: '/admin/request/support',
+			label: 'Support'
 		}
 	];
 	$: if ($navigating) {
@@ -70,16 +96,27 @@
 				<IconMenu />
 			</button>
 			<span class="font-bold text-xl">Admin</span>
-			{#each adminLinks as link}
-				<a
-					href={link.href}
-					class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
-					>{link.label}</a
-				>
-			{/each}
+			{#if !$page.url.pathname.startsWith('/admin/request')}
+				{#each adminLinks as link}
+					<a
+						href={link.href}
+						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
+						>{link.label}</a
+					>
+				{/each}
+			{:else}
+				{#each adminRequestLinks as link}
+					<a
+						href={link.href}
+						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
+						>{link.label}</a
+					>
+				{/each}
+			{/if}
 		</nav>
 	</div>
 </header>
+
 {#if navMenuOpen}
 	<nav
 		transition:slide

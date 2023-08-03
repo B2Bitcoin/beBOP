@@ -11,6 +11,7 @@
 
 <a href="/admin/product/new" class="underline block">Add product</a>
 <a href="/admin/product/prices" class="underline block">Products price</a>
+<a href="/admin/product/perk" class="underline block">Perk page</a>
 
 <h1 class="text-3xl">List of products</h1>
 

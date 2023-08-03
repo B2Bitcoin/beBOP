@@ -217,6 +217,7 @@
 			/>
 			Enable Google Shopping export
 		</label>
+		<input type="button" value="Overwrite price" class="btn btn-blue self-start" />
 	</div>
 	<label class="form-label">
 		Subscription duration
