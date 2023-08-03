@@ -1,4 +1,5 @@
 <script lang="ts">
+	import IconRefresh from '$lib/components/icons/IconRefresh.svelte';
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
 	import Tags from 'svelte-tags-input';
@@ -61,12 +62,9 @@
 					</option>
 				{/each}
 			</select>
-			<input
-				type="button"
-				on:click={onOverwrite}
-				value="Overwrite"
-				class="btn btn-blue self-start"
-			/>
+			<button type="button" on:click={onOverwrite} class="btn btn-red self-start">
+				<IconRefresh />
+			</button>
 		</div>
 	</label>
 
