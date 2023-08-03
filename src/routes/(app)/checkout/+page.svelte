@@ -283,15 +283,6 @@
 				/>
 				Mandatory biling address
 			</label>
-			<label class="checkbox-label">
-				<input
-					type="checkbox"
-					name="collectMyIp"
-					class="form-checkbox"
-					bind:checked={collectMyIp}
-				/>
-				I agree to the collection of my IP address (why ?)
-			</label>
 		</form>
 		<div>
 			<article
@@ -476,6 +467,23 @@
 						I agree to the <a href="/terms" target="_blank" class="text-link hover:underline">
 							terms of service
 						</a>
+					</span>
+				</label>
+				<label class="checkbox-label">
+					<input
+						type="checkbox"
+						name="collectMyIp"
+						class="form-checkbox"
+						bind:checked={collectMyIp}
+					/>
+					<span>
+						I agree to the collection of my IP address (<a
+							href="/ip-collect"
+							target="_blank"
+							class="text-link hover:underline"
+						>
+							why ?
+						</a>)
 					</span>
 				</label>
 

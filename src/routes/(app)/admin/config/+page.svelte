@@ -14,6 +14,12 @@
 	let saveIp = false;
 	let mandatoryBilingAddress = false;
 	let enableGoogleShoppingExport = false;
+
+	function onOverwrite(event: Event) {
+		if (!confirm('Do you want to overwrite current product currencies with this one?')) {
+			event.preventDefault();
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -45,16 +51,23 @@
 			{/each}
 		</select>
 	</label>
-
 	<label class="form-label">
 		Price reference currency (to avoid exchange rate fluctuations)
-		<select name="priceReferenceCurrency" class="form-input max-w-[25rem]">
-			{#each CURRENCIES as currency}
-				<option value={currency} selected={data.priceReferenceCurrency === currency}>
-					{currency}
-				</option>
-			{/each}
-		</select>
+		<div class="flex gap-2">
+			<select name="priceReferenceCurrency" class="form-input max-w-[25rem]">
+				{#each CURRENCIES as currency}
+					<option value={currency} selected={data.priceReferenceCurrency === currency}>
+						{currency}
+					</option>
+				{/each}
+			</select>
+			<input
+				type="button"
+				on:click={onOverwrite}
+				value="Overwrite"
+				class="btn btn-blue self-start"
+			/>
+		</div>
 	</label>
 
 	<label class="checkbox-label">
@@ -217,7 +230,6 @@
 			/>
 			Enable Google Shopping export
 		</label>
-		<input type="button" value="Overwrite price" class="btn btn-blue self-start" />
 	</div>
 	<label class="form-label">
 		Subscription duration
