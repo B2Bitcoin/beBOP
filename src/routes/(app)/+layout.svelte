@@ -39,10 +39,12 @@
 
 	$: items = data.cart || [];
 	$: totalPrice = sum(
-		items.map(
-			(item) =>
-				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				item.quantity
+		items.map((item) =>
+			item.customPrice
+				? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
+				  item.quantity
+				: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				  item.quantity
 		)
 	);
 	$: vat = totalPrice * (data.vatRate / 100);
