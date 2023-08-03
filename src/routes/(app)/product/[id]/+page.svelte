@@ -16,6 +16,7 @@
 
 	let quantity = 1;
 	let loading = false;
+	let customAmount = data.product.price.amount;
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
@@ -27,6 +28,9 @@
 		$productAddedToCart = {
 			product: data.product,
 			quantity,
+			...(data.product.type !== 'subscription' && {
+				customPrice: { amount: customAmount, currency: data.mainCurrency }
+			}),
 			picture: currentPicture
 		};
 	}
@@ -200,12 +204,12 @@
 							<hr class="border-gray-300 md:hidden mt-4 pb-2" />
 							<div class="flex flex-col gap-2 justify-between">
 								<label class="w-full form-label">
-									Name your price (in SATs): <input
+									Name your price : <input
 										class="form-input"
 										type="number"
-										value={toSatoshis(data.product.price.amount, data.product.price.currency)}
 										min={toSatoshis(data.product.price.amount, data.product.price.currency)}
 										name="customPrice"
+										bind:value={customAmount}
 										placeholder="Price"
 										required
 										step="any"

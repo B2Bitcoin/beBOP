@@ -3,6 +3,7 @@ import { collections } from './database';
 import type { Product } from '$lib/types/Product';
 import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 import { error } from '@sveltejs/kit';
+import { runtimeConfig } from './runtime-config';
 
 /**
  * Be wary if adding Zod: called from NostR as well and need human readable error messages
@@ -52,7 +53,7 @@ export async function addToCartInDb(
 			quantity: product.type === 'subscription' ? 1 : quantity,
 			...(params.customAmount &&
 				product.type !== 'subscription' && {
-					customPrice: { amount: params.customAmount, currency: 'SAT' }
+					customPrice: { amount: params.customAmount, currency: runtimeConfig.mainCurrency }
 				})
 		});
 	}
