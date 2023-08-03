@@ -10,8 +10,7 @@ import { error } from '@sveltejs/kit';
 export async function addToCartInDb(
 	product: Product,
 	quantity: number,
-	customAmount: number,
-	params: { sessionId?: string; npub?: string; totalQuantity?: boolean }
+	params: { sessionId?: string; npub?: string; totalQuantity?: boolean; customAmount?: number }
 ) {
 	if (product.availableDate && !product.preorder && product.availableDate > new Date()) {
 		throw error(400, 'Product is not available for preorder');
@@ -39,7 +38,6 @@ export async function addToCartInDb(
 
 	if (existingItem) {
 		existingItem.quantity = params.totalQuantity ? quantity : existingItem.quantity + quantity;
-		existingItem.customPrice = { amount: customAmount, currency: 'SAT' };
 
 		if (existingItem.quantity > MAX_PRODUCT_QUANTITY) {
 			existingItem.quantity = MAX_PRODUCT_QUANTITY;
@@ -52,9 +50,10 @@ export async function addToCartInDb(
 		cart.items.push({
 			productId: product._id,
 			quantity: product.type === 'subscription' ? 1 : quantity,
-			...(product.type !== 'subscription' && {
-				customPrice: { amount: customAmount, currency: 'SAT' }
-			})
+			...(params.customAmount &&
+				product.type !== 'subscription' && {
+					customPrice: { amount: params.customAmount, currency: 'SAT' }
+				})
 		});
 	}
 
