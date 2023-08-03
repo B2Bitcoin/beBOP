@@ -371,7 +371,7 @@
 									class="text-base text-gray-600 truncate"
 									amount={item.product.price.amount * (actualVatRate / 100)}
 									currency={data.mainCurrency}
-									secondary
+									main
 								/>
 							</div>
 						</div>
