@@ -68,7 +68,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	const { quantity, customPrice } = z
 		.object({
 			quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY),
-			customPrice: z.number({ coerce: true }).int().min(1).min(product.price.amount)
+			customPrice: z.number({ coerce: true }).int()
 		})
 		.parse({
 			quantity: formData.get('quantity') || '1',
@@ -77,7 +77,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 
 	await addToCartInDb(product, quantity, {
 		sessionId: locals.sessionId,
-		customAmount: customPrice
+		...(product.type !== 'subscription' && { customAmount: customPrice })
 	});
 }
 
