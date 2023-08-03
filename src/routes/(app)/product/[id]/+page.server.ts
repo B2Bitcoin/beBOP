@@ -75,7 +75,10 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			customPrice: formData.get('customPrice')
 		});
 
-	await addToCartInDb(product, quantity, customPrice, { sessionId: locals.sessionId });
+	await addToCartInDb(product, quantity, {
+		sessionId: locals.sessionId,
+		customAmount: customPrice
+	});
 }
 
 export const actions = {
