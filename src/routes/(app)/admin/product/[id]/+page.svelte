@@ -13,7 +13,6 @@
 	let preorder = data.product.preorder;
 	let shipping = data.product.shipping;
 	let payWhatYouWant = data.product.payWhatYouWant;
-	let typeElement: HTMLSelectElement;
 	let priceAmountElement: HTMLInputElement;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
