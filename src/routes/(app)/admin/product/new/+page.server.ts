@@ -125,6 +125,7 @@ export const actions: Actions = {
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
 						payWhatYouWant: parsed.payWhatYouWant,
+						standalone: parsed.payWhatYouWant ? parsed.payWhatYouWant : parsed.standalone,
 						displayShortDescription: parsed.displayShortDescription,
 						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
@@ -216,6 +217,7 @@ export const actions: Actions = {
 					preorder: duplicate.preorder,
 					shipping: duplicate.shipping,
 					payWhatYouWant: duplicate.payWhatYouWant,
+					standalone: duplicate.standalone,
 					displayShortDescription: duplicate.displayShortDescription
 				},
 				{ session }
