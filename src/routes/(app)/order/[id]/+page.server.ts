@@ -45,6 +45,7 @@ export async function load({ params, depends }) {
 					availableDate: item.product.availableDate,
 					shipping: item.product.shipping
 				},
+				...(item.customPrice && { customPrice: item.customPrice }),
 				picture: pictures.find((picture) => picture.productId === item.product._id),
 				digitalFiles: digitalFiles.filter(
 					(digitalFile) => digitalFile.productId === item.product._id

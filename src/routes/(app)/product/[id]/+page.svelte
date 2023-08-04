@@ -204,7 +204,8 @@
 							<hr class="border-gray-300 md:hidden mt-4 pb-2" />
 							<div class="flex flex-col gap-2 justify-between">
 								<label class="w-full form-label">
-									Name your price : <input
+									Name your price ({data.mainCurrency}):
+									<input
 										class="form-input"
 										type="number"
 										min={toSatoshis(data.product.price.amount, data.product.price.currency)}

@@ -168,18 +168,33 @@
 						</div>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
-							<PriceTag
-								class="text-2xl text-gray-800 truncate"
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								main
-							/>
-							<PriceTag
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								class="text-base text-gray-600 truncate"
-								secondary
-							/>
+							{#if item.customPrice}
+								<PriceTag
+									class="text-2xl text-gray-800 truncate"
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									main
+								/>
+								<PriceTag
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									class="text-base text-gray-600 truncate"
+									secondary
+								/>
+							{:else}
+								<PriceTag
+									class="text-2xl text-gray-800 truncate"
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									main
+								/>
+								<PriceTag
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									class="text-base text-gray-600 truncate"
+									secondary
+								/>
+							{/if}
 						</div>
 					</div>
 
