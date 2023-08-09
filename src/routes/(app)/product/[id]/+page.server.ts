@@ -75,12 +75,13 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		})
 		.parse({
 			quantity: formData.get('quantity') || '1',
-			customPrice: formData.get('customPrice')
+			customPrice: formData.get('customPrice') || '0'
 		});
 	const customPriceConverted = parsePriceAmount(customPrice, runtimeConfig.mainCurrency, true);
 	await addToCartInDb(product, quantity, {
 		sessionId: locals.sessionId,
-		...(product.type !== 'subscription' && { customAmount: customPriceConverted })
+		...(product.payWhatYouWant &&
+			product.type !== 'subscription' && { customAmount: customPriceConverted })
 	});
 }
 
