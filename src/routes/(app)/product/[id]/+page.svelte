@@ -10,13 +10,17 @@
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { isPreorder as isPreorderFn } from '$lib/types/Product.js';
-	import { toSatoshis } from '$lib/utils/toSatoshis.js';
+	import { toCurrency } from '$lib/utils/toCurrency.js';
 
 	export let data;
 
 	let quantity = 1;
 	let loading = false;
-	let customAmount = data.product.price.amount;
+	let customAmount =
+		data.product.price.amount !== 0 &&
+		toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency) < 0.01
+			? 0.01
+			: toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency);
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
@@ -208,7 +212,13 @@
 									<input
 										class="form-input"
 										type="number"
-										min={toSatoshis(data.product.price.amount, data.product.price.currency)}
+										min={customAmount < 0.01 && data.product.price.amount !== 0
+											? '0.01'
+											: toCurrency(
+													data.mainCurrency,
+													data.product.price.amount,
+													data.product.price.currency
+											  )}
 										name="customPrice"
 										bind:value={customAmount}
 										placeholder="Price"

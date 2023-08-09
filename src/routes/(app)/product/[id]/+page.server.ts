@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
+import { parsePriceAmount } from '$lib/types/Currency';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne<
@@ -70,16 +71,16 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	const { quantity, customPrice } = z
 		.object({
 			quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY),
-			customPrice: z.number({ coerce: true }).int()
+			customPrice: z.string().regex(/^\d+(\.\d+)?$/)
 		})
 		.parse({
 			quantity: formData.get('quantity') || '1',
 			customPrice: formData.get('customPrice')
 		});
-
+	const customPriceConverted = parsePriceAmount(customPrice, runtimeConfig.mainCurrency, true);
 	await addToCartInDb(product, quantity, {
 		sessionId: locals.sessionId,
-		...(product.type !== 'subscription' && { customAmount: customPrice })
+		...(product.type !== 'subscription' && { customAmount: customPriceConverted })
 	});
 }
 
