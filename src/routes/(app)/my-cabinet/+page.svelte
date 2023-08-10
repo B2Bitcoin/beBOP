@@ -7,7 +7,7 @@
 	import IconSuscription from '$lib/components/icons/IconSuscription.svelte';
 </script>
 
-<div class="mx-auto max-w-7xl">
+<div class="mx-auto max-w-7xl mb-6">
 	<div class="flex flex-col h-[140px] bg-gray-200 rounded-lg gap-2">
 		<div class="flex items-center px-6 gap-4">
 			<h1 class="text-5xl font-bold text-[22px] py-6">My Cabinet</h1>
