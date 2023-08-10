@@ -179,6 +179,60 @@
 			</div>
 		</div>
 	</div>
+
+	<hr class="border-gray-300 my-4 w-full" />
+
+	<nav>
+		<ul class="list-style-none flex">
+			<li>
+				<a
+					class="pointer-events-none relative block rounded-full bg-transparent px-3 py-1.5 text-sm text-neutral-500 transition-all duration-300 dark:text-neutral-400"
+					href="#!">&lt;</a
+				>
+			</li>
+			<li>
+				<a
+					class="pointer-events-none relative block rounded-full bg-transparent px-3 py-1.5 text-sm text-neutral-500 transition-all duration-300 dark:text-neutral-400"
+					href="#!">&lt;&lt;</a
+				>
+			</li>
+			<li>
+				<a
+					class="relative block rounded-full bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-gray-300 dark:hover:bg-neutral-700"
+					href="#!">1</a
+				>
+			</li>
+			<li aria-current="page">
+				<a
+					class="relative block rounded-full bg-gray-300 px-3 py-1.5 text-sm font-medium text-primary-700 transition-all duration-300"
+					href="#!"
+					>2
+					<span
+						class="absolute -m-px h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 [clip:rect(0,0,0,0)]"
+						>(current)</span
+					>
+				</a>
+			</li>
+			<li>
+				<a
+					class="relative block rounded-full bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-gray-300 dark:hover:bg-neutral-700"
+					href="#!">3</a
+				>
+			</li>
+			<li>
+				<a
+					class="relative block rounded-full bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+					href="#!">&gt;&gt;</a
+				>
+			</li>
+			<li>
+				<a
+					class="relative block rounded-full bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+					href="#!">&gt;</a
+				>
+			</li>
+		</ul>
+	</nav>
 </div>
 
 <style>
