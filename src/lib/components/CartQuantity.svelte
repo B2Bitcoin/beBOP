@@ -16,7 +16,7 @@
 		class="{sm ? 'px-1' : 'px-3'} bg-gray-300 rounded-l text-gray-800 disabled:text-gray-450"
 		disabled={disabled || item.quantity >= MAX_PRODUCT_QUANTITY}
 	>
-		<span class="sr-only">Increase quantity</span><IconChevronUp class={sm ? 'scale-75' : ''} />
+		<span class="sr-only">Decrease quantity</span><IconChevronDown class={sm ? 'scale-75' : ''} />
 	</button>
 	<input
 		type="number"
@@ -33,6 +33,6 @@
 		class="{sm ? 'px-1' : 'px-3'} bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
 		disabled={disabled || item.quantity <= 0}
 	>
-		<span class="sr-only">Decrease quantity</span><IconChevronDown class={sm ? 'scale-75' : ''} />
+		<span class="sr-only">Increase quantity</span><IconChevronUp class={sm ? 'scale-75' : ''} />
 	</button>
 </div>
