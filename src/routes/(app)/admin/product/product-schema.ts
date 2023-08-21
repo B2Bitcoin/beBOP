@@ -15,5 +15,6 @@ export const productBaseSchema = {
 	displayShortDescription: z.boolean({ coerce: true }).default(false),
 	deliveryFees: deliveryFeesSchema.optional(),
 	applyDeliveryFeesOnlyOnce: z.boolean({ coerce: true }).default(false),
-	requireSpecificDeliveryFee: z.boolean({ coerce: true }).default(false)
+	requireSpecificDeliveryFee: z.boolean({ coerce: true }).default(false),
+	payWhatYouWant: z.boolean({ coerce: true }).default(false)
 };

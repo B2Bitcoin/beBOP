@@ -15,6 +15,7 @@ import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees } from '$lib/types/Cart';
 import { vatRates } from './vat-rates';
+import type { Currency } from '$lib/types/Currency';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -123,7 +124,11 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 }
 
 export async function createOrder(
-	items: Array<{ quantity: number; product: Product }>,
+	items: Array<{
+		quantity: number;
+		product: Product;
+		customPrice?: { amount: number; currency: Currency };
+	}>,
 	paymentMethod: Order['payment']['method'],
 	params: {
 		sessionId?: string;
@@ -191,9 +196,12 @@ export async function createOrder(
 
 	for (const item of items) {
 		const price = parseFloat(item.product.price.amount.toString());
-		const quantity = item.quantity;
 
-		totalSatoshis += toSatoshis(price * quantity, item.product.price.currency);
+		const quantity = item.quantity;
+		if (item.product.type !== 'subscription' && item.customPrice) {
+			const customPrice = parseFloat(item.customPrice.amount.toString());
+			totalSatoshis += toSatoshis(customPrice * quantity, item.customPrice.currency);
+		} else totalSatoshis += toSatoshis(price * quantity, item.product.price.currency);
 	}
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;

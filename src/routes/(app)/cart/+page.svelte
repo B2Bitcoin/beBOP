@@ -14,10 +14,12 @@
 
 	$: items = data.cart || [];
 	$: totalPrice = sum(
-		items.map(
-			(item) =>
-				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				item.quantity
+		items.map((item) =>
+			item.customPrice
+				? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
+				  item.quantity
+				: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				  item.quantity
 		)
 	);
 	$: vat = totalPrice * (data.vatRate / 100);
@@ -99,18 +101,33 @@
 						</div>
 
 						<div class="flex flex-col items-end justify-center">
-							<PriceTag
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								main
-								class="text-2xl text-gray-800 truncate"
-							/>
-							<PriceTag
-								class="text-base text-gray-600 truncate"
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								secondary
-							/>
+							{#if item.product.type !== 'subscription' && item.customPrice}
+								<PriceTag
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									main
+									class="text-2xl text-gray-800 truncate"
+								/>
+								<PriceTag
+									class="text-base text-gray-600 truncate"
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									secondary
+								/>
+							{:else}
+								<PriceTag
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									main
+									class="text-2xl text-gray-800 truncate"
+								/>
+								<PriceTag
+									class="text-base text-gray-600 truncate"
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									secondary
+								/>
+							{/if}
 						</div>
 					</form>
 

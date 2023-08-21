@@ -19,6 +19,7 @@ export interface Product extends Timestamps {
 	availableDate?: Date;
 	preorder: boolean;
 	displayShortDescription: boolean;
+	payWhatYouWant: boolean;
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;

@@ -39,10 +39,12 @@
 
 	$: items = data.cart || [];
 	$: totalPrice = sum(
-		items.map(
-			(item) =>
-				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				item.quantity
+		items.map((item) =>
+			item.customPrice
+				? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
+				  item.quantity
+				: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				  item.quantity
 		)
 	);
 	$: vat = totalPrice * (data.vatRate / 100);
@@ -179,6 +181,7 @@
 									on:dismiss={() => ($productAddedToCart = null)}
 									product={$productAddedToCart.product}
 									picture={$productAddedToCart.picture}
+									customPrice={$productAddedToCart.customPrice}
 								/>
 							</Popup>
 						{:else if cartOpen}
@@ -235,12 +238,22 @@
 												{/if}
 											</div>
 											<div class="flex flex-col items-end gap-[6px] ml-auto">
-												<PriceTag
-													class="text-gray-600 text-base"
-													amount={item.quantity * item.product.price.amount}
-													currency={item.product.price.currency}
-													main
-												/>
+												{#if item.product.type !== 'subscription' && item.customPrice}
+													<PriceTag
+														class="text-gray-600 text-base"
+														amount={item.quantity * item.customPrice.amount}
+														currency={item.customPrice.currency}
+														main
+													/>
+												{:else}
+													<PriceTag
+														class="text-gray-600 text-base"
+														amount={item.quantity * item.product.price.amount}
+														currency={item.product.price.currency}
+														main
+													/>
+												{/if}
+
 												<button formaction="/cart/{item.product._id}/?/remove">
 													<IconTrash class="text-gray-800" />
 													<span class="sr-only">Remote item from cart</span>

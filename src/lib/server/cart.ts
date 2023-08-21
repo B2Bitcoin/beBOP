@@ -3,6 +3,7 @@ import { collections } from './database';
 import type { Product } from '$lib/types/Product';
 import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 import { error } from '@sveltejs/kit';
+import { runtimeConfig } from './runtime-config';
 
 /**
  * Be wary if adding Zod: called from NostR as well and need human readable error messages
@@ -10,7 +11,7 @@ import { error } from '@sveltejs/kit';
 export async function addToCartInDb(
 	product: Product,
 	quantity: number,
-	params: { sessionId?: string; npub?: string; totalQuantity?: boolean }
+	params: { sessionId?: string; npub?: string; totalQuantity?: boolean; customAmount?: number }
 ) {
 	if (product.availableDate && !product.preorder && product.availableDate > new Date()) {
 		throw error(400, 'Product is not available for preorder');
@@ -49,7 +50,11 @@ export async function addToCartInDb(
 	} else {
 		cart.items.push({
 			productId: product._id,
-			quantity: product.type === 'subscription' ? 1 : quantity
+			quantity: product.type === 'subscription' ? 1 : quantity,
+			...(params.customAmount &&
+				product.type !== 'subscription' && {
+					customPrice: { amount: params.customAmount, currency: runtimeConfig.mainCurrency }
+				})
 		});
 	}
 

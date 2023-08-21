@@ -17,6 +17,7 @@ export interface Order extends Timestamps {
 	items: Array<{
 		product: Product;
 		quantity: number;
+		customPrice?: { amount: number; currency: Currency };
 	}>;
 
 	shippingAddress?: {
