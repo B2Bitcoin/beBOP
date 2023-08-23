@@ -95,7 +95,7 @@
 						</div>
 
 						<div class="self-center">
-							{#if item.product.type !== 'subscription'}
+							{#if item.product.type !== 'subscription' && !item.product.standalone}
 								<CartQuantity {item} />
 							{/if}
 						</div>

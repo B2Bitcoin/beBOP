@@ -14,6 +14,7 @@
 	let shipping = data.product.shipping;
 	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
+	let standalone = data.product.standalone;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -102,6 +103,10 @@
 				name="payWhatYouWant"
 			/>
 			This is a pay-what-you-want product
+		</label>
+		<label class="checkbox-label">
+			<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
+			This is a standalone product
 		</label>
 		<label>
 			Short description

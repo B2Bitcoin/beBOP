@@ -18,6 +18,7 @@
 	let formElement: HTMLFormElement;
 	let files: FileList;
 	let payWhatYouWant = false;
+	let standalone = payWhatYouWant;
 	let typeElement: HTMLSelectElement;
 
 	let preorder = product?.preorder ?? false;
@@ -196,6 +197,10 @@
 			name="payWhatYouWant"
 		/>
 		This is a pay-what-you-want product
+	</label>
+	<label class="checkbox-label">
+		<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
+		This is a standalone product
 	</label>
 
 	<label class="form-label">

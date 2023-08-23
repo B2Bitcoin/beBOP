@@ -23,6 +23,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			| 'shipping'
 			| 'displayShortDescription'
 			| 'payWhatYouWant'
+			| 'standalone'
 		>
 	>(
 		{ _id: params.id },
@@ -37,7 +38,8 @@ export const load: PageServerLoad = async ({ params }) => {
 				preorder: 1,
 				type: 1,
 				displayShortDescription: 1,
-				payWhatYouWant: 1
+				payWhatYouWant: 1,
+				standalone: 1
 			}
 		}
 	);
@@ -73,12 +75,13 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		})
 		.parse({
 			quantity: formData.get('quantity') || '1',
-			customPrice: formData.get('customPrice')
+			customPrice: formData.get('customPrice') || '0'
 		});
 	const customPriceConverted = parsePriceAmount(customPrice, runtimeConfig.mainCurrency, true);
 	await addToCartInDb(product, quantity, {
 		sessionId: locals.sessionId,
-		...(product.type !== 'subscription' && { customAmount: customPriceConverted })
+		...(product.payWhatYouWant &&
+			product.type !== 'subscription' && { customAmount: customPriceConverted })
 	});
 }
 

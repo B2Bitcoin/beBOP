@@ -230,7 +230,7 @@
 												<a href="/product/{item.product._id}">
 													<h3 class="text-base text-gray-850 font-medium">{item.product.name}</h3>
 												</a>
-												{#if item.product.type !== 'subscription'}
+												{#if item.product.type !== 'subscription' && !item.product.standalone}
 													<div class="flex items-center gap-2 text-gray-700">
 														<span class="text-xs">Quantity: </span>
 														<CartQuantity {item} sm />

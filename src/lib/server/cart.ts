@@ -37,7 +37,7 @@ export async function addToCartInDb(
 
 	const existingItem = cart.items.find((item) => item.productId === product._id);
 
-	if (existingItem) {
+	if (existingItem && !product.standalone) {
 		existingItem.quantity = params.totalQuantity ? quantity : existingItem.quantity + quantity;
 
 		if (existingItem.quantity > MAX_PRODUCT_QUANTITY) {
