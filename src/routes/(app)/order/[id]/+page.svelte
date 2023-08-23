@@ -60,7 +60,7 @@
 					<ul>
 						<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
 						<li>
-							Payment amount: <code class="break-words">
+							Payment amount: <code class="break-words break-all">
 								{(data.order.payment.method === 'bitcoin'
 									? toBitcoins(data.order.totalPrice.amount, data.order.totalPrice.currency)
 									: toSatoshis(data.order.totalPrice.amount, data.order.totalPrice.currency)
