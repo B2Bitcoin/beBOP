@@ -33,19 +33,21 @@
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 grid grid-cols-3 gap-2">
+	<div
+		class="w-full rounded-xl bg-white border-gray-300 border p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
+	>
 		<div class="col-span-2 flex flex-col gap-2">
 			<h1 class="text-3xl">Order #{data.order.number}</h1>
 			{#if data.order.notifications?.paymentStatus?.npub}
 				<p>
-					NostR public address for payment status: <span class="font-mono break-words">
+					NostR public address for payment status: <span class="font-mono break-all break-words">
 						{data.order.notifications.paymentStatus.npub}</span
 					>
 				</p>
 			{/if}
 			{#if data.order.payment.status !== 'expired' && data.order.payment.status !== 'canceled'}
 				<div>
-					Keep this link: <a class="underline text-link break-words" href={$page.url.href}
+					Keep this link: <a class="underline text-link break-all break-words" href={$page.url.href}
 						>{$page.url.href}</a
 					> to access the order later.
 				</div>
@@ -126,7 +128,7 @@
 				</form>
 			{/if}
 		</div>
-		<div>
+		<div class="">
 			<article
 				class="rounded sticky top-4 -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>

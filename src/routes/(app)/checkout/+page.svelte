@@ -97,8 +97,10 @@
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 grid grid-cols-3 gap-2">
-		<form id="checkout" method="post" class="col-span-2 flex flex-col gap-4" on:submit={checkForm}>
+	<div
+		class="w-full rounded-xl bg-white border-gray-300 border p-6 grid flex md:grid-cols-3 sm:flex-wrap"
+	>
+		<form id="checkout" method="post" class="col-span-2 flex flex-col" on:submit={checkForm}>
 			<h1 class="page-title">Checkout</h1>
 
 			<section class="gap-4 grid grid-cols-6 w-4/5">
