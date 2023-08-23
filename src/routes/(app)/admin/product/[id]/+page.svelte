@@ -13,8 +13,9 @@
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
 	let shipping = data.product.shipping;
-
+	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
+	let standalone = data.product.standalone;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -29,7 +30,11 @@
 	}
 
 	function checkForm(event: SubmitEvent) {
-		if (priceAmountElement.value && +priceAmountElement.value < 1 / SATOSHIS_PER_BTC) {
+		if (
+			priceAmountElement.value &&
+			+priceAmountElement.value < 1 / SATOSHIS_PER_BTC &&
+			!payWhatYouWant
+		) {
 			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
 			priceAmountElement.reportValidity();
 			event.preventDefault();
@@ -113,7 +118,20 @@
 				</select>
 			</label>
 		</div>
-
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={payWhatYouWant}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+				name="payWhatYouWant"
+			/>
+			This is a pay-what-you-want product
+		</label>
+		<label class="checkbox-label">
+			<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
+			This is a standalone product
+		</label>
 		<label>
 			Short description
 			<textarea
@@ -186,22 +204,50 @@
 		{/if}
 
 		{#if data.product.type !== 'donation'}
+			<h3 class="text-xl">Delivery</h3>
 			<label class="checkbox-label">
 				<input class="form-checkbox" type="checkbox" name="shipping" bind:checked={shipping} />
 				The product has a physical component that will be shipped to the customer's address
 			</label>
 
-			{#if shipping && data.deliveryFees.mode === 'perItem'}
-				<DeliveryFeesSelector
-					deliveryFees={data.product.deliveryFees || {}}
-					defaultCurrency={data.product.price.currency}
-				/>
+			{#if shipping}
+				{#if data.deliveryFees.mode === 'perItem'}
+					<DeliveryFeesSelector
+						deliveryFees={data.product.deliveryFees || {}}
+						defaultCurrency={data.product.price.currency}
+					/>
+
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							name="requireSpecificDeliveryFee"
+							bind:checked={data.product.requireSpecificDeliveryFee}
+						/>
+						Prevent order if no specific delivery fee matches the customer's country (do not use
+						<a href="/admin/config/delivery" class="text-link hover:underline" target="_blank">
+							globally defined fees
+						</a> as fallback)
+					</label>
+				{/if}
+
+				{#if data.deliveryFees.mode === 'perItem' || data.deliveryFees.applyFlatFeeToEachItem}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							name="applyDeliveryFeesOnlyOnce"
+							bind:checked={data.product.applyDeliveryFeesOnlyOnce}
+						/> Apply delivery fee only once, even if the customer orders multiple items
+					</label>
+				{/if}
 			{/if}
 		{/if}
 
 		<div class="flex justify-between gap-2">
 			<button type="submit" class="btn btn-blue">Update</button>
 			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
+			<a href="/admin/product/new?duplicate_from={data.product._id}" class="btn btn-gray">
+				Duplicate
+			</a>
 			<button
 				type="submit"
 				class="ml-auto btn btn-red"

@@ -10,11 +10,17 @@
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { isPreorder as isPreorderFn } from '$lib/types/Product.js';
+	import { toCurrency } from '$lib/utils/toCurrency.js';
 
 	export let data;
 
 	let quantity = 1;
 	let loading = false;
+	let customAmount =
+		data.product.price.amount !== 0 &&
+		toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency) < 0.01
+			? 0.01
+			: toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency);
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
@@ -26,6 +32,9 @@
 		$productAddedToCart = {
 			product: data.product,
 			quantity,
+			...(data.product.type !== 'subscription' && {
+				customPrice: { amount: customAmount, currency: data.mainCurrency }
+			}),
 			picture: currentPicture
 		};
 	}
@@ -195,7 +204,31 @@
 						}}
 						class="flex flex-col gap-2"
 					>
-						{#if data.product.type !== 'subscription'}
+						{#if data.product.payWhatYouWant}
+							<hr class="border-gray-300 md:hidden mt-4 pb-2" />
+							<div class="flex flex-col gap-2 justify-between">
+								<label class="w-full form-label">
+									Name your price ({data.mainCurrency}):
+									<input
+										class="form-input"
+										type="number"
+										min={customAmount < 0.01 && data.product.price.amount !== 0
+											? '0.01'
+											: toCurrency(
+													data.mainCurrency,
+													data.product.price.amount,
+													data.product.price.currency
+											  )}
+										name="customPrice"
+										bind:value={customAmount}
+										placeholder="Price"
+										required
+										step="any"
+									/>
+								</label>
+							</div>
+						{/if}
+						{#if data.product.type !== 'subscription' && !data.product.standalone}
 							<label class="mb-2">
 								Amount: <select
 									name="quantity"

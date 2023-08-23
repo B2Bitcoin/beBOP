@@ -7,6 +7,7 @@ import { addYears } from 'date-fns';
 import '$lib/server/locks';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
+// import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
@@ -45,6 +46,8 @@ export const handleError = (({ error, event }) => {
 
 export const handle = (async ({ event, resolve }) => {
 	await refreshPromise;
+
+	// event.locals.countryCode = countryFromIp(event.getClientAddress());
 
 	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
 	if (isAdminUrl && ADMIN_LOGIN && ADMIN_PASSWORD) {
@@ -102,7 +105,11 @@ export const handle = (async ({ event, resolve }) => {
 
 	const response = await resolve(event);
 
-	if (response.status >= 500 && response.headers.get('Content-Type')?.includes('text/html')) {
+	if (
+		response.status >= 500 &&
+		(!event.locals.status || event.locals.status >= 500) &&
+		response.headers.get('Content-Type')?.includes('text/html')
+	) {
 		const errorPages = await collections.cmsPages.countDocuments({
 			_id: 'error'
 		});

@@ -1,9 +1,9 @@
 export const COUNTRIES = {
-	CHE: 'Switzerland',
-	FRA: 'France',
-	BEL: 'Belgium'
+	CH: 'Switzerland',
+	FR: 'France',
+	BE: 'Belgium'
 };
 
-export type CountryAlpha3 = keyof typeof COUNTRIES;
+export type CountryAlpha2 = keyof typeof COUNTRIES;
 
-export const COUNTRY_ALPHA3S = Object.keys(COUNTRIES) as [CountryAlpha3, ...CountryAlpha3[]];
+export const COUNTRY_ALPHA2S = Object.keys(COUNTRIES) as [CountryAlpha2, ...CountryAlpha2[]];

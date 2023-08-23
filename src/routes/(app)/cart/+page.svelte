@@ -14,12 +14,16 @@
 
 	$: items = data.cart || [];
 	$: totalPrice = sum(
-		items.map(
-			(item) =>
-				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				item.quantity
+		items.map((item) =>
+			item.customPrice
+				? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
+				  item.quantity
+				: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				  item.quantity
 		)
 	);
+	$: vat = totalPrice * (data.vatRate / 100);
+	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
@@ -91,48 +95,95 @@
 						</div>
 
 						<div class="self-center">
-							{#if item.product.type !== 'subscription'}
+							{#if item.product.type !== 'subscription' && !item.product.standalone}
 								<CartQuantity {item} />
 							{/if}
 						</div>
 
 						<div class="flex flex-col items-end justify-center">
-							<PriceTag
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								main
-								class="text-2xl text-gray-800 truncate"
-							/>
-							<PriceTag
-								class="text-base text-gray-600 truncate"
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								secondary
-							/>
+							{#if item.product.type !== 'subscription' && item.customPrice}
+								<PriceTag
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									main
+									class="text-2xl text-gray-800 truncate"
+								/>
+								<PriceTag
+									class="text-base text-gray-600 truncate"
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									secondary
+								/>
+							{:else}
+								<PriceTag
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									main
+									class="text-2xl text-gray-800 truncate"
+								/>
+								<PriceTag
+									class="text-base text-gray-600 truncate"
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									secondary
+								/>
+							{/if}
 						</div>
 					</form>
 
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
+			{#if data.vatCountry && !data.vatExempted}
+				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
+					<div class="flex flex-col">
+						<h2 class="text-gray-800 text-[28px]">Vat ({data.vatRate}%):</h2>
+						<p class="text-sm text-gray-600">
+							VAT rate for {data.vatCountry}.
+							{#if data.vatSingleCountry}
+								The country is the seller's country.
+							{:else}
+								The country is determined through data from
+								<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+							{/if}
+						</p>
+					</div>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							amount={vat}
+							currency={data.mainCurrency}
+							main
+							class="text-[28px] text-gray-800"
+						/>
+						<PriceTag
+							class="text-base text-gray-600"
+							amount={vat}
+							currency={data.mainCurrency}
+							secondary
+						/>
+					</div>
+				</div>
+			{/if}
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 				<h2 class="text-gray-800 text-[32px]">Total:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={totalPrice}
+						amount={totalPriceWithVat}
 						currency={data.mainCurrency}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
-						amount={totalPrice}
+						amount={totalPriceWithVat}
 						currency={data.mainCurrency}
 						secondary
 					/>
 				</div>
 			</div>
-			<a href="/checkout" class="btn btn-black w-80 ml-auto">Checkout</a>
+			<div class="flex justify-end">
+				<a href="/checkout" class="btn btn-black w-80">Checkout</a>
+			</div>
 		{:else}
 			<p>Cart is empty</p>
 		{/if}

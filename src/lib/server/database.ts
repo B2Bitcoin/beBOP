@@ -25,6 +25,7 @@ const db = client.db(MONGODB_DB);
 
 // const users = db.collection<User>('users');
 const pictures = db.collection<Picture>('pictures');
+const pendingPictures = db.collection<Picture>('pictures.pending');
 const products = db.collection<Product>('products');
 const bootikSubscriptions = db.collection<BootikSubscription>('subscriptions');
 const paidSubscriptions = db.collection<PaidSubscription>('subscriptions.paid');
@@ -52,6 +53,7 @@ export const collections = {
 	carts,
 	digitalFiles,
 	pendingDigitalFiles,
+	pendingPictures,
 	orders,
 	emailNotifications,
 	nostrNotifications,

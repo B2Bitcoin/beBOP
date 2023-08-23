@@ -43,13 +43,24 @@
 			: actualCurrency || 'BTC';
 
 	$: displayed =
-		displayedAmount.toLocaleString('en', {
-			style: displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : 'currency',
-			currency:
-				displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : displayedCurrency,
-			maximumFractionDigits: displayedCurrency === 'BTC' ? 8 : 2,
-			minimumFractionDigits: 0
-		}) + (displayedCurrency === 'SAT' && !short ? ' SAT' : '');
+		displayedCurrency !== 'BTC' && actualAmount > 0 && displayedAmount < 0.01
+			? '< ' +
+			  Number(0.01).toLocaleString('en', {
+					style: displayedCurrency === 'SAT' ? undefined : 'currency',
+					currency: displayedCurrency === 'SAT' ? undefined : displayedCurrency,
+					maximumFractionDigits: 2,
+					minimumFractionDigits: 0
+			  })
+			: displayedAmount.toLocaleString('en', {
+					style:
+						displayedCurrency === 'SAT' || displayedCurrency === 'BTC' ? undefined : 'currency',
+					currency:
+						displayedCurrency === 'SAT' || displayedCurrency === 'BTC'
+							? undefined
+							: displayedCurrency,
+					maximumFractionDigits: displayedCurrency === 'BTC' ? 8 : 2,
+					minimumFractionDigits: 0
+			  }) + (displayedCurrency === 'SAT' && !short ? ' SAT' : '');
 </script>
 
 {#if actualCurrency}

@@ -13,6 +13,9 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
+import { computeDeliveryFees } from '$lib/types/Cart';
+import { vatRates } from './vat-rates';
+import type { Currency } from '$lib/types/Currency';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -121,7 +124,11 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 }
 
 export async function createOrder(
-	items: Array<{ quantity: number; product: Product }>,
+	items: Array<{
+		quantity: number;
+		product: Product;
+		customPrice?: { amount: number; currency: Currency };
+	}>,
 	paymentMethod: Order['payment']['method'],
 	params: {
 		sessionId?: string;
@@ -131,6 +138,7 @@ export async function createOrder(
 				email?: string;
 			};
 		};
+		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
 		cb?: (session: ClientSession) => Promise<unknown>;
 	}
@@ -163,18 +171,56 @@ export async function createOrder(
 	}
 
 	const isDigital = products.every((product) => !product.shipping);
+	let deliveryFees = 0;
 
-	if (!isDigital && !params.shippingAddress) {
-		throw error(400, 'Shipping address is required');
+	if (!isDigital) {
+		if (!params.shippingAddress) {
+			throw error(400, 'Shipping address is required');
+		} else {
+			const { country } = params.shippingAddress;
+
+			deliveryFees = computeDeliveryFees(
+				runtimeConfig.mainCurrency,
+				country,
+				items,
+				runtimeConfig.deliveryFees
+			);
+
+			if (isNaN(deliveryFees)) {
+				throw error(400, 'Some products are not available in your country');
+			}
+		}
 	}
 
-	let totalSatoshis = 0;
+	let totalSatoshis = toSatoshis(deliveryFees, runtimeConfig.mainCurrency);
 
 	for (const item of items) {
 		const price = parseFloat(item.product.price.amount.toString());
-		const quantity = item.quantity;
 
-		totalSatoshis += toSatoshis(price * quantity, item.product.price.currency);
+		const quantity = item.quantity;
+		if (item.product.type !== 'subscription' && item.customPrice) {
+			const customPrice = parseFloat(item.customPrice.amount.toString());
+			totalSatoshis += toSatoshis(customPrice * quantity, item.customPrice.currency);
+		} else totalSatoshis += toSatoshis(price * quantity, item.product.price.currency);
+	}
+
+	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
+	const vat: Order['vat'] =
+		!vatCountry || runtimeConfig.vatExempted
+			? undefined
+			: {
+					country: vatCountry,
+					price: {
+						currency: 'SAT',
+						amount: Math.round(
+							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100)
+						)
+					},
+					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
+			  };
+
+	if (vat) {
+		totalSatoshis += vat.price.amount;
 	}
 
 	const orderId = crypto.randomUUID();
@@ -248,10 +294,19 @@ export async function createOrder(
 				updatedAt: new Date(),
 				items,
 				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
+				...(vat && { vat }),
 				totalPrice: {
 					amount: totalSatoshis,
 					currency: 'SAT'
 				},
+				...(deliveryFees
+					? {
+							shippingPrice: {
+								amount: deliveryFees,
+								currency: runtimeConfig.mainCurrency
+							}
+					  }
+					: undefined),
 				payment: {
 					method: paymentMethod,
 					status: 'pending',

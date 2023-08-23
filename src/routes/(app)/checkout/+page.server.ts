@@ -1,16 +1,20 @@
 import { collections } from '$lib/server/database';
 import { paymentMethods } from '$lib/server/payment-methods.js';
-import { COUNTRY_ALPHA3S } from '$lib/types/Country';
+import { COUNTRY_ALPHA2S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
 import { createOrder } from '$lib/server/orders.js';
 import { emailsEnabled } from '$lib/server/email.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { vatRates } from '$lib/server/vat-rates.js';
 
 export function load() {
 	return {
 		paymentMethods: paymentMethods(),
-		emailsEnabled
+		emailsEnabled,
+		deliveryFees: runtimeConfig.deliveryFees,
+		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
 	};
 }
 
@@ -53,7 +57,7 @@ export const actions = {
 						city: z.string().min(1),
 						state: z.string().optional(),
 						zip: z.string().min(1),
-						country: z.enum(COUNTRY_ALPHA3S)
+						country: z.enum(COUNTRY_ALPHA2S)
 					})
 					.parse(Object.fromEntries(formData));
 
@@ -90,7 +94,10 @@ export const actions = {
 		const orderId = await createOrder(
 			cart.items.map((item) => ({
 				quantity: item.quantity,
-				product: byId[item.productId]
+				product: byId[item.productId],
+				...(item.customPrice && {
+					customPrice: { amount: item.customPrice.amount, currency: item.customPrice.currency }
+				})
 			})),
 			paymentMethod,
 			{
@@ -102,6 +109,7 @@ export const actions = {
 					}
 				},
 				shippingAddress: shipping,
+				vatCountry: shipping?.country ?? locals.countryCode,
 				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
 			}
 		);

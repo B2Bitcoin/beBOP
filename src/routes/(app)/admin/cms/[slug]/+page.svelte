@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data;
@@ -50,13 +51,23 @@
 		/>
 	</label>
 
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="fullScreen"
+			checked={data.cmsPage.fullScreen}
+			class="form-checkbox"
+		/>
+		Full screen
+	</label>
+
 	<label class="block w-full mt-4">
 		Content
 		<textarea
 			name="content"
 			cols="30"
 			rows="10"
-			maxlength="10000"
+			maxlength={MAX_CONTENT_LIMIT}
 			placeholder="Markdown content"
 			class="form-input block w-full"
 			value={data.cmsPage.content}

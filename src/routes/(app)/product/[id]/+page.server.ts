@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
+import { parsePriceAmount } from '$lib/types/Currency';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne<
@@ -21,6 +22,8 @@ export const load: PageServerLoad = async ({ params }) => {
 			| 'type'
 			| 'shipping'
 			| 'displayShortDescription'
+			| 'payWhatYouWant'
+			| 'standalone'
 		>
 	>(
 		{ _id: params.id },
@@ -34,7 +37,9 @@ export const load: PageServerLoad = async ({ params }) => {
 				availableDate: 1,
 				preorder: 1,
 				type: 1,
-				displayShortDescription: 1
+				displayShortDescription: 1,
+				payWhatYouWant: 1,
+				standalone: 1
 			}
 		}
 	);
@@ -63,15 +68,21 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	}
 
 	const formData = await request.formData();
-	const { quantity } = z
+	const { quantity, customPrice } = z
 		.object({
-			quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY)
+			quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY),
+			customPrice: z.string().regex(/^\d+(\.\d+)?$/)
 		})
 		.parse({
-			quantity: formData.get('quantity') || '1'
+			quantity: formData.get('quantity') || '1',
+			customPrice: formData.get('customPrice') || '0'
 		});
-
-	await addToCartInDb(product, quantity, { sessionId: locals.sessionId });
+	const customPriceConverted = parsePriceAmount(customPrice, runtimeConfig.mainCurrency, true);
+	await addToCartInDb(product, quantity, {
+		sessionId: locals.sessionId,
+		...(product.payWhatYouWant &&
+			product.type !== 'subscription' && { customAmount: customPriceConverted })
+	});
 }
 
 export const actions = {

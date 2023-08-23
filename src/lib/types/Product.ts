@@ -14,9 +14,13 @@ export interface Product extends Timestamps {
 	type: 'subscription' | 'resource' | 'donation';
 	shipping: boolean;
 	deliveryFees?: DeliveryFees;
+	requireSpecificDeliveryFee?: boolean;
+	applyDeliveryFeesOnlyOnce?: boolean;
 	availableDate?: Date;
 	preorder: boolean;
 	displayShortDescription: boolean;
+	payWhatYouWant: boolean;
+	standalone: boolean;
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;

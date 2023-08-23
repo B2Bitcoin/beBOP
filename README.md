@@ -10,6 +10,7 @@ P2P Bootik for merch, subscribers and crowdfunding
 - A MongoDB replica set. You can run it inside docker or use MongoDB Atlas.
 - A bitcoin node, and lnd
 - Node version 18+, corepack enabled with `corepack enable`
+- Git LFS installed with `git lfs install`
 
 ### S3 configuration
 
@@ -41,6 +42,7 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `SMTP_PASSWORD` - Specify all the SMTP variables to enable email notifications
 - `SMTP_PORT` - Specify all the SMTP variables to enable email notifications
 - `SMTP_USER` - Specify all the SMTP variables to enable email notifications
+- `TOR_PROXY_URL` - Url of the SOCKS5 proxy used to access TOR. If set, and the hostname for `BITCOIN_RPC_URL` is a `.onion` address, the app will use the proxy to access the bitcoin node. In the same manner, if `LND_REST_URL` is a `.onion` address, TOR will be used to access the lightning node.
 
 ## Production
 

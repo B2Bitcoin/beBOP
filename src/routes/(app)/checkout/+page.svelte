@@ -12,8 +12,13 @@
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
+	import { computeDeliveryFees } from '$lib/types/Cart.js';
+	import { typedKeys } from '$lib/utils/typedKeys.js';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 
 	let actionCount = 0;
+	let country = typedKeys(COUNTRIES)[0];
+
 	export let data;
 
 	const feedItems = [
@@ -69,24 +74,39 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(
-		items.map(
-			(item) =>
-				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				item.quantity
-		)
-	);
+	$: deliveryFees = computeDeliveryFees(data.mainCurrency, country, items, data.deliveryFees);
+
+	$: isDigital = items.every((item) => !item.product.shipping);
+	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
+	$: actualVatRate =
+		isDigital || data.vatSingleCountry ? data.vatRate : data.vatRates[actualCountry] ?? 0;
+
+	$: totalPrice =
+		sum(
+			items.map((item) =>
+				item.customPrice
+					? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
+					  item.quantity
+					: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+					  item.quantity
+			)
+		) + (deliveryFees || 0);
+
+	$: vat = totalPrice * (actualVatRate / 100);
+	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 grid grid-cols-3 gap-2">
-		<form id="checkout" method="post" class="col-span-2 flex flex-col gap-4" on:submit={checkForm}>
+	<div
+		class="w-full rounded-xl bg-white border-gray-300 border p-6 grid flex md:grid-cols-3 sm:flex-wrap"
+	>
+		<form id="checkout" method="post" class="col-span-2 flex flex-col" on:submit={checkForm}>
 			<h1 class="page-title">Checkout</h1>
 
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">Shipment info</h2>
 
-				{#if items.every((item) => !item.product.shipping)}
+				{#if isDigital}
 					<p class="col-span-6 text-gray-800">
 						All products in your cart are digital products. You don't need to provide any shipping
 						information.
@@ -127,9 +147,9 @@
 
 					<label class="form-label col-span-3">
 						Country
-						<select name="country" class="form-input" required>
-							{#each Object.entries(COUNTRIES) as [code, country]}
-								<option value={code}>{country}</option>
+						<select name="country" class="form-input" required bind:value={country}>
+							{#each Object.entries(COUNTRIES) as [code, countryTxt]}
+								<option value={code} selected={code === country}>{countryTxt}</option>
 							{/each}
 						</select>
 					</label>
@@ -296,24 +316,100 @@
 							</div>
 
 							<div class="flex flex-col ml-auto items-end justify-center">
-								<PriceTag
-									class="text-2xl text-gray-800 truncate"
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									main
-								/>
-								<PriceTag
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									class="text-base text-gray-600 truncate"
-									secondary
-								/>
+								{#if item.product.type !== 'subscription' && item.customPrice}
+									<PriceTag
+										class="text-2xl text-gray-800 truncate"
+										amount={item.quantity * item.customPrice.amount}
+										currency={item.customPrice.currency}
+										main
+									/>
+									<PriceTag
+										amount={item.quantity * item.customPrice.amount}
+										currency={item.customPrice.currency}
+										class="text-base text-gray-600 truncate"
+										secondary
+									/>
+								{:else}
+									<PriceTag
+										class="text-2xl text-gray-800 truncate"
+										amount={item.quantity * item.product.price.amount}
+										currency={item.product.price.currency}
+										main
+									/>
+									<PriceTag
+										amount={item.quantity * item.product.price.amount}
+										currency={item.product.price.currency}
+										class="text-base text-gray-600 truncate"
+										secondary
+									/>
+								{/if}
 							</div>
 						</div>
 					</form>
 
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
+
+				{#if deliveryFees}
+					<div class="flex justify-between items-center">
+						<h3 class="text-base text-gray-700">Delivery fees</h3>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl text-gray-800 truncate"
+								amount={deliveryFees}
+								currency={data.mainCurrency}
+								main
+							/>
+							<PriceTag
+								amount={deliveryFees}
+								currency={data.mainCurrency}
+								class="text-base text-gray-600 truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{:else if isNaN(deliveryFees)}
+					<div class="alert-error mt-3">
+						Delivery is not available in your country for some of the items of your cart.
+					</div>
+				{/if}
+
+				{#if data.vatCountry && !data.vatExempted}
+					<div class="flex justify-between items-center">
+						<div class="flex flex-col">
+							<h3 class="text-base text-gray-700 flex flex-row gap-2 items-center">
+								Vat ({actualVatRate}%)
+								<div
+									title="VAT rate for {actualCountry}. {data.vatSingleCountry
+										? "The VAT country is the seller's country"
+										: isDigital
+										? 'The country is determined with data from https://lite.ip2location.com'
+										: 'The country is determined by the shipping address'}"
+								>
+									<IconInfo class="cursor-pointer" />
+								</div>
+							</h3>
+						</div>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl text-gray-800 truncate"
+								amount={vat}
+								currency={data.mainCurrency}
+								main
+							/>
+							<PriceTag
+								amount={vat}
+								currency={data.mainCurrency}
+								class="text-base text-gray-600 truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{/if}
 
 				<span class="py-1" />
 
@@ -322,14 +418,14 @@
 						<span class="text-xl text-gray-850">Total</span>
 						<PriceTag
 							class="text-2xl text-gray-800"
-							amount={totalPrice}
+							amount={totalPriceWithVat}
 							currency={data.mainCurrency}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end text-gray-600"
-						amount={totalPrice}
+						amount={totalPriceWithVat}
 						currency={data.mainCurrency}
 						secondary
 					/>
@@ -338,9 +434,9 @@
 				<label class="checkbox-label">
 					<input type="checkbox" class="form-checkbox" name="teecees" form="checkout" required />
 					<span>
-						I agree to the <a href="/terms" target="_blank" class="text-link hover:underline"
-							>terms of service</a
-						>
+						I agree to the <a href="/terms" target="_blank" class="text-link hover:underline">
+							terms of service
+						</a>
 					</span>
 				</label>
 
@@ -349,6 +445,7 @@
 					class="btn btn-black btn-xl -mx-1 -mb-1 mt-1"
 					value="Proceed"
 					form="checkout"
+					disabled={isNaN(deliveryFees)}
 				/>
 			</article>
 		</div>

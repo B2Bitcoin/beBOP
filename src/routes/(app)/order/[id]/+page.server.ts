@@ -45,15 +45,29 @@ export async function load({ params, depends }) {
 					availableDate: item.product.availableDate,
 					shipping: item.product.shipping
 				},
+				...(item.customPrice && { customPrice: item.customPrice }),
 				picture: pictures.find((picture) => picture.productId === item.product._id),
 				digitalFiles: digitalFiles.filter(
 					(digitalFile) => digitalFile.productId === item.product._id
 				)
 			})),
 			totalPrice: {
-				amount: parseFloat(order.totalPrice.amount.toString()),
+				amount: order.totalPrice.amount,
 				currency: order.totalPrice.currency
 			},
+			shippingPrice: order.shippingPrice && {
+				amount: order.shippingPrice.amount,
+				currency: order.shippingPrice.currency
+			},
+			vat: order.vat && {
+				country: order.vat.country,
+				price: {
+					amount: order.vat.price.amount,
+					currency: order.vat.price.currency
+				},
+				rate: order.vat.rate
+			},
+			shippingAddress: order.shippingAddress,
 			notifications: order.notifications
 		},
 

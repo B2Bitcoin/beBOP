@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { COUNTRIES, COUNTRY_ALPHA3S, type CountryAlpha3 } from '$lib/types/Country';
+	import { COUNTRIES, COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
 	import { CURRENCIES, type Currency } from '$lib/types/Currency';
 	import { typedEntries } from '$lib/utils/typedEntries';
 	import type { DeliveryFees } from '$lib/types/DeliveryFees';
 
 	export let deliveryFees: DeliveryFees = {};
 	export let defaultCurrency: Currency;
+	export let disabled = false;
 
-	let feeCountryToAdd: CountryAlpha3 | 'default' = 'default';
+	let feeCountryToAdd: CountryAlpha2 | 'default' = 'default';
 
-	$: countriesWithNoFee = ['default' as const, ...COUNTRY_ALPHA3S].filter(
+	$: countriesWithNoFee = ['default' as const, ...COUNTRY_ALPHA2S].filter(
 		(country) => !deliveryFees[country]
 	);
 	$: feeCountryToAdd = countriesWithNoFee.includes(feeCountryToAdd)
@@ -19,7 +20,7 @@
 
 {#if countriesWithNoFee.length}
 	<div class="checkbox-label">
-		<select class="form-input max-w-[25rem]" bind:value={feeCountryToAdd}>
+		<select class="form-input max-w-[25rem]" {disabled} bind:value={feeCountryToAdd}>
 			{#each countriesWithNoFee as country}
 				<option value={country}>
 					{country === 'default' ? 'Other countries' : COUNTRIES[country]}
@@ -28,6 +29,7 @@
 		</select>
 		<button
 			type="button"
+			{disabled}
 			on:click={() =>
 				(deliveryFees[feeCountryToAdd] = structuredClone(deliveryFees.default) || {
 					amount: 0,
@@ -49,6 +51,7 @@
 				<input
 					class="form-input"
 					type="number"
+					{disabled}
 					name="deliveryFees[{country}].amount"
 					placeholder="Price"
 					step="any"
@@ -61,7 +64,7 @@
 
 			<label class="w-full">
 				Currency
-				<select name="deliveryFees[{country}].currency" class="form-input">
+				<select name="deliveryFees[{country}].currency" class="form-input" {disabled}>
 					{#each CURRENCIES as currency}
 						<option value={currency} selected={deliveryFee?.currency === currency}>
 							{currency}
@@ -73,6 +76,7 @@
 		<button
 			type="button"
 			class="text-red-500 underline text-left"
+			{disabled}
 			on:click={() => {
 				delete deliveryFees[country];
 				deliveryFees = { ...deliveryFees };
