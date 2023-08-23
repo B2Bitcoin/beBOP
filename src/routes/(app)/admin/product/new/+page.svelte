@@ -18,10 +18,7 @@
 	let formElement: HTMLFormElement;
 	let files: FileList;
 	let payWhatYouWant = false;
-<<<<<<< HEAD
 	let standalone = payWhatYouWant;
-=======
->>>>>>> 4cc966cfc7fe918936ef58b7dba0f1592b52e567
 	let typeElement: HTMLSelectElement;
 
 	let preorder = product?.preorder ?? false;

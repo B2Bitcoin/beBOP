@@ -228,11 +228,7 @@
 								</label>
 							</div>
 						{/if}
-<<<<<<< HEAD
 						{#if data.product.type !== 'subscription' && !data.product.standalone}
-=======
-						{#if data.product.type !== 'subscription'}
->>>>>>> 4cc966cfc7fe918936ef58b7dba0f1592b52e567
 							<label class="mb-2">
 								Amount: <select
 									name="quantity"
