@@ -100,23 +100,27 @@
 			</tr>
 		</thead>
 		<tbody class="bg-white divide-y divide-gray-200">
-			{#each data.subscriptions as subscription}
-				<tr>
-					<td class="px-6 py-4 whitespace-no-wrap"> {subscription._id}</td>
-					<td class="px-6 py-4 whitespace-no-wrap">
-						{subscriptionStatus(subscription)}
-					</td>
-					<td class="px-6 py-4 whitespace-no-wrap">
-						{format(subscription.updatedAt, 'MMMM dd, Y')}</td
-					>
-					<td class="px-6 py-4 whitespace-no-wrap">
-						{subscription.npub ? subscription.npub : ''}</td
-					>
-					<td class="px-6 py-4 whitespace-no-wrap">
-						{subscription.email ? subscription.email : ''}</td
-					>
-				</tr>
-			{/each}
+			{#if data.subscriptions.length > 0}
+				{#each data.subscriptions as subscription}
+					<tr>
+						<td class="px-6 py-4 whitespace-no-wrap"> {subscription._id}</td>
+						<td class="px-6 py-4 whitespace-no-wrap">
+							{subscriptionStatus(subscription)}
+						</td>
+						<td class="px-6 py-4 whitespace-no-wrap">
+							{format(subscription.updatedAt, 'MMMM dd, Y')}</td
+						>
+						<td class="px-6 py-4 whitespace-no-wrap">
+							{subscription.npub ? subscription.npub : ''}</td
+						>
+						<td class="px-6 py-4 whitespace-no-wrap">
+							{subscription.email ? subscription.email : ''}</td
+						>
+					</tr>
+				{/each}
+			{:else}
+				<p>empty data !</p>
+			{/if}
 		</tbody>
 	</table>
 </div>

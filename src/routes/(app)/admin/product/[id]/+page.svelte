@@ -64,15 +64,17 @@
 			>Edit a product</a
 		>
 	</li>
-	<li class="mr-2">
-		<a
-			href="/admin/product/{data.product._id}/subscribers"
-			class="{$page.url.pathname === '/admin/product/' + data.product._id + '/subscribers'
-				? 'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500'
-				: 'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300'} "
-			>Subscribers</a
-		>
-	</li>
+	{#if data.product.type === 'subscription'}
+		<li class="mr-2">
+			<a
+				href="/admin/product/{data.product._id}/subscribers"
+				class="{$page.url.pathname === '/admin/product/' + data.product._id + '/subscribers'
+					? 'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500'
+					: 'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300'} "
+				>Subscribers</a
+			>
+		</li>
+	{/if}
 </ul>
 
 <div class="flex flex-col">
