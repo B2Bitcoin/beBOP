@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
-	import { addDays, addMonths } from 'date-fns';
+	import { addDays } from 'date-fns';
 
 	export let data;
 	let beginsAt = new Date().toJSON().slice(0, 10);
