@@ -16,6 +16,11 @@
 
 	let quantity = 1;
 	let loading = false;
+	const endsAt = data.discount[0] ? new Date(data.discount[0].endsAt).getTime() : 0; // Convert to timestamp
+	const currentTime = Date.now();
+	const timeDifference = endsAt - currentTime;
+
+	const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
 	let customAmount =
 		data.product.price.amount !== 0 &&
 		toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency) < 0.01
@@ -150,10 +155,14 @@
 					/>
 				</div>
 
-				{#if 0}
+				{#if data.product.type === 'subscription' && data.discount.length > 0}
 					<hr class="border-gray-300" />
-					<h3 class="text-gray-850 text-[22px]">50% off for 48h</h3>
-					<GoalProgress text="1h32min left" goal={600} progress={444} />
+					<h3 class="text-gray-850 text-[22px]">
+						{data.discount[0].percentage}% off for {hoursDifference}h
+					</h3>
+					{#if 0}
+						<GoalProgress text="1h32min left" goal={600} progress={444} />
+					{/if}
 					<hr class="border-gray-300" />
 					<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
 						<IconInfo class="text-[#E4C315]" />

@@ -52,10 +52,14 @@ export const load: PageServerLoad = async ({ params }) => {
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
 		.toArray();
-
+	const discount = await collections.discounts
+		.find({ productIds: { $in: [product._id] }, endsAt: { $gt: new Date(Date.now()) } })
+		.sort({ createdAt: 1 })
+		.toArray();
 	return {
 		product,
 		pictures,
+		discount,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
 };
