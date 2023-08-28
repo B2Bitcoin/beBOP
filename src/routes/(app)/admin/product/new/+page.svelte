@@ -2,7 +2,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
-	import { CURRENCIES, MININUM_PER_CURRENCY, SATOSHIS_PER_BTC } from '$lib/types/Currency';
+	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId.js';
 	import { upperFirst } from '$lib/utils/upperFirst';
