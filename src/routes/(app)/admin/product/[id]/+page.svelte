@@ -132,7 +132,7 @@
 				class="form-checkbox"
 				type="checkbox"
 				name="displayShortDescription"
-				value={data.product.displayShortDescription}
+				bind:checked={data.product.displayShortDescription}
 			/>
 			Display the short description on product page
 		</label>
