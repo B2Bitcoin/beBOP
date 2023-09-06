@@ -63,13 +63,13 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex flex-wrap gap-2">
-		<div class="flex flex-col gap-2 w-12 min-w-[48px] hidden sm:inline py-12">
+		<div class="flex flex-col gap-2 w-14 min-w-[48px] py-12 hidden md:block">
 			{#if data.pictures.length > 1}
 				{#each data.pictures as picture, i}
 					<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
 						<Picture
 							{picture}
-							class="h-12 w-12 rounded-sm {picture === currentPicture
+							class="h-12 w-12 rounded-sm m-2 {picture === currentPicture
 								? 'ring-2 ring-link ring-offset-2'
 								: ''} cursor-pointer"
 						/>
@@ -90,7 +90,7 @@
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
-				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:hidden py-12">
+				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:inline md:hidden py-12">
 					{#if data.pictures.length > 1}
 						{#each data.pictures as picture, i}
 							<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
