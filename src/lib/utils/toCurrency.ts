@@ -19,8 +19,9 @@ export function toCurrency(
 			? bitcoinAmount
 			: bitcoinAmount * get(exchangeRate)[`BTC_${targetCurrency}` as const];
 
+	// Deleted Math.round() here think it cause the total not to match in different page
 	return (
-		Math.round(ret * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
+		(ret * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
 		Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])
 	);
 }
