@@ -3,7 +3,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
+	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { page } from '$app/stores';
 
@@ -16,6 +16,7 @@
 	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
 	let standalone = data.product.standalone;
+	let curr: 'SAT' | 'BTC';
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -32,10 +33,12 @@
 	function checkForm(event: SubmitEvent) {
 		if (
 			priceAmountElement.value &&
-			+priceAmountElement.value < 1 / SATOSHIS_PER_BTC &&
+			+priceAmountElement.value <= MININUM_PER_CURRENCY[curr] &&
 			!payWhatYouWant
 		) {
-			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
+			priceAmountElement.setCustomValidity(
+				'Price must be greater than ' + MININUM_PER_CURRENCY[curr] + ' ' + curr
+			);
 			priceAmountElement.reportValidity();
 			event.preventDefault();
 			return;
@@ -111,7 +114,12 @@
 			<label class="w-full">
 				Price currency
 
-				<select name="priceCurrency" class="form-input">
+				<select
+					name="priceCurrency"
+					class="form-input"
+					bind:value={curr}
+					on:input={() => priceAmountElement?.setCustomValidity('')}
+				>
 					{#each CURRENCIES as currency}
 						<option value={currency} selected={data.product.price.currency === currency}
 							>{currency}</option
@@ -150,7 +158,7 @@
 				class="form-checkbox"
 				type="checkbox"
 				name="displayShortDescription"
-				value={data.product.displayShortDescription}
+				bind:checked={data.product.displayShortDescription}
 			/>
 			Display the short description on product page
 		</label>
