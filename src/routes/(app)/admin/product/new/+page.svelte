@@ -2,7 +2,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
-	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
+	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId.js';
 	import { upperFirst } from '$lib/utils/upperFirst';
@@ -31,6 +31,7 @@
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
 
+	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
 	$: if (!enablePreorder) {
@@ -50,10 +51,12 @@
 		try {
 			if (
 				priceAmountElement.value &&
-				+priceAmountElement.value < 1 / SATOSHIS_PER_BTC &&
+				+priceAmountElement.value <= MININUM_PER_CURRENCY[curr] &&
 				!payWhatYouWant
 			) {
-				priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
+				priceAmountElement.setCustomValidity(
+					'Price must be greater than ' + MININUM_PER_CURRENCY[curr] + ' ' + curr
+				);
 				priceAmountElement.reportValidity();
 				event.preventDefault();
 				return;
@@ -66,6 +69,7 @@
 				return;
 			} else {
 				priceAmountElement.setCustomValidity('');
+				typeElement.setCustomValidity('');
 			}
 
 			if (!product) {
@@ -179,7 +183,12 @@
 		<label class="w-full form-label">
 			Price currency
 
-			<select name="priceCurrency" class="form-input">
+			<select
+				name="priceCurrency"
+				class="form-input"
+				bind:value={curr}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+			>
 				{#each CURRENCIES as currency}
 					<option value={currency} selected={priceCurrency === currency}>
 						{currency}
@@ -193,7 +202,9 @@
 			class="form-checkbox"
 			type="checkbox"
 			bind:checked={payWhatYouWant}
-			on:input={() => priceAmountElement?.setCustomValidity('')}
+			on:input={() => {
+				priceAmountElement?.setCustomValidity(''), typeElement.setCustomValidity('');
+			}}
 			name="payWhatYouWant"
 		/>
 		This is a pay-what-you-want product

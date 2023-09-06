@@ -58,9 +58,13 @@
 					<p class="text-xl">Your order awaits confirmation from the seller.</p>
 				{:else}
 					<ul>
-						<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
 						<li>
-							Payment amount: <code class="break-words break-all">
+							Payment address: <code class="break-words break-all"
+								>{data.order.payment.address}</code
+							>
+						</li>
+						<li>
+							Payment amount: <code class="break-words">
 								{(data.order.payment.method === 'bitcoin'
 									? toBitcoins(data.order.totalPrice.amount, data.order.totalPrice.currency)
 									: toSatoshis(data.order.totalPrice.amount, data.order.totalPrice.currency)
