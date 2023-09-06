@@ -104,7 +104,7 @@
 						{/each}
 					{/if}
 				</div>
-				{#if data.product.description.trim()}
+				{#if data.product.description.trim() || data.product.shortDescription.trim()}
 					<hr class="border-gray-300" />
 					<h2 class="text-gray-850 text-[22px]">
 						{data.product.displayShortDescription && data.product.shortDescription
