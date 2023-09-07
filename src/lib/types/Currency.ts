@@ -26,8 +26,9 @@ export function parsePriceAmount(
 	currency: Currency,
 	payWhatYouWant: boolean
 ): number {
+	//deleted Math.round()
 	const priceAmount =
-		Math.round(parseFloat(amount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency])) /
+		(parseFloat(amount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency])) /
 		Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency]);
 	if (!payWhatYouWant) {
 		if (priceAmount <= MININUM_PER_CURRENCY[currency]) {

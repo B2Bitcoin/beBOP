@@ -20,6 +20,7 @@
 	let payWhatYouWant = false;
 	let standalone = payWhatYouWant;
 	let typeElement: HTMLSelectElement;
+	let freeProduct = false;
 
 	let preorder = product?.preorder ?? false;
 	let name = product?.name ? product.name + ' (duplicate)' : '';
@@ -52,10 +53,15 @@
 			if (
 				priceAmountElement.value &&
 				+priceAmountElement.value <= MININUM_PER_CURRENCY[curr] &&
-				!payWhatYouWant
+				!payWhatYouWant &&
+				!freeProduct
 			) {
 				priceAmountElement.setCustomValidity(
-					'Price must be greater than ' + MININUM_PER_CURRENCY[curr] + ' ' + curr
+					'Price must be greater than or equal to' +
+						MININUM_PER_CURRENCY[curr] +
+						' ' +
+						curr +
+						' or might be free'
 				);
 				priceAmountElement.reportValidity();
 				event.preventDefault();
@@ -173,6 +179,7 @@
 				name="priceAmount"
 				placeholder="Price"
 				step="any"
+				disabled={freeProduct}
 				bind:value={priceAmount}
 				bind:this={priceAmountElement}
 				on:input={() => priceAmountElement?.setCustomValidity('')}
@@ -212,6 +219,10 @@
 	<label class="checkbox-label">
 		<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
 		This is a standalone product
+	</label>
+	<label class="checkbox-label">
+		<input class="form-checkbox" type="checkbox" bind:checked={freeProduct} name="free" />
+		This is a free product
 	</label>
 
 	<label class="form-label">

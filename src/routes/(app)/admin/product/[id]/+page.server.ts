@@ -83,7 +83,9 @@ export const actions: Actions = {
 			parsed.shipping = false;
 		}
 
-		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency, parsed.payWhatYouWant);
+		const priceAmount = parsed.free
+			? 0
+			: parsePriceAmount(parsed.priceAmount!, priceCurrency, parsed.payWhatYouWant);
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },

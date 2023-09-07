@@ -7,7 +7,10 @@ export const productBaseSchema = {
 	name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 	description: z.string().trim().max(10_000),
 	shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
-	priceAmount: z.string().regex(/^\d+(\.\d+)?$/),
+	priceAmount: z
+		.string()
+		.regex(/^\d+(\.\d+)?$/)
+		.optional(),
 	priceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
 	availableDate: z.date({ coerce: true }).optional(),
 	preorder: z.boolean({ coerce: true }).default(false),
@@ -17,5 +20,6 @@ export const productBaseSchema = {
 	applyDeliveryFeesOnlyOnce: z.boolean({ coerce: true }).default(false),
 	requireSpecificDeliveryFee: z.boolean({ coerce: true }).default(false),
 	payWhatYouWant: z.boolean({ coerce: true }).default(false),
-	standalone: z.boolean({ coerce: true }).default(false)
+	standalone: z.boolean({ coerce: true }).default(false),
+	free: z.boolean({ coerce: true }).default(false)
 };

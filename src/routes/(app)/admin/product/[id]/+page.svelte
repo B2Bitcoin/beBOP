@@ -16,6 +16,7 @@
 	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
 	let standalone = data.product.standalone;
+	let freeProduct = data.product.free;
 	let curr: 'SAT' | 'BTC';
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
@@ -34,10 +35,15 @@
 		if (
 			priceAmountElement.value &&
 			+priceAmountElement.value <= MININUM_PER_CURRENCY[curr] &&
-			!payWhatYouWant
+			!payWhatYouWant &&
+			!freeProduct
 		) {
 			priceAmountElement.setCustomValidity(
-				'Price must be greater than ' + MININUM_PER_CURRENCY[curr] + ' ' + curr
+				'Price must be greater than or equal to' +
+					MININUM_PER_CURRENCY[curr] +
+					' ' +
+					curr +
+					' or might be free'
 			);
 			priceAmountElement.reportValidity();
 			event.preventDefault();
@@ -102,6 +108,7 @@
 					name="priceAmount"
 					placeholder="Price"
 					step="any"
+					disabled={freeProduct}
 					value={data.product.price.amount
 						.toLocaleString('en', { maximumFractionDigits: 8 })
 						.replace(/,/g, '')}
@@ -141,6 +148,10 @@
 		<label class="checkbox-label">
 			<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
 			This is a standalone product
+		</label>
+		<label class="checkbox-label">
+			<input class="form-checkbox" type="checkbox" bind:checked={freeProduct} name="free" />
+			This is a free product
 		</label>
 		<label>
 			Short description
