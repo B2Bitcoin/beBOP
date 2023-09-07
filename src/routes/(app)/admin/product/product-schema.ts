@@ -10,7 +10,7 @@ export const productBaseSchema = {
 	priceAmount: z
 		.string()
 		.regex(/^\d+(\.\d+)?$/)
-		.optional(),
+		.default('0'),
 	priceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
 	availableDate: z.date({ coerce: true }).optional(),
 	preorder: z.boolean({ coerce: true }).default(false),

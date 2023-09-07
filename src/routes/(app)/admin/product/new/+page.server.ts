@@ -72,7 +72,7 @@ export const actions: Actions = {
 
 		const priceAmount = parsed.free
 			? 0
-			: parsePriceAmount(parsed.priceAmount!, parsed.priceCurrency, parsed.payWhatYouWant);
+			: parsePriceAmount(parsed.priceAmount, parsed.priceCurrency, parsed.payWhatYouWant);
 
 		if (parsed.type !== 'resource') {
 			delete parsed.availableDate;
@@ -209,7 +209,7 @@ export const actions: Actions = {
 					name: duplicate.name,
 					price: {
 						currency: duplicate.priceCurrency,
-						amount: parseFloat(duplicate.priceAmount!)
+						amount: parseFloat(duplicate.priceAmount)
 					},
 					type: product.type,
 					availableDate: duplicate.availableDate || undefined,
