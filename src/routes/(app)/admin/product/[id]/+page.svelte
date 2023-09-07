@@ -15,6 +15,7 @@
 	let shipping = data.product.shipping;
 	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
+	let dateChanged = false;
 	let standalone = data.product.standalone;
 	let freeProduct = data.product.free;
 	let curr: 'SAT' | 'BTC';
@@ -198,7 +199,8 @@
 						type="date"
 						name="availableDate"
 						bind:value={availableDateStr}
-						min={addDays(new Date(), 1).toJSON().slice(0, 10)}
+						on:change={() => (dateChanged = true)}
+						min={dateChanged ? addDays(new Date(), 1).toJSON().slice(0, 10) : null}
 					/>
 					<span class="text-sm text-gray-600 mt-2 block"
 						>Leave empty if your product is immediately available. Press
