@@ -104,6 +104,7 @@ export const actions: Actions = {
 					preorder: parsed.preorder,
 					payWhatYouWant: parsed.payWhatYouWant,
 					standalone: parsed.payWhatYouWant ? parsed.payWhatYouWant : parsed.standalone,
+					free: parsed.free,
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
 					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
