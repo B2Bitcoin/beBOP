@@ -62,7 +62,7 @@
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex flex-wrap gap-2">
+	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
 		<div class="flex flex-col gap-2 w-14 min-w-[48px] py-12 hidden md:block">
 			{#if data.pictures.length > 1}
 				{#each data.pictures as picture, i}
