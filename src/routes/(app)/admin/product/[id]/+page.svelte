@@ -18,6 +18,7 @@
 	let standalone = data.product.standalone;
 	let freeProduct = data.product.free;
 	let curr: 'SAT' | 'BTC';
+	let disableDate = true;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -197,8 +198,9 @@
 						class="form-input"
 						type="date"
 						name="availableDate"
+						disabled={availableDate && availableDate.getTime() < Date.now() && disableDate}
 						bind:value={availableDateStr}
-						min={addDays(new Date(), 1).toJSON().slice(0, 10)}
+						min={changedDate ? addDays(new Date(), 1).toJSON().slice(0, 10) : null}
 					/>
 					<span class="text-sm text-gray-600 mt-2 block"
 						>Leave empty if your product is immediately available. Press
@@ -208,7 +210,10 @@
 						> to remove the date.</span
 					>
 				</label>
-
+				<label class="checkbox-label">
+					<input class="form-checkbox" type="checkbox" bind:checked={disableDate} />
+					🔐
+				</label>
 				<label class="checkbox-label {enablePreorder ? '' : 'cursor-not-allowed text-gray-450'}">
 					<input
 						class="form-checkbox {enablePreorder ? '' : 'cursor-not-allowed border-gray-450'}"
