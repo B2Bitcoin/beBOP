@@ -83,7 +83,9 @@ export const actions: Actions = {
 			parsed.shipping = false;
 		}
 
-		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency, parsed.payWhatYouWant);
+		const priceAmount = parsed.free
+			? 0
+			: parsePriceAmount(parsed.priceAmount, priceCurrency, parsed.payWhatYouWant);
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
@@ -102,6 +104,7 @@ export const actions: Actions = {
 					preorder: parsed.preorder,
 					payWhatYouWant: parsed.payWhatYouWant,
 					standalone: parsed.payWhatYouWant ? parsed.payWhatYouWant : parsed.standalone,
+					free: parsed.free,
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
 					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
