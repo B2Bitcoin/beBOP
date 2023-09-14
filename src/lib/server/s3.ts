@@ -21,7 +21,7 @@ await s3client
 			CORSConfiguration: {
 				CORSRules: [
 					{
-						AllowedMethods: ['PUT'],
+						AllowedMethods: ['PUT', 'HEAD', 'OPTIONS', 'GET'],
 						// todo: change to production domain
 						AllowedOrigins: ['*'],
 						AllowedHeaders: ['*'],
