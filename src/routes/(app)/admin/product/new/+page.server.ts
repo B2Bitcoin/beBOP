@@ -72,6 +72,8 @@ export const actions: Actions = {
 
 		const priceAmount = parsed.free
 			? 0
+			: !parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0'
+			? 0
 			: parsePriceAmount(parsed.priceAmount, parsed.priceCurrency, parsed.payWhatYouWant);
 
 		if (parsed.type !== 'resource') {
@@ -85,6 +87,10 @@ export const actions: Actions = {
 
 		if (parsed.type === 'donation') {
 			parsed.shipping = false;
+		}
+
+		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
+			parsed.free = true;
 		}
 
 		const pendingPicture = await collections.pendingPictures.findOne({
