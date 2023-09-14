@@ -27,7 +27,7 @@
 	let shipping = product?.shipping ?? false;
 	let type = product?.type ?? 'resource';
 	let priceAmount = product?.price.amount ?? 0;
-	let priceCurrency = product?.price.currency ?? data.priceReferenceCurrency;
+	let priceCurrency = product?.price.currency ?? data.currencies.priceReference;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
 	let freeProduct = false;
@@ -343,7 +343,7 @@
 		{#if shipping}
 			{#if data.deliveryFees.mode === 'perItem'}
 				<DeliveryFeesSelector
-					defaultCurrency={product?.price.currency ?? data.priceReferenceCurrency}
+					defaultCurrency={product?.price.currency ?? data.currencies.priceReference}
 					deliveryFees={product?.deliveryFees ?? {}}
 					disabled={submitting}
 				/>
