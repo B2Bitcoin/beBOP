@@ -15,6 +15,7 @@
 	import { computeDeliveryFees } from '$lib/types/Cart.js';
 	import { typedKeys } from '$lib/utils/typedKeys.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -82,17 +83,12 @@
 		isDigital || data.vatSingleCountry ? data.vatRate : data.vatRates[actualCountry] ?? 0;
 
 	$: totalPrice =
-		sum(
-			items.map((item) =>
-				item.customPrice
-					? toCurrency(data.currencies.main, item.customPrice.amount, item.customPrice.currency) *
-					  item.quantity
-					: toCurrency(
-							data.currencies.main,
-							item.product.price.amount,
-							item.product.price.currency
-					  ) * item.quantity
-			)
+		sumCurrency(
+			data.currencies.main,
+			items.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount: (item.customPrice || item.product.price).amount * item.quantity
+			}))
 		) + (deliveryFees || 0);
 
 	$: vat = totalPrice * (actualVatRate / 100);

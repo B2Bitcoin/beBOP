@@ -21,8 +21,8 @@
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import { slide } from 'svelte/transition';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
-	import { toCurrency } from '$lib/utils/toCurrency';
 	import { currencies } from '$lib/stores/currencies.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 
 	export let data;
 
@@ -38,14 +38,12 @@
 	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(
-		items.map((item) =>
-			item.customPrice
-				? toCurrency(data.currencies.main, item.customPrice.amount, item.customPrice.currency) *
-				  item.quantity
-				: toCurrency(data.currencies.main, item.product.price.amount, item.product.price.currency) *
-				  item.quantity
-		)
+	$: totalPrice = sumCurrency(
+		data.currencies.main,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount: (item.customPrice || item.product.price).amount * item.quantity
+		}))
 	);
 	$: vat = totalPrice * (data.vatRate / 100);
 	$: totalPriceWithVat = totalPrice + vat;
