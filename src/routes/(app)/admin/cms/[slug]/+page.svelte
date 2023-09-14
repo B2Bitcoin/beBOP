@@ -91,10 +91,7 @@
 
 	<div class="flex flex-row justify-between gap-2">
 		<input type="submit" class="btn btn-blue text-white" formaction="?/update" value="Update" />
-		<a
-			href="/{data.cmsPage._id}{data.cmsPage.maintenanceDisplay ? '?displayMaintenance=true' : ''}"
-			class="btn btn-gray">View</a
-		>
+		<a href="/{data.cmsPage._id}" class="btn btn-gray">View</a>
 
 		<input
 			type="submit"

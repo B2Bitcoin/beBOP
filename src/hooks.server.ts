@@ -7,6 +7,7 @@ import { addYears } from 'date-fns';
 import '$lib/server/locks';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
+import type { CMSPage } from '$lib/types/CmsPage';
 // import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
@@ -50,6 +51,14 @@ export const handle = (async ({ event, resolve }) => {
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
 
 	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
+	const cmsPageMaintenanceAvailable = await collections.cmsPages
+		.find({
+			maintenanceDisplay: true
+		})
+		.project<Pick<CMSPage, '_id'>>({
+			_id: 1
+		})
+		.toArray();
 	if (isAdminUrl && ADMIN_LOGIN && ADMIN_PASSWORD) {
 		const authorization = event.request.headers.get('authorization');
 
@@ -75,6 +84,7 @@ export const handle = (async ({ event, resolve }) => {
 			});
 		}
 	}
+	const slug = event.url.pathname.split('/')[1];
 
 	if (
 		runtimeConfig.isMaintenance &&
@@ -82,7 +92,7 @@ export const handle = (async ({ event, resolve }) => {
 		event.url.pathname !== '/logo' &&
 		!event.url.pathname.startsWith('/.well-known/') &&
 		!event.url.pathname.startsWith('/picture/raw/') &&
-		!event.url.searchParams.get('displayMaintenance') &&
+		!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
 		!runtimeConfig.maintenanceIps.split(',').includes(event.getClientAddress())
 	) {
 		if (event.request.method !== 'GET') {
