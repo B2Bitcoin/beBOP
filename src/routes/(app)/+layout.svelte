@@ -4,7 +4,7 @@
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { onMount, setContext } from 'svelte';
+	import { onMount } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { navigating, page } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';

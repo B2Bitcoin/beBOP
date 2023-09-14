@@ -5,13 +5,11 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { COUNTRIES } from '$lib/types/Country';
-	import { sum } from '$lib/utils/sum';
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { computeDeliveryFees } from '$lib/types/Cart.js';
 	import { typedKeys } from '$lib/utils/typedKeys.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
