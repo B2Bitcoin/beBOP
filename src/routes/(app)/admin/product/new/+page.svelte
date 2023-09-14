@@ -48,7 +48,6 @@
 
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
-
 		try {
 			if (
 				priceAmountElement.value &&
@@ -395,6 +394,9 @@
 		type="submit"
 		class="btn btn-blue self-start text-white"
 		disabled={submitting}
+		on:click={() => {
+			priceAmountElement?.setCustomValidity('');
+		}}
 		value="Submit"
 	/>
 </form>

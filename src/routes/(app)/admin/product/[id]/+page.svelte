@@ -286,7 +286,13 @@
 		{/if}
 
 		<div class="flex justify-between gap-2">
-			<button type="submit" class="btn btn-blue">Update</button>
+			<button
+				type="submit"
+				class="btn btn-blue"
+				on:click={() => {
+					priceAmountElement?.setCustomValidity('');
+				}}>Update</button
+			>
 			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
 			<a href="/admin/product/new?duplicate_from={data.product._id}" class="btn btn-gray">
 				Duplicate
