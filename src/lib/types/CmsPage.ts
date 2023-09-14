@@ -6,6 +6,7 @@ export interface CMSPage extends Timestamps {
 	shortDescription: string;
 	content: string;
 	fullScreen: boolean;
+	maintenanceDisplay: boolean;
 }
 
 export const MAX_CONTENT_LIMIT = 20000;
