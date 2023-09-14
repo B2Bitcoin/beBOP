@@ -5,16 +5,16 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { COUNTRIES } from '$lib/types/Country';
-	import { sum } from '$lib/utils/sum';
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { toCurrency } from '$lib/utils/toCurrency.js';
-	import { computeDeliveryFees } from '$lib/types/Cart.js';
-	import { typedKeys } from '$lib/utils/typedKeys.js';
+	import { computeDeliveryFees } from '$lib/types/Cart';
+	import { typedKeys } from '$lib/utils/typedKeys';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -74,7 +74,7 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: deliveryFees = computeDeliveryFees(data.mainCurrency, country, items, data.deliveryFees);
+	$: deliveryFees = computeDeliveryFees(data.currencies.main, country, items, data.deliveryFees);
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
@@ -82,17 +82,15 @@
 		isDigital || data.vatSingleCountry ? data.vatRate : data.vatRates[actualCountry] ?? 0;
 
 	$: totalPrice =
-		sum(
-			items.map((item) =>
-				item.customPrice
-					? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
-					  item.quantity
-					: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-					  item.quantity
-			)
+		sumCurrency(
+			data.currencies.main,
+			items.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount: (item.customPrice || item.product.price).amount * item.quantity
+			}))
 		) + (deliveryFees || 0);
 
-	$: vat = totalPrice * (actualVatRate / 100);
+	$: vat = fixCurrencyRounding(totalPrice * (actualVatRate / 100), data.currencies.main);
 	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
@@ -358,12 +356,12 @@
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
 								amount={deliveryFees}
-								currency={data.mainCurrency}
+								currency={data.currencies.main}
 								main
 							/>
 							<PriceTag
 								amount={deliveryFees}
-								currency={data.mainCurrency}
+								currency={data.currencies.main}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
@@ -397,12 +395,12 @@
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
 								amount={vat}
-								currency={data.mainCurrency}
+								currency={data.currencies.main}
 								main
 							/>
 							<PriceTag
 								amount={vat}
-								currency={data.mainCurrency}
+								currency={data.currencies.main}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
@@ -419,14 +417,14 @@
 						<PriceTag
 							class="text-2xl text-gray-800"
 							amount={totalPriceWithVat}
-							currency={data.mainCurrency}
+							currency={data.currencies.main}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={data.currencies.main}
 						secondary
 					/>
 				</div>

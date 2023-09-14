@@ -1,5 +1,5 @@
-import { collections } from '$lib/server/database.js';
-import type { EmailNotification } from '$lib/types/EmailNotification.js';
+import { collections } from '$lib/server/database';
+import type { EmailNotification } from '$lib/types/EmailNotification';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 

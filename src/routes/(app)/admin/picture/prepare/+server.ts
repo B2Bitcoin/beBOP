@@ -1,7 +1,7 @@
 import { S3_BUCKET } from '$env/static/private';
-import { collections } from '$lib/server/database.js';
-import { s3client, secureLink } from '$lib/server/s3.js';
-import { generateId } from '$lib/utils/generateId.js';
+import { collections } from '$lib/server/database';
+import { s3client, secureLink } from '$lib/server/s3';
+import { generateId } from '$lib/utils/generateId';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import * as mimeTypes from 'mime-types';

@@ -4,7 +4,7 @@
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { generateId } from '$lib/utils/generateId.js';
+	import { generateId } from '$lib/utils/generateId';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import PictureComponent from '$lib/components/Picture.svelte';
@@ -27,7 +27,7 @@
 	let shipping = product?.shipping ?? false;
 	let type = product?.type ?? 'resource';
 	let priceAmount = product?.price.amount ?? 0;
-	let priceCurrency = product?.price.currency ?? data.priceReferenceCurrency;
+	let priceCurrency = product?.price.currency ?? data.currencies.priceReference;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
 	let freeProduct = false;
@@ -343,7 +343,7 @@
 		{#if shipping}
 			{#if data.deliveryFees.mode === 'perItem'}
 				<DeliveryFeesSelector
-					defaultCurrency={product?.price.currency ?? data.priceReferenceCurrency}
+					defaultCurrency={product?.price.currency ?? data.currencies.priceReference}
 					deliveryFees={product?.deliveryFees ?? {}}
 					disabled={submitting}
 				/>

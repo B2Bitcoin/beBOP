@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { format } from 'date-fns';
-	import type { PaidSubscription } from '$lib/types/PaidSubscription.js';
+	import type { PaidSubscription } from '$lib/types/PaidSubscription';
 
 	export let data;
 	function subscriptionStatus(subscription: PaidSubscription) {

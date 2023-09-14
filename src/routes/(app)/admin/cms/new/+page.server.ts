@@ -1,6 +1,6 @@
-import { collections } from '$lib/server/database.js';
-import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
-import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product.js';
+import { collections } from '$lib/server/database';
+import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
+import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 

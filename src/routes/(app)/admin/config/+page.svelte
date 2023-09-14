@@ -23,7 +23,7 @@
 		Main currency
 		<select name="mainCurrency" class="form-input max-w-[25rem]">
 			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
-				<option value={currency} selected={data.mainCurrency === currency}>{currency}</option>
+				<option value={currency} selected={data.currencies.main === currency}>{currency}</option>
 			{/each}
 		</select>
 	</label>
@@ -31,9 +31,11 @@
 	<label class="form-label">
 		Secondary currency
 		<select name="secondaryCurrency" class="form-input max-w-[25rem]">
-			<option value="" selected={!data.secondaryCurrency} />
+			<option value="" selected={!data.currencies.secondary} />
 			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
-				<option value={currency} selected={data.secondaryCurrency === currency}>{currency}</option>
+				<option value={currency} selected={data.currencies.secondary === currency}
+					>{currency}</option
+				>
 			{/each}
 		</select>
 	</label>
@@ -42,7 +44,7 @@
 		Price reference currency (to avoid exchange rate fluctuations)
 		<select name="priceReferenceCurrency" class="form-input max-w-[25rem]">
 			{#each CURRENCIES as currency}
-				<option value={currency} selected={data.priceReferenceCurrency === currency}>
+				<option value={currency} selected={data.currencies.priceReference === currency}>
 					{currency}
 				</option>
 			{/each}

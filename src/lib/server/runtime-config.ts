@@ -3,6 +3,7 @@ import { collections } from './database';
 import { exchangeRate } from '$lib/stores/exchangeRate';
 import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 import type { DeliveryFees } from '$lib/types/DeliveryFees';
+import { currencies } from '$lib/stores/currencies';
 
 const defaultConfig = {
 	BTC_EUR: 30_000,
@@ -70,6 +71,12 @@ exchangeRate.set({
 	BTC_SAT: defaultConfig.BTC_SAT
 });
 
+currencies.set({
+	main: defaultConfig.mainCurrency,
+	secondary: defaultConfig.secondaryCurrency,
+	priceReference: defaultConfig.priceReferenceCurrency
+});
+
 export type RuntimeConfig = typeof defaultConfig;
 type ConfigKey = keyof RuntimeConfig;
 export type RuntimeConfigItem = {
@@ -102,6 +109,12 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 		BTC_CHF: runtimeConfig.BTC_CHF,
 		BTC_USD: runtimeConfig.BTC_USD,
 		BTC_SAT: runtimeConfig.BTC_SAT
+	});
+
+	currencies.set({
+		main: runtimeConfig.mainCurrency,
+		secondary: runtimeConfig.secondaryCurrency,
+		priceReference: runtimeConfig.priceReferenceCurrency
 	});
 
 	if (!runtimeConfig.lnurlPayMetadataJwtSigningKey) {

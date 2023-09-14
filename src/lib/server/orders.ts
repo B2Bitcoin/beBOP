@@ -16,6 +16,8 @@ import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees } from '$lib/types/Cart';
 import { vatRates } from './vat-rates';
 import type { Currency } from '$lib/types/Currency';
+import { sumCurrency } from '$lib/utils/sumCurrency';
+import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -194,15 +196,19 @@ export async function createOrder(
 
 	let totalSatoshis = toSatoshis(deliveryFees, runtimeConfig.mainCurrency);
 
-	for (const item of items) {
+	const itemPrices = items.map((item) => {
 		const price = parseFloat(item.product.price.amount.toString());
 
 		const quantity = item.quantity;
 		if (item.product.type !== 'subscription' && item.customPrice) {
 			const customPrice = parseFloat(item.customPrice.amount.toString());
-			totalSatoshis += toSatoshis(customPrice * quantity, item.customPrice.currency);
-		} else totalSatoshis += toSatoshis(price * quantity, item.product.price.currency);
-	}
+			return { amount: customPrice * quantity, currency: item.customPrice.currency };
+		} else {
+			return { amount: price * quantity, currency: item.product.price.currency };
+		}
+	});
+
+	totalSatoshis += sumCurrency('SAT', itemPrices);
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
@@ -211,10 +217,11 @@ export async function createOrder(
 			: {
 					country: vatCountry,
 					price: {
-						currency: 'SAT',
-						amount: Math.round(
-							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100)
-						)
+						amount: fixCurrencyRounding(
+							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
+							'SAT'
+						),
+						currency: 'SAT'
 					},
 					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
 			  };
