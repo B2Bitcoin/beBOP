@@ -5,8 +5,8 @@ import {
 	getBalance,
 	getBlockchainInfo
 } from '$lib/server/bitcoin';
-import { collections } from '$lib/server/database.js';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { collections } from '$lib/server/database';
+import { runtimeConfig } from '$lib/server/runtime-config';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 

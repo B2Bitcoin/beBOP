@@ -9,8 +9,8 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
-	import { isPreorder as isPreorderFn } from '$lib/types/Product.js';
-	import { toCurrency } from '$lib/utils/toCurrency.js';
+	import { isPreorder as isPreorderFn } from '$lib/types/Product';
+	import { toCurrency } from '$lib/utils/toCurrency';
 
 	export let data;
 

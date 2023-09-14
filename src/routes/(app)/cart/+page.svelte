@@ -5,7 +5,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { sumCurrency } from '$lib/utils/sumCurrency.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	export let data;
 

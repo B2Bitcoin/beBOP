@@ -1,6 +1,6 @@
 import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database';
-import { getS3DownloadLink, s3client } from '$lib/server/s3.js';
+import { getS3DownloadLink, s3client } from '$lib/server/s3';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { error, redirect } from '@sveltejs/kit';
 

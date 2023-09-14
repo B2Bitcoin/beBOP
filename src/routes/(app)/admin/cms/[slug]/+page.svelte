@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
+	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data;

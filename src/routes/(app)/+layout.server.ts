@@ -1,10 +1,10 @@
-import { countryNameByAlpha2 } from '$lib/server/country-codes.js';
-import { collections } from '$lib/server/database.js';
+import { countryNameByAlpha2 } from '$lib/server/country-codes';
+import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { vatRates } from '$lib/server/vat-rates.js';
-import type { Product } from '$lib/types/Product.js';
+import { vatRates } from '$lib/server/vat-rates';
+import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
-import { filterUndef } from '$lib/utils/filterUndef.js';
+import { filterUndef } from '$lib/utils/filterUndef';
 
 export async function load({ depends, locals }) {
 	depends(UrlDependency.ExchangeRate);

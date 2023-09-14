@@ -21,8 +21,8 @@
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import { slide } from 'svelte/transition';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
-	import { currencies } from '$lib/stores/currencies.js';
-	import { sumCurrency } from '$lib/utils/sumCurrency.js';
+	import { currencies } from '$lib/stores/currencies';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	export let data;
 

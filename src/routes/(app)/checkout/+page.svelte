@@ -10,10 +10,10 @@
 	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { computeDeliveryFees } from '$lib/types/Cart.js';
-	import { typedKeys } from '$lib/utils/typedKeys.js';
+	import { computeDeliveryFees } from '$lib/types/Cart';
+	import { typedKeys } from '$lib/utils/typedKeys';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import { sumCurrency } from '$lib/utils/sumCurrency.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
