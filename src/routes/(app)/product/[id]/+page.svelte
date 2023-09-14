@@ -18,9 +18,9 @@
 	let loading = false;
 	let customAmount =
 		data.product.price.amount !== 0 &&
-		toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency) < 0.01
+		toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency) < 0.01
 			? 0.01
-			: toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency);
+			: toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency);
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
@@ -33,7 +33,7 @@
 			product: data.product,
 			quantity,
 			...(data.product.type !== 'subscription' && {
-				customPrice: { amount: customAmount, currency: data.mainCurrency }
+				customPrice: { amount: customAmount, currency: data.currencies.main }
 			}),
 			picture: currentPicture
 		};
@@ -224,14 +224,14 @@
 							<hr class="border-gray-300 md:hidden mt-4 pb-2" />
 							<div class="flex flex-col gap-2 justify-between">
 								<label class="w-full form-label">
-									Name your price ({data.mainCurrency}):
+									Name your price ({data.currencies.main}):
 									<input
 										class="form-input"
 										type="number"
 										min={customAmount < 0.01 && data.product.price.amount !== 0
 											? '0.01'
 											: toCurrency(
-													data.mainCurrency,
+													data.currencies.main,
 													data.product.price.amount,
 													data.product.price.currency
 											  )}

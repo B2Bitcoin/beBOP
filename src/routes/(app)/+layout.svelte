@@ -22,6 +22,7 @@
 	import { slide } from 'svelte/transition';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
 	import { toCurrency } from '$lib/utils/toCurrency';
+	import { currencies } from '$lib/stores/currencies.js';
 
 	export let data;
 
@@ -31,19 +32,18 @@
 	let actionCount = 0;
 
 	$exchangeRate = data.exchangeRate;
+	$currencies = data.currencies;
 
 	$: $exchangeRate = data.exchangeRate;
-
-	setContext('mainCurrency', data.mainCurrency);
-	setContext('secondaryCurrency', data.secondaryCurrency);
+	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
 	$: totalPrice = sum(
 		items.map((item) =>
 			item.customPrice
-				? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
+				? toCurrency(data.currencies.main, item.customPrice.amount, item.customPrice.currency) *
 				  item.quantity
-				: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				: toCurrency(data.currencies.main, item.product.price.amount, item.product.price.currency) *
 				  item.quantity
 		)
 	);
@@ -264,14 +264,18 @@
 									{#if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
 											Vat ({data.vatRate}%) <PriceTag
-												currency={data.mainCurrency}
+												currency={data.currencies.main}
 												amount={vat}
 												main
 											/>
 										</div>
 									{/if}
 									<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-										Total <PriceTag currency={data.mainCurrency} amount={totalPriceWithVat} main />
+										Total <PriceTag
+											currency={data.currencies.main}
+											amount={totalPriceWithVat}
+											main
+										/>
 									</div>
 									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
 									{#if items.length > 0}<a href="/checkout" class="btn btn-black">

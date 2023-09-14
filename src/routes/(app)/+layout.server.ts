@@ -38,8 +38,11 @@ export async function load({ depends, locals }) {
 			: 0,
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
 		vatCountry: runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : locals.countryCode,
-		mainCurrency: runtimeConfig.mainCurrency,
-		secondaryCurrency: runtimeConfig.secondaryCurrency,
+		currencies: {
+			main: runtimeConfig.mainCurrency,
+			secondary: runtimeConfig.secondaryCurrency,
+			priceReference: runtimeConfig.priceReferenceCurrency
+		},
 		brandName: runtimeConfig.brandName,
 		logoPicture,
 		links: {

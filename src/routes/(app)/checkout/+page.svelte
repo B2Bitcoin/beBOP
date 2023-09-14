@@ -74,7 +74,7 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: deliveryFees = computeDeliveryFees(data.mainCurrency, country, items, data.deliveryFees);
+	$: deliveryFees = computeDeliveryFees(data.currencies.main, country, items, data.deliveryFees);
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
@@ -85,10 +85,13 @@
 		sum(
 			items.map((item) =>
 				item.customPrice
-					? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
+					? toCurrency(data.currencies.main, item.customPrice.amount, item.customPrice.currency) *
 					  item.quantity
-					: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-					  item.quantity
+					: toCurrency(
+							data.currencies.main,
+							item.product.price.amount,
+							item.product.price.currency
+					  ) * item.quantity
 			)
 		) + (deliveryFees || 0);
 
@@ -358,12 +361,12 @@
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
 								amount={deliveryFees}
-								currency={data.mainCurrency}
+								currency={data.currencies.main}
 								main
 							/>
 							<PriceTag
 								amount={deliveryFees}
-								currency={data.mainCurrency}
+								currency={data.currencies.main}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
@@ -397,12 +400,12 @@
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
 								amount={vat}
-								currency={data.mainCurrency}
+								currency={data.currencies.main}
 								main
 							/>
 							<PriceTag
 								amount={vat}
-								currency={data.mainCurrency}
+								currency={data.currencies.main}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
@@ -419,14 +422,14 @@
 						<PriceTag
 							class="text-2xl text-gray-800"
 							amount={totalPriceWithVat}
-							currency={data.mainCurrency}
+							currency={data.currencies.main}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={data.currencies.main}
 						secondary
 					/>
 				</div>

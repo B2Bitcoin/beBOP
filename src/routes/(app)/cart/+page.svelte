@@ -16,9 +16,9 @@
 	$: totalPrice = sum(
 		items.map((item) =>
 			item.customPrice
-				? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
+				? toCurrency(data.currencies.main, item.customPrice.amount, item.customPrice.currency) *
 				  item.quantity
-				: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
+				: toCurrency(data.currencies.main, item.product.price.amount, item.product.price.currency) *
 				  item.quantity
 		)
 	);
@@ -151,14 +151,14 @@
 					<div class="flex flex-col items-end">
 						<PriceTag
 							amount={vat}
-							currency={data.mainCurrency}
+							currency={data.currencies.main}
 							main
 							class="text-[28px] text-gray-800"
 						/>
 						<PriceTag
 							class="text-base text-gray-600"
 							amount={vat}
-							currency={data.mainCurrency}
+							currency={data.currencies.main}
 							secondary
 						/>
 					</div>
@@ -169,14 +169,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={data.currencies.main}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={data.currencies.main}
 						secondary
 					/>
 				</div>
