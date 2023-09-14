@@ -39,16 +39,21 @@
 			!payWhatYouWant &&
 			!freeProduct
 		) {
-			priceAmountElement.setCustomValidity(
-				'Price must be greater than or equal to' +
-					MININUM_PER_CURRENCY[curr] +
-					' ' +
-					curr +
-					' or might be free'
-			);
-			priceAmountElement.reportValidity();
-			event.preventDefault();
-			return;
+			if (
+				parseInt(priceAmountElement.value) === 0 &&
+				!confirm('Do you want to save this product as free product? (current price == 0)')
+			) {
+				priceAmountElement.setCustomValidity(
+					'Price must be greater than or equal to ' +
+						MININUM_PER_CURRENCY[curr] +
+						' ' +
+						curr +
+						' or might be free'
+				);
+				priceAmountElement.reportValidity();
+				event.preventDefault();
+				return;
+			}
 		} else {
 			priceAmountElement.setCustomValidity('');
 		}
@@ -147,11 +152,23 @@
 			This is a pay-what-you-want product
 		</label>
 		<label class="checkbox-label">
-			<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={standalone}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+				name="standalone"
+			/>
 			This is a standalone product
 		</label>
 		<label class="checkbox-label">
-			<input class="form-checkbox" type="checkbox" bind:checked={freeProduct} name="free" />
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={freeProduct}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+				name="free"
+			/>
 			This is a free product
 		</label>
 		<label>
@@ -269,7 +286,13 @@
 		{/if}
 
 		<div class="flex justify-between gap-2">
-			<button type="submit" class="btn btn-blue">Update</button>
+			<button
+				type="submit"
+				class="btn btn-blue"
+				on:click={() => {
+					priceAmountElement?.setCustomValidity('');
+				}}>Update</button
+			>
 			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
 			<a href="/admin/product/new?duplicate_from={data.product._id}" class="btn btn-gray">
 				Duplicate

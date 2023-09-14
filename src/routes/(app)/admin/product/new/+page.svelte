@@ -20,7 +20,6 @@
 	let payWhatYouWant = false;
 	let standalone = payWhatYouWant;
 	let typeElement: HTMLSelectElement;
-	let freeProduct = false;
 
 	let preorder = product?.preorder ?? false;
 	let name = product?.name ? product.name + ' (duplicate)' : '';
@@ -31,6 +30,7 @@
 	let priceCurrency = product?.price.currency ?? data.priceReferenceCurrency;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
+	let freeProduct = false;
 
 	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
@@ -48,7 +48,6 @@
 
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
-
 		try {
 			if (
 				priceAmountElement.value &&
@@ -56,16 +55,21 @@
 				!payWhatYouWant &&
 				!freeProduct
 			) {
-				priceAmountElement.setCustomValidity(
-					'Price must be greater than or equal to' +
-						MININUM_PER_CURRENCY[curr] +
-						' ' +
-						curr +
-						' or might be free'
-				);
-				priceAmountElement.reportValidity();
-				event.preventDefault();
-				return;
+				if (
+					parseInt(priceAmountElement.value) === 0 &&
+					!confirm('Do you want to save this product as free product? (current price == 0)')
+				) {
+					priceAmountElement.setCustomValidity(
+						'Price must be greater than or equal to ' +
+							MININUM_PER_CURRENCY[curr] +
+							' ' +
+							curr +
+							' or might be free'
+					);
+					priceAmountElement.reportValidity();
+					event.preventDefault();
+					return;
+				}
 			} else if (payWhatYouWant && typeElement.value === 'subscription') {
 				typeElement.setCustomValidity(
 					'You cannot create a subscription type product with a pay-what-you-want price '
@@ -217,11 +221,25 @@
 		This is a pay-what-you-want product
 	</label>
 	<label class="checkbox-label">
-		<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={standalone}
+			name="standalone"
+			on:input={() => priceAmountElement?.setCustomValidity('')}
+		/>
 		This is a standalone product
 	</label>
 	<label class="checkbox-label">
-		<input class="form-checkbox" type="checkbox" bind:checked={freeProduct} name="free" />
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={freeProduct}
+			on:input={() => {
+				priceAmountElement?.setCustomValidity('');
+			}}
+			name="free"
+		/>
 		This is a free product
 	</label>
 
@@ -376,6 +394,9 @@
 		type="submit"
 		class="btn btn-blue self-start text-white"
 		disabled={submitting}
+		on:click={() => {
+			priceAmountElement?.setCustomValidity('');
+		}}
 		value="Submit"
 	/>
 </form>
