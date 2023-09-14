@@ -14,6 +14,7 @@
 	import { typedKeys } from '$lib/utils/typedKeys';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -89,7 +90,7 @@
 			}))
 		) + (deliveryFees || 0);
 
-	$: vat = totalPrice * (actualVatRate / 100);
+	$: vat = fixCurrencyRounding(totalPrice * (actualVatRate / 100), data.currencies.main);
 	$: totalPriceWithVat = totalPrice + vat;
 </script>
 

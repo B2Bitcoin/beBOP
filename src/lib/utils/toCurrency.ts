@@ -7,8 +7,12 @@ export function toCurrency(
 	amount: number,
 	fromCurrency: Currency
 ): number {
+	// Just fix the rounding if the currencies are the same
 	if (fromCurrency === targetCurrency) {
-		return amount;
+		return Math.round(
+			(amount * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
+				Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])
+		);
 	}
 
 	const bitcoinAmount =
@@ -19,9 +23,8 @@ export function toCurrency(
 			? bitcoinAmount
 			: bitcoinAmount * get(exchangeRate)[`BTC_${targetCurrency}` as const];
 
-	// Deleted Math.round() here think it cause the total not to match in different page
 	return (
-		(ret * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
+		Math.round(ret * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
 		Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])
 	);
 }

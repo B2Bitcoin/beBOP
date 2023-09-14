@@ -23,6 +23,7 @@
 	import { exchangeRate } from '$lib/stores/exchangeRate';
 	import { currencies } from '$lib/stores/currencies';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 
 	export let data;
 
@@ -45,7 +46,7 @@
 			amount: (item.customPrice || item.product.price).amount * item.quantity
 		}))
 	);
-	$: vat = totalPrice * (data.vatRate / 100);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), data.currencies.main);
 	$: totalPriceWithVat = totalPrice + vat;
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
