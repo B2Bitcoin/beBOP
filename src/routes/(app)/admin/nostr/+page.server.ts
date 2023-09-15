@@ -1,8 +1,8 @@
 import { ORIGIN } from '$env/static/private';
-import { collections } from '$lib/server/database.js';
-import { isLightningConfigured, lndGetInfo } from '$lib/server/lightning.js';
+import { collections } from '$lib/server/database';
+import { isLightningConfigured, lndGetInfo } from '$lib/server/lightning';
 import { nostrPrivateKey, nostrPublicKey, nostrRelays, nostrToHex } from '$lib/server/nostr';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { runtimeConfig } from '$lib/server/runtime-config';
 import { bech32 } from 'bech32';
 import { ObjectId } from 'mongodb';
 import { RelayPool } from 'nostr-relaypool';
@@ -10,8 +10,8 @@ import { Kind } from 'nostr-tools';
 import { z } from 'zod';
 import { setTimeout } from 'node:timers/promises';
 import type { Event } from 'nostr-tools';
-import { uniqBy } from '$lib/utils/uniqBy.js';
-import { NOSTR_PROTOCOL_VERSION } from '$lib/server/locks/handle-messages.js';
+import { uniqBy } from '$lib/utils/uniqBy';
+import { NOSTR_PROTOCOL_VERSION } from '$lib/server/locks/handle-messages';
 
 export function load() {
 	return {

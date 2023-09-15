@@ -75,10 +75,10 @@
 	{#each data.transactions as transaction}
 		<li class="flex flex-wrap">
 			Amount: {transaction.amount}
-			{#if data.priceReferenceCurrency !== 'BTC'}(<PriceTag
+			{#if data.currencies.priceReference !== 'BTC'}(<PriceTag
 					currency="BTC"
 					amount={transaction.amount}
-					convertedTo={data.priceReferenceCurrency}
+					convertedTo={data.currencies.priceReference}
 				/>){/if} / Txid:
 			<a
 				class="underline text-link break-all"

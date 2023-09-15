@@ -5,24 +5,22 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { sum } from '$lib/utils/sum';
-	import { toCurrency } from '$lib/utils/toCurrency.js';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	export let data;
 
 	let actionCount = 0;
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(
-		items.map((item) =>
-			item.customPrice
-				? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
-				  item.quantity
-				: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				  item.quantity
-		)
+	$: totalPrice = sumCurrency(
+		data.currencies.main,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount: (item.customPrice || item.product.price).amount * item.quantity
+		}))
 	);
-	$: vat = totalPrice * (data.vatRate / 100);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), data.currencies.main);
 	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
@@ -151,14 +149,14 @@
 					<div class="flex flex-col items-end">
 						<PriceTag
 							amount={vat}
-							currency={data.mainCurrency}
+							currency={data.currencies.main}
 							main
 							class="text-[28px] text-gray-800"
 						/>
 						<PriceTag
 							class="text-base text-gray-600"
 							amount={vat}
-							currency={data.mainCurrency}
+							currency={data.currencies.main}
 							secondary
 						/>
 					</div>
@@ -169,14 +167,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={data.currencies.main}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={data.currencies.main}
 						secondary
 					/>
 				</div>

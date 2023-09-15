@@ -70,11 +70,11 @@ export const actions: Actions = {
 			throw error(409, 'Product with same slug already exists');
 		}
 
-		const priceAmount = parsePriceAmount(
-			parsed.priceAmount,
-			parsed.priceCurrency,
-			parsed.payWhatYouWant
-		);
+		const priceAmount = parsed.free
+			? 0
+			: !parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0'
+			? 0
+			: parsePriceAmount(parsed.priceAmount, parsed.priceCurrency, parsed.payWhatYouWant);
 
 		if (parsed.type !== 'resource') {
 			delete parsed.availableDate;
@@ -87,6 +87,10 @@ export const actions: Actions = {
 
 		if (parsed.type === 'donation') {
 			parsed.shipping = false;
+		}
+
+		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
+			parsed.free = true;
 		}
 
 		const pendingPicture = await collections.pendingPictures.findOne({
@@ -126,6 +130,7 @@ export const actions: Actions = {
 						shipping: parsed.shipping,
 						payWhatYouWant: parsed.payWhatYouWant,
 						standalone: parsed.payWhatYouWant ? parsed.payWhatYouWant : parsed.standalone,
+						free: parsed.free,
 						displayShortDescription: parsed.displayShortDescription,
 						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
@@ -218,6 +223,7 @@ export const actions: Actions = {
 					shipping: duplicate.shipping,
 					payWhatYouWant: duplicate.payWhatYouWant,
 					standalone: duplicate.standalone,
+					free: duplicate.free,
 					displayShortDescription: duplicate.displayShortDescription
 				},
 				{ session }

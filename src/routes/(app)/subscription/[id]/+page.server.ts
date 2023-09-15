@@ -1,7 +1,7 @@
-import { collections } from '$lib/server/database.js';
-import { createOrder } from '$lib/server/orders.js';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { filterUndef } from '$lib/utils/filterUndef.js';
+import { collections } from '$lib/server/database';
+import { createOrder } from '$lib/server/orders';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import { filterUndef } from '$lib/utils/filterUndef';
 import { error, redirect } from '@sveltejs/kit';
 import { subSeconds } from 'date-fns';
 

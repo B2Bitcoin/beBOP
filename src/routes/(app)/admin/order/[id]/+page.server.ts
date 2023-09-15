@@ -1,6 +1,6 @@
-import { collections, withTransaction } from '$lib/server/database.js';
-import { onOrderPaid } from '$lib/server/orders.js';
-import { toSatoshis } from '$lib/utils/toSatoshis.js';
+import { collections, withTransaction } from '$lib/server/database';
+import { onOrderPaid } from '$lib/server/orders';
+import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error, redirect } from '@sveltejs/kit';
 
 export const actions = {

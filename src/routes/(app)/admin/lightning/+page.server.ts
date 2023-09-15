@@ -5,7 +5,7 @@ import {
 	lndGetInfo,
 	lndListChannels,
 	lndWalletBalance
-} from '$lib/server/lightning.js';
+} from '$lib/server/lightning';
 
 export async function load() {
 	return {

@@ -2,9 +2,9 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
-	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
+	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { generateId } from '$lib/utils/generateId.js';
+	import { generateId } from '$lib/utils/generateId';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import PictureComponent from '$lib/components/Picture.svelte';
@@ -27,10 +27,12 @@
 	let shipping = product?.shipping ?? false;
 	let type = product?.type ?? 'resource';
 	let priceAmount = product?.price.amount ?? 0;
-	let priceCurrency = product?.price.currency ?? data.priceReferenceCurrency;
+	let priceCurrency = product?.price.currency ?? data.currencies.priceReference;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
+	let freeProduct = false;
 
+	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
 	$: if (!enablePreorder) {
@@ -46,17 +48,28 @@
 
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
-
 		try {
 			if (
 				priceAmountElement.value &&
-				+priceAmountElement.value < 1 / SATOSHIS_PER_BTC &&
-				!payWhatYouWant
+				+priceAmountElement.value <= MININUM_PER_CURRENCY[curr] &&
+				!payWhatYouWant &&
+				!freeProduct
 			) {
-				priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
-				priceAmountElement.reportValidity();
-				event.preventDefault();
-				return;
+				if (
+					parseInt(priceAmountElement.value) === 0 &&
+					!confirm('Do you want to save this product as free product? (current price == 0)')
+				) {
+					priceAmountElement.setCustomValidity(
+						'Price must be greater than or equal to ' +
+							MININUM_PER_CURRENCY[curr] +
+							' ' +
+							curr +
+							' or might be free'
+					);
+					priceAmountElement.reportValidity();
+					event.preventDefault();
+					return;
+				}
 			} else if (payWhatYouWant && typeElement.value === 'subscription') {
 				typeElement.setCustomValidity(
 					'You cannot create a subscription type product with a pay-what-you-want price '
@@ -66,6 +79,7 @@
 				return;
 			} else {
 				priceAmountElement.setCustomValidity('');
+				typeElement.setCustomValidity('');
 			}
 
 			if (!product) {
@@ -169,6 +183,7 @@
 				name="priceAmount"
 				placeholder="Price"
 				step="any"
+				disabled={freeProduct}
 				bind:value={priceAmount}
 				bind:this={priceAmountElement}
 				on:input={() => priceAmountElement?.setCustomValidity('')}
@@ -179,7 +194,12 @@
 		<label class="w-full form-label">
 			Price currency
 
-			<select name="priceCurrency" class="form-input">
+			<select
+				name="priceCurrency"
+				class="form-input"
+				bind:value={curr}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+			>
 				{#each CURRENCIES as currency}
 					<option value={currency} selected={priceCurrency === currency}>
 						{currency}
@@ -193,14 +213,34 @@
 			class="form-checkbox"
 			type="checkbox"
 			bind:checked={payWhatYouWant}
-			on:input={() => priceAmountElement?.setCustomValidity('')}
+			on:input={() => {
+				priceAmountElement?.setCustomValidity(''), typeElement.setCustomValidity('');
+			}}
 			name="payWhatYouWant"
 		/>
 		This is a pay-what-you-want product
 	</label>
 	<label class="checkbox-label">
-		<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={standalone}
+			name="standalone"
+			on:input={() => priceAmountElement?.setCustomValidity('')}
+		/>
 		This is a standalone product
+	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={freeProduct}
+			on:input={() => {
+				priceAmountElement?.setCustomValidity('');
+			}}
+			name="free"
+		/>
+		This is a free product
 	</label>
 
 	<label class="form-label">
@@ -303,7 +343,7 @@
 		{#if shipping}
 			{#if data.deliveryFees.mode === 'perItem'}
 				<DeliveryFeesSelector
-					defaultCurrency={product?.price.currency ?? data.priceReferenceCurrency}
+					defaultCurrency={product?.price.currency ?? data.currencies.priceReference}
 					deliveryFees={product?.deliveryFees ?? {}}
 					disabled={submitting}
 				/>
@@ -354,6 +394,9 @@
 		type="submit"
 		class="btn btn-blue self-start text-white"
 		disabled={submitting}
+		on:click={() => {
+			priceAmountElement?.setCustomValidity('');
+		}}
 		value="Submit"
 	/>
 </form>

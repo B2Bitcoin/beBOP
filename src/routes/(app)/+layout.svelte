@@ -4,7 +4,7 @@
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { onMount, setContext } from 'svelte';
+	import { onMount } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { navigating, page } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';
@@ -21,7 +21,9 @@
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import { slide } from 'svelte/transition';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
-	import { toCurrency } from '$lib/utils/toCurrency';
+	import { currencies } from '$lib/stores/currencies';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 
 	export let data;
 
@@ -31,23 +33,20 @@
 	let actionCount = 0;
 
 	$exchangeRate = data.exchangeRate;
+	$currencies = data.currencies;
 
 	$: $exchangeRate = data.exchangeRate;
-
-	setContext('mainCurrency', data.mainCurrency);
-	setContext('secondaryCurrency', data.secondaryCurrency);
+	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(
-		items.map((item) =>
-			item.customPrice
-				? toCurrency(data.mainCurrency, item.customPrice.amount, item.customPrice.currency) *
-				  item.quantity
-				: toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				  item.quantity
-		)
+	$: totalPrice = sumCurrency(
+		data.currencies.main,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount: (item.customPrice || item.product.price).amount * item.quantity
+		}))
 	);
-	$: vat = totalPrice * (data.vatRate / 100);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), data.currencies.main);
 	$: totalPriceWithVat = totalPrice + vat;
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
@@ -264,14 +263,18 @@
 									{#if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
 											Vat ({data.vatRate}%) <PriceTag
-												currency={data.mainCurrency}
+												currency={data.currencies.main}
 												amount={vat}
 												main
 											/>
 										</div>
 									{/if}
 									<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-										Total <PriceTag currency={data.mainCurrency} amount={totalPriceWithVat} main />
+										Total <PriceTag
+											currency={data.currencies.main}
+											amount={totalPriceWithVat}
+											main
+										/>
 									</div>
 									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
 									{#if items.length > 0}<a href="/checkout" class="btn btn-black">

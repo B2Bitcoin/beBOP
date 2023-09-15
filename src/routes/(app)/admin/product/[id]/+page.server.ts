@@ -79,12 +79,23 @@ export const actions: Actions = {
 			parsed.preorder = false;
 		}
 
+		if (product.availableDate && !parsed.availableDate) {
+			parsed.availableDate = product.availableDate;
+		}
+
 		if (product.type === 'donation') {
 			parsed.shipping = false;
 		}
 
-		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency, parsed.payWhatYouWant);
+		const priceAmount = parsed.free
+			? 0
+			: !parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0'
+			? 0
+			: parsePriceAmount(parsed.priceAmount, priceCurrency, parsed.payWhatYouWant);
 
+		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
+			parsed.free = true;
+		}
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -102,6 +113,7 @@ export const actions: Actions = {
 					preorder: parsed.preorder,
 					payWhatYouWant: parsed.payWhatYouWant,
 					standalone: parsed.payWhatYouWant ? parsed.payWhatYouWant : parsed.standalone,
+					free: parsed.free,
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
 					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,

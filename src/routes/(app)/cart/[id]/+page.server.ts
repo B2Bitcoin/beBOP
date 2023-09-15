@@ -1,6 +1,6 @@
-import { addToCartInDb, removeFromCartInDb } from '$lib/server/cart.js';
-import { collections } from '$lib/server/database.js';
-import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart.js';
+import { addToCartInDb, removeFromCartInDb } from '$lib/server/cart';
+import { collections } from '$lib/server/database';
+import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 

@@ -5,10 +5,10 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import { UrlDependency } from '$lib/types/UrlDependency.js';
+	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
-	import { toSatoshis } from '$lib/utils/toSatoshis.js';
+	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { differenceInMinutes, format } from 'date-fns';
 	import { onMount } from 'svelte';
 
@@ -58,9 +58,13 @@
 					<p class="text-xl">Your order awaits confirmation from the seller.</p>
 				{:else}
 					<ul>
-						<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
 						<li>
-							Payment amount: <code class="break-words break-all">
+							Payment address: <code class="break-words break-all"
+								>{data.order.payment.address}</code
+							>
+						</li>
+						<li>
+							Payment amount: <code class="break-words">
 								{(data.order.payment.method === 'bitcoin'
 									? toBitcoins(data.order.totalPrice.amount, data.order.totalPrice.currency)
 									: toSatoshis(data.order.totalPrice.amount, data.order.totalPrice.currency)

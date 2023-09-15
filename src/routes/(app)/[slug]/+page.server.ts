@@ -1,10 +1,10 @@
-import { collections } from '$lib/server/database.js';
+import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import { marked } from 'marked';
-import type { Product } from '$lib/types/Product.js';
-import { picturesForProducts } from '$lib/server/picture.js';
+import type { Product } from '$lib/types/Product';
+import { picturesForProducts } from '$lib/server/picture';
 import { omit } from 'lodash-es';
-import type { Challenge } from '$lib/types/Challenge.js';
+import type { Challenge } from '$lib/types/Challenge';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 
 const PRODUCT_WIDGET_REGEX =
