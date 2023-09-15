@@ -1,6 +1,6 @@
-import { collections } from '$lib/server/database.js';
-import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
-import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product.js';
+import { collections } from '$lib/server/database';
+import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
+import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
@@ -30,12 +30,13 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { title, content, shortDescription, fullScreen } = z
+		const { title, content, shortDescription, fullScreen, maintenanceDisplay } = z
 			.object({
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
 				content: z.string().max(MAX_CONTENT_LIMIT),
 				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),
-				fullScreen: z.boolean({ coerce: true })
+				fullScreen: z.boolean({ coerce: true }),
+				maintenanceDisplay: z.boolean({ coerce: true })
 			})
 			.parse(Object.fromEntries(data));
 
@@ -49,6 +50,7 @@ export const actions = {
 					content,
 					shortDescription,
 					fullScreen,
+					maintenanceDisplay,
 					updatedAt: new Date()
 				}
 			}

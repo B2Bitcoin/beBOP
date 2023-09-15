@@ -108,7 +108,7 @@
 							{subscriptionStatus(subscription)}
 						</td>
 						<td class="px-6 py-4 whitespace-no-wrap">
-							{format(subscription.updatedAt, 'MMMM dd, Y')}</td
+							{format(subscription.updatedAt, 'MMMM-dd-Y')}</td
 						>
 						<td class="px-6 py-4 whitespace-no-wrap">
 							{subscription.npub ? subscription.npub : ''}</td

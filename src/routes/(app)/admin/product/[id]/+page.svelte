@@ -3,7 +3,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
+	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { page } from '$app/stores';
 
@@ -16,6 +16,9 @@
 	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
 	let standalone = data.product.standalone;
+	let freeProduct = data.product.free;
+	let curr: 'SAT' | 'BTC';
+	let disableDate = true;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -32,13 +35,25 @@
 	function checkForm(event: SubmitEvent) {
 		if (
 			priceAmountElement.value &&
-			+priceAmountElement.value < 1 / SATOSHIS_PER_BTC &&
-			!payWhatYouWant
+			+priceAmountElement.value <= MININUM_PER_CURRENCY[curr] &&
+			!payWhatYouWant &&
+			!freeProduct
 		) {
-			priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
-			priceAmountElement.reportValidity();
-			event.preventDefault();
-			return;
+			if (
+				parseInt(priceAmountElement.value) === 0 &&
+				!confirm('Do you want to save this product as free product? (current price == 0)')
+			) {
+				priceAmountElement.setCustomValidity(
+					'Price must be greater than or equal to ' +
+						MININUM_PER_CURRENCY[curr] +
+						' ' +
+						curr +
+						' or might be free'
+				);
+				priceAmountElement.reportValidity();
+				event.preventDefault();
+				return;
+			}
 		} else {
 			priceAmountElement.setCustomValidity('');
 		}
@@ -99,6 +114,7 @@
 					name="priceAmount"
 					placeholder="Price"
 					step="any"
+					disabled={freeProduct}
 					value={data.product.price.amount
 						.toLocaleString('en', { maximumFractionDigits: 8 })
 						.replace(/,/g, '')}
@@ -111,7 +127,12 @@
 			<label class="w-full">
 				Price currency
 
-				<select name="priceCurrency" class="form-input">
+				<select
+					name="priceCurrency"
+					class="form-input"
+					bind:value={curr}
+					on:input={() => priceAmountElement?.setCustomValidity('')}
+				>
 					{#each CURRENCIES as currency}
 						<option value={currency} selected={data.product.price.currency === currency}
 							>{currency}</option
@@ -131,8 +152,24 @@
 			This is a pay-what-you-want product
 		</label>
 		<label class="checkbox-label">
-			<input class="form-checkbox" type="checkbox" bind:checked={standalone} name="standalone" />
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={standalone}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+				name="standalone"
+			/>
 			This is a standalone product
+		</label>
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={freeProduct}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+				name="free"
+			/>
+			This is a free product
 		</label>
 		<label>
 			Short description
@@ -150,7 +187,7 @@
 				class="form-checkbox"
 				type="checkbox"
 				name="displayShortDescription"
-				value={data.product.displayShortDescription}
+				bind:checked={data.product.displayShortDescription}
 			/>
 			Display the short description on product page
 		</label>
@@ -178,8 +215,9 @@
 						class="form-input"
 						type="date"
 						name="availableDate"
+						disabled={availableDate && availableDate.getTime() < Date.now() && disableDate}
 						bind:value={availableDateStr}
-						min={addDays(new Date(), 1).toJSON().slice(0, 10)}
+						min={changedDate ? addDays(new Date(), 1).toJSON().slice(0, 10) : null}
 					/>
 					<span class="text-sm text-gray-600 mt-2 block"
 						>Leave empty if your product is immediately available. Press
@@ -189,7 +227,10 @@
 						> to remove the date.</span
 					>
 				</label>
-
+				<label class="checkbox-label">
+					<input class="form-checkbox" type="checkbox" bind:checked={disableDate} />
+					🔐
+				</label>
 				<label class="checkbox-label {enablePreorder ? '' : 'cursor-not-allowed text-gray-450'}">
 					<input
 						class="form-checkbox {enablePreorder ? '' : 'cursor-not-allowed border-gray-450'}"
@@ -245,7 +286,13 @@
 		{/if}
 
 		<div class="flex justify-between gap-2">
-			<button type="submit" class="btn btn-blue">Update</button>
+			<button
+				type="submit"
+				class="btn btn-blue"
+				on:click={() => {
+					priceAmountElement?.setCustomValidity('');
+				}}>Update</button
+			>
 			<a href="/product/{data.product._id}" class="btn btn-gray">View</a>
 			<a href="/admin/product/new?duplicate_from={data.product._id}" class="btn btn-gray">
 				Duplicate

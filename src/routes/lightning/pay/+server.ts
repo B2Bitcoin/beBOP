@@ -1,6 +1,6 @@
-import { isLightningConfigured, lndCreateInvoice } from '$lib/server/lightning.js';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { SATOSHIS_PER_BTC } from '$lib/types/Currency.js';
+import { isLightningConfigured, lndCreateInvoice } from '$lib/server/lightning';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
 import { error } from '@sveltejs/kit';
 import { jwtVerify } from 'jose';
 import { z } from 'zod';

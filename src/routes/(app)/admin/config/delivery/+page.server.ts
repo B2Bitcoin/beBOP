@@ -2,8 +2,8 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { z } from 'zod';
-import { collections } from '$lib/server/database.js';
-import { deliveryFeesSchema } from './schema.js';
+import { collections } from '$lib/server/database';
+import { deliveryFeesSchema } from './schema';
 
 export const actions = {
 	default: async function ({ request }) {

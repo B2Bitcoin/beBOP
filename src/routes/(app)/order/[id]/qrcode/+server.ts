@@ -1,5 +1,5 @@
-import { collections } from '$lib/server/database.js';
-import { toBitcoins } from '$lib/utils/toBitcoins.js';
+import { collections } from '$lib/server/database';
+import { toBitcoins } from '$lib/utils/toBitcoins';
 import { error } from '@sveltejs/kit';
 import qrcode from 'qrcode';
 

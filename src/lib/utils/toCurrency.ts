@@ -7,8 +7,12 @@ export function toCurrency(
 	amount: number,
 	fromCurrency: Currency
 ): number {
+	// Just fix the rounding if the currencies are the same
 	if (fromCurrency === targetCurrency) {
-		return amount;
+		return Math.round(
+			(amount * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
+				Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])
+		);
 	}
 
 	const bitcoinAmount =

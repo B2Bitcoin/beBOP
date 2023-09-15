@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 	import { toCurrency } from '$lib/utils/toCurrency';
-	import { getContext } from 'svelte';
 	import IconBitcoin from './icons/IconBitcoin.svelte';
 	import IconSatoshi from './icons/IconSatoshi.svelte';
-	import type { LayoutData } from '../../routes/(app)/$types';
+	import { currencies } from '$lib/stores/currencies';
 
 	export let amount: number;
 	export let currency: Currency;
@@ -23,8 +22,8 @@
 	let className = '';
 	export { className as class };
 
-	const mainCurrency = getContext<LayoutData['mainCurrency']>('mainCurrency');
-	const secondaryCurrency = getContext<LayoutData['secondaryCurrency']>('secondaryCurrency');
+	const mainCurrency = $currencies.main;
+	const secondaryCurrency = $currencies.secondary;
 
 	$: actualCurrency = main ? mainCurrency : secondary ? secondaryCurrency : convertedTo ?? currency;
 	$: actualAmount = actualCurrency === null ? 0 : toCurrency(actualCurrency, amount, currency);

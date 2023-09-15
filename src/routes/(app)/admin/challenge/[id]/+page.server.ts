@@ -1,5 +1,5 @@
-import { collections } from '$lib/server/database.js';
-import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product.js';
+import { collections } from '$lib/server/database';
+import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 

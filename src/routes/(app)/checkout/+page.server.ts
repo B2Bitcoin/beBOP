@@ -1,13 +1,13 @@
 import { collections } from '$lib/server/database';
-import { paymentMethods } from '$lib/server/payment-methods.js';
+import { paymentMethods } from '$lib/server/payment-methods';
 import { COUNTRY_ALPHA2S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
-import { createOrder } from '$lib/server/orders.js';
-import { emailsEnabled } from '$lib/server/email.js';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { vatRates } from '$lib/server/vat-rates.js';
+import { createOrder } from '$lib/server/orders';
+import { emailsEnabled } from '$lib/server/email';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import { vatRates } from '$lib/server/vat-rates';
 
 export function load() {
 	return {

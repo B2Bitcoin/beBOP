@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
+	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data;
@@ -59,6 +59,16 @@
 			class="form-checkbox"
 		/>
 		Full screen
+	</label>
+
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="maintenanceDisplay"
+			checked={data.cmsPage.maintenanceDisplay}
+			class="form-checkbox"
+		/>
+		Available even in Maintenance mode
 	</label>
 
 	<label class="block w-full mt-4">

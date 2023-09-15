@@ -1,8 +1,8 @@
 import { ORIGIN } from '$env/static/private';
-import { countryNameByAlpha2 } from '$lib/server/country-codes.js';
-import { collections } from '$lib/server/database.js';
+import { countryNameByAlpha2 } from '$lib/server/country-codes';
+import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { CURRENCIES } from '$lib/types/Currency.js';
+import { CURRENCIES } from '$lib/types/Currency';
 import { z } from 'zod';
 
 export async function load(event) {

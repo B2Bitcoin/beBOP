@@ -9,8 +9,8 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
-	import { isPreorder as isPreorderFn } from '$lib/types/Product.js';
-	import { toCurrency } from '$lib/utils/toCurrency.js';
+	import { isPreorder as isPreorderFn } from '$lib/types/Product';
+	import { toCurrency } from '$lib/utils/toCurrency';
 
 	export let data;
 
@@ -23,9 +23,9 @@
 	const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
 	let customAmount =
 		data.product.price.amount !== 0 &&
-		toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency) < 0.01
+		toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency) < 0.01
 			? 0.01
-			: toCurrency(data.mainCurrency, data.product.price.amount, data.product.price.currency);
+			: toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency);
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
@@ -38,7 +38,7 @@
 			product: data.product,
 			quantity,
 			...(data.product.type !== 'subscription' && {
-				customPrice: { amount: customAmount, currency: data.mainCurrency }
+				customPrice: { amount: customAmount, currency: data.currencies.main }
 			}),
 			picture: currentPicture
 		};
@@ -68,17 +68,19 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
-		<div class="flex flex-col gap-2 w-12 min-w-[48px] py-12">
-			{#each data.pictures as picture, i}
-				<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
-					<Picture
-						{picture}
-						class="h-12 w-12 rounded-sm {picture === currentPicture
-							? 'ring-2 ring-link ring-offset-2'
-							: ''} cursor-pointer"
-					/>
-				</a>
-			{/each}
+		<div class="flex flex-col gap-2 w-14 min-w-[48px] py-12 hidden md:block">
+			{#if data.pictures.length > 1}
+				{#each data.pictures as picture, i}
+					<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
+						<Picture
+							{picture}
+							class="h-12 w-12 rounded-sm m-2 {picture === currentPicture
+								? 'ring-2 ring-link ring-offset-2'
+								: ''} cursor-pointer"
+						/>
+					</a>
+				{/each}
+			{/if}
 		</div>
 
 		<div class="flex flex-col md:grid md:grid-cols-[70%_1fr] gap-2 grow pb-12">
@@ -93,7 +95,21 @@
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
-				{#if data.product.description.trim()}
+				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:inline md:hidden py-12">
+					{#if data.pictures.length > 1}
+						{#each data.pictures as picture, i}
+							<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
+								<Picture
+									{picture}
+									class="h-12 w-12 rounded-sm {picture === currentPicture
+										? 'ring-2 ring-link ring-offset-2'
+										: ''} cursor-pointer"
+								/>
+							</a>
+						{/each}
+					{/if}
+				</div>
+				{#if data.product.description.trim() || data.product.shortDescription.trim()}
 					<hr class="border-gray-300" />
 					<h2 class="text-gray-850 text-[22px]">
 						{data.product.displayShortDescription && data.product.shortDescription
@@ -217,14 +233,14 @@
 							<hr class="border-gray-300 md:hidden mt-4 pb-2" />
 							<div class="flex flex-col gap-2 justify-between">
 								<label class="w-full form-label">
-									Name your price ({data.mainCurrency}):
+									Name your price ({data.currencies.main}):
 									<input
 										class="form-input"
 										type="number"
 										min={customAmount < 0.01 && data.product.price.amount !== 0
 											? '0.01'
 											: toCurrency(
-													data.mainCurrency,
+													data.currencies.main,
 													data.product.price.amount,
 													data.product.price.currency
 											  )}
