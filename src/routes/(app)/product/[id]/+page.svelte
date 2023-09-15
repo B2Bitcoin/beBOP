@@ -90,11 +90,7 @@
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
-<<<<<<< HEAD
-				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:hidden py-12">
-=======
 				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:inline md:hidden py-12">
->>>>>>> 9ee6971aef6c676ba289a818efd855029b9f2182
 					{#if data.pictures.length > 1}
 						{#each data.pictures as picture, i}
 							<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
@@ -108,11 +104,7 @@
 						{/each}
 					{/if}
 				</div>
-<<<<<<< HEAD
-				{#if data.product.description.trim()}
-=======
 				{#if data.product.description.trim() || data.product.shortDescription.trim()}
->>>>>>> 9ee6971aef6c676ba289a818efd855029b9f2182
 					<hr class="border-gray-300" />
 					<h2 class="text-gray-850 text-[22px]">
 						{data.product.displayShortDescription && data.product.shortDescription
