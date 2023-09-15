@@ -61,6 +61,16 @@
 		Full screen
 	</label>
 
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="maintenanceDisplay"
+			checked={data.cmsPage.maintenanceDisplay}
+			class="form-checkbox"
+		/>
+		Available even in Maintenance mode
+	</label>
+
 	<label class="block w-full mt-4">
 		Content
 		<textarea

@@ -30,12 +30,13 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { title, content, shortDescription, fullScreen } = z
+		const { title, content, shortDescription, fullScreen, maintenanceDisplay } = z
 			.object({
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
 				content: z.string().max(MAX_CONTENT_LIMIT),
 				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),
-				fullScreen: z.boolean({ coerce: true })
+				fullScreen: z.boolean({ coerce: true }),
+				maintenanceDisplay: z.boolean({ coerce: true })
 			})
 			.parse(Object.fromEntries(data));
 
@@ -49,6 +50,7 @@ export const actions = {
 					content,
 					shortDescription,
 					fullScreen,
+					maintenanceDisplay,
 					updatedAt: new Date()
 				}
 			}
