@@ -14,16 +14,20 @@ export async function load({ params }) {
 
 	const beginsAt = discount.beginsAt?.toJSON().slice(0, 10);
 	const endsAt = discount.endsAt.toJSON().slice(0, 10);
-	const products = await collections.products
+	const requiredSubscription = await collections.products
 		.find({ type: 'subscription' })
 		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
 		.toArray();
-
+	const products = await collections.products
+		.find({ type: { $ne: 'subscription' }, payWhatYouWant: false, free: false })
+		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
+		.toArray();
 	return {
 		discount,
 		beginsAt,
 		endsAt,
-		products
+		products,
+		requiredSubscription
 	};
 }
 
@@ -39,17 +43,21 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { name, percentage, beginsAt, endsAt } = z
+		const { name, subscriptionIds, productIds, wholeCatalog, percentage, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				productIds: z.string().array(),
+				subscriptionIds: z.string().array(),
 				percentage: z.string().regex(/^\d+(\.\d+)?$/),
+				wholeCatalog: z.boolean({ coerce: true }).default(false),
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
 			.parse({
 				name: data.get('name'),
+				subscriptionIds: data.getAll('subscriptionIds'),
 				productIds: data.getAll('productIds'),
+				wholeCatalog: data.get('wholeCatalog'),
 				percentage: data.get('percentage'),
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
@@ -63,6 +71,9 @@ export const actions = {
 				$set: {
 					name,
 					percentage: Number(percentage),
+					subscriptionIds,
+					wholeCatalog,
+					productIds,
 					beginsAt,
 					endsAt,
 					updatedAt: new Date()

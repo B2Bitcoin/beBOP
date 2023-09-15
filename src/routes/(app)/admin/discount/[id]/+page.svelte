@@ -6,6 +6,9 @@
 	let beginsAt = data.beginsAt;
 	let endsAt = data.endsAt;
 	let endsAtElement: HTMLInputElement;
+	let availableProductList = data.products;
+	let requiredSubscription = data.requiredSubscription;
+	let wholeCatalog = data.discount.wholeCatalog;
 
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
@@ -85,14 +88,49 @@
 	</div>
 
 	<div class="flex flex-col gap-4 w-[30%]">
-		<h2 class="text-xl">Products</h2>
-		<select multiple name="productIds" value={data.discount.productIds}>
-			{#each data.products as product}
-				<option value={product._id}>
-					{product.name}
-				</option>
-			{/each}
-		</select>
+		<label class="form-label"
+			>Required Subscription
+			<select
+				multiple
+				name="subscriptionIds"
+				class="form-input min-h-[20rem]"
+				value={data.discount.subscriptionIds}
+			>
+				{#each requiredSubscription as subscription}
+					<option value={subscription._id}>
+						{subscription.name}
+					</option>
+				{/each}
+			</select>
+			<p class="text-gray-600 text-sm">
+				You can hold Ctrl to select indivdual items, or Shift to select multiple items at once
+			</p>
+		</label>
+	</div>
+
+	<label class="checkbox-label">
+		<input type="checkbox" name="wholeCatalog" class="form-checkbox" bind:checked={wholeCatalog} />
+		The discount apply to the hole catalog (except free, subscription & PWYW products)
+	</label>
+	<div class="flex flex-col gap-4 w-[30%] {wholeCatalog ? 'hidden' : ''}">
+		<label class="form-label"
+			>Products
+			<select
+				multiple
+				name="productIds"
+				class="form-input min-h-[20rem]"
+				value={data.discount.productIds}
+			>
+				{#each availableProductList as product}
+					<option value={product._id}>
+						{product.name}
+					</option>
+				{/each}
+			</select>
+			<p class="text-gray-600 text-sm">
+				You can hold Ctrl to select indivdual items, or Shift to select multiple items at once
+			</p>
+		</label>
 	</div>
 
 	<div class="flex flex-row justify-between gap-2">
