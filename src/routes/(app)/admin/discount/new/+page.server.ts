@@ -12,9 +12,12 @@ export const load = async () => {
 		.toArray();
 
 	const products = await collections.products
-		.find({ type: { $ne: 'subscription' }, payWhatYouWant: { $eq: false }, free: { $eq: false } })
+		.find({
+			type: { $ne: 'subscription' },
+			payWhatYouWant: { $exists: true, $eq: false },
+			free: { $exists: true, $eq: false }
+		})
 		.project<Pick<Product, '_id' | 'name'>>({ _id: 1, name: 1 })
-		.sort({ createdAt: 1 })
 		.toArray();
 
 	return {
