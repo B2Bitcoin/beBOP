@@ -12,7 +12,7 @@ export const load = async () => {
 		.toArray();
 
 	const products = await collections.products
-		.find({ type: { $ne: 'subscription' }, payWhatYouWant: false, free: false })
+		.find({})
 		.project<Pick<Product, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.sort({ createdAt: 1 })
 		.toArray();
