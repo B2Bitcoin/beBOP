@@ -16,11 +16,11 @@ export async function load({ params }) {
 	const endsAt = discount.endsAt.toJSON().slice(0, 10);
 	const requiredSubscription = await collections.products
 		.find({ type: 'subscription' })
-		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
+		.project<Pick<Product, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 	const products = await collections.products
 		.find({ type: { $ne: 'subscription' }, payWhatYouWant: false, free: false })
-		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
+		.project<Pick<Product, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 	return {
 		discount,
