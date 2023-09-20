@@ -125,8 +125,15 @@
 						)}</pre>
 				</div>
 			{/if}
-
-			{#if data.order.payment.status === 'pending'}
+			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash'}
+				<form action="/admin/order/{data.order._id}?/confirm" method="post">
+					<button type="submit" class="btn btn-black">Mark paid</button>
+				</form>
+				<form action="/admin/order/{data.order._id}?/cancel" method="post">
+					<button type="submit" class="btn btn-red">Cancel</button>
+				</form>
+			{/if}
+			{#if data.order.payment.status === 'pending' && 0}
 				<form method="post" action="?/cancel">
 					<button type="submit" class="btn btn-red">Cancel</button>
 				</form>
