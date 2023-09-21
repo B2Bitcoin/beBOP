@@ -1,4 +1,5 @@
 <script lang="ts">
+	import IconRefresh from '$lib/components/icons/IconRefresh.svelte';
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
 
@@ -6,6 +7,12 @@
 
 	let vatExempted = data.vatExempted;
 	let vatSingleCountry = data.vatSingleCountry;
+
+	function onOverwrite(event: Event) {
+		if (!confirm('Do you want to overwrite current product currencies with this one?')) {
+			event.preventDefault();
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -42,15 +49,19 @@
 
 	<label class="form-label">
 		Price reference currency (to avoid exchange rate fluctuations)
-		<select name="priceReferenceCurrency" class="form-input max-w-[25rem]">
-			{#each CURRENCIES as currency}
-				<option value={currency} selected={data.currencies.priceReference === currency}>
-					{currency}
-				</option>
-			{/each}
-		</select>
+		<div class="flex gap-2">
+			<select name="priceReferenceCurrency" class="form-input max-w-[25rem]">
+				{#each CURRENCIES as currency}
+					<option value={currency} selected={data.currencies.priceReference === currency}>
+						{currency}
+					</option>
+				{/each}
+			</select>
+			<button type="button" class="btn btn-red self-start" on:click={onOverwrite}>
+				<IconRefresh />
+			</button>
+		</div>
 	</label>
-
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
