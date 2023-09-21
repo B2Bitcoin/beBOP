@@ -18,6 +18,7 @@ export async function load(event) {
 		subscriptionReminderSeconds: runtimeConfig.subscriptionReminderSeconds,
 		confirmationBlocks: runtimeConfig.confirmationBlocks,
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
+		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
 		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN
 	};
@@ -50,7 +51,8 @@ export const actions = {
 					.int()
 					.min(0)
 					.max(24 * 60 * 60 * 7),
-				confirmationBlocks: z.number({ coerce: true }).int().min(0)
+				confirmationBlocks: z.number({ coerce: true }).int().min(0),
+				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0)
 			})
 			.parse(Object.fromEntries(formData));
 
@@ -129,6 +131,15 @@ export const actions = {
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'confirmationBlocks' },
 				{ $set: { data: result.confirmationBlocks, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.desiredPaymentTimeout !== result.desiredPaymentTimeout) {
+			runtimeConfig.desiredPaymentTimeout = result.desiredPaymentTimeout;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'desiredPaymentTimeout' },
+				{ $set: { data: result.desiredPaymentTimeout, updatedAt: new Date() } },
 				{ upsert: true }
 			);
 		}

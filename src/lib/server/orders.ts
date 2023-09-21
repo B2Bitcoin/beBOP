@@ -1,7 +1,15 @@
 import type { Order } from '$lib/types/Order';
 import type { ClientSession } from 'mongodb';
 import { collections, withTransaction } from './database';
-import { add, addHours, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
+import {
+	add,
+	addHours,
+	addMinutes,
+	addMonths,
+	differenceInSeconds,
+	max,
+	subSeconds
+} from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
@@ -290,7 +298,10 @@ export async function createOrder(
 	const orderNumber = await generateOrderNumber();
 
 	await withTransaction(async (session) => {
-		const expiresAt = paymentMethod === 'cash' ? addMonths(new Date(), 1) : addHours(new Date(), 2);
+		const expiresAt =
+			paymentMethod === 'cash'
+				? addMonths(new Date(), 1)
+				: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 
 		await collections.orders.insertOne(
 			{

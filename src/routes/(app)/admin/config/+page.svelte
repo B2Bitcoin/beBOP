@@ -196,6 +196,17 @@
 			value={data.confirmationBlocks}
 		/>
 	</label>
+	<label class="form-label">
+		Set desired timeout for payment (in minutes)
+		<input
+			type="number"
+			min="0"
+			step="1"
+			name="desiredPaymentTimeout"
+			class="form-input max-w-[25rem]"
+			value={data.desiredPaymentTimeout}
+		/>
+	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>
 
