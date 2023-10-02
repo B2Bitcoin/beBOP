@@ -7,10 +7,13 @@
 
 	let vatExempted = data.vatExempted;
 	let vatSingleCountry = data.vatSingleCountry;
+	let actionForm: HTMLInputElement;
 
-	function onOverwrite(event: Event) {
+	async function onOverwrite(event: Event) {
+		actionForm.value = 'overwrite';
 		if (!confirm('Do you want to overwrite current product currencies with this one?')) {
 			event.preventDefault();
+			actionForm.value = '';
 		}
 	}
 </script>
@@ -57,7 +60,8 @@
 					</option>
 				{/each}
 			</select>
-			<button type="button" class="btn btn-red self-start" on:click={onOverwrite}>
+			<input type="hidden" name="actionOverwrite" bind:this={actionForm} />
+			<button type="submit" class="btn btn-red self-start" on:click={onOverwrite}>
 				<IconRefresh />
 			</button>
 		</div>
