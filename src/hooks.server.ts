@@ -3,9 +3,17 @@ import { type HandleServerError, type Handle, error } from '@sveltejs/kit';
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
+import { SvelteKitAuth } from '@auth/sveltekit';
+import GitHub from '@auth/core/providers/github';
 
 import '$lib/server/locks';
-import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
+import {
+	ADMIN_LOGIN,
+	ADMIN_PASSWORD,
+	AUTH_SECRET,
+	GITHUB_ID,
+	GITHUB_SECRET
+} from '$env/static/private';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 // import { countryFromIp } from '$lib/server/geoip';
@@ -45,11 +53,15 @@ export const handleError = (({ error, event }) => {
 	}
 }) satisfies HandleServerError;
 
-export const handle = (async ({ event, resolve }) => {
+export const handle = SvelteKitAuth(async (event) => {
+	const authOptions = {
+		providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
+		secret: AUTH_SECRET,
+		trustHost: true
+	};
+
 	await refreshPromise;
-
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
-
 	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
@@ -113,40 +125,5 @@ export const handle = (async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
-
-	const response = await resolve(event);
-
-	if (
-		response.status >= 500 &&
-		(!event.locals.status || event.locals.status >= 500) &&
-		response.headers.get('Content-Type')?.includes('text/html')
-	) {
-		const errorPages = await collections.cmsPages.countDocuments({
-			_id: 'error'
-		});
-
-		if (errorPages) {
-			return new Response(null, {
-				status: 302,
-				headers: {
-					location: '/error'
-				}
-			});
-		}
-	}
-
-	// Work around handleError which does not allow setting the header
-	const status = event.locals.status;
-	if (status) {
-		const contentType = response.headers.get('Content-Type');
-		return new Response(response.body, {
-			...response,
-			headers: {
-				...Object.fromEntries(response.headers.entries()),
-				'content-type': contentType?.includes('html') ? contentType : 'application/json'
-			},
-			status
-		});
-	}
-	return response;
+	return authOptions;
 }) satisfies Handle;

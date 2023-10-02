@@ -51,6 +51,7 @@ export async function load({ depends, locals }) {
 			topbar: runtimeConfig.topbarLinks
 		},
 		logo: runtimeConfig.logoPictureId,
+		sessionSvelteKit: await locals.getSession(),
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
