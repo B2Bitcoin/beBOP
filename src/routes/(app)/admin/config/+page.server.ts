@@ -3,6 +3,7 @@ import { countryNameByAlpha2 } from '$lib/server/country-codes';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { CURRENCIES } from '$lib/types/Currency';
+import { toCurrency } from '$lib/utils/toCurrency';
 import { z } from 'zod';
 
 export async function load(event) {
@@ -52,7 +53,8 @@ export const actions = {
 					.min(0)
 					.max(24 * 60 * 60 * 7),
 				confirmationBlocks: z.number({ coerce: true }).int().min(0),
-				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0)
+				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
+				actionOverwrite: z.string()
 			})
 			.parse(Object.fromEntries(formData));
 
@@ -169,6 +171,27 @@ export const actions = {
 				{ $set: { data: result.priceReferenceCurrency, updatedAt: new Date() } },
 				{ upsert: true }
 			);
+			if (result.actionOverwrite === 'overwrite') {
+				const products = await collections.products.find({}).toArray();
+				const currency = result.priceReferenceCurrency;
+
+				for (const product of products) {
+					const priceAmount = toCurrency(currency, product.price.amount, product.price.currency);
+
+					await collections.products.updateOne(
+						{ _id: product._id },
+						{
+							$set: {
+								price: {
+									amount: priceAmount,
+									currency
+								},
+								updatedAt: new Date()
+							}
+						}
+					);
+				}
+			}
 		}
 
 		if (runtimeConfig.vatExempted !== result.vatExempted) {
