@@ -160,7 +160,7 @@ export const handleAdmin = (async ({ event, resolve }) => {
 	return response;
 }) satisfies Handle;
 
-export const handleAuthSvelte = SvelteKitAuth(async (event) => {
+export const handleAuthSvelte = SvelteKitAuth(async () => {
 	const authOptions = {
 		providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
 		secret: AUTH_SECRET,
