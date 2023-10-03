@@ -26,6 +26,7 @@ const defaultConfig = {
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	confirmationBlocks: 1,
+	desiredPaymentTimeout: 1,
 	bitcoinWallet: '',
 	logoPictureId: '',
 	lnurlPayMetadataJwtSigningKey: '',
