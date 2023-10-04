@@ -13,7 +13,7 @@ declare global {
 			status?: number;
 			sessionId: string;
 			countryCode: string;
-			user?: {login: string; role: string;}
+			user?: { login: string; role: string };
 		}
 		// interface PageData {}
 		// interface Platform {}

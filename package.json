@@ -57,7 +57,6 @@
 		"@aws-sdk/s3-request-presigner": "^3.316.0",
 		"@fontsource/gloock": "^5.0.0",
 		"@fontsource/poppins": "^4.5.10",
-		"bcrypt": "^5.1.1",
 		"bcryptjs": "^2.4.3",
 		"bech32": "^2.0.0",
 		"busboy": "^1.6.0",

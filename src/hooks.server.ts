@@ -59,31 +59,7 @@ export const handle = (async ({ event, resolve }) => {
 			_id: 1
 		})
 		.toArray();
-	if (isAdminUrl && ADMIN_LOGIN && ADMIN_PASSWORD) {
-		const authorization = event.request.headers.get('authorization');
 
-		if (!authorization?.startsWith('Basic ')) {
-			return new Response(null, {
-				status: 401,
-				headers: {
-					'WWW-Authenticate': 'Basic realm="Admin"'
-				}
-			});
-		}
-
-		const [login, password] = Buffer.from(authorization.split(' ')[1], 'base64')
-			.toString()
-			.split(':');
-
-		if (login !== ADMIN_LOGIN || password !== ADMIN_PASSWORD) {
-			return new Response(null, {
-				status: 401,
-				headers: {
-					'WWW-Authenticate': 'Basic realm="Admin"'
-				}
-			});
-		}
-	}
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
 	if (
@@ -117,12 +93,14 @@ export const handle = (async ({ event, resolve }) => {
 		sessionId: event.locals.sessionId
 	});
 	if (authenticateUser) {
-		event.locals.user_login = authenticateUser.login;
-		event.locals.user_role = authenticateUser.roleId;
+		event.locals.user = {
+			login: authenticateUser.login,
+			role: authenticateUser.roleId
+		};
 	}
 	// Protect any routes under /admin
 	if (isAdminUrl && event.url.pathname !== '/admin/login') {
-		const sessionUser = event.locals.user_login;
+		const sessionUser = event.locals.user?.login;
 		if (!sessionUser) {
 			throw redirect(303, '/admin/login');
 		}
