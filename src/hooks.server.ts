@@ -1,5 +1,5 @@
 import { ZodError } from 'zod';
-import { type HandleServerError, type Handle, error } from '@sveltejs/kit';
+import { type HandleServerError, type Handle, error, redirect } from '@sveltejs/kit';
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
@@ -113,6 +113,20 @@ export const handle = (async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
+	const authenticateUser = await collections.users.findOne({
+		sessionId: event.locals.sessionId
+	});
+	if (authenticateUser) {
+		event.locals.user_login = authenticateUser.login;
+		event.locals.user_role = authenticateUser.roleId;
+	}
+	// Protect any routes under /admin
+	if (event.url.pathname.startsWith('/admin') && !event.url.pathname.startsWith('/admin/login')) {
+		const sessionUser = event.locals.user_login;
+		if (!sessionUser) {
+			throw redirect(303, '/admin/login');
+		}
+	}
 
 	const response = await resolve(event);
 
