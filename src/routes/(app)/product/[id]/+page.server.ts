@@ -54,7 +54,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		.toArray();
 	const discount = await collections.discounts
 		.find({ productIds: { $in: [product._id] }, endsAt: { $gt: new Date(Date.now()) } })
-		.sort({ createdAt: 1 })
+		.sort({ createdAt: -1 })
 		.toArray();
 	return {
 		product,
