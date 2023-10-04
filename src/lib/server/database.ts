@@ -16,6 +16,7 @@ import type { Challenge } from '$lib/types/Challenge';
 import type { EmailNotification } from '$lib/types/EmailNotification';
 import type { Role } from '$lib/types/Role';
 import type { User } from '$lib/types/User';
+import type { Discount } from '$lib/types/Discount';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -44,6 +45,7 @@ const cmsPages = db.collection<CMSPage>('cmsPages');
 const challenges = db.collection<Challenge>('challenges');
 const roles = db.collection<Role>('roles');
 const users = db.collection<User>('users');
+const discounts = db.collection<Discount>('discounts');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -67,7 +69,8 @@ export const collections = {
 	cmsPages,
 	challenges,
 	roles,
-	users
+	users,
+	discounts
 };
 
 client.on('open', () => {
