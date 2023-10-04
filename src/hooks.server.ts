@@ -88,14 +88,19 @@ export const handle = (async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
-	const authenticateUser = await collections.users.findOne({
+	const sessionUser = await collections.sessions.findOne({
 		sessionId: event.locals.sessionId
 	});
-	if (authenticateUser) {
-		event.locals.user = {
-			login: authenticateUser.login,
-			role: authenticateUser.roleId
-		};
+	if (sessionUser) {
+		const authenticateUser = await collections.users.findOne({
+			_id: sessionUser.userId
+		});
+		if (authenticateUser) {
+			event.locals.user = {
+				login: authenticateUser.login,
+				role: authenticateUser.roleId
+			};
+		}
 	}
 	// Protect any routes under /admin
 	if (isAdminUrl && event.url.pathname !== '/admin/login') {

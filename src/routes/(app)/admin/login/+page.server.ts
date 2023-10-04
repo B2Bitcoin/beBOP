@@ -2,7 +2,9 @@ import { collections } from '$lib/server/database';
 import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
+import { ObjectId } from 'mongodb';
+import { addSeconds } from 'date-fns';
 
 export const load = async () => {};
 
@@ -10,7 +12,7 @@ export const actions: Actions = {
 	default: async function ({ locals, request }) {
 		const data = await request.formData();
 
-		const { login, password } = z
+		const { login, password, remember, memorize } = z
 			.object({
 				login: z.string(),
 				password: z.string(),
@@ -27,8 +29,28 @@ export const actions: Actions = {
 		if (authenticateUser && bcrypt.compareSync(password, authenticateUser.password)) {
 			await collections.users.updateOne(
 				{ _id: authenticateUser._id },
-				{ $set: { sessionId: locals.sessionId, updatedAt: new Date() } }
+				{ $set: { updatedAt: new Date() } }
 			);
+			if (remember) {
+				await collections.sessions.insertOne({
+					_id: new ObjectId(),
+					userId: authenticateUser._id,
+					sessionId: locals.sessionId,
+					expiresAt: addSeconds(new Date(), memorize),
+					createdAt: new Date(),
+					updatedAt: new Date()
+				});
+			} else {
+				await collections.sessions.insertOne({
+					_id: new ObjectId(),
+					userId: authenticateUser._id,
+					sessionId: locals.sessionId,
+					expiresAt: addSeconds(new Date(), 3600),
+					createdAt: new Date(),
+					updatedAt: new Date()
+				});
+			}
+
 			// Redirect to the admin dashboard upon successful login
 			throw redirect(303, `/admin`);
 		} else {
