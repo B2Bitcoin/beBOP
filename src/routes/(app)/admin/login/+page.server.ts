@@ -10,7 +10,7 @@ export const actions: Actions = {
 	default: async function ({ locals, request }) {
 		const data = await request.formData();
 
-		const { login, password, remember, memorize } = z
+		const { login, password } = z
 			.object({
 				login: z.string(),
 				password: z.string(),
