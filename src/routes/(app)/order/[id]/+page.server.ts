@@ -25,6 +25,7 @@ export async function load({ params, depends }) {
 	return {
 		confirmationBlocksRequired: runtimeConfig.confirmationBlocks,
 		order: {
+			_id: order._id,
 			number: order.number,
 			createdAt: order.createdAt,
 			payment: {

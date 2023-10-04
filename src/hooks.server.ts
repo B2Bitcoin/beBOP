@@ -84,7 +84,7 @@ export const handle = (async ({ event, resolve }) => {
 			});
 		}
 	}
-	const slug = event.url.pathname.split('/')[1];
+	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
 	if (
 		runtimeConfig.isMaintenance &&

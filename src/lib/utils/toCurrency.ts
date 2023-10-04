@@ -9,9 +9,9 @@ export function toCurrency(
 ): number {
 	// Just fix the rounding if the currencies are the same
 	if (fromCurrency === targetCurrency) {
-		return Math.round(
-			(amount * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
-				Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])
+		return (
+			Math.round(amount * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /
+			Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])
 		);
 	}
 

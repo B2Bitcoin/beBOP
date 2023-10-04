@@ -125,6 +125,8 @@ client.on('open', () => {
 	paidSubscriptions
 		.createIndex({ cancelledAt: 1, 'notifications.type': 1, paidUntil: 1 })
 		.catch(console.error);
+
+	discounts.createIndex({ endsAt: 1 }).catch(console.error);
 });
 
 export async function withTransaction(cb: WithSessionCallback) {
