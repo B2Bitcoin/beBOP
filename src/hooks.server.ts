@@ -121,7 +121,7 @@ export const handle = (async ({ event, resolve }) => {
 		event.locals.user_role = authenticateUser.roleId;
 	}
 	// Protect any routes under /admin
-	if (event.url.pathname.startsWith('/admin') && !event.url.pathname.startsWith('/admin/login')) {
+	if (isAdminUrl && event.url.pathname !== '/admin/login') {
 		const sessionUser = event.locals.user_login;
 		if (!sessionUser) {
 			throw redirect(303, '/admin/login');
