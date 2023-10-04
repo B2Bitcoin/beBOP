@@ -14,6 +14,7 @@ import type { PaidSubscription } from '$lib/types/PaidSubscription';
 import type { CMSPage } from '$lib/types/CmsPage';
 import type { Challenge } from '$lib/types/Challenge';
 import type { EmailNotification } from '$lib/types/EmailNotification';
+import type { Discount } from '$lib/types/Discount';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -40,6 +41,7 @@ const emailNotifications = db.collection<EmailNotification>('notifications.email
 const nostrReceivedMessages = db.collection<NostRReceivedMessage>('nostr.receivedMessage');
 const cmsPages = db.collection<CMSPage>('cmsPages');
 const challenges = db.collection<Challenge>('challenges');
+const discounts = db.collection<Discount>('discounts');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -61,7 +63,8 @@ export const collections = {
 	bootikSubscriptions,
 	paidSubscriptions,
 	cmsPages,
-	challenges
+	challenges,
+	discounts
 };
 
 client.on('open', () => {
