@@ -5,7 +5,6 @@ import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 
 import '$lib/server/locks';
-import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 // import { countryFromIp } from '$lib/server/geoip';
