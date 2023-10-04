@@ -2,7 +2,7 @@ import { collections } from '$lib/server/database';
 import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 export const load = async () => {};
 
