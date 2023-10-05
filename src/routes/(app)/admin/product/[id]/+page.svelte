@@ -2,7 +2,11 @@
 	import PictureComponent from '$lib/components/Picture.svelte';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
-	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import {
+		DEFAULT_MAX_QUANTITY_PER_ORDER,
+		MAX_NAME_LIMIT,
+		MAX_SHORT_DESCRIPTION_LIMIT
+	} from '$lib/types/Product';
 	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { page } from '$app/stores';
@@ -245,6 +249,23 @@
 			</div>
 
 			<input type="hidden" name="changedDate" value={changedDate} />
+		{/if}
+
+		{#if data.product.type !== 'subscription'}
+			<label class="form-label">
+				Max quantity per order
+
+				<input
+					class="form-input"
+					type="number"
+					name="maxQuantityPerOrder"
+					placeholder="Max quantity per order"
+					step="1"
+					min="1"
+					max="10"
+					value={data.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER}
+				/>
+			</label>
 		{/if}
 
 		{#if data.product.type === 'resource'}

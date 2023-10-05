@@ -146,6 +146,7 @@ export const actions: Actions = {
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
 					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
+					...(parsed.maxQuantityPerOrder && { maxQuantityPerOrder: parsed.maxQuantityPerOrder }),
 					...(parsed.stock !== undefined && {
 						stock: {
 							total: parsed.stock,
@@ -158,7 +159,8 @@ export const actions: Actions = {
 				$unset: {
 					...(!parsed.availableDate && { availableDate: '' }),
 					...(!parsed.deliveryFees && { deliveryFees: '' }),
-					...(parsed.stock === undefined && { stock: '' })
+					...(parsed.stock === undefined && { stock: '' }),
+					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' })
 				}
 			}
 		);

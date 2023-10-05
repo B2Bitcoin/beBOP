@@ -22,5 +22,6 @@ export const productBaseSchema = {
 	payWhatYouWant: z.boolean({ coerce: true }).default(false),
 	standalone: z.boolean({ coerce: true }).default(false),
 	free: z.boolean({ coerce: true }).default(false),
-	stock: z.number().int().min(0).optional()
+	stock: z.number().int().min(0).optional(),
+	maxQuantityPerOrder: z.number().int().min(1).max(10).optional()
 };

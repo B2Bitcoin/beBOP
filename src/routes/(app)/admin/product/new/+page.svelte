@@ -3,7 +3,11 @@
 	import { invalidateAll } from '$app/navigation';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
-	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import {
+		DEFAULT_MAX_QUANTITY_PER_ORDER,
+		MAX_NAME_LIMIT,
+		MAX_SHORT_DESCRIPTION_LIMIT
+	} from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
@@ -32,6 +36,7 @@
 	let displayShortDescription = product?.displayShortDescription ?? false;
 	let freeProduct = false;
 	let hasStock = false;
+	let maxQuantityPerOrder = product?.maxQuantityPerOrder ?? DEFAULT_MAX_QUANTITY_PER_ORDER;
 
 	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
@@ -325,6 +330,22 @@
 				Enable preorders before available date
 			</label>
 		</div>
+	{/if}
+
+	{#if type !== 'subscription'}
+		<label class="form-label">
+			Max quantity per order
+			<input
+				class="form-input"
+				type="number"
+				name="maxQuantityPerOrder"
+				step="1"
+				min="1"
+				max="10"
+				value={maxQuantityPerOrder}
+				disabled={submitting}
+			/>
+		</label>
 	{/if}
 
 	{#if type === 'resource'}

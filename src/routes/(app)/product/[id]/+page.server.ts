@@ -1,9 +1,8 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, RequestEvent } from './$types';
-import type { Product } from '$lib/types/Product';
+import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { z } from 'zod';
-import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
@@ -74,7 +73,11 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	const formData = await request.formData();
 	const { quantity, customPrice } = z
 		.object({
-			quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY),
+			quantity: z
+				.number({ coerce: true })
+				.int()
+				.min(1)
+				.max(product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER),
 			customPrice: z.string().regex(/^\d+(\.\d+)?$/)
 		})
 		.parse({

@@ -137,6 +137,9 @@ export const actions: Actions = {
 						requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
 						...(parsed.stock !== undefined && {
 							stock: { total: parsed.stock, available: parsed.stock, reserved: 0 }
+						}),
+						...(parsed.maxQuantityPerOrder && {
+							maxQuantityPerOrder: parsed.maxQuantityPerOrder
 						})
 					},
 					{ session }

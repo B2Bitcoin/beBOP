@@ -16,6 +16,7 @@ export interface Product extends Timestamps {
 		total: number;
 		reserved: number;
 	};
+	maxQuantityPerOrder?: number;
 	type: 'subscription' | 'resource' | 'donation';
 	shipping: boolean;
 	deliveryFees?: DeliveryFees;
@@ -34,6 +35,8 @@ export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
 export const MAX_NAME_LIMIT = 70;
 
 export const MAX_SHORT_DESCRIPTION_LIMIT = 160;
+
+export const DEFAULT_MAX_QUANTITY_PER_ORDER = 10;
 
 export function isPreorder(
 	availableDate: Date | undefined,
