@@ -22,7 +22,7 @@
 		},
 		{
 			option: 'As much as possible',
-			value: 1
+			value: 10 * 365 * 86400
 		}
 	];
 </script>
