@@ -9,7 +9,7 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
-	import { isPreorder as isPreorderFn } from '$lib/types/Product';
+	import { DEFAULT_MAX_QUANTITY_PER_ORDER, isPreorder as isPreorderFn } from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 
 	export let data;
@@ -260,7 +260,9 @@
 									bind:value={quantity}
 									class="form-input w-16 ml-2 inline cursor-pointer"
 								>
-									{#each [1, 2, 3, 4, 5] as i}
+									{#each Array(Math.min(data.product.stock?.available ?? Infinity, data.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER))
+										.fill(0)
+										.map((_, i) => i + 1) as i}
 										<option value={i}>{i}</option>
 									{/each}
 								</select>
