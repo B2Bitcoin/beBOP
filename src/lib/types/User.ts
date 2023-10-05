@@ -10,5 +10,5 @@ export interface User extends Timestamps {
 	};
 	roleId: string;
 	status: string;
-	lastLoginAt: Date;
+	lastLoginAt?: Date;
 }
