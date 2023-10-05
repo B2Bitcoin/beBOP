@@ -8,6 +8,4 @@ export interface User extends Timestamps {
 	backupAddressValue: string;
 	roleId: string;
 	status: string;
-	memorize: 'none' | '1h' | '1d' | '1w' | '1m' | 'max';
-	sessionId?: string;
 }

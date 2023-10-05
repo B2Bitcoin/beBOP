@@ -135,6 +135,7 @@ client.on('open', () => {
 		.createIndex({ cancelledAt: 1, 'notifications.type': 1, paidUntil: 1 })
 		.catch(console.error);
 	sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch(console.error);
+	sessions.createIndex({ sessionId: 1 }).catch(console.error);
 });
 
 export async function withTransaction(cb: WithSessionCallback) {
