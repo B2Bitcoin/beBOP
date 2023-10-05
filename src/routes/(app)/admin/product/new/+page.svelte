@@ -31,6 +31,7 @@
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
 	let freeProduct = false;
+	let hasStock = false;
 
 	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
@@ -324,6 +325,37 @@
 				Enable preorders before available date
 			</label>
 		</div>
+	{/if}
+
+	{#if type === 'resource'}
+		<h3 class="text-xl">Stock</h3>
+
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="hasStock"
+				bind:checked={hasStock}
+				disabled={submitting}
+			/>
+			The product has a limited stock
+		</label>
+
+		{#if hasStock}
+			<label class="form-label">
+				Stock
+				<input
+					class="form-input"
+					type="number"
+					name="stock"
+					placeholder="Stock"
+					step="1"
+					min="0"
+					value={0}
+					disabled={submitting}
+				/>
+			</label>
+		{/if}
 	{/if}
 
 	{#if type !== 'donation'}

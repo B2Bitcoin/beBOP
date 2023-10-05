@@ -11,6 +11,11 @@ export interface Product extends Timestamps {
 		amount: number;
 		currency: Currency;
 	};
+	stock?: {
+		available: number;
+		total: number;
+		reserved: number;
+	};
 	type: 'subscription' | 'resource' | 'donation';
 	shipping: boolean;
 	deliveryFees?: DeliveryFees;

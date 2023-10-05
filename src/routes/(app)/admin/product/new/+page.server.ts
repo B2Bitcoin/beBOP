@@ -134,7 +134,10 @@ export const actions: Actions = {
 						displayShortDescription: parsed.displayShortDescription,
 						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
-						requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee
+						requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
+						...(parsed.stock !== undefined && {
+							stock: { total: parsed.stock, available: parsed.stock, reserved: 0 }
+						})
 					},
 					{ session }
 				);

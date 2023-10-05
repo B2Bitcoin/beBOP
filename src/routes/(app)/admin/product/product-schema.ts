@@ -21,5 +21,6 @@ export const productBaseSchema = {
 	requireSpecificDeliveryFee: z.boolean({ coerce: true }).default(false),
 	payWhatYouWant: z.boolean({ coerce: true }).default(false),
 	standalone: z.boolean({ coerce: true }).default(false),
-	free: z.boolean({ coerce: true }).default(false)
+	free: z.boolean({ coerce: true }).default(false),
+	stock: z.number().int().min(0).optional()
 };

@@ -17,6 +17,7 @@
 	let priceAmountElement: HTMLInputElement;
 	let standalone = data.product.standalone;
 	let freeProduct = data.product.free;
+	let hasStock = !!data.product.stock;
 	let curr: 'SAT' | 'BTC';
 	let disableDate = true;
 
@@ -244,6 +245,30 @@
 			</div>
 
 			<input type="hidden" name="changedDate" value={changedDate} />
+		{/if}
+
+		{#if data.product.type === 'resource'}
+			<h3 class="text-xl">Stock</h3>
+
+			<label class="checkbox-label">
+				<input class="form-checkbox" type="checkbox" name="hasStock" bind:checked={hasStock} />
+				The product has a limited stock
+			</label>
+
+			{#if hasStock}
+				<label class="form-label">
+					Stock
+					<input
+						class="form-input"
+						type="number"
+						name="stock"
+						placeholder="Stock"
+						step="1"
+						min="0"
+						value={data.product.stock?.total ?? 0}
+					/>
+				</label>
+			{/if}
 		{/if}
 
 		{#if data.product.type !== 'donation'}
