@@ -3,7 +3,11 @@
 	import { invalidateAll } from '$app/navigation';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
-	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import {
+		DEFAULT_MAX_QUANTITY_PER_ORDER,
+		MAX_NAME_LIMIT,
+		MAX_SHORT_DESCRIPTION_LIMIT
+	} from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
@@ -31,6 +35,8 @@
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
 	let freeProduct = false;
+	let hasStock = false;
+	let maxQuantityPerOrder = product?.maxQuantityPerOrder ?? DEFAULT_MAX_QUANTITY_PER_ORDER;
 
 	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
@@ -324,6 +330,53 @@
 				Enable preorders before available date
 			</label>
 		</div>
+	{/if}
+
+	{#if type !== 'subscription'}
+		<label class="form-label">
+			Max quantity per order
+			<input
+				class="form-input"
+				type="number"
+				name="maxQuantityPerOrder"
+				step="1"
+				min="1"
+				max="10"
+				value={maxQuantityPerOrder}
+				disabled={submitting}
+			/>
+		</label>
+	{/if}
+
+	{#if type === 'resource'}
+		<h3 class="text-xl">Stock</h3>
+
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="hasStock"
+				bind:checked={hasStock}
+				disabled={submitting}
+			/>
+			The product has a limited stock
+		</label>
+
+		{#if hasStock}
+			<label class="form-label">
+				Stock
+				<input
+					class="form-input"
+					type="number"
+					name="stock"
+					placeholder="Stock"
+					step="1"
+					min="0"
+					value={0}
+					disabled={submitting}
+				/>
+			</label>
+		{/if}
 	{/if}
 
 	{#if type !== 'donation'}

@@ -1,6 +1,6 @@
 import { addToCartInDb, removeFromCartInDb } from '$lib/server/cart';
 import { collections } from '$lib/server/database';
-import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
+import { DEFAULT_MAX_QUANTITY_PER_ORDER } from '$lib/types/Product.js';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
@@ -40,13 +40,15 @@ export const actions = {
 
 		const formData = await request.formData();
 
+		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
+
 		const { quantity } = z
 			.object({
 				quantity: z
 					.number({ coerce: true })
 					.int()
 					.min(1)
-					.max(MAX_PRODUCT_QUANTITY - 1)
+					.max(max - 1)
 			})
 			.parse({
 				quantity: formData.get('quantity')
@@ -60,10 +62,21 @@ export const actions = {
 		throw redirect(303, request.headers.get('referer') || '/cart');
 	},
 	decrease: async ({ request, locals, params }) => {
+		const product = await collections.products.findOne({ _id: params.id });
+
+		if (!product) {
+			await collections.carts.updateOne(
+				{ sessionId: locals.sessionId },
+				{ $pull: { items: { productId: params.id } } }
+			);
+			throw error(404, 'This product does not exist');
+		}
 		const formData = await request.formData();
+
+		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
 		const { quantity } = z
 			.object({
-				quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY)
+				quantity: z.number({ coerce: true }).int().min(1).max(max)
 			})
 			.parse({
 				quantity: formData.get('quantity')

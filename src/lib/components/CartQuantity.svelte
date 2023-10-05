@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
 	import IconChevronDown from './icons/IconChevronDown.svelte';
 	import IconChevronUp from './icons/IconChevronUp.svelte';
 	import type { LayoutData } from '../../routes/(app)/$types';
+	import { DEFAULT_MAX_QUANTITY_PER_ORDER } from '$lib/types/Product';
 
 	export let sm = false;
 	export let disabled = false;
@@ -31,7 +31,8 @@
 	<button
 		formaction="/cart/{item.product._id}/?/increase"
 		class="{sm ? 'px-1' : 'px-3'} bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
-		disabled={disabled || item.quantity >= MAX_PRODUCT_QUANTITY}
+		disabled={disabled ||
+			item.quantity >= (item.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER)}
 	>
 		<span class="sr-only">Increase quantity</span><IconChevronUp class={sm ? 'scale-75' : ''} />
 	</button>

@@ -96,6 +96,35 @@ export const actions: Actions = {
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;
 		}
+		const amountInCarts =
+			(
+				await collections.carts
+					.aggregate([
+						{
+							$match: {
+								'items.productId': params.id
+							}
+						},
+						{
+							$unwind: '$items'
+						},
+						{
+							$match: {
+								'items.productId': params.id
+							}
+						},
+						{
+							$group: {
+								_id: null,
+								total: {
+									$sum: '$items.quantity'
+								}
+							}
+						}
+					])
+					.next()
+			)?.total || 0;
+
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -117,11 +146,21 @@ export const actions: Actions = {
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
 					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
+					...(parsed.maxQuantityPerOrder && { maxQuantityPerOrder: parsed.maxQuantityPerOrder }),
+					...(parsed.stock !== undefined && {
+						stock: {
+							total: parsed.stock,
+							reserved: amountInCarts,
+							available: parsed.stock - amountInCarts
+						}
+					}),
 					updatedAt: new Date()
 				},
 				$unset: {
 					...(!parsed.availableDate && { availableDate: '' }),
-					...(!parsed.deliveryFees && { deliveryFees: '' })
+					...(!parsed.deliveryFees && { deliveryFees: '' }),
+					...(parsed.stock === undefined && { stock: '' }),
+					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' })
 				}
 			}
 		);

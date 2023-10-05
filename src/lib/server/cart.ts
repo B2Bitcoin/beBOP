@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { collections } from './database';
-import type { Product } from '$lib/types/Product';
-import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart';
+import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
 
@@ -40,8 +39,9 @@ export async function addToCartInDb(
 	if (existingItem && !product.standalone) {
 		existingItem.quantity = params.totalQuantity ? quantity : existingItem.quantity + quantity;
 
-		if (existingItem.quantity > MAX_PRODUCT_QUANTITY) {
-			existingItem.quantity = MAX_PRODUCT_QUANTITY;
+		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
+		if (existingItem.quantity > max) {
+			existingItem.quantity = max;
 		}
 
 		if (product.type === 'subscription') {

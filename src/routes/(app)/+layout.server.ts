@@ -70,6 +70,7 @@ export async function load({ depends, locals }) {
 								| 'requireSpecificDeliveryFee'
 								| 'payWhatYouWant'
 								| 'standalone'
+								| 'maxQuantityPerOrder'
 							>
 						>(
 							{ _id: item.productId },
@@ -87,7 +88,8 @@ export async function load({ depends, locals }) {
 									applyDeliveryFeesOnlyOnce: 1,
 									requireSpecificDeliveryFee: 1,
 									payWhatYouWant: 1,
-									standalone: 1
+									standalone: 1,
+									maxQuantityPerOrder: 1
 								}
 							}
 						);
