@@ -2,7 +2,7 @@ import { collections } from '$lib/server/database';
 import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 import { ObjectId } from 'mongodb';
 import { addSeconds } from 'date-fns';
 
@@ -26,7 +26,7 @@ export const actions: Actions = {
 				memorize: data.get('memorize')
 			});
 		const authenticateUser = await collections.users.findOne({ login: login });
-		if (authenticateUser && bcrypt.compareSync(password, authenticateUser.password)) {
+		if (authenticateUser && bcryptjs.compareSync(password, authenticateUser.password)) {
 			await collections.users.updateOne(
 				{ _id: authenticateUser._id },
 				{ $set: { updatedAt: new Date() } }
