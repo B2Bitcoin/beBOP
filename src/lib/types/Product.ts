@@ -26,6 +26,9 @@ export interface Product extends Timestamps {
 	preorder: boolean;
 	displayShortDescription: boolean;
 	payWhatYouWant: boolean;
+	/**
+	 * One line per item in a cart, eg for large products
+	 */
 	standalone: boolean;
 	free: boolean;
 }
@@ -43,4 +46,8 @@ export function isPreorder(
 	preorder: boolean | undefined
 ): boolean {
 	return !!(preorder && availableDate && availableDate > new Date());
+}
+
+export function oneMaxPerLine(p: Pick<Product, 'standalone' | 'type'>) {
+	return p.standalone || p.type === 'subscription';
 }
