@@ -98,3 +98,36 @@ export async function refreshAvailableStockInDb(productId: string, session?: Cli
 		}
 	);
 }
+
+export async function amountOfProductSold(productId: string): Promise<number> {
+	return (
+		(
+			await collections.orders
+				.aggregate([
+					{
+						$match: {
+							'items.product._id': productId,
+							'payment.status': 'paid'
+						}
+					},
+					{
+						$unwind: '$items'
+					},
+					{
+						$match: {
+							'items.product._id': productId
+						}
+					},
+					{
+						$group: {
+							_id: null,
+							total: {
+								$sum: '$items.quantity'
+							}
+						}
+					}
+				])
+				.next()
+		)?.total ?? 0
+	);
+}

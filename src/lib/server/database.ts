@@ -83,6 +83,7 @@ client.on('open', () => {
 		)
 		.catch(console.error);
 	orders.createIndex({ sessionId: 1 }).catch(console.error);
+	orders.createIndex({ 'items.product._id': 1, paymentStatus: 1 });
 	orders
 		.createIndex(
 			{ 'notifications.paymentStatus.npub': 1, createdAt: -1 },
