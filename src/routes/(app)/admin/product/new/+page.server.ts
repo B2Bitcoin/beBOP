@@ -129,7 +129,7 @@ export const actions: Actions = {
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
 						payWhatYouWant: parsed.payWhatYouWant,
-						standalone: parsed.payWhatYouWant ? parsed.payWhatYouWant : parsed.standalone,
+						standalone: parsed.payWhatYouWant || parsed.standalone,
 						free: parsed.free,
 						displayShortDescription: parsed.displayShortDescription,
 						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
