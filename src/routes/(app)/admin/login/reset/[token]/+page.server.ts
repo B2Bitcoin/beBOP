@@ -19,7 +19,7 @@ export async function load({ params }) {
 }
 
 export const actions: Actions = {
-	default: async function ({ request, params }) {
+	default: async function ({ request }) {
 		const data = await request.formData();
 
 		const { login, pwd1, pwd2 } = z

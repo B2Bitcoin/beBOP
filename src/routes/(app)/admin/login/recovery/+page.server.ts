@@ -20,7 +20,7 @@ export const actions: Actions = {
 				accountType: data.get('accountType'),
 				otherLogin: data.get('otherLogin')
 			});
-		let query = accountType === 'super-admin' ? { roleId: accountType } : { login: otherLogin };
+		const query = accountType === 'super-admin' ? { roleId: accountType } : { login: otherLogin };
 		const user = await collections.users.findOne(query);
 		if (user) {
 			await collections.passwordResets.insertOne({
