@@ -30,8 +30,8 @@ export const actions = {
 				pwd2: data.get('pwd2')
 			});
 		if (pwd1 === pwd2) {
-			const salt = bcryptjs.genSaltSync(10);
-			const passwordBcrypt = bcryptjs.hashSync(pwd1, salt);
+			const salt = await bcryptjs.genSalt(10);
+			const passwordBcrypt = await bcryptjs.hash(pwd1, salt);
 			await collections.users.updateOne({ login: login }, { $set: { password: passwordBcrypt } });
 
 			return { success: true };
