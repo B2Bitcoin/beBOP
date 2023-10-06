@@ -18,6 +18,7 @@ import type { Role } from '$lib/types/Role';
 import type { User } from '$lib/types/User';
 import type { Discount } from '$lib/types/Discount';
 import type { Session } from '$lib/types/session';
+import type { PasswordReset } from '$lib/types/PasswordReset';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -48,6 +49,7 @@ const roles = db.collection<Role>('roles');
 const users = db.collection<User>('users');
 const discounts = db.collection<Discount>('discounts');
 const sessions = db.collection<Session>('sessions');
+const passwordResets = db.collection<PasswordReset>('passwordResets');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -73,7 +75,8 @@ export const collections = {
 	roles,
 	users,
 	discounts,
-	sessions
+	sessions,
+	passwordResets
 };
 
 client.on('open', () => {
@@ -136,6 +139,7 @@ client.on('open', () => {
 		.catch(console.error);
 	sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch(console.error);
 	sessions.createIndex({ sessionId: 1 }).catch(console.error);
+	passwordResets.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch(console.error);
 });
 
 export async function withTransaction(cb: WithSessionCallback) {
