@@ -8,6 +8,7 @@ import { createOrder } from '$lib/server/orders';
 import { emailsEnabled } from '$lib/server/email';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
+import { refreshAvailableStockInDb } from '$lib/server/product';
 
 export function load() {
 	return {
@@ -110,7 +111,12 @@ export const actions = {
 				},
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
+				cb: async (session) => {
+					await collections.carts.deleteOne({ _id: cart._id }, { session });
+					for (const item of cart.items) {
+						await refreshAvailableStockInDb(item.productId, session);
+					}
+				}
 			}
 		);
 
