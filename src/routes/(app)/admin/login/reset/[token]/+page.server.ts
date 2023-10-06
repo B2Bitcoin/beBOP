@@ -5,7 +5,7 @@ import bcryptjs from 'bcryptjs';
 
 export async function load({ params }) {
 	const passwordReset = await collections.passwordResets.findOne({
-		tokenUrl: params.token
+		token: params.token
 	});
 
 	if (!passwordReset) {

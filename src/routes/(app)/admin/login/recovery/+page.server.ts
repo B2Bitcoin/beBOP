@@ -25,7 +25,7 @@ export const actions = {
 			await collections.passwordResets.insertOne({
 				_id: new ObjectId(),
 				userId: user._id,
-				tokenUrl: new ObjectId().toString(),
+				token: crypto.randomUUID(),
 				expiresAt: addMinutes(new Date(), 15),
 				createdAt: new Date(),
 				updatedAt: new Date()
