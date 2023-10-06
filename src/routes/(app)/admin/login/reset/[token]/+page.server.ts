@@ -4,11 +4,10 @@ import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 
 export async function load({ params }) {
-	const users = await collections.users.findOne({"passwordSet.token": params.token});
-	const user = users.find((us) => us.passwordReset?.token === params.token);
+	const user = await collections.users.findOne({ 'passwordReset.token': params.token });
 
-	if (!user) {
-		throw error(404, 'token password reset not found ' + params.token);
+	if (!user || (user.passwordReset && user.passwordReset?.expiresAt < new Date())) {
+		throw error(404, 'token password reset not found or has expired');
 	}
 	return {
 		user
