@@ -12,7 +12,6 @@ import type { Product } from '$lib/types/Product';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
-import { refreshAvailableStockInDb } from '../product';
 
 const lock = new Lock('received-messages');
 
@@ -455,12 +454,7 @@ const commands: Record<
 				},
 				vatCountry: '',
 				shippingAddress: null,
-				cb: async (session) => {
-					await collections.carts.deleteOne({ _id: cart._id }, { session });
-					for (const item of items) {
-						await refreshAvailableStockInDb(item.product._id, session);
-					}
-				}
+				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
 			}).catch(async (e) => {
 				console.error(e);
 				await send(e.message);

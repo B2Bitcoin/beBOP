@@ -7,7 +7,7 @@ import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
-import { amountOfProductInCarts } from '$lib/server/product';
+import { amountOfProductReserved } from '$lib/server/product';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -97,7 +97,7 @@ export const actions: Actions = {
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;
 		}
-		const amountInCarts = await amountOfProductInCarts(params.id);
+		const amountInCarts = await amountOfProductReserved(params.id);
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },

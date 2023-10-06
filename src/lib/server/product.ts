@@ -1,9 +1,15 @@
 import type { ClientSession } from 'mongodb';
 import { collections } from './database';
 
-export async function amountOfProductInCarts(productId: string, session?: ClientSession) {
+/**
+ * Amount of product reserved in carts and pending orders
+ */
+export async function amountOfProductReserved(
+	productId: string,
+	session?: ClientSession
+): Promise<number> {
 	return (
-		(
+		((
 			await collections.carts
 				.aggregate(
 					[
@@ -34,12 +40,45 @@ export async function amountOfProductInCarts(productId: string, session?: Client
 					}
 				)
 				.next()
-		)?.total ?? 0
+		)?.total ?? 0) +
+		((
+			await collections.orders
+				.aggregate(
+					[
+						{
+							$match: {
+								'items.product._id': productId,
+								'payment.status': 'pending'
+							}
+						},
+						{
+							$unwind: '$items'
+						},
+						{
+							$match: {
+								'items.product._id': productId
+							}
+						},
+						{
+							$group: {
+								_id: null,
+								total: {
+									$sum: '$items.quantity'
+								}
+							}
+						}
+					],
+					{
+						session
+					}
+				)
+				.next()
+		)?.total ?? 0)
 	);
 }
 
 export async function refreshAvailableStockInDb(productId: string, session?: ClientSession) {
-	const amountInCarts = await amountOfProductInCarts(productId, session);
+	const amountInCarts = await amountOfProductReserved(productId, session);
 
 	await collections.products.updateOne(
 		{

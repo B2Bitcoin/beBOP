@@ -18,6 +18,7 @@ import { vatRates } from './vat-rates';
 import type { Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
+import { refreshAvailableStockInDb } from './product';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -123,6 +124,20 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 		);
 	}
 	//#endregion
+
+	// Update product stock in DB
+	for (const item of order.items.filter((item) => item.product.stock)) {
+		await collections.products.updateOne(
+			{
+				_id: item.product._id
+			},
+			{
+				$inc: { 'stock.total': -item.quantity, 'stock.available': -item.quantity },
+				$set: { updatedAt: new Date() }
+			},
+			{ session }
+		);
+	}
 }
 
 export async function createOrder(
@@ -360,6 +375,12 @@ export async function createOrder(
 		);
 
 		await params.cb?.(session);
+
+		for (const product of products) {
+			if (product.stock) {
+				await refreshAvailableStockInDb(product._id, session);
+			}
+		}
 	});
 
 	return orderId;
