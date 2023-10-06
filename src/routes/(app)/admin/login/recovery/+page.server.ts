@@ -1,13 +1,12 @@
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
-import type { Actions } from './$types';
 import { z } from 'zod';
 import { addMinutes } from 'date-fns';
 import { sendResetPasswordNotification } from '$lib/server/sendResetPasswordNotification';
 
 export const load = async () => {};
 
-export const actions: Actions = {
+export const actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 

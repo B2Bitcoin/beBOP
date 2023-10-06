@@ -1,5 +1,4 @@
 import { collections } from '$lib/server/database';
-import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
@@ -8,7 +7,7 @@ import { addSeconds } from 'date-fns';
 
 export const load = async () => {};
 
-export const actions: Actions = {
+export const actions = {
 	default: async function ({ locals, request }) {
 		const data = await request.formData();
 

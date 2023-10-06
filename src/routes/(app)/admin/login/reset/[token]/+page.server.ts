@@ -1,6 +1,5 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
-import type { Actions } from '../$types';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 
@@ -18,7 +17,7 @@ export async function load({ params }) {
 	};
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 
