@@ -6,8 +6,12 @@ import bcryptjs from 'bcryptjs';
 export async function load({ params }) {
 	const user = await collections.users.findOne({ 'passwordReset.token': params.token });
 
-	if (!user || (user.passwordReset && user.passwordReset?.expiresAt < new Date())) {
-		throw error(404, 'token password reset not found or has expired');
+	if (!user) {
+		throw error(404, 'token password reset not found');
+	}
+
+	if (user.passwordReset && user.passwordReset?.expiresAt < new Date()) {
+		throw error(404, 'token password reset has expired');
 	}
 	return {
 		user
