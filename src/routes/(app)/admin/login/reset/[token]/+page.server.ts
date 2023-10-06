@@ -4,14 +4,12 @@ import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 
 export async function load({ params }) {
-	const passwordReset = await collections.passwordResets.findOne({
-		token: params.token
-	});
+	const users = await collections.users.find().toArray();
+	const user = users.find((us) => us.passwordReset?.token === params.token);
 
-	if (!passwordReset) {
-		throw error(404, 'token password reset not found');
+	if (!user) {
+		throw error(404, 'token password reset not found ' + params.token);
 	}
-	const user = await collections.users.findOne({ _id: passwordReset.userId });
 	return {
 		user
 	};

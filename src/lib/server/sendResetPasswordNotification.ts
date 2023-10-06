@@ -5,10 +5,9 @@ import { ObjectId } from 'mongodb';
 import { Kind } from 'nostr-tools';
 
 export async function sendResetPasswordNotification(user: User) {
-	const passwordReset = await collections.passwordResets.findOne({ userId: user._id });
 	const content = `{Shop name + shop url] - Password reset\n\nDear user,\n\n
         This message was sent to you because you have requested to reset your password.\n\n
-        You'll be able to do it by following this link : ${ORIGIN}/admin/reset/${passwordReset?.token}\n\n
+        You'll be able to do it by following this link : ${ORIGIN}/admin/reset/${user.passwordReset.token}\n\n
         If you didn't ask for this password reset procedure, please ignore this message and do nothing.\n\n
         Best regards,\n\n
         {Shop name} team`;

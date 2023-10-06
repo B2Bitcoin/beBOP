@@ -1,5 +1,4 @@
 import { collections } from '$lib/server/database';
-import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 import { addMinutes } from 'date-fns';
 import { sendResetPasswordNotification } from '$lib/server/sendResetPasswordNotification';
@@ -22,14 +21,17 @@ export const actions = {
 		const query = accountType === 'super-admin' ? { roleId: accountType } : { login: otherLogin };
 		const user = await collections.users.findOne(query);
 		if (user) {
-			await collections.passwordResets.insertOne({
-				_id: new ObjectId(),
-				userId: user._id,
-				token: crypto.randomUUID(),
-				expiresAt: addMinutes(new Date(), 15),
-				createdAt: new Date(),
-				updatedAt: new Date()
-			});
+			await collections.users.updateOne(
+				{ _id: user._id },
+				{
+					$set: {
+						passwordReset: {
+							token: crypto.randomUUID(),
+							expiresAt: addMinutes(new Date(), 15)
+						}
+					}
+				}
+			);
 			sendResetPasswordNotification(user);
 			return { success: true };
 		} else {
