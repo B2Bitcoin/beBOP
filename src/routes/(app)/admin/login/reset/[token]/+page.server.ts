@@ -4,7 +4,7 @@ import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 
 export async function load({ params }) {
-	const users = await collections.users.find().toArray();
+	const users = await collections.users.findOne({"passwordSet.token": params.token});
 	const user = users.find((us) => us.passwordReset?.token === params.token);
 
 	if (!user) {
