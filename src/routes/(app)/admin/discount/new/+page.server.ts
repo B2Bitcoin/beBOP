@@ -1,5 +1,4 @@
 import { collections } from '$lib/server/database';
-import type { Actions } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
@@ -26,7 +25,7 @@ export const load = async () => {
 	};
 };
 
-export const actions: Actions = {
+export const actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 
