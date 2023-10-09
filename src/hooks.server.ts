@@ -1,11 +1,10 @@
 import { ZodError } from 'zod';
-import { type HandleServerError, type Handle, error } from '@sveltejs/kit';
+import { type HandleServerError, type Handle, error, redirect } from '@sveltejs/kit';
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 
 import '$lib/server/locks';
-import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 // import { countryFromIp } from '$lib/server/geoip';
@@ -51,6 +50,8 @@ export const handle = (async ({ event, resolve }) => {
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
 
 	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
+	const isAdminLoginUrl =
+		event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login';
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
 			maintenanceDisplay: true
@@ -59,31 +60,7 @@ export const handle = (async ({ event, resolve }) => {
 			_id: 1
 		})
 		.toArray();
-	if (isAdminUrl && ADMIN_LOGIN && ADMIN_PASSWORD) {
-		const authorization = event.request.headers.get('authorization');
 
-		if (!authorization?.startsWith('Basic ')) {
-			return new Response(null, {
-				status: 401,
-				headers: {
-					'WWW-Authenticate': 'Basic realm="Admin"'
-				}
-			});
-		}
-
-		const [login, password] = Buffer.from(authorization.split(' ')[1], 'base64')
-			.toString()
-			.split(':');
-
-		if (login !== ADMIN_LOGIN || password !== ADMIN_PASSWORD) {
-			return new Response(null, {
-				status: 401,
-				headers: {
-					'WWW-Authenticate': 'Basic realm="Admin"'
-				}
-			});
-		}
-	}
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
 	if (
@@ -113,6 +90,27 @@ export const handle = (async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
+	const sessionUser = await collections.sessions.findOne({
+		sessionId: event.locals.sessionId
+	});
+	if (sessionUser) {
+		const authenticateUser = await collections.users.findOne({
+			_id: sessionUser.userId
+		});
+		if (authenticateUser) {
+			event.locals.user = {
+				login: authenticateUser.login,
+				role: authenticateUser.roleId
+			};
+		}
+	}
+	// Protect any routes under /admin
+	if (isAdminUrl && !isAdminLoginUrl) {
+		const sessionUser = event.locals.user?.login;
+		if (!sessionUser) {
+			throw redirect(303, '/admin/login');
+		}
+	}
 
 	const response = await resolve(event);
 
