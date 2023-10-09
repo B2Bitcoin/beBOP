@@ -11,4 +11,8 @@ export interface User extends Timestamps {
 	roleId: string;
 	status: string;
 	lastLoginAt?: Date;
+	passwordReset?: {
+		token: string;
+		expiresAt: Date;
+	};
 }

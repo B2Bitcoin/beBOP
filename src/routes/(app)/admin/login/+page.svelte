@@ -82,7 +82,7 @@
 		{/if}
 		<div class="flex justify-center gap-4 mt-2">
 			<input type="submit" class="btn btn-blue text-white" value="Login" />
-			<input type="reset" class="btn btn-gray" value="Recovery" />
+			<button class="btn btn-gray"><a href="/admin/login/recovery">Recovery</a></button>
 		</div>
 	</form>
 </div>

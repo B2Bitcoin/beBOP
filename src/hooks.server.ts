@@ -50,6 +50,8 @@ export const handle = (async ({ event, resolve }) => {
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
 
 	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
+	const isAdminLoginUrl =
+		event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login';
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
 			maintenanceDisplay: true
@@ -103,7 +105,7 @@ export const handle = (async ({ event, resolve }) => {
 		}
 	}
 	// Protect any routes under /admin
-	if (isAdminUrl && event.url.pathname !== '/admin/login') {
+	if (isAdminUrl && !isAdminLoginUrl) {
 		const sessionUser = event.locals.user?.login;
 		if (!sessionUser) {
 			throw redirect(303, '/admin/login');
