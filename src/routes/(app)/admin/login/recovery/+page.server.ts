@@ -32,7 +32,8 @@ export const actions = {
 					}
 				}
 			);
-			sendResetPasswordNotification(user);
+			const userUpdated = await collections.users.findOne(query);
+			if (userUpdated) sendResetPasswordNotification(userUpdated);
 			return { success: true };
 		} else {
 			return { failedFindUser: true, accountType, otherLogin };
