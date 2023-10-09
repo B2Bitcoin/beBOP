@@ -1,9 +1,9 @@
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+
 import { collections } from '$lib/server/database';
 import type { Challenge } from '$lib/types/Challenge';
 
-export const load: PageServerLoad = async () => {
+export const load = async () => {
 	const challenges = await collections.challenges
 		.find({})
 		.project<Pick<Challenge, '_id' | 'name'>>({ _id: 1, name: 1 })

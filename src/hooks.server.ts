@@ -7,6 +7,10 @@ import { addYears } from 'date-fns';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
+import { sequence } from '@sveltejs/kit/hooks';
+import { SvelteKitAuth } from '@auth/sveltekit';
+import GitHub from '@auth/core/providers/github';
+import { AUTH_SECRET, GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
 // import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
@@ -44,7 +48,7 @@ export const handleError = (({ error, event }) => {
 	}
 }) satisfies HandleServerError;
 
-export const handle = (async ({ event, resolve }) => {
+export const handleAdmin = (async ({ event, resolve }) => {
 	await refreshPromise;
 
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
@@ -148,3 +152,14 @@ export const handle = (async ({ event, resolve }) => {
 	}
 	return response;
 }) satisfies Handle;
+
+export const handleAuthSvelte = SvelteKitAuth(async () => {
+	const authOptions = {
+		providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
+		secret: AUTH_SECRET,
+		trustHost: true
+	};
+	return authOptions;
+}) satisfies Handle;
+
+export const handle = sequence(handleAdmin, handleAuthSvelte);

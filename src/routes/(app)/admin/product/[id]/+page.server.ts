@@ -8,7 +8,7 @@ import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
 
 	if (!product) {

@@ -4,7 +4,7 @@ import type { PageServerLoad, Actions } from './$types';
 import { deletePicture } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	const picture = await collections.pictures.findOne({ _id: params.id });
 
 	if (!picture) {

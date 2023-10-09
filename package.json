@@ -53,6 +53,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@auth/core": "^0.16.1",
+		"@auth/sveltekit": "^0.3.9",
 		"@aws-sdk/client-s3": "^3.312.0",
 		"@aws-sdk/s3-request-presigner": "^3.316.0",
 		"@fontsource/gloock": "^5.0.0",
