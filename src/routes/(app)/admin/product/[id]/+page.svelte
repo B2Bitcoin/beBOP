@@ -2,7 +2,11 @@
 	import PictureComponent from '$lib/components/Picture.svelte';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
-	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import {
+		DEFAULT_MAX_QUANTITY_PER_ORDER,
+		MAX_NAME_LIMIT,
+		MAX_SHORT_DESCRIPTION_LIMIT
+	} from '$lib/types/Product';
 	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { page } from '$app/stores';
@@ -17,6 +21,7 @@
 	let priceAmountElement: HTMLInputElement;
 	let standalone = data.product.standalone;
 	let freeProduct = data.product.free;
+	let hasStock = !!data.product.stock;
 	let curr: 'SAT' | 'BTC';
 	let disableDate = true;
 
@@ -244,6 +249,47 @@
 			</div>
 
 			<input type="hidden" name="changedDate" value={changedDate} />
+		{/if}
+
+		{#if data.product.type !== 'subscription'}
+			<label class="form-label">
+				Max quantity per order
+
+				<input
+					class="form-input"
+					type="number"
+					name="maxQuantityPerOrder"
+					placeholder="Max quantity per order"
+					step="1"
+					min="1"
+					max="10"
+					value={data.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER}
+				/>
+			</label>
+		{/if}
+
+		{#if data.product.type === 'resource'}
+			<h3 class="text-xl">Stock</h3>
+
+			<label class="checkbox-label">
+				<input class="form-checkbox" type="checkbox" name="hasStock" bind:checked={hasStock} />
+				The product has a limited stock
+			</label>
+
+			{#if hasStock}
+				<label class="form-label">
+					Stock
+					<input
+						class="form-input"
+						type="number"
+						name="stock"
+						placeholder="Stock"
+						step="1"
+						min="0"
+						value={data.product.stock?.total ?? 0}
+					/>
+				</label>
+			{/if}
 		{/if}
 
 		{#if data.product.type !== 'donation'}

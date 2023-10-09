@@ -9,7 +9,11 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
-	import { isPreorder as isPreorderFn } from '$lib/types/Product';
+	import {
+		DEFAULT_MAX_QUANTITY_PER_ORDER,
+		isPreorder as isPreorderFn,
+		oneMaxPerLine
+	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 
 	export let data;
@@ -32,6 +36,14 @@
 		data.pictures[0];
 
 	$: isPreorder = isPreorderFn(data.product.availableDate, data.product.preorder);
+
+	$: amountAvailable = Math.max(
+		Math.min(
+			data.product.stock?.available ?? Infinity,
+			data.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
+		),
+		0
+	);
 
 	function addToCart() {
 		$productAddedToCart = {
@@ -253,20 +265,28 @@
 								</label>
 							</div>
 						{/if}
-						{#if data.product.type !== 'subscription' && !data.product.standalone}
+						{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 							<label class="mb-2">
 								Amount: <select
 									name="quantity"
 									bind:value={quantity}
 									class="form-input w-16 ml-2 inline cursor-pointer"
 								>
-									{#each [1, 2, 3, 4, 5] as i}
+									{#each Array(amountAvailable)
+										.fill(0)
+										.map((_, i) => i + 1) as i}
 										<option value={i}>{i}</option>
 									{/each}
 								</select>
 							</label>
 						{/if}
-						{#if data.showCheckoutButton}
+						{#if amountAvailable === 0}
+							<p class="text-red-500">
+								<span class="font-bold">Out of stock</span>
+								<br />
+								Please check back later
+							</p>
+						{:else if data.showCheckoutButton}
 							<button class="btn btn-black" disabled={loading}>{verb} now</button>
 							<button
 								value="Add to cart"
