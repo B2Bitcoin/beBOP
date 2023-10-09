@@ -48,6 +48,10 @@
 		{
 			href: '/admin/challenge',
 			label: 'Challenges'
+		},
+		{
+			href: '/admin/discount',
+			label: 'Discount'
 		}
 	];
 	$: if ($navigating) {
@@ -65,18 +69,22 @@
 			>
 				<IconMenu />
 			</button>
-			<span class="font-bold text-xl">Admin</span>
-			{#each adminLinks as link}
-				<a
-					href={link.href}
-					class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
-					>{link.label}</a
-				>
-			{/each}
+			<span class="font-bold text-xl"
+				>Admin {$page.url.pathname.startsWith('/admin/login') ? 'login' : ''}</span
+			>
+			{#if !$page.url.pathname.startsWith('/admin/login')}
+				{#each adminLinks as link}
+					<a
+						href={link.href}
+						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
+						>{link.label}</a
+					>
+				{/each}
+			{/if}
 		</nav>
 	</div>
 </header>
-{#if navMenuOpen}
+{#if navMenuOpen && !$page.url.pathname.startsWith('/admin/login')}
 	<nav
 		transition:slide
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"

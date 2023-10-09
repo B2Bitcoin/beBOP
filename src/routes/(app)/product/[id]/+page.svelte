@@ -9,13 +9,22 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
-	import { isPreorder as isPreorderFn } from '$lib/types/Product';
+	import {
+		DEFAULT_MAX_QUANTITY_PER_ORDER,
+		isPreorder as isPreorderFn,
+		oneMaxPerLine
+	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 
 	export let data;
 
 	let quantity = 1;
 	let loading = false;
+	const endsAt = data.discount[0] ? new Date(data.discount[0].endsAt).getTime() : 0; // Convert to timestamp
+	const currentTime = Date.now();
+	const timeDifference = endsAt - currentTime;
+
+	const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
 	let customAmount =
 		data.product.price.amount !== 0 &&
 		toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency) < 0.01
@@ -27,6 +36,14 @@
 		data.pictures[0];
 
 	$: isPreorder = isPreorderFn(data.product.availableDate, data.product.preorder);
+
+	$: amountAvailable = Math.max(
+		Math.min(
+			data.product.stock?.available ?? Infinity,
+			data.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
+		),
+		0
+	);
 
 	function addToCart() {
 		$productAddedToCart = {
@@ -166,10 +183,14 @@
 					/>
 				</div>
 
-				{#if 0}
+				{#if data.product.type === 'subscription' && data.discount.length > 0}
 					<hr class="border-gray-300" />
-					<h3 class="text-gray-850 text-[22px]">50% off for 48h</h3>
-					<GoalProgress text="1h32min left" goal={600} progress={444} />
+					<h3 class="text-gray-850 text-[22px]">
+						{data.discount[0].percentage}% off for {hoursDifference}h
+					</h3>
+					{#if 0}
+						<GoalProgress text="1h32min left" goal={600} progress={444} />
+					{/if}
 					<hr class="border-gray-300" />
 					<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
 						<IconInfo class="text-[#E4C315]" />
@@ -244,20 +265,28 @@
 								</label>
 							</div>
 						{/if}
-						{#if data.product.type !== 'subscription' && !data.product.standalone}
+						{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 							<label class="mb-2">
 								Amount: <select
 									name="quantity"
 									bind:value={quantity}
 									class="form-input w-16 ml-2 inline cursor-pointer"
 								>
-									{#each [1, 2, 3, 4, 5] as i}
+									{#each Array(amountAvailable)
+										.fill(0)
+										.map((_, i) => i + 1) as i}
 										<option value={i}>{i}</option>
 									{/each}
 								</select>
 							</label>
 						{/if}
-						{#if data.showCheckoutButton}
+						{#if amountAvailable === 0}
+							<p class="text-red-500">
+								<span class="font-bold">Out of stock</span>
+								<br />
+								Please check back later
+							</p>
+						{:else if data.showCheckoutButton}
 							<button class="btn btn-black" disabled={loading}>{verb} now</button>
 							<button
 								value="Add to cart"

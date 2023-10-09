@@ -17,8 +17,6 @@ export interface Cart extends Timestamps {
 	}>;
 }
 
-export const MAX_PRODUCT_QUANTITY = 100;
-
 export function computeDeliveryFees(
 	currency: Currency,
 	country: CountryAlpha2,

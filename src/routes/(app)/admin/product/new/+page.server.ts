@@ -129,12 +129,18 @@ export const actions: Actions = {
 						preorder: parsed.preorder,
 						shipping: parsed.shipping,
 						payWhatYouWant: parsed.payWhatYouWant,
-						standalone: parsed.payWhatYouWant ? parsed.payWhatYouWant : parsed.standalone,
+						standalone: parsed.payWhatYouWant || parsed.standalone,
 						free: parsed.free,
 						displayShortDescription: parsed.displayShortDescription,
 						...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 						applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
-						requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee
+						requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
+						...(parsed.stock !== undefined && {
+							stock: { total: parsed.stock, available: parsed.stock, reserved: 0 }
+						}),
+						...(parsed.maxQuantityPerOrder && {
+							maxQuantityPerOrder: parsed.maxQuantityPerOrder
+						})
 					},
 					{ session }
 				);

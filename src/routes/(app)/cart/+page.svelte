@@ -5,6 +5,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 
@@ -93,7 +94,7 @@
 						</div>
 
 						<div class="self-center">
-							{#if item.product.type !== 'subscription' && !item.product.standalone}
+							{#if !oneMaxPerLine(item.product)}
 								<CartQuantity {item} />
 							{/if}
 						</div>
