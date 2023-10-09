@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { , Actions } from './$types';
+import type { Actions } from './$types';
 import { deletePicture } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 
