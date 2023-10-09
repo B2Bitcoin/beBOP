@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';

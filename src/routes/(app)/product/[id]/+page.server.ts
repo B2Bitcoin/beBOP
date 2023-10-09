@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, RequestEvent } from './$types';
+import type { , RequestEvent } from './$types';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
