@@ -3,13 +3,13 @@ import { type HandleServerError, type Handle, error, redirect } from '@sveltejs/
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
+import { SvelteKitAuth } from '@auth/sveltekit';
+import GitHub from '@auth/core/providers/github';
 
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 import { sequence } from '@sveltejs/kit/hooks';
-import { SvelteKitAuth } from '@auth/sveltekit';
-import GitHub from '@auth/core/providers/github';
 import { AUTH_SECRET, GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
 // import { countryFromIp } from '$lib/server/geoip';
 
