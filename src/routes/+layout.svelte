@@ -8,19 +8,15 @@
 	import '@fontsource/poppins/400.css';
 	import '@fontsource/gloock/400.css';
 
-	import { onMount } from 'svelte';
-
-	onMount(() => {
-		const domain = import.meta.env.VITE_PLAUSIBLE_DOMAIN;
-		const scriptUrl = import.meta.env.VITE_PLAUSIBLE_SCRIPT_URL;
-
-		const script = document.createElement('script');
-		script.defer = true;
-		script.dataset.domain = domain;
-		script.src = scriptUrl;
-
-		document.head.appendChild(script);
-	});
+	import { PUBLIC_PLAUSIBLE_SCRIPT_URL } from '$env/static/public';
+	import { page } from '$app/stores';
 </script>
+
+<svelte:head>
+	{#if PUBLIC_PLAUSIBLE_SCRIPT_URL}
+		<script async defer data-domain={$page.url.origin} src={PUBLIC_PLAUSIBLE_SCRIPT_URL}>
+		</script>
+	{/if}
+</svelte:head>
 
 <slot />
