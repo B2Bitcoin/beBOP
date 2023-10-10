@@ -110,8 +110,10 @@ export const handleAdmin = (async ({ event, resolve }) => {
 	}
 	// Protect any routes under /admin
 	if (isAdminUrl && !isAdminLoginUrl) {
-		const sessionUser = event.locals.user?.login;
-		if (!sessionUser) {
+		const sessionUserLogin = event.locals.user?.login;
+		const sessionUserRole = event.locals.user?.role;
+
+		if (!sessionUserLogin || sessionUserRole === 'customer') {
 			throw redirect(303, '/admin/login');
 		}
 	}

@@ -15,5 +15,8 @@ export interface User extends Timestamps {
 		token: string;
 		expiresAt: Date;
 	};
-	token?: string;
+	authLink?: {
+		token: string;
+		expiresAt: Date;
+	};
 }

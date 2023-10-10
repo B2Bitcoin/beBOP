@@ -30,6 +30,7 @@ export const actions = {
 				{ _id: authenticateUser._id },
 				{ $set: { lastLoginAt: new Date() } }
 			);
+			await collections.sessions.deleteOne({ sessionId: locals.sessionId });
 			await collections.sessions.insertOne({
 				_id: new ObjectId(),
 				userId: authenticateUser._id,
