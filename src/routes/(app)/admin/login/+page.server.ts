@@ -25,7 +25,11 @@ export const actions = {
 				memorize: data.get('memorize')
 			});
 		const authenticateUser = await collections.users.findOne({ login: login });
-		if (authenticateUser && (await bcryptjs.compare(password, authenticateUser.password!))) {
+		if (
+			authenticateUser &&
+			authenticateUser.password &&
+			(await bcryptjs.compare(password, authenticateUser.password))
+		) {
 			await collections.users.updateOne(
 				{ _id: authenticateUser._id },
 				{ $set: { lastLoginAt: new Date() } }

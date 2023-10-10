@@ -34,7 +34,7 @@ export const actions = {
 			);
 			if (user) {
 				const userUpdated = await collections.users.findOne({ login: login });
-				sendAuthentificationlink(userUpdated!);
+				if (userUpdated) sendAuthentificationlink(userUpdated);
 				return { login, successExistUser: true };
 			} else {
 				return fail(400, { fail: true });
@@ -58,7 +58,7 @@ export const actions = {
 			});
 			if (user) {
 				const userCreated = await collections.users.findOne({ _id: user.insertedId });
-				sendAuthentificationlink(userCreated!);
+				if (userCreated) sendAuthentificationlink(userCreated);
 				return { login, successNewUser: true };
 			} else {
 				return fail(400, { fail: true });
