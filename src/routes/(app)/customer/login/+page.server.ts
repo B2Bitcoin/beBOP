@@ -12,14 +12,12 @@ export const actions = {
 		const data = await request.formData();
 		const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-		const { login, createUser } = z
+		const { login } = z
 			.object({
-				login: z.string(),
-				createUser: z.boolean({ coerce: true }).default(false)
+				login: z.string()
 			})
 			.parse({
-				login: data.get('login'),
-				createUser: data.get('createUser')
+				login: data.get('login')
 			});
 		const existUser = await collections.users.findOne({ login: login });
 		if (existUser) {
