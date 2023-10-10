@@ -4,5 +4,5 @@ import { json } from '@sveltejs/kit';
 export const POST = async () => {
 	const exportedDatabase = await exportDatabase();
 
-	return json({ exportedDatabase }, { status: 200 });
+	return json(exportedDatabase, { status: 200 });
 };
