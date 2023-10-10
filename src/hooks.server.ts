@@ -10,7 +10,7 @@ import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 import { sequence } from '@sveltejs/kit/hooks';
-import { AUTH_SECRET, GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
+import { GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
 // import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
@@ -155,13 +155,8 @@ export const handleAdmin = (async ({ event, resolve }) => {
 	return response;
 }) satisfies Handle;
 
-export const handleAuthSvelte = SvelteKitAuth(async () => {
-	const authOptions = {
-		providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
-		secret: AUTH_SECRET,
-		trustHost: true
-	};
-	return authOptions;
-}) satisfies Handle;
+export const handleAuthSvelte = SvelteKitAuth({
+	providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })]
+});
 
 export const handle = sequence(handleAdmin, handleAuthSvelte);
