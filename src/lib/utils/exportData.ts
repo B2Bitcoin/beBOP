@@ -1,7 +1,12 @@
 import { collections } from '../server/database';
 
 export async function exportDatabase() {
-	const cart = await collections.carts.find();
+	try {
+		const challenges = await collections.challenges.find().toArray();
 
-	return cart;
+		return { challenges };
+	} catch (error) {
+		console.error('Error exporting database:', error);
+		throw error;
+	}
 }
