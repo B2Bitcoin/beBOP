@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
-	import { goto, invalidate, invalidateAll } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
@@ -44,7 +44,6 @@
 						class="contents"
 						use:enhance={({ action }) => {
 							errorMessage = '';
-							let oldQty = item.quantity;
 
 							if (action.searchParams.has('/increase')) {
 								item.quantity++;
@@ -66,7 +65,6 @@
 									if (result.type === 'error' && result.error?.message) {
 										errorMessage = result.error.message;
 										errorProductId = item.product._id;
-										oldQty = item.quantity;
 										await invalidate(UrlDependency.Cart);
 										return;
 									}

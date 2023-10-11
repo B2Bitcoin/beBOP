@@ -197,7 +197,6 @@
 											class="flex border-b border-gray-300 pb-2 gap-2"
 											method="POST"
 											use:enhance={({ action }) => {
-												let oldQty = item.quantity;
 												cartErrorMessage = '';
 												if (action.searchParams.has('/increase')) {
 													item.quantity++;
@@ -219,7 +218,6 @@
 														if (result.type === 'error' && result.error?.message) {
 															cartErrorMessage = result.error.message;
 															cartErrorProductId = item.product._id;
-															oldQty = item.quantity;
 															await invalidate(UrlDependency.Cart);
 															return;
 														}
