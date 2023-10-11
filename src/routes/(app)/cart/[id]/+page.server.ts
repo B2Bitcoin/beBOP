@@ -39,7 +39,7 @@ export const actions = {
 		if (!product) {
 			await collections.carts.updateOne(
 				{ sessionId: locals.sessionId },
-				{ $pull: { items: { productId: params.id } } }
+				{ $pull: { items: { productId: params.id } }, $set: { updatedAt: new Date() } }
 			);
 			throw error(404, 'This product does not exist');
 		}
@@ -73,7 +73,7 @@ export const actions = {
 		if (!product) {
 			await collections.carts.updateOne(
 				{ sessionId: locals.sessionId },
-				{ $pull: { items: { productId: params.id } } }
+				{ $pull: { items: { productId: params.id } }, $set: { updatedAt: new Date() } }
 			);
 			throw error(404, 'This product does not exist');
 		}

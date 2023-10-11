@@ -26,6 +26,7 @@ const defaultConfig = {
 	brandName: 'My Space',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
+	reserveStockInMinutes: 20,
 	confirmationBlocks: 1,
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
