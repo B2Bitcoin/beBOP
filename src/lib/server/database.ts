@@ -139,7 +139,12 @@ client.on('open', () => {
 	users
 		.createIndex(
 			{ login: 1 },
-			{ unique: true, collation: { locale: 'en', strength: 1 }, name: 'case-insensitive-login' }
+			{
+				unique: true,
+				collation: { locale: 'en', strength: 1 },
+				name: 'case-insensitive-login',
+				sparse: true
+			}
 		)
 		.catch(console.error);
 	sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch(console.error);

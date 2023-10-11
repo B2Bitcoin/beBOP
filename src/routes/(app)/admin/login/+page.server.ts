@@ -73,7 +73,7 @@ export const actions = {
 			return fail(400, { login, incorrect: 'login' });
 		}
 
-		if (user.password && !(await bcryptjs.compare(password, user.password))) {
+		if (!user.password || !(await bcryptjs.compare(password, user.password))) {
 			return fail(400, { login, incorrect: 'password' });
 		}
 
