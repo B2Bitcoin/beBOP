@@ -3,7 +3,7 @@ import type { Timestamps } from './Timestamps';
 export interface User extends Timestamps {
 	_id: string;
 	login: string;
-	password: string;
+	password?: string;
 	backupInfo: {
 		email?: string;
 		nostr?: string;
@@ -12,6 +12,10 @@ export interface User extends Timestamps {
 	status: string;
 	lastLoginAt?: Date;
 	passwordReset?: {
+		token: string;
+		expiresAt: Date;
+	};
+	authLink?: {
 		token: string;
 		expiresAt: Date;
 	};
