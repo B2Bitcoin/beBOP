@@ -4,7 +4,6 @@ import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
 import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
-import { sum } from '$lib/utils/sum';
 import type { Cart } from '$lib/types/Cart';
 
 /**
