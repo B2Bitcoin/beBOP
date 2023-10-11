@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import { MongoClient, Db } from 'mongodb';
 import { MONGODB_URL, MONGODB_DB } from '$env/static/private';
+import * as devalue from 'devalue';
 
 export const actions = {
 	default: async ({ request }) => {
@@ -26,7 +27,8 @@ export const actions = {
 		const fileText = new TextDecoder().decode(fileBuffer);
 
 		try {
-			const fileJson = JSON.parse(fileText);
+			// const fileJson = JSON.parse(fileText);
+			const fileJson = devalue.parse(fileText);
 
 			const collections = Object.keys(fileJson);
 
@@ -37,8 +39,10 @@ export const actions = {
 				//Delete all collection
 				await collection.deleteMany({});
 
-				//Import collection
-				await collection.insertMany(collectionData);
+				//Recreate all collection
+				if (collectionData.length > 0) {
+					await collection.insertMany(collectionData);
+				}
 			}
 
 			return {

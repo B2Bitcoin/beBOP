@@ -1,8 +1,13 @@
 import { exportDatabase } from '$lib/utils/exportData.js';
-import { json } from '@sveltejs/kit';
 
 export const POST = async () => {
 	const exportedDatabase = await exportDatabase();
 
-	return json(exportedDatabase, { status: 200 });
+	return new Response(exportedDatabase, {
+		status: 200,
+		headers: {
+			'Content-Type': 'application/json',
+			'Content-Disposition': `attachment; filename=backup.json`
+		}
+	});
 };

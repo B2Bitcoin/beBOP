@@ -1,6 +1,5 @@
 <script lang="ts">
-	let authorizedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.json'];
-	let file;
+	let authorizedExtensions = ['.json'];
 </script>
 
 <h1 class="text-3xl">Import backup</h1>

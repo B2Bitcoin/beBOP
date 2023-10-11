@@ -1,4 +1,5 @@
 import { collections } from '../server/database';
+import * as devalue from 'devalue';
 
 export async function exportDatabase() {
 	try {
@@ -11,7 +12,7 @@ export async function exportDatabase() {
 		const runtimeConfig = await collections.runtimeConfig.find().toArray();
 		const paidSubscriptions = await collections.paidSubscriptions.find().toArray();
 
-		return {
+		const dataToExport = {
 			challenges,
 			cmsPages,
 			digitalFiles,
@@ -21,6 +22,8 @@ export async function exportDatabase() {
 			runtimeConfig,
 			paidSubscriptions
 		};
+
+		return devalue.stringify(dataToExport);
 	} catch (error) {
 		console.error('Error exporting database:', error);
 		throw error;
