@@ -134,7 +134,7 @@ client.on('open', () => {
 	paidSubscriptions
 		.createIndex({ cancelledAt: 1, 'notifications.type': 1, paidUntil: 1 })
 		.catch(console.error);
-	users.createIndex({ login: 1 }, { unique: true }).catch(console.error);
+	users.createIndex({ login: 1 }, { unique: true, sparse: true }).catch(console.error);
 	// Case-insensitive index on login
 	users
 		.createIndex(
