@@ -1,17 +1,21 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
+	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	export let data;
 
 	let actionCount = 0;
+
+	let errorMessage = '';
+	let errorProductId = '';
 
 	$: items = data.cart || [];
 	$: totalPrice = sumCurrency(
@@ -39,6 +43,9 @@
 						method="POST"
 						class="contents"
 						use:enhance={({ action }) => {
+							errorMessage = '';
+							let oldQty = item.quantity;
+
 							if (action.searchParams.has('/increase')) {
 								item.quantity++;
 							} else if (action.searchParams.has('/decrease')) {
@@ -54,6 +61,13 @@
 									if (result.type === 'redirect') {
 										// Invalidate all to remove 0-quantity items
 										await goto(result.location, { noScroll: true, invalidateAll: true });
+										return;
+									}
+									if (result.type === 'error' && result.error?.message) {
+										errorMessage = result.error.message;
+										errorProductId = item.product._id;
+										oldQty = item.quantity;
+										await invalidate(UrlDependency.Cart);
 										return;
 									}
 									await applyAction(result);
@@ -129,6 +143,10 @@
 							{/if}
 						</div>
 					</form>
+
+					{#if errorMessage && errorProductId === item.product._id}
+						<p class="text-red-600 col-span-4">{errorMessage}</p>
+					{/if}
 
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}

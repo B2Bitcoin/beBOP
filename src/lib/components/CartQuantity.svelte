@@ -32,7 +32,8 @@
 		formaction="/cart/{item.product._id}/?/increase"
 		class="{sm ? 'px-1' : 'px-3'} bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
 		disabled={disabled ||
-			item.quantity >= (item.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER)}
+			item.quantity >= (item.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER) ||
+			(item.product.stock && item.product.stock.available <= 0)}
 	>
 		<span class="sr-only">Increase quantity</span><IconChevronUp class={sm ? 'scale-75' : ''} />
 	</button>
