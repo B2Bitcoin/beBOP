@@ -70,11 +70,11 @@ export const actions = {
 		}
 
 		if (!user) {
-			throw fail(400, { login, incorrect: 'login' });
+			return fail(400, { login, incorrect: 'login' });
 		}
 
 		if (!(await bcryptjs.compare(password, user.password))) {
-			throw fail(400, { login, incorrect: 'password' });
+			return fail(400, { login, incorrect: 'password' });
 		}
 
 		await collections.users.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
