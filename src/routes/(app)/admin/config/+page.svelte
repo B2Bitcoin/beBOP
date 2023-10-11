@@ -219,20 +219,20 @@
 			name="createUserOnSession"
 		/>
 		Create new user on session request
-		<label class="form-label">
-			How much time a cart reserves the stock (in minutes)
-			<input
-				type="number"
-				min="0"
-				step="1"
-				name="reserveStockInMinutes"
-				class="form-input max-w-[25rem]"
-				value={data.reserveStockInMinutes}
-			/>
-			<p class="text-sm">The cart's reservation is extended each time the cart is updated.</p>
-		</label>
-		<input type="submit" value="Update" class="btn btn-gray self-start" />
 	</label>
+	<label class="form-label">
+		How much time a cart reserves the stock (in minutes)
+		<input
+			type="number"
+			min="0"
+			step="1"
+			name="reserveStockInMinutes"
+			class="form-input max-w-[25rem]"
+			value={data.reserveStockInMinutes}
+		/>
+		<p class="text-sm">The cart's reservation is extended each time the cart is updated.</p>
+	</label>
+	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>
 
 <p>
