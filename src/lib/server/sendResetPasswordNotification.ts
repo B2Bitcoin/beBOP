@@ -12,7 +12,7 @@ export async function sendResetPasswordNotification(user: User) {
         If you didn't ask for this password reset procedure, please ignore this message and do nothing.\n\n
         Best regards,\n\n
         ${runtimeConfig.brandName} team`;
-	if (user.backupInfo.nostr) {
+	if (user.backupInfo?.nostr) {
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
@@ -22,7 +22,7 @@ export async function sendResetPasswordNotification(user: User) {
 			dest: user.backupInfo.nostr
 		});
 	}
-	if (user.backupInfo.email) {
+	if (user.backupInfo?.email) {
 		await collections.emailNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
