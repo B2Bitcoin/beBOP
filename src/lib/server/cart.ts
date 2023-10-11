@@ -171,17 +171,15 @@ export async function removeFromCartInDb(
 }
 
 async function computeAvailableAmount(product: Product, cart: Cart): Promise<number> {
-	const amountInCart = sum(
-		cart.items.filter((item) => item.productId === product._id).map((item) => item.quantity)
-	);
-
 	return !product.stock
 		? Infinity
 		: product.stock.total +
-				amountInCart -
 				(await amountOfProductReserved(product._id, {
-					sessionId: cart.sessionId,
-					npub: cart.npub
+					exclude: {
+						sessionId: cart.sessionId,
+
+						npub: cart.npub
+					}
 				}));
 }
 
@@ -209,8 +207,10 @@ export async function checkCartItems(
 		const available = product.stock
 			? product.stock.total -
 			  (await amountOfProductReserved(productId, {
-					npub: opts?.npub,
-					sessionId: opts?.sessionId
+					exclude: {
+						npub: opts?.npub,
+						sessionId: opts?.sessionId
+					}
 			  }))
 			: Infinity;
 		if (product.stock && qtyPerItem[productId] > available) {
