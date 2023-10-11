@@ -4,6 +4,7 @@ import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { CURRENCIES } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
+import { typedKeys } from '$lib/utils/typedKeys.js';
 import { z } from 'zod';
 
 export async function load(event) {
@@ -21,6 +22,7 @@ export async function load(event) {
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
 		createUserOnSession: runtimeConfig.createUserOnSession,
+		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
 		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN
 	};
@@ -55,13 +57,22 @@ export const actions = {
 					.max(24 * 60 * 60 * 7),
 				confirmationBlocks: z.number({ coerce: true }).int().min(0),
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
+<<<<<<< HEAD
 				createUserOnSession: z.boolean({ coerce: true }),
 				actionOverwrite: z.string()
+=======
+				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
+				actionOverwrite: z.enum(['', 'overwrite']).optional()
+>>>>>>> c458ebbf1fb68b61560b71f01bd7163aa5cc268a
 			})
 			.parse(Object.fromEntries(formData));
 
-		const secondaryCurrency = result.secondaryCurrency || null;
+		const { actionOverwrite, ...runtimeConfigUpdates } = {
+			...result,
+			secondaryCurrency: result.secondaryCurrency || null
+		};
 
+<<<<<<< HEAD
 		if (runtimeConfig.includeOrderUrlInQRCode !== result.includeOrderUrlInQRCode) {
 			runtimeConfig.includeOrderUrlInQRCode = result.includeOrderUrlInQRCode;
 			await collections.runtimeConfig.updateOne(
@@ -202,43 +213,39 @@ export const actions = {
 						}
 					);
 				}
+=======
+		for (const key of typedKeys(runtimeConfigUpdates)) {
+			if (runtimeConfig[key] !== runtimeConfigUpdates[key]) {
+				runtimeConfig[key] = runtimeConfigUpdates[key] as never;
+				await collections.runtimeConfig.updateOne(
+					{ _id: key },
+					{ $set: { data: runtimeConfigUpdates[key], updatedAt: new Date() } },
+					{ upsert: true }
+				);
+>>>>>>> c458ebbf1fb68b61560b71f01bd7163aa5cc268a
 			}
 		}
 
-		if (runtimeConfig.vatExempted !== result.vatExempted) {
-			runtimeConfig.vatExempted = result.vatExempted;
-			await collections.runtimeConfig.updateOne(
-				{ _id: 'vatExempted' },
-				{ $set: { data: result.vatExempted, updatedAt: new Date() } },
-				{ upsert: true }
-			);
-		}
+		if (actionOverwrite === 'overwrite') {
+			const products = await collections.products.find({}).toArray();
+			const currency = result.priceReferenceCurrency;
 
-		if (runtimeConfig.vatExemptionReason !== result.vatExemptionReason) {
-			runtimeConfig.vatExemptionReason = result.vatExemptionReason;
-			await collections.runtimeConfig.updateOne(
-				{ _id: 'vatExemptionReason' },
-				{ $set: { data: result.vatExemptionReason, updatedAt: new Date() } },
-				{ upsert: true }
-			);
-		}
+			for (const product of products) {
+				const priceAmount = toCurrency(currency, product.price.amount, product.price.currency);
 
-		if (runtimeConfig.vatSingleCountry !== result.vatSingleCountry) {
-			runtimeConfig.vatSingleCountry = result.vatSingleCountry;
-			await collections.runtimeConfig.updateOne(
-				{ _id: 'vatSingleCountry' },
-				{ $set: { data: result.vatSingleCountry, updatedAt: new Date() } },
-				{ upsert: true }
-			);
-		}
-
-		if (runtimeConfig.vatCountry !== result.vatCountry) {
-			runtimeConfig.vatCountry = result.vatCountry;
-			await collections.runtimeConfig.updateOne(
-				{ _id: 'vatCountry' },
-				{ $set: { data: result.vatCountry, updatedAt: new Date() } },
-				{ upsert: true }
-			);
+				await collections.products.updateOne(
+					{ _id: product._id },
+					{
+						$set: {
+							price: {
+								amount: priceAmount,
+								currency
+							},
+							updatedAt: new Date()
+						}
+					}
+				);
+			}
 		}
 	}
 };

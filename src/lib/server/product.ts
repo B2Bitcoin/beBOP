@@ -1,12 +1,20 @@
 import type { ClientSession } from 'mongodb';
 import { collections } from './database';
+import { subMinutes } from 'date-fns';
+import { runtimeConfig } from './runtime-config';
 
 /**
  * Amount of product reserved in carts and pending orders
  */
 export async function amountOfProductReserved(
 	productId: string,
-	session?: ClientSession
+	opts?: {
+		/** Include stock for outdated carts with this npub */
+		npub?: string;
+		/** Include stock for outdated carts with this sessionId */
+		sessionId?: string;
+		session?: ClientSession;
+	}
 ): Promise<number> {
 	return (
 		((
@@ -15,7 +23,26 @@ export async function amountOfProductReserved(
 					[
 						{
 							$match: {
-								'items.productId': productId
+								'items.productId': productId,
+								$or: [
+									{
+										updatedAt: { $gt: subMinutes(new Date(), runtimeConfig.reserveStockInMinutes) }
+									},
+									...(opts?.npub
+										? [
+												{
+													npub: opts.npub
+												}
+										  ]
+										: []),
+									...(opts?.sessionId
+										? [
+												{
+													sessionId: opts.sessionId
+												}
+										  ]
+										: [])
+								]
 							}
 						},
 						{
@@ -36,7 +63,7 @@ export async function amountOfProductReserved(
 						}
 					],
 					{
-						session
+						session: opts?.session
 					}
 				)
 				.next()
@@ -69,7 +96,7 @@ export async function amountOfProductReserved(
 						}
 					],
 					{
-						session
+						session: opts?.session
 					}
 				)
 				.next()
@@ -78,7 +105,7 @@ export async function amountOfProductReserved(
 }
 
 export async function refreshAvailableStockInDb(productId: string, session?: ClientSession) {
-	const amountInCarts = await amountOfProductReserved(productId, session);
+	const amountInCarts = await amountOfProductReserved(productId, { session });
 
 	await collections.products.updateOne(
 		{
