@@ -59,20 +59,18 @@
 	}
 </script>
 
-<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-hidden">
-		<nav class="flex gap-6 font-light items-center">
-			<button
-				class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
-				class:rotate-90={navMenuOpen}
-				on:click={() => (navMenuOpen = !navMenuOpen)}
-			>
-				<IconMenu />
-			</button>
-			<span class="font-bold text-xl"
-				>Admin {$page.url.pathname.startsWith('/admin/login') ? 'login' : ''}</span
-			>
-			{#if !$page.url.pathname.startsWith('/admin/login')}
+{#if !$page.url.pathname.startsWith('/admin/login')}
+	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
+		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-hidden">
+			<nav class="flex gap-6 font-light items-center">
+				<button
+					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
+					class:rotate-90={navMenuOpen}
+					on:click={() => (navMenuOpen = !navMenuOpen)}
+				>
+					<IconMenu />
+				</button>
+				<span class="font-bold text-xl">Admin</span>
 				{#each adminLinks as link}
 					<a
 						href={link.href}
@@ -80,10 +78,10 @@
 						>{link.label}</a
 					>
 				{/each}
-			{/if}
-		</nav>
-	</div>
-</header>
+			</nav>
+		</div>
+	</header>
+{/if}
 {#if navMenuOpen && !$page.url.pathname.startsWith('/admin/login')}
 	<nav
 		transition:slide

@@ -5,8 +5,23 @@ import { vatRates } from '$lib/server/vat-rates';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef';
+import { error, redirect } from '@sveltejs/kit';
 
-export async function load({ depends, locals }) {
+export async function load(params) {
+	if (!runtimeConfig.isAdminCreated) {
+		if (params.locals.user) {
+			throw error(
+				400,
+				"Admin account hasn't been created yet. Please open a new private window to create admin account"
+			);
+		}
+		if (params.url.pathname !== '/admin/login') {
+			throw redirect(302, '/admin/login');
+		}
+	}
+
+	const { depends, locals } = params;
+
 	depends(UrlDependency.ExchangeRate);
 	depends(UrlDependency.Cart);
 

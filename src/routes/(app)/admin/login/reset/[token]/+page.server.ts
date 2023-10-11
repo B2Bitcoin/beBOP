@@ -3,6 +3,7 @@ import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import type { User } from '$lib/types/User';
+import { ObjectId } from 'mongodb';
 
 export async function load({ params }) {
 	const user = await collections.users.findOne<Pick<User, '_id' | 'login' | 'passwordReset'>>({
@@ -38,7 +39,7 @@ export const actions = {
 		const passwordBcrypt = await bcryptjs.hash(pwd1, salt);
 		if (
 			await collections.users.updateOne(
-				{ _id: user, 'passwordReset.token': params.token },
+				{ _id: new ObjectId(user), 'passwordReset.token': params.token },
 				{ $set: { password: passwordBcrypt } }
 			)
 		) {
