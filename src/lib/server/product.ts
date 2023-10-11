@@ -1,5 +1,7 @@
 import type { ClientSession } from 'mongodb';
 import { collections } from './database';
+import { subMinutes } from 'date-fns';
+import { runtimeConfig } from './runtime-config';
 
 /**
  * Amount of product reserved in carts and pending orders
@@ -15,7 +17,8 @@ export async function amountOfProductReserved(
 					[
 						{
 							$match: {
-								'items.productId': productId
+								'items.productId': productId,
+								updatedAt: { $gt: subMinutes(new Date(), runtimeConfig.reserveStockInMinutes) }
 							}
 						},
 						{
