@@ -1,11 +1,11 @@
-import { collections, withTransaction } from '$lib/server/database';
+import { collections } from '$lib/server/database';
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { ObjectId } from 'mongodb';
 import { addSeconds } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
+import { createAdminUserInDb } from '$lib/server/user.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
@@ -36,37 +36,9 @@ export const actions = {
 		let user = await collections.users.findOne({ login: login });
 
 		if (!user && !runtimeConfig.isAdminCreated) {
-			const salt = await bcryptjs.genSalt(10);
-			const passwordBcrypt = await bcryptjs.hash(password, salt);
+			await createAdminUserInDb(login, password);
 
-			// Create super admin
-			const newUser = {
-				_id: new ObjectId(),
-				login,
-				password: passwordBcrypt,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-				roleId: SUPER_ADMIN_ROLE_ID
-			};
-
-			await withTransaction(async (session) => {
-				await collections.users.insertOne(newUser, { session });
-				await collections.runtimeConfig.updateOne(
-					{
-						_id: 'isAdminCreated'
-					},
-					{
-						$set: {
-							data: true,
-							updatedAt: new Date()
-						}
-					},
-					{ session, upsert: true }
-				);
-				runtimeConfig.isAdminCreated = true;
-			});
-
-			user = newUser;
+			user = await collections.users.findOne({ login: login });
 		}
 
 		if (!user) {

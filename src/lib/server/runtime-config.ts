@@ -4,6 +4,8 @@ import { exchangeRate } from '$lib/stores/exchangeRate';
 import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 import type { DeliveryFees } from '$lib/types/DeliveryFees';
 import { currencies } from '$lib/stores/currencies';
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
+import { createAdminUserInDb } from './user';
 
 const defaultConfig = {
 	isAdminCreated: false,
@@ -126,6 +128,10 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 			{ $set: { data: crypto.randomUUID(), updatedAt: new Date() } },
 			{ upsert: true }
 		);
+	}
+
+	if (!runtimeConfig.isAdminCreated && ADMIN_LOGIN && ADMIN_PASSWORD) {
+		await createAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
 	}
 }
 
