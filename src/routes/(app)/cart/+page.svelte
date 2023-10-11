@@ -14,7 +14,7 @@
 
 	let actionCount = 0;
 
-	let errorMessage = '';
+	let errorMessage = data.errorMessage;
 	let errorProductId = '';
 
 	$: items = data.cart || [];
@@ -32,6 +32,10 @@
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 bg-white border-gray-300 border">
 		<h1 class="page-title">Products</h1>
+
+		{#if errorMessage && !errorProductId}
+			<p class="text-red-600">{errorMessage}</p>
+		{/if}
 
 		{#if items.length}
 			<div

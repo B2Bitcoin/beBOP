@@ -184,3 +184,53 @@ async function computeAvailableAmount(product: Product, cart: Cart): Promise<num
 					npub: cart.npub
 				}));
 }
+
+export async function checkCartItems(
+	items: Array<{
+		quantity: number;
+		product: Pick<Product, 'stock' | '_id' | 'name' | 'maxQuantityPerOrder'>;
+	}>,
+	opts?: {
+		sessionId?: string;
+		npub?: string;
+	}
+) {
+	const products = items.map((item) => item.product);
+	const productById = Object.fromEntries(products.map((product) => [product._id, product]));
+
+	// be careful, there can be multiple lines for the same product due to product.standalone
+	const qtyPerItem: Record<string, number> = {};
+	for (const item of items) {
+		qtyPerItem[item.product._id] = (qtyPerItem[item.product._id] || 0) + item.quantity;
+	}
+
+	for (const productId of Object.keys(qtyPerItem)) {
+		const product = productById[productId];
+		const available = product.stock
+			? product.stock.total -
+			  (await amountOfProductReserved(productId, {
+					npub: opts?.npub,
+					sessionId: opts?.sessionId
+			  }))
+			: Infinity;
+		if (product.stock && qtyPerItem[productId] > available) {
+			if (!available) {
+				throw error(400, 'Product is out of stock: ' + product.name);
+			}
+			throw error(
+				400,
+				'Not enough stock for product: ' + product.name + ', only ' + available + ' left'
+			);
+		}
+
+		if (qtyPerItem[productId] > (product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER)) {
+			throw error(
+				400,
+				'Cannot order more than ' +
+					(product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER) +
+					' of product: ' +
+					product.name
+			);
+		}
+	}
+}

@@ -4,7 +4,7 @@ import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
-import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
+import type { Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
@@ -18,7 +18,8 @@ import { vatRates } from './vat-rates';
 import type { Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
-import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
+import { refreshAvailableStockInDb } from './product';
+import { checkCartItems } from './cart';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -192,38 +193,7 @@ export async function createOrder(
 		);
 	}
 
-	const productById = Object.fromEntries(products.map((product) => [product._id, product]));
-
-	// be careful, there can be multiple lines for the same product due to product.standalone
-	const qtyPerItem: Record<string, number> = {};
-	for (const item of items) {
-		qtyPerItem[item.product._id] = (qtyPerItem[item.product._id] || 0) + item.quantity;
-	}
-
-	for (const productId of Object.keys(qtyPerItem)) {
-		const product = productById[productId];
-		if (
-			product.stock &&
-			qtyPerItem[productId] >
-				product.stock.total -
-					(await amountOfProductReserved(productId, {
-						npub: params.cart?.npub,
-						sessionId: params.sessionId
-					}))
-		) {
-			throw error(400, 'Not enough stock for product: ' + product.name);
-		}
-
-		if (qtyPerItem[productId] > (product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER)) {
-			throw error(
-				400,
-				'Cannot order more than ' +
-					(product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER) +
-					' of product: ' +
-					product.name
-			);
-		}
-	}
+	await checkCartItems(items, params.cart);
 
 	const isDigital = products.every((product) => !product.shipping);
 	let deliveryFees = 0;
