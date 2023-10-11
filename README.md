@@ -153,3 +153,13 @@ Then restart `pnpm dev`.
 The simplest way is to get a free tier on [MongoDB Atlas](https://www.mongodb.com/atlas/database).
 
 Alternatively, you need to configure a local MongoDB with ReplicaSet enabled. ReplicaSet is needed for change streams and ACID transactions.
+
+### Configuring plausible
+
+Self install plausible : [Plausible](https://plausible.io/docs/self-hosting)
+
+In your `.env.local` file, add the following:
+
+```dotenv
+PUBLIC_PLAUSIBLE_SCRIPT_URL=<Your plausible script> #for exemple: https://plausible.yourdomain.com/js/script.js
+```
