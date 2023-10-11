@@ -7,6 +7,7 @@ import { addYears } from 'date-fns';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
+import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 // import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
@@ -49,9 +50,10 @@ export const handle = (async ({ event, resolve }) => {
 
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
 
-	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
-	const isAdminLoginUrl =
-		event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login';
+	const isAdminUrl =
+		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
+		!(event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login');
+
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
 			maintenanceDisplay: true
@@ -105,10 +107,13 @@ export const handle = (async ({ event, resolve }) => {
 		}
 	}
 	// Protect any routes under /admin
-	if (isAdminUrl && !isAdminLoginUrl) {
-		const sessionUser = event.locals.user?.login;
+	if (isAdminUrl) {
+		const sessionUser = event.locals.user;
 		if (!sessionUser) {
 			throw redirect(303, '/admin/login');
+		}
+		if (sessionUser.role !== SUPER_ADMIN_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page.');
 		}
 	}
 

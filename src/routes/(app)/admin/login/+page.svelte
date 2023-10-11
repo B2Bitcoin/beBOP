@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { ActionData } from './$types';
+	export let form;
+	export let data;
 
-	export let form: ActionData;
 	let rememberOption = false;
 	const rememberDates = [
 		{
@@ -72,17 +72,15 @@
 		{#if form?.incorrect}
 			<p class="text-red-500"><b>Invalid credentials, please try again</b></p>
 		{/if}
-		{#if 0}
-			<p class="text-red-500"><b>Something went wrong.</b></p>
-			<p class="text-red-500"><b>Please try again or ask superadmin to check error log.</b></p>
-		{/if}
-		{#if 0}
-			<p class="text-red-500"><b>This account is enabled.</b></p>
-			<p class="text-red-500"><b>Please contact superadmin.</b></p>
-		{/if}
 		<div class="flex justify-center gap-4 mt-2">
-			<input type="submit" class="btn btn-blue text-white" value="Login" />
-			<button class="btn btn-gray"><a href="/admin/login/recovery">Recovery</a></button>
+			<input
+				type="submit"
+				class="btn btn-blue text-white"
+				value={data.isAdminCreated ? 'Login' : 'Create Super Admin'}
+			/>
+			{#if data.isAdminCreated}
+				<a href="/admin/login/recovery" class="btn btn-gray">Recovery</a>
+			{/if}
 		</div>
 	</form>
 </div>

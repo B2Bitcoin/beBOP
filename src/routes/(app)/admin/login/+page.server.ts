@@ -1,11 +1,17 @@
-import { collections } from '$lib/server/database';
+import { collections, withTransaction } from '$lib/server/database';
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { ObjectId } from 'mongodb';
 import { addSeconds } from 'date-fns';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 
-export const load = async () => {};
+export const load = async () => {
+	return {
+		isAdminCreated: runtimeConfig.isAdminCreated
+	};
+};
 
 export const actions = {
 	default: async function ({ locals, request }) {
@@ -24,15 +30,46 @@ export const actions = {
 				remember: data.get('remember'),
 				memorize: data.get('memorize')
 			});
-		const authenticateUser = await collections.users.findOne({ login: login });
-		if (authenticateUser && (await bcryptjs.compare(password, authenticateUser.password))) {
-			await collections.users.updateOne(
-				{ _id: authenticateUser._id },
-				{ $set: { lastLoginAt: new Date() } }
-			);
+		let user = await collections.users.findOne({ login: login });
+
+		if (!user && !runtimeConfig.isAdminCreated) {
+			const salt = await bcryptjs.genSalt(10);
+			const passwordBcrypt = await bcryptjs.hash(password, salt);
+
+			// Create super admin
+			const newUser = {
+				_id: new ObjectId(),
+				login,
+				password: passwordBcrypt,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				roleId: SUPER_ADMIN_ROLE_ID
+			};
+
+			await withTransaction(async (session) => {
+				await collections.users.insertOne(newUser, { session });
+				await collections.runtimeConfig.updateOne(
+					{
+						_id: 'isAdminCreated'
+					},
+					{
+						$set: {
+							value: true,
+							updatedAt: new Date()
+						}
+					},
+					{ session }
+				);
+			});
+
+			user = newUser;
+		}
+
+		if (user && (await bcryptjs.compare(password, user.password))) {
+			await collections.users.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
 			await collections.sessions.insertOne({
 				_id: new ObjectId(),
-				userId: authenticateUser._id,
+				userId: user._id,
 				sessionId: locals.sessionId,
 				expiresAt: addSeconds(new Date(), remember ? memorize : 3600),
 				createdAt: new Date(),

@@ -5,8 +5,15 @@ import { vatRates } from '$lib/server/vat-rates';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef';
+import { redirect } from '@sveltejs/kit';
 
-export async function load({ depends, locals }) {
+export async function load(params) {
+	if (!runtimeConfig.isAdminCreated && params.url.pathname !== '/admin/login') {
+		throw redirect(302, '/admin/login');
+	}
+
+	const { depends, locals } = params;
+
 	depends(UrlDependency.ExchangeRate);
 	depends(UrlDependency.Cart);
 
