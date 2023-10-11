@@ -27,7 +27,6 @@ export const connectPromise = client.connect().catch(console.error);
 
 const db = client.db(MONGODB_DB);
 
-// const users = db.collection<User>('users');
 const pictures = db.collection<Picture>('pictures');
 const pendingPictures = db.collection<Picture>('pictures.pending');
 const products = db.collection<Product>('products');
@@ -92,6 +91,7 @@ client.on('open', () => {
 		)
 		.catch(console.error);
 	orders.createIndex({ sessionId: 1 }).catch(console.error);
+	orders.createIndex({ 'items.product._id': 1, paymentStatus: 1 });
 	orders
 		.createIndex(
 			{ 'notifications.paymentStatus.npub': 1, createdAt: -1 },
@@ -134,8 +134,16 @@ client.on('open', () => {
 	paidSubscriptions
 		.createIndex({ cancelledAt: 1, 'notifications.type': 1, paidUntil: 1 })
 		.catch(console.error);
+	users.createIndex({ login: 1 }, { unique: true }).catch(console.error);
+	// Case-insensitive index on login
+	users
+		.createIndex(
+			{ login: 1 },
+			{ unique: true, collation: { locale: 'en', strength: 1 }, name: 'case-insensitive-login' }
+		)
+		.catch(console.error);
 	sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch(console.error);
-	sessions.createIndex({ sessionId: 1 }).catch(console.error);
+	sessions.createIndex({ sessionId: 1 }, { unique: true }).catch(console.error);
 });
 
 export async function withTransaction(cb: WithSessionCallback) {

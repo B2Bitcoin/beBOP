@@ -20,6 +20,7 @@ export async function load(event) {
 		confirmationBlocks: runtimeConfig.confirmationBlocks,
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
+		createUserOnSession: runtimeConfig.createUserOnSession,
 		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN
 	};
@@ -54,6 +55,7 @@ export const actions = {
 					.max(24 * 60 * 60 * 7),
 				confirmationBlocks: z.number({ coerce: true }).int().min(0),
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
+				createUserOnSession: z.boolean({ coerce: true }),
 				actionOverwrite: z.string()
 			})
 			.parse(Object.fromEntries(formData));
@@ -74,6 +76,15 @@ export const actions = {
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'isMaintenance' },
 				{ $set: { data: result.isMaintenance, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		if (runtimeConfig.createUserOnSession !== result.createUserOnSession) {
+			runtimeConfig.createUserOnSession = result.createUserOnSession;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'createUserOnSession' },
+				{ $set: { data: result.createUserOnSession, updatedAt: new Date() } },
 				{ upsert: true }
 			);
 		}

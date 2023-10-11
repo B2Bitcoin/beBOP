@@ -1,8 +1,9 @@
 import { ObjectId } from 'mongodb';
-import { collections } from './database';
+import { collections, withTransaction } from './database';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
+import { refreshAvailableStockInDb } from './product';
 
 /**
  * Be wary if adding Zod: called from NostR as well and need human readable error messages
@@ -58,20 +59,33 @@ export async function addToCartInDb(
 		});
 	}
 
-	return await collections.carts.findOneAndUpdate(
-		{ _id: cart._id },
-		{
-			$set: {
-				items: cart.items,
-				updatedAt: new Date()
-			},
-			$setOnInsert: {
-				createdAt: new Date(),
-				...query
+	const validCart = cart;
+	await withTransaction(async (session) => {
+		cart = (
+			await collections.carts.findOneAndUpdate(
+				{ _id: validCart._id },
+				{
+					$set: {
+						items: validCart.items,
+						updatedAt: new Date()
+					},
+					$setOnInsert: {
+						createdAt: new Date(),
+						...query
+					}
+				},
+				{ upsert: true, returnDocument: 'after', session }
+			)
+		).value;
+
+		if (cart) {
+			for (const item of cart.items) {
+				await refreshAvailableStockInDb(item.productId, session);
 			}
-		},
-		{ upsert: true, returnDocument: 'after' }
-	);
+		}
+	});
+
+	return cart;
 }
 
 export async function removeFromCartInDb(
@@ -97,16 +111,23 @@ export async function removeFromCartInDb(
 		return cart;
 	}
 
-	item.quantity = params.totalQuantity ? quantity : Math.max(item.quantity - quantity, 0);
+	const newQty = params.totalQuantity ? quantity : Math.max(item.quantity - quantity, 0);
+
+	item.quantity = newQty;
 
 	if (item.quantity === 0) {
 		cart.items = cart.items.filter((it) => it !== item);
 	}
 
-	await collections.carts.updateOne(
-		{ _id: cart._id },
-		{ $set: { items: cart.items, updatedAt: new Date() } }
-	);
+	await withTransaction(async (session) => {
+		await collections.carts.updateOne(
+			{ _id: cart._id },
+			{ $set: { items: cart.items, updatedAt: new Date() } },
+			{ session }
+		);
+
+		await refreshAvailableStockInDb(productId, session);
+	});
 
 	return cart;
 }

@@ -6,6 +6,7 @@ import type { DeliveryFees } from '$lib/types/DeliveryFees';
 import { currencies } from '$lib/stores/currencies';
 
 const defaultConfig = {
+	isAdminCreated: false,
 	BTC_EUR: 30_000,
 	BTC_CHF: 30_000,
 	BTC_USD: 30_000,
@@ -27,6 +28,7 @@ const defaultConfig = {
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	confirmationBlocks: 1,
 	desiredPaymentTimeout: 120,
+	createUserOnSession: false,
 	bitcoinWallet: '',
 	logoPictureId: '',
 	lnurlPayMetadataJwtSigningKey: '',

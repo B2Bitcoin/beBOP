@@ -335,7 +335,7 @@ const commands: Record<
 				return;
 			}
 
-			const item = cart.value?.items.find((item) => item.productId === product._id);
+			const item = cart.items.find((item) => item.productId === product._id);
 
 			if (!item) {
 				return;

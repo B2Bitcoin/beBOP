@@ -3,7 +3,7 @@ import type { Timestamps } from './Timestamps';
 
 export interface Session extends Timestamps {
 	_id: ObjectId;
-	userId: string;
+	userId: ObjectId;
 	sessionId: string;
 	expiresAt: Date;
 }

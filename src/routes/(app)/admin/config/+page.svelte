@@ -211,6 +211,15 @@
 			value={data.desiredPaymentTimeout}
 		/>
 	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			checked={data.createUserOnSession}
+			name="createUserOnSession"
+		/>
+		Create new user on session request
+	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>
 
