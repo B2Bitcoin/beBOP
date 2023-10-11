@@ -101,7 +101,7 @@ export const handle = (async ({ event, resolve }) => {
 		});
 		if (user) {
 			event.locals.user = {
-				login: user.login,
+				login: user.login ? user.login : '',
 				role: user.roleId
 			};
 		}
