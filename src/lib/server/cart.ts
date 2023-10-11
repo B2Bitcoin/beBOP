@@ -3,7 +3,9 @@ import { collections, withTransaction } from './database';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
-import { refreshAvailableStockInDb } from './product';
+import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
+import { sum } from '$lib/utils/sum';
+import type { Cart } from '$lib/types/Cart';
 
 /**
  * Be wary if adding Zod: called from NostR as well and need human readable error messages
@@ -13,6 +15,10 @@ export async function addToCartInDb(
 	quantity: number,
 	params: { sessionId?: string; npub?: string; totalQuantity?: boolean; customAmount?: number }
 ) {
+	if (quantity < 0) {
+		throw new TypeError('Quantity cannot be negative');
+	}
+
 	if (product.availableDate && !product.preorder && product.availableDate > new Date()) {
 		throw error(400, 'Product is not available for preorder');
 	}
@@ -37,12 +43,34 @@ export async function addToCartInDb(
 
 	const existingItem = cart.items.find((item) => item.productId === product._id);
 
-	if (existingItem && !product.standalone) {
+	const availableAmount = await computeAvailableAmount(product, cart);
+
+	if (availableAmount < 0) {
+		throw error(400, 'Product is out of stock');
+	}
+
+	if (product.standalone) {
+		if (quantity !== 1) {
+			throw error(400, 'You can only order one of this product');
+		}
+		cart.items.push({
+			productId: product._id,
+			quantity: 1,
+			...(params.customAmount &&
+				product.type !== 'subscription' && {
+					customPrice: { amount: params.customAmount, currency: runtimeConfig.mainCurrency }
+				})
+		});
+	} else if (existingItem) {
 		existingItem.quantity = params.totalQuantity ? quantity : existingItem.quantity + quantity;
 
-		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
+		const max = Math.min(
+			product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER,
+			availableAmount
+		);
+
 		if (existingItem.quantity > max) {
-			existingItem.quantity = max;
+			throw error(400, `You can only order ${max} of this product`);
 		}
 
 		if (product.type === 'subscription') {
@@ -89,10 +117,14 @@ export async function addToCartInDb(
 }
 
 export async function removeFromCartInDb(
-	productId: Product['_id'],
+	product: Product,
 	quantity: number,
 	params: { sessionId?: string; npub?: string; totalQuantity?: boolean }
 ) {
+	if (quantity < 0) {
+		throw new TypeError('Quantity cannot be negative');
+	}
+
 	if (!params.sessionId && !params.npub) {
 		throw new TypeError('No session ID or NPUB provided');
 	}
@@ -105,7 +137,7 @@ export async function removeFromCartInDb(
 		throw new TypeError('Cart is empty');
 	}
 
-	const item = cart.items.find((i) => i.productId === productId);
+	const item = cart.items.find((i) => i.productId === product._id);
 
 	if (!item) {
 		return cart;
@@ -113,9 +145,15 @@ export async function removeFromCartInDb(
 
 	const newQty = params.totalQuantity ? quantity : Math.max(item.quantity - quantity, 0);
 
-	item.quantity = newQty;
+	const availableAmount = await computeAvailableAmount(product, cart);
 
-	if (item.quantity === 0) {
+	item.quantity = Math.min(
+		availableAmount,
+		newQty,
+		product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
+	);
+
+	if (item.quantity <= 0) {
 		cart.items = cart.items.filter((it) => it !== item);
 	}
 
@@ -126,8 +164,23 @@ export async function removeFromCartInDb(
 			{ session }
 		);
 
-		await refreshAvailableStockInDb(productId, session);
+		await refreshAvailableStockInDb(product._id, session);
 	});
 
 	return cart;
+}
+
+async function computeAvailableAmount(product: Product, cart: Cart): Promise<number> {
+	const amountInCart = sum(
+		cart.items.filter((item) => item.productId === product._id).map((item) => item.quantity)
+	);
+
+	return !product.stock
+		? Infinity
+		: product.stock.total +
+				amountInCart -
+				(await amountOfProductReserved(product._id, {
+					sessionId: cart.sessionId,
+					npub: cart.npub
+				}));
 }

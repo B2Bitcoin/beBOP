@@ -373,7 +373,7 @@ const commands: Record<
 				return;
 			}
 
-			const cart = await removeFromCartInDb(product._id, quantity, {
+			const cart = await removeFromCartInDb(product, quantity, {
 				npub: senderNpub
 			}).catch(async (e) => {
 				console.error(e);
