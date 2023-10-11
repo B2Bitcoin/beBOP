@@ -14,7 +14,7 @@
 
 <svelte:head>
 	{#if PUBLIC_PLAUSIBLE_SCRIPT_URL}
-		<script defer data-domain={$page.url.origin} src={PUBLIC_PLAUSIBLE_SCRIPT_URL}>
+		<script defer data-domain={$page.url.host} src={PUBLIC_PLAUSIBLE_SCRIPT_URL}>
 		</script>
 	{/if}
 </svelte:head>
