@@ -1,10 +1,10 @@
 import type { Order } from '$lib/types/Order';
-import type { ClientSession } from 'mongodb';
+import type { ClientSession, WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
-import type { Product } from '$lib/types/Product';
+import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
@@ -13,12 +13,12 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
-import { computeDeliveryFees } from '$lib/types/Cart';
+import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
 import { vatRates } from './vat-rates';
 import type { Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
-import { refreshAvailableStockInDb } from './product';
+import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -155,9 +155,14 @@ export async function createOrder(
 				email?: string;
 			};
 		};
+		/**
+		 * Will automatically delete the cart after the order is created
+		 *
+		 * Also, allows using the stock reserved by the cart
+		 */
+		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
-		cb?: (session: ClientSession) => Promise<unknown>;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -185,6 +190,39 @@ export async function createOrder(
 					.map((product) => product.name)
 					.join(', ')
 		);
+	}
+
+	const productById = Object.fromEntries(products.map((product) => [product._id, product]));
+
+	// be careful, there can be multiple lines for the same product due to product.standalone
+	const qtyPerItem: Record<string, number> = {};
+	for (const item of items) {
+		qtyPerItem[item.product._id] = (qtyPerItem[item.product._id] || 0) + item.quantity;
+	}
+
+	for (const productId of Object.keys(qtyPerItem)) {
+		const product = productById[productId];
+		if (
+			product.stock &&
+			qtyPerItem[productId] >
+				product.stock.total -
+					(await amountOfProductReserved(productId, {
+						npub: params.cart?.npub,
+						sessionId: params.sessionId
+					}))
+		) {
+			throw error(400, 'Not enough stock for product: ' + product.name);
+		}
+
+		if (qtyPerItem[productId] > (product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER)) {
+			throw error(
+				400,
+				'Cannot order more than ' +
+					(product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER) +
+					' of product: ' +
+					product.name
+			);
+		}
 	}
 
 	const isDigital = products.every((product) => !product.shipping);
@@ -374,7 +412,9 @@ export async function createOrder(
 			{ session }
 		);
 
-		await params.cb?.(session);
+		if (params.cart) {
+			await collections.carts.deleteOne({ _id: params.cart._id }, { session });
+		}
 
 		for (const product of products) {
 			if (product.stock) {

@@ -454,7 +454,7 @@ const commands: Record<
 				},
 				vatCountry: '',
 				shippingAddress: null,
-				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
+				cart
 			}).catch(async (e) => {
 				console.error(e);
 				await send(e.message);
