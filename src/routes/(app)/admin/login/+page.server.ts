@@ -7,7 +7,10 @@ import { addSeconds } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 
-export const load = async () => {
+export const load = async ({ locals }) => {
+	if (locals.user) {
+		throw redirect(303, `/admin`);
+	}
 	return {
 		isAdminCreated: runtimeConfig.isAdminCreated
 	};
@@ -54,32 +57,36 @@ export const actions = {
 					},
 					{
 						$set: {
-							value: true,
+							data: true,
 							updatedAt: new Date()
 						}
 					},
-					{ session }
+					{ session, upsert: true }
 				);
+				runtimeConfig.isAdminCreated = true;
 			});
 
 			user = newUser;
 		}
 
-		if (user && (await bcryptjs.compare(password, user.password))) {
-			await collections.users.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
-			await collections.sessions.insertOne({
-				_id: new ObjectId(),
-				userId: user._id,
-				sessionId: locals.sessionId,
-				expiresAt: addSeconds(new Date(), remember ? memorize : 3600),
-				createdAt: new Date(),
-				updatedAt: new Date()
-			});
-			// Redirect to the admin dashboard upon successful login
-			throw redirect(303, `/admin`);
-		} else {
-			// Login failed, you can redirect to a login error page or handle it as needed
-			return fail(400, { login, incorrect: true });
+		if (!user) {
+			throw fail(400, { login, incorrect: 'login' });
 		}
+
+		if (!(await bcryptjs.compare(password, user.password))) {
+			throw fail(400, { login, incorrect: 'password' });
+		}
+
+		await collections.users.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
+		await collections.sessions.insertOne({
+			_id: new ObjectId(),
+			userId: user._id,
+			sessionId: locals.sessionId,
+			expiresAt: addSeconds(new Date(), remember ? memorize : 3600),
+			createdAt: new Date(),
+			updatedAt: new Date()
+		});
+		// Redirect to the admin dashboard upon successful login
+		throw redirect(303, `/admin`);
 	}
 };

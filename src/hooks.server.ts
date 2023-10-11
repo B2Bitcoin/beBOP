@@ -92,27 +92,26 @@ export const handle = (async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
-	const sessionUser = await collections.sessions.findOne({
+	const session = await collections.sessions.findOne({
 		sessionId: event.locals.sessionId
 	});
-	if (sessionUser) {
-		const authenticateUser = await collections.users.findOne({
-			_id: sessionUser.userId
+	if (session) {
+		const user = await collections.users.findOne({
+			_id: session.userId
 		});
-		if (authenticateUser) {
+		if (user) {
 			event.locals.user = {
-				login: authenticateUser.login,
-				role: authenticateUser.roleId
+				login: user.login,
+				role: user.roleId
 			};
 		}
 	}
 	// Protect any routes under /admin
 	if (isAdminUrl) {
-		const sessionUser = event.locals.user;
-		if (!sessionUser) {
+		if (!event.locals.user) {
 			throw redirect(303, '/admin/login');
 		}
-		if (sessionUser.role !== SUPER_ADMIN_ROLE_ID) {
+		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 	}
