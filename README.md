@@ -161,5 +161,5 @@ Self install plausible : [Plausible](https://plausible.io/docs/self-hosting)
 In your `.env.local` file, add the following:
 
 ```dotenv
-VITE_PLAUSIBLE_SCRIPT_URL=<Your plausible script> #for exemple: https://plausible.yourdomaine.com/js/script.js
+PUBLIC_PLAUSIBLE_SCRIPT_URL=<Your plausible script> #for exemple: https://plausible.yourdomain.com/js/script.js
 ```
