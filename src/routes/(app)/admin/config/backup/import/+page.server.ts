@@ -3,7 +3,8 @@ import { MongoClient, Db } from 'mongodb';
 import { MONGODB_URL, MONGODB_DB } from '$env/static/private';
 import * as devalue from 'devalue';
 import type { Challenge } from '$lib/types/Challenge.js';
-import type { ImportTypeTypes } from '$lib/types/Backup.js';
+import type { ImportTypeFilesTypes, ImportTypeTypes } from '$lib/types/Backup.js';
+import { handleImageImport } from '$lib/utils/importData.js';
 
 const IMPORT_TYPE_MAPPINGS: { global: null; catalog: string[]; shopConfig: string[] } = {
 	global: null,
@@ -18,12 +19,17 @@ export const actions = {
 			importType: ImportTypeTypes;
 			importOrders: undefined | 'on';
 			passedChallenges: undefined | 'on';
+			importFiles: undefined | 'on';
+			importTypeFiles: ImportTypeFilesTypes | undefined;
 		};
 
-		const { importType, importOrders, passedChallenges } = formData;
+		const { importType, importOrders, passedChallenges, importFiles, importTypeFiles } = formData;
+
+		console.log('importFiles, importTypeFiles ', importFiles, importTypeFiles);
 
 		const importOrdersBool = importOrders === 'on';
 		const passedChallengesBool = passedChallenges === 'on';
+		const importFilesBool = importFiles === 'on';
 
 		const client = new MongoClient(MONGODB_URL);
 		await client.connect();
@@ -81,6 +87,22 @@ export const actions = {
 					collectionData = collectionData.filter(
 						(challenge: Challenge) => new Date(challenge.endsAt) > now
 					);
+				}
+
+				//skip digitalFiles and pictures
+				if (
+					!importFilesBool &&
+					(collectionName === 'digitalFiles' || collectionName === 'pictures')
+				) {
+					continue;
+				}
+
+				//check images
+				if (
+					importFilesBool &&
+					(collectionName === 'digitalFiles' || collectionName === 'pictures')
+				) {
+					collectionData = await handleImageImport(collectionData, importTypeFiles);
 				}
 
 				//Delete all collection

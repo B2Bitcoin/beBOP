@@ -11,7 +11,6 @@ export interface Picture extends Timestamps {
 	_id: string;
 	productId?: string;
 	name: string;
-
 	storage: {
 		original: ImageData;
 		formats: ImageData[];
