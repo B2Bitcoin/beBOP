@@ -2,10 +2,28 @@ import { fail } from '@sveltejs/kit';
 import { MongoClient, Db } from 'mongodb';
 import { MONGODB_URL, MONGODB_DB } from '$env/static/private';
 import * as devalue from 'devalue';
+import type { Challenge } from '$lib/types/Challenge.js';
+import type { ImportTypeTypes } from '$lib/types/Backup.js';
+
+const IMPORT_TYPE_MAPPINGS: { global: null; catalog: string[]; shopConfig: string[] } = {
+	global: null,
+	catalog: ['products'],
+	shopConfig: ['runtimeConfig']
+};
 
 export const actions = {
 	default: async ({ request }) => {
-		const formData = Object.fromEntries(await request.formData());
+		const formData = Object.fromEntries(await request.formData()) as {
+			fileToUpload: File;
+			importType: ImportTypeTypes;
+			importOrders: undefined | 'on';
+			passedChallenges: undefined | 'on';
+		};
+
+		const { importType, importOrders, passedChallenges } = formData;
+
+		const importOrdersBool = importOrders === 'on';
+		const passedChallengesBool = passedChallenges === 'on';
 
 		const client = new MongoClient(MONGODB_URL);
 		await client.connect();
@@ -27,14 +45,43 @@ export const actions = {
 		const fileText = new TextDecoder().decode(fileBuffer);
 
 		try {
-			// const fileJson = JSON.parse(fileText);
 			const fileJson = devalue.parse(fileText);
 
-			const collections = Object.keys(fileJson);
+			let collections = Object.keys(fileJson);
+
+			//Filter collection to import
+			if (importType !== 'global') {
+				const allowedCollections = IMPORT_TYPE_MAPPINGS[importType];
+
+				if (!allowedCollections) {
+					return fail(400, {
+						error: true,
+						message: 'Invalid import type'
+					});
+				}
+
+				collections = collections.filter((collectionName) =>
+					allowedCollections.includes(collectionName)
+				);
+			}
 
 			for (const collectionName of collections) {
-				const collectionData = fileJson[collectionName];
+				let collectionData = fileJson[collectionName];
 				const collection = db.collection(collectionName);
+
+				// If "importOrders" is true and the collection is "orders", then proceed.
+				if (!(importOrdersBool || collectionName !== 'orders')) {
+					continue;
+				}
+
+				// If "passedChallenges" is false and the collection is "challenges",
+				// filters the collection to have only future challenges.
+				if (!passedChallengesBool && collectionName === 'challenges') {
+					const now = new Date();
+					collectionData = collectionData.filter(
+						(challenge: Challenge) => new Date(challenge.endsAt) > now
+					);
+				}
 
 				//Delete all collection
 				await collection.deleteMany({});

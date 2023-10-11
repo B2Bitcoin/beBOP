@@ -10,6 +10,7 @@ export async function exportDatabase() {
 		const pictures = await collections.pictures.find().toArray();
 		const products = await collections.products.find().toArray();
 		const runtimeConfig = await collections.runtimeConfig.find().toArray();
+		const bootikSubscriptions = await collections.bootikSubscriptions.find().toArray();
 		const paidSubscriptions = await collections.paidSubscriptions.find().toArray();
 
 		const dataToExport = {
@@ -20,6 +21,7 @@ export async function exportDatabase() {
 			pictures,
 			products,
 			runtimeConfig,
+			bootikSubscriptions,
 			paidSubscriptions
 		};
 
