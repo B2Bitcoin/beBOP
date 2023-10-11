@@ -8,7 +8,13 @@ import { runtimeConfig } from './runtime-config';
  */
 export async function amountOfProductReserved(
 	productId: string,
-	session?: ClientSession
+	opts?: {
+		/** Include stock for outdated carts with this npub */
+		npub?: string;
+		/** Include stock for outdated carts with this sessionId */
+		sessionId?: string;
+		session?: ClientSession;
+	}
 ): Promise<number> {
 	return (
 		((
@@ -18,7 +24,25 @@ export async function amountOfProductReserved(
 						{
 							$match: {
 								'items.productId': productId,
-								updatedAt: { $gt: subMinutes(new Date(), runtimeConfig.reserveStockInMinutes) }
+								$or: [
+									{
+										updatedAt: { $gt: subMinutes(new Date(), runtimeConfig.reserveStockInMinutes) }
+									},
+									...(opts?.npub
+										? [
+												{
+													npub: opts.npub
+												}
+										  ]
+										: []),
+									...(opts?.sessionId
+										? [
+												{
+													sessionId: opts.sessionId
+												}
+										  ]
+										: [])
+								]
 							}
 						},
 						{
@@ -39,7 +63,7 @@ export async function amountOfProductReserved(
 						}
 					],
 					{
-						session
+						session: opts?.session
 					}
 				)
 				.next()
@@ -72,7 +96,7 @@ export async function amountOfProductReserved(
 						}
 					],
 					{
-						session
+						session: opts?.session
 					}
 				)
 				.next()
@@ -81,7 +105,7 @@ export async function amountOfProductReserved(
 }
 
 export async function refreshAvailableStockInDb(productId: string, session?: ClientSession) {
-	const amountInCarts = await amountOfProductReserved(productId, session);
+	const amountInCarts = await amountOfProductReserved(productId, { session });
 
 	await collections.products.updateOne(
 		{
