@@ -14,6 +14,8 @@ export async function handleImageImport(
 
 	const validFileData = [];
 	for (const file of fileData) {
+		console.log('file ', file);
+
 		let imageKey: string | null = null;
 		if ('key' in file.storage) {
 			imageKey = file.storage.key;
@@ -38,6 +40,8 @@ export async function handleImageImport(
 }
 
 async function checkUrl(imageKey: string) {
+	console.log('imageKey ', imageKey);
+
 	try {
 		const s3Client = new S3Client({
 			region: S3_REGION,
@@ -52,6 +56,8 @@ async function checkUrl(imageKey: string) {
 		await s3Client.send(new HeadObjectCommand({ Bucket: S3_BUCKET, Key: key }));
 		return true;
 	} catch (error) {
+		console.log('je passe la ');
+
 		return false;
 	}
 }

@@ -2,7 +2,6 @@ import { exportDatabase } from '$lib/utils/exportData.js';
 
 export const POST = async ({ request }) => {
 	const { exportType } = JSON.parse(await request.text());
-	console.log(exportType);
 
 	const exportedDatabase = await exportDatabase(exportType);
 
