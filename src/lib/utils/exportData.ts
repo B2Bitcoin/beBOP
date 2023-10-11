@@ -1,7 +1,7 @@
 import { collections } from '../server/database';
 import * as devalue from 'devalue';
 
-export async function exportDatabase() {
+export async function exportDatabase(exportType: 'product' | undefined) {
 	try {
 		const challenges = await collections.challenges.find().toArray();
 		const cmsPages = await collections.cmsPages.find().toArray();
@@ -13,17 +13,20 @@ export async function exportDatabase() {
 		const bootikSubscriptions = await collections.bootikSubscriptions.find().toArray();
 		const paidSubscriptions = await collections.paidSubscriptions.find().toArray();
 
-		const dataToExport = {
-			challenges,
-			cmsPages,
-			digitalFiles,
-			orders,
-			pictures,
-			products,
-			runtimeConfig,
-			bootikSubscriptions,
-			paidSubscriptions
-		};
+		const dataToExport =
+			exportType === 'product'
+				? { products }
+				: {
+						challenges,
+						cmsPages,
+						digitalFiles,
+						orders,
+						pictures,
+						products,
+						runtimeConfig,
+						bootikSubscriptions,
+						paidSubscriptions
+				  };
 
 		return devalue.stringify(dataToExport);
 	} catch (error) {

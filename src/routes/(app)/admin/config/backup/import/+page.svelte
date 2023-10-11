@@ -6,9 +6,9 @@
 	let authorizedExtensions = ['.json'];
 
 	let importType: ImportTypeTypes = 'global';
-	let importOrders: boolean = false;
-	let passedChallenges: boolean = false;
-	let importFiles: boolean = false;
+	let importOrders = false;
+	let passedChallenges = false;
+	let importFiles = false;
 </script>
 
 {#if form?.success}
@@ -95,5 +95,5 @@
 		{/if}
 	</div>
 
-	<button type="submit" class="btn btn-black self-start">Submit</button>
+	<button type="submit" class="btn btn-black self-start">Import</button>
 </form>

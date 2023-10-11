@@ -4,8 +4,6 @@
 			method: 'POST'
 		});
 
-		console.log('response ', response);
-
 		if (!response.ok) {
 			throw new Error('Network response was not ok' + response.statusText);
 		}
@@ -23,4 +21,4 @@
 </script>
 
 <h1 class="text-3xl">Export Data</h1>
-<button on:click={exportData} class="btn btn-black self-start">Export Data</button>
+<button on:click={exportData} class="btn btn-black self-start">Export</button>
