@@ -86,6 +86,7 @@ export async function load(params) {
 								| 'payWhatYouWant'
 								| 'standalone'
 								| 'maxQuantityPerOrder'
+								| 'stock'
 							>
 						>(
 							{ _id: item.productId },
@@ -104,7 +105,8 @@ export async function load(params) {
 									requireSpecificDeliveryFee: 1,
 									payWhatYouWant: 1,
 									standalone: 1,
-									maxQuantityPerOrder: 1
+									maxQuantityPerOrder: 1,
+									stock: 1
 								}
 							}
 						);

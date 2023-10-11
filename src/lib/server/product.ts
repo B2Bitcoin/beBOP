@@ -9,10 +9,18 @@ import { runtimeConfig } from './runtime-config';
 export async function amountOfProductReserved(
 	productId: string,
 	opts?: {
-		/** Include stock for outdated carts with this npub */
-		npub?: string;
-		/** Include stock for outdated carts with this sessionId */
-		sessionId?: string;
+		include?: {
+			/** Include stock for outdated carts with this npub */
+			npub?: string;
+			/** Include stock for outdated carts with this sessionId */
+			sessionId?: string;
+		};
+		exclude?: {
+			/** Exclude stock for active carts with this npub */
+			npub?: string;
+			/** Exclude stock for active carts with this sessionId */
+			sessionId?: string;
+		};
 		session?: ClientSession;
 	}
 ): Promise<number> {
@@ -28,21 +36,23 @@ export async function amountOfProductReserved(
 									{
 										updatedAt: { $gt: subMinutes(new Date(), runtimeConfig.reserveStockInMinutes) }
 									},
-									...(opts?.npub
+									...(opts?.include?.npub
 										? [
 												{
-													npub: opts.npub
+													npub: opts.include.npub
 												}
 										  ]
 										: []),
-									...(opts?.sessionId
+									...(opts?.include?.sessionId
 										? [
 												{
-													sessionId: opts.sessionId
+													sessionId: opts.include.sessionId
 												}
 										  ]
 										: [])
-								]
+								],
+								...(opts?.exclude?.npub && { npub: { $ne: opts.exclude.npub } }),
+								...(opts?.exclude?.sessionId && { sessionId: { $ne: opts.exclude.sessionId } })
 							}
 						},
 						{

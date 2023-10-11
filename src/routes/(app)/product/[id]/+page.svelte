@@ -20,6 +20,7 @@
 
 	let quantity = 1;
 	let loading = false;
+	let errorMessage = '';
 	const endsAt = data.discount[0] ? new Date(data.discount[0].endsAt).getTime() : 0; // Convert to timestamp
 	const currentTime = Date.now();
 	const timeDifference = endsAt - currentTime;
@@ -228,9 +229,16 @@
 						method="post"
 						use:enhance={({ action }) => {
 							loading = true;
+							errorMessage = '';
 							return async ({ result }) => {
 								loading = false;
-								if (result.type === 'error' || !action.searchParams.has('/addToCart')) {
+
+								if (result.type === 'error') {
+									errorMessage = result.error.message;
+									return;
+								}
+
+								if (!action.searchParams.has('/addToCart')) {
 									return await applyAction(result);
 								}
 
@@ -279,6 +287,9 @@
 									{/each}
 								</select>
 							</label>
+						{/if}
+						{#if errorMessage}
+							<p class="text-red-500">{errorMessage}</p>
 						{/if}
 						{#if amountAvailable === 0}
 							<p class="text-red-500">
