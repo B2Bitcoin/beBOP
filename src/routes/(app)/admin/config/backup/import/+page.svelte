@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { ImportTypeTypes } from '$lib/types/Backup';
 
+	export let data;
 	export let form;
 
 	let authorizedExtensions = ['.json'];
 
-	let importType: ImportTypeTypes = 'global';
+	let importType: ImportTypeTypes | string = data.importType ?? 'global';
 	let importOrders = false;
 	let passedChallenges = false;
 	let importFiles = false;

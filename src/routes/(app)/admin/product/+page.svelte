@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import ProductItem from '$lib/components/ProductItem.svelte';
 
 	export let data;
@@ -30,11 +31,16 @@
 		link.click();
 		document.body.removeChild(link);
 	}
+
+	function importData() {
+		goto('/admin/config/backup/import?type=catalog');
+	}
 </script>
 
 <a href="/admin/product/new" class="underline block">Add product</a>
 <a href="/admin/product/prices" class="underline block">Products price</a>
 <button on:click={exportData} class="btn btn-black self-start">Export catalog</button>
+<button on:click={importData} class="btn btn-black self-start">Import catalog</button>
 
 <h1 class="text-3xl">List of products</h1>
 
