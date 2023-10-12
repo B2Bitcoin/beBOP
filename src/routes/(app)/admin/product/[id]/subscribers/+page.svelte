@@ -8,13 +8,17 @@
 		if (subscription.updatedAt.getTime() + subscription.paidUntil.getTime() >= Date.now()) {
 			// if( subscription.updatedAt.getTime() + subscription.paidUntil.getTime() - subscription.notifications. )
 			return 'active';
-		} else subscription.updatedAt.getTime() + subscription.paidUntil.getTime() < Date.now();
+		} else {
+			subscription.updatedAt.getTime() + subscription.paidUntil.getTime() < Date.now();
+		}
 		return 'expired';
 	}
 
 	function exportcsv() {
 		const table = document.getElementById('subscription-table');
-		if (!table) return;
+		if (!table) {
+			return;
+		}
 
 		const rows = table.querySelectorAll('tr');
 		const data = Array.from(rows).map((row) =>

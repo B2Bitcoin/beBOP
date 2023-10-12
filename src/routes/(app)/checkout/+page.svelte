@@ -41,7 +41,9 @@
 
 	function checkForm(event: SubmitEvent) {
 		for (const input of typedValues(npubInputs)) {
-			if (!input) continue;
+			if (!input) {
+				continue;
+			}
 
 			input.value = input.value.trim();
 
