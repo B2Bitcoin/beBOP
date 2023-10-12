@@ -27,6 +27,9 @@
 			{#if form?.successUser}
 				<p class="text-green-500">you'll receive a session link on your address</p>
 			{/if}
+			{#if form?.cannotCreateUser}
+				<p class="text-red-500">Sadly, no information was found about your contact.</p>
+			{/if}
 			{#if form?.fail}
 				<p class="text-red-500">Sorry, An error happen try again.</p>
 			{/if}
