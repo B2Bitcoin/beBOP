@@ -53,7 +53,7 @@ export const actions = {
 		}
 		if (!runtimeConfig.createUserOnSession) {
 			await sendFailAuthentificationlink(address);
-			return { address, successExistUser: true };
+			return { address, cannotCreateUser: true, userDoesNotExist: true };
 		}
 
 		const user = await collections.users.insertOne({
