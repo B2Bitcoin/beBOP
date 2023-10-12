@@ -224,13 +224,13 @@
 		<p class="text-sm">The cart's reservation is extended each time the cart is updated.</p>
 	</label>
 	<label class="form-label">
-		Plausible
+		Plausible script url
 		<input
 			type="text"
 			class="form-input max-w-[25rem]"
-			name="plausible"
+			name="plausibleScriptUrl"
 			placeholder="https://plausible.yourdomain.com/js/script.js"
-			value={data.plausible}
+			value={data.plausibleScriptUrl}
 		/>
 	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />

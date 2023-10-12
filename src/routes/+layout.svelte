@@ -13,8 +13,8 @@
 </script>
 
 <svelte:head>
-	{#if data.plausible}
-		<script defer data-domain={$page.url.host} src={data.plausible}>
+	{#if data.plausibleScriptUrl}
+		<script defer data-domain={$page.url.host} src={data.plausibleScriptUrl}>
 		</script>
 	{/if}
 </svelte:head>

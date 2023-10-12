@@ -67,7 +67,7 @@ const defaultConfig = {
 			}
 		} as DeliveryFees
 	},
-	plausible: ''
+	plausibleScriptUrl: ''
 };
 
 exchangeRate.set({

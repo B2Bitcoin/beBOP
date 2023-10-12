@@ -24,7 +24,7 @@ export async function load(event) {
 		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
 		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN,
-		plausible: runtimeConfig.plausible
+		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl
 	};
 }
 
@@ -59,7 +59,7 @@ export const actions = {
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
 				actionOverwrite: z.enum(['', 'overwrite']).optional(),
-				plausible: z.string()
+				plausibleScriptUrl: z.string()
 			})
 			.parse(Object.fromEntries(formData));
 
