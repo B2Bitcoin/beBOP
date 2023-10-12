@@ -14,25 +14,35 @@ export async function handleImageImport(
 
 	const validFileData = [];
 	for (const file of fileData) {
-		console.log('file ', file);
+		const imageKeys: string[] = [];
 
-		let imageKey: string | null = null;
 		if ('key' in file.storage) {
-			imageKey = file.storage.key;
+			imageKeys.push(file.storage.key);
 		} else if ('original' in file.storage && 'key' in file.storage.original) {
-			imageKey = file.storage.original.key;
+			imageKeys.push(file.storage.original.key);
+
+			if (file.storage.formats) {
+				for (const format of file.storage.formats) {
+					imageKeys.push(format.key);
+				}
+			}
 		}
 
-		if (imageKey) {
-			const isValidUrl = await checkUrl(imageKey);
+		const validUrls = await Promise.all(imageKeys.map((key) => checkUrl(key)));
 
-			if (importTypeFiles === 'checkWarn') {
+		const allUrlsValid = validUrls.every((isValid) => isValid);
+
+		if (importTypeFiles === 'checkWarn') {
+			validFileData.push(file);
+			if (!allUrlsValid) {
+				console.warn(`Warning: One or more URLs of ${JSON.stringify(file)} are not accessible.`);
+				console.log('EMAIL CHECK AND WARN');
+			}
+		} else if (importTypeFiles === 'checkClean') {
+			if (allUrlsValid) {
 				validFileData.push(file);
-				if (!isValidUrl) {
-					console.warn(`Warning: ${imageKey} is not accessible.`);
-				}
-			} else if (importTypeFiles === 'checkClean' && isValidUrl) {
-				validFileData.push(file);
+			} else {
+				console.log('CHECK AND CLEAN EMAIL');
 			}
 		}
 	}
@@ -40,8 +50,6 @@ export async function handleImageImport(
 }
 
 async function checkUrl(imageKey: string) {
-	console.log('imageKey ', imageKey);
-
 	try {
 		const s3Client = new S3Client({
 			region: S3_REGION,
@@ -56,8 +64,6 @@ async function checkUrl(imageKey: string) {
 		await s3Client.send(new HeadObjectCommand({ Bucket: S3_BUCKET, Key: key }));
 		return true;
 	} catch (error) {
-		console.log('je passe la ');
-
 		return false;
 	}
 }

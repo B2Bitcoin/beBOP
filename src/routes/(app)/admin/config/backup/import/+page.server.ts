@@ -6,8 +6,15 @@ import type { Challenge } from '$lib/types/Challenge.js';
 import type { ImportTypeFilesTypes, ImportTypeTypes } from '$lib/types/Backup.js';
 import { handleImageImport } from '$lib/utils/importData.js';
 
-const IMPORT_TYPE_MAPPINGS: { global: null; catalog: string[]; shopConfig: string[] } = {
-	global: null,
+const IMPORT_TYPE_MAPPINGS: { global: string[]; catalog: string[]; shopConfig: string[] } = {
+	global: [
+		'cmsPages',
+		'products',
+		'runtimeConfig',
+		'bootikSubscriptions',
+		'paidSubscriptions',
+		'challenges'
+	],
 	catalog: ['products'],
 	shopConfig: ['runtimeConfig']
 };
@@ -24,8 +31,6 @@ export const actions = {
 		};
 
 		const { importType, importOrders, passedChallenges, importFiles, importTypeFiles } = formData;
-
-		console.log('importFiles, importTypeFiles ', importFiles, importTypeFiles);
 
 		const importOrdersBool = importOrders === 'on';
 		const passedChallengesBool = passedChallenges === 'on';
@@ -56,29 +61,23 @@ export const actions = {
 			let collections = Object.keys(fileJson);
 
 			//Filter collection to import
-			if (importType !== 'global') {
-				const allowedCollections = IMPORT_TYPE_MAPPINGS[importType];
+			let allowedCollections = IMPORT_TYPE_MAPPINGS[importType];
 
-				if (!allowedCollections) {
-					return fail(400, {
-						error: true,
-						message: 'Invalid import type'
-					});
-				}
-
-				collections = collections.filter((collectionName) =>
-					allowedCollections.includes(collectionName)
-				);
+			if (importOrdersBool) {
+				allowedCollections = [...allowedCollections, 'orders'];
 			}
+
+			if (importFilesBool) {
+				allowedCollections = [...allowedCollections, 'digitalFiles', 'pictures'];
+			}
+
+			collections = collections.filter((collectionName) =>
+				allowedCollections.includes(collectionName)
+			);
 
 			for (const collectionName of collections) {
 				let collectionData = fileJson[collectionName];
 				const collection = db.collection(collectionName);
-
-				// If "importOrders" is true and the collection is "orders", then proceed.
-				if (!(importOrdersBool || collectionName !== 'orders')) {
-					continue;
-				}
 
 				// If "passedChallenges" is false and the collection is "challenges",
 				// filters the collection to have only future challenges.
@@ -87,14 +86,6 @@ export const actions = {
 					collectionData = collectionData.filter(
 						(challenge: Challenge) => new Date(challenge.endsAt) > now
 					);
-				}
-
-				//skip digitalFiles and pictures
-				if (
-					!importFilesBool &&
-					(collectionName === 'digitalFiles' || collectionName === 'pictures')
-				) {
-					continue;
 				}
 
 				//check images
