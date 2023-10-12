@@ -8,8 +8,19 @@ import { createOrder } from '$lib/server/orders';
 import { emailsEnabled } from '$lib/server/email';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
+import { checkCartItems } from '$lib/server/cart.js';
 
-export function load() {
+export async function load({ parent, locals }) {
+	const parentData = await parent();
+
+	if (parentData.cart) {
+		try {
+			await checkCartItems(parentData.cart, { sessionId: locals.sessionId });
+		} catch (err) {
+			throw redirect(303, '/cart');
+		}
+	}
+
 	return {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
@@ -108,9 +119,9 @@ export const actions = {
 						email
 					}
 				},
+				cart,
 				shippingAddress: shipping,
-				vatCountry: shipping?.country ?? locals.countryCode,
-				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
+				vatCountry: shipping?.country ?? locals.countryCode
 			}
 		);
 

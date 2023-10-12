@@ -28,7 +28,5 @@ export async function load({ params, locals }) {
 		updatedAt: new Date()
 	});
 
-	return {
-		login: user.login
-	};
+	return { user: { _id: user._id.toString(), login: user.login } };
 }

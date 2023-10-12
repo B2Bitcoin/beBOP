@@ -18,9 +18,7 @@ export async function load({ params }) {
 	if (user.passwordReset?.expiresAt < new Date()) {
 		throw error(404, 'token password reset has expired');
 	}
-	return {
-		user
-	};
+	return { user: { _id: user._id.toString(), login: user.login } };
 }
 
 export const actions = {

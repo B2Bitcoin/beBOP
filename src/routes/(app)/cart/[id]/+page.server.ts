@@ -88,7 +88,7 @@ export const actions = {
 				quantity: formData.get('quantity')
 			});
 
-		await removeFromCartInDb(params.id, quantity - 1, {
+		await removeFromCartInDb(product, quantity - 1, {
 			sessionId: locals.sessionId,
 			totalQuantity: true
 		});
