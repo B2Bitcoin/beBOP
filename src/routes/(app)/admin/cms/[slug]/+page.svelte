@@ -2,6 +2,7 @@
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import Editor from '@tinymce/tinymce-svelte';
+	import { TINYMCE_PLUGINS, TINYMCE_TOOLBAR } from '../tinymce-plugins.js';
 
 	export let data;
 
@@ -77,7 +78,11 @@
 	<label class="block w-full mt-4">
 		Content
 
-		<Editor scriptSrc="/tinymce/tinymce.min.js" bind:value={pageContent} />
+		<Editor
+			scriptSrc="/tinymce/tinymce.js"
+			bind:value={pageContent}
+			conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
+		/>
 
 		<p class="text-gray-700 my-3">
 			To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code>,
