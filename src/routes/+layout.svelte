@@ -7,14 +7,14 @@
 	import '@fontsource/outfit/300.css';
 	import '@fontsource/poppins/400.css';
 	import '@fontsource/gloock/400.css';
-
-	import { PUBLIC_PLAUSIBLE_SCRIPT_URL } from '$env/static/public';
 	import { page } from '$app/stores';
+
+	export let data;
 </script>
 
 <svelte:head>
-	{#if PUBLIC_PLAUSIBLE_SCRIPT_URL}
-		<script defer data-domain={$page.url.host} src={PUBLIC_PLAUSIBLE_SCRIPT_URL}>
+	{#if data.plausible}
+		<script defer data-domain={$page.url.host} src={data.plausible}>
 		</script>
 	{/if}
 </svelte:head>

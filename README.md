@@ -158,8 +158,7 @@ Alternatively, you need to configure a local MongoDB with ReplicaSet enabled. Re
 
 Self install plausible : [Plausible](https://plausible.io/docs/self-hosting)
 
-In your `.env.local` file, add the following:
+Then : go in the config page : /admin/config
 
-```dotenv
-PUBLIC_PLAUSIBLE_SCRIPT_URL=<Your plausible script> #for exemple: https://plausible.yourdomain.com/js/script.js
-```
+And : Copy/paste your Plausible URL in the plausible input
+#for example: https://plausible.your-domain.pvh-labs.ch/js/script.js
