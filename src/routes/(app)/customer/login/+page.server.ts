@@ -47,12 +47,12 @@ export const actions = {
 				{ returnDocument: 'after' }
 			);
 			if (user.value) {
-				sendAuthentificationlink(user.value);
+				await sendAuthentificationlink(user.value);
 				return { address, successExistUser: true };
 			}
 		}
 		if (!runtimeConfig.createUserOnSession) {
-			sendFailAuthentificationlink(address);
+			await sendFailAuthentificationlink(address);
 			return { address, successExistUser: true };
 		}
 
@@ -72,9 +72,9 @@ export const actions = {
 			updatedAt: new Date(),
 			createdAt: new Date()
 		});
-		if (user) {
-			const userCreated = await collections.users.findOne({ _id: user.insertedId });
-			if (userCreated) sendAuthentificationlink(userCreated);
+		const userCreated = await collections.users.findOne({ _id: user.insertedId });
+		if (userCreated) {
+			await sendAuthentificationlink(userCreated);
 			return { address, successUser: true };
 		} else {
 			return fail(400, { fail: true });

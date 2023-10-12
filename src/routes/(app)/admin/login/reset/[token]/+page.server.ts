@@ -4,9 +4,10 @@ import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import type { User } from '$lib/types/User';
 import { ObjectId } from 'mongodb';
+import type { SetRequired } from 'type-fest';
 
 export async function load({ params }) {
-	const user = await collections.users.findOne<Pick<User, '_id' | 'login' | 'passwordReset'>>({
+	const user = await collections.users.findOne<SetRequired<User, 'passwordReset'>>({
 		'passwordReset.token': params.token
 	});
 
@@ -14,7 +15,7 @@ export async function load({ params }) {
 		throw error(404, 'token password reset not found');
 	}
 
-	if (user.passwordReset && user.passwordReset?.expiresAt < new Date()) {
+	if (user.passwordReset?.expiresAt < new Date()) {
 		throw error(404, 'token password reset has expired');
 	}
 	return {
