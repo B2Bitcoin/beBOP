@@ -7,7 +7,7 @@ export interface User extends Timestamps {
 	password?: string;
 	backupInfo?: {
 		email?: string;
-		nostr?: string;
+		npub?: string;
 	};
 	roleId: string;
 	status?: string;

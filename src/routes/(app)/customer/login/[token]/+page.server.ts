@@ -4,9 +4,10 @@ import { error } from '@sveltejs/kit';
 import type { User } from '$lib/types/User';
 import { ObjectId } from 'mongodb';
 import { addMinutes } from 'date-fns';
+import type { SetRequired } from 'type-fest';
 
 export async function load({ params, locals }) {
-	const user = await collections.users.findOne<Pick<User, '_id' | 'login' | 'authLink'>>({
+	const user = await collections.users.findOne<SetRequired<User, 'authLink'>>({
 		'authLink.token': params.token
 	});
 
@@ -14,7 +15,7 @@ export async function load({ params, locals }) {
 		throw error(404, 'token authentification not found');
 	}
 
-	if (user.authLink && user.authLink?.expiresAt < new Date()) {
+	if (!user.authLink || user.authLink?.expiresAt < new Date()) {
 		throw error(404, 'token authentification has expired');
 	}
 	await collections.sessions.deleteOne({ sessionId: locals.sessionId });

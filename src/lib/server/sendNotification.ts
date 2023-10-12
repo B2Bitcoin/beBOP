@@ -13,14 +13,14 @@ export async function sendResetPasswordNotification(user: User) {
         If you didn't ask for this password reset procedure, please ignore this message and do nothing.\n\n
         Best regards,\n\n
         ${runtimeConfig.brandName} team`;
-	if (user.backupInfo?.nostr) {
+	if (user.backupInfo?.npub) {
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			kind: Kind.EncryptedDirectMessage,
 			updatedAt: new Date(),
 			content,
-			dest: user.backupInfo.nostr
+			dest: user.backupInfo.npub
 		});
 	}
 	if (user.backupInfo?.email) {
@@ -43,14 +43,14 @@ export async function sendAuthentificationlink(user: User) {
 	If you didn't ask for this temporary session procedure, please ignore this message and do nothing.\n\n
     Best regards,\n\n
     ${runtimeConfig.brandName} team`;
-	if (user.backupInfo?.nostr) {
+	if (user.backupInfo?.npub) {
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			kind: Kind.EncryptedDirectMessage,
 			updatedAt: new Date(),
 			content,
-			dest: user.backupInfo.nostr
+			dest: user.backupInfo.npub
 		});
 	}
 	if (user.backupInfo?.email) {
@@ -61,6 +61,36 @@ export async function sendAuthentificationlink(user: User) {
 			subject: `Password Reset`,
 			htmlContent: content,
 			dest: user.backupInfo.email
+		});
+	}
+}
+
+export async function sendFailAuthentificationlink(address: string) {
+	const content = `${runtimeConfig.brandName} + ${ORIGIN} - Temporary session request\n\n
+	Dear visitor,\n\n
+	This message was sent to you because you have requested a temporary session link.\n\n
+	Sadly, no information was found about your contact.\n\n
+	Are you sure you use this {nostr npub / email address / contact mean} previously on our website ?\n\n
+	If you didn't ask for this temporary session procedure, please ignore this message and do nothing.
+    Best regards,\n\n
+    ${runtimeConfig.brandName} team`;
+	if (!address.includes('@')) {
+		await collections.nostrNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			kind: Kind.EncryptedDirectMessage,
+			updatedAt: new Date(),
+			content,
+			dest: address
+		});
+	} else {
+		await collections.emailNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			subject: `Password Reset`,
+			htmlContent: content,
+			dest: address
 		});
 	}
 }
