@@ -66,7 +66,8 @@ const defaultConfig = {
 				currency: 'EUR'
 			}
 		} as DeliveryFees
-	}
+	},
+	plausibleScriptUrl: ''
 };
 
 exchangeRate.set({
