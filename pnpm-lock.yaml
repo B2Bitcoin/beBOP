@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@aws-sdk/client-s3':
     specifier: ^3.312.0
@@ -13,6 +17,12 @@ dependencies:
   '@fontsource/poppins':
     specifier: ^4.5.10
     version: 4.5.10
+  ag-grid-community:
+    specifier: ^30.2.0
+    version: 30.2.0
+  ag-grid-svelte:
+    specifier: ^0.3.0
+    version: 0.3.0(ag-grid-community@30.2.0)(svelte@3.58.0)
   bcryptjs:
     specifier: ^2.4.3
     version: 2.4.3
@@ -1987,6 +1997,20 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  /ag-grid-community@30.2.0:
+    resolution: {integrity: sha512-Gd6GXmtzEQSCDloBdRxxCDqnjTBRAOf/zzlaxxyyVBJgc+cePuNgGdplRUhT/rwIiDwvyuoynvxelVE/iYdXsA==}
+    dev: false
+
+  /ag-grid-svelte@0.3.0(ag-grid-community@30.2.0)(svelte@3.58.0):
+    resolution: {integrity: sha512-jaEwHqhZPeNtPgXTlUQ7URVbuU1eGqkGs4L7S7aLPzfDJORmAOZQYmWmHEulTN9WpbGQstScS+ACyT07uUMXwQ==}
+    peerDependencies:
+      ag-grid-community: ^28 || ^29 || ^30
+      svelte: ^3
+    dependencies:
+      ag-grid-community: 30.2.0
+      svelte: 3.58.0
+    dev: false
+
   /ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
     dependencies:
@@ -3115,6 +3139,7 @@ packages:
 
   /memory-pager@1.5.0:
     resolution: {integrity: sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -3874,6 +3899,7 @@ packages:
 
   /sparse-bitfield@3.0.3:
     resolution: {integrity: sha512-kvzhi7vqKTfkh0PZU+2D2PIllw2ymqJKujUcyPMd9Y75Nv4nPbGJZXNhxsgdQab2BmlDct1YnfQCguEvHr7VsQ==}
+    requiresBuild: true
     dependencies:
       memory-pager: 1.5.0
     dev: false
@@ -4049,7 +4075,6 @@ packages:
   /svelte@3.58.0:
     resolution: {integrity: sha512-brIBNNB76mXFmU/Kerm4wFnkskBbluBDCjx/8TcpYRb298Yh2dztS2kQ6bhtjMcvUhd5ynClfwpz5h2gnzdQ1A==}
     engines: {node: '>= 8'}
-    dev: true
 
   /tailwindcss@3.3.1(postcss@8.4.21)(ts-node@10.9.1):
     resolution: {integrity: sha512-Vkiouc41d4CEq0ujXl6oiGFQ7bA3WEhUZdTgXAhtKxSy49OmKs8rEfQmupsfF0IGW8fv2iQkp1EVUuapCFrZ9g==}

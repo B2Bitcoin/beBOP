@@ -52,6 +52,10 @@
 		{
 			href: '/admin/discount',
 			label: 'Discount'
+		},
+		{
+			href: '/admin/table',
+			label: 'Table'
 		}
 	];
 	$: if ($navigating) {
