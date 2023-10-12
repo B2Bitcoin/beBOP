@@ -121,3 +121,8 @@
 		@apply border border-blue-400 p-2 text-blue-600 rounded;
 	}
 }
+
+/* TinyMCE upgrade button */
+.tox-promotion {
+	@apply hidden;
+}

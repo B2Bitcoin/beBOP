@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import Editor from '@tinymce/tinymce-svelte';
+	import scriptSrc from 'tinymce/tinymce.min.js?url';
+
+	let pageContent = '';
 </script>
 
 <h1 class="text-3xl">Add a CMS Page</h1>
@@ -52,19 +56,26 @@
 	</label>
 	<label class="block w-full mt-4">
 		Content
+
+		<Editor {scriptSrc} bind:value={pageContent} />
+
+		<p class="text-gray-700 my-3">
+			To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code>,
+			where
+			<code class="font-mono">slug</code> is the slug of your product
+		</p>
+
+		Raw HTML
+
 		<textarea
 			name="content"
 			cols="30"
 			rows="10"
 			maxlength={MAX_CONTENT_LIMIT}
-			placeholder="Markdown content."
+			placeholder="HTML content"
 			class="form-input block w-full"
+			bind:value={pageContent}
 		/>
-		<p class="text-gray-700">
-			To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code>,
-			where
-			<code class="font-mono">slug</code> is the slug of your product
-		</p>
 	</label>
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />

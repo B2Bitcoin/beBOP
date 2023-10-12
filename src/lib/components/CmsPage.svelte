@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { marked } from 'marked';
 	import type { PageData } from '../../routes/(app)/[slug]/$types';
 	import ProductWidget from './ProductWidget.svelte';
 	import ChallengeWidget from './ChallengeWidget.svelte';
@@ -37,7 +36,7 @@
 		{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 			<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
 		{:else}
-			{@html marked(token.raw)}
+			{@html token.raw}
 		{/if}
 	{/each}
 {:else}
@@ -56,7 +55,7 @@
 					{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 						<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
 					{:else}
-						{@html marked(token.raw)}
+						{@html token.raw}
 					{/if}
 				{/each}
 			</div>
