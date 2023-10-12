@@ -1,6 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import { MongoClient, Db } from 'mongodb';
-import { MONGODB_URL, MONGODB_DB } from '$env/static/private';
+import { MONGODB_URL, MONGODB_DB, SMTP_USER } from '$env/static/private';
 import * as devalue from 'devalue';
 import type { Challenge } from '$lib/types/Challenge.js';
 import type { ImportTypeFilesTypes, ImportTypeTypes } from '$lib/types/Backup.js';
@@ -8,6 +8,7 @@ import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { S3_REGION, S3_KEY_ID, S3_KEY_SECRET, S3_BUCKET } from '$env/static/private';
 import type { Picture } from '$lib/types/Picture';
 import type { DigitalFile } from '$lib/types/DigitalFile';
+import { sendEmail } from '$lib/server/email.js';
 
 export function load({ url }) {
 	return {
@@ -159,14 +160,23 @@ async function handleImageImport(
 		if (importTypeFiles === 'checkWarn') {
 			validFileData.push(file);
 			if (!allUrlsValid) {
-				console.warn(`Warning: One or more URLs of ${JSON.stringify(file)} are not accessible.`);
-				console.log('EMAIL CHECK AND WARN');
+				await sendEmail({
+					to: SMTP_USER,
+					subject: 'WARNING : URLs ARE NOT ACCESSIBLE',
+					html: `Warning: One or more URLs of ${JSON.stringify(file)} are not accessible.`
+				});
 			}
 		} else if (importTypeFiles === 'checkClean') {
 			if (allUrlsValid) {
 				validFileData.push(file);
 			} else {
-				console.log('CHECK AND CLEAN EMAIL');
+				await sendEmail({
+					to: SMTP_USER,
+					subject: 'ERROR : URLs ARE NOT ACCESSIBLE',
+					html: `Warning: One or more URLs of ${JSON.stringify(
+						file
+					)} are not accessible. We didn't import them.`
+				});
 			}
 		}
 	}
