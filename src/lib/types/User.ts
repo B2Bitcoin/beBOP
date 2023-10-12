@@ -23,3 +23,4 @@ export interface User extends Timestamps {
 }
 
 export const SUPER_ADMIN_ROLE_ID = 'super-admin';
+export const CUSTOMER_ROLE_ID = 'customer';

@@ -1,5 +1,5 @@
 import type { Order } from '$lib/types/Order';
-import type { ClientSession, WithId } from 'mongodb';
+import { ObjectId, type ClientSession, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
@@ -20,6 +20,7 @@ import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -312,6 +313,34 @@ export async function createOrder(
 
 	const orderNumber = await generateOrderNumber();
 
+	//region user
+	const session = await collections.sessions.findOne({ sessionId: params.sessionId });
+	let userId: ObjectId;
+	if (session) {
+		userId = session.userId;
+	} else {
+		const user = await collections.users.findOne({
+			...(npubAddress && { 'backupInfo.npub': npubAddress }),
+			...(email && { 'backupInfo.email': email })
+		});
+		if (user) {
+			userId = user._id;
+		} else {
+			const createdUser = await collections.users.insertOne({
+				_id: new ObjectId(),
+				...(npubAddress && { login: npubAddress }),
+				...(email && { login: email }),
+				...(npubAddress && { backupInfo: { npub: npubAddress } }),
+				...(email && { backupInfo: { email: npubAddress } }),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				roleId: CUSTOMER_ROLE_ID
+			});
+			userId = createdUser.insertedId;
+		}
+	}
+	//end region user
+
 	await withTransaction(async (session) => {
 		const expiresAt =
 			paymentMethod === 'cash'
@@ -377,7 +406,8 @@ export async function createOrder(
 						...(npubAddress && { npub: npubAddress }),
 						...(email && { email })
 					}
-				}
+				},
+				userId
 			},
 			{ session }
 		);
