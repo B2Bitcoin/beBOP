@@ -15,7 +15,7 @@ export async function load({ params, locals }) {
 		throw error(404, 'token authentification not found');
 	}
 
-	if (!user.authLink || user.authLink?.expiresAt < new Date()) {
+	if (user.authLink.expiresAt < new Date()) {
 		throw error(404, 'token authentification has expired');
 	}
 	await collections.sessions.deleteOne({ sessionId: locals.sessionId });
