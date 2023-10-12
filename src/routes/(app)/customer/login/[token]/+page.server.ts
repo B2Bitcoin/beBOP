@@ -29,6 +29,6 @@ export async function load({ params, locals }) {
 	});
 
 	return {
-		user
+		login: user.login
 	};
 }
