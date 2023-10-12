@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import ProductItem from '$lib/components/ProductItem.svelte';
 	import { downloadFile } from '$lib/utils/downloadFile.js';
 
