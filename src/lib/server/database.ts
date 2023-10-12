@@ -18,6 +18,7 @@ import type { Role } from '$lib/types/Role';
 import type { User } from '$lib/types/User';
 import type { Discount } from '$lib/types/Discount';
 import type { Session } from '$lib/types/session';
+import type { Migration } from '$lib/types/Migration';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -47,6 +48,7 @@ const roles = db.collection<Role>('roles');
 const users = db.collection<User>('users');
 const discounts = db.collection<Discount>('discounts');
 const sessions = db.collection<Session>('sessions');
+const migrations = db.collection<Migration>('migrations');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -67,6 +69,7 @@ export const collections = {
 	nostrReceivedMessages,
 	bootikSubscriptions,
 	paidSubscriptions,
+	migrations,
 	cmsPages,
 	challenges,
 	roles,
