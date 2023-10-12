@@ -1,4 +1,4 @@
-import { collections } from '../../../../../../lib/server/database';
+import { collections } from '$lib/server/database';
 import * as devalue from 'devalue';
 
 export const POST = async ({ request }) => {

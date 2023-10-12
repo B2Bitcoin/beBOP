@@ -22,8 +22,6 @@
 
 <a href="/admin/config/delivery" class="underline">Deliver fees</a>
 
-<a href="/admin/config/backup" class="underline">Backup</a>
-
 <p>Configured URL: {data.origin}</p>
 
 <div>

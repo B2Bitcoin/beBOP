@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { downloadFile } from '$lib/utils/downloadFile';
+
 	async function exportData() {
-		const response = await fetch('/admin/config/backup/create', {
+		const response = await fetch('/admin/backup/create', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -9,18 +11,11 @@
 		});
 
 		if (!response.ok) {
-			throw new Error('Network response was not ok' + response.statusText);
+			alert('Error ' + response.status + ': ' + (await response.text()));
 		}
 
 		const blob = await response.blob();
-		const link = document.createElement('a');
-
-		link.href = window.URL.createObjectURL(blob);
-		link.download = 'backup.json';
-
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
+		downloadFile(blob, 'backup.json');
 	}
 </script>
 

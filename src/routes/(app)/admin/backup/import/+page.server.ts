@@ -1,14 +1,17 @@
 import { fail } from '@sveltejs/kit';
-import { MongoClient, Db } from 'mongodb';
-import { MONGODB_URL, MONGODB_DB, SMTP_USER } from '$env/static/private';
+import { SMTP_USER } from '$env/static/private';
 import * as devalue from 'devalue';
 import type { Challenge } from '$lib/types/Challenge.js';
-import type { ImportTypeFilesTypes, ImportTypeTypes } from '$lib/types/Backup.js';
+import type { ImportTypeFilesTypes } from '$lib/types/Backup.js';
 import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { S3_REGION, S3_KEY_ID, S3_KEY_SECRET, S3_BUCKET } from '$env/static/private';
 import type { Picture } from '$lib/types/Picture';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import { sendEmail } from '$lib/server/email.js';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
+import { z } from 'zod';
+import { db } from '$lib/server/database.js';
 
 export function load({ url }) {
 	return {
@@ -31,36 +34,37 @@ const IMPORT_TYPE_MAPPINGS: { global: string[]; catalog: string[]; shopConfig: s
 
 export const actions = {
 	default: async ({ request }) => {
-		const formData = Object.fromEntries(await request.formData()) as {
-			fileToUpload: File;
-			importType: ImportTypeTypes;
-			importOrders: undefined | 'on';
-			passedChallenges: undefined | 'on';
-			importFiles: undefined | 'on';
-			importTypeFiles: ImportTypeFilesTypes | undefined;
-		};
+		const formData = await request.formData();
 
-		const { importType, importOrders, passedChallenges, importFiles, importTypeFiles } = formData;
+		const json: JsonObject = {};
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 
-		const importOrdersBool = importOrders === 'on';
-		const passedChallengesBool = passedChallenges === 'on';
-		const importFilesBool = importFiles === 'on';
+		const {
+			fileToUpload,
+			importType,
+			importOrders,
+			passedChallenges,
+			importFiles,
+			importTypeFiles
+		} = z
+			.object({
+				fileToUpload: z.instanceof(File),
+				importType: z.enum(['global', 'catalog', 'shopConfig']),
+				importOrders: z.boolean({ coerce: true }),
+				passedChallenges: z.boolean({ coerce: true }),
+				importFiles: z.boolean({ coerce: true }),
+				importTypeFiles: z.enum(['basic', 'checkWarn', 'checkClean']).optional()
+			})
+			.parse(json);
 
-		const client = new MongoClient(MONGODB_URL);
-		await client.connect();
-		const db: Db = client.db(MONGODB_DB);
-
-		if (
-			!(formData.fileToUpload as File).name ||
-			(formData.fileToUpload as File).name === 'undefined'
-		) {
+		if (!(fileToUpload as File).name || (fileToUpload as File).name === 'undefined') {
 			return fail(400, {
 				error: true,
 				message: 'You must provide a file to upload'
 			});
 		}
-
-		const { fileToUpload } = formData as { fileToUpload: File };
 
 		const fileBuffer = await fileToUpload.arrayBuffer();
 		const fileText = new TextDecoder().decode(fileBuffer);
@@ -73,11 +77,11 @@ export const actions = {
 			//Filter collection to import
 			let allowedCollections = IMPORT_TYPE_MAPPINGS[importType];
 
-			if (importOrdersBool) {
+			if (importOrders) {
 				allowedCollections = [...allowedCollections, 'orders'];
 			}
 
-			if (importFilesBool) {
+			if (importFiles) {
 				allowedCollections = [...allowedCollections, 'digitalFiles', 'pictures'];
 			}
 
@@ -91,7 +95,7 @@ export const actions = {
 
 				// If "passedChallenges" is false and the collection is "challenges",
 				// filters the collection to have only future challenges.
-				if (!passedChallengesBool && collectionName === 'challenges') {
+				if (!passedChallenges && collectionName === 'challenges') {
 					const now = new Date();
 					collectionData = collectionData.filter(
 						(challenge: Challenge) => new Date(challenge.endsAt) > now
@@ -99,10 +103,7 @@ export const actions = {
 				}
 
 				//check images
-				if (
-					importFilesBool &&
-					(collectionName === 'digitalFiles' || collectionName === 'pictures')
-				) {
+				if (importFiles && (collectionName === 'digitalFiles' || collectionName === 'pictures')) {
 					collectionData = await handleImageImport(collectionData, importTypeFiles);
 				}
 
