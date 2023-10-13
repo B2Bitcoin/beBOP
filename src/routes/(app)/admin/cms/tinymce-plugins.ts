@@ -1,20 +1,32 @@
 export const TINYMCE_PLUGINS = [
 	'advlist',
+	'anchor',
 	'autolink',
+	'autoresize',
+	'charmap',
+	'code',
+	'directionnality',
+	'emoticons',
+	'fullpage',
+	'fullscreen',
+	'help',
+	'hr',
+	'image',
+	'importcss',
+	'insertdatetime',
 	'lists',
 	'link',
-	'image',
-	'charmap',
-	'preview',
-	'anchor',
-	'searchreplace',
-	'visualblocks',
-	'code',
-	'fullscreen',
-	'insertdatetime',
 	'media',
-	'table'
+	'nonbreaking',
+	'pagebreak',
+	'preview',
+	'preview',
+	'save',
+	'searchreplace',
+	'table',
+	'visualblocks',
+	'visualchars'
 ];
 
 export const TINYMCE_TOOLBAR =
-	'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image';
+	'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol';
