@@ -145,6 +145,8 @@ client.on('open', () => {
 			{ unique: true, collation: { locale: 'en', strength: 1 }, name: 'case-insensitive-login' }
 		)
 		.catch(console.error);
+	users.createIndex({ 'backupInfo.email': 1 }, { sparse: true, unique: true }).catch(console.error);
+	users.createIndex({ 'backupInfo.npub': 1 }, { sparse: true, unique: true }).catch(console.error);
 	sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch(console.error);
 	sessions.createIndex({ sessionId: 1 }, { unique: true }).catch(console.error);
 });
