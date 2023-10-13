@@ -30,6 +30,9 @@
 	let topMenuOpen = false;
 	let navMenuOpen = false;
 
+	let cartErrorMessage = '';
+	let cartErrorProductId = '';
+
 	let actionCount = 0;
 
 	$exchangeRate = data.exchangeRate;
@@ -187,10 +190,14 @@
 							<Popup>
 								<div class="p-2 gap-2 flex flex-col">
 									{#each items as item}
+										{#if cartErrorMessage && cartErrorProductId === item.product._id}
+											<div class="text-red-600 text-sm">{cartErrorMessage}</div>
+										{/if}
 										<form
 											class="flex border-b border-gray-300 pb-2 gap-2"
 											method="POST"
 											use:enhance={({ action }) => {
+												cartErrorMessage = '';
 												if (action.searchParams.has('/increase')) {
 													item.quantity++;
 												} else if (action.searchParams.has('/decrease')) {
@@ -206,6 +213,12 @@
 														if (result.type === 'redirect') {
 															// Invalidate all to remove 0-quantity items
 															await goto(result.location, { noScroll: true, invalidateAll: true });
+															return;
+														}
+														if (result.type === 'error' && result.error?.message) {
+															cartErrorMessage = result.error.message;
+															cartErrorProductId = item.product._id;
+															await invalidate(UrlDependency.Cart);
 															return;
 														}
 														await applyAction(result);
@@ -255,7 +268,7 @@
 
 												<button formaction="/cart/{item.product._id}/?/remove">
 													<IconTrash class="text-gray-800" />
-													<span class="sr-only">Remote item from cart</span>
+													<span class="sr-only">Remove item from cart</span>
 												</button>
 											</div>
 										</form>

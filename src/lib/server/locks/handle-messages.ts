@@ -335,7 +335,7 @@ const commands: Record<
 				return;
 			}
 
-			const item = cart.value?.items.find((item) => item.productId === product._id);
+			const item = cart.items.find((item) => item.productId === product._id);
 
 			if (!item) {
 				return;
@@ -373,7 +373,7 @@ const commands: Record<
 				return;
 			}
 
-			const cart = await removeFromCartInDb(product._id, quantity, {
+			const cart = await removeFromCartInDb(product, quantity, {
 				npub: senderNpub
 			}).catch(async (e) => {
 				console.error(e);
@@ -454,7 +454,7 @@ const commands: Record<
 				},
 				vatCountry: '',
 				shippingAddress: null,
-				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
+				cart
 			}).catch(async (e) => {
 				console.error(e);
 				await send(e.message);

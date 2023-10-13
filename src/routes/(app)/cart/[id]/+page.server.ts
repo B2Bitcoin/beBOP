@@ -1,5 +1,6 @@
 import { addToCartInDb, removeFromCartInDb } from '$lib/server/cart';
-import { collections } from '$lib/server/database';
+import { collections, withTransaction } from '$lib/server/database';
+import { refreshAvailableStockInDb } from '$lib/server/product.js';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER } from '$lib/types/Product.js';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -20,10 +21,15 @@ export const actions = {
 
 		cart.items = cart.items.filter((it) => it !== item);
 
-		await collections.carts.updateOne(
-			{ _id: cart._id },
-			{ $set: { items: cart.items, updatedAt: new Date() } }
-		);
+		await withTransaction(async (session) => {
+			await collections.carts.updateOne(
+				{ _id: cart._id },
+				{ $set: { items: cart.items, updatedAt: new Date() } },
+				{ session }
+			);
+
+			await refreshAvailableStockInDb(params.id, session);
+		});
 
 		throw redirect(303, request.headers.get('referer') || '/cart');
 	},
@@ -33,7 +39,7 @@ export const actions = {
 		if (!product) {
 			await collections.carts.updateOne(
 				{ sessionId: locals.sessionId },
-				{ $pull: { items: { productId: params.id } } }
+				{ $pull: { items: { productId: params.id } }, $set: { updatedAt: new Date() } }
 			);
 			throw error(404, 'This product does not exist');
 		}
@@ -67,7 +73,7 @@ export const actions = {
 		if (!product) {
 			await collections.carts.updateOne(
 				{ sessionId: locals.sessionId },
-				{ $pull: { items: { productId: params.id } } }
+				{ $pull: { items: { productId: params.id } }, $set: { updatedAt: new Date() } }
 			);
 			throw error(404, 'This product does not exist');
 		}
@@ -82,7 +88,7 @@ export const actions = {
 				quantity: formData.get('quantity')
 			});
 
-		await removeFromCartInDb(params.id, quantity - 1, {
+		await removeFromCartInDb(product, quantity - 1, {
 			sessionId: locals.sessionId,
 			totalQuantity: true
 		});

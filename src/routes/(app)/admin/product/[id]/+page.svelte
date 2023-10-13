@@ -290,6 +290,11 @@
 					/>
 				</label>
 			{/if}
+
+			<ul class="list-disc ml-4">
+				<li>Amount in pending orders / carts: <b>{data.reserved}</b></li>
+				<li>Amount sold: <b>{data.sold}</b></li>
+			</ul>
 		{/if}
 
 		{#if data.product.type !== 'donation'}

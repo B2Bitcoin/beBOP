@@ -1,5 +1,13 @@
 import { MONGODB_URL, MONGODB_DB } from '$env/static/private';
-import { MongoClient, ObjectId, type WithSessionCallback } from 'mongodb';
+import {
+	MongoClient,
+	ObjectId,
+	type WithSessionCallback,
+	type IndexSpecification,
+	type CreateIndexesOptions,
+	Collection,
+	MongoServerError
+} from 'mongodb';
 import type { Picture } from '../types/Picture';
 import type { Product } from '$lib/types/Product';
 import type { RuntimeConfigItem } from './runtime-config';
@@ -18,6 +26,7 @@ import type { Role } from '$lib/types/Role';
 import type { User } from '$lib/types/User';
 import type { Discount } from '$lib/types/Discount';
 import type { Session } from '$lib/types/session';
+import type { Migration } from '$lib/types/Migration';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -27,7 +36,6 @@ export const connectPromise = client.connect().catch(console.error);
 
 const db = client.db(MONGODB_DB);
 
-// const users = db.collection<User>('users');
 const pictures = db.collection<Picture>('pictures');
 const pendingPictures = db.collection<Picture>('pictures.pending');
 const products = db.collection<Product>('products');
@@ -48,6 +56,7 @@ const roles = db.collection<Role>('roles');
 const users = db.collection<User>('users');
 const discounts = db.collection<Discount>('discounts');
 const sessions = db.collection<Session>('sessions');
+const migrations = db.collection<Migration>('migrations');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -68,6 +77,7 @@ export const collections = {
 	nostrReceivedMessages,
 	bootikSubscriptions,
 	paidSubscriptions,
+	migrations,
 	cmsPages,
 	challenges,
 	roles,
@@ -76,66 +86,96 @@ export const collections = {
 	sessions
 };
 
-client.on('open', () => {
-	pictures.createIndex({ productId: 1 }).catch(console.error);
-	locks.createIndex({ updatedAt: 1 }, { expireAfterSeconds: 60 }).catch(console.error);
-	carts
-		.createIndex(
-			{ sessionId: 1 },
-			{ unique: true, partialFilterExpression: { sessionId: { $exists: true } } }
-		)
-		.catch(console.error);
-	carts
-		.createIndex(
-			{ npub: 1 },
-			{ unique: true, partialFilterExpression: { npub: { $exists: true } } }
-		)
-		.catch(console.error);
-	orders.createIndex({ sessionId: 1 }).catch(console.error);
-	orders
-		.createIndex(
-			{ 'notifications.paymentStatus.npub': 1, createdAt: -1 },
-			{ partialFilterExpression: { 'notifications.paymentStatus.npub': { $exists: true } } }
-		)
-		.catch(console.error);
-	orders
-		.createIndex(
-			{ 'notifications.paymentStatus.email': 1, createdAt: -1 },
-			{ partialFilterExpression: { 'notifications.paymentStatus.email': { $exists: true } } }
-		)
-		.catch(console.error);
-	orders.createIndex({ number: 1 }, { unique: true }).catch(console.error);
-	digitalFiles.createIndex({ productId: 1 }).catch(console.error);
-	nostrReceivedMessages.createIndex({ createdAt: -1 }).catch(console.error);
-	nostrReceivedMessages.createIndex({ processedAt: 1 }).catch(console.error);
-	nostrNotifications.createIndex({ dest: 1 }).catch(console.error);
-	nostrNotifications.createIndex({ processedAt: 1 }).catch(console.error);
-	emailNotifications.createIndex({ dest: 1 }).catch(console.error);
-	emailNotifications.createIndex({ processedAt: 1 }).catch(console.error);
-	bootikSubscriptions.createIndex({ npub: 1 }, { sparse: true }).catch(console.error);
-	paidSubscriptions
-		.createIndex(
-			{ npub: 1, productId: 1 },
-			{ unique: true, partialFilterExpression: { npub: { $exists: true } } }
-		)
-		.catch(console.error);
-	paidSubscriptions
-		.createIndex(
-			{ email: 1, productId: 1 },
-			{ unique: true, partialFilterExpression: { email: { $exists: true } } }
-		)
-		.catch(console.error);
-	paidSubscriptions.createIndex({ number: 1 }, { unique: true }).catch(console.error);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?]> = [
+	[pictures, { productId: 1 }],
+	[locks, { updatedAt: 1 }, { expireAfterSeconds: 60 }],
+	[
+		carts,
+		{ sessionId: 1 },
+		{ unique: true, partialFilterExpression: { sessionId: { $exists: true } } }
+	],
+	[carts, { npub: 1 }, { unique: true, partialFilterExpression: { npub: { $exists: true } } }],
+	[orders, { sessionId: 1 }],
+	[orders, { 'items.product._id': 1, paymentStatus: 1 }],
+	[
+		orders,
+		{ 'notifications.paymentStatus.npub': 1, createdAt: -1 },
+		{ partialFilterExpression: { 'notifications.paymentStatus.npub': { $exists: true } } }
+	],
+	[
+		orders,
+		{ 'notifications.paymentStatus.email': 1, createdAt: -1 },
+		{ partialFilterExpression: { 'notifications.paymentStatus.email': { $exists: true } } }
+	],
+	[orders, { number: 1 }, { unique: true }],
+	[digitalFiles, { productId: 1 }],
+	[nostrReceivedMessages, { processedAt: 1 }],
+	[nostrReceivedMessages, { createdAt: -1 }],
+	[nostrNotifications, { dest: 1 }],
+	[nostrNotifications, { processedAt: 1 }],
+	[emailNotifications, { dest: 1 }],
+	[emailNotifications, { processedAt: 1 }],
+	[bootikSubscriptions, { npub: 1 }, { sparse: true }],
+	[
+		paidSubscriptions,
+		{ npub: 1, productId: 1 },
+		{ unique: true, partialFilterExpression: { npub: { $exists: true } } }
+	],
+	[
+		paidSubscriptions,
+		{ email: 1, productId: 1 },
+		{ unique: true, partialFilterExpression: { email: { $exists: true } } }
+	],
+	[paidSubscriptions, { number: 1 }, { unique: true }],
 	// See subscription-lock.ts, for searching for subscriptions to remind
 	// todo: find which index is better
-	paidSubscriptions
-		.createIndex({ cancelledAt: 1, paidUntil: 1, 'notifications.type': 1 })
-		.catch(console.error);
-	paidSubscriptions
-		.createIndex({ cancelledAt: 1, 'notifications.type': 1, paidUntil: 1 })
-		.catch(console.error);
-	sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch(console.error);
-	sessions.createIndex({ sessionId: 1 }).catch(console.error);
+	[paidSubscriptions, { cancelledAt: 1, paidUntil: 1, 'notifications.type': 1 }],
+	[paidSubscriptions, { cancelledAt: 1, 'notifications.type': 1, paidUntil: 1 }],
+	[users, { login: 1 }, { unique: true }],
+	[
+		users,
+		{ login: 1 },
+		{ unique: true, collation: { locale: 'en', strength: 1 }, name: 'case-insensitive-login' }
+	],
+	[users, { 'backupInfo.email': 1 }, { sparse: true, unique: true }],
+	[users, { 'backupInfo.npub': 1 }, { sparse: true, unique: true }],
+	[sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
+	[sessions, { sessionId: 1 }, { unique: true }]
+];
+
+client.on('open', () => {
+	for (const [collection, index, options] of indexes) {
+		collection
+			.createIndex(index, options)
+			.catch(async (err) => {
+				if (err instanceof MongoServerError && err.code === 86) {
+					const indexes = await collection.indexes();
+
+					for (const existingIndex of indexes) {
+						if (JSON.stringify(existingIndex.key) === JSON.stringify(index)) {
+							if (
+								options?.expireAfterSeconds !== existingIndex.expireAfterSeconds ||
+								options?.unique !== existingIndex.unique ||
+								options?.sparse !== existingIndex.sparse ||
+								JSON.stringify(options?.partialFilterExpression) !==
+									JSON.stringify(existingIndex.partialFilterExpression)
+							) {
+								await collection.dropIndex(existingIndex.name);
+								await collection.createIndex(index, options);
+
+								console.log(
+									`Recreated index ${existingIndex.name} on ${collection.collectionName}`
+								);
+
+								break;
+							}
+						}
+					}
+				}
+			})
+			.catch(console.error);
+	}
 });
 
 export async function withTransaction(cb: WithSessionCallback) {

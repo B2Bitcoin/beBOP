@@ -1,5 +1,5 @@
 import type { Order } from '$lib/types/Order';
-import type { ClientSession } from 'mongodb';
+import type { ClientSession, WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
@@ -13,11 +13,13 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
-import { computeDeliveryFees } from '$lib/types/Cart';
+import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
 import { vatRates } from './vat-rates';
 import type { Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
+import { refreshAvailableStockInDb } from './product';
+import { checkCartItems } from './cart';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -123,6 +125,20 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 		);
 	}
 	//#endregion
+
+	// Update product stock in DB
+	for (const item of order.items.filter((item) => item.product.stock)) {
+		await collections.products.updateOne(
+			{
+				_id: item.product._id
+			},
+			{
+				$inc: { 'stock.total': -item.quantity, 'stock.available': -item.quantity },
+				$set: { updatedAt: new Date() }
+			},
+			{ session }
+		);
+	}
 }
 
 export async function createOrder(
@@ -140,9 +156,14 @@ export async function createOrder(
 				email?: string;
 			};
 		};
+		/**
+		 * Will automatically delete the cart after the order is created
+		 *
+		 * Also, allows using the stock reserved by the cart
+		 */
+		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
-		cb?: (session: ClientSession) => Promise<unknown>;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -171,6 +192,8 @@ export async function createOrder(
 					.join(', ')
 		);
 	}
+
+	await checkCartItems(items, params.cart);
 
 	const isDigital = products.every((product) => !product.shipping);
 	let deliveryFees = 0;
@@ -359,7 +382,15 @@ export async function createOrder(
 			{ session }
 		);
 
-		await params.cb?.(session);
+		if (params.cart) {
+			await collections.carts.deleteOne({ _id: params.cart._id }, { session });
+		}
+
+		for (const product of products) {
+			if (product.stock) {
+				await refreshAvailableStockInDb(product._id, session);
+			}
+		}
 	});
 
 	return orderId;
