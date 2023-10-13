@@ -313,33 +313,32 @@ export async function createOrder(
 
 	const orderNumber = await generateOrderNumber();
 
-	//region user
+	// #region User
 	const session = await collections.sessions.findOne({ sessionId: params.sessionId });
-	let userId: ObjectId;
+	let orderUserId: ObjectId;
 	if (session) {
-		userId = session.userId;
+		orderUserId = session.userId;
 	} else {
 		const user = await collections.users.findOne({
-			...(npubAddress && { 'backupInfo.npub': npubAddress }),
-			...(email && { 'backupInfo.email': email })
+			$or: [{ 'backupInfo.npub': npubAddress }, { 'backupInfo.email': email }]
 		});
 		if (user) {
-			userId = user._id;
-		} else {
+			orderUserId = user._id;
+		} else if (npubAddress || email) {
 			const createdUser = await collections.users.insertOne({
 				_id: new ObjectId(),
 				...(npubAddress && { login: npubAddress }),
 				...(email && { login: email }),
 				...(npubAddress && { backupInfo: { npub: npubAddress } }),
-				...(email && { backupInfo: { email: npubAddress } }),
+				...(email && { backupInfo: { email: email } }),
 				createdAt: new Date(),
 				updatedAt: new Date(),
 				roleId: CUSTOMER_ROLE_ID
 			});
-			userId = createdUser.insertedId;
+			orderUserId = createdUser.insertedId;
 		}
 	}
-	//end region user
+	// #endregion
 
 	await withTransaction(async (session) => {
 		const expiresAt =
@@ -407,7 +406,7 @@ export async function createOrder(
 						...(email && { email })
 					}
 				},
-				userId
+				...(orderUserId && { userId: orderUserId })
 			},
 			{ session }
 		);
