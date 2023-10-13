@@ -318,7 +318,7 @@ export async function createOrder(
 	let orderUserId: ObjectId;
 	if (session) {
 		orderUserId = session.userId;
-	} else {
+	} else if (npubAddress || email) {
 		const user = await collections.users.findOne({
 			$or: filterUndef([
 				npubAddress ? { 'backupInfo.npub': npubAddress } : undefined,
@@ -327,7 +327,7 @@ export async function createOrder(
 		});
 		if (user) {
 			orderUserId = user._id;
-		} else if (npubAddress || email) {
+		} else {
 			const createdUser = await collections.users.insertOne({
 				_id: new ObjectId(),
 				login: email || npubAddress,
