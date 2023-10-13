@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import { z } from 'zod';
 import { addMinutes } from 'date-fns';
-import { sendResetPasswordNotification } from '$lib/server/sendResetPasswordNotification';
+import { sendResetPasswordNotification } from '$lib/server/sendNotification';
 
 export const load = async () => {};
 
@@ -32,7 +32,10 @@ export const actions = {
 					}
 				}
 			);
-			sendResetPasswordNotification(user);
+			const userUpdated = await collections.users.findOne(query);
+			if (userUpdated) {
+				await sendResetPasswordNotification(userUpdated);
+			}
 			return { success: true };
 		} else {
 			return { failedFindUser: true, accountType, otherLogin };

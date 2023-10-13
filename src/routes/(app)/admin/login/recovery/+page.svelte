@@ -38,7 +38,7 @@
 			{/if}
 			{#if form?.success}
 				<p class="text-green-500">A password email was sent.</p>
-				<p class="text-green-500">to shop backup email.</p>
+				<p class="text-green-500">to shop backup address.</p>
 			{/if}
 			{#if form?.failedFindUser}
 				<p class="text-red-500">No user with this information.</p>

@@ -11,6 +11,7 @@ import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 import { sequence } from '@sveltejs/kit/hooks';
 import { AUTH_SECRET, GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
+import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 // import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
@@ -53,9 +54,10 @@ export const handleAdmin = (async ({ event, resolve }) => {
 
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
 
-	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
-	const isAdminLoginUrl =
-		event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login';
+	const isAdminUrl =
+		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
+		!(event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login');
+
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
 			maintenanceDisplay: true
@@ -94,25 +96,27 @@ export const handleAdmin = (async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
-	const sessionUser = await collections.sessions.findOne({
+	const session = await collections.sessions.findOne({
 		sessionId: event.locals.sessionId
 	});
-	if (sessionUser) {
-		const authenticateUser = await collections.users.findOne({
-			_id: sessionUser.userId
+	if (session) {
+		const user = await collections.users.findOne({
+			_id: session.userId
 		});
-		if (authenticateUser) {
+		if (user) {
 			event.locals.user = {
-				login: authenticateUser.login,
-				role: authenticateUser.roleId
+				login: user.login ? user.login : '',
+				role: user.roleId
 			};
 		}
 	}
 	// Protect any routes under /admin
-	if (isAdminUrl && !isAdminLoginUrl) {
-		const sessionUser = event.locals.user?.login;
-		if (!sessionUser) {
+	if (isAdminUrl) {
+		if (!event.locals.user) {
 			throw redirect(303, '/admin/login');
+		}
+		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page.');
 		}
 	}
 
@@ -153,13 +157,8 @@ export const handleAdmin = (async ({ event, resolve }) => {
 	return response;
 }) satisfies Handle;
 
-export const handleAuthSvelte = SvelteKitAuth(async () => {
-	const authOptions = {
-		providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
-		secret: AUTH_SECRET,
-		trustHost: true
-	};
-	return authOptions;
-}) satisfies Handle;
+export const handleAuthSvelte = SvelteKitAuth({
+	providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })]
+});
 
 export const handle = sequence(handleAdmin, handleAuthSvelte);

@@ -4,8 +4,11 @@ import { exchangeRate } from '$lib/stores/exchangeRate';
 import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 import type { DeliveryFees } from '$lib/types/DeliveryFees';
 import { currencies } from '$lib/stores/currencies';
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
+import { createAdminUserInDb } from './user';
 
 const defaultConfig = {
+	isAdminCreated: false,
 	BTC_EUR: 30_000,
 	BTC_CHF: 30_000,
 	BTC_USD: 30_000,
@@ -25,8 +28,10 @@ const defaultConfig = {
 	brandName: 'My Space',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
+	reserveStockInMinutes: 20,
 	confirmationBlocks: 1,
 	desiredPaymentTimeout: 120,
+	createUserOnSession: false,
 	bitcoinWallet: '',
 	logoPictureId: '',
 	lnurlPayMetadataJwtSigningKey: '',
@@ -124,6 +129,10 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 			{ $set: { data: crypto.randomUUID(), updatedAt: new Date() } },
 			{ upsert: true }
 		);
+	}
+
+	if (!runtimeConfig.isAdminCreated && ADMIN_LOGIN && ADMIN_PASSWORD) {
+		await createAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
 	}
 }
 

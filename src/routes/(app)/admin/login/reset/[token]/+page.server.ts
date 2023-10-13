@@ -2,23 +2,24 @@ import { collections } from '$lib/server/database';
 import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
-import type { User } from '$lib/types/User';
+import { SUPER_ADMIN_ROLE_ID, type User } from '$lib/types/User';
+import { ObjectId } from 'mongodb';
+import type { SetRequired } from 'type-fest';
 
 export async function load({ params }) {
-	const user = await collections.users.findOne<Pick<User, '_id' | 'login' | 'passwordReset'>>({
-		'passwordReset.token': params.token
+	const user = await collections.users.findOne<SetRequired<User, 'passwordReset'>>({
+		'passwordReset.token': params.token,
+		roleId: SUPER_ADMIN_ROLE_ID
 	});
 
 	if (!user) {
 		throw error(404, 'token password reset not found');
 	}
 
-	if (user.passwordReset && user.passwordReset?.expiresAt < new Date()) {
+	if (user.passwordReset?.expiresAt < new Date()) {
 		throw error(404, 'token password reset has expired');
 	}
-	return {
-		user
-	};
+	return { user: { _id: user._id.toString(), login: user.login } };
 }
 
 export const actions = {
@@ -38,7 +39,7 @@ export const actions = {
 		const passwordBcrypt = await bcryptjs.hash(pwd1, salt);
 		if (
 			await collections.users.updateOne(
-				{ _id: user, 'passwordReset.token': params.token },
+				{ _id: new ObjectId(user), 'passwordReset.token': params.token },
 				{ $set: { password: passwordBcrypt } }
 			)
 		) {

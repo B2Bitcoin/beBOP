@@ -1,5 +1,5 @@
 import type { Order } from '$lib/types/Order';
-import type { ClientSession } from 'mongodb';
+import { ObjectId, type ClientSession, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
@@ -13,11 +13,14 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
-import { computeDeliveryFees } from '$lib/types/Cart';
+import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
 import { vatRates } from './vat-rates';
 import type { Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
+import { refreshAvailableStockInDb } from './product';
+import { checkCartItems } from './cart';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -123,6 +126,20 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 		);
 	}
 	//#endregion
+
+	// Update product stock in DB
+	for (const item of order.items.filter((item) => item.product.stock)) {
+		await collections.products.updateOne(
+			{
+				_id: item.product._id
+			},
+			{
+				$inc: { 'stock.total': -item.quantity, 'stock.available': -item.quantity },
+				$set: { updatedAt: new Date() }
+			},
+			{ session }
+		);
+	}
 }
 
 export async function createOrder(
@@ -140,9 +157,14 @@ export async function createOrder(
 				email?: string;
 			};
 		};
+		/**
+		 * Will automatically delete the cart after the order is created
+		 *
+		 * Also, allows using the stock reserved by the cart
+		 */
+		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
-		cb?: (session: ClientSession) => Promise<unknown>;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -171,6 +193,8 @@ export async function createOrder(
 					.join(', ')
 		);
 	}
+
+	await checkCartItems(items, params.cart);
 
 	const isDigital = products.every((product) => !product.shipping);
 	let deliveryFees = 0;
@@ -289,6 +313,41 @@ export async function createOrder(
 
 	const orderNumber = await generateOrderNumber();
 
+	// #region User
+	const session = await collections.sessions.findOne({ sessionId: params.sessionId });
+	let orderUserId: ObjectId;
+	if (session) {
+		orderUserId = session.userId;
+	} else if (npubAddress || email) {
+		const user = await collections.users.findOne({
+			$or: filterUndef([
+				npubAddress ? { 'backupInfo.npub': npubAddress } : undefined,
+				email ? { 'backupInfo.email': email } : undefined
+			])
+		});
+		if (user) {
+			orderUserId = user._id;
+		} else {
+			const createdUser = await collections.users.insertOne({
+				_id: new ObjectId(),
+				login: email || npubAddress,
+				backupInfo: {
+					...(npubAddress && {
+						npub: npubAddress
+					}),
+					...(email && {
+						email: email
+					})
+				},
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				roleId: CUSTOMER_ROLE_ID
+			});
+			orderUserId = createdUser.insertedId;
+		}
+	}
+	// #endregion
+
 	await withTransaction(async (session) => {
 		const expiresAt =
 			paymentMethod === 'cash'
@@ -354,12 +413,21 @@ export async function createOrder(
 						...(npubAddress && { npub: npubAddress }),
 						...(email && { email })
 					}
-				}
+				},
+				...(orderUserId && { userId: orderUserId })
 			},
 			{ session }
 		);
 
-		await params.cb?.(session);
+		if (params.cart) {
+			await collections.carts.deleteOne({ _id: params.cart._id }, { session });
+		}
+
+		for (const product of products) {
+			if (product.stock) {
+				await refreshAvailableStockInDb(product._id, session);
+			}
+		}
 	});
 
 	return orderId;
