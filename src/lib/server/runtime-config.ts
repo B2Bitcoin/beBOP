@@ -134,6 +134,12 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 
 	if (!runtimeConfig.isAdminCreated && ADMIN_LOGIN && ADMIN_PASSWORD) {
 		await createAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
+
+		await collections.runtimeConfig.updateOne(
+			{ _id: 'isAdminCreated' },
+			{ $set: { data: true, updatedAt: new Date() } },
+			{ upsert: true }
+		);
 	}
 
 	await runMigrations();
