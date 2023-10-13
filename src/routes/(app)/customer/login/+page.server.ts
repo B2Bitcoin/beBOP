@@ -66,7 +66,7 @@ export const actions = {
 				: {
 						npub: address
 				  },
-			roleId: 'customer',
+			roleId: CUSTOMER_ROLE_ID,
 			status: 'active',
 			authLink: { token: crypto.randomUUID(), expiresAt: addMinutes(new Date(), 60) },
 			updatedAt: new Date(),
