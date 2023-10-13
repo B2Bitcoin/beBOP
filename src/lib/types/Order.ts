@@ -2,6 +2,7 @@ import type { Product } from './Product';
 import type { Currency } from './Currency';
 import type { CountryAlpha2 } from './Country';
 import type { Timestamps } from './Timestamps';
+import type { ObjectId } from 'mongodb';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -73,4 +74,5 @@ export interface Order extends Timestamps {
 	};
 
 	lastPaymentStatusNotified?: OrderPaymentStatus;
+	userId?: ObjectId;
 }
