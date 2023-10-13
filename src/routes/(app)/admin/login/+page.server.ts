@@ -8,9 +8,12 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { createAdminUserInDb } from '$lib/server/user.js';
 
 export const load = async ({ locals }) => {
+	console.log('je passe la ', locals.user, runtimeConfig.isAdminCreated);
+
 	if (locals.user) {
 		throw redirect(303, `/admin`);
 	}
+
 	return {
 		isAdminCreated: runtimeConfig.isAdminCreated
 	};
@@ -40,6 +43,8 @@ export const actions = {
 
 			user = await collections.users.findOne({ login: login });
 		}
+
+		console.log('user ', user);
 
 		if (!user) {
 			return fail(400, { login, incorrect: 'login' });
