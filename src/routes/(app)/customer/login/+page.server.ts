@@ -37,7 +37,7 @@ export const actions = {
 
 		if (existUser) {
 			const user = await collections.users.findOneAndUpdate(
-				{ _id: existUser._id },
+				{ _id: existUser._id, roleId: CUSTOMER_ROLE_ID },
 				{
 					$set: {
 						authLink: { token: crypto.randomUUID(), expiresAt: addMinutes(new Date(), 60) },
