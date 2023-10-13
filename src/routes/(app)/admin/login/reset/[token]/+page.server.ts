@@ -2,13 +2,14 @@ import { collections } from '$lib/server/database';
 import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
-import type { User } from '$lib/types/User';
+import { SUPER_ADMIN_ROLE_ID, type User } from '$lib/types/User';
 import { ObjectId } from 'mongodb';
 import type { SetRequired } from 'type-fest';
 
 export async function load({ params }) {
 	const user = await collections.users.findOne<SetRequired<User, 'passwordReset'>>({
-		'passwordReset.token': params.token
+		'passwordReset.token': params.token,
+		roleId: SUPER_ADMIN_ROLE_ID
 	});
 
 	if (!user) {

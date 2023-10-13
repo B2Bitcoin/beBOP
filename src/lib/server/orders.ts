@@ -320,17 +320,25 @@ export async function createOrder(
 		orderUserId = session.userId;
 	} else {
 		const user = await collections.users.findOne({
-			$or: [{ 'backupInfo.npub': npubAddress }, { 'backupInfo.email': email }]
+			$or: filterUndef([
+				npubAddress ? { 'backupInfo.npub': npubAddress } : undefined,
+				email ? { 'backupInfo.email': email } : undefined
+			])
 		});
 		if (user) {
 			orderUserId = user._id;
 		} else if (npubAddress || email) {
 			const createdUser = await collections.users.insertOne({
 				_id: new ObjectId(),
-				...(npubAddress && { login: npubAddress }),
-				...(email && { login: email }),
-				...(npubAddress && { backupInfo: { npub: npubAddress } }),
-				...(email && { backupInfo: { email: email } }),
+				login: email || npubAddress,
+				backupInfo: {
+					...(npubAddress && {
+						npub: npubAddress
+					}),
+					...(email && {
+						email: email
+					})
+				},
 				createdAt: new Date(),
 				updatedAt: new Date(),
 				roleId: CUSTOMER_ROLE_ID
