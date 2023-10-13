@@ -7,33 +7,20 @@ import { addSeconds } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createAdminUserInDb } from '$lib/server/user.js';
 
-export const load = async ({ locals }) => {
-	if (locals.user) {
-		throw redirect(303, `/admin`);
-	}
-
-	return {
-		isAdminCreated: runtimeConfig.isAdminCreated
-	};
-};
-
 export const actions = {
 	default: async function ({ locals, request }) {
 		const data = await request.formData();
 
-		const { login, password, remember, memorize } = z
+		const { login, password } = z
 			.object({
 				login: z.string(),
-				password: z.string(),
-				remember: z.boolean({ coerce: true }).default(false),
-				memorize: z.number({ coerce: true }).int()
+				password: z.string()
 			})
 			.parse({
 				login: data.get('login'),
-				password: data.get('password'),
-				remember: data.get('remember'),
-				memorize: data.get('memorize')
+				password: data.get('password')
 			});
+
 		let user = await collections.users.findOne({ login: login });
 
 		if (!user && !runtimeConfig.isAdminCreated) {
