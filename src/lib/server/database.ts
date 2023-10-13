@@ -146,30 +146,35 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 
 client.on('open', () => {
 	for (const [collection, index, options] of indexes) {
-		collection.createIndex(index, options).catch(async (err) => {
-			if (err instanceof MongoServerError && err.code === 86) {
-				const indexes = await collection.indexes();
+		collection
+			.createIndex(index, options)
+			.catch(async (err) => {
+				if (err instanceof MongoServerError && err.code === 86) {
+					const indexes = await collection.indexes();
 
-				for (const existingIndex of indexes) {
-					if (JSON.stringify(existingIndex.key) === JSON.stringify(index)) {
-						if (
-							options?.expireAfterSeconds !== existingIndex.expireAfterSeconds ||
-							options?.unique !== existingIndex.unique ||
-							options?.sparse !== existingIndex.sparse ||
-							JSON.stringify(options?.partialFilterExpression) !==
-								JSON.stringify(existingIndex.partialFilterExpression)
-						) {
-							await collection.dropIndex(existingIndex.name);
-							await collection.createIndex(index, options);
+					for (const existingIndex of indexes) {
+						if (JSON.stringify(existingIndex.key) === JSON.stringify(index)) {
+							if (
+								options?.expireAfterSeconds !== existingIndex.expireAfterSeconds ||
+								options?.unique !== existingIndex.unique ||
+								options?.sparse !== existingIndex.sparse ||
+								JSON.stringify(options?.partialFilterExpression) !==
+									JSON.stringify(existingIndex.partialFilterExpression)
+							) {
+								await collection.dropIndex(existingIndex.name);
+								await collection.createIndex(index, options);
 
-							console.log(`Recreated index ${existingIndex.name} on ${collection.collectionName}`);
+								console.log(
+									`Recreated index ${existingIndex.name} on ${collection.collectionName}`
+								);
 
-							break;
+								break;
+							}
 						}
 					}
 				}
-			}
-		});
+			})
+			.catch(console.error);
 	}
 });
 
