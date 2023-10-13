@@ -9,6 +9,7 @@ import {
 import { ObjectId } from 'mongodb';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { bech32 } from 'bech32';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 export const load = async () => {};
 
