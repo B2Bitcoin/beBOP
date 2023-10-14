@@ -38,3 +38,9 @@ export function parsePriceAmount(
 
 	return priceAmount;
 }
+
+/**
+ * When computing VAT, delivery fees, etc, convert everything to SAT and only display
+ * the result in the user's currency.
+ */
+export const UNDERLYING_CURRENCY = 'SAT';
