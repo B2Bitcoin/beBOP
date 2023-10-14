@@ -89,7 +89,7 @@
 
 <ul>
 	{#each data.transactions as transaction}
-		<li class="flex flex-wrap">
+		<li class="flex flex-wrap gap-2">
 			Amount: {transaction.amount}
 			{#if data.currencies.priceReference !== 'BTC'}(<PriceTag
 					currency="BTC"
