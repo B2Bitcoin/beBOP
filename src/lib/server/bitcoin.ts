@@ -8,6 +8,8 @@ import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 import { runtimeConfig } from './runtime-config';
 import { socksDispatcher } from 'fetch-socks';
+import { inspect } from 'node:util';
+import { filterUndef } from '$lib/utils/filterUndef';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
@@ -30,6 +32,7 @@ type BitcoinCommand =
 	| 'createwallet'
 	| 'listreceivedbyaddress'
 	| 'dumpprivkey'
+	| 'listdescriptors'
 	| 'getnewaddress'
 	| 'getbalance'
 	| 'getblockchaininfo';
@@ -168,13 +171,36 @@ export async function getBlockchainInfo() {
 		.result;
 }
 
-export async function dumpPrivKeys(wallet: string): Promise<
-	Array<{
+export async function listDescriptors(wallet: string) {
+	const response = await bitcoinRpc('listdescriptors', [true], wallet);
+
+	if (!response.ok) {
+		console.error(await response.text());
+		throw error(500, 'Could not list wallet descriptors');
+	}
+
+	const json = await response.json();
+	return z
+		.object({ result: z.object({ descriptors: z.array(z.object({ desc: z.string() })) }) })
+		.parse(json).result;
+}
+
+export async function dumpWalletInfo(wallet: string): Promise<{
+	descriptors?: Array<{ desc: string }>;
+	privKeys?: Array<{
 		address: string;
 		privKey: string;
 		balance: number;
-	}>
-> {
+	}>;
+}> {
+	try {
+		const descriptors = await listDescriptors(wallet);
+
+		if (descriptors.descriptors.length > 0) {
+			return descriptors;
+		}
+	} catch {}
+
 	const response = await bitcoinRpc('listreceivedbyaddress', [0, false, false, '', true], wallet);
 
 	if (!response.ok) {
@@ -189,24 +215,30 @@ export async function dumpPrivKeys(wallet: string): Promise<
 		})
 		.parse(json);
 
-	return await Promise.all(
-		addresses.map(async ({ address, amount }) => {
-			const response = await bitcoinRpc('dumpprivkey', [address], wallet);
+	const privKeys = filterUndef(
+		await Promise.all(
+			addresses.map(async ({ address, amount }) => {
+				const response = await bitcoinRpc('dumpprivkey', [address], wallet);
 
-			if (!response.ok) {
-				console.error(await response.text());
-				throw error(500, 'Could not dump private key');
-			}
+				if (!response.ok) {
+					console.error(await response.text());
+					throw error(500, 'Could not dump private key for address: ' + address);
+				}
 
-			const privKey = z.object({ result: z.string() }).parse(await response.json()).result;
+				const privKey = z.object({ result: z.string() }).parse(await response.json()).result;
 
-			return {
-				address,
-				privKey,
-				balance: amount
-			};
-		})
+				return {
+					address,
+					privKey,
+					balance: amount
+				};
+			})
+		)
 	);
+
+	return {
+		privKeys
+	};
 }
 
 export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[number];
