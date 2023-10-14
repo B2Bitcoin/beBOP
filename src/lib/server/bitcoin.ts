@@ -8,7 +8,6 @@ import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 import { runtimeConfig } from './runtime-config';
 import { socksDispatcher } from 'fetch-socks';
-import { inspect } from 'node:util';
 import { filterUndef } from '$lib/utils/filterUndef';
 
 export const isBitcoinConfigured =
@@ -181,7 +180,20 @@ export async function listDescriptors(wallet: string) {
 
 	const json = await response.json();
 	return z
-		.object({ result: z.object({ descriptors: z.array(z.object({ desc: z.string() })) }) })
+		.object({
+			result: z.object({
+				descriptors: z.array(
+					z.object({
+						desc: z.string(),
+						timestamp: z.number(),
+						active: z.boolean(),
+						internal: z.boolean(),
+						range: z.array(z.number()),
+						next: z.number()
+					})
+				)
+			})
+		})
 		.parse(json).result;
 }
 
