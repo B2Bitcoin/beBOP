@@ -71,6 +71,7 @@ export const handle = (async ({ event, resolve }) => {
 		event.url.pathname !== '/logo' &&
 		!event.url.pathname.startsWith('/.well-known/') &&
 		!event.url.pathname.startsWith('/picture/raw/') &&
+		event.url.pathname !== '/lightning/pay' &&
 		!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
 		!runtimeConfig.maintenanceIps.split(',').includes(event.getClientAddress())
 	) {
