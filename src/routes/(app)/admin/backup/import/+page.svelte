@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ImportTypeTypes } from '$lib/types/Backup';
+	type ImportTypeTypes = 'global' | 'catalog' | 'shopConfig';
 
 	export let data;
 	export let form;
@@ -8,7 +8,7 @@
 
 	let importType: ImportTypeTypes | string = data.importType ?? 'global';
 	let importOrders = false;
-	let passedChallenges = false;
+	let includePastChallenges = false;
 	let importFiles = false;
 </script>
 
@@ -75,8 +75,8 @@
 			<input
 				type="checkbox"
 				class="form-checkbox"
-				name="passedChallenges"
-				checked={passedChallenges}
+				name="includePastChallenges"
+				checked={includePastChallenges}
 			/>
 			Passed challenges
 		</label>
@@ -89,9 +89,9 @@
 		{#if importFiles}
 			<label for="importTypeFiles">Choose import type:</label>
 			<select id="importTypeFiles" name="importTypeFiles">
-				<option value="basic">Import (basic)</option>
-				<option value="checkWarn">Import (check & warn)</option>
-				<option value="checkClean">Import (check & clean)</option>
+				<option value="basic">Basic</option>
+				<option value="checkWarn">Check & warn</option>
+				<option value="checkClean">Check & clean</option>
 			</select>
 		{/if}
 	</div>

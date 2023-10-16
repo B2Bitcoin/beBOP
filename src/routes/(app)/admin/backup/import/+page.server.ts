@@ -2,8 +2,7 @@ import { fail } from '@sveltejs/kit';
 import { SMTP_USER } from '$env/static/private';
 import * as devalue from 'devalue';
 import type { Challenge } from '$lib/types/Challenge.js';
-import type { ImportTypeFilesTypes } from '$lib/types/Backup.js';
-import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { S3_REGION, S3_KEY_ID, S3_KEY_SECRET, S3_BUCKET } from '$env/static/private';
 import type { Picture } from '$lib/types/Picture';
 import type { DigitalFile } from '$lib/types/DigitalFile';
@@ -19,7 +18,9 @@ export function load({ url }) {
 	};
 }
 
-const IMPORT_TYPE_MAPPINGS: { global: string[]; catalog: string[]; shopConfig: string[] } = {
+export type ImportTypeFilesTypes = 'basic' | 'checkWarn' | 'checkClean';
+
+const IMPORT_TYPE_MAPPINGS = {
 	global: [
 		'cmsPages',
 		'products',
@@ -28,7 +29,7 @@ const IMPORT_TYPE_MAPPINGS: { global: string[]; catalog: string[]; shopConfig: s
 		'paidSubscriptions',
 		'challenges'
 	],
-	catalog: ['products'],
+	catalog: ['products', 'digitalFiles', 'pictures'],
 	shopConfig: ['runtimeConfig']
 };
 
@@ -45,7 +46,7 @@ export const actions = {
 			fileToUpload,
 			importType,
 			importOrders,
-			passedChallenges,
+			includePastChallenges,
 			importFiles,
 			importTypeFiles
 		} = z
@@ -53,18 +54,11 @@ export const actions = {
 				fileToUpload: z.instanceof(File),
 				importType: z.enum(['global', 'catalog', 'shopConfig']),
 				importOrders: z.boolean({ coerce: true }),
-				passedChallenges: z.boolean({ coerce: true }),
+				includePastChallenges: z.boolean({ coerce: true }),
 				importFiles: z.boolean({ coerce: true }),
 				importTypeFiles: z.enum(['basic', 'checkWarn', 'checkClean']).optional()
 			})
 			.parse(json);
-
-		if (!(fileToUpload as File).name || (fileToUpload as File).name === 'undefined') {
-			return fail(400, {
-				error: true,
-				message: 'You must provide a file to upload'
-			});
-		}
 
 		const fileBuffer = await fileToUpload.arrayBuffer();
 		const fileText = new TextDecoder().decode(fileBuffer);
@@ -74,14 +68,13 @@ export const actions = {
 
 			let collections = Object.keys(fileJson);
 
-			//Filter collection to import
-			let allowedCollections = IMPORT_TYPE_MAPPINGS[importType];
+			let allowedCollections: string[] = IMPORT_TYPE_MAPPINGS[importType];
 
 			if (importOrders) {
 				allowedCollections = [...allowedCollections, 'orders'];
 			}
 
-			if (importFiles) {
+			if (importFiles && importType !== 'catalog') {
 				allowedCollections = [...allowedCollections, 'digitalFiles', 'pictures'];
 			}
 
@@ -93,18 +86,19 @@ export const actions = {
 				let collectionData = fileJson[collectionName];
 				const collection = db.collection(collectionName);
 
-				// If "passedChallenges" is false and the collection is "challenges",
-				// filters the collection to have only future challenges.
-				if (!passedChallenges && collectionName === 'challenges') {
+				if (!includePastChallenges && collectionName === 'challenges') {
 					const now = new Date();
 					collectionData = collectionData.filter(
 						(challenge: Challenge) => new Date(challenge.endsAt) > now
 					);
 				}
 
-				//check images
-				if (importFiles && (collectionName === 'digitalFiles' || collectionName === 'pictures')) {
+				if (importFiles && collectionName === 'pictures') {
 					collectionData = await handleImageImport(collectionData, importTypeFiles);
+				}
+
+				if (importFiles && collectionName === 'digitalFiles') {
+					collectionData = await handleDigitalFileImport(collectionData, importTypeFiles);
 				}
 
 				//Delete all collection
@@ -130,75 +124,130 @@ export const actions = {
 	}
 };
 
-async function handleImageImport(
-	fileData: Picture[] | DigitalFile[],
-	importTypeFiles: ImportTypeFilesTypes | undefined
+async function handleFilesImport<T extends Picture | DigitalFile>(
+	fileData: T[],
+	importTypeFiles: ImportTypeFilesTypes | undefined,
+	handler: (file: T) => Promise<boolean>
 ) {
-	if (importTypeFiles === 'basic') {
-		return fileData;
-	}
-
 	const validFileData = [];
+	const invalidURLs = [];
+
 	for (const file of fileData) {
-		const imageKeys: string[] = [];
-
-		if ('key' in file.storage) {
-			imageKeys.push(file.storage.key);
-		} else if ('original' in file.storage && 'key' in file.storage.original) {
-			imageKeys.push(file.storage.original.key);
-
-			if (file.storage.formats) {
-				for (const format of file.storage.formats) {
-					imageKeys.push(format.key);
-				}
-			}
+		const isSuccess = await handler(file);
+		if (!isSuccess) {
+			invalidURLs.push(JSON.stringify(file));
 		}
 
-		const validUrls = await Promise.all(imageKeys.map((key) => checkUrl(key)));
-
-		const allUrlsValid = validUrls.every((isValid) => isValid);
-
-		if (importTypeFiles === 'checkWarn') {
+		if (
+			importTypeFiles === 'basic' ||
+			importTypeFiles === 'checkWarn' ||
+			(importTypeFiles === 'checkClean' && invalidURLs.length === 0)
+		) {
 			validFileData.push(file);
-			if (!allUrlsValid) {
-				await sendEmail({
-					to: SMTP_USER,
-					subject: 'WARNING : URLs ARE NOT ACCESSIBLE',
-					html: `Warning: One or more URLs of ${JSON.stringify(file)} are not accessible.`
-				});
-			}
-		} else if (importTypeFiles === 'checkClean') {
-			if (allUrlsValid) {
-				validFileData.push(file);
-			} else {
-				await sendEmail({
-					to: SMTP_USER,
-					subject: 'ERROR : URLs ARE NOT ACCESSIBLE',
-					html: `Warning: One or more URLs of ${JSON.stringify(
-						file
-					)} are not accessible. We didn't import them.`
-				});
-			}
 		}
 	}
+
+	await alertUser(importTypeFiles, invalidURLs);
+
 	return validFileData;
 }
 
-async function checkUrl(imageKey: string) {
-	try {
-		const s3Client = new S3Client({
-			region: S3_REGION,
-			credentials: {
-				accessKeyId: S3_KEY_ID,
-				secretAccessKey: S3_KEY_SECRET
+async function handleImageImport(
+	fileData: Picture[],
+	importTypeFiles: ImportTypeFilesTypes | undefined
+) {
+	return await handleFilesImport(fileData, importTypeFiles, async (file: Picture) => {
+		let allSuccess = true;
+		allSuccess =
+			allSuccess && (await uploadFileToS3(file.storage.original.url, file.storage.original.key));
+
+		if (file.storage.formats) {
+			for (const format of file.storage.formats) {
+				allSuccess = allSuccess && (await uploadFileToS3(format.url, format.key));
 			}
-		});
+		}
 
-		const key = 'bootik.bootik/' + imageKey;
+		return allSuccess;
+	});
+}
 
-		await s3Client.send(new HeadObjectCommand({ Bucket: S3_BUCKET, Key: key }));
+async function handleDigitalFileImport(
+	fileData: DigitalFile[],
+	importTypeFiles: ImportTypeFilesTypes | undefined
+) {
+	return await handleFilesImport(fileData, importTypeFiles, (file: DigitalFile) => {
+		return uploadFileToS3(file.storage.url, file.storage.key);
+	});
+}
+
+async function uploadFileToS3(imageUrl: URL | RequestInfo | undefined, s3Key: string) {
+	const s3Client = new S3Client({
+		region: S3_REGION,
+		credentials: {
+			accessKeyId: S3_KEY_ID,
+			secretAccessKey: S3_KEY_SECRET
+		}
+	});
+
+	try {
+		const response = await fetch(imageUrl ? imageUrl : '');
+
+		if (response.status !== 200) {
+			console.error(`Failed to fetch ${imageUrl}. Status code: ${response.status}`);
+			return false;
+		}
+
+		const arrayBuffer = await response.arrayBuffer();
+		const uint8ArrayBuffer = new Uint8Array(arrayBuffer);
+
+		const params = {
+			Bucket: S3_BUCKET,
+			Key: s3Key,
+			Body: uint8ArrayBuffer
+		};
+
+		await s3Client.send(new PutObjectCommand(params));
+
 		return true;
 	} catch (error) {
+		console.error('Error in uploadFileToS3:', error);
 		return false;
+	}
+}
+
+async function alertUser(importType: string | undefined, invalidURLs: string[]) {
+	console.log('alertUser => ', importType, invalidURLs);
+
+	if (importType === 'basic' || invalidURLs.length === 0) {
+		await sendEmail({
+			to: SMTP_USER,
+			subject: 'SUCCESS : IMPORT',
+			html: `The importation of the file succeeded`
+		});
+		console.log('suuccessss');
+
+		return;
+	}
+
+	if (importType === 'checkWarn' && invalidURLs.length > 0) {
+		await sendEmail({
+			to: SMTP_USER,
+			subject: 'WARNING : URLs ARE NOT ACCESSIBLE',
+			html: `Warning: One or more URLs of ${invalidURLs} are not accessible.`
+		});
+
+		console.log('warniiiiing');
+		return;
+	}
+
+	if (importType === 'checkClean' && invalidURLs.length > 0) {
+		await sendEmail({
+			to: SMTP_USER,
+			subject: 'ERROR : URLs ARE NOT ACCESSIBLE',
+			html: `Warning: One or more URLs of ${invalidURLs} are not accessible. We didn't import them.`
+		});
+
+		console.log('errrooooor');
+		return;
 	}
 }
