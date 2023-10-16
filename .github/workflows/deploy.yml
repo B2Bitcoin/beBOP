@@ -35,4 +35,4 @@ jobs:
         run: |
           zip -r build.zip build
           scp build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik/build.zip
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && git lfs install && cd B2BitcoinBootik && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-instance"
+          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && git lfs install && cd B2BitcoinBootik && git remote prune origin && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-instance"

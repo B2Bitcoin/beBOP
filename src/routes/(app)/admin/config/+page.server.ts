@@ -24,7 +24,8 @@ export async function load(event) {
 		createUserOnSession: runtimeConfig.createUserOnSession,
 		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
 		countryCodes: countryNameByAlpha2,
-		origin: ORIGIN
+		origin: ORIGIN,
+		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl
 	};
 }
 
@@ -59,7 +60,8 @@ export const actions = {
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
 				createUserOnSession: z.boolean({ coerce: true }),
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
-				actionOverwrite: z.enum(['', 'overwrite']).optional()
+				actionOverwrite: z.enum(['', 'overwrite']).optional(),
+				plausibleScriptUrl: z.string()
 			})
 			.parse(Object.fromEntries(formData));
 

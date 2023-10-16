@@ -15,6 +15,8 @@
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
+	import { toCurrency } from '$lib/utils/toCurrency.js';
+	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -61,7 +63,7 @@
 	}
 
 	$: paymentMethods = data.paymentMethods.filter((method) =>
-		method === 'bitcoin' ? totalPrice >= 0.00001 : true
+		method === 'bitcoin' ? totalSatoshi >= 10_000 : true
 	);
 
 	const paymentMethodDesc = {
@@ -76,7 +78,7 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: deliveryFees = computeDeliveryFees(data.currencies.main, country, items, data.deliveryFees);
+	$: deliveryFees = computeDeliveryFees('SAT', country, items, data.deliveryFees);
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
@@ -85,15 +87,16 @@
 
 	$: totalPrice =
 		sumCurrency(
-			data.currencies.main,
+			UNDERLYING_CURRENCY,
 			items.map((item) => ({
 				currency: (item.customPrice || item.product.price).currency,
 				amount: (item.customPrice || item.product.price).amount * item.quantity
 			}))
 		) + (deliveryFees || 0);
 
-	$: vat = fixCurrencyRounding(totalPrice * (actualVatRate / 100), data.currencies.main);
+	$: vat = fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
+	$: totalSatoshi = toCurrency('SAT', totalPriceWithVat, UNDERLYING_CURRENCY);
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -358,12 +361,12 @@
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
 								amount={deliveryFees}
-								currency={data.currencies.main}
+								currency={UNDERLYING_CURRENCY}
 								main
 							/>
 							<PriceTag
 								amount={deliveryFees}
-								currency={data.currencies.main}
+								currency={UNDERLYING_CURRENCY}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
@@ -397,12 +400,12 @@
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
 								amount={vat}
-								currency={data.currencies.main}
+								currency={UNDERLYING_CURRENCY}
 								main
 							/>
 							<PriceTag
 								amount={vat}
-								currency={data.currencies.main}
+								currency={UNDERLYING_CURRENCY}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
@@ -419,14 +422,14 @@
 						<PriceTag
 							class="text-2xl text-gray-800"
 							amount={totalPriceWithVat}
-							currency={data.currencies.main}
+							currency={UNDERLYING_CURRENCY}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.currencies.main}
+						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
