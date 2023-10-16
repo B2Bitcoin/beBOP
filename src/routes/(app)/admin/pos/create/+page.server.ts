@@ -1,7 +1,10 @@
 import { z } from 'zod';
+import { collections } from '$lib/server/database';
+import bcryptjs from 'bcryptjs';
+import { redirect } from '@sveltejs/kit';
 
 export const actions = {
-	default: async function ({ locals, request }) {
+	default: async function ({ request }) {
 		const data = await request.formData();
 
 		const { login, password } = z
@@ -14,6 +17,17 @@ export const actions = {
 				password: data.get('password')
 			});
 
-		console.log('login, password ', login, password);
+		const salt = await bcryptjs.genSalt(10);
+		const passwordBcrypt = await bcryptjs.hash(password, salt);
+
+		await collections.seats.insertOne({
+			_id: crypto.randomUUID(),
+			login,
+			password: passwordBcrypt,
+			createdAt: new Date(),
+			updatedAt: new Date()
+		});
+
+		throw redirect(303, '/admin/pos');
 	}
 };
