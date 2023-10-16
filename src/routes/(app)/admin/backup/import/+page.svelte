@@ -16,6 +16,14 @@
 	<p class="alert-success">Data imported</p>
 {/if}
 
+{#if form?.message === 'warning'}
+	<p class="alert-warning">Some files are corrupted</p>
+{/if}
+
+{#if form?.message === 'error'}
+	<p class="alert-error">Some files haven't been imported</p>
+{/if}
+
 <h1 class="text-3xl">Import backup</h1>
 <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
 	<label for="file">Upload your file</label>

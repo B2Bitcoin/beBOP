@@ -56,7 +56,7 @@ export const actions = {
 				importOrders: z.boolean({ coerce: true }),
 				includePastChallenges: z.boolean({ coerce: true }),
 				importFiles: z.boolean({ coerce: true }),
-				importTypeFiles: z.enum(['basic', 'checkWarn', 'checkClean']).optional()
+				importTypeFiles: z.enum(['basic', 'checkWarn', 'checkClean']).default('basic')
 			})
 			.parse(json);
 
@@ -82,6 +82,7 @@ export const actions = {
 				allowedCollections.includes(collectionName)
 			);
 
+			let warningImageImport: string | undefined = '';
 			for (const collectionName of collections) {
 				let collectionData = fileJson[collectionName];
 				const collection = db.collection(collectionName);
@@ -93,12 +94,21 @@ export const actions = {
 					);
 				}
 
-				if (importFiles && collectionName === 'pictures') {
-					collectionData = await handleImageImport(collectionData, importTypeFiles);
+				if (collectionName === 'pictures') {
+					const response = await handleImageImport(collectionData, importTypeFiles);
+
+					collectionData = response.formattedCollection;
+					if (!warningImageImport) {
+						warningImageImport = response.warningImageImport;
+					}
 				}
 
-				if (importFiles && collectionName === 'digitalFiles') {
-					collectionData = await handleDigitalFileImport(collectionData, importTypeFiles);
+				if (collectionName === 'digitalFiles') {
+					const response = await handleDigitalFileImport(collectionData, importTypeFiles);
+					collectionData = response.formattedCollection;
+					if (!warningImageImport) {
+						warningImageImport = response.warningImageImport;
+					}
 				}
 
 				//Delete all collection
@@ -111,7 +121,8 @@ export const actions = {
 			}
 
 			return {
-				success: true
+				success: true,
+				message: warningImageImport
 			};
 		} catch (e) {
 			console.error('Error parsing JSON', e);
@@ -147,9 +158,9 @@ async function handleFilesImport<T extends Picture | DigitalFile>(
 		}
 	}
 
-	await alertUser(importTypeFiles, invalidURLs);
+	const warningImageImport = await alertUser(importTypeFiles, invalidURLs);
 
-	return validFileData;
+	return { formattedCollection: validFileData, warningImageImport };
 }
 
 async function handleImageImport(
@@ -216,17 +227,14 @@ async function uploadFileToS3(imageUrl: URL | RequestInfo | undefined, s3Key: st
 }
 
 async function alertUser(importType: string | undefined, invalidURLs: string[]) {
-	console.log('alertUser => ', importType, invalidURLs);
-
 	if (importType === 'basic' || invalidURLs.length === 0) {
 		await sendEmail({
 			to: SMTP_USER,
 			subject: 'SUCCESS : IMPORT',
 			html: `The importation of the file succeeded`
 		});
-		console.log('suuccessss');
 
-		return;
+		return 'success';
 	}
 
 	if (importType === 'checkWarn' && invalidURLs.length > 0) {
@@ -236,8 +244,7 @@ async function alertUser(importType: string | undefined, invalidURLs: string[]) 
 			html: `Warning: One or more URLs of ${invalidURLs} are not accessible.`
 		});
 
-		console.log('warniiiiing');
-		return;
+		return 'warning';
 	}
 
 	if (importType === 'checkClean' && invalidURLs.length > 0) {
@@ -247,7 +254,6 @@ async function alertUser(importType: string | undefined, invalidURLs: string[]) 
 			html: `Warning: One or more URLs of ${invalidURLs} are not accessible. We didn't import them.`
 		});
 
-		console.log('errrooooor');
-		return;
+		return 'error';
 	}
 }
