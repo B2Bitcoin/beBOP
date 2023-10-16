@@ -4,6 +4,10 @@
 	import 'ag-grid-community/styles/ag-grid.css';
 	import 'ag-grid-community/styles/ag-theme-alpine.css';
 
+	export let data;
+
+	console.log('data ', data);
+
 	let api: GridApi;
 	let columnApi: ColumnApi;
 	let selectedRows: any[] = [];
@@ -24,16 +28,8 @@
 			width: 50
 		},
 		{
-			headerName: 'Make',
-			field: 'make',
-			filter: 'agTextColumnFilter',
-			sortable: true,
-			resizable: true,
-			editable: true
-		},
-		{
-			headerName: 'Model',
-			field: 'model',
+			headerName: 'Name',
+			field: 'name',
 			filter: 'agTextColumnFilter',
 			sortable: true,
 			resizable: true,
@@ -42,7 +38,15 @@
 		{
 			headerName: 'Price',
 			field: 'price',
-			filter: 'agNumberColumnFilter',
+			filter: 'agTextColumnFilter',
+			sortable: true,
+			resizable: true,
+			editable: true
+		},
+		{
+			headerName: 'Currency',
+			field: 'currency',
+			filter: 'agTextColumnFilter',
 			sortable: true,
 			resizable: true,
 			editable: true
@@ -50,21 +54,28 @@
 	];
 
 	type RowSelectionType = 'multiple' | 'single';
+	type Product = {
+		name: string;
+		price: number;
+		currency: 'BTC' | 'CHF' | 'EUR' | 'USD' | 'SAT';
+	};
 
 	let gridOptions: {
 		columnDefs: ColDef[];
-		rowData: { make: string; model: string; price: number }[];
+		rowData: Product[];
 		rowSelection: RowSelectionType;
 		pagination: boolean;
 		paginationPageSize: number;
 		onSelectionChanged: () => void;
 	} = {
 		columnDefs: columnDefinitions,
-		rowData: [
-			{ make: 'Toyota', model: 'Celica', price: 35000 },
-			{ make: 'Ford', model: 'Mondeo', price: 32000 },
-			{ make: 'Porsche', model: 'Boxster', price: 72000 }
-		],
+		rowData: data.products.map((currentProduct) => {
+			return {
+				name: currentProduct.name,
+				price: currentProduct.price.amount,
+				currency: currentProduct.price.currency
+			};
+		}),
 		rowSelection: 'multiple',
 		pagination: true,
 		paginationPageSize: 2,
