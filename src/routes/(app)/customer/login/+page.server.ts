@@ -11,7 +11,11 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { bech32 } from 'bech32';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
-export const load = async () => {};
+export const load = async (params) => {
+	const session = await params.locals.getSession();
+	if (session) {
+	}
+};
 
 export const actions = {
 	default: async function ({ request }) {

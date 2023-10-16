@@ -5,12 +5,24 @@ import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import GitHub from '@auth/core/providers/github';
+import Google from '@auth/core/providers/google';
+import Facebook from '@auth/core/providers/facebook';
+import Twitter from '@auth/core/providers/twitter';
 
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 import { sequence } from '@sveltejs/kit/hooks';
-import { AUTH_SECRET, GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
+import {
+	FACEBOOK_ID,
+	FACEBOOK_SECRET,
+	GITHUB_ID,
+	GITHUB_SECRET,
+	GOOGLE_ID,
+	GOOGLE_SECRET,
+	TWITTER_ID,
+	TWITTER_SECRET
+} from '$env/static/private';
 import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 // import { countryFromIp } from '$lib/server/geoip';
 
@@ -158,7 +170,20 @@ export const handleAdmin = (async ({ event, resolve }) => {
 }) satisfies Handle;
 
 export const handleAuthSvelte = SvelteKitAuth({
-	providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })]
+	providers: [
+		GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET }),
+		Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET }),
+		Facebook({
+			clientId: FACEBOOK_ID,
+			clientSecret: FACEBOOK_SECRET,
+			redirectProxyUrl: 'http://localhost:5173'
+		}),
+		Twitter({
+			clientId: TWITTER_ID,
+			clientSecret: TWITTER_SECRET,
+			redirectProxyUrl: 'http://localhost:5173'
+		})
+	]
 });
 
 export const handle = sequence(handleAdmin, handleAuthSvelte);
