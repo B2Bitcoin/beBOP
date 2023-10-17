@@ -186,7 +186,7 @@ export const handleAuthSvelte = SvelteKitAuth({
 	],
 	callbacks: {
 		async jwt({ token, user, account }) {
-			if (user && user.email) {
+			if (user) {
 				const providerFilter = account?.provider
 					? { [`backupInfo.${account?.provider}._id`]: user.id }
 					: {};
