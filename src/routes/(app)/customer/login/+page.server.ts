@@ -1,5 +1,5 @@
 import { collections } from '$lib/server/database';
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { z } from 'zod';
 import { addMinutes } from 'date-fns';
 import {
@@ -11,9 +11,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { bech32 } from 'bech32';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
-export const load = async (params) => {
-	const session = await params.locals.getSession();
-};
+export const load = async () => {};
 
 export const actions = {
 	default: async function ({ request }) {
