@@ -3,16 +3,27 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
+import { ObjectId } from 'mongodb';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const seat = await collections.seats.findOne({ _id: params.id });
+	const userId = new ObjectId(params.id);
 
-	if (!seat) {
-		throw error(404, 'Seat not found');
+	const user = await collections.users.findOne({ _id: userId });
+	const sessions = await collections.sessions.find({ userId: userId }).toArray();
+
+	if (!user) {
+		throw error(404, 'User not found');
 	}
 
+	user._id = user._id.toString();
+
 	return {
-		seat
+		user,
+		sessions: sessions.map((s) => ({
+			...s,
+			_id: s._id.toString(),
+			userId: s.userId.toString()
+		}))
 	};
 };
 
@@ -40,8 +51,8 @@ export const actions: Actions = {
 			updatedValueSeat.password = passwordBcrypt;
 		}
 
-		await collections.seats.updateOne(
-			{ _id: params.id },
+		await collections.users.updateOne(
+			{ _id: new ObjectId(params.id) },
 			{
 				$set: updatedValueSeat
 			}
@@ -51,7 +62,11 @@ export const actions: Actions = {
 	},
 
 	delete: async ({ params }) => {
-		await collections.seats.deleteOne({ _id: params.id });
+		try {
+			await collections.users.deleteOne({ _id: new ObjectId(params.id) });
+		} catch (error) {
+			console.log(error);
+		}
 
 		throw redirect(303, '/admin/pos');
 	}

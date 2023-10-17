@@ -7,7 +7,7 @@ import { addYears } from 'date-fns';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
-import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 // import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
@@ -111,7 +111,7 @@ export const handle = (async ({ event, resolve }) => {
 		if (!event.locals.user) {
 			throw redirect(303, '/admin/login');
 		}
-		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
+		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID && event.locals.user.role !== POS_ROLE_ID) {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 	}

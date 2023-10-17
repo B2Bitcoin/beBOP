@@ -2,14 +2,16 @@
 	export let data;
 
 	function confirmDelete(event: Event) {
-		if (!confirm('Would you like to delete this product?')) {
+		if (!confirm('Would you like to delete this user?')) {
 			event.preventDefault();
 		}
 	}
+
+	console.log('data ', data);
 </script>
 
 <div>
-	{data.seat.login}
+	{data.user.login}
 </div>
 
 <form method="post" class="flex flex-col gap-4" action="?/update">
@@ -19,7 +21,7 @@
 			class="form-input"
 			type="text"
 			name="login"
-			value={data.seat.login}
+			value={data.user.login}
 			placeholder="Enter your login"
 			required
 		/>
@@ -35,3 +37,10 @@
 		<button type="submit" class="btn btn-blue">Update</button>
 	</div>
 </form>
+
+<h1>Sessions active :</h1>
+<div class="flex flex-col flex-wrap gap-2">
+	{#each data.sessions as session}
+		<a href="/admin/pos/session/{session._id}">{session._id}</a>
+	{/each}
+</div>

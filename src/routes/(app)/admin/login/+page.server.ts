@@ -42,8 +42,6 @@ export const actions = {
 			user = await collections.users.findOne({ login: login });
 		}
 
-		console.log('user ', user);
-
 		if (!user) {
 			return fail(400, { login, incorrect: 'login' });
 		}
