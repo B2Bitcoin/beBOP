@@ -87,6 +87,7 @@ export const handleAdmin = (async ({ event, resolve }) => {
 		event.url.pathname !== '/logo' &&
 		!event.url.pathname.startsWith('/.well-known/') &&
 		!event.url.pathname.startsWith('/picture/raw/') &&
+		event.url.pathname !== '/lightning/pay' &&
 		!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
 		!runtimeConfig.maintenanceIps.split(',').includes(event.getClientAddress())
 	) {
@@ -173,16 +174,8 @@ export const handleAuthSvelte = SvelteKitAuth({
 	providers: [
 		GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET }),
 		Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET }),
-		Facebook({
-			clientId: FACEBOOK_ID,
-			clientSecret: FACEBOOK_SECRET,
-			redirectProxyUrl: 'http://localhost:5173'
-		}),
-		Twitter({
-			clientId: TWITTER_ID,
-			clientSecret: TWITTER_SECRET,
-			redirectProxyUrl: 'http://localhost:5173'
-		})
+		Facebook({ clientId: FACEBOOK_ID, clientSecret: FACEBOOK_SECRET }),
+		Twitter({ clientId: TWITTER_ID, clientSecret: TWITTER_SECRET })
 	]
 });
 

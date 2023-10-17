@@ -31,7 +31,9 @@
 		</p>
 	{/if}
 
-	<input type="hidden" name="productId" value={productId || ''} />
+	{#if productId}
+		<input type="hidden" name="productId" value={productId} />
+	{/if}
 
 	<input type="submit" class="btn btn-gray self-start" value="Add" />
 </form>

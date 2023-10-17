@@ -1,5 +1,5 @@
 import { collections } from '$lib/server/database';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { addMinutes } from 'date-fns';
 import {
@@ -13,8 +13,6 @@ import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 export const load = async (params) => {
 	const session = await params.locals.getSession();
-	if (session) {
-	}
 };
 
 export const actions = {

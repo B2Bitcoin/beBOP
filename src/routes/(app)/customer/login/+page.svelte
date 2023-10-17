@@ -9,6 +9,19 @@
 
 	export let form: ActionData;
 	let formAuthLink: HTMLFormElement;
+
+	async function handleLoginProvider() {
+		// Call your authentication provider's login function
+		const user = await signIn('github');
+
+		// Now 'user' contains the user data from GitHub.
+		// You can access user.id, user.name, and user.email.
+
+		// Save the user data to your database
+		// await saveUserDataToDatabase(user);
+
+		// Redirect or do other necessary actions
+	}
 </script>
 
 <h1 class="text-2xl">Authentification</h1>
@@ -17,7 +30,6 @@
 	<form method="post" class="flex-col gap-4 p-6 w-[40em]" bind:this={formAuthLink}>
 		<h1 class="text-2xl">Receive Authentification Link</h1>
 		<br />
-
 		<label class="form-label">
 			Address (email, nostr or phone):
 			<input
@@ -75,7 +87,7 @@
 				>
 			</div>
 			<div class="flex justify-center gap-4 mt-2">
-				<button class="btn btn-gray w-[15em]" on:click={() => signIn('github')}
+				<button class="btn btn-gray w-[15em]" on:click={handleLoginProvider}
 					><IconGithub /> Sign In With Github</button
 				>
 			</div>
