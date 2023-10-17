@@ -7,6 +7,6 @@ export interface DigitalFile extends Timestamps {
 	storage: {
 		key: string;
 		size: number;
-		url?: URL | RequestInfo;
+		url?: string;
 	};
 }

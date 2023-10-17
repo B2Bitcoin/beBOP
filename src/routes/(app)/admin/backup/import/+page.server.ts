@@ -13,8 +13,6 @@ import {
 import type { Picture } from '$lib/types/Picture';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import { sendEmail } from '$lib/server/email.js';
-import type { JsonObject } from 'type-fest';
-import { set } from 'lodash-es';
 import { z } from 'zod';
 import { db } from '$lib/server/database.js';
 
@@ -41,13 +39,6 @@ const IMPORT_TYPE_MAPPINGS = {
 
 export const actions = {
 	default: async ({ request }) => {
-		const formData = await request.formData();
-
-		const json: JsonObject = {};
-		for (const [key, value] of formData) {
-			set(json, key, value);
-		}
-
 		const {
 			fileToUpload,
 			importType,
@@ -64,7 +55,7 @@ export const actions = {
 				importFiles: z.boolean({ coerce: true }),
 				importTypeFiles: z.enum(['basic', 'checkWarn', 'checkClean']).default('basic')
 			})
-			.parse(json);
+			.parse(Object.fromEntries(await request.formData()));
 
 		const fileBuffer = await fileToUpload.arrayBuffer();
 		const fileText = new TextDecoder().decode(fileBuffer);
@@ -88,6 +79,7 @@ export const actions = {
 				allowedCollections.includes(collectionName)
 			);
 
+			let globalInvalidFiles: string[] = [];
 			let warningImageImport: string | undefined = '';
 			for (const collectionName of collections) {
 				let collectionData = fileJson[collectionName];
@@ -101,20 +93,19 @@ export const actions = {
 				}
 
 				if (collectionName === 'pictures') {
-					const response = await handleImageImport(collectionData, importTypeFiles);
+					const pictureResponse = await handleImageImport(collectionData, importTypeFiles);
 
-					collectionData = response.formattedCollection;
-					if (!warningImageImport) {
-						warningImageImport = response.warningImageImport;
-					}
+					collectionData = pictureResponse.formattedCollection;
+					globalInvalidFiles = [...globalInvalidFiles, ...pictureResponse.invalidFiles];
 				}
 
 				if (collectionName === 'digitalFiles') {
-					const response = await handleDigitalFileImport(collectionData, importTypeFiles);
-					collectionData = response.formattedCollection;
-					if (!warningImageImport) {
-						warningImageImport = response.warningImageImport;
-					}
+					const digitalFileResponse = await handleDigitalFileImport(
+						collectionData,
+						importTypeFiles
+					);
+					collectionData = digitalFileResponse.formattedCollection;
+					globalInvalidFiles = [...globalInvalidFiles, ...digitalFileResponse.invalidFiles];
 				}
 
 				//Delete all collection
@@ -124,6 +115,10 @@ export const actions = {
 				if (collectionData.length > 0) {
 					await collection.insertMany(collectionData);
 				}
+			}
+
+			if (globalInvalidFiles.length) {
+				warningImageImport = await alertUser(importTypeFiles, globalInvalidFiles);
 			}
 
 			return {
@@ -147,26 +142,24 @@ async function handleFilesImport<T extends Picture | DigitalFile>(
 	handler: (file: T) => Promise<boolean>
 ) {
 	const validFileData = [];
-	const invalidURLs = [];
+	const invalidFiles = [];
 
 	for (const file of fileData) {
 		const isSuccess = await handler(file);
 		if (!isSuccess) {
-			invalidURLs.push(JSON.stringify(file));
+			invalidFiles.push(JSON.stringify(file));
 		}
 
 		if (
 			importTypeFiles === 'basic' ||
 			importTypeFiles === 'checkWarn' ||
-			(importTypeFiles === 'checkClean' && invalidURLs.length === 0)
+			(importTypeFiles === 'checkClean' && invalidFiles.length === 0)
 		) {
 			validFileData.push(file);
 		}
 	}
 
-	const warningImageImport = await alertUser(importTypeFiles, invalidURLs);
-
-	return { formattedCollection: validFileData, warningImageImport };
+	return { formattedCollection: validFileData, invalidFiles };
 }
 
 async function handleImageImport(
@@ -175,8 +168,7 @@ async function handleImageImport(
 ) {
 	return await handleFilesImport(fileData, importTypeFiles, async (file: Picture) => {
 		let allSuccess = true;
-		allSuccess =
-			allSuccess && (await uploadFileToS3(file.storage.original.url, file.storage.original.key));
+		allSuccess &&= await uploadFileToS3(file.storage.original.url, file.storage.original.key);
 
 		if (file.storage.formats) {
 			for (const format of file.storage.formats) {
@@ -232,8 +224,8 @@ async function uploadFileToS3(imageUrl: URL | RequestInfo | undefined, s3Key: st
 	}
 }
 
-async function alertUser(importType: string | undefined, invalidURLs: string[]) {
-	if (importType === 'basic' || invalidURLs.length === 0) {
+async function alertUser(importType: string | undefined, invalidFiles: string[]) {
+	if (importType === 'basic' || invalidFiles.length === 0) {
 		await sendEmail({
 			to: EMAIL_REPLY_TO || SMTP_USER,
 			subject: 'SUCCESS : IMPORT',
@@ -243,21 +235,21 @@ async function alertUser(importType: string | undefined, invalidURLs: string[]) 
 		return 'success';
 	}
 
-	if (importType === 'checkWarn' && invalidURLs.length > 0) {
+	if (importType === 'checkWarn' && invalidFiles.length > 0) {
 		await sendEmail({
 			to: EMAIL_REPLY_TO || SMTP_USER,
 			subject: 'WARNING : URLs ARE NOT ACCESSIBLE',
-			html: `Warning: One or more URLs of ${invalidURLs} are not accessible.`
+			html: `Warning: One or more URLs of ${invalidFiles} are not accessible.`
 		});
 
 		return 'warning';
 	}
 
-	if (importType === 'checkClean' && invalidURLs.length > 0) {
+	if (importType === 'checkClean' && invalidFiles.length > 0) {
 		await sendEmail({
 			to: EMAIL_REPLY_TO || SMTP_USER,
 			subject: 'ERROR : URLs ARE NOT ACCESSIBLE',
-			html: `Warning: One or more URLs of ${invalidURLs} are not accessible. We didn't import them.`
+			html: `Warning: One or more URLs of ${invalidFiles} are not accessible. We didn't import them.`
 		});
 
 		return 'error';

@@ -4,6 +4,9 @@ import type { DigitalFile } from '$lib/types/DigitalFile.js';
 import type { Picture } from '$lib/types/Picture.js';
 import * as devalue from 'devalue';
 
+//maximum amount of time that is valid for presigned URLs
+const ONE_WEEK_IN_SECONDS = 7 * 24 * 3600;
+
 export const POST = async ({ request }) => {
 	const { exportType } = JSON.parse(await request.text());
 
@@ -19,12 +22,12 @@ export const POST = async ({ request }) => {
 
 	let digitalFilesWithUrl: DigitalFile[] = [];
 	if (digitalFiles.length > 0) {
-		digitalFilesWithUrl = await Promise.all(digitalFiles.map(getDigitalFileUrl));
+		digitalFilesWithUrl = await Promise.all(digitalFiles.map(addDigitalFileUrl));
 	}
 
 	let picturesWithUrl: Picture[] = [];
 	if (pictures.length > 0) {
-		picturesWithUrl = await Promise.all(pictures.map(getPictureUrl));
+		picturesWithUrl = await Promise.all(pictures.map(addPictureUrls));
 	}
 
 	const dataToExport =
@@ -53,11 +56,11 @@ export const POST = async ({ request }) => {
 	});
 };
 
-const getPictureUrl = async (picture: Picture) => {
+const addPictureUrls = async (picture: Picture) => {
 	picture.storage.original.url = await getS3DownloadLink(picture.storage.original.key, 604800);
 	const resolvedFormats = await Promise.all(
 		picture.storage.formats.map(async (currentFormat) => {
-			currentFormat.url = await getS3DownloadLink(currentFormat.key, 604800);
+			currentFormat.url = await getS3DownloadLink(currentFormat.key, ONE_WEEK_IN_SECONDS);
 			return currentFormat;
 		})
 	);
@@ -65,8 +68,8 @@ const getPictureUrl = async (picture: Picture) => {
 	return picture;
 };
 
-const getDigitalFileUrl = async (digitalFile: DigitalFile) => {
-	digitalFile.storage.url = await getS3DownloadLink(digitalFile.storage.key, 604800);
+const addDigitalFileUrl = async (digitalFile: DigitalFile) => {
+	digitalFile.storage.url = await getS3DownloadLink(digitalFile.storage.key, ONE_WEEK_IN_SECONDS);
 
 	return digitalFile;
 };
