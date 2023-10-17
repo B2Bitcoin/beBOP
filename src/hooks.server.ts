@@ -2,7 +2,7 @@ import { ZodError } from 'zod';
 import { type HandleServerError, type Handle, error, redirect } from '@sveltejs/kit';
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
-import { addYears } from 'date-fns';
+import { addMinutes, addYears } from 'date-fns';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
@@ -23,9 +23,8 @@ import {
 	TWITTER_ID,
 	TWITTER_SECRET
 } from '$env/static/private';
-import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 // import { countryFromIp } from '$lib/server/geoip';
-
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
 	if (typeof error === 'object' && error) {
@@ -132,6 +131,14 @@ export const handleAdmin = (async ({ event, resolve }) => {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 	}
+	if (runtimeConfig.sessionId !== event.locals.sessionId) {
+		runtimeConfig.sessionId = event.locals.sessionId;
+		await collections.runtimeConfig.updateOne(
+			{ _id: 'sessionId' },
+			{ $set: { data: runtimeConfig.sessionId, updatedAt: new Date() } },
+			{ upsert: true }
+		);
+	}
 
 	const response = await resolve(event);
 
@@ -176,7 +183,54 @@ export const handleAuthSvelte = SvelteKitAuth({
 		Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET }),
 		Facebook({ clientId: FACEBOOK_ID, clientSecret: FACEBOOK_SECRET }),
 		Twitter({ clientId: TWITTER_ID, clientSecret: TWITTER_SECRET })
-	]
+	],
+	callbacks: {
+		async jwt({ token, user, account }) {
+			if (user && user.email) {
+				const providerFilter = account?.provider
+					? { [`backupInfo.${account?.provider}._id`]: user.id }
+					: {};
+				const userLocal = await collections.users.findOne(providerFilter);
+				if (!userLocal) {
+					const newUser = await collections.users.insertOne({
+						_id: new ObjectId(),
+						login: user.id + user.email,
+						backupInfo: {
+							[account?.provider ? account?.provider : '']: {
+								_id: user.id,
+								email: user.email,
+								name: user.name
+							}
+						},
+						roleId: CUSTOMER_ROLE_ID,
+						updatedAt: new Date(),
+						createdAt: new Date()
+					});
+					await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
+					await collections.sessions.insertOne({
+						_id: new ObjectId(),
+						userId: newUser.insertedId,
+						sessionId: runtimeConfig.sessionId,
+						expiresAt: addMinutes(new Date(), 60),
+						createdAt: new Date(),
+						updatedAt: new Date()
+					});
+				} else {
+					await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
+					await collections.sessions.insertOne({
+						_id: new ObjectId(),
+						userId: userLocal._id,
+						sessionId: runtimeConfig.sessionId,
+						expiresAt: addMinutes(new Date(), 60),
+						createdAt: new Date(),
+						updatedAt: new Date()
+					});
+				}
+			}
+
+			return token;
+		}
+	}
 });
 
 export const handle = sequence(handleAdmin, handleAuthSvelte);

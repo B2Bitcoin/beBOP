@@ -49,7 +49,7 @@ const defaultConfig = {
 		{ label: 'Terms of Service', href: '/terms' },
 		{ label: 'Privacy Policy', href: '/privacy' }
 	],
-
+	sessionId: '',
 	vatExempted: false,
 	vatExemptionReason: '',
 	vatSingleCountry: false,
