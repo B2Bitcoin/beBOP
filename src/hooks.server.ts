@@ -176,61 +176,71 @@ export const handleAdmin = (async ({ event, resolve }) => {
 	}
 	return response;
 }) satisfies Handle;
+const providers = [
+	...(GITHUB_ID && GITHUB_SECRET
+		? [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })]
+		: []),
+	...(GOOGLE_ID && GOOGLE_SECRET
+		? [Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET })]
+		: []),
+	...(FACEBOOK_ID && FACEBOOK_SECRET
+		? [Facebook({ clientId: FACEBOOK_ID, clientSecret: FACEBOOK_SECRET })]
+		: []),
+	...(TWITTER_ID && TWITTER_SECRET
+		? [Twitter({ clientId: TWITTER_ID, clientSecret: TWITTER_SECRET })]
+		: [])
+];
+export const handleAuthSvelte = providers.length
+	? SvelteKitAuth({
+			providers: providers,
+			callbacks: {
+				async jwt({ token, user, account }) {
+					if (user) {
+						const providerFilter = account?.provider
+							? { [`backupInfo.${account?.provider}._id`]: user.id }
+							: {};
+						const userLocal = await collections.users.findOne(providerFilter);
+						if (!userLocal) {
+							const newUser = await collections.users.insertOne({
+								_id: new ObjectId(),
+								login: user.id + user.email,
+								backupInfo: {
+									[account?.provider ? account?.provider : '']: {
+										_id: user.id,
+										email: user.email,
+										name: user.name
+									}
+								},
+								roleId: CUSTOMER_ROLE_ID,
+								updatedAt: new Date(),
+								createdAt: new Date()
+							});
+							await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
+							await collections.sessions.insertOne({
+								_id: new ObjectId(),
+								userId: newUser.insertedId,
+								sessionId: runtimeConfig.sessionId,
+								expiresAt: addMinutes(new Date(), 60),
+								createdAt: new Date(),
+								updatedAt: new Date()
+							});
+						} else {
+							await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
+							await collections.sessions.insertOne({
+								_id: new ObjectId(),
+								userId: userLocal._id,
+								sessionId: runtimeConfig.sessionId,
+								expiresAt: addMinutes(new Date(), 60),
+								createdAt: new Date(),
+								updatedAt: new Date()
+							});
+						}
+					}
 
-export const handleAuthSvelte = SvelteKitAuth({
-	providers: [
-		GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET }),
-		Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET }),
-		Facebook({ clientId: FACEBOOK_ID, clientSecret: FACEBOOK_SECRET }),
-		Twitter({ clientId: TWITTER_ID, clientSecret: TWITTER_SECRET })
-	],
-	callbacks: {
-		async jwt({ token, user, account }) {
-			if (user) {
-				const providerFilter = account?.provider
-					? { [`backupInfo.${account?.provider}._id`]: user.id }
-					: {};
-				const userLocal = await collections.users.findOne(providerFilter);
-				if (!userLocal) {
-					const newUser = await collections.users.insertOne({
-						_id: new ObjectId(),
-						login: user.id + user.email,
-						backupInfo: {
-							[account?.provider ? account?.provider : '']: {
-								_id: user.id,
-								email: user.email,
-								name: user.name
-							}
-						},
-						roleId: CUSTOMER_ROLE_ID,
-						updatedAt: new Date(),
-						createdAt: new Date()
-					});
-					await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
-					await collections.sessions.insertOne({
-						_id: new ObjectId(),
-						userId: newUser.insertedId,
-						sessionId: runtimeConfig.sessionId,
-						expiresAt: addMinutes(new Date(), 60),
-						createdAt: new Date(),
-						updatedAt: new Date()
-					});
-				} else {
-					await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
-					await collections.sessions.insertOne({
-						_id: new ObjectId(),
-						userId: userLocal._id,
-						sessionId: runtimeConfig.sessionId,
-						expiresAt: addMinutes(new Date(), 60),
-						createdAt: new Date(),
-						updatedAt: new Date()
-					});
+					return token;
 				}
 			}
+	  })
+	: null;
 
-			return token;
-		}
-	}
-});
-
-export const handle = sequence(handleAdmin, handleAuthSvelte);
+export const handle = handleAuthSvelte ? sequence(handleAdmin, handleAuthSvelte) : handleAdmin;
