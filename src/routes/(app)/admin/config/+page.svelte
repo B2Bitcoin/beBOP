@@ -211,15 +211,6 @@
 			value={data.desiredPaymentTimeout}
 		/>
 	</label>
-	<label class="checkbox-label">
-		<input
-			class="form-checkbox"
-			type="checkbox"
-			checked={data.createUserOnSession}
-			name="createUserOnSession"
-		/>
-		Create new user on session request
-	</label>
 	<label class="form-label">
 		How much time a cart reserves the stock (in minutes)
 		<input

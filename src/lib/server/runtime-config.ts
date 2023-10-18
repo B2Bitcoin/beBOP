@@ -32,7 +32,6 @@ const defaultConfig = {
 	reserveStockInMinutes: 20,
 	confirmationBlocks: 1,
 	desiredPaymentTimeout: 120,
-	createUserOnSession: false,
 	bitcoinWallet: '',
 	logoPictureId: '',
 	lnurlPayMetadataJwtSigningKey: '',

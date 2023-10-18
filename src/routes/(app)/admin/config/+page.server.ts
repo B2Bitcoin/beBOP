@@ -21,7 +21,6 @@ export async function load(event) {
 		confirmationBlocks: runtimeConfig.confirmationBlocks,
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
-		createUserOnSession: runtimeConfig.createUserOnSession,
 		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
 		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN,
@@ -58,7 +57,6 @@ export const actions = {
 					.max(24 * 60 * 60 * 7),
 				confirmationBlocks: z.number({ coerce: true }).int().min(0),
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
-				createUserOnSession: z.boolean({ coerce: true }),
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
 				actionOverwrite: z.enum(['', 'overwrite']).optional(),
 				plausibleScriptUrl: z.string()
