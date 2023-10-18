@@ -8,6 +8,8 @@ import * as devalue from 'devalue';
 const ONE_WEEK_IN_SECONDS = 7 * 24 * 3600;
 
 export const POST = async ({ request }) => {
+	console.log('Je passe ici');
+
 	try {
 		const { exportType } = JSON.parse(await request.text());
 
