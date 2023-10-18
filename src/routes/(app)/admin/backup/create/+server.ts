@@ -3,13 +3,12 @@ import { getS3DownloadLink } from '$lib/server/s3.js';
 import type { DigitalFile } from '$lib/types/DigitalFile.js';
 import type { Picture } from '$lib/types/Picture.js';
 import * as devalue from 'devalue';
+import { ObjectId } from 'mongodb';
 
 //maximum amount of time that is valid for presigned URLs
 const ONE_WEEK_IN_SECONDS = 7 * 24 * 3600;
 
 export const POST = async ({ request }) => {
-	console.log('Je passe ici');
-
 	try {
 		const { exportType } = JSON.parse(await request.text());
 
@@ -23,12 +22,12 @@ export const POST = async ({ request }) => {
 		const bootikSubscriptions = await collections.bootikSubscriptions.find().toArray();
 		const paidSubscriptions = await collections.paidSubscriptions.find().toArray();
 
-		let digitalFilesWithUrl: (DigitalFile | undefined)[] = [];
+		let digitalFilesWithUrl: DigitalFile[] = [];
 		if (digitalFiles.length > 0) {
 			digitalFilesWithUrl = await Promise.all(digitalFiles.map(addDigitalFileUrl));
 		}
 
-		let picturesWithUrl: (Picture | undefined)[] = [];
+		let picturesWithUrl: Picture[] = [];
 		if (pictures.length > 0) {
 			picturesWithUrl = await Promise.all(pictures.map(addPictureUrls));
 		}
@@ -48,7 +47,9 @@ export const POST = async ({ request }) => {
 						paidSubscriptions
 				  };
 
-		const exportedDatabase = devalue.stringify(dataToExport);
+		const dataToExportTransformed = objectIdToJson(dataToExport);
+
+		const exportedDatabase = devalue.stringify(dataToExportTransformed);
 
 		return new Response(exportedDatabase, {
 			status: 200,
@@ -63,27 +64,34 @@ export const POST = async ({ request }) => {
 };
 
 const addPictureUrls = async (picture: Picture) => {
-	try {
-		picture.storage.original.url = await getS3DownloadLink(picture.storage.original.key, 604800);
-		const resolvedFormats = await Promise.all(
-			picture.storage.formats.map(async (currentFormat) => {
-				currentFormat.url = await getS3DownloadLink(currentFormat.key, ONE_WEEK_IN_SECONDS);
-				return currentFormat;
-			})
-		);
-		picture.storage.formats = resolvedFormats;
-		return picture;
-	} catch (error) {
-		console.error('An error occurred during picture URL addition :', error);
-	}
+	picture.storage.original.url = await getS3DownloadLink(picture.storage.original.key, 604800);
+	const resolvedFormats = await Promise.all(
+		picture.storage.formats.map(async (currentFormat) => {
+			currentFormat.url = await getS3DownloadLink(currentFormat.key, ONE_WEEK_IN_SECONDS);
+			return currentFormat;
+		})
+	);
+	picture.storage.formats = resolvedFormats;
+	return picture;
 };
 
 const addDigitalFileUrl = async (digitalFile: DigitalFile) => {
-	try {
-		digitalFile.storage.url = await getS3DownloadLink(digitalFile.storage.key, ONE_WEEK_IN_SECONDS);
+	digitalFile.storage.url = await getS3DownloadLink(digitalFile.storage.key, ONE_WEEK_IN_SECONDS);
 
-		return digitalFile;
-	} catch (error) {
-		console.error('An error occurred during digital file URL addition :', error);
-	}
+	return digitalFile;
 };
+
+function objectIdToJson(obj) {
+	if (obj instanceof ObjectId) {
+		return { $oid: obj.toHexString() };
+	} else if (obj && typeof obj === 'object') {
+		for (const key in obj) {
+			obj[key] = objectIdToJson(obj[key]);
+		}
+	} else if (Array.isArray(obj)) {
+		for (let i = 0; i < obj.length; i++) {
+			obj[i] = objectIdToJson(obj[i]);
+		}
+	}
+	return obj;
+}

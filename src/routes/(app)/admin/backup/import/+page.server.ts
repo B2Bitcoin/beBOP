@@ -15,6 +15,7 @@ import type { DigitalFile } from '$lib/types/DigitalFile';
 import { sendEmail } from '$lib/server/email.js';
 import { z } from 'zod';
 import { db } from '$lib/server/database.js';
+import { ObjectId } from 'mongodb';
 
 export function load({ url }) {
 	return {
@@ -63,7 +64,9 @@ export const actions = {
 		try {
 			const fileJson = devalue.parse(fileText);
 
-			let collections = Object.keys(fileJson);
+			const transformedData = jsonToObjectId(fileJson);
+
+			let collections = Object.keys(transformedData);
 
 			let allowedCollections: string[] = IMPORT_TYPE_MAPPINGS[importType];
 
@@ -254,4 +257,19 @@ async function alertUser(importType: string | undefined, invalidFiles: string[])
 
 		return 'error';
 	}
+}
+
+function jsonToObjectId(obj) {
+	if (obj && obj.$oid) {
+		return new ObjectId(obj.$oid);
+	} else if (obj && typeof obj === 'object') {
+		for (const key in obj) {
+			obj[key] = jsonToObjectId(obj[key]);
+		}
+	} else if (Array.isArray(obj)) {
+		for (let i = 0; i < obj.length; i++) {
+			obj[i] = jsonToObjectId(obj[i]);
+		}
+	}
+	return obj;
 }
