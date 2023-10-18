@@ -7,14 +7,17 @@ import { runtimeConfig } from './runtime-config';
 import { SignJWT } from 'jose';
 
 export async function sendResetPasswordNotification(user: User) {
-	const content = `${runtimeConfig.brandName} + ${ORIGIN} - Password reset\n\n
-		Dear user,\n\n
-        This message was sent to you because you have requested to reset your password.\n\n
-        You'll be able to do it by following this link : ${ORIGIN}/admin/login/reset/${user.passwordReset?.token}\n\n
-        If you didn't ask for this password reset procedure, please ignore this message and do nothing.\n\n
-        Best regards,\n\n
-        ${runtimeConfig.brandName} team`;
 	if (user.backupInfo?.npub) {
+		const content = `Dear user,
+		
+This message was sent to you because you have requested to reset your password.
+
+Follow this link to reset your password: ${ORIGIN}/admin/login/reset/${user.passwordReset?.token}
+		
+If you didn't ask for this password reset procedure, please ignore this message and do nothing.
+
+Best regards,
+${runtimeConfig.brandName} team`;
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
@@ -25,6 +28,11 @@ export async function sendResetPasswordNotification(user: User) {
 		});
 	}
 	if (user.backupInfo?.email) {
+		const content = `<p>Dear user,</p>
+		<p>This message was sent to you because you have requested to reset your password.</p>
+		<p>Follow <a href="${ORIGIN}/admin/login/reset/${user.passwordReset?.token}">this link</a> to reset your password.</p>
+		<p>If you didn't ask for this password reset procedure, please ignore this message and do nothing.</p>
+		<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
 		await collections.emailNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
@@ -37,28 +45,30 @@ export async function sendResetPasswordNotification(user: User) {
 }
 
 export async function sendAuthentificationlink(session: { email?: string; npub?: string }) {
-	const content = (token: string) => `${
-		runtimeConfig.brandName
-	} + ${ORIGIN} - Temporary session request\n\n
-	Dear user,\n\n
-	This message was sent to you because you have requested a temporary session link.\n\n
-	You'll be able to do it by following this link : ${ORIGIN}/customer/login?token=${encodeURIComponent(
-		token
-	)}\n\n
-	If you didn't ask for this temporary session procedure, please ignore this message and do nothing.\n\n
-    Best regards,\n\n
-    ${runtimeConfig.brandName} team`;
 	if (session.npub) {
 		const jwt = await new SignJWT({ npub: session.npub })
 			.setExpirationTime('1h')
 			.setProtectedHeader({ alg: 'HS256' })
 			.sign(Buffer.from(runtimeConfig.authLinkJwtSigningKey));
+
+		const content = `Dear user,
+		
+This message was sent to you because you have requested a temporary session link.
+
+Follow this link to create your temporary session: ${ORIGIN}/customer/login?token=${encodeURIComponent(
+			jwt
+		)}
+		
+If you didn't ask for this temporary session procedure, please ignore this message and do nothing.
+
+Best regards,
+${runtimeConfig.brandName} team`;
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			kind: Kind.EncryptedDirectMessage,
 			updatedAt: new Date(),
-			content: content(jwt),
+			content,
 			dest: session.npub
 		});
 	}
@@ -71,8 +81,14 @@ export async function sendAuthentificationlink(session: { email?: string; npub?:
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			subject: `Password Reset`,
-			htmlContent: content(jwt),
+			subject: `Temporary session request`,
+			htmlContent: `<p>Dear user,</p>
+<p>This message was sent to you because you have requested a temporary session link.</p>
+<p>Follow <a href="${ORIGIN}/customer/login?token=${encodeURIComponent(
+				jwt
+			)}">this link</a> to create your temporary session.</p>
+<p>If you didn't ask for this temporary session procedure, please ignore this message and do nothing.</p>
+<p>Best regards,<br>${runtimeConfig.brandName} team</p>`,
 			dest: session.email
 		});
 	}
