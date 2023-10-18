@@ -81,16 +81,22 @@ const addDigitalFileUrl = async (digitalFile: DigitalFile) => {
 	return digitalFile;
 };
 
-function objectIdToJson(obj) {
+function objectIdToJson(obj, alreadyParsed = new Set()) {
+	if (obj && typeof obj === 'object') {
+		if (alreadyParsed.has(obj)) {
+			throw new Error('Cyclic dependency detected');
+		}
+		alreadyParsed.add(obj);
+	}
 	if (obj instanceof ObjectId) {
 		return { $oid: obj.toHexString() };
 	} else if (obj && typeof obj === 'object') {
 		for (const key in obj) {
-			obj[key] = objectIdToJson(obj[key]);
+			obj[key] = objectIdToJson(obj[key], alreadyParsed);
 		}
 	} else if (Array.isArray(obj)) {
 		for (let i = 0; i < obj.length; i++) {
-			obj[i] = objectIdToJson(obj[i]);
+			obj[i] = objectIdToJson(obj[i], alreadyParsed);
 		}
 	}
 	return obj;

@@ -14,7 +14,7 @@ import type { Picture } from '$lib/types/Picture';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import { sendEmail } from '$lib/server/email.js';
 import { z } from 'zod';
-import { db } from '$lib/server/database.js';
+import { collections, db } from '$lib/server/database.js';
 import { ObjectId } from 'mongodb';
 
 export function load({ url }) {
@@ -149,6 +149,7 @@ async function handleFilesImport<T extends Picture | DigitalFile>(
 
 	for (const file of fileData) {
 		const isSuccess = await handler(file);
+
 		if (!isSuccess) {
 			invalidFiles.push(JSON.stringify(file));
 		}
@@ -203,6 +204,7 @@ async function uploadFileToS3(imageUrl: URL | RequestInfo | undefined, s3Key: st
 
 	try {
 		const response = await fetch(imageUrl ? imageUrl : '');
+		const contentType = response.headers.get('content-type') || undefined;
 
 		if (response.status !== 200) {
 			console.error(`Failed to fetch ${imageUrl}. Status code: ${response.status}`);
@@ -215,7 +217,8 @@ async function uploadFileToS3(imageUrl: URL | RequestInfo | undefined, s3Key: st
 		const params = {
 			Bucket: S3_BUCKET,
 			Key: s3Key,
-			Body: uint8ArrayBuffer
+			Body: uint8ArrayBuffer,
+			ContentType: contentType
 		};
 
 		await s3Client.send(new PutObjectCommand(params));
@@ -229,47 +232,66 @@ async function uploadFileToS3(imageUrl: URL | RequestInfo | undefined, s3Key: st
 
 async function alertUser(importType: string | undefined, invalidFiles: string[]) {
 	if (importType === 'basic' || invalidFiles.length === 0) {
-		await sendEmail({
-			to: EMAIL_REPLY_TO || SMTP_USER,
-			subject: 'SUCCESS : IMPORT',
-			html: `The importation of the file succeeded`
-		});
+		await sendNotification('SUCCESS : IMPORT', 'The import of the file succeeded');
 
 		return 'success';
 	}
 
 	if (importType === 'checkWarn' && invalidFiles.length > 0) {
-		await sendEmail({
-			to: EMAIL_REPLY_TO || SMTP_USER,
-			subject: 'WARNING : URLs ARE NOT ACCESSIBLE',
-			html: `Warning: One or more URLs of ${invalidFiles} are not accessible.`
-		});
+		await sendNotification(
+			'WARNING : URLs ARE NOT ACCESSIBLE',
+			`Warning: One or more URLs of ${invalidFiles} are not accessible.`
+		);
 
 		return 'warning';
 	}
 
 	if (importType === 'checkClean' && invalidFiles.length > 0) {
-		await sendEmail({
-			to: EMAIL_REPLY_TO || SMTP_USER,
-			subject: 'ERROR : URLs ARE NOT ACCESSIBLE',
-			html: `Warning: One or more URLs of ${invalidFiles} are not accessible. We didn't import them.`
-		});
+		await sendNotification(
+			'ERROR : URLs ARE NOT ACCESSIBLE',
+			`Warning: One or more URLs of ${invalidFiles} are not accessible. We didn't import them.`
+		);
 
 		return 'error';
 	}
 }
 
-function jsonToObjectId(obj) {
+async function sendNotification(subject: string, htmlContent: string) {
+	await sendEmail({
+		to: EMAIL_REPLY_TO || SMTP_USER,
+		subject: subject,
+		html: htmlContent
+	});
+
+	await collections.emailNotifications.insertOne({
+		_id: new ObjectId(),
+		createdAt: new Date(),
+		updatedAt: new Date(),
+		subject: subject,
+		htmlContent: htmlContent,
+		dest: EMAIL_REPLY_TO || SMTP_USER
+	});
+}
+
+function jsonToObjectId(obj, alreadyParsed = new Set()) {
+	if (obj && typeof obj === 'object') {
+		if (alreadyParsed.has(obj)) {
+			throw new Error('Cyclic dependency detected');
+		}
+		alreadyParsed.add(obj);
+	}
+
 	if (obj && obj.$oid) {
 		return new ObjectId(obj.$oid);
 	} else if (obj && typeof obj === 'object') {
 		for (const key in obj) {
-			obj[key] = jsonToObjectId(obj[key]);
+			obj[key] = jsonToObjectId(obj[key], alreadyParsed);
 		}
 	} else if (Array.isArray(obj)) {
 		for (let i = 0; i < obj.length; i++) {
-			obj[i] = jsonToObjectId(obj[i]);
+			obj[i] = jsonToObjectId(obj[i], alreadyParsed);
 		}
 	}
+
 	return obj;
 }
