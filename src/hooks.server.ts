@@ -14,6 +14,7 @@ import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 import { sequence } from '@sveltejs/kit/hooks';
 import {
+	AUTH_SECRET,
 	FACEBOOK_ID,
 	FACEBOOK_SECRET,
 	GITHUB_ID,
@@ -190,57 +191,58 @@ const providers = [
 		? [Twitter({ clientId: TWITTER_ID, clientSecret: TWITTER_SECRET })]
 		: [])
 ];
-export const handleAuthSvelte = providers.length
-	? SvelteKitAuth({
-			providers: providers,
-			callbacks: {
-				async jwt({ token, user, account }) {
-					if (user) {
-						const providerFilter = account?.provider
-							? { [`backupInfo.${account?.provider}._id`]: user.id }
-							: {};
-						const userLocal = await collections.users.findOne(providerFilter);
-						if (!userLocal) {
-							const newUser = await collections.users.insertOne({
-								_id: new ObjectId(),
-								login: user.id + user.email,
-								backupInfo: {
-									[account?.provider ? account?.provider : '']: {
-										_id: user.id,
-										email: user.email,
-										name: user.name
-									}
-								},
-								roleId: CUSTOMER_ROLE_ID,
-								updatedAt: new Date(),
-								createdAt: new Date()
-							});
-							await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
-							await collections.sessions.insertOne({
-								_id: new ObjectId(),
-								userId: newUser.insertedId,
-								sessionId: runtimeConfig.sessionId,
-								expiresAt: addMinutes(new Date(), 60),
-								createdAt: new Date(),
-								updatedAt: new Date()
-							});
-						} else {
-							await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
-							await collections.sessions.insertOne({
-								_id: new ObjectId(),
-								userId: userLocal._id,
-								sessionId: runtimeConfig.sessionId,
-								expiresAt: addMinutes(new Date(), 60),
-								createdAt: new Date(),
-								updatedAt: new Date()
-							});
+export const handleAuthSvelte =
+	providers.length && AUTH_SECRET
+		? SvelteKitAuth({
+				providers: providers,
+				callbacks: {
+					async jwt({ token, user, account }) {
+						if (user) {
+							const providerFilter = account?.provider
+								? { [`backupInfo.${account?.provider}._id`]: user.id }
+								: {};
+							const userLocal = await collections.users.findOne(providerFilter);
+							if (!userLocal) {
+								const newUser = await collections.users.insertOne({
+									_id: new ObjectId(),
+									login: user.id + user.email,
+									backupInfo: {
+										[account?.provider ? account?.provider : '']: {
+											_id: user.id,
+											email: user.email,
+											name: user.name
+										}
+									},
+									roleId: CUSTOMER_ROLE_ID,
+									updatedAt: new Date(),
+									createdAt: new Date()
+								});
+								await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
+								await collections.sessions.insertOne({
+									_id: new ObjectId(),
+									userId: newUser.insertedId,
+									sessionId: runtimeConfig.sessionId,
+									expiresAt: addMinutes(new Date(), 60),
+									createdAt: new Date(),
+									updatedAt: new Date()
+								});
+							} else {
+								await collections.sessions.deleteOne({ sessionId: runtimeConfig.sessionId });
+								await collections.sessions.insertOne({
+									_id: new ObjectId(),
+									userId: userLocal._id,
+									sessionId: runtimeConfig.sessionId,
+									expiresAt: addMinutes(new Date(), 60),
+									createdAt: new Date(),
+									updatedAt: new Date()
+								});
+							}
 						}
-					}
 
-					return token;
+						return token;
+					}
 				}
-			}
-	  })
-	: null;
+		  })
+		: null;
 
 export const handle = handleAuthSvelte ? sequence(handleAdmin, handleAuthSvelte) : handleAdmin;
