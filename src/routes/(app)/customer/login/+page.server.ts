@@ -3,8 +3,9 @@ import { sendAuthentificationlink } from '$lib/server/sendNotification';
 import { bech32 } from 'bech32';
 import { jwtVerify } from 'jose';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { collections } from '$lib/server/database.js';
+import { addDays } from 'date-fns';
 
 export const load = async ({ url }) => {
 	const token = url.searchParams.get('token');
@@ -18,7 +19,7 @@ export const load = async ({ url }) => {
 					npub: z.string().optional(),
 					email: z.string().optional()
 				})
-				.parse(authLink);
+				.parse(authLink.payload);
 
 			if (npub) {
 				return {
@@ -59,6 +60,7 @@ export const actions = {
 	},
 	validate: async function ({ url, locals }) {
 		const token = url.searchParams.get('token');
+		let dontCatch = false;
 
 		if (!token) {
 			return fail(400, { error: 'Invalid or expired token' });
@@ -71,7 +73,7 @@ export const actions = {
 					npub: z.string().optional(),
 					email: z.string().optional()
 				})
-				.parse(authLink);
+				.parse(authLink.payload);
 
 			await collections.sessions.updateOne(
 				{
@@ -83,6 +85,7 @@ export const actions = {
 					},
 					$set: {
 						updatedAt: new Date(),
+						expiresAt: addDays(new Date(), 1),
 						...(npub && { npub }),
 						...(email && { email })
 					}
@@ -91,7 +94,13 @@ export const actions = {
 					upsert: true
 				}
 			);
+
+			dontCatch = true;
+			throw redirect(303, '/customer/login');
 		} catch (err) {
+			if (dontCatch) {
+				throw err;
+			}
 			return fail(400, { error: 'Invalid or expired token' });
 		}
 	}
