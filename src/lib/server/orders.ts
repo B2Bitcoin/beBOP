@@ -1,4 +1,5 @@
 import type { Order } from '$lib/types/Order';
+import type { ClientSession, WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
@@ -19,7 +20,6 @@ import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
-import type { ClientSession, WithId } from 'mongodb';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
