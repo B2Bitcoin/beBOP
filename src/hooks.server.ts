@@ -10,6 +10,28 @@ import type { CMSPage } from '$lib/types/CmsPage';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 // import { countryFromIp } from '$lib/server/geoip';
 
+const clients = {};
+
+export function notifyClientsOfUpdate(data) {
+	console.log('=> notifyClientsOfUpdate', data);
+
+	for (const clientId in clients) {
+		const writer = clients[clientId].writer;
+		writer.write(`data: ${JSON.stringify(data)}\n\n`).catch(() => {
+			// Error writing to the client, assume it has disconnected
+			writer.close();
+			delete clients[clientId];
+		});
+	}
+}
+
+const cartCollection = collections.carts;
+const changeStream = cartCollection.watch();
+
+changeStream.on('change', () => {
+	notifyClientsOfUpdate({ changed: true });
+});
+
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
 	if (typeof error === 'object' && error) {
@@ -150,5 +172,26 @@ export const handle = (async ({ event, resolve }) => {
 			status
 		});
 	}
+
+	if (event.url.pathname === '/sse') {
+		const { readable, writable } = new TransformStream();
+		const writer = writable.getWriter();
+		const response = new Response(readable, {
+			headers: {
+				'Content-Type': 'text/event-stream',
+				'Cache-Control': 'no-cache',
+				Connection: 'keep-alive'
+			}
+		});
+		const clientId = Date.now();
+		const client = {
+			id: clientId,
+			writer: writer
+		};
+		clients[clientId] = client;
+
+		return response;
+	}
+
 	return response;
 }) satisfies Handle;

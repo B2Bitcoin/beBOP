@@ -6,8 +6,6 @@
 			event.preventDefault();
 		}
 	}
-
-	console.log('data ', data);
 </script>
 
 <div>
