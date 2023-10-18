@@ -6,10 +6,6 @@ export interface Session extends Timestamps {
 	userId?: ObjectId;
 	email?: string;
 	npub?: string;
-	authLink?: {
-		token: string;
-		expiresAt: Date;
-	};
 	sessionId: string;
 	expiresAt: Date;
 }

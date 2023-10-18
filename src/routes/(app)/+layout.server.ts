@@ -41,6 +41,8 @@ export async function load(params) {
 			BTC_SAT: runtimeConfig.BTC_SAT
 		},
 		countryCode: locals.countryCode,
+		email: locals.email,
+		npub: locals.npub,
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0

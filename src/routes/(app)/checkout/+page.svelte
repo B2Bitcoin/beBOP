@@ -38,7 +38,7 @@
 	};
 
 	const emails: Record<FeedKey, string> = {
-		paymentStatus: ''
+		paymentStatus: data.email || ''
 	};
 
 	function checkForm(event: SubmitEvent) {
@@ -227,6 +227,7 @@
 									class="form-input"
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
+									value={data.npub}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus' && !emails[key] && paymentMethod !== 'cash'}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}

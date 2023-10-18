@@ -106,6 +106,12 @@ export const handle = (async ({ event, resolve }) => {
 				role: user.roleId
 			};
 		}
+		if (session.email) {
+			event.locals.email = session.email;
+		}
+		if (session.npub) {
+			event.locals.npub = session.npub;
+		}
 	}
 	// Protect any routes under /admin
 	if (isAdminUrl) {
