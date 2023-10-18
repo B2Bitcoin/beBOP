@@ -16,10 +16,6 @@ export interface User extends Timestamps {
 		token: string;
 		expiresAt: Date;
 	};
-	authLink?: {
-		token: string;
-		expiresAt: Date;
-	};
 }
 
 export const SUPER_ADMIN_ROLE_ID = 'super-admin';

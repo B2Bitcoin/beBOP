@@ -10,7 +10,9 @@
 		<IconStandBy class="text-green-500" />
 	</div>
 	<div class="flex-wrap text-center">
-		<p class="text-green-500">Successfully logged in with {data.user.login}</p>
+		<p class="text-green-500">
+			Successfully logged in with {data.session.npub ? data.session.npub : data.session.email}
+		</p>
 	</div>
 	<div class="flex justify-center gap-4 mt-2">
 		<button class="btn btn-blue"><a href="/">Go to home</a></button>
