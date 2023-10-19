@@ -2,14 +2,14 @@ import { collections } from '$lib/server/database';
 import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
-import { SUPER_ADMIN_ROLE_ID, type User } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, type User } from '$lib/types/User';
 import { ObjectId } from 'mongodb';
 import type { SetRequired } from 'type-fest';
 
 export async function load({ params }) {
 	const user = await collections.users.findOne<SetRequired<User, 'passwordReset'>>({
 		'passwordReset.token': params.token,
-		roleId: SUPER_ADMIN_ROLE_ID
+		roleId: { $ne: CUSTOMER_ROLE_ID }
 	});
 
 	if (!user) {
@@ -37,12 +37,15 @@ export const actions = {
 
 		const salt = await bcryptjs.genSalt(10);
 		const passwordBcrypt = await bcryptjs.hash(pwd1, salt);
-		if (
-			await collections.users.updateOne(
-				{ _id: new ObjectId(user), 'passwordReset.token': params.token },
-				{ $set: { password: passwordBcrypt } }
-			)
-		) {
+		const updateResult = await collections.users.updateOne(
+			{
+				_id: new ObjectId(user),
+				'passwordReset.token': params.token,
+				roleId: { $ne: CUSTOMER_ROLE_ID }
+			},
+			{ $set: { password: passwordBcrypt } }
+		);
+		if (updateResult.matchedCount) {
 			return { success: true };
 		} else {
 			return fail(400, { failed: true });
