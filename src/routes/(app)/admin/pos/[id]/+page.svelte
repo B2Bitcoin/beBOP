@@ -12,7 +12,9 @@
 
 <a href="/admin/pos/{data.user._id}/edit">Modifier le POS</a>
 {#if data?.sessions[0]?.sessionId}
-	<a target="_blank" href={`/session/${data?.sessions[0]?.sessionId}`}>Ouvrir la session active</a>
+	<a target="_blank" href={`/session/${data?.sessions[data?.sessions?.length - 1]?.sessionId}`}
+		>Ouvrir la session active</a
+	>
 {/if}
 
 <h2 class="text-2xl">Active sessions :</h2>
