@@ -10,13 +10,13 @@
 	let matchedHeight: number | null = null;
 
 	$: {
-		const match4px = className.match(/(\s|^)w-(\d+)(\s|$)/);
+		const match4px = className.match(/(\s|^)(max-)?w-(\d+)(\s|$)/);
 		if (match4px) {
-			matchedWidth = parseInt(match4px[2]) * 4;
+			matchedWidth = parseInt(match4px[3]) * 4;
 		} else {
-			const matchPx = className.match(/(\s|^)w-\[(\d+)px](\s|$)/);
+			const matchPx = className.match(/(\s|^)(max-)?w-\[(\d+)px](\s|$)/);
 			if (matchPx) {
-				matchedWidth = parseInt(matchPx[2]);
+				matchedWidth = parseInt(matchPx[3]);
 			} else {
 				matchedWidth = null;
 			}
@@ -24,13 +24,13 @@
 	}
 
 	$: {
-		const match4px = className.match(/(\s|^)h-(\d+)(\s|$)/);
+		const match4px = className.match(/(\s|^)(max-)?h-(\d+)(\s|$)/);
 		if (match4px) {
-			matchedHeight = parseInt(match4px[2]) * 4;
+			matchedHeight = parseInt(match4px[3]) * 4;
 		} else {
-			const matchPx = className.match(/(\s|^)h-\[(\d+)px](\s|$)/);
+			const matchPx = className.match(/(\s|^)(max-)?h-\[(\d+)px](\s|$)/);
 			if (matchPx) {
-				matchedHeight = parseInt(matchPx[2]);
+				matchedHeight = parseInt(matchPx[3]);
 			} else {
 				matchedHeight = null;
 			}
