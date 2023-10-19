@@ -102,9 +102,15 @@ export const handle = (async ({ event, resolve }) => {
 		});
 		if (user) {
 			event.locals.user = {
-				login: user.login,
+				login: user.login ? user.login : '',
 				role: user.roleId
 			};
+		}
+		if (session.email) {
+			event.locals.email = session.email;
+		}
+		if (session.npub) {
+			event.locals.npub = session.npub;
 		}
 	}
 	// Protect any routes under /admin

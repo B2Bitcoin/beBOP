@@ -6,6 +6,7 @@ import { ObjectId } from 'mongodb';
 import { addSeconds } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createAdminUserInDb } from '$lib/server/user.js';
+import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
@@ -33,7 +34,7 @@ export const actions = {
 				remember: data.get('remember'),
 				memorize: data.get('memorize')
 			});
-		let user = await collections.users.findOne({ login: login });
+		let user = await collections.users.findOne({ login: login, roleId: SUPER_ADMIN_ROLE_ID });
 
 		if (!user && !runtimeConfig.isAdminCreated) {
 			await createAdminUserInDb(login, password);
@@ -45,7 +46,7 @@ export const actions = {
 			return fail(400, { login, incorrect: 'login' });
 		}
 
-		if (!(await bcryptjs.compare(password, user.password))) {
+		if (!user.password || !(await bcryptjs.compare(password, user.password))) {
 			return fail(400, { login, incorrect: 'password' });
 		}
 
