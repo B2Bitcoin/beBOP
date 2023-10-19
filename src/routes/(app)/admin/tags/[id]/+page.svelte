@@ -1,0 +1,200 @@
+<script lang="ts">
+	import { generateId } from '$lib/utils/generateId';
+	import { upperFirst } from '$lib/utils/upperFirst';
+	export let data;
+	let name = data.tag.name;
+	let slug = data.tag._id;
+	function confirmDelete(event: Event) {
+		if (!confirm('Would you like to delete this tag?')) {
+			event.preventDefault();
+		}
+	}
+</script>
+
+<h1 class="text-3xl">Add a tag</h1>
+
+<form method="post" class="flex flex-col gap-4" action="?/update">
+	<label class="form-label">
+		tag name
+		<input
+			class="form-input"
+			type="text"
+			name="name"
+			placeholder="Tag name"
+			bind:value={name}
+			on:change={() => (slug = generateId(name, false))}
+			on:input={() => (slug = generateId(name, false))}
+			required
+		/>
+	</label>
+
+	<label class="form-label">
+		Slug
+
+		<input
+			class="form-input block"
+			type="text"
+			name="slug"
+			placeholder="Slug"
+			bind:value={slug}
+			title="Only lowercase letters, numbers and dashes are allowed"
+			required
+			disabled
+		/>
+	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={data.tag.widgetUseOnly}
+			name="widgetUseOnly"
+		/>
+		For widget use only
+	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={data.tag.productTagging}
+			name="productTagging"
+		/>
+		Available for product tagging
+	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={data.tag.useLightDark}
+			name="useLightDark"
+		/>
+		Use light/dark inverted mode
+	</label>
+	<div class="flex flex-col gap-4 w-[20em]">
+		<label class="form-label">
+			Tag family
+			<select class="form-input" name="family" value={data.tag.family}>
+				{#each ['creators', 'events', 'retailers', 'temporal'] as family}
+					<option value={family}>{upperFirst(family)}</option>
+				{/each}
+			</select>
+		</label>
+	</div>
+
+	<label class="form-label">
+		Tag title
+		<input
+			class="form-input"
+			type="text"
+			bind:value={data.tag.title}
+			name="title"
+			placeholder="Tag title"
+			required
+		/>
+	</label>
+	<label class="form-label">
+		Tag subtitle
+		<input
+			class="form-input"
+			type="text"
+			bind:value={data.tag.subtitle}
+			name="subtitle"
+			placeholder="Tag subtitle"
+			required
+		/>
+	</label>
+	<label class="form-label">
+		Short content
+		<textarea
+			name="shortContent"
+			bind:value={data.tag.shortContent}
+			cols="30"
+			rows="2"
+			class="form-input"
+		/>
+	</label>
+	<label class="form-label">
+		Full content
+		<textarea
+			name="content"
+			bind:value={data.tag.content}
+			cols="30"
+			rows="10"
+			maxlength="10000"
+			class="form-input"
+		/>
+	</label>
+
+	{#if data.tag.cta}
+		<h3 class="text-xl">CTAs</h3>
+		{#each [...data.tag.cta, ...Array(3 - data.tag.cta.length).fill( { href: '', label: '' } )] as link, i}
+			<div class="flex gap-4">
+				<label class="form-label">
+					Text
+					<input type="text" name="ctaLinks[{i}].label" class="form-input" value={link.label} />
+				</label>
+				<label class="form-label">
+					Url
+					<input type="text" name="ctaLinks[{i}].href" class="form-input" value={link.href} />
+				</label>
+			</div>
+		{/each}
+	{:else}
+		<h3 class="text-xl">CTAs</h3>
+		{#each [0, 1, 2] as i}
+			<div class="flex gap-4">
+				<label class="form-label">
+					Text
+					<input type="text" name="ctaLinks[{i}].label" class="form-input" />
+				</label>
+				<label class="form-label">
+					Url
+					<input type="text" name="ctaLinks[{i}].href" class="form-input" />
+				</label>
+			</div>
+		{/each}
+	{/if}
+	{#if data.tag.menu}
+		<h3 class="text-xl">Links menu</h3>
+		{#each [...data.tag.menu, ...Array(5 - data.tag.menu.length).fill( { href: '', label: '' } )] as link, i}
+			<div class="flex gap-4">
+				<label class="form-label">
+					Text
+					<input type="text" name="menuLinks[{i}].label" class="form-input" value={link.label} />
+				</label>
+				<label class="form-label">
+					Url
+					<input type="text" name="menuLinks[{i}].href" class="form-input" value={link.href} />
+				</label>
+			</div>
+		{/each}
+	{:else}
+		<h3 class="text-xl">Links menu</h3>
+		{#each [0, 1, 2, 3, 4] as i}
+			<div class="flex gap-4">
+				<label class="form-label">
+					Text
+					<input type="text" name="menuLinks[{i}].label" class="form-input" />
+				</label>
+				<label class="form-label">
+					Url
+					<input type="text" name="menuLinks[{i}].href" class="form-input" />
+				</label>
+			</div>
+		{/each}
+	{/if}
+	<label class="form-label">
+		CSS override
+		<textarea
+			name="cssOverride"
+			bind:value={data.tag.cssOveride}
+			cols="30"
+			rows="10"
+			maxlength="10000"
+			class="form-input"
+		/>
+	</label>
+	<input type="submit" class="btn btn-blue self-start text-white" value="Update" />
+	<button type="submit" class="ml-auto btn btn-red" formaction="?/delete" on:click={confirmDelete}>
+		Delete
+	</button>
+</form>
