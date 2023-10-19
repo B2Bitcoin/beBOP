@@ -101,9 +101,9 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<div
-		class="w-full rounded-xl bg-white border-gray-300 border p-6 grid flex md:grid-cols-3 sm:flex-wrap"
+		class="w-full rounded-xl bg-white border-gray-300 border p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
 	>
-		<form id="checkout" method="post" class="col-span-2 flex flex-col" on:submit={checkForm}>
+		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
 			<h1 class="page-title">Checkout</h1>
 
 			<section class="gap-4 grid grid-cols-6 w-4/5">
@@ -227,7 +227,7 @@
 									class="form-input"
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
-									value={data.npub}
+									value={data.npub || ''}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus' && !emails[key] && paymentMethod !== 'cash'}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
@@ -250,9 +250,9 @@
 				{/each}
 			</section>
 		</form>
-		<div>
+		<div class="w-full md:w-auto">
 			<article
-				class="rounded sticky top-4 -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
+				class="rounded sticky top-4 md:-mr-2 md:-mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
 				<div class="flex justify-between">
 					<a href="/cart" class="text-link hover:underline">&lt;&lt;Back to cart</a>
