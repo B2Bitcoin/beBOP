@@ -11,7 +11,8 @@
 
 	export let data;
 	export const cart = writable(data.cart);
-	let view = 'updateCart';
+	export const order = writable(null);
+	export const view = writable('updateCart');
 
 	function subscribeToServerEvents() {
 		console.log('=> subscribeToServerEvents');
@@ -20,10 +21,11 @@
 			onmessage(ev) {
 				const { eventType } = JSON.parse(ev.data);
 				if (eventType === 'updateCart') {
-					view = 'updateCart';
+					view.set('updateCart');
 					fetchUpdatedCart();
 				} else if (eventType === 'checkout') {
-					view = 'checkout';
+					view.set('checkout');
+					fetchOrder();
 				}
 			},
 			onopen() {
@@ -39,13 +41,24 @@
 		const response = await fetch(`/session/cart?sessionId=${data.session.sessionId}`);
 		if (response.ok) {
 			const updatedCart = await response.json();
-			console.log('updatedCart ', updatedCart);
 
 			cart.set(updatedCart);
 		} else {
 			console.error('Failed to fetch updated cart:', await response.text());
 		}
 	}
+
+	async function fetchOrder() {
+		const response = await fetch(`/session/order?sessionId=${data.session.sessionId}`);
+		if (response.ok) {
+			const orderData = await response.json();
+			order.set(orderData);
+		} else {
+			console.error('Failed to fetch updated cart:', await response.text());
+		}
+	}
+
+	console.log('ORDERRRR ', $order);
 
 	subscribeToServerEvents();
 
@@ -61,7 +74,7 @@
 </script>
 
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
-	{#if view === 'updateCart'}
+	{#if $view === 'updateCart'}
 		<div>
 			{#if $cart.length}
 				<div class="overflow-hidden">
@@ -150,7 +163,29 @@
 				<p>Cart is empty</p>
 			{/if}
 		</div>
-	{:else if view === 'checkout'}
-		<div>QR Code</div>
+	{:else if $view === 'checkout'}
+		{#if order}
+			<div class="flex flex-col items-center gap-3">
+				<h1 class="text-3xl text-center">Order #{$order?.number}</h1>
+				<div class="w-32 h-32 bg-black block" />
+				<div class="flex justify-end pb-6 gap-6">
+					<h2 class="text-gray-800 text-[32px]">Total:</h2>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							amount={$order?.totalPrice?.amount}
+							currency={$order?.totalPrice?.currency}
+							main
+							class="text-[32px] text-gray-800"
+						/>
+						<PriceTag
+							class="text-base text-gray-600"
+							amount={$order?.totalPrice?.amount}
+							currency={$order?.totalPrice?.currency}
+							secondary
+						/>
+					</div>
+				</div>
+			</div>
+		{/if}
 	{/if}
 </main>

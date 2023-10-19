@@ -11,11 +11,13 @@
 <h1 class="text-3xl">{data.user.login}</h1>
 
 <a href="/admin/pos/{data.user._id}/edit">Modifier le POS</a>
-<a target="_blank" href={`/session/${data.sessions[0].sessionId}`}>Ouvrir la session active</a>
+{#if data?.sessions[0]?.sessionId}
+	<a target="_blank" href={`/session/${data?.sessions[0]?.sessionId}`}>Ouvrir la session active</a>
+{/if}
 
 <h2 class="text-2xl">Active sessions :</h2>
 <div class="flex flex-col flex-wrap gap-2">
 	{#each data.sessions as session}
-		<a href="/admin/pos/session/{session.sessionId}">{session.sessionId}</a>
+		<a href="/admin/pos/session/{session?.sessionId}">{session?.sessionId}</a>
 	{/each}
 </div>
