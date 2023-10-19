@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 import { formatCart } from '$lib/server/cart';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const session = await collections.sessions.findOne({ _id: new ObjectId(params.sessionId) });
+	const session = await collections.sessions.findOne({ sessionId: params.sessionId });
 
 	if (!session) {
 		throw error(404, 'User not found');
@@ -17,8 +17,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	const sanitizedCart = convertObjectIdsToStrings(cart);
 
 	const formattedCart = await formatCart(sanitizedCart);
-
-	console.log('hello');
 
 	return {
 		session: sanitizedSession,

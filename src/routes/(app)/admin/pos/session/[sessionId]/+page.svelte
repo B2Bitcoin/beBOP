@@ -1,16 +1,17 @@
 <script lang="ts">
 	export let data;
-	console.log('Coucouu ', data);
 </script>
 
 <div>
-	{data.session._id}
+	{data.session.sessionId}
 </div>
 
 <h1>Cart :</h1>
 
 <div class="flex flex-col flex-wrap gap-2">
-	{#each data.cart.items as items}
-		<div>{items.productId}</div>
-	{/each}
+	{#if data?.cart?.items?.length}
+		{#each data.cart.items as items}
+			<div>{items.productId}</div>
+		{/each}
+	{/if}
 </div>

@@ -10,26 +10,82 @@ import type { CMSPage } from '$lib/types/CmsPage';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 // import { countryFromIp } from '$lib/server/geoip';
 
-const clients = {};
+interface Client {
+	writer: WritableStreamDefaultWriter;
+	sessionId: string;
+}
 
-export function notifyClientsOfUpdate(data) {
-	console.log('=> notifyClientsOfUpdate', data);
+interface ChangeEvent {
+	documentKey: {
+		_id?: string;
+	};
+}
 
+const clients: Record<string, Client> = {};
+
+export function notifyClientsOfCartUpdate(
+	data: { eventType: string },
+	sessionIdToUpdate: string
+): void {
 	for (const clientId in clients) {
-		const writer = clients[clientId].writer;
-		writer.write(`data: ${JSON.stringify(data)}\n\n`).catch(() => {
-			// Error writing to the client, assume it has disconnected
-			writer.close();
-			delete clients[clientId];
-		});
+		if (clients[clientId].sessionId === sessionIdToUpdate) {
+			const writer = clients[clientId].writer;
+			writer.write(`data: ${JSON.stringify(data)}\n\n`).catch((error) => {
+				console.error(`Error writing to client ${clientId}`, error);
+				// Error writing to the client, assume it has disconnected
+				writer.close();
+				delete clients[clientId];
+			});
+		}
 	}
 }
 
+//Check change on cart collection
 const cartCollection = collections.carts;
-const changeStream = cartCollection.watch();
+const cartChangeStream = cartCollection.watch();
 
-changeStream.on('change', () => {
-	notifyClientsOfUpdate({ changed: true });
+cartChangeStream.on('change', async (changeEvent: ChangeEvent) => {
+	try {
+		if (changeEvent?.documentKey?._id) {
+			const cart = await collections.carts.findOne({
+				_id: new ObjectId(changeEvent.documentKey._id)
+			});
+
+			if (!cart || !cart.sessionId) {
+				console.error('Cart or session ID not found for changeEvent: ', changeEvent);
+				return;
+			}
+
+			notifyClientsOfCartUpdate({ eventType: 'updateCart' }, cart.sessionId);
+		}
+	} catch (error) {
+		console.error('Error processing changeEvent:', error);
+	}
+});
+
+//Check change on order collection
+const orderCollection = collections.orders;
+const orderChangeStream = orderCollection.watch();
+
+orderChangeStream.on('change', async (changeEvent: ChangeEvent) => {
+	try {
+		if (changeEvent?.documentKey?._id) {
+			const order = await collections.orders.findOne({
+				_id: changeEvent.documentKey._id
+			});
+
+			if (!order || !order.sessionId) {
+				console.error('Cart or session ID not found for changeEvent: ', changeEvent);
+				return;
+			}
+
+			console.log('checkout order ', order);
+
+			notifyClientsOfCartUpdate({ eventType: 'checkout' }, order.sessionId);
+		}
+	} catch (error) {
+		console.error('Error processing changeEvent:', error);
+	}
 });
 
 export const handleError = (({ error, event }) => {
@@ -184,10 +240,14 @@ export const handle = (async ({ event, resolve }) => {
 			}
 		});
 		const clientId = Date.now();
+
+		//create client object, with the session id
 		const client = {
 			id: clientId,
+			sessionId: event.url.searchParams.get('sessionId') ?? '',
 			writer: writer
 		};
+
 		clients[clientId] = client;
 
 		return response;

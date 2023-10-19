@@ -8,37 +8,14 @@
 	}
 </script>
 
-<div>
-	{data.user.login}
-</div>
+<h1 class="text-3xl">{data.user.login}</h1>
 
-<form method="post" class="flex flex-col gap-4" action="?/update">
-	<label class="form-label">
-		Login
-		<input
-			class="form-input"
-			type="text"
-			name="login"
-			value={data.user.login}
-			placeholder="Enter your login"
-			required
-		/>
-	</label>
-	<label class="form-label">
-		Password
-		<input class="form-input" type="password" name="password" placeholder="Enter your password" />
-	</label>
-	<div class="flex gap-2">
-		<button type="submit" class="btn btn-red" formaction="?/delete" on:click={confirmDelete}>
-			Delete
-		</button>
-		<button type="submit" class="btn btn-blue">Update</button>
-	</div>
-</form>
+<a href="/admin/pos/{data.user._id}/edit">Modifier le POS</a>
+<a target="_blank" href={`/session/${data.sessions[0].sessionId}`}>Ouvrir la session active</a>
 
-<h1>Sessions active :</h1>
+<h2 class="text-2xl">Active sessions :</h2>
 <div class="flex flex-col flex-wrap gap-2">
 	{#each data.sessions as session}
-		<a href="/admin/pos/session/{session._id}">{session._id}</a>
+		<a href="/admin/pos/session/{session.sessionId}">{session.sessionId}</a>
 	{/each}
 </div>

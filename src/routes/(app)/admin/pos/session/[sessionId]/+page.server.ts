@@ -1,10 +1,10 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { ObjectId } from 'mongodb';
+import { convertObjectIdsToStrings } from '$lib/utils/convertObjectIdsToStrings';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const session = await collections.sessions.findOne({ _id: new ObjectId(params.sessionId) });
+	const session = await collections.sessions.findOne({ sessionId: params.sessionId });
 
 	if (!session) {
 		throw error(404, 'User not found');
@@ -20,18 +20,3 @@ export const load: PageServerLoad = async ({ params }) => {
 		cart: sanitizedCart
 	};
 };
-
-function convertObjectIdsToStrings(obj: any) {
-	if (!obj) {
-		return obj;
-	}
-
-	for (const key in obj) {
-		if (obj[key] instanceof ObjectId) {
-			obj[key] = obj[key].toString();
-		} else if (typeof obj[key] === 'object') {
-			convertObjectIdsToStrings(obj[key]);
-		}
-	}
-	return obj;
-}

@@ -10,18 +10,21 @@
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	export let data;
-
 	export const cart = writable(data.cart);
-
-	console.log('coucou', $cart);
+	let view = 'updateCart';
 
 	function subscribeToServerEvents() {
 		console.log('=> subscribeToServerEvents');
 
-		fetchEventSource('/sse', {
+		fetchEventSource(`/sse?sessionId=${data.session.sessionId}`, {
 			onmessage(ev) {
-				console.log('=> message ');
-				fetchUpdatedCart();
+				const { eventType } = JSON.parse(ev.data);
+				if (eventType === 'updateCart') {
+					view = 'updateCart';
+					fetchUpdatedCart();
+				} else if (eventType === 'checkout') {
+					view = 'checkout';
+				}
 			},
 			onopen() {
 				console.log('=> Connection established');
@@ -58,92 +61,96 @@
 </script>
 
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
-	<div class="">
-		{#if $cart.length}
-			<div class="overflow-hidden">
-				{#each $cart as item}
-					<div class="flex items-center justify-between w-full">
-						<div class="flex flex-col">
-							<h2 class="text-2xl text-gray-850">{item.product.name}</h2>
-							<div class="flex gap-2">
-								<div
-									class="w-[138px] h-[138px] min-w-[138px] min-h-[138px] rounded flex items-center"
-								>
-									{#if item.picture}
-										<Picture
-											picture={item.picture}
-											class="mx-auto rounded h-full object-contain"
-											sizes="138px"
+	{#if view === 'updateCart'}
+		<div>
+			{#if $cart.length}
+				<div class="overflow-hidden">
+					{#each $cart as item}
+						<div class="flex items-center justify-between w-full">
+							<div class="flex flex-col">
+								<h2 class="text-2xl text-gray-850">{item.product.name}</h2>
+								<div class="flex gap-2">
+									<div
+										class="w-[138px] h-[138px] min-w-[138px] min-h-[138px] rounded flex items-center"
+									>
+										{#if item.picture}
+											<Picture
+												picture={item.picture}
+												class="mx-auto rounded h-full object-contain"
+												sizes="138px"
+											/>
+										{/if}
+									</div>
+									<div class="flex items-start gap-2">
+										<ProductType
+											product={item.product}
+											hasDigitalFiles={item.digitalFiles.length >= 1}
 										/>
-									{/if}
+									</div>
 								</div>
-								<div class="flex items-start gap-2">
-									<ProductType
-										product={item.product}
-										hasDigitalFiles={item.digitalFiles.length >= 1}
+							</div>
+
+							<div>
+								Quantity : {item.quantity}
+							</div>
+
+							<div class="flex flex-col items-end justify-center">
+								{#if item.product.type !== 'subscription' && item.customPrice}
+									<PriceTag
+										amount={item.quantity * item.customPrice.amount}
+										currency={item.customPrice.currency}
+										main
+										class="text-2xl text-gray-800 truncate"
 									/>
-								</div>
+									<PriceTag
+										class="text-base text-gray-600 truncate"
+										amount={item.quantity * item.customPrice.amount}
+										currency={item.customPrice.currency}
+										secondary
+									/>
+								{:else}
+									<PriceTag
+										amount={item.quantity * item.product.price.amount}
+										currency={item.product.price.currency}
+										main
+										class="text-2xl text-gray-800 truncate"
+									/>
+									<PriceTag
+										class="text-base text-gray-600 truncate"
+										amount={item.quantity * item.product.price.amount}
+										currency={item.product.price.currency}
+										secondary
+									/>
+								{/if}
 							</div>
 						</div>
 
-						<div>
-							Quantity : {item.quantity}
-						</div>
-
-						<div class="flex flex-col items-end justify-center">
-							{#if item.product.type !== 'subscription' && item.customPrice}
-								<PriceTag
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									main
-									class="text-2xl text-gray-800 truncate"
-								/>
-								<PriceTag
-									class="text-base text-gray-600 truncate"
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									secondary
-								/>
-							{:else}
-								<PriceTag
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									main
-									class="text-2xl text-gray-800 truncate"
-								/>
-								<PriceTag
-									class="text-base text-gray-600 truncate"
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									secondary
-								/>
-							{/if}
-						</div>
-					</div>
-
-					<div class="border-b border-gray-300 col-span-4" />
-				{/each}
-			</div>
-
-			<div class="flex justify-end pb-6 gap-6">
-				<h2 class="text-gray-800 text-[32px]">Total:</h2>
-				<div class="flex flex-col items-end">
-					<PriceTag
-						amount={totalPriceWithVat}
-						currency={data.currencies.main}
-						main
-						class="text-[32px] text-gray-800"
-					/>
-					<PriceTag
-						class="text-base text-gray-600"
-						amount={totalPriceWithVat}
-						currency={data.currencies.main}
-						secondary
-					/>
+						<div class="border-b border-gray-300 col-span-4" />
+					{/each}
 				</div>
-			</div>
-		{:else}
-			<p>Cart is empty</p>
-		{/if}
-	</div>
+
+				<div class="flex justify-end pb-6 gap-6">
+					<h2 class="text-gray-800 text-[32px]">Total:</h2>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							amount={totalPriceWithVat}
+							currency={data.currencies.main}
+							main
+							class="text-[32px] text-gray-800"
+						/>
+						<PriceTag
+							class="text-base text-gray-600"
+							amount={totalPriceWithVat}
+							currency={data.currencies.main}
+							secondary
+						/>
+					</div>
+				</div>
+			{:else}
+				<p>Cart is empty</p>
+			{/if}
+		</div>
+	{:else if view === 'checkout'}
+		<div>QR Code</div>
+	{/if}
 </main>
