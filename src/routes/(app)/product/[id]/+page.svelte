@@ -183,7 +183,7 @@
 					/>
 				</div>
 
-				{#if data.product.type === 'subscription' && data.discount}
+				{#if data.discount}
 					<hr class="border-gray-300" />
 					<h3 class="text-gray-850 text-[22px]">
 						{data.discount.percentage}% off for {hoursDifference}h

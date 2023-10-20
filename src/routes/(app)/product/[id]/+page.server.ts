@@ -8,7 +8,7 @@ import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { maxBy } from 'lodash-es';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
 		Pick<
 			Product,
@@ -56,8 +56,17 @@ export const load: PageServerLoad = async ({ params }) => {
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
 		.toArray();
+	const subscriptions = await collections.paidSubscriptions
+		.find({
+			$or: [{ email: locals.email }, { npub: locals.npub }]
+		})
+		.toArray();
 	const discount = await collections.discounts
-		.find({ subscriptionIds: product._id, endsAt: { $gt: new Date() } })
+		.find({
+			$or: [{ wholeCatalog: true }, { productIds: product._id }],
+			subscriptionIds: { $in: [subscriptions.map((sub) => sub.productId)] },
+			endsAt: { $gt: new Date() }
+		})
 		.sort({ createdAt: -1 })
 		.toArray();
 	return {
