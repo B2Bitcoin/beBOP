@@ -3,11 +3,28 @@ import { type HandleServerError, type Handle, error, redirect } from '@sveltejs/
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
+import { SvelteKitAuth } from '@auth/sveltekit';
 
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import GitHub from '@auth/core/providers/github';
+import Google from '@auth/core/providers/google';
+import Facebook from '@auth/core/providers/facebook';
+import Twitter from '@auth/core/providers/twitter';
+import {
+	AUTH_SECRET,
+	FACEBOOK_ID,
+	FACEBOOK_SECRET,
+	GITHUB_ID,
+	GITHUB_SECRET,
+	GOOGLE_ID,
+	GOOGLE_SECRET,
+	TWITTER_ID,
+	TWITTER_SECRET
+} from '$env/static/private';
+import { sequence } from '@sveltejs/kit/hooks';
 // import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
@@ -45,7 +62,7 @@ export const handleError = (({ error, event }) => {
 	}
 }) satisfies HandleServerError;
 
-export const handle = (async ({ event, resolve }) => {
+const handleGlobal: Handle = async ({ event, resolve }) => {
 	await refreshPromise;
 
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
@@ -158,4 +175,25 @@ export const handle = (async ({ event, resolve }) => {
 		});
 	}
 	return response;
-}) satisfies Handle;
+};
+
+const authProviders = AUTH_SECRET
+	? [
+			...(GITHUB_ID && GITHUB_SECRET
+				? [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })]
+				: []),
+			...(GOOGLE_ID && GOOGLE_SECRET
+				? [Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET })]
+				: []),
+			...(FACEBOOK_ID && FACEBOOK_SECRET
+				? [Facebook({ clientId: FACEBOOK_ID, clientSecret: FACEBOOK_SECRET })]
+				: []),
+			...(TWITTER_ID && TWITTER_SECRET
+				? [Twitter({ clientId: TWITTER_ID, clientSecret: TWITTER_SECRET })]
+				: [])
+	  ]
+	: [];
+
+const handleSSO = authProviders ? SvelteKitAuth({ providers: authProviders }) : null;
+
+export const handle = handleSSO ? sequence(handleGlobal, handleSSO) : handleGlobal;
