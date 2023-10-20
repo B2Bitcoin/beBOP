@@ -11,10 +11,18 @@
 		temporal: false
 	};
 	function toggleTagsVisibility(category: string) {
-		if (category === 'creators') showTags.creators = !showTags.creators;
-		if (category === 'retailers') showTags.retailers = !showTags.retailers;
-		if (category === 'temporal') showTags.temporal = !showTags.temporal;
-		if (category === 'events') showTags.events = !showTags.events;
+		if (category === 'creators') {
+			showTags.creators = !showTags.creators;
+		}
+		if (category === 'retailers') {
+			showTags.retailers = !showTags.retailers;
+		}
+		if (category === 'temporal') {
+			showTags.temporal = !showTags.temporal;
+		}
+		if (category === 'events') {
+			showTags.events = !showTags.events;
+		}
 	}
 </script>
 

@@ -1,5 +1,4 @@
 import { collections } from '$lib/server/database';
-import { filter } from 'lodash-es';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
