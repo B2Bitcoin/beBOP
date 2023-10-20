@@ -191,17 +191,19 @@
 					{#if 0}
 						<GoalProgress text="1h32min left" goal={600} progress={444} />
 					{/if}
-					<hr class="border-gray-300" />
-					<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
-						<IconInfo class="text-[#E4C315]" />
-						<div>
-							<h3 class="font-semibold text-gray-800">Free with "xxxxx"</h3>
-							<p class="text-gray-700">
-								This product is available for free with your monthly subscription
-							</p>
-							<a href="/cabinet" class="text-[#E4C315] hover:underline">See in MyCabinet</a>
+					{#if data.discount.percentage === 100}
+						<hr class="border-gray-300" />
+						<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
+							<IconInfo class="text-[#E4C315]" />
+							<div>
+								<h3 class="font-semibold text-gray-800">Free with "xxxxx"</h3>
+								<p class="text-gray-700">
+									This product is available for free with your monthly subscription
+								</p>
+								<a href="/cabinet" class="text-[#E4C315] hover:underline">See in MyCabinet</a>
+							</div>
 						</div>
-					</div>
+					{/if}
 				{/if}
 				<hr class="border-gray-300 my-2" />
 
