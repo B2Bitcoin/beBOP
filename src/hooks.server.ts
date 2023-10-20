@@ -20,12 +20,15 @@ import {
 	GITHUB_SECRET,
 	GOOGLE_ID,
 	GOOGLE_SECRET,
+	ORIGIN,
 	TWITTER_ID,
 	TWITTER_SECRET
 } from '$env/static/private';
 import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
 // import { countryFromIp } from '$lib/server/geoip';
+
+const SSO_COOKIE = 'next-auth.session-token';
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
@@ -108,6 +111,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
+
 	const session = await collections.sessions.findOne({
 		sessionId: event.locals.sessionId
 	});
@@ -121,12 +125,9 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 				role: user.roleId
 			};
 		}
-		if (session.email) {
-			event.locals.email = session.email;
-		}
-		if (session.npub) {
-			event.locals.npub = session.npub;
-		}
+		event.locals.email = session.email;
+		event.locals.npub = session.npub;
+		event.locals.sso = session.sso;
 	}
 	// Protect any routes under /admin
 	if (isAdminUrl) {
@@ -175,18 +176,113 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	return response;
 };
 
+const handleSsoCookie: Handle = async ({ event, resolve }) => {
+	const ssoSession = await event.locals.getSession();
+	if (ssoSession?.user?.name && 'id' in ssoSession.user && typeof ssoSession.user.id === 'string') {
+		event.cookies.delete(SSO_COOKIE, { path: '/' });
+
+		const session = await collections.sessions.findOne({
+			sessionId: event.locals.sessionId
+		});
+
+		const provider = ssoSession.user.id.split('-')[0];
+		const ssoInfo = {
+			provider,
+			id: ssoSession.user.id,
+			email: ssoSession.user.email ?? undefined,
+			avatarUrl: ssoSession.user.image ?? undefined,
+			name: ssoSession.user.name
+		};
+
+		if (!session) {
+			await collections.sessions.insertOne({
+				sessionId: event.locals.sessionId,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				_id: new ObjectId(),
+				expiresAt: addYears(new Date(), 1),
+				sso: [ssoInfo]
+			});
+		} else {
+			await collections.sessions.updateOne(
+				{
+					sessionId: event.locals.sessionId
+				},
+				{
+					$set: {
+						updatedAt: new Date(),
+						expiresAt: addYears(new Date(), 1),
+						sso: [...(session.sso || []), ssoInfo]
+					}
+				}
+			);
+		}
+		event.locals.sso = [...(session?.sso || []), ssoInfo];
+	}
+
+	const response = await resolve(event);
+
+	return response;
+};
+
 const authProviders = [
 	...(GITHUB_ID && GITHUB_SECRET
-		? [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })]
+		? [
+				GitHub({
+					clientId: GITHUB_ID,
+					clientSecret: GITHUB_SECRET,
+					profile: (param) => {
+						return {
+							id: 'github-' + param.id.toString(),
+							name: param.name,
+							image: param.avatar_url,
+							email: param.email
+						};
+					}
+				})
+		  ]
 		: []),
 	...(GOOGLE_ID && GOOGLE_SECRET
-		? [Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET })]
+		? [
+				Google({
+					clientId: GOOGLE_ID,
+					clientSecret: GOOGLE_SECRET,
+					profile: (param) => ({
+						name: param.name,
+						email: param.email,
+						image: param.picture,
+						id: 'google-' + param.sub
+					})
+				})
+		  ]
 		: []),
 	...(FACEBOOK_ID && FACEBOOK_SECRET
-		? [Facebook({ clientId: FACEBOOK_ID, clientSecret: FACEBOOK_SECRET })]
+		? [
+				Facebook({
+					clientId: FACEBOOK_ID,
+					clientSecret: FACEBOOK_SECRET,
+					profile: (param) => ({
+						id: 'facebook-' + param.id,
+						name: param.name,
+						email: param.email,
+						image: param.picture.data.url
+					})
+				})
+		  ]
 		: []),
 	...(TWITTER_ID && TWITTER_SECRET
-		? [Twitter({ clientId: TWITTER_ID, clientSecret: TWITTER_SECRET })]
+		? [
+				Twitter({
+					clientId: TWITTER_ID,
+					clientSecret: TWITTER_SECRET,
+					profile: (param) => ({
+						id: 'twitter-' + param.data.id,
+						name: param.data.name,
+						email: param.data.email,
+						image: param.data.profile_image_url
+					})
+				})
+		  ]
 		: [])
 ];
 
@@ -198,6 +294,23 @@ const handleSSO = authProviders
 	? SvelteKitAuth({
 			providers: authProviders,
 			secret: runtimeConfig.ssoSecret,
+			/**
+			 * Ideally we'd not store in the cookie at all, updating the session in DB directly.
+			 *
+			 * But I'm not sure it's possible to do that with @auth/sveltekit. So instead, we allow the
+			 * cookie to be set, and read its data with `getSession()` and update the session in DB and unset the cookie immediately after.
+			 */
+			cookies: {
+				sessionToken: {
+					name: 'next-auth.session-token',
+					options: {
+						httpOnly: true,
+						secure: ORIGIN.startsWith('https://'),
+						sameSite: 'lax',
+						path: '/'
+					}
+				}
+			},
 			callbacks: {
 				/**
 				 * Get the user's ID from the token and add it to the session
@@ -214,4 +327,4 @@ const handleSSO = authProviders
 	  })
 	: null;
 
-export const handle = handleSSO ? sequence(handleGlobal, handleSSO) : handleGlobal;
+export const handle = handleSSO ? sequence(handleGlobal, handleSSO, handleSsoCookie) : handleGlobal;

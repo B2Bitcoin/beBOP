@@ -16,6 +16,13 @@ declare global {
 			user?: { login: string; role: string };
 			email?: string;
 			npub?: string;
+			sso?: Array<{
+				provider: string;
+				email?: string;
+				avatarUrl?: string;
+				name: string;
+				id: string;
+			}>;
 		}
 		// interface PageData {}
 		// interface Platform {}
