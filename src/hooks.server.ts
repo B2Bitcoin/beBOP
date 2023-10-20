@@ -195,7 +195,23 @@ if (!building) {
 }
 
 const handleSSO = authProviders
-	? SvelteKitAuth({ providers: authProviders, secret: runtimeConfig.ssoSecret })
+	? SvelteKitAuth({
+			providers: authProviders,
+			secret: runtimeConfig.ssoSecret,
+			callbacks: {
+				/**
+				 * Get the user's ID from the token and add it to the session
+				 */
+				session: async (params) => {
+					if (params.session.user) {
+						Object.assign(params.session.user, {
+							id: params.token.sub
+						});
+					}
+					return params.session;
+				}
+			}
+	  })
 	: null;
 
 export const handle = handleSSO ? sequence(handleGlobal, handleSSO) : handleGlobal;
