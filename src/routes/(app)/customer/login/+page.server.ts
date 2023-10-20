@@ -7,7 +7,6 @@ import { fail, redirect } from '@sveltejs/kit';
 import { collections } from '$lib/server/database.js';
 import { addDays } from 'date-fns';
 import {
-	AUTH_SECRET,
 	FACEBOOK_ID,
 	FACEBOOK_SECRET,
 	GITHUB_ID,
@@ -23,10 +22,10 @@ export const load = async ({ url }) => {
 
 	const base = {
 		canSso: {
-			github: !!(AUTH_SECRET && GITHUB_ID && GITHUB_SECRET),
-			google: !!(AUTH_SECRET && GOOGLE_ID && GOOGLE_SECRET),
-			facebook: !!(AUTH_SECRET && FACEBOOK_ID && FACEBOOK_SECRET),
-			twitter: !!(AUTH_SECRET && TWITTER_ID && TWITTER_SECRET)
+			github: !!(GITHUB_ID && GITHUB_SECRET),
+			google: !!(GOOGLE_ID && GOOGLE_SECRET),
+			facebook: !!(FACEBOOK_ID && FACEBOOK_SECRET),
+			twitter: !!(TWITTER_ID && TWITTER_SECRET)
 		}
 	};
 
