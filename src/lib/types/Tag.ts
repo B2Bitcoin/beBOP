@@ -1,5 +1,3 @@
-import type { Currency } from './Currency';
-import type { DeliveryFees } from './DeliveryFees';
 import type { Timestamps } from './Timestamps';
 
 export interface Tag extends Timestamps {
