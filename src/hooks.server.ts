@@ -3,12 +3,32 @@ import { type HandleServerError, type Handle, error, redirect } from '@sveltejs/
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
+import { SvelteKitAuth } from '@auth/sveltekit';
 
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
 import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import GitHub from '@auth/core/providers/github';
+import Google from '@auth/core/providers/google';
+import Facebook from '@auth/core/providers/facebook';
+import Twitter from '@auth/core/providers/twitter';
+import {
+	FACEBOOK_ID,
+	FACEBOOK_SECRET,
+	GITHUB_ID,
+	GITHUB_SECRET,
+	GOOGLE_ID,
+	GOOGLE_SECRET,
+	ORIGIN,
+	TWITTER_ID,
+	TWITTER_SECRET
+} from '$env/static/private';
+import { sequence } from '@sveltejs/kit/hooks';
+import { building } from '$app/environment';
 // import { countryFromIp } from '$lib/server/geoip';
+
+const SSO_COOKIE = 'next-auth.session-token';
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
@@ -45,9 +65,7 @@ export const handleError = (({ error, event }) => {
 	}
 }) satisfies HandleServerError;
 
-export const handle = (async ({ event, resolve }) => {
-	await refreshPromise;
-
+const handleGlobal: Handle = async ({ event, resolve }) => {
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
 
 	const isAdminUrl =
@@ -93,6 +111,7 @@ export const handle = (async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
+
 	const session = await collections.sessions.findOne({
 		sessionId: event.locals.sessionId
 	});
@@ -106,12 +125,9 @@ export const handle = (async ({ event, resolve }) => {
 				role: user.roleId
 			};
 		}
-		if (session.email) {
-			event.locals.email = session.email;
-		}
-		if (session.npub) {
-			event.locals.npub = session.npub;
-		}
+		event.locals.email = session.email;
+		event.locals.npub = session.npub;
+		event.locals.sso = session.sso;
 	}
 	// Protect any routes under /admin
 	if (isAdminUrl) {
@@ -158,4 +174,160 @@ export const handle = (async ({ event, resolve }) => {
 		});
 	}
 	return response;
-}) satisfies Handle;
+};
+
+const handleSsoCookie: Handle = async ({ event, resolve }) => {
+	const ssoSession = await event.locals.getSession();
+	if (ssoSession?.user?.name && 'id' in ssoSession.user && typeof ssoSession.user.id === 'string') {
+		event.cookies.delete(SSO_COOKIE, { path: '/' });
+
+		const session = await collections.sessions.findOne({
+			sessionId: event.locals.sessionId
+		});
+
+		const provider = ssoSession.user.id.split('-')[0];
+		const ssoInfo = {
+			provider,
+			id: ssoSession.user.id,
+			email: ssoSession.user.email ?? undefined,
+			avatarUrl: ssoSession.user.image ?? undefined,
+			name: ssoSession.user.name
+		};
+
+		if (!session) {
+			await collections.sessions.insertOne({
+				sessionId: event.locals.sessionId,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				_id: new ObjectId(),
+				expiresAt: addYears(new Date(), 1),
+				sso: [ssoInfo]
+			});
+		} else {
+			await collections.sessions.updateOne(
+				{
+					sessionId: event.locals.sessionId
+				},
+				{
+					$set: {
+						updatedAt: new Date(),
+						expiresAt: addYears(new Date(), 1),
+						sso: [...(session.sso || []).filter((s) => s.provider !== ssoInfo.provider), ssoInfo]
+					}
+				}
+			);
+		}
+		event.locals.sso = [
+			...(session?.sso || []).filter((s) => s.provider !== ssoInfo.provider),
+			ssoInfo
+		];
+	}
+
+	const response = await resolve(event);
+
+	return response;
+};
+
+const authProviders = [
+	...(GITHUB_ID && GITHUB_SECRET
+		? [
+				GitHub({
+					clientId: GITHUB_ID,
+					clientSecret: GITHUB_SECRET,
+					profile: (param) => {
+						return {
+							id: 'github-' + param.id.toString(),
+							name: param.name,
+							image: param.avatar_url,
+							email: param.email
+						};
+					}
+				})
+		  ]
+		: []),
+	...(GOOGLE_ID && GOOGLE_SECRET
+		? [
+				Google({
+					clientId: GOOGLE_ID,
+					clientSecret: GOOGLE_SECRET,
+					profile: (param) => ({
+						name: param.name,
+						email: param.email,
+						image: param.picture,
+						id: 'google-' + param.sub
+					})
+				})
+		  ]
+		: []),
+	...(FACEBOOK_ID && FACEBOOK_SECRET
+		? [
+				Facebook({
+					clientId: FACEBOOK_ID,
+					clientSecret: FACEBOOK_SECRET,
+					profile: (param) => ({
+						id: 'facebook-' + param.id,
+						name: param.name,
+						email: param.email,
+						image: param.picture.data.url
+					})
+				})
+		  ]
+		: []),
+	...(TWITTER_ID && TWITTER_SECRET
+		? [
+				Twitter({
+					clientId: TWITTER_ID,
+					clientSecret: TWITTER_SECRET,
+					profile: (param) => ({
+						id: 'twitter-' + param.data.id,
+						name: param.data.name,
+						email: param.data.email,
+						image: param.data.profile_image_url
+					})
+				})
+		  ]
+		: [])
+];
+
+if (!building) {
+	await refreshPromise;
+}
+
+const handleSSO = authProviders
+	? SvelteKitAuth({
+			providers: authProviders,
+			secret: runtimeConfig.ssoSecret,
+			/**
+			 * Ideally we'd not store in the cookie at all, updating the session in DB directly.
+			 *
+			 * But I'm not sure it's possible to do that with @auth/sveltekit. So instead, we allow the
+			 * cookie to be set, and read its data with `getSession()` and update the session in DB and unset the cookie immediately after.
+			 */
+			cookies: {
+				sessionToken: {
+					name: 'next-auth.session-token',
+					options: {
+						httpOnly: true,
+						secure: ORIGIN.startsWith('https://'),
+						sameSite: 'lax',
+						path: '/'
+					}
+				}
+			},
+			callbacks: {
+				/**
+				 * Get the user's ID from the token and add it to the session
+				 */
+				session: async (params) => {
+					if (params.session.user) {
+						Object.assign(params.session.user, {
+							id: params.token.sub
+						});
+					}
+					return params.session;
+				}
+			}
+	  })
+	: null;
+
+export const handle = handleSSO ? sequence(handleGlobal, handleSSO, handleSsoCookie) : handleGlobal;
