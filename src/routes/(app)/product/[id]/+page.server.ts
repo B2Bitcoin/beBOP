@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, RequestEvent } from './$types';
+import type { RequestEvent } from './$types';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
@@ -8,7 +8,7 @@ import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { maxBy } from 'lodash-es';
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
 		Pick<
 			Product,

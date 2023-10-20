@@ -43,6 +43,7 @@ export async function load(params) {
 		countryCode: locals.countryCode,
 		email: locals.email,
 		npub: locals.npub,
+		sso: locals.sso,
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0
