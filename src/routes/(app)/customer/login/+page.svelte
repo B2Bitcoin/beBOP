@@ -49,19 +49,31 @@
 			</div>
 		</form>
 
-		<div class="flex flex-col gap-4 mt-4 justify-center self-center">
-			<button class="btn btn-gray" on:click={() => signIn('google')}>
-				<IconGoogle class="text-[#db4437] mr-2" />Sign In With Google
-			</button>
-			<button class="btn btn-gray" on:click={() => signIn('facebook')}>
-				<IconFacebook class="text-[#4267B2] mr-2" /> Sign In With Facebook
-			</button>
-			<button class="btn btn-gray" on:click={() => signIn('twitter')}>
-				<IconTwitter class="text-[#1DA1F2] mr-2" /> Sign In With Twitter
-			</button>
-			<button class="btn btn-gray" on:click={() => signIn('github')}>
-				<IconGithub class="mr-2" /> Sign In With Github
-			</button>
-		</div>
+		{#if data.canSso.github || data.canSso.google || data.canSso.facebook || data.canSso.twitter}
+			<h2 class="text-2xl">Or sign in with</h2>
+
+			<div class="flex flex-col gap-4 mt-4 self-center">
+				{#if data.canSso.google}
+					<button class="btn btn-gray" on:click={() => signIn('google')}>
+						<IconGoogle class="text-[#db4437] mr-2" />Sign In With Google
+					</button>
+				{/if}
+				{#if data.canSso.facebook}
+					<button class="btn btn-gray" on:click={() => signIn('facebook')}>
+						<IconFacebook class="text-[#4267B2] mr-2" /> Sign In With Facebook
+					</button>
+				{/if}
+				{#if data.canSso.twitter}
+					<button class="btn btn-gray" on:click={() => signIn('twitter')}>
+						<IconTwitter class="text-[#1DA1F2] mr-2" /> Sign In With Twitter
+					</button>
+				{/if}
+				{#if data.canSso.github}
+					<button class="btn btn-gray" on:click={() => signIn('github')}>
+						<IconGithub class="mr-2" /> Sign In With Github
+					</button>
+				{/if}
+			</div>
+		{/if}
 	{/if}
 </div>

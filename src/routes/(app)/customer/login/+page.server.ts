@@ -6,9 +6,29 @@ import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { collections } from '$lib/server/database.js';
 import { addDays } from 'date-fns';
+import {
+	AUTH_SECRET,
+	FACEBOOK_ID,
+	FACEBOOK_SECRET,
+	GITHUB_ID,
+	GITHUB_SECRET,
+	GOOGLE_ID,
+	GOOGLE_SECRET,
+	TWITTER_ID,
+	TWITTER_SECRET
+} from '$env/static/private';
 
 export const load = async ({ url }) => {
 	const token = url.searchParams.get('token');
+
+	const base = {
+		canSso: {
+			github: !!(AUTH_SECRET && GITHUB_ID && GITHUB_SECRET),
+			google: !!(AUTH_SECRET && GOOGLE_ID && GOOGLE_SECRET),
+			facebook: !!(AUTH_SECRET && FACEBOOK_ID && FACEBOOK_SECRET),
+			twitter: !!(AUTH_SECRET && TWITTER_ID && TWITTER_SECRET)
+		}
+	};
 
 	if (token) {
 		try {
@@ -23,17 +43,21 @@ export const load = async ({ url }) => {
 
 			if (npub) {
 				return {
+					...base,
 					npubToLogin: npub
 				};
 			} else if (email) {
 				return {
+					...base,
 					emailToLogin: email
 				};
 			}
 		} catch (err) {
-			return { error: 'Invalid or expired token' };
+			return { ...base, error: 'Invalid or expired token' };
 		}
 	}
+
+	return base;
 };
 
 export const actions = {
