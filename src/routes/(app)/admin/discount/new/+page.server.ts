@@ -14,8 +14,8 @@ export const load = async () => {
 	const products = await collections.products
 		.find({
 			type: { $ne: 'subscription' },
-			payWhatYouWant: { $exists: true, $eq: false },
-			free: { $exists: true, $eq: false }
+			payWhatYouWant: { $ne: true },
+			free: { $ne: true }
 		})
 		.project<Pick<Product, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
