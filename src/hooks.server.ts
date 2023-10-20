@@ -212,12 +212,15 @@ const handleSsoCookie: Handle = async ({ event, resolve }) => {
 					$set: {
 						updatedAt: new Date(),
 						expiresAt: addYears(new Date(), 1),
-						sso: [...(session.sso || []), ssoInfo]
+						sso: [...(session.sso || []).filter((s) => s.provider !== ssoInfo.provider), ssoInfo]
 					}
 				}
 			);
 		}
-		event.locals.sso = [...(session?.sso || []), ssoInfo];
+		event.locals.sso = [
+			...(session?.sso || []).filter((s) => s.provider !== ssoInfo.provider),
+			ssoInfo
+		];
 	}
 
 	const response = await resolve(event);

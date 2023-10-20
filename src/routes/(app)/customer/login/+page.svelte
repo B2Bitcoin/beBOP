@@ -14,11 +14,16 @@
 	{#if form?.error || data?.error}
 		<p class="text-red-500">{form?.error || data?.error}</p>
 	{/if}
-	{#if data.email || data.npub}
+	{#if data.email || data.npub || data.sso?.length}
 		<h2 class="text-2xl">Session</h2>
 		<ul class="list-disc ml-4">
 			{#if data.email}<li>Email: {data.email}</li>{/if}
 			{#if data.npub}<li>Npub: {data.npub}</li>{/if}
+			{#each data.sso || [] as { provider, email, name }}
+				<li>
+					{provider}: {email || 'no-email'} ({name})
+				</li>
+			{/each}
 		</ul>
 	{/if}
 	{#if data.emailToLogin || data.npubToLogin}
