@@ -1,5 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { signIn } from '@auth/sveltekit/client';
+	import IconFacebook from '~icons/ant-design/facebook-filled';
+	import IconGithub from '~icons/ant-design/github-outlined';
+	import IconGoogle from '~icons/ant-design/google-outlined';
+	import IconTwitter from '~icons/ant-design/twitter-outlined';
+
 	export let form;
 	export let data;
 </script>
@@ -42,5 +48,20 @@
 				<button class="btn btn-gray"><a href="/">Cancel</a></button>
 			</div>
 		</form>
+
+		<div class="flex flex-col gap-4 mt-4 justify-center self-center">
+			<button class="btn btn-gray" on:click={() => signIn('google')}>
+				<IconGoogle class="text-[#db4437] mr-2" />Sign In With Google
+			</button>
+			<button class="btn btn-gray" on:click={() => signIn('facebook')}>
+				<IconFacebook class="text-[#4267B2] mr-2" /> Sign In With Facebook
+			</button>
+			<button class="btn btn-gray" on:click={() => signIn('twitter')}>
+				<IconTwitter class="text-[#1DA1F2] mr-2" /> Sign In With Twitter
+			</button>
+			<button class="btn btn-gray" on:click={() => signIn('github')}>
+				<IconGithub class="mr-2" /> Sign In With Github
+			</button>
+		</div>
 	{/if}
 </div>
