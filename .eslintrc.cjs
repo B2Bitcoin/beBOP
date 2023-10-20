@@ -18,7 +18,8 @@ module.exports = {
 		'@typescript-eslint/no-empty-function': 'off',
 		'@typescript-eslint/no-explicit-any': 'error',
 		'@typescript-eslint/no-non-null-assertion': 'error',
-		'@typescript-eslint/no-unused-vars': 'error'
+		'@typescript-eslint/no-unused-vars': 'error',
+		curly: 'error'
 	},
 	env: {
 		browser: true,

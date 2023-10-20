@@ -151,7 +151,7 @@
 			{#if vatSingleCountry}
 				<label class="form-label">
 					Seller's country for VAT purposes
-					<select name="vatCountry">
+					<select name="vatCountry" class="form-input">
 						{#each Object.entries(data.countryCodes) as [countryCode, countryName]}
 							<option value={countryCode} selected={data.vatCountry === countryCode}>
 								{countryName}
@@ -209,6 +209,28 @@
 			name="desiredPaymentTimeout"
 			class="form-input max-w-[25rem]"
 			value={data.desiredPaymentTimeout}
+		/>
+	</label>
+	<label class="form-label">
+		How much time a cart reserves the stock (in minutes)
+		<input
+			type="number"
+			min="0"
+			step="1"
+			name="reserveStockInMinutes"
+			class="form-input max-w-[25rem]"
+			value={data.reserveStockInMinutes}
+		/>
+		<p class="text-sm">The cart's reservation is extended each time the cart is updated.</p>
+	</label>
+	<label class="form-label">
+		Plausible script url
+		<input
+			type="text"
+			class="form-input max-w-[25rem]"
+			name="plausibleScriptUrl"
+			placeholder="https://plausible.yourdomain.com/js/script.js"
+			value={data.plausibleScriptUrl}
 		/>
 	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />

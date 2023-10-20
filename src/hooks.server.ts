@@ -1,13 +1,13 @@
 import { ZodError } from 'zod';
-import { type HandleServerError, type Handle, error } from '@sveltejs/kit';
+import { type HandleServerError, type Handle, error, redirect } from '@sveltejs/kit';
 import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 
 import '$lib/server/locks';
-import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
+import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 // import { countryFromIp } from '$lib/server/geoip';
 
 export const handleError = (({ error, event }) => {
@@ -50,7 +50,10 @@ export const handle = (async ({ event, resolve }) => {
 
 	// event.locals.countryCode = countryFromIp(event.getClientAddress());
 
-	const isAdminUrl = event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin';
+	const isAdminUrl =
+		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
+		!(event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login');
+
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
 			maintenanceDisplay: true
@@ -59,31 +62,7 @@ export const handle = (async ({ event, resolve }) => {
 			_id: 1
 		})
 		.toArray();
-	if (isAdminUrl && ADMIN_LOGIN && ADMIN_PASSWORD) {
-		const authorization = event.request.headers.get('authorization');
 
-		if (!authorization?.startsWith('Basic ')) {
-			return new Response(null, {
-				status: 401,
-				headers: {
-					'WWW-Authenticate': 'Basic realm="Admin"'
-				}
-			});
-		}
-
-		const [login, password] = Buffer.from(authorization.split(' ')[1], 'base64')
-			.toString()
-			.split(':');
-
-		if (login !== ADMIN_LOGIN || password !== ADMIN_PASSWORD) {
-			return new Response(null, {
-				status: 401,
-				headers: {
-					'WWW-Authenticate': 'Basic realm="Admin"'
-				}
-			});
-		}
-	}
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
 	if (
@@ -92,6 +71,7 @@ export const handle = (async ({ event, resolve }) => {
 		event.url.pathname !== '/logo' &&
 		!event.url.pathname.startsWith('/.well-known/') &&
 		!event.url.pathname.startsWith('/picture/raw/') &&
+		event.url.pathname !== '/lightning/pay' &&
 		!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
 		!runtimeConfig.maintenanceIps.split(',').includes(event.getClientAddress())
 	) {
@@ -113,6 +93,35 @@ export const handle = (async ({ event, resolve }) => {
 		httpOnly: true,
 		expires: addYears(new Date(), 1)
 	});
+	const session = await collections.sessions.findOne({
+		sessionId: event.locals.sessionId
+	});
+	if (session) {
+		const user = await collections.users.findOne({
+			_id: session.userId
+		});
+		if (user) {
+			event.locals.user = {
+				login: user.login ? user.login : '',
+				role: user.roleId
+			};
+		}
+		if (session.email) {
+			event.locals.email = session.email;
+		}
+		if (session.npub) {
+			event.locals.npub = session.npub;
+		}
+	}
+	// Protect any routes under /admin
+	if (isAdminUrl) {
+		if (!event.locals.user) {
+			throw redirect(303, '/admin/login');
+		}
+		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page.');
+		}
+	}
 
 	const response = await resolve(event);
 

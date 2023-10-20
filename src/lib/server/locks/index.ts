@@ -6,3 +6,4 @@ import './order-notifications';
 import './nostr-notifications';
 import './handle-messages';
 import './subscription-lock';
+import './stock-lock';

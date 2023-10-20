@@ -5,8 +5,23 @@ import { vatRates } from '$lib/server/vat-rates';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef';
+import { error, redirect } from '@sveltejs/kit';
 
-export async function load({ depends, locals }) {
+export async function load(params) {
+	if (!runtimeConfig.isAdminCreated) {
+		if (params.locals.user) {
+			throw error(
+				400,
+				"Admin account hasn't been created yet. Please open a new private window to create admin account"
+			);
+		}
+		if (params.url.pathname !== '/admin/login') {
+			throw redirect(302, '/admin/login');
+		}
+	}
+
+	const { depends, locals } = params;
+
 	depends(UrlDependency.ExchangeRate);
 	depends(UrlDependency.Cart);
 
@@ -26,6 +41,8 @@ export async function load({ depends, locals }) {
 			BTC_SAT: runtimeConfig.BTC_SAT
 		},
 		countryCode: locals.countryCode,
+		email: locals.email,
+		npub: locals.npub,
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0
@@ -70,6 +87,8 @@ export async function load({ depends, locals }) {
 								| 'requireSpecificDeliveryFee'
 								| 'payWhatYouWant'
 								| 'standalone'
+								| 'maxQuantityPerOrder'
+								| 'stock'
 							>
 						>(
 							{ _id: item.productId },
@@ -87,7 +106,9 @@ export async function load({ depends, locals }) {
 									applyDeliveryFeesOnlyOnce: 1,
 									requireSpecificDeliveryFee: 1,
 									payWhatYouWant: 1,
-									standalone: 1
+									standalone: 1,
+									maxQuantityPerOrder: 1,
+									stock: 1
 								}
 							}
 						);

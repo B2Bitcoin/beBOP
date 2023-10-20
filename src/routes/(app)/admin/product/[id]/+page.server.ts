@@ -7,6 +7,7 @@ import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
+import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -28,7 +29,9 @@ export const load: PageServerLoad = async ({ params }) => {
 	return {
 		product,
 		pictures,
-		digitalFiles
+		digitalFiles,
+		reserved: amountOfProductReserved(params.id),
+		sold: amountOfProductSold(params.id)
 	};
 };
 
@@ -96,6 +99,8 @@ export const actions: Actions = {
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;
 		}
+		const amountInCarts = await amountOfProductReserved(params.id);
+
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -117,11 +122,21 @@ export const actions: Actions = {
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
 					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
+					...(parsed.maxQuantityPerOrder && { maxQuantityPerOrder: parsed.maxQuantityPerOrder }),
+					...(parsed.stock !== undefined && {
+						stock: {
+							total: parsed.stock,
+							reserved: amountInCarts,
+							available: parsed.stock - amountInCarts
+						}
+					}),
 					updatedAt: new Date()
 				},
 				$unset: {
 					...(!parsed.availableDate && { availableDate: '' }),
-					...(!parsed.deliveryFees && { deliveryFees: '' })
+					...(!parsed.deliveryFees && { deliveryFees: '' }),
+					...(parsed.stock === undefined && { stock: '' }),
+					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' })
 				}
 			}
 		);

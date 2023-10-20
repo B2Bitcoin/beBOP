@@ -20,8 +20,8 @@ The app will automatically configure the S3 bucket to accept CORS PUT calls.
 
 Add `.env.local` or `.env.{development,test,production}.local` files for secrets not committed to git and to override the `.env`
 
-- `ADMIN_LOGIN` - Protect the admin page with this user
-- `ADMIN_PASSWORD` - Protect the admin page with this password
+- `ADMIN_LOGIN` - Automatically create an admin user with this login
+- `ADMIN_PASSWORD` - Automatically create an admin user with this password
 - `BITCOIN_RPC_URL` - The RPC url for the bitcoin node. Set to http://127.0.0.1:8332 if you run a bitcoin node locally with default configuration
 - `BITCOIN_RPC_USER` - The RPC user
 - `BITCOIN_RPC_PASSWORD` - The RPC password
@@ -153,3 +153,12 @@ Then restart `pnpm dev`.
 The simplest way is to get a free tier on [MongoDB Atlas](https://www.mongodb.com/atlas/database).
 
 Alternatively, you need to configure a local MongoDB with ReplicaSet enabled. ReplicaSet is needed for change streams and ACID transactions.
+
+### Configuring plausible
+
+Self install plausible : [Plausible](https://plausible.io/docs/self-hosting)
+
+Then, go in the config page : /admin/config
+
+And : Copy/paste your Plausible URL in the plausible input
+#for example: https://plausible.your-domain.com/js/script.js

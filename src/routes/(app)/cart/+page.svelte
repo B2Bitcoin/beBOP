@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
+	import { oneMaxPerLine } from '$lib/types/Product.js';
+	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 
@@ -12,21 +15,28 @@
 
 	let actionCount = 0;
 
+	let errorMessage = data.errorMessage;
+	let errorProductId = '';
+
 	$: items = data.cart || [];
 	$: totalPrice = sumCurrency(
-		data.currencies.main,
+		UNDERLYING_CURRENCY,
 		items.map((item) => ({
 			currency: (item.customPrice || item.product.price).currency,
 			amount: (item.customPrice || item.product.price).amount * item.quantity
 		}))
 	);
-	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), data.currencies.main);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 bg-white border-gray-300 border">
 		<h1 class="page-title">Products</h1>
+
+		{#if errorMessage && !errorProductId}
+			<p class="text-red-600">{errorMessage}</p>
+		{/if}
 
 		{#if items.length}
 			<div
@@ -38,6 +48,8 @@
 						method="POST"
 						class="contents"
 						use:enhance={({ action }) => {
+							errorMessage = '';
+
 							if (action.searchParams.has('/increase')) {
 								item.quantity++;
 							} else if (action.searchParams.has('/decrease')) {
@@ -53,6 +65,12 @@
 									if (result.type === 'redirect') {
 										// Invalidate all to remove 0-quantity items
 										await goto(result.location, { noScroll: true, invalidateAll: true });
+										return;
+									}
+									if (result.type === 'error' && result.error?.message) {
+										errorMessage = result.error.message;
+										errorProductId = item.product._id;
+										await invalidate(UrlDependency.Cart);
 										return;
 									}
 									await applyAction(result);
@@ -93,7 +111,7 @@
 						</div>
 
 						<div class="self-center">
-							{#if item.product.type !== 'subscription' && !item.product.standalone}
+							{#if !oneMaxPerLine(item.product)}
 								<CartQuantity {item} />
 							{/if}
 						</div>
@@ -129,6 +147,10 @@
 						</div>
 					</form>
 
+					{#if errorMessage && errorProductId === item.product._id}
+						<p class="text-red-600 col-span-4">{errorMessage}</p>
+					{/if}
+
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
@@ -149,14 +171,14 @@
 					<div class="flex flex-col items-end">
 						<PriceTag
 							amount={vat}
-							currency={data.currencies.main}
+							currency={UNDERLYING_CURRENCY}
 							main
 							class="text-[28px] text-gray-800"
 						/>
 						<PriceTag
 							class="text-base text-gray-600"
 							amount={vat}
-							currency={data.currencies.main}
+							currency={UNDERLYING_CURRENCY}
 							secondary
 						/>
 					</div>
@@ -167,14 +189,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={totalPriceWithVat}
-						currency={data.currencies.main}
+						currency={UNDERLYING_CURRENCY}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.currencies.main}
+						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>

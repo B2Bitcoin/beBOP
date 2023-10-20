@@ -13,6 +13,9 @@ declare global {
 			status?: number;
 			sessionId: string;
 			countryCode: string;
+			user?: { login: string; role: string };
+			email?: string;
+			npub?: string;
 		}
 		// interface PageData {}
 		// interface Platform {}

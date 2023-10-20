@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import Editor from '@tinymce/tinymce-svelte';
+	import { TINYMCE_PLUGINS, TINYMCE_TOOLBAR } from '../tinymce-plugins.js';
 
 	export let data;
+
+	let pageContent = data.cmsPage.content;
 
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this CMS page?')) {
@@ -73,20 +77,30 @@
 
 	<label class="block w-full mt-4">
 		Content
+
+		<Editor
+			scriptSrc="/tinymce/tinymce.js"
+			bind:value={pageContent}
+			conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
+		/>
+
+		<p class="text-gray-700 my-3">
+			To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code>,
+			where
+			<code class="font-mono">slug</code> is the slug of your product
+		</p>
+
+		Raw HTML
+
 		<textarea
 			name="content"
 			cols="30"
 			rows="10"
 			maxlength={MAX_CONTENT_LIMIT}
-			placeholder="Markdown content"
+			placeholder="HTML content"
 			class="form-input block w-full"
-			value={data.cmsPage.content}
+			bind:value={pageContent}
 		/>
-		<p class="text-gray-700">
-			To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code>,
-			where
-			<code class="font-mono">slug</code> is the slug of your product
-		</p>
 	</label>
 
 	<div class="flex flex-row justify-between gap-2">
