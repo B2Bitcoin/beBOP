@@ -47,7 +47,8 @@ export function userIdentifier(locals: App.Locals): UserIdentifier {
 		ssoIds: locals.sso?.map((sso) => sso.id),
 		userId: locals.user?._id,
 		email: locals.email,
-		npub: locals.npub
+		npub: locals.npub,
+		sessionId: locals.sessionId
 	};
 }
 
