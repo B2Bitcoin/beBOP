@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { upperFirst } from '$lib/utils/upperFirst';
 	import { signIn } from '@auth/sveltekit/client';
 	import IconFacebook from '~icons/ant-design/facebook-filled';
 	import IconGithub from '~icons/ant-design/github-outlined';
@@ -21,7 +22,7 @@
 			{#if data.npub}<li>Npub: {data.npub}</li>{/if}
 			{#each data.sso || [] as { provider, email, name }}
 				<li>
-					{provider}: {email || 'no-email'} ({name})
+					{upperFirst(provider)}: {email || 'no-email'} ({name})
 				</li>
 			{/each}
 		</ul>

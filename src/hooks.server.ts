@@ -121,6 +121,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		});
 		if (user) {
 			event.locals.user = {
+				_id: user._id,
 				login: user.login ? user.login : '',
 				role: user.roleId
 			};
