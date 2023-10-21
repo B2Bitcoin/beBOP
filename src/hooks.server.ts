@@ -26,6 +26,7 @@ import {
 } from '$env/static/private';
 import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
+import { sha256 } from '$lib/utils/sha256';
 // import { countryFromIp } from '$lib/server/geoip';
 
 const SSO_COOKIE = 'next-auth.session-token';
@@ -101,7 +102,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const token = event.cookies.get('bootik-session');
 
-	event.locals.sessionId = token || crypto.randomUUID();
+	const secretSessionId = token || crypto.randomUUID();
+	event.locals.sessionId = await sha256(secretSessionId);
 
 	// Refresh cookie expiration date
 	event.cookies.set('bootik-session', event.locals.sessionId, {
