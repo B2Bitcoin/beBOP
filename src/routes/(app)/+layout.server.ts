@@ -41,7 +41,7 @@ export async function load(params) {
 			BTC_SAT: runtimeConfig.BTC_SAT
 		},
 		countryCode: locals.countryCode,
-		email: locals.email,
+		email: locals.email || locals.sso?.find((sso) => sso.email)?.email,
 		npub: locals.npub,
 		sso: locals.sso,
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
