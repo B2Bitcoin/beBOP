@@ -296,6 +296,8 @@ if (!building) {
 
 const handleSSO = authProviders
 	? SvelteKitAuth({
+			// Should be fine as long as your reverse proxy is configured to only accept traffic with the correct host header
+			trustHost: true,
 			providers: authProviders,
 			secret: runtimeConfig.ssoSecret,
 			/**
