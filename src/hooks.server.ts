@@ -106,7 +106,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	event.locals.sessionId = await sha256(secretSessionId);
 
 	// Refresh cookie expiration date
-	event.cookies.set('bootik-session', event.locals.sessionId, {
+	event.cookies.set('bootik-session', secretSessionId, {
 		path: '/',
 		sameSite: 'lax',
 		secure: true,
