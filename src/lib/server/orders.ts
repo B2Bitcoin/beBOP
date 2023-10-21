@@ -21,6 +21,7 @@ import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
+import { userQuery } from './user';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
