@@ -273,10 +273,7 @@ export async function createOrder(
 		}
 
 		const existingSubscription = await collections.paidSubscriptions.findOne({
-			$or: filterUndef([
-				npubAddress ? { npub: npubAddress } : undefined,
-				email ? { email: email } : undefined
-			]),
+			...userQuery(params.user),
 			productId: product._id
 		});
 
