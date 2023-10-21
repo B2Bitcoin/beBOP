@@ -7,6 +7,7 @@ export interface Session extends Timestamps {
 	email?: string;
 	npub?: string;
 	sessionId: string;
+	expireUserAt?: Date;
 	expiresAt: Date;
 	sso?: Array<{
 		provider: string;

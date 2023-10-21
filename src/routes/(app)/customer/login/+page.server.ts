@@ -126,5 +126,40 @@ export const actions = {
 			}
 			return fail(400, { error: 'Invalid or expired token' });
 		}
+	},
+	clearEmail: async function ({ locals }) {
+		await collections.sessions.updateOne(
+			{ sessionId: locals.sessionId },
+			{ $unset: { email: '' } }
+		);
+	},
+	clearNpub: async function ({ locals }) {
+		await collections.sessions.updateOne({ sessionId: locals.sessionId }, { $unset: { npub: '' } });
+	},
+	clearUserId: async function ({ locals }) {
+		await collections.sessions.updateOne(
+			{ sessionId: locals.sessionId },
+			{ $unset: { userId: '' } }
+		);
+	},
+	clearSso: async function ({ locals, request }) {
+		const { provider } = z
+			.object({
+				provider: z.enum(['github', 'google', 'facebook', 'twitter'])
+			})
+			.parse(Object.fromEntries(await request.formData()));
+
+		await collections.sessions.updateOne(
+			{ sessionId: locals.sessionId },
+			{ $pull: { sso: { provider } } }
+		);
+	},
+	clearAll: async function (event) {
+		await collections.sessions.deleteOne({ sessionId: event.locals.sessionId });
+
+		event.locals.sessionId = crypto.randomUUID();
+		event.cookies.delete('bootik-session', {
+			path: '/'
+		});
 	}
 };

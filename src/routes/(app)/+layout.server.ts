@@ -44,8 +44,10 @@ export async function load(params) {
 		},
 		countryCode: locals.countryCode,
 		email: locals.email || locals.sso?.find((sso) => sso.email)?.email,
+		emailFromSso: !locals.email && locals.sso?.some((sso) => sso.email),
 		npub: locals.npub,
 		sso: locals.sso,
+		userId: locals.user?._id.toString(),
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0

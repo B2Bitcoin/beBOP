@@ -112,19 +112,45 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		expires: addYears(new Date(), 1)
 	});
 
-	const session = await collections.sessions.findOne({
-		sessionId: event.locals.sessionId
-	});
+	const session = (
+		await collections.sessions.findOneAndUpdate(
+			{
+				sessionId: event.locals.sessionId
+			},
+			{
+				$set: {
+					updatedAt: new Date(),
+					expiresAt: addYears(new Date(), 1)
+				}
+			}
+		)
+	).value;
 	if (session) {
-		const user = await collections.users.findOne({
-			_id: session.userId
-		});
-		if (user) {
-			event.locals.user = {
-				_id: user._id,
-				login: user.login ? user.login : '',
-				role: user.roleId
-			};
+		if (session.userId) {
+			const user = await collections.users.findOne({
+				_id: session.userId
+			});
+			if ((session.expireUserAt && session.expireUserAt < new Date()) || !user) {
+				await collections.sessions.updateOne(
+					{
+						sessionId: event.locals.sessionId
+					},
+					{
+						$unset: {
+							userId: '',
+							expireUserAt: ''
+						}
+					}
+				);
+			} else {
+				if (user) {
+					event.locals.user = {
+						_id: user._id,
+						login: user.login ? user.login : '',
+						role: user.roleId
+					};
+				}
+			}
 		}
 		event.locals.email = session.email;
 		event.locals.npub = session.npub;
