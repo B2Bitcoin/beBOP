@@ -9,12 +9,28 @@
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
-	import { isPreorder as isPreorderFn } from '$lib/types/Product.js';
+	import {
+		DEFAULT_MAX_QUANTITY_PER_ORDER,
+		isPreorder as isPreorderFn,
+		oneMaxPerLine
+	} from '$lib/types/Product';
+	import { toCurrency } from '$lib/utils/toCurrency';
 
 	export let data;
 
 	let quantity = 1;
 	let loading = false;
+	let errorMessage = '';
+	const endsAt = data.discount[0] ? new Date(data.discount[0].endsAt).getTime() : 0; // Convert to timestamp
+	const currentTime = Date.now();
+	const timeDifference = endsAt - currentTime;
+
+	const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
+	let customAmount =
+		data.product.price.amount !== 0 &&
+		toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency) < 0.01
+			? 0.01
+			: toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency);
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
@@ -22,10 +38,21 @@
 
 	$: isPreorder = isPreorderFn(data.product.availableDate, data.product.preorder);
 
+	$: amountAvailable = Math.max(
+		Math.min(
+			data.product.stock?.available ?? Infinity,
+			data.product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
+		),
+		0
+	);
+
 	function addToCart() {
 		$productAddedToCart = {
 			product: data.product,
 			quantity,
+			...(data.product.type !== 'subscription' && {
+				customPrice: { amount: customAmount, currency: data.currencies.main }
+			}),
 			picture: currentPicture
 		};
 	}
@@ -54,17 +81,19 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
-		<div class="flex flex-col gap-2 w-12 min-w-[48px] py-12">
-			{#each data.pictures as picture, i}
-				<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
-					<Picture
-						{picture}
-						class="h-12 w-12 rounded-sm {picture === currentPicture
-							? 'ring-2 ring-link ring-offset-2'
-							: ''} cursor-pointer"
-					/>
-				</a>
-			{/each}
+		<div class="flex flex-col gap-2 w-14 min-w-[48px] py-12 hidden md:block">
+			{#if data.pictures.length > 1}
+				{#each data.pictures as picture, i}
+					<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
+						<Picture
+							{picture}
+							class="h-12 w-12 rounded-sm m-2 {picture === currentPicture
+								? 'ring-2 ring-link ring-offset-2'
+								: ''} cursor-pointer"
+						/>
+					</a>
+				{/each}
+			{/if}
 		</div>
 
 		<div class="flex flex-col md:grid md:grid-cols-[70%_1fr] gap-2 grow pb-12">
@@ -79,7 +108,21 @@
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
-				{#if data.product.description.trim()}
+				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:inline md:hidden py-12">
+					{#if data.pictures.length > 1}
+						{#each data.pictures as picture, i}
+							<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
+								<Picture
+									{picture}
+									class="h-12 w-12 rounded-sm {picture === currentPicture
+										? 'ring-2 ring-link ring-offset-2'
+										: ''} cursor-pointer"
+								/>
+							</a>
+						{/each}
+					{/if}
+				</div>
+				{#if data.product.description.trim() || data.product.shortDescription.trim()}
 					<hr class="border-gray-300" />
 					<h2 class="text-gray-850 text-[22px]">
 						{data.product.displayShortDescription && data.product.shortDescription
@@ -141,10 +184,14 @@
 					/>
 				</div>
 
-				{#if 0}
+				{#if data.product.type === 'subscription' && data.discount.length > 0}
 					<hr class="border-gray-300" />
-					<h3 class="text-gray-850 text-[22px]">50% off for 48h</h3>
-					<GoalProgress text="1h32min left" goal={600} progress={444} />
+					<h3 class="text-gray-850 text-[22px]">
+						{data.discount[0].percentage}% off for {hoursDifference}h
+					</h3>
+					{#if 0}
+						<GoalProgress text="1h32min left" goal={600} progress={444} />
+					{/if}
 					<hr class="border-gray-300" />
 					<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
 						<IconInfo class="text-[#E4C315]" />
@@ -182,9 +229,16 @@
 						method="post"
 						use:enhance={({ action }) => {
 							loading = true;
+							errorMessage = '';
 							return async ({ result }) => {
 								loading = false;
-								if (result.type === 'error' || !action.searchParams.has('/addToCart')) {
+
+								if (result.type === 'error') {
+									errorMessage = result.error.message;
+									return;
+								}
+
+								if (!action.searchParams.has('/addToCart')) {
 									return await applyAction(result);
 								}
 
@@ -195,20 +249,55 @@
 						}}
 						class="flex flex-col gap-2"
 					>
-						{#if data.product.type !== 'subscription'}
+						{#if data.product.payWhatYouWant}
+							<hr class="border-gray-300 md:hidden mt-4 pb-2" />
+							<div class="flex flex-col gap-2 justify-between">
+								<label class="w-full form-label">
+									Name your price ({data.currencies.main}):
+									<input
+										class="form-input"
+										type="number"
+										min={customAmount < 0.01 && data.product.price.amount !== 0
+											? '0.01'
+											: toCurrency(
+													data.currencies.main,
+													data.product.price.amount,
+													data.product.price.currency
+											  )}
+										name="customPrice"
+										bind:value={customAmount}
+										placeholder="Price"
+										required
+										step="any"
+									/>
+								</label>
+							</div>
+						{/if}
+						{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 							<label class="mb-2">
 								Amount: <select
 									name="quantity"
 									bind:value={quantity}
 									class="form-input w-16 ml-2 inline cursor-pointer"
 								>
-									{#each [1, 2, 3, 4, 5] as i}
+									{#each Array(amountAvailable)
+										.fill(0)
+										.map((_, i) => i + 1) as i}
 										<option value={i}>{i}</option>
 									{/each}
 								</select>
 							</label>
 						{/if}
-						{#if data.showCheckoutButton}
+						{#if errorMessage}
+							<p class="text-red-500">{errorMessage}</p>
+						{/if}
+						{#if amountAvailable === 0}
+							<p class="text-red-500">
+								<span class="font-bold">Out of stock</span>
+								<br />
+								Please check back later
+							</p>
+						{:else if data.showCheckoutButton}
 							<button class="btn btn-black" disabled={loading}>{verb} now</button>
 							<button
 								value="Add to cart"

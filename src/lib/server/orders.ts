@@ -1,7 +1,7 @@
 import type { Order } from '$lib/types/Order';
-import type { ClientSession } from 'mongodb';
+import type { ClientSession, WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
-import { add, addHours, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
+import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
@@ -13,8 +13,15 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
-import { computeDeliveryFees } from '$lib/types/Cart';
+import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
 import { vatRates } from './vat-rates';
+import type { Currency } from '$lib/types/Currency';
+import { sumCurrency } from '$lib/utils/sumCurrency';
+import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
+import { refreshAvailableStockInDb } from './product';
+import { checkCartItems } from './cart';
+import type { UserIdentifier } from '$lib/types/UserIdentifier';
+import { userQuery } from './user';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -78,7 +85,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 				{
 					_id: crypto.randomUUID(),
 					number: await generateSubscriptionNumber(),
-					npub: order.notifications.paymentStatus.npub,
+					user: order.user,
 					productId: subscription.product._id,
 					paidUntil: add(new Date(), { [`${runtimeConfig.subscriptionDuration}s`]: 1 }),
 					createdAt: new Date(),
@@ -120,22 +127,45 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 		);
 	}
 	//#endregion
+
+	// Update product stock in DB
+	for (const item of order.items.filter((item) => item.product.stock)) {
+		await collections.products.updateOne(
+			{
+				_id: item.product._id
+			},
+			{
+				$inc: { 'stock.total': -item.quantity, 'stock.available': -item.quantity },
+				$set: { updatedAt: new Date() }
+			},
+			{ session }
+		);
+	}
 }
 
 export async function createOrder(
-	items: Array<{ quantity: number; product: Product }>,
+	items: Array<{
+		quantity: number;
+		product: Product;
+		customPrice?: { amount: number; currency: Currency };
+	}>,
 	paymentMethod: Order['payment']['method'],
 	params: {
-		sessionId?: string;
+		user: UserIdentifier;
 		notifications: {
 			paymentStatus: {
 				npub?: string;
 				email?: string;
 			};
 		};
+		/**
+		 * Will automatically delete the cart after the order is created
+		 *
+		 * Also, allows using the stock reserved by the cart
+		 */
+		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
-		cb?: (session: ClientSession) => Promise<unknown>;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -165,6 +195,8 @@ export async function createOrder(
 		);
 	}
 
+	await checkCartItems(items, params.cart);
+
 	const isDigital = products.every((product) => !product.shipping);
 	let deliveryFees = 0;
 
@@ -189,12 +221,19 @@ export async function createOrder(
 
 	let totalSatoshis = toSatoshis(deliveryFees, runtimeConfig.mainCurrency);
 
-	for (const item of items) {
+	const itemPrices = items.map((item) => {
 		const price = parseFloat(item.product.price.amount.toString());
-		const quantity = item.quantity;
 
-		totalSatoshis += toSatoshis(price * quantity, item.product.price.currency);
-	}
+		const quantity = item.quantity;
+		if (item.product.type !== 'subscription' && item.customPrice) {
+			const customPrice = parseFloat(item.customPrice.amount.toString());
+			return { amount: customPrice * quantity, currency: item.customPrice.currency };
+		} else {
+			return { amount: price * quantity, currency: item.product.price.currency };
+		}
+	});
+
+	totalSatoshis += sumCurrency('SAT', itemPrices);
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
@@ -203,10 +242,11 @@ export async function createOrder(
 			: {
 					country: vatCountry,
 					price: {
-						currency: 'SAT',
-						amount: Math.round(
-							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100)
-						)
+						amount: fixCurrencyRounding(
+							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
+							'SAT'
+						),
+						currency: 'SAT'
 					},
 					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
 			  };
@@ -234,10 +274,7 @@ export async function createOrder(
 		}
 
 		const existingSubscription = await collections.paidSubscriptions.findOne({
-			$or: filterUndef([
-				npubAddress ? { npub: npubAddress } : undefined,
-				email ? { email: email } : undefined
-			]),
+			...userQuery(params.user),
 			productId: product._id
 		});
 
@@ -275,13 +312,15 @@ export async function createOrder(
 	const orderNumber = await generateOrderNumber();
 
 	await withTransaction(async (session) => {
-		const expiresAt = paymentMethod === 'cash' ? addMonths(new Date(), 1) : addHours(new Date(), 2);
+		const expiresAt =
+			paymentMethod === 'cash'
+				? addMonths(new Date(), 1)
+				: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 
 		await collections.orders.insertOne(
 			{
 				_id: orderId,
 				number: orderNumber,
-				...(params.sessionId && { sessionId: params.sessionId }),
 				createdAt: new Date(),
 				updatedAt: new Date(),
 				items,
@@ -336,12 +375,26 @@ export async function createOrder(
 						...(npubAddress && { npub: npubAddress }),
 						...(email && { email })
 					}
+				},
+				user: {
+					...params.user,
+					// In case the user didn't authenticate with an email but still wants to be notified,
+					// we also associate the email to the order
+					...(email && { email })
 				}
 			},
 			{ session }
 		);
 
-		await params.cb?.(session);
+		if (params.cart) {
+			await collections.carts.deleteOne({ _id: params.cart._id }, { session });
+		}
+
+		for (const product of products) {
+			if (product.stock) {
+				await refreshAvailableStockInDb(product._id, session);
+			}
+		}
 	});
 
 	return orderId;

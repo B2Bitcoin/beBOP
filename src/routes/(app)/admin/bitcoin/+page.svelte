@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PriceTag from '$lib/components/PriceTag.svelte';
+	import { downloadFile } from '$lib/utils/downloadFile.js';
 	import { formatDistance } from 'date-fns';
 	import { tick } from 'svelte';
 
@@ -22,6 +23,22 @@
 
 		(event.currentTarget as HTMLFormElement).submit();
 	}
+
+	async function dump(wallet: string) {
+		const response = await fetch(`/admin/bitcoin/dump`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ wallet })
+		});
+
+		if (response.ok) {
+			downloadFile(await response.blob(), `wallet-${wallet}.json`);
+		} else {
+			alert('Error dumping wallet: ' + (await response.text()));
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Bitcoin node</h1>
@@ -38,19 +55,18 @@
 {#if data.wallets.length}
 	<ul>
 		{#each data.wallets as wallet}
-			{#if data.currentWallet === wallet}
-				<li class="font-bold">{wallet}</li>
-			{:else}
-				<li class="flex gap-2">
-					{wallet}
+			<li class="flex gap-2">
+				<span class:font-bold={wallet === data.currentWallet}>{wallet}</span>
+				{#if data.currentWallet !== wallet}
 					<form action="?/setCurrentWallet" method="post">
-						<input type="hidden" value={wallet} name="wallet" /><button
-							type="submit"
-							class="text-link underline">select</button
-						>
+						<input type="hidden" value={wallet} name="wallet" />
+						<button type="submit" class="text-link underline"> select </button>
 					</form>
-				</li>
-			{/if}
+				{/if}
+				<button on:click|preventDefault={() => dump(wallet)} class="text-link underline">
+					dump
+				</button>
+			</li>
 		{/each}
 	</ul>
 
@@ -77,12 +93,12 @@
 
 <ul>
 	{#each data.transactions as transaction}
-		<li class="flex flex-wrap">
+		<li class="flex flex-wrap gap-2">
 			Amount: {transaction.amount}
-			{#if data.priceReferenceCurrency !== 'BTC'}(<PriceTag
+			{#if data.currencies.priceReference !== 'BTC'}(<PriceTag
 					currency="BTC"
 					amount={transaction.amount}
-					convertedTo={data.priceReferenceCurrency}
+					convertedTo={data.currencies.priceReference}
 				/>){/if} / Txid:
 			<a
 				class="underline text-link break-all"

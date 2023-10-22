@@ -1,7 +1,6 @@
 import { collections } from '$lib/server/database';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
+export const load = async () => {
 	const products = await collections.products.find({}).toArray();
 
 	return {

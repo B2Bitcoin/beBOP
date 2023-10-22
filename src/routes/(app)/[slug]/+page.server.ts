@@ -1,16 +1,17 @@
-import { collections } from '$lib/server/database.js';
+import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
-import { marked } from 'marked';
-import type { Product } from '$lib/types/Product.js';
-import { picturesForProducts } from '$lib/server/picture.js';
+import type { Product } from '$lib/types/Product';
+import { picturesForProducts } from '$lib/server/picture';
 import { omit } from 'lodash-es';
-import type { Challenge } from '$lib/types/Challenge.js';
+import type { Challenge } from '$lib/types/Challenge';
 import type { DigitalFile } from '$lib/types/DigitalFile';
+import { trimSuffix } from '$lib/utils/trimSuffix.js';
+import { trimPrefix } from '$lib/utils/trimPrefix.js';
 
 const PRODUCT_WIDGET_REGEX =
-	/^\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]$/i;
+	/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
 
-const CHALLENGE_WIDGET_REGEX = /^\[Challenge=(?<slug>[a-z0-9-]+)\]$/i;
+const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
 
 export async function load({ params }) {
 	const cmsPage = await collections.cmsPages.findOne({
@@ -24,40 +25,67 @@ export async function load({ params }) {
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
 
-	const tokens = marked.lexer(cmsPage.content).map((token) => {
-		if (token.type === 'paragraph') {
-			let match = token.raw.match(PRODUCT_WIDGET_REGEX);
+	const tokens: Array<
+		| {
+				type: 'html';
+				raw: string;
+		  }
+		| {
+				type: 'productWidget';
+				slug: string;
+				display: string | undefined;
+				raw: string;
+		  }
+		| {
+				type: 'challengeWidget';
+				slug: string;
+				raw: string;
+		  }
+	> = [];
 
-			if (match?.groups?.slug) {
-				const slug = match.groups.slug;
-				const display = match.groups.display;
+	const productMatches = cmsPage.content.matchAll(PRODUCT_WIDGET_REGEX);
+	const challengeMatches = cmsPage.content.matchAll(CHALLENGE_WIDGET_REGEX);
 
-				productSlugs.add(slug);
+	let index = 0;
 
-				return {
-					type: 'productWidget',
-					raw: token.raw,
-					slug,
-					display
-				} as const;
-			}
+	const orderedMatches = [
+		...[...productMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'productWidget' })
+		),
+		...[...challengeMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
+		)
+	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
-			match = token.raw.match(CHALLENGE_WIDGET_REGEX);
+	for (const match of orderedMatches) {
+		tokens.push({
+			type: 'html',
+			raw: trimPrefix(trimSuffix(cmsPage.content.slice(index, match.index), '<p>'), '</p>')
+		});
 
-			if (match?.groups?.slug) {
-				const slug = match.groups.slug;
-
-				challengeSlugs.add(slug);
-
-				return {
-					type: 'challengeWidget',
-					raw: token.raw,
-					slug
-				} as const;
-			}
+		if (match.type === 'productWidget' && match.groups?.slug) {
+			productSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'productWidget',
+				slug: match.groups.slug,
+				display: match.groups?.display,
+				raw: match[0]
+			});
+		} else if (match.type === 'challengeWidget' && match.groups?.slug) {
+			challengeSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'challengeWidget',
+				slug: match.groups.slug,
+				raw: match[0]
+			});
 		}
 
-		return token;
+		index = match.index + match[0].length;
+	}
+
+	tokens.push({
+		type: 'html',
+		raw: trimPrefix(cmsPage.content.slice(index), '</p>')
 	});
 
 	const products = await collections.products

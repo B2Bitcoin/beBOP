@@ -5,10 +5,10 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import { UrlDependency } from '$lib/types/UrlDependency.js';
+	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
-	import { toSatoshis } from '$lib/utils/toSatoshis.js';
+	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { differenceInMinutes, format } from 'date-fns';
 	import { onMount } from 'svelte';
 
@@ -33,19 +33,21 @@
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 grid grid-cols-3 gap-2">
+	<div
+		class="w-full rounded-xl bg-white border-gray-300 border p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
+	>
 		<div class="col-span-2 flex flex-col gap-2">
 			<h1 class="text-3xl">Order #{data.order.number}</h1>
 			{#if data.order.notifications?.paymentStatus?.npub}
 				<p>
-					NostR public address for payment status: <span class="font-mono break-words">
+					NostR public address for payment status: <span class="font-mono break-all break-words">
 						{data.order.notifications.paymentStatus.npub}</span
 					>
 				</p>
 			{/if}
 			{#if data.order.payment.status !== 'expired' && data.order.payment.status !== 'canceled'}
 				<div>
-					Keep this link: <a class="underline text-link break-words" href={$page.url.href}
+					Keep this link: <a class="underline text-link break-all break-words" href={$page.url.href}
 						>{$page.url.href}</a
 					> to access the order later.
 				</div>
@@ -56,7 +58,11 @@
 					<p class="text-xl">Your order awaits confirmation from the seller.</p>
 				{:else}
 					<ul>
-						<li>Payment address: <code class="break-words">{data.order.payment.address}</code></li>
+						<li>
+							Payment address: <code class="break-words break-all"
+								>{data.order.payment.address}</code
+							>
+						</li>
 						<li>
 							Payment amount: <code class="break-words">
 								{(data.order.payment.method === 'bitcoin'
@@ -119,14 +125,21 @@
 						)}</pre>
 				</div>
 			{/if}
-
-			{#if data.order.payment.status === 'pending'}
+			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash'}
+				<form action="/admin/order/{data.order._id}?/confirm" method="post">
+					<button type="submit" class="btn btn-black">Mark paid</button>
+				</form>
+				<form action="/admin/order/{data.order._id}?/cancel" method="post">
+					<button type="submit" class="btn btn-red">Cancel</button>
+				</form>
+			{/if}
+			{#if data.order.payment.status === 'pending' && 0}
 				<form method="post" action="?/cancel">
 					<button type="submit" class="btn btn-red">Cancel</button>
 				</form>
 			{/if}
 		</div>
-		<div>
+		<div class="">
 			<article
 				class="rounded sticky top-4 -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
@@ -168,25 +181,33 @@
 						</div>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
-							<PriceTag
-								class="text-2xl text-gray-800 truncate"
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								main
-							/>
-							<PriceTag
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								class="text-base text-gray-600 truncate"
-								secondary
-							/>
-							TVA excluded:
-							<PriceTag
-								class="text-base text-gray-600 truncate"
-								amount={item.product.price.amount * (data.vatRate / 100)}
-								currency={data.mainCurrency}
-								main
-							/>
+							{#if item.customPrice}
+								<PriceTag
+									class="text-2xl text-gray-800 truncate"
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									main
+								/>
+								<PriceTag
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									class="text-base text-gray-600 truncate"
+									secondary
+								/>
+							{:else}
+								<PriceTag
+									class="text-2xl text-gray-800 truncate"
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									main
+								/>
+								<PriceTag
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									class="text-base text-gray-600 truncate"
+									secondary
+								/>
+							{/if}
 						</div>
 					</div>
 

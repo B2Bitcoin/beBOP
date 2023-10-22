@@ -1,12 +1,14 @@
-import { addToCartInDb, removeFromCartInDb } from '$lib/server/cart.js';
-import { collections } from '$lib/server/database.js';
-import { MAX_PRODUCT_QUANTITY } from '$lib/types/Cart.js';
+import { addToCartInDb, removeFromCartInDb } from '$lib/server/cart';
+import { collections, withTransaction } from '$lib/server/database';
+import { refreshAvailableStockInDb } from '$lib/server/product.js';
+import { userIdentifier } from '$lib/server/user.js';
+import { DEFAULT_MAX_QUANTITY_PER_ORDER } from '$lib/types/Product.js';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const actions = {
 	remove: async ({ locals, params, request }) => {
-		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
+		const cart = await collections.carts.findOne({ user: userIdentifier(locals) });
 
 		if (!cart) {
 			throw error(404, 'This product is not in the cart');
@@ -20,10 +22,15 @@ export const actions = {
 
 		cart.items = cart.items.filter((it) => it !== item);
 
-		await collections.carts.updateOne(
-			{ _id: cart._id },
-			{ $set: { items: cart.items, updatedAt: new Date() } }
-		);
+		await withTransaction(async (session) => {
+			await collections.carts.updateOne(
+				{ _id: cart._id },
+				{ $set: { items: cart.items, updatedAt: new Date() } },
+				{ session }
+			);
+
+			await refreshAvailableStockInDb(params.id, session);
+		});
 
 		throw redirect(303, request.headers.get('referer') || '/cart');
 	},
@@ -33,12 +40,14 @@ export const actions = {
 		if (!product) {
 			await collections.carts.updateOne(
 				{ sessionId: locals.sessionId },
-				{ $pull: { items: { productId: params.id } } }
+				{ $pull: { items: { productId: params.id } }, $set: { updatedAt: new Date() } }
 			);
 			throw error(404, 'This product does not exist');
 		}
 
 		const formData = await request.formData();
+
+		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
 
 		const { quantity } = z
 			.object({
@@ -46,31 +55,42 @@ export const actions = {
 					.number({ coerce: true })
 					.int()
 					.min(1)
-					.max(MAX_PRODUCT_QUANTITY - 1)
+					.max(max - 1)
 			})
 			.parse({
 				quantity: formData.get('quantity')
 			});
 
 		await addToCartInDb(product, quantity + 1, {
-			sessionId: locals.sessionId,
+			user: userIdentifier(locals),
 			totalQuantity: true
 		});
 
 		throw redirect(303, request.headers.get('referer') || '/cart');
 	},
 	decrease: async ({ request, locals, params }) => {
+		const product = await collections.products.findOne({ _id: params.id });
+
+		if (!product) {
+			await collections.carts.updateMany(
+				{ productId: params.id },
+				{ $pull: { items: { productId: params.id } }, $set: { updatedAt: new Date() } }
+			);
+			throw error(404, 'This product does not exist');
+		}
 		const formData = await request.formData();
+
+		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
 		const { quantity } = z
 			.object({
-				quantity: z.number({ coerce: true }).int().min(1).max(MAX_PRODUCT_QUANTITY)
+				quantity: z.number({ coerce: true }).int().min(1).max(max)
 			})
 			.parse({
 				quantity: formData.get('quantity')
 			});
 
-		await removeFromCartInDb(params.id, quantity - 1, {
-			sessionId: locals.sessionId,
+		await removeFromCartInDb(product, quantity - 1, {
+			user: userIdentifier(locals),
 			totalQuantity: true
 		});
 

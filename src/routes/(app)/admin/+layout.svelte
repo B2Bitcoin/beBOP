@@ -64,6 +64,10 @@
 		{
 			href: '/admin/delivery',
 			label: 'Delivery'
+		},
+		{
+			href: '/admin/discount',
+			label: 'Discount'
 		}
 	];
 	const adminRequestLinks = [
@@ -85,28 +89,29 @@
 	}
 </script>
 
-<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-	<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-hidden">
-		<nav class="flex gap-6 font-light items-center">
-			<button
-				class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
-				class:rotate-90={navMenuOpen}
-				on:click={() => (navMenuOpen = !navMenuOpen)}
-			>
-				<IconMenu />
-			</button>
-			<span class="font-bold text-xl">Admin</span>
-			{#each adminLinks as link}
-				<a
-					href={link.href}
-					class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
-					>{link.label}</a
+{#if !$page.url.pathname.startsWith('/admin/login')}
+	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
+		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-hidden">
+			<nav class="flex gap-6 font-light items-center">
+				<button
+					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
+					class:rotate-90={navMenuOpen}
+					on:click={() => (navMenuOpen = !navMenuOpen)}
 				>
-			{/each}
-		</nav>
-	</div>
-</header>
-
+					<IconMenu />
+				</button>
+				<span class="font-bold text-xl">Admin</span>
+				{#each adminLinks as link}
+					<a
+						href={link.href}
+						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
+						>{link.label}</a
+					>
+				{/each}
+			</nav>
+		</div>
+	</header>
+{/if}
 {#if $page.url.pathname.startsWith('/admin/request')}
 	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
 		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-hidden">
@@ -130,8 +135,7 @@
 		</div>
 	</header>
 {/if}
-
-{#if navMenuOpen}
+{#if navMenuOpen && !$page.url.pathname.startsWith('/admin/login')}
 	<nav
 		transition:slide
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"

@@ -2,9 +2,13 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
-	import { CURRENCIES, SATOSHIS_PER_BTC } from '$lib/types/Currency';
-	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { generateId } from '$lib/utils/generateId.js';
+	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
+	import {
+		DEFAULT_MAX_QUANTITY_PER_ORDER,
+		MAX_NAME_LIMIT,
+		MAX_SHORT_DESCRIPTION_LIMIT
+	} from '$lib/types/Product';
+	import { generateId } from '$lib/utils/generateId';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import PictureComponent from '$lib/components/Picture.svelte';
@@ -18,6 +22,9 @@
 	let priceAmountElement: HTMLInputElement;
 	let formElement: HTMLFormElement;
 	let files: FileList;
+	let payWhatYouWant = false;
+	let standalone = false;
+	let typeElement: HTMLSelectElement;
 
 	let preorder = product?.preorder ?? false;
 	let name = product?.name ? product.name + ' (duplicate)' : '';
@@ -25,10 +32,14 @@
 	let shipping = product?.shipping ?? false;
 	let type = product?.type ?? 'resource';
 	let priceAmount = product?.price.amount ?? 0;
-	let priceCurrency = product?.price.currency ?? data.priceReferenceCurrency;
+	let priceCurrency = product?.price.currency ?? data.currencies.priceReference;
 	let availableDate: string | undefined = product?.availableDate?.toJSON()?.slice(0, 10) ?? '';
 	let displayShortDescription = product?.displayShortDescription ?? false;
+	let freeProduct = false;
+	let hasStock = false;
+	let maxQuantityPerOrder = product?.maxQuantityPerOrder ?? DEFAULT_MAX_QUANTITY_PER_ORDER;
 
+	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
 
 	$: if (!enablePreorder) {
@@ -44,15 +55,38 @@
 
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
-
 		try {
-			if (priceAmountElement.value && priceAmount < 1 / SATOSHIS_PER_BTC) {
-				priceAmountElement.setCustomValidity('Price must be greater than 1 SAT');
-				priceAmountElement.reportValidity();
+			if (
+				priceAmountElement.value &&
+				+priceAmountElement.value <= MININUM_PER_CURRENCY[curr] &&
+				!payWhatYouWant &&
+				!freeProduct
+			) {
+				if (
+					parseInt(priceAmountElement.value) === 0 &&
+					!confirm('Do you want to save this product as free product? (current price == 0)')
+				) {
+					priceAmountElement.setCustomValidity(
+						'Price must be greater than or equal to ' +
+							MININUM_PER_CURRENCY[curr] +
+							' ' +
+							curr +
+							' or might be free'
+					);
+					priceAmountElement.reportValidity();
+					event.preventDefault();
+					return;
+				}
+			} else if (payWhatYouWant && typeElement.value === 'subscription') {
+				typeElement.setCustomValidity(
+					'You cannot create a subscription type product with a pay-what-you-want price '
+				);
+				typeElement.reportValidity();
 				event.preventDefault();
 				return;
 			} else {
 				priceAmountElement.setCustomValidity('');
+				typeElement.setCustomValidity('');
 			}
 
 			if (!product) {
@@ -158,6 +192,7 @@
 				name="priceAmount"
 				placeholder="Price"
 				step="any"
+				disabled={freeProduct}
 				bind:value={priceAmount}
 				bind:this={priceAmountElement}
 				on:input={() => priceAmountElement?.setCustomValidity('')}
@@ -168,7 +203,12 @@
 		<label class="w-full form-label">
 			Price currency
 
-			<select name="priceCurrency" class="form-input">
+			<select
+				name="priceCurrency"
+				class="form-input"
+				bind:value={curr}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+			>
 				{#each CURRENCIES as currency}
 					<option value={currency} selected={priceCurrency === currency}>
 						{currency}
@@ -177,6 +217,40 @@
 			</select>
 		</label>
 	</div>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={payWhatYouWant}
+			on:input={() => {
+				priceAmountElement?.setCustomValidity(''), typeElement.setCustomValidity('');
+			}}
+			name="payWhatYouWant"
+		/>
+		This is a pay-what-you-want product
+	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={standalone}
+			name="standalone"
+			on:input={() => priceAmountElement?.setCustomValidity('')}
+		/>
+		This is a standalone product
+	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			bind:checked={freeProduct}
+			on:input={() => {
+				priceAmountElement?.setCustomValidity('');
+			}}
+			name="free"
+		/>
+		This is a free product
+	</label>
 
 	<label class="form-label">
 		Short description
@@ -212,11 +286,17 @@
 		/>
 	</label>
 
-	<label class="form-label">
+	<label>
 		Type
-		<select class="form-input" bind:value={type} disabled={!!product} name="type" required>
-			{#each ['resource', 'donation', 'subscription'] as opt}
-				<option value={opt} selected={type === opt}>{upperFirst(opt)}</option>
+		<select
+			class="form-input"
+			bind:value={type}
+			name="type"
+			bind:this={typeElement}
+			on:input={() => typeElement?.setCustomValidity('')}
+		>
+			{#each ['resource', 'donation', 'subscription'] as type}
+				<option value={type}>{upperFirst(type)}</option>
 			{/each}
 		</select>
 	</label>
@@ -255,6 +335,53 @@
 		</div>
 	{/if}
 
+	{#if type !== 'subscription'}
+		<label class="form-label">
+			Max quantity per order
+			<input
+				class="form-input"
+				type="number"
+				name="maxQuantityPerOrder"
+				step="1"
+				min="1"
+				max="10"
+				value={maxQuantityPerOrder}
+				disabled={submitting}
+			/>
+		</label>
+	{/if}
+
+	{#if type === 'resource'}
+		<h3 class="text-xl">Stock</h3>
+
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="hasStock"
+				bind:checked={hasStock}
+				disabled={submitting}
+			/>
+			The product has a limited stock
+		</label>
+
+		{#if hasStock}
+			<label class="form-label">
+				Stock
+				<input
+					class="form-input"
+					type="number"
+					name="stock"
+					placeholder="Stock"
+					step="1"
+					min="0"
+					value={0}
+					disabled={submitting}
+				/>
+			</label>
+		{/if}
+	{/if}
+
 	{#if type !== 'donation'}
 		<h3 class="text-xl">Delivery</h3>
 
@@ -272,7 +399,7 @@
 		{#if shipping}
 			{#if data.deliveryFees.mode === 'perItem'}
 				<DeliveryFeesSelector
-					defaultCurrency={product?.price.currency ?? data.priceReferenceCurrency}
+					defaultCurrency={product?.price.currency ?? data.currencies.priceReference}
 					deliveryFees={product?.deliveryFees ?? {}}
 					disabled={submitting}
 				/>
@@ -349,6 +476,9 @@
 		type="submit"
 		class="btn btn-blue self-start text-white"
 		disabled={submitting}
+		on:click={() => {
+			priceAmountElement?.setCustomValidity('');
+		}}
 		value="Submit"
 	/>
 </form>

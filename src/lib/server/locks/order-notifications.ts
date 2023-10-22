@@ -7,6 +7,7 @@ import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
 import { refreshPromise } from '../runtime-config';
+import { refreshAvailableStockInDb } from '../product';
 
 const lock = new Lock('order-notifications');
 
@@ -133,20 +134,21 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						content += `\n\nPlease pay this invoice: ${order.payment.address}`;
 					}
 				}
-
-				await collections.nostrNotifications.insertOne(
-					{
-						_id: new ObjectId(),
-						createdAt: new Date(),
-						kind: Kind.EncryptedDirectMessage,
-						updatedAt: new Date(),
-						content,
-						dest: npub
-					},
-					{
-						session
-					}
-				);
+				if (!(order.payment.method === 'cash' && order.payment.status !== 'paid')) {
+					await collections.nostrNotifications.insertOne(
+						{
+							_id: new ObjectId(),
+							createdAt: new Date(),
+							kind: Kind.EncryptedDirectMessage,
+							updatedAt: new Date(),
+							content,
+							dest: npub
+						},
+						{
+							session
+						}
+					);
+				}
 			}
 
 			if (email) {
@@ -164,20 +166,21 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						htmlContent += `<p>Please pay this invoice: ${order.payment.address}</p>`;
 					}
 				}
-
-				await collections.emailNotifications.insertOne(
-					{
-						_id: new ObjectId(),
-						createdAt: new Date(),
-						updatedAt: new Date(),
-						subject: `Order #${order.number}`,
-						htmlContent,
-						dest: email
-					},
-					{
-						session
-					}
-				);
+				if (!(order.payment.method === 'cash' && order.payment.status !== 'paid')) {
+					await collections.emailNotifications.insertOne(
+						{
+							_id: new ObjectId(),
+							createdAt: new Date(),
+							updatedAt: new Date(),
+							subject: `Order #${order.number}`,
+							htmlContent,
+							dest: email
+						},
+						{
+							session
+						}
+					);
+				}
 			}
 
 			await collections.orders.updateOne(
@@ -194,6 +197,9 @@ async function handleOrderNotification(order: Order): Promise<void> {
 				}
 			);
 		});
+
+		// Maybe not needed when order.payment.status === "paid"
+		await Promise.all(order.items.map((item) => refreshAvailableStockInDb(item.product._id)));
 	} finally {
 		processingIds.delete(order._id.toString());
 	}

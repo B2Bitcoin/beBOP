@@ -1,8 +1,8 @@
-import { collections } from '$lib/server/database.js';
-import { picturesForProducts } from '$lib/server/picture.js';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { getS3DownloadLink } from '$lib/server/s3.js';
-import { UrlDependency } from '$lib/types/UrlDependency.js';
+import { collections } from '$lib/server/database';
+import { picturesForProducts } from '$lib/server/picture';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import { getS3DownloadLink } from '$lib/server/s3';
+import { UrlDependency } from '$lib/types/UrlDependency';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, depends }) {
@@ -25,6 +25,7 @@ export async function load({ params, depends }) {
 	return {
 		confirmationBlocksRequired: runtimeConfig.confirmationBlocks,
 		order: {
+			_id: order._id,
 			number: order.number,
 			createdAt: order.createdAt,
 			payment: {
@@ -45,6 +46,7 @@ export async function load({ params, depends }) {
 					availableDate: item.product.availableDate,
 					shipping: item.product.shipping
 				},
+				...(item.customPrice && { customPrice: item.customPrice }),
 				picture: pictures.find((picture) => picture.productId === item.product._id),
 				digitalFiles: digitalFiles.filter(
 					(digitalFile) => digitalFile.productId === item.product._id

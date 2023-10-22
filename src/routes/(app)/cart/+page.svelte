@@ -1,32 +1,42 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { sum } from '$lib/utils/sum';
-	import { toCurrency } from '$lib/utils/toCurrency.js';
+	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
+	import { oneMaxPerLine } from '$lib/types/Product.js';
+	import { UrlDependency } from '$lib/types/UrlDependency.js';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	export let data;
 
 	let actionCount = 0;
 
+	let errorMessage = data.errorMessage;
+	let errorProductId = '';
+
 	$: items = data.cart || [];
-	$: totalPrice = sum(
-		items.map(
-			(item) =>
-				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				item.quantity
-		)
+	$: totalPrice = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount: (item.customPrice || item.product.price).amount * item.quantity
+		}))
 	);
-	$: vat = totalPrice * (data.vatRate / 100);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 bg-white border-gray-300 border">
 		<h1 class="page-title">Products</h1>
+
+		{#if errorMessage && !errorProductId}
+			<p class="text-red-600">{errorMessage}</p>
+		{/if}
 
 		{#if items.length}
 			<div
@@ -38,6 +48,8 @@
 						method="POST"
 						class="contents"
 						use:enhance={({ action }) => {
+							errorMessage = '';
+
 							if (action.searchParams.has('/increase')) {
 								item.quantity++;
 							} else if (action.searchParams.has('/decrease')) {
@@ -53,6 +65,12 @@
 									if (result.type === 'redirect') {
 										// Invalidate all to remove 0-quantity items
 										await goto(result.location, { noScroll: true, invalidateAll: true });
+										return;
+									}
+									if (result.type === 'error' && result.error?.message) {
+										errorMessage = result.error.message;
+										errorProductId = item.product._id;
+										await invalidate(UrlDependency.Cart);
 										return;
 									}
 									await applyAction(result);
@@ -93,33 +111,45 @@
 						</div>
 
 						<div class="self-center">
-							{#if item.product.type !== 'subscription'}
+							{#if !oneMaxPerLine(item.product)}
 								<CartQuantity {item} />
 							{/if}
 						</div>
 
 						<div class="flex flex-col items-end justify-center">
-							<PriceTag
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								main
-								class="text-2xl text-gray-800 truncate"
-							/>
-							<PriceTag
-								class="text-base text-gray-600 truncate"
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								secondary
-							/>
-							TVA excluded:
-							<PriceTag
-								class="text-base text-gray-600 truncate"
-								amount={item.product.price.amount * (data.vatRate / 100)}
-								currency={data.mainCurrency}
-								main
-							/>
+							{#if item.product.type !== 'subscription' && item.customPrice}
+								<PriceTag
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									main
+									class="text-2xl text-gray-800 truncate"
+								/>
+								<PriceTag
+									class="text-base text-gray-600 truncate"
+									amount={item.quantity * item.customPrice.amount}
+									currency={item.customPrice.currency}
+									secondary
+								/>
+							{:else}
+								<PriceTag
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									main
+									class="text-2xl text-gray-800 truncate"
+								/>
+								<PriceTag
+									class="text-base text-gray-600 truncate"
+									amount={item.quantity * item.product.price.amount}
+									currency={item.product.price.currency}
+									secondary
+								/>
+							{/if}
 						</div>
 					</form>
+
+					{#if errorMessage && errorProductId === item.product._id}
+						<p class="text-red-600 col-span-4">{errorMessage}</p>
+					{/if}
 
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
@@ -141,14 +171,14 @@
 					<div class="flex flex-col items-end">
 						<PriceTag
 							amount={vat}
-							currency={data.mainCurrency}
+							currency={UNDERLYING_CURRENCY}
 							main
 							class="text-[28px] text-gray-800"
 						/>
 						<PriceTag
 							class="text-base text-gray-600"
 							amount={vat}
-							currency={data.mainCurrency}
+							currency={UNDERLYING_CURRENCY}
 							secondary
 						/>
 					</div>
@@ -159,14 +189,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={UNDERLYING_CURRENCY}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>

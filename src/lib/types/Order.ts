@@ -2,6 +2,7 @@ import type { Product } from './Product';
 import type { Currency } from './Currency';
 import type { CountryAlpha2 } from './Country';
 import type { Timestamps } from './Timestamps';
+import type { UserIdentifier } from './UserIdentifier';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -10,13 +11,13 @@ export interface Order extends Timestamps {
 	 * A string - a crypto UUID. Anyone having access to the _id can access the order.
 	 */
 	_id: string;
-	sessionId?: string;
 
 	number: number;
 
 	items: Array<{
 		product: Product;
 		quantity: number;
+		customPrice?: { amount: number; currency: Currency };
 	}>;
 
 	shippingAddress?: {
@@ -70,6 +71,8 @@ export interface Order extends Timestamps {
 			email?: string;
 		};
 	};
+
+	user: UserIdentifier;
 
 	lastPaymentStatusNotified?: OrderPaymentStatus;
 }

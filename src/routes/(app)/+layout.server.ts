@@ -1,16 +1,33 @@
-import { countryNameByAlpha2 } from '$lib/server/country-codes.js';
-import { collections } from '$lib/server/database.js';
+import { getCartFromDb } from '$lib/server/cart.js';
+import { countryNameByAlpha2 } from '$lib/server/country-codes';
+import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { vatRates } from '$lib/server/vat-rates.js';
-import type { Product } from '$lib/types/Product.js';
+import { userIdentifier } from '$lib/server/user.js';
+import { vatRates } from '$lib/server/vat-rates';
+import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
-import { filterUndef } from '$lib/utils/filterUndef.js';
+import { filterUndef } from '$lib/utils/filterUndef';
+import { error, redirect } from '@sveltejs/kit';
 
-export async function load({ depends, locals }) {
+export async function load(params) {
+	if (!runtimeConfig.isAdminCreated) {
+		if (params.locals.user) {
+			throw error(
+				400,
+				"Admin account hasn't been created yet. Please open a new private window to create admin account"
+			);
+		}
+		if (params.url.pathname !== '/admin/login') {
+			throw redirect(302, '/admin/login');
+		}
+	}
+
+	const { depends, locals } = params;
+
 	depends(UrlDependency.ExchangeRate);
 	depends(UrlDependency.Cart);
 
-	const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
+	const cart = await getCartFromDb({ user: userIdentifier(locals) });
 
 	const logoPicture = runtimeConfig.logoPictureId
 		? await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId })
@@ -26,6 +43,11 @@ export async function load({ depends, locals }) {
 			BTC_SAT: runtimeConfig.BTC_SAT
 		},
 		countryCode: locals.countryCode,
+		email: locals.email || locals.sso?.find((sso) => sso.email)?.email,
+		emailFromSso: !locals.email && locals.sso?.some((sso) => sso.email),
+		npub: locals.npub,
+		sso: locals.sso,
+		userId: locals.user?._id.toString(),
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0
@@ -38,8 +60,11 @@ export async function load({ depends, locals }) {
 			: 0,
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
 		vatCountry: runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : locals.countryCode,
-		mainCurrency: runtimeConfig.mainCurrency,
-		secondaryCurrency: runtimeConfig.secondaryCurrency,
+		currencies: {
+			main: runtimeConfig.mainCurrency,
+			secondary: runtimeConfig.secondaryCurrency,
+			priceReference: runtimeConfig.priceReferenceCurrency
+		},
 		brandName: runtimeConfig.brandName,
 		logoPicture,
 		links: {
@@ -65,6 +90,10 @@ export async function load({ depends, locals }) {
 								| 'deliveryFees'
 								| 'applyDeliveryFeesOnlyOnce'
 								| 'requireSpecificDeliveryFee'
+								| 'payWhatYouWant'
+								| 'standalone'
+								| 'maxQuantityPerOrder'
+								| 'stock'
 							>
 						>(
 							{ _id: item.productId },
@@ -80,7 +109,11 @@ export async function load({ depends, locals }) {
 									preorder: 1,
 									deliveryFees: 1,
 									applyDeliveryFeesOnlyOnce: 1,
-									requireSpecificDeliveryFee: 1
+									requireSpecificDeliveryFee: 1,
+									payWhatYouWant: 1,
+									standalone: 1,
+									maxQuantityPerOrder: 1,
+									stock: 1
 								}
 							}
 						);
@@ -98,7 +131,8 @@ export async function load({ depends, locals }) {
 									.find({ productId: item.productId })
 									.sort({ createdAt: 1 })
 									.toArray(),
-								quantity: item.quantity
+								quantity: item.quantity,
+								...(item.customPrice && { customPrice: item.customPrice })
 							};
 						}
 					})

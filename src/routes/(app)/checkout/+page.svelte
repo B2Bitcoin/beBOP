@@ -5,16 +5,18 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { COUNTRIES } from '$lib/types/Country';
-	import { sum } from '$lib/utils/sum';
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { toCurrency } from '$lib/utils/toCurrency.js';
-	import { computeDeliveryFees } from '$lib/types/Cart.js';
-	import { typedKeys } from '$lib/utils/typedKeys.js';
+	import { computeDeliveryFees } from '$lib/types/Cart';
+	import { typedKeys } from '$lib/utils/typedKeys';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
+	import { toCurrency } from '$lib/utils/toCurrency.js';
+	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -36,12 +38,14 @@
 	};
 
 	const emails: Record<FeedKey, string> = {
-		paymentStatus: ''
+		paymentStatus: data.email || ''
 	};
 
 	function checkForm(event: SubmitEvent) {
 		for (const input of typedValues(npubInputs)) {
-			if (!input) continue;
+			if (!input) {
+				continue;
+			}
 
 			input.value = input.value.trim();
 
@@ -59,7 +63,7 @@
 	}
 
 	$: paymentMethods = data.paymentMethods.filter((method) =>
-		method === 'bitcoin' ? totalPrice >= 0.00001 : true
+		method === 'bitcoin' ? totalSatoshi >= 10_000 : true
 	);
 
 	const paymentMethodDesc = {
@@ -74,7 +78,7 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: deliveryFees = computeDeliveryFees(data.mainCurrency, country, items, data.deliveryFees);
+	$: deliveryFees = computeDeliveryFees('SAT', country, items, data.deliveryFees);
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
@@ -82,15 +86,15 @@
 		isDigital || data.vatSingleCountry ? data.vatRate : data.vatRates[actualCountry] ?? 0;
 
 	$: totalPrice =
-		sum(
-			items.map(
-				(item) =>
-					toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-					item.quantity
-			)
+		sumCurrency(
+			UNDERLYING_CURRENCY,
+			items.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount: (item.customPrice || item.product.price).amount * item.quantity
+			}))
 		) + (deliveryFees || 0);
 
-	$: vat = totalPrice * (actualVatRate / 100);
+	$: vat = fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 
 	let isRelayPoint = false;
@@ -98,11 +102,14 @@
 	let mandatoryBilingAddress = false;
 	let addAddress = false;
 	let collectMyIp = false;
+	$: totalSatoshi = toCurrency('SAT', totalPriceWithVat, UNDERLYING_CURRENCY);
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<div class="w-full rounded-xl bg-white border-gray-300 border p-6 grid grid-cols-3 gap-2">
-		<form id="checkout" method="post" class="col-span-2 flex flex-col gap-4" on:submit={checkForm}>
+	<div
+		class="w-full rounded-xl bg-white border-gray-300 border p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
+	>
+		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
 			<h1 class="page-title">Checkout</h1>
 
 			<section class="gap-4 grid grid-cols-6 w-4/5">
@@ -226,6 +233,7 @@
 									class="form-input"
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
+									value={data.npub || ''}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus' && !emails[key] && paymentMethod !== 'cash'}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
@@ -284,9 +292,9 @@
 				Mandatory biling address
 			</label>
 		</form>
-		<div>
+		<div class="w-full md:w-auto">
 			<article
-				class="rounded sticky top-4 -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
+				class="rounded sticky top-4 md:-mr-2 md:-mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
 				<div class="flex justify-between">
 					<a href="/cart" class="text-link hover:underline">&lt;&lt;Back to cart</a>
@@ -354,25 +362,33 @@
 							</div>
 
 							<div class="flex flex-col ml-auto items-end justify-center">
-								<PriceTag
-									class="text-2xl text-gray-800 truncate"
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									main
-								/>
-								<PriceTag
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									class="text-base text-gray-600 truncate"
-									secondary
-								/>
-								TVA excluded:
-								<PriceTag
-									class="text-base text-gray-600 truncate"
-									amount={item.product.price.amount * (actualVatRate / 100)}
-									currency={data.mainCurrency}
-									main
-								/>
+								{#if item.product.type !== 'subscription' && item.customPrice}
+									<PriceTag
+										class="text-2xl text-gray-800 truncate"
+										amount={item.quantity * item.customPrice.amount}
+										currency={item.customPrice.currency}
+										main
+									/>
+									<PriceTag
+										amount={item.quantity * item.customPrice.amount}
+										currency={item.customPrice.currency}
+										class="text-base text-gray-600 truncate"
+										secondary
+									/>
+								{:else}
+									<PriceTag
+										class="text-2xl text-gray-800 truncate"
+										amount={item.quantity * item.product.price.amount}
+										currency={item.product.price.currency}
+										main
+									/>
+									<PriceTag
+										amount={item.quantity * item.product.price.amount}
+										currency={item.product.price.currency}
+										class="text-base text-gray-600 truncate"
+										secondary
+									/>
+								{/if}
 							</div>
 						</div>
 					</form>
@@ -388,12 +404,12 @@
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
 								amount={deliveryFees}
-								currency={data.mainCurrency}
+								currency={UNDERLYING_CURRENCY}
 								main
 							/>
 							<PriceTag
 								amount={deliveryFees}
-								currency={data.mainCurrency}
+								currency={UNDERLYING_CURRENCY}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
@@ -427,12 +443,12 @@
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
 								amount={vat}
-								currency={data.mainCurrency}
+								currency={UNDERLYING_CURRENCY}
 								main
 							/>
 							<PriceTag
 								amount={vat}
-								currency={data.mainCurrency}
+								currency={UNDERLYING_CURRENCY}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
@@ -449,14 +465,14 @@
 						<PriceTag
 							class="text-2xl text-gray-800"
 							amount={totalPriceWithVat}
-							currency={data.mainCurrency}
+							currency={UNDERLYING_CURRENCY}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.mainCurrency}
+						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>

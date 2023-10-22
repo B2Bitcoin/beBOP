@@ -70,6 +70,7 @@
 						on:dismiss={() => ($productAddedToCart = null)}
 						product={$productAddedToCart.product}
 						picture={$productAddedToCart.picture}
+						customPrice={$productAddedToCart.customPrice}
 					/>
 				</Popup>
 			{/if}

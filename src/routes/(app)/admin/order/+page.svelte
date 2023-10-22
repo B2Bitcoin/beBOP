@@ -26,10 +26,10 @@
 				})}</time
 			>
 			- Total: {toSatoshis(order.totalPrice.amount, order.totalPrice.currency).toLocaleString('en')}
-			SAT {#if data.priceReferenceCurrency !== 'SAT'}(<PriceTag
+			SAT {#if data.currencies.priceReference !== 'SAT'}(<PriceTag
 					currency={order.totalPrice.currency}
 					amount={order.totalPrice.amount}
-					convertedTo={data.priceReferenceCurrency}
+					convertedTo={data.currencies.priceReference}
 				/>){/if}-
 			<span
 				class={order.payment.status === 'expired' || order.payment.status === 'canceled'

@@ -7,7 +7,7 @@ import { ORIGIN } from '$env/static/private';
 import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
-import { addToCartInDb, removeFromCartInDb } from '../cart';
+import { addToCartInDb, getCartFromDb, removeFromCartInDb } from '../cart';
 import type { Product } from '$lib/types/Product';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
@@ -270,7 +270,7 @@ const commands: Record<
 		description: 'Show the contents of your cart',
 		maintenanceBlocked: true,
 		execute: async (send, { senderNpub }) => {
-			const cart = await collections.carts.findOne({ npub: senderNpub });
+			const cart = await getCartFromDb({ user: { npub: senderNpub } });
 
 			if (!cart || !cart.items.length) {
 				await send('Your cart is empty');
@@ -325,17 +325,19 @@ const commands: Record<
 				return;
 			}
 
-			const cart = await addToCartInDb(product, quantity, { npub: senderNpub }).catch(async (e) => {
-				console.error(e);
-				await send(e.message);
-				return null;
-			});
+			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
+				async (e) => {
+					console.error(e);
+					await send(e.message);
+					return null;
+				}
+			);
 
 			if (!cart) {
 				return;
 			}
 
-			const item = cart.value?.items.find((item) => item.productId === product._id);
+			const item = cart.items.find((item) => item.productId === product._id);
 
 			if (!item) {
 				return;
@@ -373,8 +375,10 @@ const commands: Record<
 				return;
 			}
 
-			const cart = await removeFromCartInDb(product._id, quantity, {
-				npub: senderNpub
+			const cart = await removeFromCartInDb(product, quantity, {
+				user: {
+					npub: senderNpub
+				}
 			}).catch(async (e) => {
 				console.error(e);
 				await send(e.message);
@@ -409,7 +413,7 @@ const commands: Record<
 		execute: async (send, { senderNpub, args }) => {
 			const paymentMethod = args.paymentMethod;
 
-			const cart = await collections.carts.findOne({ npub: senderNpub });
+			const cart = await getCartFromDb({ user: { npub: senderNpub } });
 
 			if (!cart) {
 				await send("Your cart is empty, you can't checkout an empty cart");
@@ -452,9 +456,12 @@ const commands: Record<
 						npub: senderNpub
 					}
 				},
+				user: {
+					npub: senderNpub
+				},
 				vatCountry: '',
 				shippingAddress: null,
-				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
+				cart
 			}).catch(async (e) => {
 				console.error(e);
 				await send(e.message);

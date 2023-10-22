@@ -1,11 +1,10 @@
 import { collections } from '$lib/server/database';
 import { z } from 'zod';
-import type { PageServerLoad } from './$types';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 
-export const load: PageServerLoad = async () => {
+export const load = async () => {
 	const products = await collections.products.find({}).toArray();
 
 	return {
@@ -30,7 +29,7 @@ export const actions = {
 				})
 				.parse(value);
 
-			const priceAmount = parsePriceAmount(price, currency);
+			const priceAmount = parsePriceAmount(price, currency, true);
 
 			await collections.products.updateOne(
 				{ _id: key },

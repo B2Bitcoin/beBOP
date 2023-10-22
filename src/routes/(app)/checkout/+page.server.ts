@@ -1,15 +1,27 @@
 import { collections } from '$lib/server/database';
-import { paymentMethods } from '$lib/server/payment-methods.js';
+import { paymentMethods } from '$lib/server/payment-methods';
 import { COUNTRY_ALPHA2S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { bech32 } from 'bech32';
-import { createOrder } from '$lib/server/orders.js';
-import { emailsEnabled } from '$lib/server/email.js';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { vatRates } from '$lib/server/vat-rates.js';
+import { createOrder } from '$lib/server/orders';
+import { emailsEnabled } from '$lib/server/email';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import { vatRates } from '$lib/server/vat-rates';
+import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
+import { userIdentifier } from '$lib/server/user.js';
 
-export function load() {
+export async function load({ parent, locals }) {
+	const parentData = await parent();
+
+	if (parentData.cart) {
+		try {
+			await checkCartItems(parentData.cart, { user: userIdentifier(locals) });
+		} catch (err) {
+			throw redirect(303, '/cart');
+		}
+	}
+
 	return {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
@@ -23,7 +35,7 @@ export const actions = {
 		if (!paymentMethods().length) {
 			throw error(500, 'No payment methods configured for the bootik');
 		}
-		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
+		const cart = await getCartFromDb({ user: userIdentifier(locals) });
 
 		if (!cart?.items.length) {
 			throw error(400, 'Cart is empty');
@@ -94,20 +106,23 @@ export const actions = {
 		const orderId = await createOrder(
 			cart.items.map((item) => ({
 				quantity: item.quantity,
-				product: byId[item.productId]
+				product: byId[item.productId],
+				...(item.customPrice && {
+					customPrice: { amount: item.customPrice.amount, currency: item.customPrice.currency }
+				})
 			})),
 			paymentMethod,
 			{
-				sessionId: locals.sessionId,
+				user: userIdentifier(locals),
 				notifications: {
 					paymentStatus: {
 						npub: npubAddress,
 						email
 					}
 				},
+				cart,
 				shippingAddress: shipping,
-				vatCountry: shipping?.country ?? locals.countryCode,
-				cb: (session) => collections.carts.deleteOne({ _id: cart._id }, { session })
+				vatCountry: shipping?.country ?? locals.countryCode
 			}
 		);
 

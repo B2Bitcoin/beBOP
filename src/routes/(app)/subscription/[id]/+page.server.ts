@@ -1,7 +1,7 @@
-import { collections } from '$lib/server/database.js';
-import { createOrder } from '$lib/server/orders.js';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { filterUndef } from '$lib/utils/filterUndef.js';
+import { collections } from '$lib/server/database';
+import { createOrder } from '$lib/server/orders';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { error, redirect } from '@sveltejs/kit';
 import { subSeconds } from 'date-fns';
 
@@ -37,7 +37,7 @@ export async function load({ params }) {
 	return {
 		subscription: {
 			createdAt: subscription.createdAt,
-			npub: subscription.npub,
+			npub: subscription.user.npub,
 			paidUntil: subscription.paidUntil,
 			number: subscription.number
 		},
@@ -68,12 +68,9 @@ export const actions = {
 			throw error(500, 'Product associated to subscription not found');
 		}
 
-		const orConditions = filterUndef([
-			subscription.npub ? { 'notifications.paymentStatus.npub': subscription.npub } : undefined,
-			subscription.email ? { 'notifications.paymentStatus.email': subscription.email } : undefined
-		]);
+		const orConditions = userQuery(subscription.user);
 
-		if (!orConditions.length) {
+		if (!orConditions.$or.length) {
 			throw error(500, 'No npub or email found for this subscription');
 		}
 
@@ -81,7 +78,7 @@ export const actions = {
 			{
 				'items.product._id': product._id,
 				'payment.status': 'paid',
-				$or: orConditions
+				orConditions
 			},
 			{
 				sort: { createdAt: -1 }
@@ -101,7 +98,7 @@ export const actions = {
 			],
 			lastOrder.payment.method,
 			{
-				sessionId: locals.sessionId,
+				user: userIdentifier(locals),
 				shippingAddress: lastOrder.shippingAddress,
 				vatCountry: lastOrder.vat?.country ?? '',
 				notifications: lastOrder.notifications

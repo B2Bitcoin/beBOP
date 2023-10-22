@@ -21,14 +21,26 @@ export const FRACTION_DIGITS_PER_CURRENCY = {
 	SAT: 0
 } as const;
 
-export function parsePriceAmount(amount: string, currency: Currency): number {
+export function parsePriceAmount(
+	amount: string,
+	currency: Currency,
+	payWhatYouWant: boolean
+): number {
+	//deleted Math.round()
 	const priceAmount =
-		Math.round(parseFloat(amount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency])) /
+		(parseFloat(amount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency])) /
 		Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency]);
-
-	if (priceAmount <= MININUM_PER_CURRENCY[currency]) {
-		throw error(400, `Price must be greater than ${MININUM_PER_CURRENCY[currency]} ${currency}`);
+	if (!payWhatYouWant) {
+		if (priceAmount <= MININUM_PER_CURRENCY[currency]) {
+			throw error(400, `Price must be greater than ${MININUM_PER_CURRENCY[currency]} ${currency}`);
+		}
 	}
 
 	return priceAmount;
 }
+
+/**
+ * When computing VAT, delivery fees, etc, convert everything to SAT and only display
+ * the result in the user's currency.
+ */
+export const UNDERLYING_CURRENCY = 'SAT';

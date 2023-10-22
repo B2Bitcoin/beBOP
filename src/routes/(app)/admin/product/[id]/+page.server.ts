@@ -1,14 +1,15 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
+import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
 
 	if (!product) {
@@ -28,7 +29,9 @@ export const load: PageServerLoad = async ({ params }) => {
 	return {
 		product,
 		pictures,
-		digitalFiles
+		digitalFiles,
+		reserved: amountOfProductReserved(params.id),
+		sold: amountOfProductSold(params.id)
 	};
 };
 
@@ -79,11 +82,24 @@ export const actions: Actions = {
 			parsed.preorder = false;
 		}
 
+		if (product.availableDate && !parsed.availableDate) {
+			parsed.availableDate = product.availableDate;
+		}
+
 		if (product.type === 'donation') {
 			parsed.shipping = false;
 		}
 
-		const priceAmount = parsePriceAmount(parsed.priceAmount, priceCurrency);
+		const priceAmount = parsed.free
+			? 0
+			: !parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0'
+			? 0
+			: parsePriceAmount(parsed.priceAmount, priceCurrency, parsed.payWhatYouWant);
+
+		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
+			parsed.free = true;
+		}
+		const amountInCarts = await amountOfProductReserved(params.id);
 
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
@@ -100,14 +116,27 @@ export const actions: Actions = {
 					shipping: parsed.shipping,
 					displayShortDescription: parsed.displayShortDescription,
 					preorder: parsed.preorder,
+					payWhatYouWant: parsed.payWhatYouWant,
+					standalone: parsed.payWhatYouWant ? parsed.payWhatYouWant : parsed.standalone,
+					free: parsed.free,
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
 					applyDeliveryFeesOnlyOnce: parsed.applyDeliveryFeesOnlyOnce,
 					requireSpecificDeliveryFee: parsed.requireSpecificDeliveryFee,
+					...(parsed.maxQuantityPerOrder && { maxQuantityPerOrder: parsed.maxQuantityPerOrder }),
+					...(parsed.stock !== undefined && {
+						stock: {
+							total: parsed.stock,
+							reserved: amountInCarts,
+							available: parsed.stock - amountInCarts
+						}
+					}),
 					updatedAt: new Date()
 				},
 				$unset: {
 					...(!parsed.availableDate && { availableDate: '' }),
-					...(!parsed.deliveryFees && { deliveryFees: '' })
+					...(!parsed.deliveryFees && { deliveryFees: '' }),
+					...(parsed.stock === undefined && { stock: '' }),
+					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' })
 				}
 			}
 		);

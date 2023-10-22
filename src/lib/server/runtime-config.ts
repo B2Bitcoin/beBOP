@@ -3,8 +3,13 @@ import { collections } from './database';
 import { exchangeRate } from '$lib/stores/exchangeRate';
 import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 import type { DeliveryFees } from '$lib/types/DeliveryFees';
+import { currencies } from '$lib/stores/currencies';
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
+import { createAdminUserInDb } from './user';
+import { runMigrations } from './migrations';
 
 const defaultConfig = {
+	isAdminCreated: false,
 	BTC_EUR: 30_000,
 	BTC_CHF: 30_000,
 	BTC_USD: 30_000,
@@ -24,10 +29,14 @@ const defaultConfig = {
 	brandName: 'My Space',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
+	reserveStockInMinutes: 20,
 	confirmationBlocks: 1,
+	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logoPictureId: '',
 	lnurlPayMetadataJwtSigningKey: '',
+	authLinkJwtSigningKey: '',
+	ssoSecret: '',
 	topbarLinks: [
 		{ label: 'Blog', href: '/blog' },
 		{ label: 'Store', href: '/store' },
@@ -60,7 +69,8 @@ const defaultConfig = {
 				currency: 'EUR'
 			}
 		} as DeliveryFees
-	}
+	},
+	plausibleScriptUrl: ''
 };
 
 exchangeRate.set({
@@ -68,6 +78,12 @@ exchangeRate.set({
 	BTC_CHF: defaultConfig.BTC_CHF,
 	BTC_USD: defaultConfig.BTC_USD,
 	BTC_SAT: defaultConfig.BTC_SAT
+});
+
+currencies.set({
+	main: defaultConfig.mainCurrency,
+	secondary: defaultConfig.secondaryCurrency,
+	priceReference: defaultConfig.priceReferenceCurrency
 });
 
 export type RuntimeConfig = typeof defaultConfig;
@@ -104,6 +120,12 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 		BTC_SAT: runtimeConfig.BTC_SAT
 	});
 
+	currencies.set({
+		main: runtimeConfig.mainCurrency,
+		secondary: runtimeConfig.secondaryCurrency,
+		priceReference: runtimeConfig.priceReferenceCurrency
+	});
+
 	if (!runtimeConfig.lnurlPayMetadataJwtSigningKey) {
 		await collections.runtimeConfig.updateOne(
 			{ _id: 'lnurlPayMetadataJwtSigningKey' },
@@ -111,6 +133,28 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 			{ upsert: true }
 		);
 	}
+
+	if (!runtimeConfig.authLinkJwtSigningKey) {
+		await collections.runtimeConfig.updateOne(
+			{ _id: 'authLinkJwtSigningKey' },
+			{ $set: { data: crypto.randomUUID(), updatedAt: new Date() } },
+			{ upsert: true }
+		);
+	}
+
+	if (!runtimeConfig.ssoSecret) {
+		await collections.runtimeConfig.updateOne(
+			{ _id: 'ssoSecret' },
+			{ $set: { data: crypto.randomUUID(), updatedAt: new Date() } },
+			{ upsert: true }
+		);
+	}
+
+	if (!runtimeConfig.isAdminCreated && ADMIN_LOGIN && ADMIN_PASSWORD) {
+		await createAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
+	}
+
+	await runMigrations();
 }
 
 export function stop(): void {

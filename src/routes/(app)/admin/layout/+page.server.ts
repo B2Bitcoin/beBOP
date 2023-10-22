@@ -1,4 +1,4 @@
-import { collections } from '$lib/server/database.js';
+import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { z } from 'zod';
 import type { JsonObject } from 'type-fest';

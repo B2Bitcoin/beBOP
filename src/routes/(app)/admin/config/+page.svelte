@@ -16,9 +16,13 @@
 	let mandatoryBilingAddress = false;
 	let enableGoogleShoppingExport = false;
 
-	function onOverwrite(event: Event) {
+	let actionForm: HTMLInputElement;
+
+	async function onOverwrite(event: Event) {
+		actionForm.value = 'overwrite';
 		if (!confirm('Do you want to overwrite current product currencies with this one?')) {
 			event.preventDefault();
+			actionForm.value = '';
 		}
 	}
 </script>
@@ -38,7 +42,7 @@
 		Main currency
 		<select name="mainCurrency" class="form-input max-w-[25rem]">
 			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
-				<option value={currency} selected={data.mainCurrency === currency}>{currency}</option>
+				<option value={currency} selected={data.currencies.main === currency}>{currency}</option>
 			{/each}
 		</select>
 	</label>
@@ -46,9 +50,11 @@
 	<label class="form-label">
 		Secondary currency
 		<select name="secondaryCurrency" class="form-input max-w-[25rem]">
-			<option value="" selected={!data.secondaryCurrency} />
+			<option value="" selected={!data.currencies.secondary} />
 			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
-				<option value={currency} selected={data.secondaryCurrency === currency}>{currency}</option>
+				<option value={currency} selected={data.currencies.secondary === currency}
+					>{currency}</option
+				>
 			{/each}
 		</select>
 	</label>
@@ -57,17 +63,17 @@
 		<div class="flex gap-2">
 			<select name="priceReferenceCurrency" class="form-input max-w-[25rem]">
 				{#each CURRENCIES as currency}
-					<option value={currency} selected={data.priceReferenceCurrency === currency}>
+					<option value={currency} selected={data.currencies.priceReference === currency}>
 						{currency}
 					</option>
 				{/each}
 			</select>
-			<button type="button" on:click={onOverwrite} class="btn btn-red self-start">
+			<input type="hidden" name="actionOverwrite" bind:this={actionForm} />
+			<button type="submit" class="btn btn-red self-start" on:click={onOverwrite}>
 				<IconRefresh />
 			</button>
 		</div>
 	</label>
-
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
@@ -153,7 +159,7 @@
 			{#if vatSingleCountry}
 				<label class="form-label">
 					Seller's country for VAT purposes
-					<select name="vatCountry">
+					<select name="vatCountry" class="form-input">
 						{#each Object.entries(data.countryCodes) as [countryCode, countryName]}
 							<option value={countryCode} selected={data.vatCountry === countryCode}>
 								{countryName}
@@ -265,6 +271,39 @@
 			name="confirmationBlocks"
 			class="form-input max-w-[25rem]"
 			value={data.confirmationBlocks}
+		/>
+	</label>
+	<label class="form-label">
+		Set desired timeout for payment (in minutes)
+		<input
+			type="number"
+			min="0"
+			step="1"
+			name="desiredPaymentTimeout"
+			class="form-input max-w-[25rem]"
+			value={data.desiredPaymentTimeout}
+		/>
+	</label>
+	<label class="form-label">
+		How much time a cart reserves the stock (in minutes)
+		<input
+			type="number"
+			min="0"
+			step="1"
+			name="reserveStockInMinutes"
+			class="form-input max-w-[25rem]"
+			value={data.reserveStockInMinutes}
+		/>
+		<p class="text-sm">The cart's reservation is extended each time the cart is updated.</p>
+	</label>
+	<label class="form-label">
+		Plausible script url
+		<input
+			type="text"
+			class="form-input max-w-[25rem]"
+			name="plausibleScriptUrl"
+			placeholder="https://plausible.yourdomain.com/js/script.js"
+			value={data.plausibleScriptUrl}
 		/>
 	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />

@@ -4,7 +4,7 @@
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { onMount, setContext } from 'svelte';
+	import { onMount } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { navigating, page } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';
@@ -21,31 +21,35 @@
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import { slide } from 'svelte/transition';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
-	import { toCurrency } from '$lib/utils/toCurrency';
+	import { currencies } from '$lib/stores/currencies';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 
 	export let data;
 
 	let topMenuOpen = false;
 	let navMenuOpen = false;
 
+	let cartErrorMessage = '';
+	let cartErrorProductId = '';
+
 	let actionCount = 0;
 
 	$exchangeRate = data.exchangeRate;
+	$currencies = data.currencies;
 
 	$: $exchangeRate = data.exchangeRate;
-
-	setContext('mainCurrency', data.mainCurrency);
-	setContext('secondaryCurrency', data.secondaryCurrency);
+	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
-	$: totalPrice = sum(
-		items.map(
-			(item) =>
-				toCurrency(data.mainCurrency, item.product.price.amount, item.product.price.currency) *
-				item.quantity
-		)
+	$: totalPrice = sumCurrency(
+		data.currencies.main,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount: (item.customPrice || item.product.price).amount * item.quantity
+		}))
 	);
-	$: vat = totalPrice * (data.vatRate / 100);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), data.currencies.main);
 	$: totalPriceWithVat = totalPrice + vat;
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
@@ -179,16 +183,21 @@
 									on:dismiss={() => ($productAddedToCart = null)}
 									product={$productAddedToCart.product}
 									picture={$productAddedToCart.picture}
+									customPrice={$productAddedToCart.customPrice}
 								/>
 							</Popup>
 						{:else if cartOpen}
 							<Popup>
 								<div class="p-2 gap-2 flex flex-col">
 									{#each items as item}
+										{#if cartErrorMessage && cartErrorProductId === item.product._id}
+											<div class="text-red-600 text-sm">{cartErrorMessage}</div>
+										{/if}
 										<form
 											class="flex border-b border-gray-300 pb-2 gap-2"
 											method="POST"
 											use:enhance={({ action }) => {
+												cartErrorMessage = '';
 												if (action.searchParams.has('/increase')) {
 													item.quantity++;
 												} else if (action.searchParams.has('/decrease')) {
@@ -204,6 +213,12 @@
 														if (result.type === 'redirect') {
 															// Invalidate all to remove 0-quantity items
 															await goto(result.location, { noScroll: true, invalidateAll: true });
+															return;
+														}
+														if (result.type === 'error' && result.error?.message) {
+															cartErrorMessage = result.error.message;
+															cartErrorProductId = item.product._id;
+															await invalidate(UrlDependency.Cart);
 															return;
 														}
 														await applyAction(result);
@@ -227,7 +242,7 @@
 												<a href="/product/{item.product._id}">
 													<h3 class="text-base text-gray-850 font-medium">{item.product.name}</h3>
 												</a>
-												{#if item.product.type !== 'subscription'}
+												{#if item.product.type !== 'subscription' && !item.product.standalone}
 													<div class="flex items-center gap-2 text-gray-700">
 														<span class="text-xs">Quantity: </span>
 														<CartQuantity {item} sm />
@@ -235,15 +250,25 @@
 												{/if}
 											</div>
 											<div class="flex flex-col items-end gap-[6px] ml-auto">
-												<PriceTag
-													class="text-gray-600 text-base"
-													amount={item.quantity * item.product.price.amount}
-													currency={item.product.price.currency}
-													main
-												/>
+												{#if item.product.type !== 'subscription' && item.customPrice}
+													<PriceTag
+														class="text-gray-600 text-base"
+														amount={item.quantity * item.customPrice.amount}
+														currency={item.customPrice.currency}
+														main
+													/>
+												{:else}
+													<PriceTag
+														class="text-gray-600 text-base"
+														amount={item.quantity * item.product.price.amount}
+														currency={item.product.price.currency}
+														main
+													/>
+												{/if}
+
 												<button formaction="/cart/{item.product._id}/?/remove">
 													<IconTrash class="text-gray-800" />
-													<span class="sr-only">Remote item from cart</span>
+													<span class="sr-only">Remove item from cart</span>
 												</button>
 											</div>
 										</form>
@@ -251,14 +276,18 @@
 									{#if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
 											Vat ({data.vatRate}%) <PriceTag
-												currency={data.mainCurrency}
+												currency={data.currencies.main}
 												amount={vat}
 												main
 											/>
 										</div>
 									{/if}
 									<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-										Total <PriceTag currency={data.mainCurrency} amount={totalPriceWithVat} main />
+										Total <PriceTag
+											currency={data.currencies.main}
+											amount={totalPriceWithVat}
+											main
+										/>
 									</div>
 									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
 									{#if items.length > 0}<a href="/checkout" class="btn btn-black">

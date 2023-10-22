@@ -24,8 +24,9 @@ await s3client
 						AllowedMethods: ['PUT'],
 						// todo: change to production domain
 						AllowedOrigins: ['*'],
-						AllowedHeaders: ['*'],
-						ID: 'CORSRule1'
+						AllowedHeaders: ['*']
+						// DO NOT SPECIFY: OVH S3 does not support this
+						// ID: 'CORSRule1'
 					}
 				]
 			}
