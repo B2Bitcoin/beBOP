@@ -128,7 +128,8 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[users, { 'backupInfo.email': 1 }, { sparse: true, unique: true }],
 	[users, { 'backupInfo.npub': 1 }, { sparse: true, unique: true }],
 	[sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
-	[sessions, { sessionId: 1 }, { unique: true }]
+	[sessions, { sessionId: 1 }, { unique: true }],
+	[discounts, { endAt: 1 }]
 ];
 
 client.on('open', () => {

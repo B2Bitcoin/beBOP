@@ -6,9 +6,9 @@ import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
-import { userIdentifier } from '$lib/server/user';
+import { userIdentifier, userQuery } from '$lib/server/user';
 
-export const load = async ({ params }) => {
+export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
 		Pick<
 			Product,
@@ -56,10 +56,22 @@ export const load = async ({ params }) => {
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
 		.toArray();
-	const discount = await collections.discounts
-		.find({ productIds: { $in: [product._id] }, endsAt: { $gt: new Date(Date.now()) } })
-		.sort({ createdAt: 1 })
+	const subscriptions = await collections.paidSubscriptions
+		.find({
+			...userQuery(userIdentifier(locals)),
+			paidUntil: { $gt: new Date() }
+		})
 		.toArray();
+	const discount = await collections.discounts.findOne(
+		{
+			$or: [{ wholeCatalog: true }, { productIds: product._id }],
+			subscriptionIds: { $in: [subscriptions.map((sub) => sub.productId)] },
+			endsAt: { $gt: new Date() }
+		},
+		{
+			sort: { percentage: -1 }
+		}
+	);
 	return {
 		product,
 		pictures,
