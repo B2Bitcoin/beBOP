@@ -65,7 +65,7 @@ export const load = async ({ params, locals }) => {
 	const discount = await collections.discounts.findOne(
 		{
 			$or: [{ wholeCatalog: true }, { productIds: product._id }],
-			subscriptionIds: { $in: [subscriptions.map((sub) => sub.productId)] },
+			subscriptionIds: { $in: subscriptions.map((sub) => sub.productId) },
 			endsAt: { $gt: new Date() }
 		},
 		{
