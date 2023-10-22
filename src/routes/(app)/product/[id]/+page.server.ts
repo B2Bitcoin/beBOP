@@ -7,7 +7,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { maxBy } from 'lodash-es';
-import { userIdentifier } from '$lib/server/user';
+import { userIdentifier, userQuery } from '$lib/server/user';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -59,7 +59,8 @@ export const load = async ({ params, locals }) => {
 		.toArray();
 	const subscriptions = await collections.paidSubscriptions
 		.find({
-			$or: [{ email: locals.email }, { npub: locals.npub }]
+			...userQuery(userIdentifier(locals)),
+			paidUntil: { $gt: new Date() }
 		})
 		.toArray();
 	const discount = await collections.discounts
