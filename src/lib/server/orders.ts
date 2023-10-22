@@ -20,6 +20,8 @@ import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
+import type { UserIdentifier } from '$lib/types/UserIdentifier';
+import { userQuery } from './user';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -83,7 +85,7 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 				{
 					_id: crypto.randomUUID(),
 					number: await generateSubscriptionNumber(),
-					npub: order.notifications.paymentStatus.npub,
+					user: order.user,
 					productId: subscription.product._id,
 					paidUntil: add(new Date(), { [`${runtimeConfig.subscriptionDuration}s`]: 1 }),
 					createdAt: new Date(),
@@ -149,7 +151,7 @@ export async function createOrder(
 	}>,
 	paymentMethod: Order['payment']['method'],
 	params: {
-		sessionId?: string;
+		user: UserIdentifier;
 		notifications: {
 			paymentStatus: {
 				npub?: string;
@@ -272,10 +274,7 @@ export async function createOrder(
 		}
 
 		const existingSubscription = await collections.paidSubscriptions.findOne({
-			$or: filterUndef([
-				npubAddress ? { npub: npubAddress } : undefined,
-				email ? { email: email } : undefined
-			]),
+			...userQuery(params.user),
 			productId: product._id
 		});
 
@@ -322,7 +321,6 @@ export async function createOrder(
 			{
 				_id: orderId,
 				number: orderNumber,
-				...(params.sessionId && { sessionId: params.sessionId }),
 				createdAt: new Date(),
 				updatedAt: new Date(),
 				items,
@@ -377,6 +375,12 @@ export async function createOrder(
 						...(npubAddress && { npub: npubAddress }),
 						...(email && { email })
 					}
+				},
+				user: {
+					...params.user,
+					// In case the user didn't authenticate with an email but still wants to be notified,
+					// we also associate the email to the order
+					...(email && { email })
 				}
 			},
 			{ session }

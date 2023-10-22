@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { upperFirst } from '$lib/utils/upperFirst';
 	import { signIn } from '@auth/sveltekit/client';
 	import IconFacebook from '~icons/ant-design/facebook-filled';
 	import IconGithub from '~icons/ant-design/github-outlined';
 	import IconGoogle from '~icons/ant-design/google-outlined';
 	import IconTwitter from '~icons/ant-design/twitter-outlined';
+	import IconTrash from '$lib/components/icons/IconTrash.svelte';
+	import { enhance } from '$app/forms';
 
 	export let form;
 	export let data;
@@ -14,18 +17,46 @@
 	{#if form?.error || data?.error}
 		<p class="text-red-500">{form?.error || data?.error}</p>
 	{/if}
-	{#if data.email || data.npub || data.sso?.length}
-		<h2 class="text-2xl">Session</h2>
-		<ul class="list-disc ml-4">
-			{#if data.email}<li>Email: {data.email}</li>{/if}
-			{#if data.npub}<li>Npub: {data.npub}</li>{/if}
-			{#each data.sso || [] as { provider, email, name }}
-				<li>
-					{provider}: {email || 'no-email'} ({name})
-				</li>
-			{/each}
-		</ul>
-	{/if}
+	<h2 class="text-2xl">Session</h2>
+	<ul class="list-disc ml-4">
+		{#if data.userId}
+			<li class="flex gap-2 items-center">
+				UserId: {data.userId}
+				<form action="?/clearUserId" class="contents" use:enhance method="post">
+					<button class="text-red-500 hover:underline"><IconTrash /></button>
+				</form>
+			</li>
+		{/if}
+		{#if data.email && !data.emailFromSso}
+			<li class="flex gap-2 items-center">
+				Email: {data.email}
+				<form action="?/clearEmail" class="contents" use:enhance method="post">
+					<button class="text-red-500 hover:underline"><IconTrash /></button>
+				</form>
+			</li>
+		{/if}
+		{#if data.npub}
+			<li class="flex gap-2 items-center">
+				Npub: {data.npub}
+				<form action="?/clearNpub" class="contents" use:enhance method="post">
+					<button class="text-red-500 hover:underline"><IconTrash /></button>
+				</form>
+			</li>
+		{/if}
+		{#each data.sso || [] as { provider, email, name }}
+			<li class="flex gap-2 items-center">
+				{upperFirst(provider)}: {email || 'no-email'} ({name})
+				<form action="?/clearSso" use:enhance class="contents" method="post">
+					<input type="hidden" name="provider" value={provider} />
+					<button class="text-red-500 hover:underline"><IconTrash /></button>
+				</form>
+			</li>
+		{/each}
+	</ul>
+
+	<form method="post" action="?/clearAll" use:enhance>
+		<button class="btn btn-red">Clear session</button>
+	</form>
 	{#if data.emailToLogin || data.npubToLogin}
 		<form method="post" action="?/validate&token={$page.url.searchParams.get('token')}">
 			<button class="btn btn-blue text-white">

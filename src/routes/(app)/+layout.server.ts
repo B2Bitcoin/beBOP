@@ -1,6 +1,8 @@
+import { getCartFromDb } from '$lib/server/cart.js';
 import { countryNameByAlpha2 } from '$lib/server/country-codes';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import { userIdentifier } from '$lib/server/user.js';
 import { vatRates } from '$lib/server/vat-rates';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
@@ -25,7 +27,7 @@ export async function load(params) {
 	depends(UrlDependency.ExchangeRate);
 	depends(UrlDependency.Cart);
 
-	const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
+	const cart = await getCartFromDb({ user: userIdentifier(locals) });
 
 	const logoPicture = runtimeConfig.logoPictureId
 		? await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId })
@@ -41,9 +43,11 @@ export async function load(params) {
 			BTC_SAT: runtimeConfig.BTC_SAT
 		},
 		countryCode: locals.countryCode,
-		email: locals.email,
+		email: locals.email || locals.sso?.find((sso) => sso.email)?.email,
+		emailFromSso: !locals.email && locals.sso?.some((sso) => sso.email),
 		npub: locals.npub,
 		sso: locals.sso,
+		userId: locals.user?._id.toString(),
 		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0

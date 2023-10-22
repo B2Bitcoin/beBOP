@@ -25,7 +25,7 @@ import type { EmailNotification } from '$lib/types/EmailNotification';
 import type { Role } from '$lib/types/Role';
 import type { User } from '$lib/types/User';
 import type { Discount } from '$lib/types/Discount';
-import type { Session } from '$lib/types/session';
+import type { Session } from '$lib/types/Session';
 import type { Migration } from '$lib/types/Migration';
 
 const client = new MongoClient(MONGODB_URL, {
@@ -90,13 +90,9 @@ export const collections = {
 const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?]> = [
 	[pictures, { productId: 1 }],
 	[locks, { updatedAt: 1 }, { expireAfterSeconds: 60 }],
-	[
-		carts,
-		{ sessionId: 1 },
-		{ unique: true, partialFilterExpression: { sessionId: { $exists: true } } }
-	],
-	[carts, { npub: 1 }, { unique: true, partialFilterExpression: { npub: { $exists: true } } }],
-	[orders, { sessionId: 1 }],
+	[carts, { 'user.**': 1 }],
+	[carts, { 'items.productId': 1 }],
+	[orders, { 'user.**': 1 }],
 	[orders, { 'items.product._id': 1, paymentStatus: 1 }],
 	[
 		orders,
@@ -117,16 +113,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[emailNotifications, { dest: 1 }],
 	[emailNotifications, { processedAt: 1 }],
 	[bootikSubscriptions, { npub: 1 }, { sparse: true }],
-	[
-		paidSubscriptions,
-		{ npub: 1, productId: 1 },
-		{ unique: true, partialFilterExpression: { npub: { $exists: true } } }
-	],
-	[
-		paidSubscriptions,
-		{ email: 1, productId: 1 },
-		{ unique: true, partialFilterExpression: { email: { $exists: true } } }
-	],
+	[paidSubscriptions, { 'user.**': 1, productId: 1 }],
 	[paidSubscriptions, { number: 1 }, { unique: true }],
 	// See subscription-lock.ts, for searching for subscriptions to remind
 	// todo: find which index is better

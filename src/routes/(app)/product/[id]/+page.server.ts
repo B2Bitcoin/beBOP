@@ -7,6 +7,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { maxBy } from 'lodash-es';
+import { userIdentifier } from '$lib/server/user';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -100,7 +101,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		});
 	const customPriceConverted = parsePriceAmount(customPrice, runtimeConfig.mainCurrency, true);
 	await addToCartInDb(product, quantity, {
-		sessionId: locals.sessionId,
+		user: userIdentifier(locals),
 		...(product.payWhatYouWant &&
 			product.type !== 'subscription' && { customAmount: customPriceConverted })
 	});

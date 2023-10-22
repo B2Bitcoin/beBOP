@@ -26,6 +26,7 @@ import {
 } from '$env/static/private';
 import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
+import { sha256 } from '$lib/utils/sha256';
 // import { countryFromIp } from '$lib/server/geoip';
 
 const SSO_COOKIE = 'next-auth.session-token';
@@ -101,10 +102,11 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const token = event.cookies.get('bootik-session');
 
-	event.locals.sessionId = token || crypto.randomUUID();
+	const secretSessionId = token || crypto.randomUUID();
+	event.locals.sessionId = await sha256(secretSessionId);
 
 	// Refresh cookie expiration date
-	event.cookies.set('bootik-session', event.locals.sessionId, {
+	event.cookies.set('bootik-session', secretSessionId, {
 		path: '/',
 		sameSite: 'lax',
 		secure: true,
@@ -112,18 +114,45 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		expires: addYears(new Date(), 1)
 	});
 
-	const session = await collections.sessions.findOne({
-		sessionId: event.locals.sessionId
-	});
+	const session = (
+		await collections.sessions.findOneAndUpdate(
+			{
+				sessionId: event.locals.sessionId
+			},
+			{
+				$set: {
+					updatedAt: new Date(),
+					expiresAt: addYears(new Date(), 1)
+				}
+			}
+		)
+	).value;
 	if (session) {
-		const user = await collections.users.findOne({
-			_id: session.userId
-		});
-		if (user) {
-			event.locals.user = {
-				login: user.login ? user.login : '',
-				role: user.roleId
-			};
+		if (session.userId) {
+			const user = await collections.users.findOne({
+				_id: session.userId
+			});
+			if ((session.expireUserAt && session.expireUserAt < new Date()) || !user) {
+				await collections.sessions.updateOne(
+					{
+						sessionId: event.locals.sessionId
+					},
+					{
+						$unset: {
+							userId: '',
+							expireUserAt: ''
+						}
+					}
+				);
+			} else {
+				if (user) {
+					event.locals.user = {
+						_id: user._id,
+						login: user.login ? user.login : '',
+						role: user.roleId
+					};
+				}
+			}
 		}
 		event.locals.email = session.email;
 		event.locals.npub = session.npub;
@@ -295,6 +324,8 @@ if (!building) {
 
 const handleSSO = authProviders
 	? SvelteKitAuth({
+			// Should be fine as long as your reverse proxy is configured to only accept traffic with the correct host header
+			trustHost: true,
 			providers: authProviders,
 			secret: runtimeConfig.ssoSecret,
 			/**
