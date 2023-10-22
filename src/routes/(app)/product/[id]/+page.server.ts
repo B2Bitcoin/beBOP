@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
-import { maxBy } from 'lodash-es';
 import { userIdentifier, userQuery } from '$lib/server/user';
 
 export const load = async ({ params, locals }) => {
@@ -63,18 +62,20 @@ export const load = async ({ params, locals }) => {
 			paidUntil: { $gt: new Date() }
 		})
 		.toArray();
-	const discount = await collections.discounts
-		.find({
+	const discount = await collections.discounts.findOne(
+		{
 			$or: [{ wholeCatalog: true }, { productIds: product._id }],
 			subscriptionIds: { $in: [subscriptions.map((sub) => sub.productId)] },
 			endsAt: { $gt: new Date() }
-		})
-		.sort({ createdAt: -1 })
-		.toArray();
+		},
+		{
+			sort: { percentage: -1 }
+		}
+	);
 	return {
 		product,
 		pictures,
-		discount: maxBy(discount, 'percentage'),
+		discount,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
 };
