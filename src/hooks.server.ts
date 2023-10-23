@@ -12,7 +12,7 @@ import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
 interface Client {
 	writer: WritableStreamDefaultWriter;
-	sessionId: string;
+	userId: string;
 }
 
 interface ChangeEvent {
@@ -24,11 +24,11 @@ interface ChangeEvent {
 const clients: Record<string, Client> = {};
 
 export function notifyClientsOfCartUpdate(
-	data: { eventType: string },
-	sessionIdToUpdate: string
+	data: { eventType: string | undefined },
+	userIdToUpdate: string
 ): void {
 	for (const clientId in clients) {
-		if (clients[clientId].sessionId === sessionIdToUpdate) {
+		if (clients[clientId].userId === userIdToUpdate) {
 			const writer = clients[clientId].writer;
 			writer.write(`data: ${JSON.stringify(data)}\n\n`).catch((error) => {
 				console.error(`Error writing to client ${clientId}`, error);
@@ -51,12 +51,12 @@ cartChangeStream.on('change', async (changeEvent: ChangeEvent) => {
 				_id: new ObjectId(changeEvent.documentKey._id)
 			});
 
-			if (!cart || !cart.sessionId) {
+			if (!cart || !cart.userId) {
 				console.error('Cart or session ID not found for changeEvent: ', changeEvent);
 				return;
 			}
 
-			notifyClientsOfCartUpdate({ eventType: 'updateCart' }, cart.sessionId);
+			notifyClientsOfCartUpdate({ eventType: 'updateCart' }, cart.userId.toString());
 		}
 	} catch (error) {
 		console.error('Error processing changeEvent:', error);
@@ -74,14 +74,15 @@ orderChangeStream.on('change', async (changeEvent: ChangeEvent) => {
 				_id: changeEvent.documentKey._id
 			});
 
-			if (!order || !order.sessionId) {
+			if (!order || !order.userId) {
 				console.error('Cart or session ID not found for changeEvent: ', changeEvent);
 				return;
 			}
 
-			console.log('checkout order ', order);
-
-			notifyClientsOfCartUpdate({ eventType: 'checkout' }, order.sessionId);
+			notifyClientsOfCartUpdate(
+				{ eventType: order.lastPaymentStatusNotified },
+				order.userId.toString()
+			);
 		}
 	} catch (error) {
 		console.error('Error processing changeEvent:', error);
@@ -244,7 +245,7 @@ export const handle = (async ({ event, resolve }) => {
 		//create client object, with the session id
 		const client = {
 			id: clientId,
-			sessionId: event.url.searchParams.get('sessionId') ?? '',
+			userId: event.url.searchParams.get('userId') ?? '',
 			writer: writer
 		};
 

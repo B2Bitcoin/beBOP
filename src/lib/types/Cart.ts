@@ -1,6 +1,7 @@
 import type { RuntimeConfig } from '$lib/server/runtime-config';
 import { sum } from '$lib/utils/sum';
 import { toCurrency } from '$lib/utils/toCurrency';
+import type { ObjectId } from 'mongodb';
 import type { CountryAlpha2 } from './Country';
 import type { Currency } from './Currency';
 import type { Product } from './Product';
@@ -9,7 +10,7 @@ import type { Timestamps } from './Timestamps';
 export interface Cart extends Timestamps {
 	sessionId?: string;
 	npub?: string;
-
+	userId?: ObjectId;
 	items: Array<{
 		productId: string;
 		quantity: number;

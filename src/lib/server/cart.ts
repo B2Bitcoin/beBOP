@@ -32,9 +32,20 @@ export async function addToCartInDb(
 	let cart = await collections.carts.findOne(query);
 
 	if (!cart) {
+		let userId;
+
+		if (params.sessionId) {
+			const session = await collections.sessions.findOne({ sessionId: params.sessionId });
+
+			if (session) {
+				userId = session.userId;
+			}
+		}
+
 		cart = {
 			...query,
 			_id: new ObjectId(),
+			userId: userId,
 			items: [],
 			createdAt: new Date(),
 			updatedAt: new Date()
@@ -95,6 +106,7 @@ export async function addToCartInDb(
 				{
 					$set: {
 						items: validCart.items,
+						userId: validCart.userId,
 						updatedAt: new Date()
 					},
 					$setOnInsert: {
