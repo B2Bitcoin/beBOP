@@ -94,14 +94,14 @@
 			Import Pictures & Digital Files
 		</label>
 
-		{#if importFiles}
+		<!-- {#if importFiles}
 			<label for="importTypeFiles">Choose import type:</label>
 			<select id="importTypeFiles" name="importTypeFiles">
 				<option value="basic">Basic</option>
 				<option value="checkWarn">Check & warn</option>
 				<option value="checkClean">Check & clean</option>
 			</select>
-		{/if}
+		{/if} -->
 	</div>
 
 	<button type="submit" class="btn btn-black self-start">Import</button>
