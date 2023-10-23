@@ -1,13 +1,14 @@
 import { addToCartInDb, removeFromCartInDb } from '$lib/server/cart';
 import { collections, withTransaction } from '$lib/server/database';
 import { refreshAvailableStockInDb } from '$lib/server/product.js';
+import { userIdentifier } from '$lib/server/user.js';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER } from '$lib/types/Product.js';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const actions = {
 	remove: async ({ locals, params, request }) => {
-		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
+		const cart = await collections.carts.findOne({ user: userIdentifier(locals) });
 
 		if (!cart) {
 			throw error(404, 'This product is not in the cart');
@@ -61,7 +62,7 @@ export const actions = {
 			});
 
 		await addToCartInDb(product, quantity + 1, {
-			sessionId: locals.sessionId,
+			user: userIdentifier(locals),
 			totalQuantity: true
 		});
 
@@ -71,8 +72,8 @@ export const actions = {
 		const product = await collections.products.findOne({ _id: params.id });
 
 		if (!product) {
-			await collections.carts.updateOne(
-				{ sessionId: locals.sessionId },
+			await collections.carts.updateMany(
+				{ productId: params.id },
 				{ $pull: { items: { productId: params.id } }, $set: { updatedAt: new Date() } }
 			);
 			throw error(404, 'This product does not exist');
@@ -89,7 +90,7 @@ export const actions = {
 			});
 
 		await removeFromCartInDb(product, quantity - 1, {
-			sessionId: locals.sessionId,
+			user: userIdentifier(locals),
 			totalQuantity: true
 		});
 

@@ -31,13 +31,13 @@ async function maintainLock() {
 
 			for await (const subscription of subscriptionsToRemind) {
 				await withTransaction(async (session) => {
-					if (subscription.npub) {
+					if (subscription.user.npub) {
 						const notifId = new ObjectId();
 						await collections.nostrNotifications.insertOne(
 							{
 								_id: notifId,
 								kind: Kind.EncryptedDirectMessage,
-								dest: subscription.npub,
+								dest: subscription.user.npub,
 								content: `Your subscription #${
 									subscription.number
 								} is going to expire ${formatDistance(subscription.paidUntil, new Date(), {
@@ -66,7 +66,7 @@ async function maintainLock() {
 							{ session }
 						);
 					}
-					if (subscription.email) {
+					if (subscription.user.email) {
 						const notifId = new ObjectId();
 						await collections.paidSubscriptions.updateOne(
 							{
@@ -103,13 +103,13 @@ async function maintainLock() {
 
 			for await (const subscription of subscriptionsToNotifyEnd) {
 				await withTransaction(async (session) => {
-					if (subscription.npub) {
+					if (subscription.user.npub) {
 						const notifId = new ObjectId();
 						await collections.nostrNotifications.insertOne(
 							{
 								_id: notifId,
 								kind: Kind.EncryptedDirectMessage,
-								dest: subscription.npub,
+								dest: subscription.user.npub,
 								content: `Your subscription #${subscription.number} expired. Renew here if you wish: ${ORIGIN}/subscription/${subscription._id}`,
 								createdAt: new Date(),
 								updatedAt: new Date()
@@ -133,7 +133,7 @@ async function maintainLock() {
 							{ session }
 						);
 					}
-					if (subscription.email) {
+					if (subscription.user.email) {
 						const notifId = new ObjectId();
 						// todo: send email & store in DB
 						await collections.paidSubscriptions.updateOne(

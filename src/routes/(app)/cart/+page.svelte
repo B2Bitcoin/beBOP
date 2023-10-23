@@ -5,6 +5,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
@@ -19,13 +20,13 @@
 
 	$: items = data.cart || [];
 	$: totalPrice = sumCurrency(
-		data.currencies.main,
+		UNDERLYING_CURRENCY,
 		items.map((item) => ({
 			currency: (item.customPrice || item.product.price).currency,
 			amount: (item.customPrice || item.product.price).amount * item.quantity
 		}))
 	);
-	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), data.currencies.main);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
@@ -170,14 +171,14 @@
 					<div class="flex flex-col items-end">
 						<PriceTag
 							amount={vat}
-							currency={data.currencies.main}
+							currency={UNDERLYING_CURRENCY}
 							main
 							class="text-[28px] text-gray-800"
 						/>
 						<PriceTag
 							class="text-base text-gray-600"
 							amount={vat}
-							currency={data.currencies.main}
+							currency={UNDERLYING_CURRENCY}
 							secondary
 						/>
 					</div>
@@ -188,14 +189,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={totalPriceWithVat}
-						currency={data.currencies.main}
+						currency={UNDERLYING_CURRENCY}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={totalPriceWithVat}
-						currency={data.currencies.main}
+						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>

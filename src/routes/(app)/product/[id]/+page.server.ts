@@ -1,13 +1,14 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, RequestEvent } from './$types';
+import type { RequestEvent } from './$types';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
+import { userIdentifier, userQuery } from '$lib/server/user';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
 		Pick<
 			Product,
@@ -55,10 +56,22 @@ export const load: PageServerLoad = async ({ params }) => {
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
 		.toArray();
-	const discount = await collections.discounts
-		.find({ productIds: { $in: [product._id] }, endsAt: { $gt: new Date(Date.now()) } })
-		.sort({ createdAt: 1 })
+	const subscriptions = await collections.paidSubscriptions
+		.find({
+			...userQuery(userIdentifier(locals)),
+			paidUntil: { $gt: new Date() }
+		})
 		.toArray();
+	const discount = await collections.discounts.findOne(
+		{
+			$or: [{ wholeCatalog: true }, { productIds: product._id }],
+			subscriptionIds: { $in: subscriptions.map((sub) => sub.productId) },
+			endsAt: { $gt: new Date() }
+		},
+		{
+			sort: { percentage: -1 }
+		}
+	);
 	return {
 		product,
 		pictures,
@@ -90,7 +103,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		});
 	const customPriceConverted = parsePriceAmount(customPrice, runtimeConfig.mainCurrency, true);
 	await addToCartInDb(product, quantity, {
-		sessionId: locals.sessionId,
+		user: userIdentifier(locals),
 		...(product.payWhatYouWant &&
 			product.type !== 'subscription' && { customAmount: customPriceConverted })
 	});

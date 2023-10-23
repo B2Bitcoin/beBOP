@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import { z } from 'zod';
 import { deletePicture } from '$lib/server/picture';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
@@ -9,7 +9,7 @@ import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
 import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
 
 	if (!product) {

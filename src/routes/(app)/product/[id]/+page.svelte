@@ -15,17 +15,16 @@
 		oneMaxPerLine
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
+	import { differenceInHours } from 'date-fns';
 
 	export let data;
 
 	let quantity = 1;
 	let loading = false;
 	let errorMessage = '';
-	const endsAt = data.discount[0] ? new Date(data.discount[0].endsAt).getTime() : 0; // Convert to timestamp
+	const endsAt = data.discount ? new Date(data.discount.endsAt).getTime() : Date.now(); // Convert to timestamp
 	const currentTime = Date.now();
-	const timeDifference = endsAt - currentTime;
-
-	const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
+	const hoursDifference = differenceInHours(endsAt, currentTime);
 	let customAmount =
 		data.product.price.amount !== 0 &&
 		toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency) < 0.01
@@ -184,25 +183,27 @@
 					/>
 				</div>
 
-				{#if data.product.type === 'subscription' && data.discount.length > 0}
+				{#if data.discount}
 					<hr class="border-gray-300" />
 					<h3 class="text-gray-850 text-[22px]">
-						{data.discount[0].percentage}% off for {hoursDifference}h
+						{data.discount.percentage}% off for {hoursDifference}h
 					</h3>
 					{#if 0}
 						<GoalProgress text="1h32min left" goal={600} progress={444} />
 					{/if}
-					<hr class="border-gray-300" />
-					<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
-						<IconInfo class="text-[#E4C315]" />
-						<div>
-							<h3 class="font-semibold text-gray-800">Free with "xxxxx"</h3>
-							<p class="text-gray-700">
-								This product is available for free with your monthly subscription
-							</p>
-							<a href="/cabinet" class="text-[#E4C315] hover:underline">See in MyCabinet</a>
+					{#if data.discount.percentage === 100}
+						<hr class="border-gray-300" />
+						<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
+							<IconInfo class="text-[#E4C315]" />
+							<div>
+								<h3 class="font-semibold text-gray-800">Free with "xxxxx"</h3>
+								<p class="text-gray-700">
+									This product is available for free with your monthly subscription
+								</p>
+								<a href="/cabinet" class="text-[#E4C315] hover:underline">See in MyCabinet</a>
+							</div>
 						</div>
-					</div>
+					{/if}
 				{/if}
 				<hr class="border-gray-300 my-2" />
 
