@@ -4,6 +4,7 @@
 		"svelte.svelte-vscode",
 		"csstools.postcss",
 		"dbaeumer.vscode-eslint",
-		"rvest.vs-code-prettier-eslint"
+		"esbenp.prettier-vscode",
+		"antfu.iconify"
 	]
 }
