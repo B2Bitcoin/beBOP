@@ -5,6 +5,7 @@ import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { ObjectId } from 'mongodb';
 import { convertObjectIdsToStrings } from '$lib/utils/convertObjectIdsToStrings';
+import { POS_ROLE_ID } from '$lib/types/User';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const userId = new ObjectId(params.id);
@@ -47,7 +48,7 @@ export const actions: Actions = {
 		}
 
 		await collections.users.updateOne(
-			{ _id: new ObjectId(params.id) },
+			{ _id: new ObjectId(params.id), roleId: POS_ROLE_ID },
 			{
 				$set: updatedValueSeat
 			}

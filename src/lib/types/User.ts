@@ -19,4 +19,4 @@ export interface User extends Timestamps {
 }
 
 export const SUPER_ADMIN_ROLE_ID = 'super-admin';
-export const POS_ROLE_ID = 'pos';
+export const POS_ROLE_ID = 'point-of-sale';
