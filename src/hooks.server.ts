@@ -27,9 +27,13 @@ export function notifyClientsOfCartUpdate(
 	data: { eventType: string | undefined },
 	userIdToUpdate: string
 ): void {
+	console.log('=> notifyClientsOfCartUpdate');
+
 	for (const clientId in clients) {
 		if (clients[clientId].userId === userIdToUpdate) {
 			const writer = clients[clientId].writer;
+			console.log('writer ', writer);
+
 			writer.write(`data: ${JSON.stringify(data)}\n\n`).catch((error) => {
 				console.error(`Error writing to client ${clientId}`, error);
 				// Error writing to the client, assume it has disconnected
@@ -45,6 +49,8 @@ const cartCollection = collections.carts;
 const cartChangeStream = cartCollection.watch();
 
 cartChangeStream.on('change', async (changeEvent: ChangeEvent) => {
+	console.log('=> cartChangeStream');
+
 	try {
 		if (changeEvent?.documentKey?._id) {
 			const cart = await collections.carts.findOne({

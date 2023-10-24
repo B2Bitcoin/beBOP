@@ -4,7 +4,6 @@ import type { PageServerLoad, Actions } from './$types';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { ObjectId } from 'mongodb';
-import { convertObjectIdsToStrings } from '$lib/utils/convertObjectIdsToStrings';
 import { POS_ROLE_ID } from '$lib/types/User';
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -16,10 +15,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(404, 'User not found');
 	}
 
-	const sanitizedUser = convertObjectIdsToStrings(user);
-
 	return {
-		user: sanitizedUser
+		user: user.login
 	};
 };
 

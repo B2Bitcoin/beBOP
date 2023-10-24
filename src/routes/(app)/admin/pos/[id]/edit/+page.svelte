@@ -9,7 +9,7 @@
 </script>
 
 <div>
-	{data.user.login}
+	{data.user}
 </div>
 
 <form method="post" class="flex flex-col gap-4" action="?/update">
@@ -19,7 +19,7 @@
 			class="form-input"
 			type="text"
 			name="login"
-			value={data.user.login}
+			value={data.user}
 			placeholder="Enter your login"
 			required
 		/>

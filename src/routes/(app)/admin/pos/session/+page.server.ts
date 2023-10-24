@@ -1,11 +1,10 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './[sessionId]/$types';
-import { convertObjectIdsToStrings } from '$lib/utils/convertObjectIdsToStrings';
 import { formatCart } from '$lib/server/cart';
+import type { PageServerLoad } from '../$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const user = await collections.users.findOne({ login: locals.user.login });
+	const user = await collections.users.findOne({ login: locals.user?.login });
 
 	if (!user) {
 		throw error(404, 'User not found');
@@ -18,13 +17,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.limit(1)
 		.next();
 
-	const sanitizedCart = convertObjectIdsToStrings(cart);
-	const sanitizedOrder = convertObjectIdsToStrings(order);
-	const formattedCart = await formatCart(sanitizedCart);
+	const formattedCart = await formatCart(cart);
 
 	return {
 		cart: formattedCart,
-		order: sanitizedOrder,
+		order: {
+			...order,
+			userId: order?.userId.toString()
+		},
 		userId: user._id.toString()
 	};
 };

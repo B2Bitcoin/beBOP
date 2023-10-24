@@ -3,11 +3,9 @@
 	import { writable } from 'svelte/store';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import ProductType from '$lib/components/ProductType.svelte';
-	import CartQuantity from '$lib/components/CartQuantity.svelte';
-	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
+	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 
 	export let data;
 	export const cart = writable(data.cart);
@@ -50,9 +48,14 @@
 	}
 
 	function subscribeToServerEvents() {
+		console.log('=> subscribeToServerEvents');
+
 		fetchEventSource(`/sse?userId=${data.userId}`, {
 			onmessage(ev) {
+				console.log('onmessage ', onmessage);
+
 				const { eventType } = JSON.parse(ev.data);
+				console.log('=> fetchEventSource ', eventType);
 				handleEvent(eventType);
 			},
 			onerror(err) {
@@ -84,7 +87,9 @@
 		}
 	}
 
-	subscribeToServerEvents();
+	if (typeof window !== 'undefined') {
+		subscribeToServerEvents();
+	}
 
 	$: totalPrice = sumCurrency(
 		data.currencies.main,
@@ -167,7 +172,10 @@
 	{:else if $view === 'expired'}
 		<div class="text-2xl text-center">Order expired</div>
 	{:else if $view === 'paid'}
-		<div class="text-2xl text-center">Order paid</div>
+		<div class="flex flex-col items-center gap-3">
+			<h1 class="text-3xl text-center">Order #{$order?.number}</h1>
+			<CheckCircleOutlined font-size="160" />
+		</div>
 	{:else if $view === 'welcome'}
 		<div class="flex flex-col items-center">
 			<h1 class="text-3xl">Welcome</h1>
