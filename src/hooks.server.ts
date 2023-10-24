@@ -23,10 +23,10 @@ interface ChangeEvent {
 
 const clients: Record<string, Client> = {};
 
-export function notifyClientsOfCartUpdate(
+export async function notifyClientsOfCartUpdate(
 	data: { eventType: string | undefined },
 	userIdToUpdate: string
-): void {
+): Promise<void> {
 	console.log('=> notifyClientsOfCartUpdate');
 
 	for (const clientId in clients) {
@@ -246,16 +246,16 @@ export const handle = (async ({ event, resolve }) => {
 				Connection: 'keep-alive'
 			}
 		});
-		const clientId = Date.now();
+
+		const userId = event.url.searchParams.get('userId') ?? '';
 
 		//create client object, with the session id
 		const client = {
-			id: clientId,
-			userId: event.url.searchParams.get('userId') ?? '',
+			userId: userId,
 			writer: writer
 		};
 
-		clients[clientId] = client;
+		clients[userId] = client;
 
 		return response;
 	}
