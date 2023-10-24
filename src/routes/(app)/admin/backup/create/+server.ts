@@ -81,19 +81,25 @@ const addDigitalFileUrl = async (digitalFile: DigitalFile) => {
 	return digitalFile;
 };
 
-function objectIdToJson(obj, alreadyParsed = new Set()) {
+function objectIdToJson(obj: unknown, alreadyParsed = new Set<unknown>()): unknown {
 	if (obj && typeof obj === 'object') {
 		if (alreadyParsed.has(obj)) {
 			throw new Error('Cyclic dependency detected');
 		}
 		alreadyParsed.add(obj);
 	}
+
 	if (obj instanceof ObjectId) {
 		return { $oid: obj.toHexString() };
-	} else if (obj && typeof obj === 'object') {
-		for (const key in obj) {
-			obj[key] = objectIdToJson(obj[key], alreadyParsed);
+	} else if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+		const recordObj = obj as Record<string, unknown>;
+		for (const key in recordObj) {
+			// eslint-disable-next-line no-prototype-builtins
+			if (recordObj.hasOwnProperty(key)) {
+				recordObj[key] = objectIdToJson(recordObj[key], alreadyParsed);
+			}
 		}
+		return recordObj;
 	} else if (Array.isArray(obj)) {
 		for (let i = 0; i < obj.length; i++) {
 			obj[i] = objectIdToJson(obj[i], alreadyParsed);

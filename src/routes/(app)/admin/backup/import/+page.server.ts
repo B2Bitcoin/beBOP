@@ -66,7 +66,7 @@ export const actions = {
 
 			const transformedData = jsonToObjectId(fileJson);
 
-			let collections = Object.keys(transformedData);
+			let collections = Object.keys(transformedData as Record<string, unknown>);
 
 			let allowedCollections: string[] = IMPORT_TYPE_MAPPINGS[importType];
 
@@ -273,7 +273,7 @@ async function sendNotification(subject: string, htmlContent: string) {
 	});
 }
 
-function jsonToObjectId(obj, alreadyParsed = new Set()) {
+function jsonToObjectId(obj: unknown, alreadyParsed = new Set<unknown>()): unknown {
 	if (obj && typeof obj === 'object') {
 		if (alreadyParsed.has(obj)) {
 			throw new Error('Cyclic dependency detected');
@@ -281,12 +281,18 @@ function jsonToObjectId(obj, alreadyParsed = new Set()) {
 		alreadyParsed.add(obj);
 	}
 
-	if (obj && obj.$oid) {
-		return new ObjectId(obj.$oid);
-	} else if (obj && typeof obj === 'object') {
-		for (const key in obj) {
-			obj[key] = jsonToObjectId(obj[key], alreadyParsed);
+	if (obj && typeof obj === 'object' && '$oid' in obj) {
+		const oidObj = obj as { $oid: string };
+		return new ObjectId(oidObj.$oid);
+	} else if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+		const recordObj = obj as Record<string, unknown>;
+		for (const key in recordObj) {
+			// eslint-disable-next-line no-prototype-builtins
+			if (recordObj.hasOwnProperty(key)) {
+				recordObj[key] = jsonToObjectId(recordObj[key], alreadyParsed);
+			}
 		}
+		return recordObj;
 	} else if (Array.isArray(obj)) {
 		for (let i = 0; i < obj.length; i++) {
 			obj[i] = jsonToObjectId(obj[i], alreadyParsed);
