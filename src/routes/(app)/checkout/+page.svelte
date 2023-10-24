@@ -17,11 +17,15 @@
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
+	import isFirstDayOfMonth from 'date-fns/fp/isFirstDayOfMonth/index';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
 
 	export let data;
+	console.log('data ', data);
+
+	let addDiscount = false;
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: 'Payment status' }
@@ -443,6 +447,44 @@
 						</a>
 					</span>
 				</label>
+				<label class="checkbox-label">
+					<input
+						type="checkbox"
+						class="form-checkbox"
+						bind:checked={addDiscount}
+						name="addDiscount"
+						form="checkout"
+					/>
+					<span>
+						As a POS user I apply a <a
+							href="/terms"
+							target="_blank"
+							class="text-link hover:underline"
+						>
+							gift discount
+						</a>
+					</span>
+				</label>
+
+				{#if addDiscount}
+					<input
+						type="text"
+						class="form-input"
+						name="discountAmount"
+						placeholder="Ex: 10"
+						required
+					/>
+
+					<select name="discountType" class="form-input" required>
+						<option value="fiat">CHF</option>
+						<option value="percentage">%</option>
+					</select>
+
+					<label class="form-label col-span-3">
+						Justification
+						<input type="text" class="form-input" name="discountJustification" />
+					</label>
+				{/if}
 
 				<input
 					type="submit"

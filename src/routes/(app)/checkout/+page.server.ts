@@ -22,6 +22,8 @@ export async function load({ parent, locals }) {
 		}
 	}
 
+	console.log('locals ', userIdentifier(locals));
+
 	return {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
