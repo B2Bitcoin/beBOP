@@ -9,11 +9,10 @@ export async function GET({ url }) {
 		throw error(400, 'userId not provided');
 	}
 
-	const order = await collections.orders
-		.find({ userId: new ObjectId(userId) })
-		.sort({ createdAt: -1 })
-		.limit(1)
-		.next();
+	const order = await collections.orders.findOne(
+		{ userId: new ObjectId(userId) },
+		{ sort: { createdAt: -1 } }
+	);
 
 	return new Response(JSON.stringify(order), {
 		headers: { 'Content-Type': 'application/json' }

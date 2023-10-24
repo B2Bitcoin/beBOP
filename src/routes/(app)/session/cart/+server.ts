@@ -10,7 +10,10 @@ export async function GET({ url }) {
 		throw error(400, 'userId not provided');
 	}
 
-	const cart = await collections.carts.findOne({ userId: new ObjectId(userId) });
+	const cart = await collections.carts.findOne(
+		{ userId: new ObjectId(userId) },
+		{ sort: { createdAt: -1 } }
+	);
 
 	if (!cart) {
 		throw error(404, 'Cart not found');

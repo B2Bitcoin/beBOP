@@ -6,7 +6,10 @@
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
+	let eventSourceInstance: EventSource | null = null;
 	export let data;
 	export const cart = writable(data.cart);
 	export const order = writable(data.order);
@@ -50,7 +53,7 @@
 	function subscribeToServerEvents() {
 		console.log('=> subscribeToServerEvents');
 
-		fetchEventSource(`/sse?userId=${data.userId}`, {
+		eventSourceInstance = fetchEventSource(`/sse?userId=${data.userId}`, {
 			onmessage(ev) {
 				console.log('onmessage ', onmessage);
 
@@ -62,6 +65,13 @@
 				console.error('=> SSE Error:', err);
 			}
 		});
+	}
+
+	function cleanUpServerEvents() {
+		if (eventSourceInstance) {
+			eventSourceInstance.close();
+			eventSourceInstance = null;
+		}
 	}
 
 	async function fetchUpdatedCart() {
@@ -87,9 +97,13 @@
 		}
 	}
 
-	if (typeof window !== 'undefined') {
+	onMount(() => {
 		subscribeToServerEvents();
-	}
+
+		return () => {
+			cleanUpServerEvents();
+		};
+	});
 
 	$: totalPrice = sumCurrency(
 		data.currencies.main,

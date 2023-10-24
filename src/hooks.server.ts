@@ -57,7 +57,7 @@ cartChangeStream.on('change', async (changeEvent: ChangeEvent) => {
 				_id: new ObjectId(changeEvent.documentKey._id)
 			});
 
-			if (!cart || !cart.userId) {
+			if (!cart?.userId) {
 				console.error('Cart or session ID not found for changeEvent: ', changeEvent);
 				return;
 			}
@@ -80,7 +80,7 @@ orderChangeStream.on('change', async (changeEvent: ChangeEvent) => {
 				_id: changeEvent.documentKey._id
 			});
 
-			if (!order || !order.userId) {
+			if (!order?.userId) {
 				console.error('Cart or session ID not found for changeEvent: ', changeEvent);
 				return;
 			}
@@ -196,9 +196,48 @@ export const handle = (async ({ event, resolve }) => {
 		if (!event.locals.user) {
 			throw redirect(303, '/admin/login');
 		}
-		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID && event.locals.user.role !== POS_ROLE_ID) {
+
+		const isSuperAdmin = event.locals.user.role === SUPER_ADMIN_ROLE_ID;
+
+		const posAllowedRoutes = ['/admin/login', '/admin/pos', '/admin/pos/'];
+		const isPOSWithValidRoute =
+			event.locals.user.role === POS_ROLE_ID &&
+			posAllowedRoutes.some((route) => {
+				if (route.endsWith('/')) {
+					return event.url.pathname.startsWith(route);
+				} else {
+					return event.url.pathname === route;
+				}
+			});
+
+		if (!isSuperAdmin && !isPOSWithValidRoute) {
 			throw error(403, 'You are not allowed to access this page.');
 		}
+	}
+
+	if (event.url.pathname === '/sse') {
+		const { readable, writable } = new TransformStream();
+		const writer = writable.getWriter();
+		const response = new Response(readable, {
+			headers: {
+				'Content-Type': 'text/event-stream',
+				'Cache-Control': 'no-cache',
+				Connection: 'keep-alive',
+				'X-Accel-Buffering': 'no'
+			}
+		});
+
+		const userId = event.url.searchParams.get('userId') ?? '';
+
+		//create client object, with the session id
+		const client = {
+			userId: userId,
+			writer: writer
+		};
+
+		clients[userId] = client;
+
+		return response;
 	}
 
 	const response = await resolve(event);
@@ -234,31 +273,6 @@ export const handle = (async ({ event, resolve }) => {
 			},
 			status
 		});
-	}
-
-	if (event.url.pathname === '/sse') {
-		const { readable, writable } = new TransformStream();
-		const writer = writable.getWriter();
-		const response = new Response(readable, {
-			headers: {
-				'Content-Type': 'text/event-stream',
-				'Cache-Control': 'no-cache',
-				Connection: 'keep-alive',
-				'X-Accel-Buffering': 'no'
-			}
-		});
-
-		const userId = event.url.searchParams.get('userId') ?? '';
-
-		//create client object, with the session id
-		const client = {
-			userId: userId,
-			writer: writer
-		};
-
-		clients[userId] = client;
-
-		return response;
 	}
 
 	return response;
