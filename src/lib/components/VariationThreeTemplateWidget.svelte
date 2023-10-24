@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Tag } from '$lib/types/Tag';
-	import VariationOneTemplateWidget from './VariationOneTemplateWidget.svelte';
 
 	let className = '';
 	export { className as class };
