@@ -236,6 +236,28 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{/if}
 
+				{#if data.order?.discount?.discountAmount}
+					<div class="flex justify-between items-center">
+						<h3 class="text-base text-gray-700 flex items-center gap-2">Discount</h3>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl text-gray-800 truncate"
+								amount={data.order?.discount?.discountAmount}
+								currency={data.order?.discount?.discountCurrency}
+								main
+							/>
+							<PriceTag
+								amount={data.order?.discount?.discountAmount}
+								currency={data.order?.discount?.discountCurrency}
+								class="text-base text-gray-600 truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{/if}
+
 				{#if data.order.vat}
 					<div class="flex justify-between items-center">
 						<h3 class="text-base text-gray-700 flex items-center gap-2">

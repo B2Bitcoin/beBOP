@@ -22,13 +22,13 @@ export async function load({ parent, locals }) {
 		}
 	}
 
-	console.log('locals ', userIdentifier(locals));
-
 	return {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
-		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
+		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
+		//waiting to merge evm-like branch to have pos-user
+		isPosUser: true
 	};
 }
 
@@ -60,6 +60,8 @@ export const actions = {
 		const formData = await request.formData();
 
 		const isDigital = products.every((product) => !product.shipping);
+
+		console.log('Object.fromEntries(formData) ', Object.fromEntries(formData));
 
 		const shipping = isDigital
 			? null
@@ -105,6 +107,14 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 
+		const discount = z
+			.object({
+				discountAmount: z.coerce.number().optional(),
+				discountType: z.enum(['fiat', 'percentage']).optional(),
+				discountJustification: z.string().optional()
+			})
+			.parse(Object.fromEntries(formData));
+
 		const orderId = await createOrder(
 			cart.items.map((item) => ({
 				quantity: item.quantity,
@@ -124,7 +134,8 @@ export const actions = {
 				},
 				cart,
 				shippingAddress: shipping,
-				vatCountry: shipping?.country ?? locals.countryCode
+				vatCountry: shipping?.country ?? locals.countryCode,
+				discount
 			}
 		);
 

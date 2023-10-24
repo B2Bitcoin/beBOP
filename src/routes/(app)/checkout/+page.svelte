@@ -23,7 +23,8 @@
 	let country = typedKeys(COUNTRIES)[0];
 
 	export let data;
-	console.log('data ', data);
+
+	console.log(data);
 
 	let addDiscount = false;
 
@@ -447,42 +448,45 @@
 						</a>
 					</span>
 				</label>
-				<label class="checkbox-label">
-					<input
-						type="checkbox"
-						class="form-checkbox"
-						bind:checked={addDiscount}
-						name="addDiscount"
-						form="checkout"
-					/>
-					<span>
-						As a POS user I apply a <a
-							href="/terms"
-							target="_blank"
-							class="text-link hover:underline"
-						>
-							gift discount
-						</a>
-					</span>
-				</label>
+				{#if data.isPosUser}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							bind:checked={addDiscount}
+							name="addDiscount"
+							form="checkout"
+						/>
+						<span>
+							As a POS user I apply a <a
+								href="/terms"
+								target="_blank"
+								class="text-link hover:underline"
+							>
+								gift discount
+							</a>
+						</span>
+					</label>
+				{/if}
 
 				{#if addDiscount}
 					<input
-						type="text"
+						type="number"
 						class="form-input"
 						name="discountAmount"
 						placeholder="Ex: 10"
+						form="checkout"
 						required
 					/>
 
-					<select name="discountType" class="form-input" required>
-						<option value="fiat">CHF</option>
+					<select name="discountType" class="form-input" form="checkout" required>
+						<option value="fiat">{data?.currencies?.main}</option>
 						<option value="percentage">%</option>
 					</select>
 
 					<label class="form-label col-span-3">
 						Justification
-						<input type="text" class="form-input" name="discountJustification" />
+						<input type="text" class="form-input" form="checkout" name="discountJustification" />
 					</label>
 				{/if}
 

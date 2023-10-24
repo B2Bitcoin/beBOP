@@ -166,6 +166,11 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
+		discount?: {
+			discountAmount?: number;
+			discountType?: 'fiat' | 'percentage';
+			discountJustification?: string;
+		};
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -235,6 +240,28 @@ export async function createOrder(
 
 	totalSatoshis += sumCurrency('SAT', itemPrices);
 
+	console.log('totalSatoshis ', totalSatoshis);
+
+	let discountAmount = 0;
+	if (params?.discount?.discountAmount) {
+		if (params.discount.discountType === 'fiat') {
+			discountAmount = toSatoshis(params.discount.discountAmount, runtimeConfig.mainCurrency);
+		} else if (params.discount.discountType === 'percentage') {
+			discountAmount = fixCurrencyRounding(
+				totalSatoshis * (params.discount.discountAmount / 100),
+				runtimeConfig.mainCurrency
+			);
+		}
+
+		if (discountAmount > totalSatoshis) {
+			throw error(400, 'Discount cannot be greater than the total price.');
+		}
+
+		totalSatoshis -= discountAmount;
+
+		console.log('after totalSatoshis ', totalSatoshis);
+	}
+
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
 		!vatCountry || runtimeConfig.vatExempted
@@ -251,9 +278,13 @@ export async function createOrder(
 					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
 			  };
 
+	console.log('vat ', vat);
+
 	if (vat) {
 		totalSatoshis += vat.price.amount;
 	}
+
+	console.log('totalSatoshis after vat ', totalSatoshis);
 
 	const orderId = crypto.randomUUID();
 
@@ -381,7 +412,10 @@ export async function createOrder(
 					// In case the user didn't authenticate with an email but still wants to be notified,
 					// we also associate the email to the order
 					...(email && { email })
-				}
+				},
+				...(params?.discount?.discountAmount && {
+					discount: { ...params.discount, discountCurrency: runtimeConfig.mainCurrency }
+				})
 			},
 			{ session }
 		);

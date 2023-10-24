@@ -75,4 +75,11 @@ export interface Order extends Timestamps {
 	user: UserIdentifier;
 
 	lastPaymentStatusNotified?: OrderPaymentStatus;
+
+	discount?: {
+		discountAmount?: number;
+		discountType?: 'fiat' | 'percentage';
+		discountJustification?: string;
+		discountCurrency: Currency;
+	};
 }
