@@ -1,32 +1,9 @@
 import { collections } from '$lib/server/database';
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { ObjectId } from 'mongodb';
-
-export const load = async ({ params }) => {
-	const userId = new ObjectId(params.id);
-
-	const user = await collections.users.findOne({ _id: userId });
-	const sessions = await collections.sessions.find({ userId: userId }).toArray();
-
-	if (!user) {
-		throw error(404, 'User not found');
-	}
-
-	return {
-		user: {
-			login: user.login,
-			_id: user._id.toString()
-		},
-		sessions: sessions.map((s) => ({
-			...s,
-			_id: s._id.toString(),
-			userId: s?.userId?.toString()
-		}))
-	};
-};
 
 export const actions: Actions = {
 	update: async ({ request, params }) => {
