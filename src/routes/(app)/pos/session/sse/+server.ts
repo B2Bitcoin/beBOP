@@ -15,6 +15,9 @@ export async function GET({ locals }) {
 		throw error(403, 'Must be logged in as a POS user');
 	}
 
+	const { readable, writable } = new TransformStream();
+	const writer = writable.getWriter();
+
 	//Check change on cart collection
 	const cartCollection = collections.carts;
 	const cartChangeStream = cartCollection.watch(
@@ -30,20 +33,18 @@ export async function GET({ locals }) {
 		}
 	);
 
-	cartChangeStream.on('change', (changeEvent) => {
+	cartChangeStream.on('change', async (changeEvent) => {
 		if (!('fullDocument' in changeEvent) || !changeEvent.fullDocument) {
 			return;
 		}
+		console.log('cartChangeStream changeEvent:', changeEvent);
 		try {
-			writer.write(`data: ${JSON.stringify({ eventType: 'updateCart' })}\n\n`).catch((error) => {
-				console.error(`Error writing to client ${userId}`, error);
-				// Error writing to the client, assume it has disconnected
-				writer.close();
-				orderChangeStream.close();
-				cartChangeStream.close();
-			});
+			await writer.write(`data: ${JSON.stringify({ eventType: 'updateCart' })}\n\n`);
 		} catch (error) {
-			console.error('Error processing changeEvent:', error);
+			console.error('Error processing cart changeEvent:', error);
+			writer.close().catch(console.error);
+			orderChangeStream.close().catch(console.error);
+			cartChangeStream.close().catch(console.error);
 		}
 	});
 
@@ -69,22 +70,18 @@ export async function GET({ locals }) {
 		try {
 			const order = changeEvent.fullDocument;
 
-			writer
-				.write(`data: ${JSON.stringify({ eventType: order.lastPaymentStatusNotified })}\n\n`)
-				.catch((error) => {
-					console.error(`Error writing to client ${userId}`, error);
-					// Error writing to the client, assume it has disconnected
-					writer.close();
-					orderChangeStream.close();
-					cartChangeStream.close();
-				});
+			await writer.write(
+				`data: ${JSON.stringify({ eventType: order.lastPaymentStatusNotified })}\n\n`
+			);
 		} catch (error) {
-			console.error('Error processing changeEvent:', error);
+			console.error('Error processing order changeEvent:', error);
+			// Error writing to the client, assume it has disconnected
+			writer.close().catch(console.error);
+			orderChangeStream.close().catch(console.error);
+			cartChangeStream.close().catch(console.error);
 		}
 	});
 
-	const { readable, writable } = new TransformStream();
-	const writer = writable.getWriter();
 	const response = new Response(readable, {
 		headers: {
 			'Content-Type': 'text/event-stream',

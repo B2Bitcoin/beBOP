@@ -13,6 +13,7 @@ import { groupBy, isEqual } from 'lodash-es';
 import { userQuery } from './user';
 import type { Currency } from '$lib/types/Currency';
 import { picturesForProducts } from './picture';
+import { removeEmpty } from '$lib/utils/removeEmpty';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	if (!params.user.sessionId && !params.user.npub) {
@@ -31,7 +32,7 @@ export async function getCartFromDb(params: { user: UserIdentifier }): Promise<C
 		};
 	}
 
-	if (!isEqual(res.user, params.user)) {
+	if (!isEqual(removeEmpty(res.user), removeEmpty(params.user))) {
 		res.user = params.user;
 		res.updatedAt = new Date();
 		await collections.carts.updateOne(
