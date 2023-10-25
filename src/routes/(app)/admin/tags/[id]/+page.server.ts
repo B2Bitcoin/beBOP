@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import { z } from 'zod';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import type { JsonObject } from 'type-fest';
