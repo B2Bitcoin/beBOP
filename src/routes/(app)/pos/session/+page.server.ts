@@ -22,7 +22,7 @@ export const load = async ({ locals }) => {
 
 	return {
 		cart: formattedCart,
-		order: {
+		order: order && {
 			...order,
 			user: null
 		}
