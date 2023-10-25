@@ -37,7 +37,6 @@ export async function GET({ locals }) {
 		if (!('fullDocument' in changeEvent) || !changeEvent.fullDocument) {
 			return;
 		}
-		console.log('cartChangeStream changeEvent:', changeEvent);
 		try {
 			await writer.write(`data: ${JSON.stringify({ eventType: 'updateCart' })}\n\n`);
 		} catch (error) {
