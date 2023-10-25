@@ -84,7 +84,7 @@
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
 	{#if view === 'updateCart'}
 		{#if cart.length}
-			<div class="overflow-scroll h-[90vh]">
+			<div class="overflow-auto h-[90vh]">
 				{#each cart as item}
 					<div class="flex items-center justify-between w-full">
 						<div class="flex flex-col">
