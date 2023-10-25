@@ -1,9 +1,10 @@
 import { collections } from '$lib/server/database.js';
-import type { OrderPaymentStatus } from '$lib/types/Order.js';
+import type { Cart } from '$lib/types/Cart.js';
+import type { Order } from '$lib/types/Order.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { error } from '@sveltejs/kit';
-
-export type SSEEventType = 'updateCart' | 'keepAlive' | OrderPaymentStatus;
+import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
+import { formatCart, formatOrder } from '../formatCartOrder.js';
 
 export async function GET({ locals }) {
 	const userId = locals.user?._id;
@@ -16,69 +17,85 @@ export async function GET({ locals }) {
 	}
 
 	const { readable, writable } = new TransformStream();
-	const writer = writable.getWriter();
+	let writer: WritableStreamDefaultWriter<unknown> | null = writable.getWriter();
+
+	function cleanup() {
+		writer?.close();
+		writer = null;
+		cartChangeStream?.close().catch(console.error);
+		cartChangeStream = null;
+		orderChangeStream?.close().catch(console.error);
+		orderChangeStream = null;
+	}
 
 	//Check change on cart collection
 	const cartCollection = collections.carts;
-	const cartChangeStream = cartCollection.watch(
-		[
-			{
-				$match: {
-					'fullDocument.user.userId': userId
+	let cartChangeStream: ChangeStream<Cart, ChangeStreamDocument<Cart>> | null =
+		cartCollection.watch(
+			[
+				{
+					$match: {
+						'fullDocument.user.userId': userId
+					}
 				}
+			],
+			{
+				fullDocument: 'updateLookup'
 			}
-		],
-		{
-			fullDocument: 'updateLookup'
-		}
-	);
+		);
 
 	cartChangeStream.on('change', async (changeEvent) => {
-		if (!('fullDocument' in changeEvent) || !changeEvent.fullDocument) {
+		if (!writer) {
 			return;
 		}
 		try {
-			await writer.ready;
-			await writer.write(`data: ${JSON.stringify({ eventType: 'updateCart' })}\n\n`);
+			const formattedCart =
+				'fullDocument' in changeEvent && changeEvent.fullDocument
+					? await formatCart(changeEvent.fullDocument)
+					: null;
+			await writer?.ready;
+			await writer?.write(
+				`data: ${JSON.stringify({ eventType: 'cart', cart: formattedCart })}\n\n`
+			);
 		} catch (error) {
 			console.error('Error processing cart changeEvent:', error);
-			writer.close().catch(console.error);
-			cartChangeStream.close().catch(console.error);
+			// Error writing to the client, assume it has disconnected
+			cleanup();
 		}
 	});
 
 	// Check change on order collection
 	const orderCollection = collections.orders;
-	const orderChangeStream = orderCollection.watch(
-		[
-			{
-				$match: {
-					'fullDocument.user.userId': userId
+	let orderChangeStream: ChangeStream<Order, ChangeStreamDocument<Order>> | null =
+		orderCollection.watch(
+			[
+				{
+					$match: {
+						'fullDocument.user.userId': userId
+					}
 				}
+			],
+			{
+				fullDocument: 'updateLookup'
 			}
-		],
-		{
-			fullDocument: 'updateLookup'
-		}
-	);
+		);
 
 	orderChangeStream.on('change', async (changeEvent) => {
-		if (!('fullDocument' in changeEvent) || !changeEvent.fullDocument || closed) {
+		if (!writer) {
 			return;
 		}
 		try {
-			const order = changeEvent.fullDocument;
+			const order =
+				'fullDocument' in changeEvent && changeEvent.fullDocument
+					? formatOrder(changeEvent.fullDocument)
+					: null;
 
-			await writer.ready;
-			await writer.write(
-				`data: ${JSON.stringify({ eventType: order.lastPaymentStatusNotified })}\n\n`
-			);
+			await writer?.ready;
+			await writer?.write(`data: ${JSON.stringify({ eventType: 'order', order })}\n\n`);
 		} catch (error) {
 			console.error('Error processing order changeEvent:', error);
 			// Error writing to the client, assume it has disconnected
-			writer.close().catch(console.error);
-			orderChangeStream.close().catch(console.error);
-			cartChangeStream.close().catch(console.error);
+			cleanup();
 		}
 	});
 
@@ -90,6 +107,28 @@ export async function GET({ locals }) {
 			'X-Accel-Buffering': 'no'
 		}
 	});
+
+	writer?.ready
+		.then(async () => {
+			const cart = await collections.carts.findOne(
+				{ 'user.userId': userId },
+				{ sort: { createdAt: -1 } }
+			);
+			const formattedCart = await formatCart(cart);
+
+			writer?.write(`data: ${JSON.stringify({ eventType: 'cart', cart: formattedCart })}\n\n`);
+
+			const order = await collections.orders.findOne(
+				{ 'user.userId': userId },
+				{ sort: { createdAt: -1 } }
+			);
+
+			await writer?.ready;
+
+			const formattedOrder = order ? formatOrder(order) : null;
+			writer?.write(`data: ${JSON.stringify({ eventType: 'order', order: formattedOrder })}\n\n`);
+		})
+		.catch(() => cleanup());
 
 	return response;
 }

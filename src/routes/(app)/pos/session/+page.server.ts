@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
-import { formatCart } from '$lib/server/cart';
 import { POS_ROLE_ID } from '$lib/types/User.js';
+import { formatCart, formatOrder } from './formatCartOrder.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user?.role !== POS_ROLE_ID) {
@@ -22,9 +22,6 @@ export const load = async ({ locals }) => {
 
 	return {
 		cart: formattedCart,
-		order: order && {
-			...order,
-			user: null
-		}
+		order: order && formatOrder(order)
 	};
 };

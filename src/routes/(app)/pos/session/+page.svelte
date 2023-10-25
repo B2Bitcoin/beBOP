@@ -6,7 +6,6 @@
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 	import { onMount } from 'svelte';
-	import type { SSEEventType } from './sse/+server.js';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -19,41 +18,13 @@
 	let cart = data.cart;
 	let order = data.order;
 
-	let view =
-		data.cart && data.cart.length > 0
-			? 'updateCart'
-			: data.order && data.order.lastPaymentStatusNotified === 'pending'
-			? 'pending'
-			: 'welcome';
+	$: view = cart && cart.length > 0 ? 'updateCart' : order ? order.payment.status : 'welcome';
 
-	type EventConfigType = {
-		view: string;
-		fetchFunc?: () => Promise<void>;
-		resetToWelcomeAfter?: number;
-	};
-
-	const eventConfig: Record<SSEEventType, EventConfigType> = {
-		updateCart: { view: 'updateCart', fetchFunc: fetchUpdatedCart },
-		pending: { view: 'pending', fetchFunc: fetchOrder },
-		canceled: { view: 'canceled', fetchFunc: fetchOrder, resetToWelcomeAfter: 5000 },
-		paid: { view: 'paid', fetchFunc: fetchOrder, resetToWelcomeAfter: 5000 },
-		expired: { view: 'expired', fetchFunc: fetchOrder, resetToWelcomeAfter: 5000 }
-	};
-
-	function handleEvent(eventType: SSEEventType) {
-		const config = eventConfig[eventType];
-		if (config) {
-			view = config.view;
-			if (config.fetchFunc) {
-				config.fetchFunc();
-			}
-			if (config.resetToWelcomeAfter) {
-				setTimeout(() => {
-					view = 'welcome';
-				}, config.resetToWelcomeAfter);
-			}
+	setTimeout(() => {
+		if (order === data.order && order?.payment.status !== 'pending') {
+			order = null;
 		}
-	}
+	}, 5_000);
 
 	async function subscribeToServerEvents() {
 		eventSourceInstance = await fetchEventSource(`/pos/session/sse`, {
@@ -61,8 +32,17 @@
 				console.log('event', ev.data, ev.data?.length);
 				if (ev.data) {
 					try {
-						const { eventType } = JSON.parse(ev.data);
-						handleEvent(eventType);
+						const { eventType, cart: sseCart, order: sseOrder } = JSON.parse(ev.data);
+						if (eventType === 'cart') {
+							cart = sseCart;
+						} else if (eventType === 'order') {
+							order = sseOrder;
+							setTimeout(() => {
+								if (order === sseOrder && order?.payment.status !== 'pending') {
+									order = null;
+								}
+							}, 5_000);
+						}
 					} catch (err) {
 						console.error('=> SSE Error:', err);
 					}
@@ -79,24 +59,6 @@
 		if (eventSourceInstance) {
 			eventSourceInstance?.close?.();
 			eventSourceInstance = null;
-		}
-	}
-
-	async function fetchUpdatedCart() {
-		const response = await fetch(`/pos/session/cart`);
-		if (response.ok) {
-			cart = await response.json();
-		} else {
-			console.error('Failed to fetch updated cart:', await response.text());
-		}
-	}
-
-	async function fetchOrder() {
-		const response = await fetch(`/pos/session/order`);
-		if (response.ok) {
-			order = await response.json();
-		} else {
-			console.error('Failed to fetch updated order:', await response.text());
 		}
 	}
 
