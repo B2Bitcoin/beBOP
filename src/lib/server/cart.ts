@@ -1,15 +1,12 @@
-import { ObjectId, type WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
 import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
 import type { Cart } from '$lib/types/Cart';
-import { filterUndef } from '$lib/utils/filterUndef';
-import type { Picture } from '$lib/types/Picture';
-import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
-import { groupBy, isEqual } from 'lodash-es';
+import { isEqual } from 'lodash-es';
 import { userQuery } from './user';
 import { removeEmpty } from '$lib/utils/removeEmpty';
 
