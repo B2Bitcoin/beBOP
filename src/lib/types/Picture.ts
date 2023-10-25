@@ -5,6 +5,7 @@ export interface ImageData {
 	width: number;
 	height: number;
 	size: number;
+	url?: string;
 }
 
 export interface Picture extends Timestamps {

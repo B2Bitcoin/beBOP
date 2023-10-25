@@ -22,6 +22,7 @@ export const actions = {
 				{ _id: order._id },
 				{
 					$set: {
+						updatedAt: new Date(),
 						'payment.status': 'paid',
 						'payment.paidAt': new Date(),
 						'payment.totalReceived': toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
@@ -53,7 +54,8 @@ export const actions = {
 				{ _id: order._id },
 				{
 					$set: {
-						'payment.status': 'canceled'
+						'payment.status': 'canceled',
+						updatedAt: new Date()
 					}
 				},
 				{ session }

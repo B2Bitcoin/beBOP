@@ -1,13 +1,19 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
 import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
 import type { Cart } from '$lib/types/Cart';
+import { filterUndef } from '$lib/utils/filterUndef';
+import type { Picture } from '$lib/types/Picture';
+import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
-import { isEqual } from 'lodash-es';
+import { groupBy, isEqual } from 'lodash-es';
 import { userQuery } from './user';
+import type { Currency } from '$lib/types/Currency';
+import { picturesForProducts } from './picture';
+import { removeEmpty } from '$lib/utils/removeEmpty';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	if (!params.user.sessionId && !params.user.npub) {
@@ -26,7 +32,7 @@ export async function getCartFromDb(params: { user: UserIdentifier }): Promise<C
 		};
 	}
 
-	if (!isEqual(res.user, params.user)) {
+	if (!isEqual(removeEmpty(res.user), removeEmpty(params.user))) {
 		res.user = params.user;
 		res.updatedAt = new Date();
 		await collections.carts.updateOne(
