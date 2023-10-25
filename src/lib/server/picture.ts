@@ -4,7 +4,7 @@ import { generateId } from '$lib/utils/generateId';
 import type { ClientSession } from 'mongodb';
 import { error } from '@sveltejs/kit';
 import { s3ProductPrefix, s3TagPrefix, s3client } from './s3';
-import { PutObjectCommand, DeleteObjectCommand, type Tag } from '@aws-sdk/client-s3';
+import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { S3_BUCKET } from '$env/static/private';
 import * as mimeTypes from 'mime-types';
 import type { ImageData, Picture, TagType } from '../types/Picture';
