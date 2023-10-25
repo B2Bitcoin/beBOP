@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { generateId } from '$lib/utils/generateId';
 	import { upperFirst } from '$lib/utils/upperFirst';
+	import PictureComponent from '$lib/components/Picture.svelte';
+
 	export let data;
 	let name = data.tag.name;
 	let slug = data.tag._id;
@@ -198,3 +200,16 @@
 		Delete
 	</button>
 </form>
+
+<h2 class="text-2xl my-4">Photos</h2>
+
+<div class="flex flex-row flex-wrap gap-6 mt-6">
+	{#each data.pictures as picture}
+		<div class="flex flex-col text-center">
+			<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
+				<PictureComponent {picture} class="h-36 block" style="object-fit: scale-down;" />
+				<span>{picture.name} / {picture.tag ? picture.tag.type : ''}</span>
+			</a>
+		</div>
+	{/each}
+</div>

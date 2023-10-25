@@ -12,9 +12,14 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!tag) {
 		throw error(404, 'tag not found');
 	}
+	const pictures = await collections.pictures
+		.find({ 'tag._id': params.id })
+		.sort({ createdAt: 1 })
+		.toArray();
 
 	return {
-		tag
+		tag,
+		pictures
 	};
 };
 
