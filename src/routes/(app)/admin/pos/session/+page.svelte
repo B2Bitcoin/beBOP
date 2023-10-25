@@ -8,7 +8,13 @@
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 	import { onMount } from 'svelte';
 
-	let eventSourceInstance: EventSource | null = null;
+	interface CustomEventSource {
+		onerror?: ((this: CustomEventSource, ev: Event) => any) | null;
+		onmessage?: ((this: CustomEventSource, ev: MessageEvent) => any) | null;
+		close?: () => void;
+	}
+
+	let eventSourceInstance: CustomEventSource | void | null = null;
 	export let data;
 	export const cart = writable(data.cart);
 	export const order = writable(data.order);
@@ -49,9 +55,8 @@
 		}
 	}
 
-	function subscribeToServerEvents() {
-		//@ts-ignore
-		eventSourceInstance = fetchEventSource(`/sse?userId=${data.userId}`, {
+	async function subscribeToServerEvents() {
+		eventSourceInstance = await fetchEventSource(`/sse?userId=${data.userId}`, {
 			onmessage(ev) {
 				console.log('onmessage ', onmessage);
 
@@ -67,7 +72,7 @@
 
 	function cleanUpServerEvents() {
 		if (eventSourceInstance) {
-			eventSourceInstance.close();
+			eventSourceInstance?.close?.();
 			eventSourceInstance = null;
 		}
 	}
