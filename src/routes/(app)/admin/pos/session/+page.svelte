@@ -56,12 +56,10 @@
 	}
 
 	async function subscribeToServerEvents() {
-		eventSourceInstance = await fetchEventSource(`/sse?userId=${data.userId}`, {
+		eventSourceInstance = await fetchEventSource(`/sse`, {
 			onmessage(ev) {
-				console.log('onmessage ', onmessage);
-
 				const { eventType } = JSON.parse(ev.data);
-				console.log('=> fetchEventSource ', eventType);
+
 				handleEvent(eventType);
 			},
 			onerror(err) {
@@ -78,7 +76,7 @@
 	}
 
 	async function fetchUpdatedCart() {
-		const response = await fetch(`/session/cart?userId=${data.userId}`);
+		const response = await fetch(`/session/cart`);
 		if (response.ok) {
 			const updatedCart = await response.json();
 
@@ -89,10 +87,9 @@
 	}
 
 	async function fetchOrder() {
-		const response = await fetch(`/session/order?userId=${data.userId}`);
+		const response = await fetch(`/session/order`);
 		if (response.ok) {
 			const orderData = await response.json();
-			console.log('newOrder ', orderData);
 
 			order.set(orderData);
 		} else {

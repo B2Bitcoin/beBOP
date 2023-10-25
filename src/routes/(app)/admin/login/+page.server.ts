@@ -5,7 +5,7 @@ import bcryptjs from 'bcryptjs';
 import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createAdminUserInDb } from '$lib/server/user.js';
-import { POS_ROLE_ID } from '$lib/types/User.js';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
@@ -34,7 +34,7 @@ export const actions = {
 				remember: data.get('remember'),
 				memorize: data.get('memorize')
 			});
-		let user = await collections.users.findOne({ login: login });
+		let user = await collections.users.findOne({ login: login, roleId: { $ne: CUSTOMER_ROLE_ID } });
 
 		if (!user && !runtimeConfig.isAdminCreated) {
 			await createAdminUserInDb(login, password);

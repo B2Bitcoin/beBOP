@@ -11,6 +11,7 @@ import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { isEqual } from 'lodash-es';
 import { userQuery } from './user';
+import type { Currency } from '$lib/types/Currency';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	if (!params.user.sessionId && !params.user.npub) {
@@ -265,7 +266,7 @@ type FormattedCartItem = {
 	quantity: number;
 	customPrice?: {
 		amount: number;
-		currency: 'BTC' | 'CHF' | 'EUR' | 'USD' | 'SAT';
+		currency: Currency;
 	};
 };
 

@@ -27,97 +27,7 @@ import {
 import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
-import type { Cart } from '$lib/types/Cart';
-import type { Order } from '$lib/types/Order';
 // import { countryFromIp } from '$lib/server/geoip';
-
-interface Client {
-	writer: WritableStreamDefaultWriter;
-	userId: string;
-}
-
-interface ChangeEvent {
-	documentKey: {
-		_id?: string;
-	};
-}
-
-const clients: Record<string, Client> = {};
-
-export async function notifyClientsOfCartUpdate(
-	data: { eventType: string | undefined },
-	userIdToUpdate: string
-): Promise<void> {
-	for (const clientId in clients) {
-		if (clients[clientId].userId === userIdToUpdate) {
-			const writer = clients[clientId].writer;
-
-			writer.write(`data: ${JSON.stringify(data)}\n\n`).catch((error) => {
-				console.error(`Error writing to client ${clientId}`, error);
-				// Error writing to the client, assume it has disconnected
-				writer.close();
-				delete clients[clientId];
-			});
-		}
-	}
-}
-
-//Check change on cart collection
-const cartCollection = collections.carts;
-const cartChangeStream = cartCollection.watch(
-	[
-		{
-			$match: {
-				'fullDocument.user.userId': { $exists: true }
-			}
-		}
-	],
-	{
-		fullDocument: 'updateLookup'
-	}
-);
-
-cartChangeStream.on('change', (changeEvent: ChangeEvent & { fullDocument?: Cart }) => {
-	try {
-		const cart = changeEvent.fullDocument;
-
-		if (cart?.user?.userId) {
-			notifyClientsOfCartUpdate({ eventType: 'updateCart' }, cart.user.userId.toString());
-		}
-	} catch (error) {
-		console.error('Error processing changeEvent:', error);
-	}
-});
-
-//Check change on order collection
-const orderCollection = collections.orders;
-const orderChangeStream = orderCollection.watch(
-	[
-		{
-			$match: {
-				'fullDocument.user.userId': { $exists: true }
-			}
-		}
-	],
-	{
-		fullDocument: 'updateLookup'
-	}
-);
-
-orderChangeStream.on('change', async (changeEvent: ChangeEvent & { fullDocument?: Order }) => {
-	try {
-		const order = changeEvent.fullDocument;
-
-		if (order?.user?.userId) {
-			notifyClientsOfCartUpdate(
-				{ eventType: order.lastPaymentStatusNotified },
-				order?.user?.userId.toString()
-			);
-		}
-	} catch (error) {
-		console.error('Error processing changeEvent:', error);
-	}
-});
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -276,31 +186,6 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		if (!isSuperAdmin && !isPOSWithValidRoute) {
 			throw error(403, 'You are not allowed to access this page.');
 		}
-	}
-
-	if (event.url.pathname === '/sse') {
-		const { readable, writable } = new TransformStream();
-		const writer = writable.getWriter();
-		const response = new Response(readable, {
-			headers: {
-				'Content-Type': 'text/event-stream',
-				'Cache-Control': 'no-cache',
-				Connection: 'keep-alive',
-				'X-Accel-Buffering': 'no'
-			}
-		});
-
-		const userId = event.url.searchParams.get('userId') ?? '';
-
-		//create client object, with the session id
-		const client = {
-			userId: userId,
-			writer: writer
-		};
-
-		clients[userId] = client;
-
-		return response;
 	}
 
 	const response = await resolve(event);

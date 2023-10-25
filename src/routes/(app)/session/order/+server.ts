@@ -1,16 +1,8 @@
 import { collections } from '$lib/server/database.js';
-import { error } from '@sveltejs/kit';
-import { ObjectId } from 'mongodb';
 
-export async function GET({ url }) {
-	const userId = url.searchParams.get('userId');
-
-	if (!userId) {
-		throw error(400, 'userId not provided');
-	}
-
+export async function GET({ locals }) {
 	const order = await collections.orders.findOne(
-		{ 'user.userId': new ObjectId(userId) },
+		{ 'user.userId': locals.user?._id },
 		{ sort: { createdAt: -1 } }
 	);
 

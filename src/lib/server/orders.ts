@@ -1,5 +1,5 @@
 import type { Order } from '$lib/types/Order';
-import type { ClientSession, ObjectId, WithId } from 'mongodb';
+import type { ClientSession, WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
@@ -309,16 +309,6 @@ export async function createOrder(
 		}
 	}
 
-	let userId: ObjectId;
-
-	if (params.sessionId) {
-		const session = await collections.sessions.findOne({ sessionId: params.sessionId });
-
-		if (session) {
-			userId = session.userId;
-		}
-	}
-
 	const orderNumber = await generateOrderNumber();
 
 	await withTransaction(async (session) => {
@@ -340,7 +330,6 @@ export async function createOrder(
 					amount: totalSatoshis,
 					currency: 'SAT'
 				},
-				userId: userId,
 				...(deliveryFees
 					? {
 							shippingPrice: {
