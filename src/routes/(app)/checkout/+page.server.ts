@@ -61,8 +61,6 @@ export const actions = {
 
 		const isDigital = products.every((product) => !product.shipping);
 
-		console.log('Object.fromEntries(formData) ', Object.fromEntries(formData));
-
 		const shipping = isDigital
 			? null
 			: z
@@ -115,6 +113,13 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData));
 
+		const { isFreeVat, reasonFreeVat } = z
+			.object({
+				isFreeVat: z.coerce.boolean().optional(),
+				reasonFreeVat: z.string().optional()
+			})
+			.parse(Object.fromEntries(formData));
+
 		const orderId = await createOrder(
 			cart.items.map((item) => ({
 				quantity: item.quantity,
@@ -135,7 +140,9 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				discount
+				discount,
+				isFreeVat,
+				reasonFreeVat
 			}
 		);
 

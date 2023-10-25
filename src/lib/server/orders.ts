@@ -172,6 +172,8 @@ export async function createOrder(
 			type?: 'fiat' | 'percentage';
 			justification?: string;
 		};
+		isFreeVat?: boolean;
+		reasonFreeVat?: string;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -286,16 +288,22 @@ export async function createOrder(
 			: {
 					country: vatCountry,
 					price: {
-						amount: fixCurrencyRounding(
-							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
-							'SAT'
-						),
+						amount: params.isFreeVat
+							? 0
+							: fixCurrencyRounding(
+									totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
+									'SAT'
+							  ),
 						currency: 'SAT'
 					},
-					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
+					rate: vatRates[vatCountry as keyof typeof vatRates] || 0,
+					...(params.isFreeVat && {
+						isFreeVat: params.isFreeVat,
+						reasonFreeVat: params.reasonFreeVat
+					})
 			  };
 
-	if (vat) {
+	if (vat && !params.isFreeVat) {
 		totalSatoshis += vat.price.amount;
 	}
 

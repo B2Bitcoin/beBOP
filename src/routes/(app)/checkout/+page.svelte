@@ -23,9 +23,8 @@
 
 	export let data;
 
-	console.log(data);
-
 	let addDiscount = false;
+	let isFreeVat = false;
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: 'Payment status' }
@@ -447,6 +446,40 @@
 						</a>
 					</span>
 				</label>
+				{#if data.isPosUser}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							bind:checked={isFreeVat}
+							name="isFreeVat"
+							form="checkout"
+						/>
+						<span>
+							This is a VAT-free order <a
+								href="/terms"
+								target="_blank"
+								class="text-link hover:underline"
+							>
+								(conditions)
+							</a>
+						</span>
+					</label>
+				{/if}
+
+				{#if isFreeVat}
+					<label class="form-label col-span-3">
+						VAT-free reason:
+						<input
+							required={isFreeVat}
+							type="text"
+							class="form-input"
+							form="checkout"
+							name="reasonFreeVat"
+						/>
+					</label>
+				{/if}
+
 				{#if data.isPosUser}
 					<label class="checkbox-label">
 						<input
