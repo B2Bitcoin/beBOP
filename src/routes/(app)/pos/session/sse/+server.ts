@@ -3,7 +3,7 @@ import type { OrderPaymentStatus } from '$lib/types/Order.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { error } from '@sveltejs/kit';
 
-export type SSEEventType = 'updateCart' | OrderPaymentStatus;
+export type SSEEventType = 'updateCart' | 'keepAlive' | OrderPaymentStatus;
 
 export async function GET({ locals }) {
 	const userId = locals.user?._id;
@@ -38,16 +38,16 @@ export async function GET({ locals }) {
 			return;
 		}
 		try {
+			await writer.ready;
 			await writer.write(`data: ${JSON.stringify({ eventType: 'updateCart' })}\n\n`);
 		} catch (error) {
 			console.error('Error processing cart changeEvent:', error);
 			writer.close().catch(console.error);
-			orderChangeStream.close().catch(console.error);
 			cartChangeStream.close().catch(console.error);
 		}
 	});
 
-	//Check change on order collection
+	// Check change on order collection
 	const orderCollection = collections.orders;
 	const orderChangeStream = orderCollection.watch(
 		[
@@ -63,12 +63,13 @@ export async function GET({ locals }) {
 	);
 
 	orderChangeStream.on('change', async (changeEvent) => {
-		if (!('fullDocument' in changeEvent) || !changeEvent.fullDocument) {
+		if (!('fullDocument' in changeEvent) || !changeEvent.fullDocument || closed) {
 			return;
 		}
 		try {
 			const order = changeEvent.fullDocument;
 
+			await writer.ready;
 			await writer.write(
 				`data: ${JSON.stringify({ eventType: order.lastPaymentStatusNotified })}\n\n`
 			);

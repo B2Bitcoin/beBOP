@@ -58,13 +58,20 @@
 	async function subscribeToServerEvents() {
 		eventSourceInstance = await fetchEventSource(`/pos/session/sse`, {
 			onmessage(ev) {
-				const { eventType } = JSON.parse(ev.data);
-
-				handleEvent(eventType);
+				console.log('event', ev.data, ev.data?.length);
+				if (ev.data) {
+					try {
+						const { eventType } = JSON.parse(ev.data);
+						handleEvent(eventType);
+					} catch (err) {
+						console.error('=> SSE Error:', err);
+					}
+				}
 			},
 			onerror(err) {
 				console.error('=> SSE Error:', err);
-			}
+			},
+			openWhenHidden: true
 		});
 	}
 
