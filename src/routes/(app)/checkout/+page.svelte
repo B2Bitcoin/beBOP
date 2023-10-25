@@ -22,7 +22,6 @@
 	let country = typedKeys(COUNTRIES)[0];
 
 	export let data;
-	let ipCollect = false;
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: 'Payment status' }

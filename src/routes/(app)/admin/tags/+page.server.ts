@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
+export const load = async () => {
 	const tags = await collections.tags.find({}).toArray();
 
 	return {

@@ -6,7 +6,7 @@ import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	const tag = await collections.tags.findOne({ _id: params.id });
 
 	if (!tag) {
