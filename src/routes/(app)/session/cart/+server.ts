@@ -11,7 +11,7 @@ export async function GET({ url }) {
 	}
 
 	const cart = await collections.carts.findOne(
-		{ userId: new ObjectId(userId) },
+		{ 'user.userId': new ObjectId(userId) },
 		{ sort: { createdAt: -1 } }
 	);
 

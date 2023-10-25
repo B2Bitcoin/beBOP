@@ -6,7 +6,6 @@
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
-	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
 	let eventSourceInstance: EventSource | null = null;
@@ -51,8 +50,7 @@
 	}
 
 	function subscribeToServerEvents() {
-		console.log('=> subscribeToServerEvents');
-
+		//@ts-ignore
 		eventSourceInstance = fetchEventSource(`/sse?userId=${data.userId}`, {
 			onmessage(ev) {
 				console.log('onmessage ', onmessage);
@@ -193,7 +191,7 @@
 	{:else if $view === 'welcome'}
 		<div class="flex flex-col items-center">
 			<h1 class="text-3xl">Welcome</h1>
-			<Picture class="" picture={data.logoPicture} />
+			<Picture class="" picture={data.logoPicture || undefined} />
 			<h2 class="text-2xl">We're happy to see you</h2>
 		</div>
 	{/if}
@@ -216,15 +214,19 @@
 					</div>
 					<div class="flex flex-col items-end">
 						<PriceTag
-							amount={$view === 'pending' ? $order?.vat?.price?.amount : vat}
-							currency={$view === 'pending' ? $order?.vat?.price?.currency : data.currencies.main}
+							amount={$view === 'pending' ? $order?.vat?.price?.amount || 0 : vat}
+							currency={$view === 'pending'
+								? $order?.vat?.price?.currency || 'USD'
+								: data.currencies.main}
 							main
 							class="text-[28px] text-gray-800"
 						/>
 						<PriceTag
 							class="text-base text-gray-600"
-							amount={$view === 'pending' ? $order?.vat?.price?.amount : vat}
-							currency={$view === 'pending' ? $order?.vat?.price?.currency : data.currencies.main}
+							amount={$view === 'pending' ? $order?.vat?.price?.amount || 0 : vat}
+							currency={$view === 'pending'
+								? $order?.vat?.price?.currency || 'USD'
+								: data.currencies.main}
 							secondary
 						/>
 					</div>
@@ -235,15 +237,19 @@
 				<h2 class="text-gray-800 text-[32px]">Total:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={$view === 'pending' ? $order?.totalPrice?.amount : totalPriceWithVat}
-						currency={$view === 'pending' ? $order?.totalPrice?.currency : data.currencies.main}
+						amount={$view === 'pending' ? $order?.totalPrice?.amount || 0 : totalPriceWithVat}
+						currency={$view === 'pending'
+							? $order?.totalPrice?.currency || 'USD'
+							: data.currencies.main}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
-						amount={$view === 'pending' ? $order?.totalPrice?.amount : totalPriceWithVat}
-						currency={$view === 'pending' ? $order?.totalPrice?.currency : data.currencies.main}
+						amount={$view === 'pending' ? $order?.totalPrice?.amount || 0 : totalPriceWithVat}
+						currency={$view === 'pending'
+							? $order?.totalPrice?.currency || 'USD'
+							: data.currencies.main}
 						secondary
 					/>
 				</div>

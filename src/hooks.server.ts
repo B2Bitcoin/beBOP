@@ -27,6 +27,8 @@ import {
 import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
+import type { Cart } from '$lib/types/Cart';
+import type { Order } from '$lib/types/Order';
 // import { countryFromIp } from '$lib/server/geoip';
 
 interface Client {
@@ -46,12 +48,9 @@ export async function notifyClientsOfCartUpdate(
 	data: { eventType: string | undefined },
 	userIdToUpdate: string
 ): Promise<void> {
-	console.log('=> notifyClientsOfCartUpdate');
-
 	for (const clientId in clients) {
 		if (clients[clientId].userId === userIdToUpdate) {
 			const writer = clients[clientId].writer;
-			console.log('writer ', writer);
 
 			writer.write(`data: ${JSON.stringify(data)}\n\n`).catch((error) => {
 				console.error(`Error writing to client ${clientId}`, error);
@@ -65,23 +64,25 @@ export async function notifyClientsOfCartUpdate(
 
 //Check change on cart collection
 const cartCollection = collections.carts;
-const cartChangeStream = cartCollection.watch();
-
-cartChangeStream.on('change', async (changeEvent: ChangeEvent) => {
-	console.log('=> cartChangeStream');
-
-	try {
-		if (changeEvent?.documentKey?._id) {
-			const cart = await collections.carts.findOne({
-				_id: new ObjectId(changeEvent.documentKey._id)
-			});
-
-			if (!cart?.userId) {
-				console.error('Cart or session ID not found for changeEvent: ', changeEvent);
-				return;
+const cartChangeStream = cartCollection.watch(
+	[
+		{
+			$match: {
+				'fullDocument.user.userId': { $exists: true }
 			}
+		}
+	],
+	{
+		fullDocument: 'updateLookup'
+	}
+);
 
-			notifyClientsOfCartUpdate({ eventType: 'updateCart' }, cart.userId.toString());
+cartChangeStream.on('change', (changeEvent: ChangeEvent & { fullDocument?: Cart }) => {
+	try {
+		const cart = changeEvent.fullDocument;
+
+		if (cart?.user?.userId) {
+			notifyClientsOfCartUpdate({ eventType: 'updateCart' }, cart.user.userId.toString());
 		}
 	} catch (error) {
 		console.error('Error processing changeEvent:', error);
@@ -90,23 +91,27 @@ cartChangeStream.on('change', async (changeEvent: ChangeEvent) => {
 
 //Check change on order collection
 const orderCollection = collections.orders;
-const orderChangeStream = orderCollection.watch();
-
-orderChangeStream.on('change', async (changeEvent: ChangeEvent) => {
-	try {
-		if (changeEvent?.documentKey?._id) {
-			const order = await collections.orders.findOne({
-				_id: changeEvent.documentKey._id
-			});
-
-			if (!order?.userId) {
-				console.error('Cart or session ID not found for changeEvent: ', changeEvent);
-				return;
+const orderChangeStream = orderCollection.watch(
+	[
+		{
+			$match: {
+				'fullDocument.user.userId': { $exists: true }
 			}
+		}
+	],
+	{
+		fullDocument: 'updateLookup'
+	}
+);
 
+orderChangeStream.on('change', async (changeEvent: ChangeEvent & { fullDocument?: Order }) => {
+	try {
+		const order = changeEvent.fullDocument;
+
+		if (order?.user?.userId) {
 			notifyClientsOfCartUpdate(
 				{ eventType: order.lastPaymentStatusNotified },
-				order.userId.toString()
+				order?.user?.userId.toString()
 			);
 		}
 	} catch (error) {
@@ -251,7 +256,13 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 		const isSuperAdmin = event.locals.user.role === SUPER_ADMIN_ROLE_ID;
 
-		const posAllowedRoutes = ['/admin/login', '/admin/pos', '/admin/pos/'];
+		const posAllowedRoutes = [
+			'/admin/login',
+			'/admin/pos',
+			'/admin/pos/',
+			'/admin/order',
+			'/admin/order/'
+		];
 		const isPOSWithValidRoute =
 			event.locals.user.role === POS_ROLE_ID &&
 			posAllowedRoutes.some((route) => {

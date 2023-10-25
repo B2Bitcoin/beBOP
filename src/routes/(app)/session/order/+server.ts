@@ -10,7 +10,7 @@ export async function GET({ url }) {
 	}
 
 	const order = await collections.orders.findOne(
-		{ userId: new ObjectId(userId) },
+		{ 'user.userId': new ObjectId(userId) },
 		{ sort: { createdAt: -1 } }
 	);
 
