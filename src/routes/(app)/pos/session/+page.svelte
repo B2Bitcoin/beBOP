@@ -56,7 +56,7 @@
 	}
 
 	async function subscribeToServerEvents() {
-		eventSourceInstance = await fetchEventSource(`/sse`, {
+		eventSourceInstance = await fetchEventSource(`/pos/session/sse`, {
 			onmessage(ev) {
 				const { eventType } = JSON.parse(ev.data);
 
@@ -76,7 +76,7 @@
 	}
 
 	async function fetchUpdatedCart() {
-		const response = await fetch(`/session/cart`);
+		const response = await fetch(`/pos/session/cart`);
 		if (response.ok) {
 			const updatedCart = await response.json();
 
@@ -87,7 +87,7 @@
 	}
 
 	async function fetchOrder() {
-		const response = await fetch(`/session/order`);
+		const response = await fetch(`/pos/session/order`);
 		if (response.ok) {
 			const orderData = await response.json();
 

@@ -9,12 +9,12 @@ export const load = async ({ locals }) => {
 	}
 
 	const cart = await collections.carts.findOne(
-		{ 'user.userId': locals.user?._id },
+		{ 'user.userId': locals.user._id },
 		{ sort: { createdAt: -1 } }
 	);
 
 	const order = await collections.orders.findOne(
-		{ 'user.userId': locals.user?._id },
+		{ 'user.userId': locals.user._id },
 		{ sort: { createdAt: -1 } }
 	);
 

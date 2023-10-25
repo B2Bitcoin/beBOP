@@ -1,8 +1,18 @@
 import { collections } from '$lib/server/database.js';
 import type { Cart } from '$lib/types/Cart.js';
 import type { Order } from '$lib/types/Order.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
+import { error } from '@sveltejs/kit';
 
 export async function GET({ locals }) {
+	if (!locals.user?._id) {
+		throw error(401, 'Must be logged in');
+	}
+
+	if (locals.user.role !== POS_ROLE_ID) {
+		throw error(403, 'Must be logged in as a POS user');
+	}
+
 	//Check change on cart collection
 	const cartCollection = collections.carts;
 	const cartChangeStream = cartCollection.watch(

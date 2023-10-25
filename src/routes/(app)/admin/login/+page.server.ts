@@ -71,6 +71,6 @@ export const actions = {
 			}
 		);
 		// Redirect to the admin dashboard upon successful login
-		throw redirect(303, user.roleId === POS_ROLE_ID ? '/admin/pos' : `/admin`);
+		throw redirect(303, user.roleId === POS_ROLE_ID ? '/pos' : `/admin`);
 	}
 };

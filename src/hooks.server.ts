@@ -8,7 +8,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
-import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
 import Facebook from '@auth/core/providers/facebook';
@@ -164,26 +164,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw redirect(303, '/admin/login');
 		}
 
-		const isSuperAdmin = event.locals.user.role === SUPER_ADMIN_ROLE_ID;
-
-		const posAllowedRoutes = [
-			'/admin/login',
-			'/admin/pos',
-			'/admin/pos/',
-			'/admin/order',
-			'/admin/order/'
-		];
-		const isPOSWithValidRoute =
-			event.locals.user.role === POS_ROLE_ID &&
-			posAllowedRoutes.some((route) => {
-				if (route.endsWith('/')) {
-					return event.url.pathname.startsWith(route);
-				} else {
-					return event.url.pathname === route;
-				}
-			});
-
-		if (!isSuperAdmin && !isPOSWithValidRoute) {
+		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 	}
@@ -222,7 +203,6 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			status
 		});
 	}
-
 	return response;
 };
 
