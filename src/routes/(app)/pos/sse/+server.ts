@@ -1,17 +1,17 @@
 import { collections } from '$lib/server/database.js';
-import type { Cart } from '$lib/types/Cart.js';
-import type { Order, OrderPaymentStatus } from '$lib/types/Order.js';
+import type { OrderPaymentStatus } from '$lib/types/Order.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { error } from '@sveltejs/kit';
 
 export type SSEEventType = 'updateCart' | OrderPaymentStatus;
 
 export async function GET({ locals }) {
-	if (!locals.user?._id) {
+	const userId = locals.user?._id;
+	if (!userId) {
 		throw error(401, 'Must be logged in');
 	}
 
-	if (locals.user.role !== POS_ROLE_ID) {
+	if (locals.user?.role !== POS_ROLE_ID) {
 		throw error(403, 'Must be logged in as a POS user');
 	}
 
@@ -21,7 +21,7 @@ export async function GET({ locals }) {
 		[
 			{
 				$match: {
-					'fullDocument.user.userId': { $exists: true }
+					'fullDocument.user.userId': userId
 				}
 			}
 		],
@@ -30,16 +30,18 @@ export async function GET({ locals }) {
 		}
 	);
 
-	cartChangeStream.on('change', (changeEvent: ChangeEvent & { fullDocument?: Cart }) => {
+	cartChangeStream.on('change', (changeEvent) => {
+		if (!('fullDocument' in changeEvent) || !changeEvent.fullDocument) {
+			return;
+		}
 		try {
-			const cart = changeEvent.fullDocument;
-
-			if (cart?.user?.userId) {
-				notifyClientsOfCartUpdate(
-					{ eventType: 'updateCart' satisfies SSEEventType },
-					cart.user.userId.toString()
-				);
-			}
+			writer.write(`data: ${JSON.stringify({ eventType: 'updateCart' })}\n\n`).catch((error) => {
+				console.error(`Error writing to client ${userId}`, error);
+				// Error writing to the client, assume it has disconnected
+				writer.close();
+				orderChangeStream.close();
+				cartChangeStream.close();
+			});
 		} catch (error) {
 			console.error('Error processing changeEvent:', error);
 		}
@@ -51,7 +53,7 @@ export async function GET({ locals }) {
 		[
 			{
 				$match: {
-					'fullDocument.user.userId': { $exists: true }
+					'fullDocument.user.userId': userId
 				}
 			}
 		],
@@ -60,16 +62,22 @@ export async function GET({ locals }) {
 		}
 	);
 
-	orderChangeStream.on('change', async (changeEvent: ChangeEvent & { fullDocument?: Order }) => {
+	orderChangeStream.on('change', async (changeEvent) => {
+		if (!('fullDocument' in changeEvent) || !changeEvent.fullDocument) {
+			return;
+		}
 		try {
 			const order = changeEvent.fullDocument;
 
-			if (order?.user?.userId) {
-				notifyClientsOfCartUpdate(
-					{ eventType: order.lastPaymentStatusNotified },
-					order?.user?.userId.toString()
-				);
-			}
+			writer
+				.write(`data: ${JSON.stringify({ eventType: order.lastPaymentStatusNotified })}\n\n`)
+				.catch((error) => {
+					console.error(`Error writing to client ${userId}`, error);
+					// Error writing to the client, assume it has disconnected
+					writer.close();
+					orderChangeStream.close();
+					cartChangeStream.close();
+				});
 		} catch (error) {
 			console.error('Error processing changeEvent:', error);
 		}
@@ -86,47 +94,5 @@ export async function GET({ locals }) {
 		}
 	});
 
-	const clientId = new Date().toISOString();
-
-	if (!clients[clientId]) {
-		clients[clientId] = new Set();
-	}
-	clients[clientId].add({ writer, userId: locals.user?._id?.toString() ?? '' });
-
 	return response;
-}
-
-interface ClientConnection {
-	writer: WritableStreamDefaultWriter;
-	userId: string;
-}
-
-interface ChangeEvent {
-	documentKey: {
-		_id?: string;
-	};
-}
-
-const clients: Record<string, Set<ClientConnection>> = {};
-
-async function notifyClientsOfCartUpdate(
-	data: { eventType: SSEEventType | undefined },
-	userIdToUpdate: string
-): Promise<void> {
-	for (const clientId in clients) {
-		for (const connection of clients[clientId]) {
-			if (connection.userId === userIdToUpdate) {
-				connection.writer.write(`data: ${JSON.stringify(data)}\n\n`).catch((error) => {
-					console.error(`Error writing to client ${clientId}`, error);
-					// Error writing to the client, assume it has disconnected
-					connection.writer.close();
-					clients[clientId].delete(connection);
-
-					if (clients[clientId].size === 0) {
-						delete clients[clientId];
-					}
-				});
-			}
-		}
-	}
 }
