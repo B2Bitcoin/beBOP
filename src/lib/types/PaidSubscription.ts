@@ -4,15 +4,14 @@
 
 import type { ObjectId } from 'mongodb';
 import type { Timestamps } from './Timestamps';
+import type { UserIdentifier } from './UserIdentifier';
 
 export interface PaidSubscription extends Timestamps {
 	_id: string;
 
 	number: number;
 
-	// One of these two must be set
-	npub?: string;
-	email?: string;
+	user: UserIdentifier;
 
 	productId: string;
 

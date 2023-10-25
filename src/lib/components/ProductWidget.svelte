@@ -36,7 +36,7 @@
 		</div>
 		<div class="flex flex-col text-center">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
-				<PictureComponent {picture} sizes="800px" class="object-contain max-h-[348px] max-w-full" />
+				<PictureComponent {picture} class="object-contain max-h-[348px] max-w-full" />
 			</a>
 		</div>
 
@@ -85,11 +85,7 @@
 				/>
 			</div>
 			<a href="/product/{product._id}" class="-ml-6">
-				<PictureComponent
-					{picture}
-					sizes="800px"
-					class="object-contain max-h-[264px] max-w-[264px]"
-				/>
+				<PictureComponent {picture} class="object-contain max-h-[264px] max-w-[264px]" />
 			</a>
 		</div>
 
@@ -165,11 +161,7 @@
 				/>
 			</div>
 			<a href="/product/{product._id}" class="-mr-6">
-				<PictureComponent
-					{picture}
-					sizes="800px"
-					class="object-contain max-h-[264px] max-w-[264px]"
-				/>
+				<PictureComponent {picture} class="object-contain max-h-[264px] max-w-[264px]" />
 			</a>
 		</div>
 	</div>
@@ -186,7 +178,7 @@
 				/>
 			</div>
 			<a href="/product/{product._id}" class="-mx-6">
-				<PictureComponent {picture} sizes="800px" class="object-contain" />
+				<PictureComponent {picture} sizes="264px" class="object-contain" />
 			</a>
 		</div>
 
@@ -224,7 +216,7 @@
 		</div>
 		<div class="flex flex-col text-center">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
-				<PictureComponent {picture} sizes="800px" class="object-contain max-h-[174px] max-w-full" />
+				<PictureComponent {picture} class="object-contain max-h-[174px] max-w-full" />
 			</a>
 		</div>
 

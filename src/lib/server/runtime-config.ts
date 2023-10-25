@@ -35,6 +35,8 @@ const defaultConfig = {
 	bitcoinWallet: '',
 	logoPictureId: '',
 	lnurlPayMetadataJwtSigningKey: '',
+	authLinkJwtSigningKey: '',
+	ssoSecret: '',
 	topbarLinks: [
 		{ label: 'Blog', href: '/blog' },
 		{ label: 'Store', href: '/store' },
@@ -127,6 +129,22 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 	if (!runtimeConfig.lnurlPayMetadataJwtSigningKey) {
 		await collections.runtimeConfig.updateOne(
 			{ _id: 'lnurlPayMetadataJwtSigningKey' },
+			{ $set: { data: crypto.randomUUID(), updatedAt: new Date() } },
+			{ upsert: true }
+		);
+	}
+
+	if (!runtimeConfig.authLinkJwtSigningKey) {
+		await collections.runtimeConfig.updateOne(
+			{ _id: 'authLinkJwtSigningKey' },
+			{ $set: { data: crypto.randomUUID(), updatedAt: new Date() } },
+			{ upsert: true }
+		);
+	}
+
+	if (!runtimeConfig.ssoSecret) {
+		await collections.runtimeConfig.updateOne(
+			{ _id: 'ssoSecret' },
 			{ $set: { data: crypto.randomUUID(), updatedAt: new Date() } },
 			{ upsert: true }
 		);

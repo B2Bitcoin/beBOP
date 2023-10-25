@@ -2,6 +2,8 @@ import type { ClientSession } from 'mongodb';
 import { collections } from './database';
 import { subMinutes } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
+import type { UserIdentifier } from '$lib/types/UserIdentifier';
+import { getCartFromDb } from './cart';
 
 /**
  * Amount of product reserved in carts and pending orders
@@ -9,21 +11,16 @@ import { runtimeConfig } from './runtime-config';
 export async function amountOfProductReserved(
 	productId: string,
 	opts?: {
-		include?: {
-			/** Include stock for outdated carts with this npub */
-			npub?: string;
-			/** Include stock for outdated carts with this sessionId */
-			sessionId?: string;
-		};
-		exclude?: {
-			/** Exclude stock for active carts with this npub */
-			npub?: string;
-			/** Exclude stock for active carts with this sessionId */
-			sessionId?: string;
-		};
+		/** Include stock for outdated carts with this id */
+		include?: UserIdentifier;
+		/** Exclude stock for active carts with this id */
+		exclude?: UserIdentifier;
 		session?: ClientSession;
 	}
 ): Promise<number> {
+	const userIdentifier = opts?.include ?? opts?.exclude;
+	const cart = userIdentifier ? await getCartFromDb({ user: userIdentifier }) : undefined;
+
 	return (
 		((
 			await collections.carts
@@ -36,23 +33,15 @@ export async function amountOfProductReserved(
 									{
 										updatedAt: { $gt: subMinutes(new Date(), runtimeConfig.reserveStockInMinutes) }
 									},
-									...(opts?.include?.npub
+									...(opts?.include && cart
 										? [
 												{
-													npub: opts.include.npub
-												}
-										  ]
-										: []),
-									...(opts?.include?.sessionId
-										? [
-												{
-													sessionId: opts.include.sessionId
+													_id: cart._id
 												}
 										  ]
 										: [])
 								],
-								...(opts?.exclude?.npub && { npub: { $ne: opts.exclude.npub } }),
-								...(opts?.exclude?.sessionId && { sessionId: { $ne: opts.exclude.sessionId } })
+								...(opts?.exclude && cart && { _id: { $ne: cart._id } })
 							}
 						},
 						{

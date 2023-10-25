@@ -8,6 +8,45 @@ import type { Cart } from '$lib/types/Cart';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { Picture } from '$lib/types/Picture';
 import type { DigitalFile } from '$lib/types/DigitalFile';
+import type { UserIdentifier } from '$lib/types/UserIdentifier';
+import { isEqual } from 'lodash-es';
+import { userQuery } from './user';
+
+export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
+	if (!params.user.sessionId && !params.user.npub) {
+		throw new TypeError('No session ID or NPUB provided');
+	}
+
+	let res = await collections.carts.findOne(userQuery(params.user), { sort: { _id: -1 } });
+
+	if (!res) {
+		res = {
+			_id: new ObjectId(),
+			items: [],
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			user: params.user
+		};
+	}
+
+	if (!isEqual(res.user, params.user)) {
+		res.user = params.user;
+		res.updatedAt = new Date();
+		await collections.carts.updateOne(
+			{
+				_id: res._id
+			},
+			{
+				$set: {
+					user: params.user,
+					updatedAt: res.updatedAt
+				}
+			}
+		);
+	}
+
+	return res;
+}
 
 /**
  * Be wary if adding Zod: called from NostR as well and need human readable error messages
@@ -15,7 +54,7 @@ import type { DigitalFile } from '$lib/types/DigitalFile';
 export async function addToCartInDb(
 	product: Product,
 	quantity: number,
-	params: { sessionId?: string; npub?: string; totalQuantity?: boolean; customAmount?: number }
+	params: { user: UserIdentifier; totalQuantity?: boolean; customAmount?: number }
 ) {
 	if (quantity < 0) {
 		throw new TypeError('Quantity cannot be negative');
@@ -25,34 +64,7 @@ export async function addToCartInDb(
 		throw error(400, 'Product is not available for preorder');
 	}
 
-	if (!params.sessionId && !params.npub) {
-		throw new TypeError('No session ID or NPUB provided');
-	}
-
-	const query = params.npub ? { npub: params.npub } : { sessionId: params.sessionId };
-
-	let cart = await collections.carts.findOne(query);
-
-	if (!cart) {
-		let userId;
-
-		if (params.sessionId) {
-			const session = await collections.sessions.findOne({ sessionId: params.sessionId });
-
-			if (session) {
-				userId = session.userId;
-			}
-		}
-
-		cart = {
-			...query,
-			_id: new ObjectId(),
-			userId: userId,
-			items: [],
-			createdAt: new Date(),
-			updatedAt: new Date()
-		};
-	}
+	let cart = await getCartFromDb(params);
 
 	const existingItem = cart.items.find((item) => item.productId === product._id);
 
@@ -102,28 +114,26 @@ export async function addToCartInDb(
 
 	const validCart = cart;
 	await withTransaction(async (session) => {
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		cart = (
 			await collections.carts.findOneAndUpdate(
 				{ _id: validCart._id },
 				{
 					$set: {
 						items: validCart.items,
-						userId: validCart.userId,
 						updatedAt: new Date()
 					},
 					$setOnInsert: {
 						createdAt: new Date(),
-						...query
+						user: params.user
 					}
 				},
 				{ upsert: true, returnDocument: 'after', session }
 			)
-		).value;
+		).value!;
 
-		if (cart) {
-			for (const item of cart.items) {
-				await refreshAvailableStockInDb(item.productId, session);
-			}
+		for (const item of cart.items) {
+			await refreshAvailableStockInDb(item.productId, session);
 		}
 	});
 
@@ -133,23 +143,13 @@ export async function addToCartInDb(
 export async function removeFromCartInDb(
 	product: Product,
 	quantity: number,
-	params: { sessionId?: string; npub?: string; totalQuantity?: boolean }
+	params: { user: UserIdentifier; totalQuantity?: boolean }
 ) {
 	if (quantity < 0) {
 		throw new TypeError('Quantity cannot be negative');
 	}
 
-	if (!params.sessionId && !params.npub) {
-		throw new TypeError('No session ID or NPUB provided');
-	}
-
-	const query = params.npub ? { npub: params.npub } : { sessionId: params.sessionId };
-
-	const cart = await collections.carts.findOne(query);
-
-	if (!cart) {
-		throw new TypeError('Cart is empty');
-	}
+	const cart = await getCartFromDb(params);
 
 	const item = cart.items.find((i) => i.productId === product._id);
 
@@ -190,9 +190,8 @@ async function computeAvailableAmount(product: Product, cart: Cart): Promise<num
 		: product.stock.total +
 				(await amountOfProductReserved(product._id, {
 					exclude: {
-						sessionId: cart.sessionId,
-
-						npub: cart.npub
+						sessionId: cart.user.sessionId,
+						npub: cart.user.npub
 					}
 				}));
 }
@@ -203,8 +202,7 @@ export async function checkCartItems(
 		product: Pick<Product, 'stock' | '_id' | 'name' | 'maxQuantityPerOrder'>;
 	}>,
 	opts?: {
-		sessionId?: string;
-		npub?: string;
+		user?: UserIdentifier;
 	}
 ) {
 	const products = items.map((item) => item.product);
@@ -219,13 +217,7 @@ export async function checkCartItems(
 	for (const productId of Object.keys(qtyPerItem)) {
 		const product = productById[productId];
 		const available = product.stock
-			? product.stock.total -
-			  (await amountOfProductReserved(productId, {
-					exclude: {
-						npub: opts?.npub,
-						sessionId: opts?.sessionId
-					}
-			  }))
+			? product.stock.total - (await amountOfProductReserved(productId, { exclude: opts?.user }))
 			: Infinity;
 		if (product.stock && qtyPerItem[productId] > available) {
 			if (!available) {

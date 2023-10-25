@@ -7,7 +7,7 @@ export interface User extends Timestamps {
 	password: string;
 	backupInfo?: {
 		email?: string;
-		nostr?: string;
+		npub?: string;
 	};
 	roleId: string;
 	status?: string;
@@ -20,3 +20,4 @@ export interface User extends Timestamps {
 
 export const SUPER_ADMIN_ROLE_ID = 'super-admin';
 export const POS_ROLE_ID = 'point-of-sale';
+export const CUSTOMER_ROLE_ID = 'customer';

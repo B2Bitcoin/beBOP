@@ -112,7 +112,7 @@
 		<input type="checkbox" name="wholeCatalog" class="form-checkbox" bind:checked={wholeCatalog} />
 		The discount apply to the hole catalog (except free, subscription & PWYW products)
 	</label>
-	<div class="flex flex-col gap-4 w-[30%] {wholeCatalog ? 'hidden' : ''}">
+	<div class="flex flex-col gap-4 w-[30%] {wholeCatalog ? 'hidden sm-inline' : ''}">
 		<label class="form-label"
 			>Products
 			<select

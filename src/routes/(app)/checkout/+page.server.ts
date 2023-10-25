@@ -8,14 +8,15 @@ import { createOrder } from '$lib/server/orders';
 import { emailsEnabled } from '$lib/server/email';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
-import { checkCartItems } from '$lib/server/cart.js';
+import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
+import { userIdentifier } from '$lib/server/user.js';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
 
 	if (parentData.cart) {
 		try {
-			await checkCartItems(parentData.cart, { sessionId: locals.sessionId });
+			await checkCartItems(parentData.cart, { user: userIdentifier(locals) });
 		} catch (err) {
 			throw redirect(303, '/cart');
 		}
@@ -34,7 +35,7 @@ export const actions = {
 		if (!paymentMethods().length) {
 			throw error(500, 'No payment methods configured for the bootik');
 		}
-		const cart = await collections.carts.findOne({ sessionId: locals.sessionId });
+		const cart = await getCartFromDb({ user: userIdentifier(locals) });
 
 		if (!cart?.items.length) {
 			throw error(400, 'Cart is empty');
@@ -112,7 +113,7 @@ export const actions = {
 			})),
 			paymentMethod,
 			{
-				sessionId: locals.sessionId,
+				user: userIdentifier(locals),
 				notifications: {
 					paymentStatus: {
 						npub: npubAddress,

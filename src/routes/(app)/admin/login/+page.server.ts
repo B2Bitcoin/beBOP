@@ -2,11 +2,11 @@ import { collections } from '$lib/server/database';
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
-import { ObjectId } from 'mongodb';
-import { addSeconds } from 'date-fns';
+import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createAdminUserInDb } from '$lib/server/user.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
+import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
@@ -35,7 +35,7 @@ export const actions = {
 				remember: data.get('remember'),
 				memorize: data.get('memorize')
 			});
-		let user = await collections.users.findOne({ login: login });
+		let user = await collections.users.findOne({ login: login, roleId: SUPER_ADMIN_ROLE_ID });
 
 		if (!user && !runtimeConfig.isAdminCreated) {
 			await createAdminUserInDb(login, password);
@@ -47,20 +47,30 @@ export const actions = {
 			return fail(400, { login, incorrect: 'login' });
 		}
 
-		if (!(await bcryptjs.compare(password, user.password))) {
+		if (!user.password || !(await bcryptjs.compare(password, user.password))) {
 			return fail(400, { login, incorrect: 'password' });
 		}
 
 		await collections.users.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
-		await collections.sessions.insertOne({
-			_id: new ObjectId(),
-			userId: user._id,
-			sessionId: locals.sessionId,
-			expiresAt: addSeconds(new Date(), remember ? memorize : 3600),
-			createdAt: new Date(),
-			updatedAt: new Date()
-		});
-
+		await collections.sessions.updateOne(
+			{
+				sessionId: locals.sessionId
+			},
+			{
+				$set: {
+					userId: user._id,
+					expiresAt: addYears(new Date(), 1),
+					expireUserAt: addSeconds(new Date(), remember ? memorize : 3600)
+				},
+				$setOnInsert: {
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}
+			},
+			{
+				upsert: true
+			}
+		);
 		// Redirect to the admin dashboard upon successful login
 		throw redirect(303, user.roleId === POS_ROLE_ID ? '/admin/pos' : `/admin`);
 	}

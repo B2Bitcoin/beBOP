@@ -6,11 +6,12 @@ import type { CountryAlpha2 } from './Country';
 import type { Currency } from './Currency';
 import type { Product } from './Product';
 import type { Timestamps } from './Timestamps';
+import type { UserIdentifier } from './UserIdentifier';
 
 export interface Cart extends Timestamps {
-	sessionId?: string;
-	npub?: string;
-	userId?: ObjectId;
+	_id: ObjectId;
+	user: UserIdentifier;
+
 	items: Array<{
 		productId: string;
 		quantity: number;
