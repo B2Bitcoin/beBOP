@@ -6,7 +6,7 @@
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 	import { onMount } from 'svelte';
-	import type { SSEEventType } from '../sse/+server.js';
+	import type { SSEEventType } from './sse/+server.js';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -18,6 +18,7 @@
 	export let data;
 	let cart = data.cart;
 	let order = data.order;
+
 	let view =
 		data.cart && data.cart.length > 0
 			? 'updateCart'

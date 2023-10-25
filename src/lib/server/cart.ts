@@ -295,7 +295,7 @@ export async function formatCart(cart: WithId<Cart> | null): Promise<FormattedCa
 					| 'stock'
 				>
 			>(
-				{ _id: cart.items.map((item) => item.productId) },
+				{ _id: { $in: cart.items.map((item) => item.productId) } },
 				{
 					projection: {
 						_id: 1,
@@ -317,6 +317,7 @@ export async function formatCart(cart: WithId<Cart> | null): Promise<FormattedCa
 				}
 			)
 			.toArray();
+
 		const productById = Object.fromEntries(products.map((product) => [product._id, product]));
 		const pictures = await picturesForProducts(products.map((product) => product._id));
 		const pictureByProductId = Object.fromEntries(
