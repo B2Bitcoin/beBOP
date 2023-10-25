@@ -284,19 +284,16 @@ function jsonToObjectId(obj: unknown, alreadyParsed = new Set<unknown>()): unkno
 	if (obj && typeof obj === 'object' && '$oid' in obj) {
 		const oidObj = obj as { $oid: string };
 		return new ObjectId(oidObj.$oid);
-	} else if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
-		const recordObj = obj as Record<string, unknown>;
-		for (const key in recordObj) {
-			// eslint-disable-next-line no-prototype-builtins
-			if (recordObj.hasOwnProperty(key)) {
-				recordObj[key] = jsonToObjectId(recordObj[key], alreadyParsed);
-			}
-		}
-		return recordObj;
 	} else if (Array.isArray(obj)) {
 		for (let i = 0; i < obj.length; i++) {
 			obj[i] = jsonToObjectId(obj[i], alreadyParsed);
 		}
+	} else if (obj && typeof obj === 'object') {
+		const recordObj = obj as Record<string, unknown>;
+		for (const key of Object.keys(recordObj)) {
+			recordObj[key] = jsonToObjectId(recordObj[key], alreadyParsed);
+		}
+		return recordObj;
 	}
 
 	return obj;
