@@ -1,12 +1,12 @@
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
+import type { Actions } from './$types';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { ObjectId } from 'mongodb';
 import { POS_ROLE_ID } from '$lib/types/User';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	const userId = new ObjectId(params.id);
 
 	const user = await collections.users.findOne({ _id: userId });
