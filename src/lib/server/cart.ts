@@ -1,13 +1,17 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
 import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
 import type { Cart } from '$lib/types/Cart';
+import { filterUndef } from '$lib/utils/filterUndef';
+import type { Picture } from '$lib/types/Picture';
+import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { isEqual } from 'lodash-es';
 import { userQuery } from './user';
+import type { Currency } from '$lib/types/Currency';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	if (!params.user.sessionId && !params.user.npub) {
@@ -236,4 +240,102 @@ export async function checkCartItems(
 			);
 		}
 	}
+}
+
+type FormattedCartItem = {
+	product: Pick<
+		Product,
+		| 'stock'
+		| '_id'
+		| 'name'
+		| 'maxQuantityPerOrder'
+		| 'deliveryFees'
+		| 'price'
+		| 'shortDescription'
+		| 'type'
+		| 'availableDate'
+		| 'shipping'
+		| 'preorder'
+		| 'applyDeliveryFeesOnlyOnce'
+		| 'requireSpecificDeliveryFee'
+		| 'payWhatYouWant'
+		| 'standalone'
+	>;
+	picture: Picture | null;
+	digitalFiles: WithId<DigitalFile>[];
+	quantity: number;
+	customPrice?: {
+		amount: number;
+		currency: Currency;
+	};
+};
+
+export async function formatCart(cart: WithId<Cart> | null): Promise<FormattedCartItem[]> {
+	if (cart && cart.items) {
+		return await Promise.all(
+			cart?.items.map(async (item) => {
+				const productDoc = await collections.products.findOne<
+					Pick<
+						Product,
+						| '_id'
+						| 'name'
+						| 'price'
+						| 'shortDescription'
+						| 'type'
+						| 'availableDate'
+						| 'shipping'
+						| 'preorder'
+						| 'deliveryFees'
+						| 'applyDeliveryFeesOnlyOnce'
+						| 'requireSpecificDeliveryFee'
+						| 'payWhatYouWant'
+						| 'standalone'
+						| 'maxQuantityPerOrder'
+						| 'stock'
+					>
+				>(
+					{ _id: item.productId },
+					{
+						projection: {
+							_id: 1,
+							name: 1,
+							price: 1,
+							shortDescription: 1,
+							type: 1,
+							shipping: 1,
+							availableDate: 1,
+							preorder: 1,
+							deliveryFees: 1,
+							applyDeliveryFeesOnlyOnce: 1,
+							requireSpecificDeliveryFee: 1,
+							payWhatYouWant: 1,
+							standalone: 1,
+							maxQuantityPerOrder: 1,
+							stock: 1
+						}
+					}
+				);
+				if (productDoc) {
+					if (runtimeConfig.deliveryFees.mode !== 'perItem') {
+						delete productDoc.deliveryFees;
+					}
+					return {
+						product: productDoc,
+						picture: await collections.pictures.findOne(
+							{ productId: item.productId },
+							{ sort: { createdAt: 1 } }
+						),
+						digitalFiles: await collections.digitalFiles
+							.find({ productId: item.productId })
+							.sort({ createdAt: 1 })
+							.toArray(),
+						quantity: item.quantity,
+						...(item.customPrice && { customPrice: item.customPrice })
+					};
+				}
+			})
+		).then((res) => filterUndef(res));
+	}
+
+	return [];
 }
