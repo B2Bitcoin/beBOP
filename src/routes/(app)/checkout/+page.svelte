@@ -250,7 +250,6 @@
 					</article>
 				{/each}
 			</section>
-			<input type="hidden" name="ipCollect" bind:value={ipCollect} />
 		</form>
 		<div class="w-full md:w-auto">
 			<article
@@ -447,13 +446,7 @@
 				</label>
 				{#if data.ipCollect}
 					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							name="allowCollectIP"
-							form="checkout"
-							bind:checked={ipCollect}
-						/>
+						<input type="checkbox" class="form-checkbox" name="allowCollectIP" form="checkout" />
 						<span>
 							I agree to the collect of my IP address( <a
 								href="/why-collect-ip"

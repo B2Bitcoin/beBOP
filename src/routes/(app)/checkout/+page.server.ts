@@ -106,10 +106,10 @@ export const actions = {
 
 		const collectIP = z
 			.object({
-				ipCollect: z.boolean({ coerce: true }).default(false)
+				allowCollectIP: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
-				ipCollect: formData.get('ipCollect')
+				allowCollectIP: formData.get('allowCollectIP')
 			});
 
 		const orderId = await createOrder(
@@ -132,7 +132,7 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				...(collectIP.ipCollect && { ipVisitor: event.getClientAddress() })
+				...(collectIP.allowCollectIP && { ipVisitor: event.getClientAddress() })
 			}
 		);
 
