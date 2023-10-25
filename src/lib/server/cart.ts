@@ -9,9 +9,10 @@ import { filterUndef } from '$lib/utils/filterUndef';
 import type { Picture } from '$lib/types/Picture';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
-import { isEqual } from 'lodash-es';
+import { groupBy, isEqual } from 'lodash-es';
 import { userQuery } from './user';
 import type { Currency } from '$lib/types/Currency';
+import { picturesForProducts } from './picture';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	if (!params.user.sessionId && !params.user.npub) {
@@ -271,69 +272,76 @@ type FormattedCartItem = {
 };
 
 export async function formatCart(cart: WithId<Cart> | null): Promise<FormattedCartItem[]> {
-	if (cart && cart.items) {
-		return await Promise.all(
-			cart?.items.map(async (item) => {
-				const productDoc = await collections.products.findOne<
-					Pick<
-						Product,
-						| '_id'
-						| 'name'
-						| 'price'
-						| 'shortDescription'
-						| 'type'
-						| 'availableDate'
-						| 'shipping'
-						| 'preorder'
-						| 'deliveryFees'
-						| 'applyDeliveryFeesOnlyOnce'
-						| 'requireSpecificDeliveryFee'
-						| 'payWhatYouWant'
-						| 'standalone'
-						| 'maxQuantityPerOrder'
-						| 'stock'
-					>
-				>(
-					{ _id: item.productId },
-					{
-						projection: {
-							_id: 1,
-							name: 1,
-							price: 1,
-							shortDescription: 1,
-							type: 1,
-							shipping: 1,
-							availableDate: 1,
-							preorder: 1,
-							deliveryFees: 1,
-							applyDeliveryFeesOnlyOnce: 1,
-							requireSpecificDeliveryFee: 1,
-							payWhatYouWant: 1,
-							standalone: 1,
-							maxQuantityPerOrder: 1,
-							stock: 1
-						}
+	if (cart?.items.length) {
+		const products = await collections.products
+			.find<
+				Pick<
+					Product,
+					| '_id'
+					| 'name'
+					| 'price'
+					| 'shortDescription'
+					| 'type'
+					| 'availableDate'
+					| 'shipping'
+					| 'preorder'
+					| 'deliveryFees'
+					| 'applyDeliveryFeesOnlyOnce'
+					| 'requireSpecificDeliveryFee'
+					| 'payWhatYouWant'
+					| 'standalone'
+					| 'maxQuantityPerOrder'
+					| 'stock'
+				>
+			>(
+				{ _id: cart.items.map((item) => item.productId) },
+				{
+					projection: {
+						_id: 1,
+						name: 1,
+						price: 1,
+						shortDescription: 1,
+						type: 1,
+						shipping: 1,
+						availableDate: 1,
+						preorder: 1,
+						deliveryFees: 1,
+						applyDeliveryFeesOnlyOnce: 1,
+						requireSpecificDeliveryFee: 1,
+						payWhatYouWant: 1,
+						standalone: 1,
+						maxQuantityPerOrder: 1,
+						stock: 1
 					}
-				);
-				if (productDoc) {
+				}
+			)
+			.toArray();
+		const productById = Object.fromEntries(products.map((product) => [product._id, product]));
+		const pictures = await picturesForProducts(products.map((product) => product._id));
+		const pictureByProductId = Object.fromEntries(
+			pictures.map((picture) => [picture.productId, picture])
+		);
+		const digitalFiles = await collections.digitalFiles
+			.find({ productId: { $in: products.map((product) => product._id) } })
+			.toArray();
+		const digitalFilesByProductId = groupBy(digitalFiles, 'productId');
+
+		return await Promise.all(
+			cart.items
+				.filter((item) => productById[item.productId])
+				.map(async (item) => {
+					const productDoc = productById[item.productId];
 					if (runtimeConfig.deliveryFees.mode !== 'perItem') {
 						delete productDoc.deliveryFees;
 					}
 					return {
 						product: productDoc,
-						picture: await collections.pictures.findOne(
-							{ productId: item.productId },
-							{ sort: { createdAt: 1 } }
-						),
-						digitalFiles: await collections.digitalFiles
-							.find({ productId: item.productId })
-							.sort({ createdAt: 1 })
-							.toArray(),
+						picture: pictureByProductId[item.productId] || null,
+						digitalFiles: digitalFilesByProductId[item.productId] || [],
 						quantity: item.quantity,
 						...(item.customPrice && { customPrice: item.customPrice })
 					};
-				}
-			})
+				})
 		).then((res) => filterUndef(res));
 	}
 
