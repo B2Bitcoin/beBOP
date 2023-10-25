@@ -7,6 +7,7 @@
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 	import { onMount } from 'svelte';
+	import type { SSEEventType } from '../sse/+server.js';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -32,7 +33,7 @@
 		resetToWelcomeAfter?: number;
 	};
 
-	const eventConfig: Record<string, EventConfigType> = {
+	const eventConfig: Record<SSEEventType, EventConfigType> = {
 		updateCart: { view: 'updateCart', fetchFunc: fetchUpdatedCart },
 		pending: { view: 'pending', fetchFunc: fetchOrder },
 		canceled: { view: 'canceled', fetchFunc: fetchOrder, resetToWelcomeAfter: 5000 },
@@ -40,7 +41,7 @@
 		expired: { view: 'expired', fetchFunc: fetchOrder, resetToWelcomeAfter: 5000 }
 	};
 
-	function handleEvent(eventType: 'updateCart' | 'pending' | 'canceled' | 'paid' | 'expired') {
+	function handleEvent(eventType: SSEEventType) {
 		const config = eventConfig[eventType];
 		if (config) {
 			view.set(config.view);

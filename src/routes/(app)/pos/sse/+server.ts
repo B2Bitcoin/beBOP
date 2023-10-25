@@ -1,8 +1,10 @@
 import { collections } from '$lib/server/database.js';
 import type { Cart } from '$lib/types/Cart.js';
-import type { Order } from '$lib/types/Order.js';
+import type { Order, OrderPaymentStatus } from '$lib/types/Order.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { error } from '@sveltejs/kit';
+
+export type SSEEventType = 'updateCart' | OrderPaymentStatus;
 
 export async function GET({ locals }) {
 	if (!locals.user?._id) {
@@ -33,7 +35,10 @@ export async function GET({ locals }) {
 			const cart = changeEvent.fullDocument;
 
 			if (cart?.user?.userId) {
-				notifyClientsOfCartUpdate({ eventType: 'updateCart' }, cart.user.userId.toString());
+				notifyClientsOfCartUpdate(
+					{ eventType: 'updateCart' satisfies SSEEventType },
+					cart.user.userId.toString()
+				);
 			}
 		} catch (error) {
 			console.error('Error processing changeEvent:', error);
@@ -105,7 +110,7 @@ interface ChangeEvent {
 const clients: Record<string, Set<ClientConnection>> = {};
 
 async function notifyClientsOfCartUpdate(
-	data: { eventType: string | undefined },
+	data: { eventType: SSEEventType | undefined },
 	userIdToUpdate: string
 ): Promise<void> {
 	for (const clientId in clients) {
