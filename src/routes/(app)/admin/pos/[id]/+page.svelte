@@ -10,7 +10,7 @@
 </script>
 
 <div>
-	{data.user}
+	User: <b>{data.user.login}</b>
 </div>
 
 <form method="post" class="flex flex-col gap-4" action="/admin/pos/{$page.params.id}?/update">
@@ -20,7 +20,7 @@
 			class="form-input"
 			type="text"
 			name="login"
-			value={data.user}
+			value={data.user.login}
 			placeholder="Enter the username"
 			required
 		/>
