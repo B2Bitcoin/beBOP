@@ -10,6 +10,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
 import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier } from '$lib/server/user.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -26,7 +27,8 @@ export async function load({ parent, locals }) {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
-		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
+		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
+		isPosUser: locals.user?.role === POS_ROLE_ID
 	};
 }
 
@@ -58,6 +60,8 @@ export const actions = {
 		const formData = await request.formData();
 
 		const isDigital = products.every((product) => !product.shipping);
+
+		console.log('Object.fromEntries(formData) ', Object.fromEntries(formData));
 
 		const shipping = isDigital
 			? null
@@ -103,6 +107,14 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 
+		const discount = z
+			.object({
+				amount: z.coerce.number().optional(),
+				type: z.enum(['fiat', 'percentage']).optional(),
+				justification: z.string().optional()
+			})
+			.parse(Object.fromEntries(formData));
+
 		const orderId = await createOrder(
 			cart.items.map((item) => ({
 				quantity: item.quantity,
@@ -122,7 +134,8 @@ export const actions = {
 				},
 				cart,
 				shippingAddress: shipping,
-				vatCountry: shipping?.country ?? locals.countryCode
+				vatCountry: shipping?.country ?? locals.countryCode,
+				discount
 			}
 		);
 

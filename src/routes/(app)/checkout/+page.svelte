@@ -23,6 +23,10 @@
 
 	export let data;
 
+	console.log(data);
+
+	let addDiscount = false;
+
 	const feedItems = [
 		{ key: 'paymentStatus', label: 'Payment status' }
 		// { key: 'productChanges', label: 'Product changes' },
@@ -443,6 +447,47 @@
 						</a>
 					</span>
 				</label>
+				{#if data.isPosUser}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							bind:checked={addDiscount}
+							name="addDiscount"
+							form="checkout"
+						/>
+						<span>
+							As a POS user I apply a <a
+								href="/terms"
+								target="_blank"
+								class="text-link hover:underline"
+							>
+								gift discount
+							</a>
+						</span>
+					</label>
+				{/if}
+
+				{#if addDiscount}
+					<input
+						type="number"
+						class="form-input"
+						name="amount"
+						placeholder="Ex: 10"
+						form="checkout"
+						required
+					/>
+
+					<select name="type" class="form-input" form="checkout" required>
+						<option value="fiat">{data?.currencies?.main}</option>
+						<option value="percentage">%</option>
+					</select>
+
+					<label class="form-label col-span-3">
+						Justification
+						<input type="text" class="form-input" form="checkout" name="justification" />
+					</label>
+				{/if}
 
 				<input
 					type="submit"

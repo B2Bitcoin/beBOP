@@ -1,5 +1,5 @@
 import type { Order } from '$lib/types/Order';
-import type { ClientSession, WithId } from 'mongodb';
+import { ObjectId, type ClientSession, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
@@ -10,7 +10,7 @@ import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
 import { lndCreateInvoice } from './lightning';
 import { ORIGIN } from '$env/static/private';
-import { emailsEnabled } from './email';
+import { emailsEnabled, sendEmail } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
@@ -22,6 +22,7 @@ import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { userQuery } from './user';
+import { SMTP_USER, EMAIL_REPLY_TO } from '$env/static/private';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -166,6 +167,11 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
+		discount?: {
+			amount?: number;
+			type?: 'fiat' | 'percentage';
+			justification?: string;
+		};
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -234,6 +240,44 @@ export async function createOrder(
 	});
 
 	totalSatoshis += sumCurrency('SAT', itemPrices);
+
+	let amount = 0;
+	if (params?.discount?.amount) {
+		if (params.discount.type === 'fiat') {
+			amount = toSatoshis(params.discount.amount, runtimeConfig.mainCurrency);
+		} else if (params.discount.type === 'percentage') {
+			amount = fixCurrencyRounding(
+				totalSatoshis * (params.discount.amount / 100),
+				runtimeConfig.mainCurrency
+			);
+		}
+
+		if (amount > totalSatoshis) {
+			throw error(400, 'Discount cannot be greater than the total price.');
+		}
+
+		const subject = 'NEW DISCOUNT';
+		const htmlContent = `A discount of ${amount} SAT have been apply. Justification: ${
+			params?.discount?.justification ?? '-'
+		}`;
+
+		await sendEmail({
+			to: EMAIL_REPLY_TO || SMTP_USER,
+			subject: subject,
+			html: htmlContent
+		});
+
+		await collections.emailNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			subject: subject,
+			htmlContent: htmlContent,
+			dest: EMAIL_REPLY_TO || SMTP_USER
+		});
+
+		totalSatoshis -= amount;
+	}
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
@@ -381,7 +425,14 @@ export async function createOrder(
 					// In case the user didn't authenticate with an email but still wants to be notified,
 					// we also associate the email to the order
 					...(email && { email })
-				}
+				},
+				...(params?.discount?.amount && {
+					discount: {
+						amount: amount,
+						currency: 'SAT',
+						justification: params?.discount?.justification
+					}
+				})
 			},
 			{ session }
 		);
