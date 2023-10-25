@@ -167,9 +167,9 @@ export async function createOrder(
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
 		discount?: {
-			discountAmount?: number;
-			discountType?: 'fiat' | 'percentage';
-			discountJustification?: string;
+			amount?: number;
+			type?: 'fiat' | 'percentage';
+			justification?: string;
 		};
 	}
 ): Promise<Order['_id']> {
@@ -242,22 +242,22 @@ export async function createOrder(
 
 	console.log('totalSatoshis ', totalSatoshis);
 
-	let discountAmount = 0;
-	if (params?.discount?.discountAmount) {
-		if (params.discount.discountType === 'fiat') {
-			discountAmount = toSatoshis(params.discount.discountAmount, runtimeConfig.mainCurrency);
-		} else if (params.discount.discountType === 'percentage') {
-			discountAmount = fixCurrencyRounding(
-				totalSatoshis * (params.discount.discountAmount / 100),
+	let amount = 0;
+	if (params?.discount?.amount) {
+		if (params.discount.type === 'fiat') {
+			amount = toSatoshis(params.discount.amount, runtimeConfig.mainCurrency);
+		} else if (params.discount.type === 'percentage') {
+			amount = fixCurrencyRounding(
+				totalSatoshis * (params.discount.amount / 100),
 				runtimeConfig.mainCurrency
 			);
 		}
 
-		if (discountAmount > totalSatoshis) {
+		if (amount > totalSatoshis) {
 			throw error(400, 'Discount cannot be greater than the total price.');
 		}
 
-		totalSatoshis -= discountAmount;
+		totalSatoshis -= amount;
 
 		console.log('after totalSatoshis ', totalSatoshis);
 	}
@@ -413,8 +413,12 @@ export async function createOrder(
 					// we also associate the email to the order
 					...(email && { email })
 				},
-				...(params?.discount?.discountAmount && {
-					discount: { ...params.discount, discountCurrency: runtimeConfig.mainCurrency }
+				...(params?.discount?.amount && {
+					discount: {
+						amount: amount,
+						currency: 'SAT',
+						justification: params?.discount?.justification
+					}
 				})
 			},
 			{ session }

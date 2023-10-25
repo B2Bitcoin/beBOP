@@ -236,20 +236,20 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{/if}
 
-				{#if data.order?.discount?.discountAmount}
+				{#if data.order?.discount?.amount}
 					<div class="flex justify-between items-center">
 						<h3 class="text-base text-gray-700 flex items-center gap-2">Discount</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
-								amount={data.order?.discount?.discountAmount}
-								currency={data.order?.discount?.discountCurrency}
+								amount={data.order?.discount?.amount}
+								currency={data.order?.discount?.currency}
 								main
 							/>
 							<PriceTag
-								amount={data.order?.discount?.discountAmount}
-								currency={data.order?.discount?.discountCurrency}
+								amount={data.order?.discount?.amount}
+								currency={data.order?.discount?.currency}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>

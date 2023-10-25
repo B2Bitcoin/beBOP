@@ -17,7 +17,6 @@
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
-	import isFirstDayOfMonth from 'date-fns/fp/isFirstDayOfMonth/index';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -473,20 +472,20 @@
 					<input
 						type="number"
 						class="form-input"
-						name="discountAmount"
+						name="amount"
 						placeholder="Ex: 10"
 						form="checkout"
 						required
 					/>
 
-					<select name="discountType" class="form-input" form="checkout" required>
+					<select name="type" class="form-input" form="checkout" required>
 						<option value="fiat">{data?.currencies?.main}</option>
 						<option value="percentage">%</option>
 					</select>
 
 					<label class="form-label col-span-3">
 						Justification
-						<input type="text" class="form-input" form="checkout" name="discountJustification" />
+						<input type="text" class="form-input" form="checkout" name="justification" />
 					</label>
 				{/if}
 

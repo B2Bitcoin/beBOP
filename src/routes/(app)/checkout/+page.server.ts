@@ -10,6 +10,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
 import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier } from '$lib/server/user.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -22,15 +23,12 @@ export async function load({ parent, locals }) {
 		}
 	}
 
-	console.log(locals);
-
 	return {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
-		//waiting to merge evm-like branch to have pos-user
-		isPosUser: true
+		isPosUser: locals.user?.role === POS_ROLE_ID
 	};
 }
 
@@ -111,9 +109,9 @@ export const actions = {
 
 		const discount = z
 			.object({
-				discountAmount: z.coerce.number().optional(),
-				discountType: z.enum(['fiat', 'percentage']).optional(),
-				discountJustification: z.string().optional()
+				amount: z.coerce.number().optional(),
+				type: z.enum(['fiat', 'percentage']).optional(),
+				justification: z.string().optional()
 			})
 			.parse(Object.fromEntries(formData));
 
