@@ -3,7 +3,7 @@ import type { Cart } from '$lib/types/Cart.js';
 import type { Order } from '$lib/types/Order.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { error } from '@sveltejs/kit';
-import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
+import type { ChangeStream, ChangeStreamDocument, ObjectId } from 'mongodb';
 import { formatCart, formatOrder } from '../formatCartOrder.js';
 
 export async function GET({ locals }) {
@@ -28,6 +28,8 @@ export async function GET({ locals }) {
 		orderChangeStream = null;
 	}
 
+	let ownCartId: ObjectId | null = null;
+
 	//Check change on cart collection
 	const cartCollection = collections.carts;
 	let cartChangeStream: ChangeStream<Cart, ChangeStreamDocument<Cart>> | null =
@@ -35,7 +37,14 @@ export async function GET({ locals }) {
 			[
 				{
 					$match: {
-						'fullDocument.user.userId': userId
+						$or: [
+							{
+								'fullDocument.user.userId': userId
+							},
+							{
+								operationType: 'delete'
+							}
+						]
 					}
 				}
 			],
@@ -48,17 +57,28 @@ export async function GET({ locals }) {
 		if (!writer) {
 			return;
 		}
+		const deletedOwnCart =
+			changeEvent.operationType === 'delete' &&
+			ownCartId &&
+			changeEvent.documentKey._id.equals(ownCartId);
+		const ownCart =
+			'fullDocument' in changeEvent &&
+			changeEvent.fullDocument &&
+			changeEvent.fullDocument.user.userId?.equals(userId) &&
+			changeEvent.fullDocument;
+		if (!deletedOwnCart && !ownCart) {
+			return;
+		}
+		if (ownCart) {
+			ownCartId = ownCart._id;
+		}
 		try {
-			const formattedCart =
-				'fullDocument' in changeEvent && changeEvent.fullDocument
-					? await formatCart(changeEvent.fullDocument)
-					: null;
+			const formattedCart = await formatCart(ownCart || null);
 			await writer?.ready;
 			await writer?.write(
 				`data: ${JSON.stringify({ eventType: 'cart', cart: formattedCart })}\n\n`
 			);
 		} catch (error) {
-			console.error('Error processing cart changeEvent:', error);
 			// Error writing to the client, assume it has disconnected
 			cleanup();
 		}
@@ -114,6 +134,9 @@ export async function GET({ locals }) {
 				{ 'user.userId': userId },
 				{ sort: { createdAt: -1 } }
 			);
+			if (cart) {
+				ownCartId = cart._id;
+			}
 			const formattedCart = await formatCart(cart);
 
 			writer?.write(`data: ${JSON.stringify({ eventType: 'cart', cart: formattedCart })}\n\n`);
