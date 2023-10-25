@@ -11,8 +11,6 @@ import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { groupBy, isEqual } from 'lodash-es';
 import { userQuery } from './user';
-import type { Currency } from '$lib/types/Currency';
-import { picturesForProducts } from './picture';
 import { removeEmpty } from '$lib/utils/removeEmpty';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
