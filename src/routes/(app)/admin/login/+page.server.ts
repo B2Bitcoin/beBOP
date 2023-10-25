@@ -5,12 +5,13 @@ import bcryptjs from 'bcryptjs';
 import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createAdminUserInDb } from '$lib/server/user.js';
-import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
-		throw redirect(303, `/admin`);
+		throw redirect(303, locals.user.role === POS_ROLE_ID ? '/pos' : `/admin`);
 	}
+
 	return {
 		isAdminCreated: runtimeConfig.isAdminCreated
 	};
@@ -33,7 +34,7 @@ export const actions = {
 				remember: data.get('remember'),
 				memorize: data.get('memorize')
 			});
-		let user = await collections.users.findOne({ login: login, roleId: SUPER_ADMIN_ROLE_ID });
+		let user = await collections.users.findOne({ login: login, roleId: { $ne: CUSTOMER_ROLE_ID } });
 
 		if (!user && !runtimeConfig.isAdminCreated) {
 			await createAdminUserInDb(login, password);
@@ -70,6 +71,6 @@ export const actions = {
 			}
 		);
 		// Redirect to the admin dashboard upon successful login
-		throw redirect(303, `/admin`);
+		throw redirect(303, user.roleId === POS_ROLE_ID ? '/pos' : `/admin`);
 	}
 };
