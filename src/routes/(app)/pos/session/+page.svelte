@@ -50,8 +50,9 @@
 			},
 			onerror(err) {
 				console.error('=> SSE Error:', err);
-			},
-			openWhenHidden: true
+			}
+			// Can set to true if you want tab to update even when hidden
+			// openWhenHidden: true
 		});
 	}
 
