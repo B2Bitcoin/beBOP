@@ -26,12 +26,13 @@ export async function load({ parent, locals }) {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
+		ipCollect: runtimeConfig.ipCollect,
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
 	};
 }
 
 export const actions = {
-	default: async ({ request, locals }) => {
+	default: async ({ request, locals, event }) => {
 		if (!paymentMethods().length) {
 			throw error(500, 'No payment methods configured for the bootik');
 		}
@@ -103,6 +104,14 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 
+		const collectIP = z
+			.object({
+				ipCollect: z.boolean({ coerce: true }).default(false)
+			})
+			.parse({
+				ipCollect: formData.get('ipCollect')
+			});
+
 		const orderId = await createOrder(
 			cart.items.map((item) => ({
 				quantity: item.quantity,
@@ -122,7 +131,8 @@ export const actions = {
 				},
 				cart,
 				shippingAddress: shipping,
-				vatCountry: shipping?.country ?? locals.countryCode
+				vatCountry: shipping?.country ?? locals.countryCode,
+				...(collectIP.ipCollect && { ipVisitor: event.getClientAddress() })
 			}
 		);
 

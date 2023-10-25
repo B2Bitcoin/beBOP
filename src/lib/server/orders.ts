@@ -166,6 +166,7 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
+		ipVisitor?: string;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -381,7 +382,8 @@ export async function createOrder(
 					// In case the user didn't authenticate with an email but still wants to be notified,
 					// we also associate the email to the order
 					...(email && { email })
-				}
+				},
+				...(params.ipVisitor && { countryIP: params.ipVisitor })
 			},
 			{ session }
 		);

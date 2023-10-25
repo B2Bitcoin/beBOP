@@ -22,6 +22,7 @@
 	let country = typedKeys(COUNTRIES)[0];
 
 	export let data;
+	let ipCollect = false;
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: 'Payment status' }
@@ -249,6 +250,7 @@
 					</article>
 				{/each}
 			</section>
+			<input type="hidden" name="ipCollect" bind:value={ipCollect} />
 		</form>
 		<div class="w-full md:w-auto">
 			<article
@@ -443,6 +445,26 @@
 						</a>
 					</span>
 				</label>
+				{#if data.ipCollect}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							name="allowCollectIP"
+							form="checkout"
+							bind:checked={ipCollect}
+						/>
+						<span>
+							I agree to the collect of my IP address( <a
+								href="/why-collect-ip"
+								target="_blank"
+								class="text-link hover:underline"
+							>
+								why ?)
+							</a>
+						</span>
+					</label>
+				{/if}
 
 				<input
 					type="submit"
