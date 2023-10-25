@@ -9,8 +9,8 @@
 	import { onMount } from 'svelte';
 
 	interface CustomEventSource {
-		onerror?: ((this: CustomEventSource, ev: Event) => any) | null;
-		onmessage?: ((this: CustomEventSource, ev: MessageEvent) => any) | null;
+		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
+		onmessage?: ((this: CustomEventSource, ev: MessageEvent) => unknown) | null;
 		close?: () => void;
 	}
 
