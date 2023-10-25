@@ -68,6 +68,8 @@ export const actions: Actions = {
 				availableDate: formData.get('availableDate') || undefined
 			});
 
+		console.log('pasre ', parsed);
+
 		if (product.type !== 'resource') {
 			delete parsed.availableDate;
 			parsed.preorder = false;
@@ -130,6 +132,19 @@ export const actions: Actions = {
 							available: parsed.stock - amountInCarts
 						}
 					}),
+					actionSettings: {
+						eShop: {
+							visible: parsed.eshopVisible,
+							basket: parsed.eshopBasket
+						},
+						retail: {
+							visible: parsed.retailVisible,
+							basket: parsed.retailBasket
+						},
+						googleShopping: {
+							visible: parsed.googleShoppingVisible
+						}
+					},
 					updatedAt: new Date()
 				},
 				$unset: {

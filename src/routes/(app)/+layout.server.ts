@@ -137,6 +137,7 @@ export async function load(params) {
 						}
 					})
 			  ).then((res) => filterUndef(res))
-			: null
+			: null,
+		defaultActionSettings: runtimeConfig.defaultActionSettings
 	};
 }

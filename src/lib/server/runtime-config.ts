@@ -70,7 +70,20 @@ const defaultConfig = {
 			}
 		} as DeliveryFees
 	},
-	plausibleScriptUrl: ''
+	plausibleScriptUrl: '',
+	defaultActionSettings: {
+		eShop: {
+			visible: false,
+			basket: false
+		},
+		retail: {
+			visible: false,
+			basket: false
+		},
+		googleShopping: {
+			visible: false
+		}
+	}
 };
 
 exchangeRate.set({

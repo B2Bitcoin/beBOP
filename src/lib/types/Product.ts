@@ -31,6 +31,19 @@ export interface Product extends Timestamps {
 	 */
 	standalone: boolean;
 	free: boolean;
+	actionSettings: {
+		eShop: {
+			visible: boolean;
+			basket: boolean;
+		};
+		retail: {
+			visible: boolean;
+			basket: boolean;
+		};
+		googleShopping: {
+			visible: boolean;
+		};
+	};
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;

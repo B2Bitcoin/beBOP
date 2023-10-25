@@ -45,6 +45,10 @@
 		0
 	);
 
+	$: shouldShowBuyButton =
+		(data.isPosUser && data.product.actionSettings?.retail?.basket) ||
+		data.product.actionSettings?.eShop?.basket;
+
 	function addToCart() {
 		$productAddedToCart = {
 			product: data.product,
@@ -298,7 +302,7 @@
 								<br />
 								Please check back later
 							</p>
-						{:else if data.showCheckoutButton}
+						{:else if data.showCheckoutButton && shouldShowBuyButton}
 							<button class="btn btn-black" disabled={loading}>{verb} now</button>
 							<button
 								value="Add to cart"
@@ -308,7 +312,7 @@
 							>
 								Add to cart
 							</button>
-						{:else}
+						{:else if shouldShowBuyButton}
 							<button
 								value="Add to cart"
 								formaction="?/addToCart"

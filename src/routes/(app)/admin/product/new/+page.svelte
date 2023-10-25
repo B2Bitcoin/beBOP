@@ -37,6 +37,17 @@
 	let freeProduct = false;
 	let hasStock = false;
 	let maxQuantityPerOrder = product?.maxQuantityPerOrder ?? DEFAULT_MAX_QUANTITY_PER_ORDER;
+	let eshopVisible =
+		product?.actionSettings?.eShop?.visible ?? data.defaultActionSettings?.eShop?.visible;
+	let retailVisible =
+		product?.actionSettings?.retail?.visible ?? data.defaultActionSettings?.retail?.visible;
+	let googleShoppingVisible =
+		product?.actionSettings?.googleShopping?.visible ??
+		data.defaultActionSettings?.googleShopping?.visible;
+	let eshopBasket =
+		product?.actionSettings?.eShop?.basket ?? data.defaultActionSettings?.eShop?.basket;
+	let retailBasket =
+		product?.actionSettings?.retail?.basket ?? data.defaultActionSettings?.retail?.basket;
 
 	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
@@ -427,6 +438,67 @@
 			{/if}
 		{/if}
 	{/if}
+
+	<h3 class="text-xl">Action settings</h3>
+	<table class="w-full border border-gray-300 divide-y divide-gray-300">
+		<thead class="bg-gray-200">
+			<tr>
+				<th class="py-2 px-4 border-r border-gray-300">Action</th>
+				<th class="py-2 px-4 border-r border-gray-300">Eshop (anyone)</th>
+				<th class="py-2 px-4 border-r border-gray-300">Retail (POS logged seat)</th>
+				<th class="py-2 px-4">Google Shopping</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class="py-2 px-4 border-r border-gray-300">Product is visible</td>
+				<td class="py-2 px-4 border-r border-gray-300 text-center"
+					><input
+						type="checkbox"
+						bind:checked={eshopVisible}
+						name="eshopVisible"
+						class="rounded"
+					/></td
+				>
+				<td class="py-2 px-4 border-r border-gray-300 text-center"
+					><input
+						type="checkbox"
+						bind:checked={retailVisible}
+						name="retailVisible"
+						class="rounded"
+					/></td
+				>
+				<td class="py-2 px-4 border-r border-gray-300 text-center"
+					><input
+						type="checkbox"
+						bind:checked={googleShoppingVisible}
+						name="googleShoppingVisible"
+						class="rounded"
+					/></td
+				>
+			</tr>
+			<tr>
+				<td class="py-2 px-4 border border-gray-300">Product can be added to basket</td>
+				<td class="py-2 px-4 border border-gray-300 text-center"
+					><input
+						type="checkbox"
+						bind:checked={eshopBasket}
+						name="eshopBasket"
+						class="rounded"
+					/></td
+				>
+				<td class="py-2 px-4 border border-gray-300 text-center"
+					><input
+						type="checkbox"
+						bind:checked={retailBasket}
+						name="retailBasket"
+						class="rounded"
+					/></td
+				>
+				<td class="py-2 px-4 border border-gray-300 text-center" />
+			</tr>
+		</tbody>
+	</table>
 
 	<input type="hidden" name="productId" value={data.productId || ''} />
 	{#if !product}

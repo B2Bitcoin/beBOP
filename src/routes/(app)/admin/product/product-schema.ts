@@ -23,5 +23,10 @@ export const productBaseSchema = {
 	standalone: z.boolean({ coerce: true }).default(false),
 	free: z.boolean({ coerce: true }).default(false),
 	stock: z.number({ coerce: true }).int().min(0).optional(),
-	maxQuantityPerOrder: z.number({ coerce: true }).int().min(1).max(10).optional()
+	maxQuantityPerOrder: z.number({ coerce: true }).int().min(1).max(10).optional(),
+	eshopVisible: z.boolean({ coerce: true }).default(false),
+	retailVisible: z.boolean({ coerce: true }).default(false),
+	googleShoppingVisible: z.boolean({ coerce: true }).default(false),
+	eshopBasket: z.boolean({ coerce: true }).default(false),
+	retailBasket: z.boolean({ coerce: true }).default(false)
 };
