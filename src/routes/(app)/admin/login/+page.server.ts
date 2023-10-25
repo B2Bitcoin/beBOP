@@ -5,12 +5,13 @@ import bcryptjs from 'bcryptjs';
 import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createAdminUserInDb } from '$lib/server/user.js';
-import { CUSTOMER_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
 		throw redirect(303, `/admin`);
 	}
+
 	return {
 		isAdminCreated: runtimeConfig.isAdminCreated
 	};
@@ -70,6 +71,6 @@ export const actions = {
 			}
 		);
 		// Redirect to the admin dashboard upon successful login
-		throw redirect(303, `/admin`);
+		throw redirect(303, user.roleId === POS_ROLE_ID ? '/admin/pos' : `/admin`);
 	}
 };
