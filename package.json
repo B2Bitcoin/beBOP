@@ -62,6 +62,7 @@
 		"bcryptjs": "^2.4.3",
 		"bech32": "^2.0.0",
 		"date-fns": "^2.29.3",
+		"devalue": "^4.3.2",
 		"fetch-socks": "^1.2.0",
 		"html-to-text": "^9.0.5",
 		"jose": "^4.14.4",
