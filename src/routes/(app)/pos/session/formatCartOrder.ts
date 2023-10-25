@@ -119,10 +119,7 @@ export async function formatCart(cart: WithId<Cart> | null): Promise<FormattedCa
 }
 
 export function formatOrder(order: Order) {
-	if (
-		order.payment.status !== 'pending' &&
-		differenceInSeconds(new Date(), order.payment.expiresAt) > 5
-	) {
+	if (order.payment.status !== 'pending' && differenceInSeconds(new Date(), order.updatedAt) > 5) {
 		return null;
 	}
 	return {
