@@ -8,7 +8,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
-import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
 import Facebook from '@auth/core/providers/facebook';
@@ -164,7 +164,16 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw redirect(303, '/admin/login');
 		}
 
-		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
+		if (event.locals.user.role === CUSTOMER_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page.');
+		}
+
+		// Todo: proper check that POS users can only edit their own orders / look at the list of own orders
+		const isPosAllowed =
+			event.locals.user.role === POS_ROLE_ID &&
+			(event.url.pathname.startsWith('/admin/order/') || event.url.pathname === '/admin/order');
+
+		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID && !isPosAllowed) {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 	}
