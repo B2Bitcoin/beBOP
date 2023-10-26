@@ -200,6 +200,8 @@
 			value={data.confirmationBlocks}
 		/>
 	</label>
+	<a href="/admin/config/confirmation-threshold" class="underline">Manage confirmation treshold</a>
+
 	<label class="form-label">
 		Set desired timeout for payment (in minutes)
 		<input
