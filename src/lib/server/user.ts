@@ -48,14 +48,28 @@ export function userIdentifier(locals: App.Locals): UserIdentifier {
 		userId: locals.user?._id,
 		email: locals.email,
 		npub: locals.npub,
-		sessionId: locals.sessionId
+		sessionId: locals.sessionId,
+
+		userLogin: locals.user?.login,
+		userRoleId: locals.user?.role
 	};
 }
 
 export function userQuery(user: UserIdentifier) {
-	return {
-		$or: Object.entries(user)
-			.filter(([, v]) => v)
-			.map(([key, value]) => ({ ['user.' + key]: value }))
+	const ret = {
+		$or: [
+			...(user.userId ? [{ 'user.userId': user.userId }] : []),
+			...(user.email ? [{ 'user.email': user.email }] : []),
+			...(user.npub ? [{ 'user.npub': user.npub }] : []),
+			...(user.sessionId ? [{ 'user.sessionId': user.sessionId }] : []),
+			...(user.ssoIds?.length ? [{ 'user.ssoIds': { $in: user.ssoIds } }] : [])
+		]
 	};
+
+	if (!ret.$or.length) {
+		// throw new TypeError('No identifier provided');
+		return { 'user.never': 'never' };
+	}
+
+	return ret;
 }

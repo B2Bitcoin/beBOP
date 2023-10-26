@@ -6,4 +6,8 @@ export interface UserIdentifier {
 	npub?: string;
 	sessionId?: string;
 	ssoIds?: string[];
+
+	/** Not really identifiers, more like audit/metadata */
+	userLogin?: string;
+	userRoleId?: string;
 }
