@@ -25,7 +25,7 @@ export async function load(event) {
 		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN,
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
-		ipCollect: runtimeConfig.ipCollect
+		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
 	};
 }
 
@@ -61,7 +61,7 @@ export const actions = {
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
 				actionOverwrite: z.enum(['', 'overwrite']).optional(),
 				plausibleScriptUrl: z.string(),
-				ipCollect: z.boolean({ coerce: true })
+				collectIPOnDeliverylessOrders: z.boolean({ coerce: true })
 			})
 			.parse(Object.fromEntries(formData));
 

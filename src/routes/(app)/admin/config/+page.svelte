@@ -124,7 +124,12 @@
 	</label>
 	<div class="flex flex-col gap-2">
 		<label class="checkbox-label">
-			<input type="checkbox" name="ipCollect" class="form-checkbox" checked={data.ipCollect} />
+			<input
+				type="checkbox"
+				name="collectIPOnDeliverylessOrders"
+				class="form-checkbox"
+				checked={data.collectIPOnDeliverylessOrders}
+			/>
 			Request IP collect on deliveryless order
 		</label>
 		<label class="checkbox-label">

@@ -21,18 +21,17 @@ export async function load({ parent, locals }) {
 			throw redirect(303, '/cart');
 		}
 	}
-
 	return {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
-		ipCollect: runtimeConfig.ipCollect,
+		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
 	};
 }
 
 export const actions = {
-	default: async ({ request, locals, event }) => {
+	default: async ({ request, locals }) => {
 		if (!paymentMethods().length) {
 			throw error(500, 'No payment methods configured for the bootik');
 		}
@@ -132,7 +131,7 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				...(collectIP.allowCollectIP && { ipVisitor: event.getClientAddress() })
+				...(collectIP.allowCollectIP && { clientIp: locals.clientIP })
 			}
 		);
 

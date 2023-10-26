@@ -443,17 +443,15 @@
 						</a>
 					</span>
 				</label>
-				{#if data.ipCollect}
+				{#if data.collectIPOnDeliverylessOrders && isDigital}
 					<label class="checkbox-label">
 						<input type="checkbox" class="form-checkbox" name="allowCollectIP" form="checkout" />
 						<span>
-							I agree to the collect of my IP address( <a
+							I agree to the collection of my IP address (<a
 								href="/why-collect-ip"
 								target="_blank"
-								class="text-link hover:underline"
-							>
-								why ?)
-							</a>
+								class="text-link hover:underline">why?</a
+							>)
 						</span>
 					</label>
 				{/if}
