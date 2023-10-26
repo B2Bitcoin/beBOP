@@ -61,8 +61,6 @@ export const actions = {
 
 		const isDigital = products.every((product) => !product.shipping);
 
-		console.log('Object.fromEntries(formData) ', Object.fromEntries(formData));
-
 		const shipping = isDigital
 			? null
 			: z
@@ -101,17 +99,12 @@ export const actions = {
 			delete shipping.state;
 		}
 
-		const paymentMethod = z
+		const { paymentMethod, discountAmount, discountType, discountJustification } = z
 			.object({
-				paymentMethod: z.enum([paymentMethods()[0], ...paymentMethods().slice(1)])
-			})
-			.parse(Object.fromEntries(formData)).paymentMethod;
-
-		const discount = z
-			.object({
-				amount: z.coerce.number().optional(),
-				type: z.enum(['fiat', 'percentage']).optional(),
-				justification: z.string().optional()
+				paymentMethod: z.enum([paymentMethods()[0], ...paymentMethods().slice(1)]),
+				discountAmount: z.coerce.number().optional(),
+				discountType: z.enum(['fiat', 'percentage']).optional(),
+				discountJustification: z.string().optional()
 			})
 			.parse(Object.fromEntries(formData));
 
@@ -135,7 +128,13 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				discount
+				...(locals.user?.role === POS_ROLE_ID && {
+					discount: {
+						amount: discountAmount,
+						type: discountType,
+						justification: discountJustification
+					}
+				})
 			}
 		);
 

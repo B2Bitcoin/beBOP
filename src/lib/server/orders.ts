@@ -10,7 +10,7 @@ import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
 import { lndCreateInvoice } from './lightning';
 import { ORIGIN } from '$env/static/private';
-import { emailsEnabled, sendEmail } from './email';
+import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
@@ -256,23 +256,14 @@ export async function createOrder(
 			throw error(400, 'Discount cannot be greater than the total price.');
 		}
 
-		const subject = 'NEW DISCOUNT';
-		const htmlContent = `A discount of ${amount} SAT have been apply. Justification: ${
-			params?.discount?.justification ?? '-'
-		}`;
-
-		await sendEmail({
-			to: EMAIL_REPLY_TO || SMTP_USER,
-			subject: subject,
-			html: htmlContent
-		});
-
 		await collections.emailNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			subject: subject,
-			htmlContent: htmlContent,
+			subject: 'NEW DISCOUNT',
+			htmlContent: `A discount of ${amount} SAT has been applied. Justification: ${
+				params?.discount?.justification ?? '-'
+			}`,
 			dest: EMAIL_REPLY_TO || SMTP_USER
 		});
 

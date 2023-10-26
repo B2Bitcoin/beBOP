@@ -23,8 +23,6 @@
 
 	export let data;
 
-	console.log(data);
-
 	let addDiscount = false;
 
 	const feedItems = [
@@ -472,20 +470,20 @@
 					<input
 						type="number"
 						class="form-input"
-						name="amount"
+						name="discountAmount"
 						placeholder="Ex: 10"
 						form="checkout"
 						required
 					/>
 
-					<select name="type" class="form-input" form="checkout" required>
+					<select name="discountType" class="form-input" form="checkout" required>
 						<option value="fiat">{data?.currencies?.main}</option>
 						<option value="percentage">%</option>
 					</select>
 
 					<label class="form-label col-span-3">
 						Justification
-						<input type="text" class="form-input" form="checkout" name="justification" />
+						<input type="text" class="form-input" form="checkout" name="discountJustification" />
 					</label>
 				{/if}
 
