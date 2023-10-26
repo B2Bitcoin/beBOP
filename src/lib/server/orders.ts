@@ -20,9 +20,9 @@ import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
-import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { userQuery } from './user';
 import { SMTP_USER, EMAIL_REPLY_TO } from '$env/static/private';
+import { toCurrency } from '$lib/utils/toCurrency';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -152,7 +152,12 @@ export async function createOrder(
 	}>,
 	paymentMethod: Order['payment']['method'],
 	params: {
-		user: UserIdentifier;
+		user: {
+			sessionId: string;
+			userId?: ObjectId;
+			login?: string;
+			role?: string;
+		};
 		notifications: {
 			paymentStatus: {
 				npub?: string;
@@ -241,6 +246,7 @@ export async function createOrder(
 
 	totalSatoshis += sumCurrency('SAT', itemPrices);
 
+	let discountInCurrency = 0;
 	let amount = 0;
 	if (params?.discount?.amount) {
 		if (params.discount.type === 'fiat') {
@@ -267,6 +273,7 @@ export async function createOrder(
 			dest: EMAIL_REPLY_TO || SMTP_USER
 		});
 
+		discountInCurrency = toCurrency(runtimeConfig.mainCurrency, amount, 'SAT');
 		totalSatoshis -= amount;
 	}
 
@@ -419,8 +426,10 @@ export async function createOrder(
 				},
 				...(params?.discount?.amount && {
 					discount: {
-						amount: amount,
-						currency: 'SAT',
+						amountReference: amount,
+						currencyReference: 'SAT',
+						amount: discountInCurrency,
+						currency: runtimeConfig.mainCurrency,
 						justification: params?.discount?.justification
 					}
 				})

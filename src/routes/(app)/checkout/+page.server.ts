@@ -118,7 +118,12 @@ export const actions = {
 			})),
 			paymentMethod,
 			{
-				user: userIdentifier(locals),
+				user: {
+					sessionId: locals.sessionId,
+					userId: locals.user?._id,
+					login: locals.user?.login,
+					role: locals.user?.role
+				},
 				notifications: {
 					paymentStatus: {
 						npub: npubAddress,

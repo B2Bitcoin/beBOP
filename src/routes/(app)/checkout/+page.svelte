@@ -456,7 +456,7 @@
 						/>
 						<span>
 							As a POS user I apply a <a
-								href="/terms"
+								href="/gift-discount"
 								target="_blank"
 								class="text-link hover:underline"
 							>
@@ -473,7 +473,7 @@
 						name="discountAmount"
 						placeholder="Ex: 10"
 						form="checkout"
-						step="0.01"
+						step="any"
 						required
 					/>
 
