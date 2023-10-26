@@ -7,7 +7,7 @@ const migrations = [
 		_id: new ObjectId('65281201e92e590e858af6cb'),
 		name: 'Migrate CMS page content from Markdown to HTML',
 		run: async (session: ClientSession) => {
-			for await (const page of await collections.cmsPages.find()) {
+			for await (const page of collections.cmsPages.find()) {
 				await collections.cmsPages.updateOne(
 					{
 						_id: page._id
@@ -25,8 +25,7 @@ const migrations = [
 ];
 
 export async function runMigrations() {
-	const migrationsCollection = await collections.migrations;
-	const migrationsInDb = await migrationsCollection.find().toArray();
+	const migrationsInDb = await collections.migrations.find().toArray();
 
 	const migrationsToRun = migrations.filter(
 		(migration) => !migrationsInDb.find((migrationInDb) => migrationInDb._id.equals(migration._id))
