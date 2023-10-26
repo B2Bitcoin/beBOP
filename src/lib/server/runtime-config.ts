@@ -55,7 +55,7 @@ const defaultConfig = {
 	vatExemptionReason: '',
 	vatSingleCountry: false,
 	vatCountry: '',
-	ipCollect: false,
+	collectIPOnDeliverylessOrders: false,
 
 	checkoutButtonOnProductPage: true,
 	discovery: true,
