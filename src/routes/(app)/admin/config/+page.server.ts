@@ -48,7 +48,7 @@ export const actions = {
 				priceReferenceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
 				vatExempted: z.boolean({ coerce: true }),
 				vatExemptionReason: z.string().default(runtimeConfig.vatExemptionReason),
-				vatSingleCountry: z.boolean({ coerce: true }).default(runtimeConfig.vatSingleCountry),
+				vatSingleCountry: z.boolean({ coerce: true }),
 				vatCountry: z.string().default(runtimeConfig.vatCountry),
 				subscriptionReminderSeconds: z
 					.number({ coerce: true })
