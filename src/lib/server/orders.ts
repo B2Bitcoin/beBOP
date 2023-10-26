@@ -309,6 +309,9 @@ export async function createOrder(
 			throw error(400, 'You already have a pending order for this product: ' + product.name);
 		}
 	}
+	if (!params.shippingAddress && !params.clientIp) {
+		throw error(400, 'Missing IP address for deliveryless order');
+	}
 
 	const orderNumber = await generateOrderNumber();
 
