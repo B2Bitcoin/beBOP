@@ -58,7 +58,7 @@ export const actions: Actions = {
 			{ id: parsed.slimBannerId, type: 'slim' as TagType },
 			{ id: parsed.avatarId, type: 'avatar' as TagType }
 		];
-		tagPictures.forEach(async (tagPicture) => {
+		await Promise.all(tagPictures.map(async (tagPicture) => {
 			const pendingMainPicture = await collections.pendingPictures.findOne({
 				_id: tagPicture.id
 			});
