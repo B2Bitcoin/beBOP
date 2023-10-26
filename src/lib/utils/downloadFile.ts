@@ -1,4 +1,4 @@
-export function downloadFile(blob: Blob, filename: string) {
+export function downloadFile(blob: Blob, filename = 'download.txt') {
 	const link = document.createElement('a');
 
 	link.href = window.URL.createObjectURL(blob);

@@ -42,7 +42,7 @@ export function secureLink(url: string) {
 	return url.replace('http:', 'https:');
 }
 
-export async function getS3DownloadLink(key: string) {
+export async function getS3DownloadLink(key: string, expiresIn: number = 24 * 3600) {
 	return secureLink(
 		await getSignedUrl(
 			s3client,
@@ -50,7 +50,7 @@ export async function getS3DownloadLink(key: string) {
 				Bucket: S3_BUCKET,
 				Key: key
 			}),
-			{ expiresIn: 24 * 3600 }
+			{ expiresIn }
 		)
 	);
 }
@@ -59,4 +59,7 @@ export function s3ProductPrefix(productId: string): string {
 	return `products/${productId}/`;
 }
 
+export function s3TagPrefix(tagId: string): string {
+	return `tags/${tagId}/`;
+}
 export { s3client };
