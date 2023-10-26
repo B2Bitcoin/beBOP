@@ -68,8 +68,6 @@ export const actions: Actions = {
 				availableDate: formData.get('availableDate') || undefined
 			});
 
-		console.log('pasre ', parsed);
-
 		if (product.type !== 'resource') {
 			delete parsed.availableDate;
 			parsed.preorder = false;

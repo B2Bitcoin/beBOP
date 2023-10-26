@@ -140,7 +140,20 @@ export const actions: Actions = {
 						}),
 						...(parsed.maxQuantityPerOrder && {
 							maxQuantityPerOrder: parsed.maxQuantityPerOrder
-						})
+						}),
+						actionSettings: {
+							eShop: {
+								visible: parsed.eshopVisible,
+								basket: parsed.eshopBasket
+							},
+							retail: {
+								visible: parsed.retailVisible,
+								basket: parsed.retailBasket
+							},
+							googleShopping: {
+								visible: parsed.googleShoppingVisible
+							}
+						}
 					},
 					{ session }
 				);
@@ -230,7 +243,20 @@ export const actions: Actions = {
 					payWhatYouWant: duplicate.payWhatYouWant,
 					standalone: duplicate.standalone,
 					free: duplicate.free,
-					displayShortDescription: duplicate.displayShortDescription
+					displayShortDescription: duplicate.displayShortDescription,
+					actionSettings: {
+						eShop: {
+							visible: duplicate.eshopVisible,
+							basket: duplicate.eshopBasket
+						},
+						retail: {
+							visible: duplicate.retailVisible,
+							basket: duplicate.retailBasket
+						},
+						googleShopping: {
+							visible: duplicate.googleShoppingVisible
+						}
+					}
 				},
 				{ session }
 			);
