@@ -32,7 +32,7 @@ const defaultConfig = {
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	reserveStockInMinutes: 20,
 	confirmationBlocks: 1,
-	confirmationBlocksTresholds: [] as ConfirmationThresholds[],
+	confirmationBlocksThresholds: [] as ConfirmationThresholds[],
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logoPictureId: '',

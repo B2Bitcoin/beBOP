@@ -26,7 +26,7 @@ export const actions = {
 
 		const existingConfig: WithId<RuntimeConfigItem> | null =
 			await collections.runtimeConfig.findOne({
-				_id: 'confirmationBlocksTresholds'
+				_id: 'confirmationBlocksThresholds'
 			});
 
 		const existingThresholds: ConfirmationThresholds[] = existingConfig
@@ -44,7 +44,7 @@ export const actions = {
 		}
 
 		await collections.runtimeConfig.updateOne(
-			{ _id: 'confirmationBlocksTresholds' },
+			{ _id: 'confirmationBlocksThresholds' },
 			{
 				$push: {
 					// @ts-expect-error is not undefined

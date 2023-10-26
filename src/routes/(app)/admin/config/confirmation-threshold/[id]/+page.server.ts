@@ -9,7 +9,7 @@ import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds.j
 
 export const load = async ({ params }) => {
 	const existingConfig = await collections.runtimeConfig.findOne({
-		_id: 'confirmationBlocksTresholds'
+		_id: 'confirmationBlocksThresholds'
 	});
 
 	// @ts-expect-error is not unknown
@@ -45,7 +45,7 @@ export const actions = {
 
 		const existingConfig: WithId<RuntimeConfigItem> | null =
 			await collections.runtimeConfig.findOne({
-				_id: 'confirmationBlocksTresholds'
+				_id: 'confirmationBlocksThresholds'
 			});
 
 		const existingThresholds: ConfirmationThresholds[] = existingConfig
@@ -77,7 +77,7 @@ export const actions = {
 		thresholdToUpdate.confirmationBlocks = confirmationBlocks;
 
 		await collections.runtimeConfig.updateOne(
-			{ _id: 'confirmationBlocksTresholds' },
+			{ _id: 'confirmationBlocksThresholds' },
 			{
 				$set: {
 					data: existingThresholds,
@@ -91,7 +91,7 @@ export const actions = {
 	delete: async function ({ params }) {
 		const existingConfig: WithId<RuntimeConfigItem> | null =
 			await collections.runtimeConfig.findOne({
-				_id: 'confirmationBlocksTresholds'
+				_id: 'confirmationBlocksThresholds'
 			});
 
 		const filteredThresholds = existingConfig
@@ -102,7 +102,7 @@ export const actions = {
 		console.log('filteredThresholds ', filteredThresholds);
 
 		await collections.runtimeConfig.updateOne(
-			{ _id: 'confirmationBlocksTresholds' },
+			{ _id: 'confirmationBlocksThresholds' },
 			{
 				$set: {
 					data: filteredThresholds,

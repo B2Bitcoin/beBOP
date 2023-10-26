@@ -138,6 +138,6 @@ export async function load(params) {
 					})
 			  ).then((res) => filterUndef(res))
 			: null,
-		confirmationBlocksTresholds: runtimeConfig.confirmationBlocksTresholds
+		confirmationBlocksThresholds: runtimeConfig.confirmationBlocksThresholds
 	};
 }
