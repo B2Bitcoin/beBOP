@@ -58,36 +58,38 @@ export const actions: Actions = {
 			{ id: parsed.slimBannerId, type: 'slim' as TagType },
 			{ id: parsed.avatarId, type: 'avatar' as TagType }
 		];
-		await Promise.all(tagPictures.map(async (tagPicture) => {
-			const pendingMainPicture = await collections.pendingPictures.findOne({
-				_id: tagPicture.id
-			});
+		await Promise.all(
+			tagPictures.map(async (tagPicture) => {
+				const pendingMainPicture = await collections.pendingPictures.findOne({
+					_id: tagPicture.id
+				});
 
-			if (!pendingMainPicture) {
-				throw error(400, 'Error when uploading picture');
-			}
-
-			const resp = await fetch(await getS3DownloadLink(pendingMainPicture.storage.original.key));
-
-			if (!resp.ok) {
-				throw error(400, 'Error when uploading picture');
-			}
-
-			const buffer = await resp.arrayBuffer();
-			await generatePicture(Buffer.from(buffer), parsed.name, {
-				tag: { _id: parsed.slug, type: tagPicture.type },
-				cb: async (session) => {
-					await s3client
-						.deleteObject({
-							Key: pendingMainPicture.storage.original.key,
-							Bucket: S3_BUCKET
-						})
-						.catch();
-
-					await collections.pendingPictures.deleteOne({ _id: tagPicture.id }, { session });
+				if (!pendingMainPicture) {
+					throw error(400, 'Error when uploading picture');
 				}
-			});
-		});
+
+				const resp = await fetch(await getS3DownloadLink(pendingMainPicture.storage.original.key));
+
+				if (!resp.ok) {
+					throw error(400, 'Error when uploading picture');
+				}
+
+				const buffer = await resp.arrayBuffer();
+				await generatePicture(Buffer.from(buffer), parsed.name, {
+					tag: { _id: parsed.slug, type: tagPicture.type },
+					cb: async (session) => {
+						await s3client
+							.deleteObject({
+								Key: pendingMainPicture.storage.original.key,
+								Bucket: S3_BUCKET
+							})
+							.catch();
+
+						await collections.pendingPictures.deleteOne({ _id: tagPicture.id }, { session });
+					}
+				});
+			})
+		);
 
 		await collections.tags.insertOne({
 			_id: parsed.slug,
