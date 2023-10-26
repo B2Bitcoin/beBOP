@@ -473,6 +473,7 @@
 						name="discountAmount"
 						placeholder="Ex: 10"
 						form="checkout"
+						step="0.01"
 						required
 					/>
 
