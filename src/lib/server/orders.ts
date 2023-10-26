@@ -166,7 +166,7 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
-		ipVisitor?: string;
+		clientIp?: string;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
