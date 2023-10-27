@@ -1,11 +1,11 @@
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { userQuery } from '$lib/server/user.js';
+import { userIdentifier, userQuery } from '$lib/server/user.js';
 
 export const load = async (event) => {
 	const lastOrders = await collections.orders
 		.find({
-			...userQuery(event.locals)
+			...userQuery(userIdentifier(event.locals))
 		})
 		.sort({ createdAt: -1 })
 		.limit(50)
