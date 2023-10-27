@@ -10,6 +10,10 @@
 <main class="max-w-7xl p-4 flex flex-col gap-4">
 	<a href="/pos/session" class="text-link hover:underline">POS session</a>
 
+	<form action="/admin/logout" method="POST">
+		<button type="submit" class="btn btn-red">Log out</button>
+	</form>
+
 	<h2 class="text-2xl">Last orders</h2>
 
 	<ul class="flex flex-col gap-4">

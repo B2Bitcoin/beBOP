@@ -71,7 +71,11 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const isAdminUrl =
 		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
-		!(event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login');
+		!(
+			event.url.pathname.startsWith('/admin/login/') ||
+			event.url.pathname === '/admin/login' ||
+			event.url.pathname === '/admin/logout'
+		);
 
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
