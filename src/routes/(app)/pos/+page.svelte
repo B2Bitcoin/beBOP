@@ -1,16 +1,16 @@
 <script>
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import IconBitcoin from '$lib/components/icons/IconBitcoin.svelte';
-	import { toSatoshis } from '$lib/utils/toSatoshis.js';
+	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { formatDistance } from 'date-fns';
 
 	export let data;
 </script>
 
-<main class="max-w-7xl p-4">
+<main class="max-w-7xl p-4 flex flex-col gap-4">
 	<a href="/pos/session" class="text-link hover:underline">POS session</a>
 
-	<h2>Last orders</h2>
+	<h2 class="text-2xl">Last orders</h2>
 
 	<ul class="flex flex-col gap-4">
 		{#each data.orders as order}
@@ -49,10 +49,10 @@
 				SAT
 
 				{#if order.payment.status === 'pending' && order.payment.method === 'cash'}
-					<form action="/admin/order/{order._id}?/confirm" method="post">
+					<form action="/pos/order/{order._id}?/confirm" method="post">
 						<button type="submit" class="btn btn-black">Mark paid</button>
 					</form>
-					<form action="/admin/order/{order._id}?/cancel" method="post">
+					<form action="/pos/order/{order._id}?/cancel" method="post">
 						<button type="submit" class="btn btn-red">Cancel</button>
 					</form>
 				{/if}

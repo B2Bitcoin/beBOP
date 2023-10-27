@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { navigating, page } from '$app/stores';
 	import IconMenu from '~icons/ant-design/menu-outlined';
+	import IconLogout from '~icons/ant-design/logout-outlined';
 	import { slide } from 'svelte/transition';
 
 	let navMenuOpen = false;
@@ -82,7 +83,16 @@
 				>
 					<IconMenu />
 				</button>
-				<span class="font-bold text-xl">Admin</span>
+				<span class="font-bold text-xl flex items-center gap-2">
+					Admin
+
+					<form action="/admin/logout" method="post" class="contents">
+						<button type="submit">
+							<span class="sr-only">Log out</span>
+							<IconLogout class="text-red-500" />
+						</button>
+					</form>
+				</span>
 				{#each adminLinks as link}
 					<a
 						href={link.href}

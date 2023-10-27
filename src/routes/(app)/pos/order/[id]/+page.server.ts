@@ -11,8 +11,10 @@ export const actions = {
 			throw error(403, 'Order does not belong to this POS account.');
 		}
 
+		const confirm = adminOrderActions.confirm;
+
 		// @ts-expect-error different route but compatible
-		return adminOrderActions.confirm(event);
+		return confirm(event);
 	},
 
 	cancel: async (event) => {
@@ -23,7 +25,9 @@ export const actions = {
 			throw error(403, 'Order does not belong to this POS account.');
 		}
 
+		const cancel = adminOrderActions.cancel;
+
 		// @ts-expect-error different route but compatible
-		return adminOrderActions.cancel(event);
+		return cancel(event);
 	}
 };
