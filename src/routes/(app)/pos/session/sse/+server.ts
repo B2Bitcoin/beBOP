@@ -1,7 +1,6 @@
 import { collections } from '$lib/server/database.js';
 import type { Cart } from '$lib/types/Cart.js';
 import type { Order } from '$lib/types/Order.js';
-import { POS_ROLE_ID } from '$lib/types/User.js';
 import { error } from '@sveltejs/kit';
 import type { ChangeStream, ChangeStreamDocument, ObjectId } from 'mongodb';
 import { formatCart, formatOrder } from '../formatCartOrder.js';
@@ -10,10 +9,6 @@ export async function GET({ locals }) {
 	const userId = locals.user?._id;
 	if (!userId) {
 		throw error(401, 'Must be logged in');
-	}
-
-	if (locals.user?.role !== POS_ROLE_ID) {
-		throw error(403, 'Must be logged in as a POS user');
 	}
 
 	const { readable, writable } = new TransformStream();

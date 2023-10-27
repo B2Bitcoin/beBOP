@@ -168,13 +168,18 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 
-		// Todo: proper check that POS users can only edit their own orders / look at the list of own orders
-		const isPosAllowed =
-			event.locals.user.role === POS_ROLE_ID &&
-			(event.url.pathname.startsWith('/admin/order/') || event.url.pathname === '/admin/order');
-
-		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID && !isPosAllowed) {
+		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
 			throw error(403, 'You are not allowed to access this page.');
+		}
+	}
+
+	if (event.url.pathname.startsWith('/pos/') || event.url.pathname === '/pos') {
+		if (!event.locals.user) {
+			throw redirect(303, '/admin/login');
+		}
+
+		if (event.locals.user.role !== POS_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page, only point-of-sale accounts are.');
 		}
 	}
 
