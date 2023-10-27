@@ -105,7 +105,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	const secretSessionId = token || crypto.randomUUID();
 	event.locals.sessionId = await sha256(secretSessionId);
 
-	event.locals.clientIP = event.getClientAddress(); // IP from Client Request
+	event.locals.clientIp = event.getClientAddress(); // IP from Client Request
 
 	// Refresh cookie expiration date
 	event.cookies.set('bootik-session', secretSessionId, {

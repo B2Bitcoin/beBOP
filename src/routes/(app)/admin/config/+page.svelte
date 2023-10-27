@@ -130,7 +130,7 @@
 				class="form-checkbox"
 				checked={data.collectIPOnDeliverylessOrders}
 			/>
-			Request IP collect on deliveryless order
+			Request IP collection on deliveryless order
 		</label>
 		<label class="checkbox-label">
 			<input type="checkbox" name="vatExempted" class="form-checkbox" bind:checked={vatExempted} />

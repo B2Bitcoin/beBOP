@@ -131,7 +131,7 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				...(collectIP.allowCollectIP && { clientIp: locals.clientIP })
+				...(collectIP.allowCollectIP && { clientIp: locals.clientIp })
 			}
 		);
 

@@ -25,7 +25,7 @@ declare global {
 				name: string;
 				id: string;
 			}>;
-			clientIP?: string;
+			clientIp?: string;
 		}
 		// interface PageData {}
 		// interface Platform {}

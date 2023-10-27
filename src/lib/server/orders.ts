@@ -309,7 +309,8 @@ export async function createOrder(
 			throw error(400, 'You already have a pending order for this product: ' + product.name);
 		}
 	}
-	if (!params.shippingAddress && !params.clientIp) {
+
+	if (runtimeConfig.collectIPOnDeliverylessOrders && !params.shippingAddress && !params.clientIp) {
 		throw error(400, 'Missing IP address for deliveryless order');
 	}
 
@@ -386,7 +387,7 @@ export async function createOrder(
 					// we also associate the email to the order
 					...(email && { email })
 				},
-				...(params.clientIp && { countryIP: params.clientIp })
+				...(params.clientIp && { clientIp: params.clientIp })
 			},
 			{ session }
 		);
