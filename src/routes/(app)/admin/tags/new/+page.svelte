@@ -19,17 +19,19 @@
 			submitting = true;
 			// Need to load here, or for some reason, some inputs disappear afterwards
 			const formData = new FormData(formElement);
-
-			const mainPictureId = await filesUpload(fileMainPicture);
-			formData.set('mainPictureId', mainPictureId);
-			const fullPictureId = await filesUpload(fileFullPicture);
-			formData.set('fullPictureId', fullPictureId);
-			const wideBannerId = await filesUpload(fileWideBanner);
-			formData.set('wideBannerId', wideBannerId);
-			const slimBannerId = await filesUpload(fileSlimBanner);
-			formData.set('slimBannerId', slimBannerId);
-			const avatarId = await filesUpload(fileAvatar);
-			formData.set('avatarId', avatarId);
+			const picturesToUpload = [
+				{ file: fileMainPicture, id: 'mainPictureId' },
+				{ file: fileFullPicture, id: 'fullPictureId' },
+				{ file: fileWideBanner, id: 'wideBannerId' },
+				{ file: fileSlimBanner, id: 'slimBannerId' },
+				{ file: fileAvatar, id: 'avatarId' }
+			];
+			await Promise.all(
+				picturesToUpload.map(async (picture) => {
+					const pictureId = await filesUpload(picture.file);
+					formData.set(picture.id, pictureId);
+				})
+			);
 
 			const finalResponse = await fetch(formElement.action, {
 				method: 'POST',
