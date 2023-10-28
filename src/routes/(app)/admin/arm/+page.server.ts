@@ -7,10 +7,7 @@ export async function load() {
 		.sort({ createdAt: 1 })
 		.toArray();
 
-	const roles = collections.roles.find().toArray();
-
 	return {
-		roles,
 		users: nonCustomers.map((user) => ({
 			_id: user._id.toString(),
 			login: user.login,

@@ -5,6 +5,7 @@
 	import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 	import { applyAction, enhance } from '$app/forms';
 	import { MultiSelect } from 'svelte-multiselect';
+	import { defaultRoleOptions } from '$lib/types/Role';
 
 	export let data;
 
@@ -51,21 +52,21 @@
 				<MultiSelect
 					name="write"
 					selected={role.permissions.write}
-					options={[]}
+					options={defaultRoleOptions}
 					disabled={role._id === SUPER_ADMIN_ROLE_ID}
 					allowUserOptions
 				/>
 				<MultiSelect
 					name="read"
 					selected={role.permissions.read}
-					options={[]}
+					options={defaultRoleOptions}
 					disabled={role._id === SUPER_ADMIN_ROLE_ID}
 					allowUserOptions
 				/>
 				<MultiSelect
 					name="forbidden"
 					selected={role.permissions.forbidden}
-					options={[]}
+					options={defaultRoleOptions}
 					allowUserOptions
 					disabled={role._id === SUPER_ADMIN_ROLE_ID}
 				/>

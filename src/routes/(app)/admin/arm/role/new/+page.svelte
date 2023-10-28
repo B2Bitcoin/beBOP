@@ -1,24 +1,6 @@
 <script lang="ts">
+	import { defaultRoleOptions } from '$lib/types/Role';
 	import MultiSelect from 'svelte-multiselect';
-
-	const options = [
-		'/admin/*',
-		'/admin/layout/*',
-		'/admin/config/*',
-		'/admin/product/*',
-		'/admin/picture/*',
-		'/admin/bitcoin/*',
-		'/admin/lightning/*',
-		'/admin/order/*',
-		'/admin/nostr/*',
-		'/admin/email/*',
-		'/admin/cms/*',
-		'/admin/challenge/*',
-		'/admin/discount/*',
-		'/admin/arm/*',
-		'/admin/backup/*',
-		'/admin/tags/*'
-	];
 </script>
 
 <h1 class="text-3xl">Create an admin role</h1>
@@ -36,19 +18,19 @@
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">
 		Read/Write access
-		<MultiSelect {options} allowUserOptions name="write" />
+		<MultiSelect options={defaultRoleOptions} allowUserOptions name="write" />
 	</label>
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">
 		Read access
-		<MultiSelect {options} allowUserOptions name="read" />
+		<MultiSelect options={defaultRoleOptions} allowUserOptions name="read" />
 	</label>
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">
 		Forbidden access
-		<MultiSelect {options} allowUserOptions name="forbidden" />
+		<MultiSelect options={defaultRoleOptions} allowUserOptions name="forbidden" />
 	</label>
 
 	<input type="submit" value="Create" class="btn btn-black self-start" />
