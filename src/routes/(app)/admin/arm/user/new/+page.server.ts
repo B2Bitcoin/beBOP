@@ -1,35 +1,45 @@
 import { z } from 'zod';
 import { collections } from '$lib/server/database';
-import bcryptjs from 'bcryptjs';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 import { ObjectId } from 'mongodb';
-import { BCRYPT_SALT_ROUNDS } from '$lib/server/user.js';
 import { roles } from '$lib/server/role.js';
+import { zodNpub } from '$lib/server/nostr.js';
+import { sendResetPasswordNotification } from '$lib/server/sendNotification.js';
 
 export const actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 		const allowedRoles = (await roles()).filter((role) => role._id !== SUPER_ADMIN_ROLE_ID);
 
-		const { login, password, roleId } = z
+		const { login, email, npub, roleId } = z
 			.object({
 				login: z.string(),
-				password: z.string(),
+				email: z.string().email().optional(),
+				npub: zodNpub().optional(),
 				roleId: z.enum([allowedRoles[0]._id, ...allowedRoles.map((role) => role._id)])
 			})
 			.parse(Object.fromEntries(data));
 
-		const passwordBcrypt = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
+		if (!email && !npub) {
+			throw error(400, 'You must provide a recovery email or npub');
+		}
 
-		await collections.users.insertOne({
+		const user = {
 			_id: new ObjectId(),
 			login,
-			password: passwordBcrypt,
+			backupInfo: {
+				...(email && { email }),
+				...(npub && { npub })
+			},
 			createdAt: new Date(),
 			updatedAt: new Date(),
 			roleId
-		});
+		};
+
+		await collections.users.insertOne(user);
+
+		await sendResetPasswordNotification(user);
 
 		throw redirect(303, '/admin/arm');
 	}

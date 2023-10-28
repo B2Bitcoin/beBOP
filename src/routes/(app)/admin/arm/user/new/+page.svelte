@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
+	import { page } from '$app/stores';
 
 	export let data;
+
+	let npub = '';
 </script>
 
 <h1 class="text-3xl">Create a user</h1>
@@ -17,11 +20,27 @@
 	</label>
 	<label class="form-label">
 		Login
-		<input class="form-input" type="text" name="login" required />
+		<input class="form-input" type="text" name="login" placeholder="user" required />
 	</label>
 	<label class="form-label">
-		Password
-		<input class="form-input" type="password" name="password" required />
+		Recovery Email
+		<input
+			class="form-input"
+			type="email"
+			name="email"
+			required={!npub}
+			placeholder="user@{$page.url.hostname}"
+		/>
+	</label>
+	<label class="form-label">
+		Recovery Npub
+		<input
+			class="form-input"
+			type="npub"
+			name="npub"
+			bind:value={npub}
+			placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+		/>
 	</label>
 	<input type="submit" value="Create" class="btn btn-black self-start" />
 </form>

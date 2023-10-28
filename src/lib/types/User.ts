@@ -4,7 +4,8 @@ import type { Timestamps } from './Timestamps';
 export interface User extends Timestamps {
 	_id: ObjectId;
 	login: string;
-	password: string;
+	// Not defined until the user logs resets their password
+	password?: string;
 	backupInfo?: {
 		email?: string;
 		npub?: string;

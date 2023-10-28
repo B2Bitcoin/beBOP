@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { sendAuthentificationlink } from '$lib/server/sendNotification';
-import { bech32 } from 'bech32';
 import { jwtVerify } from 'jose';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { fail, redirect } from '@sveltejs/kit';
@@ -16,6 +15,7 @@ import {
 	TWITTER_ID,
 	TWITTER_SECRET
 } from '$env/static/private';
+import { zodNpub } from '$lib/server/nostr.js';
 
 export const load = async ({ url }) => {
 	const token = url.searchParams.get('token');
@@ -64,15 +64,7 @@ export const actions = {
 		const data = await request.formData();
 		const { address } = z
 			.object({
-				address: z.union([
-					z.string().email(),
-					z
-						.string()
-						.startsWith('npub')
-						.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
-							message: 'Invalid npub address'
-						})
-				])
+				address: z.union([z.string().email(), zodNpub()])
 			})
 			.parse({
 				address: data.get('address')
