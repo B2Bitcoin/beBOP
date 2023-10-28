@@ -1,4 +1,6 @@
-export interface Role {
+import type { Timestamps } from './Timestamps';
+
+export interface Role extends Timestamps {
 	_id: string;
 	name: string;
 

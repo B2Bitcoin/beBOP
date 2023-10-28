@@ -29,7 +29,9 @@ export const actions = {
 				read: parsed.read,
 				write: parsed.write,
 				forbidden: parsed.forbidden
-			}
+			},
+			createdAt: new Date(),
+			updatedAt: new Date()
 		});
 
 		throw redirect(303, `/admin/arm`);

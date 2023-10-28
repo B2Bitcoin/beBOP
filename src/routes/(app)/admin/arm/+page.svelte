@@ -2,8 +2,9 @@
 	import IconRefresh from '$lib/components/icons/IconRefresh.svelte';
 	import IconSave from '~icons/ant-design/save-outlined';
 	import IconDelete from '~icons/ant-design/delete-outlined';
-	import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
+	import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 	import { applyAction, enhance } from '$app/forms';
+	import { MultiSelect } from 'svelte-multiselect';
 
 	export let data;
 
@@ -26,9 +27,72 @@
 
 <a href="/admin/arm/role/new" class="underline">Create a role</a>
 
-<ul class="flex flex-col flex-wrap gap-2 list-disc ml-4">
+<ul class="grid grid-cols-[auto_auto_auto_auto_auto_min-content_min-content] gap-2">
+	<li class="contents">
+		<span>Role ID</span>
+		<span>Role name</span>
+		<span>Write access</span>
+		<span>Read access</span>
+		<span>Forbidden access</span>
+		<span>Save</span>
+		<span>Delete</span>
+	</li>
 	{#each data.roles as role}
-		<li>{role.name} [{role._id}]</li>
+		<li class="contents">
+			<form class="contents" method="post" action="/admin/arm/role/{role._id}?/update">
+				<input type="text" name="id" class="form-input" disabled value={role._id} />
+				<input
+					type="text"
+					name="name"
+					class="form-input"
+					disabled={role._id === SUPER_ADMIN_ROLE_ID}
+					value={role.name}
+				/>
+				<MultiSelect
+					name="write"
+					selected={role.permissions.write}
+					options={[]}
+					disabled={role._id === SUPER_ADMIN_ROLE_ID}
+					allowUserOptions
+				/>
+				<MultiSelect
+					name="read"
+					selected={role.permissions.read}
+					options={[]}
+					disabled={role._id === SUPER_ADMIN_ROLE_ID}
+					allowUserOptions
+				/>
+				<MultiSelect
+					name="forbidden"
+					selected={role.permissions.forbidden}
+					options={[]}
+					allowUserOptions
+					disabled={role._id === SUPER_ADMIN_ROLE_ID}
+				/>
+				<button
+					type="submit"
+					class="btn btn-black self-start"
+					disabled={role._id === SUPER_ADMIN_ROLE_ID}
+					title="Save"
+				>
+					<IconSave />
+				</button>
+				<button
+					type="submit"
+					class="btn btn-red self-start"
+					formaction="/admin/arm/role/{role._id}?/delete"
+					disabled={role._id === SUPER_ADMIN_ROLE_ID || role._id === POS_ROLE_ID}
+					title="Delete role"
+					on:click={(e) => {
+						if (!confirm(`Are you sure you want to delete this role: ${role._id}?`)) {
+							e.preventDefault();
+						}
+					}}
+				>
+					<IconDelete />
+				</button>
+			</form>
+		</li>
 	{/each}
 </ul>
 
