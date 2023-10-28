@@ -4,7 +4,7 @@ import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { createAdminUserInDb } from '$lib/server/user.js';
+import { createSuperAdminUserInDb } from '$lib/server/user.js';
 import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 
 export const load = async ({ locals }) => {
@@ -37,7 +37,7 @@ export const actions = {
 		let user = await collections.users.findOne({ login: login, roleId: { $ne: CUSTOMER_ROLE_ID } });
 
 		if (!user && !runtimeConfig.isAdminCreated) {
-			await createAdminUserInDb(login, password);
+			await createSuperAdminUserInDb(login, password);
 
 			user = await collections.users.findOne({ login: login });
 		}

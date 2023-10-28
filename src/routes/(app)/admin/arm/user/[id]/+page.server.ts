@@ -4,6 +4,7 @@ import type { Actions } from './$types';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { ObjectId } from 'mongodb';
+import { BCRYPT_SALT_ROUNDS } from '$lib/server/user';
 
 export const load = async ({ params }) => {
 	const userId = new ObjectId(params.id);
@@ -41,8 +42,7 @@ export const actions: Actions = {
 		};
 
 		if (password) {
-			const salt = await bcryptjs.genSalt(10);
-			const passwordBcrypt = await bcryptjs.hash(password, salt);
+			const passwordBcrypt = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
 			updatedValueSeat.password = passwordBcrypt;
 		}
 

@@ -4,6 +4,7 @@ import bcryptjs from 'bcryptjs';
 import { redirect } from '@sveltejs/kit';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { ObjectId } from 'mongodb';
+import { BCRYPT_SALT_ROUNDS } from '$lib/server/user.js';
 
 export const actions = {
 	default: async function ({ request }) {
@@ -19,8 +20,7 @@ export const actions = {
 				password: data.get('password')
 			});
 
-		const salt = await bcryptjs.genSalt(10);
-		const passwordBcrypt = await bcryptjs.hash(password, salt);
+		const passwordBcrypt = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
 
 		await collections.users.insertOne({
 			_id: new ObjectId(),
@@ -31,6 +31,6 @@ export const actions = {
 			roleId: POS_ROLE_ID
 		});
 
-		throw redirect(303, '/admin/pos');
+		throw redirect(303, '/admin/arm');
 	}
 };

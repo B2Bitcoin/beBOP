@@ -5,6 +5,7 @@ import bcryptjs from 'bcryptjs';
 import { CUSTOMER_ROLE_ID, type User } from '$lib/types/User';
 import { ObjectId } from 'mongodb';
 import type { SetRequired } from 'type-fest';
+import { BCRYPT_SALT_ROUNDS } from '$lib/server/user.js';
 
 export async function load({ params }) {
 	const user = await collections.users.findOne<SetRequired<User, 'passwordReset'>>({
@@ -35,8 +36,7 @@ export const actions = {
 				pwd1: data.get('pwd1')
 			});
 
-		const salt = await bcryptjs.genSalt(10);
-		const passwordBcrypt = await bcryptjs.hash(pwd1, salt);
+		const passwordBcrypt = await bcryptjs.hash(pwd1, BCRYPT_SALT_ROUNDS);
 		const updateResult = await collections.users.updateOne(
 			{
 				_id: new ObjectId(user),
