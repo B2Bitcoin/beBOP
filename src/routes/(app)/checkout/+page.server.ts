@@ -3,13 +3,13 @@ import { paymentMethods } from '$lib/server/payment-methods';
 import { COUNTRY_ALPHA2S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import { bech32 } from 'bech32';
 import { createOrder } from '$lib/server/orders';
 import { emailsEnabled } from '$lib/server/email';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
 import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier } from '$lib/server/user.js';
+import { zodNpub } from '$lib/server/nostr.js';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -75,13 +75,7 @@ export const actions = {
 
 		const notifications = z
 			.object({
-				paymentStatusNPUB: z
-					.string()
-					.startsWith('npub')
-					.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
-						message: 'Invalid npub address'
-					})
-					.optional(),
+				paymentStatusNPUB: zodNpub().optional(),
 				paymentStatusEmail: z.string().email().optional()
 			})
 			.parse({

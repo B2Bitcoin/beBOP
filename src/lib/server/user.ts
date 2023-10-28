@@ -6,13 +6,14 @@ import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import { collections, withTransaction } from './database';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 
-export async function createAdminUserInDb(login: string, password: string) {
+export const BCRYPT_SALT_ROUNDS = 10;
+
+export async function createSuperAdminUserInDb(login: string, password: string) {
 	if (runtimeConfig.isAdminCreated) {
 		return;
 	}
 
-	const salt = await bcryptjs.genSalt(10);
-	const passwordBcrypt = await bcryptjs.hash(password, salt);
+	const passwordBcrypt = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
 
 	// Create super admin
 	const newUser = {

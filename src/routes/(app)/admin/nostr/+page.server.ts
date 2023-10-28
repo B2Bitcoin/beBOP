@@ -1,9 +1,14 @@
 import { ORIGIN } from '$env/static/private';
 import { collections } from '$lib/server/database';
 import { isLightningConfigured, lndGetInfo } from '$lib/server/lightning';
-import { nostrPrivateKey, nostrPublicKey, nostrRelays, nostrToHex } from '$lib/server/nostr';
+import {
+	nostrPrivateKey,
+	nostrPublicKey,
+	nostrRelays,
+	nostrToHex,
+	zodNpub
+} from '$lib/server/nostr';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { bech32 } from 'bech32';
 import { ObjectId } from 'mongodb';
 import { RelayPool } from 'nostr-relaypool';
 import { Kind } from 'nostr-tools';
@@ -70,13 +75,7 @@ export const actions = {
 
 		const { npub, message } = z
 			.object({
-				npub: z
-					.string()
-					.trim()
-					.startsWith('npub')
-					.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
-						message: 'Invalid npub address'
-					}),
+				npub: zodNpub(),
 				message: z.string().trim().min(1)
 			})
 			.parse(Object.fromEntries(form));
@@ -99,12 +98,7 @@ export const actions = {
 
 		const { npub } = z
 			.object({
-				npub: z
-					.string()
-					.startsWith('npub')
-					.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
-						message: 'Invalid npub address'
-					})
+				npub: zodNpub()
 			})
 			.parse(Object.fromEntries(await request.formData()));
 

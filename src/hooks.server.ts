@@ -134,7 +134,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	if (session) {
 		if (session.userId) {
 			const user = await collections.users.findOne({
-				_id: session.userId
+				_id: session.userId,
+				disabled: { $ne: true }
 			});
 			if ((session.expireUserAt && session.expireUserAt < new Date()) || !user) {
 				await collections.sessions.updateOne(

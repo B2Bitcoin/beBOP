@@ -55,8 +55,8 @@
 			label: 'Discount'
 		},
 		{
-			href: '/admin/pos',
-			label: 'POS'
+			href: '/admin/arm',
+			label: 'ARM'
 		},
 		{
 			href: '/admin/backup',

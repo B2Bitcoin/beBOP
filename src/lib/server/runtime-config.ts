@@ -5,7 +5,7 @@ import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 import type { DeliveryFees } from '$lib/types/DeliveryFees';
 import { currencies } from '$lib/stores/currencies';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
-import { createAdminUserInDb } from './user';
+import { createSuperAdminUserInDb } from './user';
 import { runMigrations } from './migrations';
 
 const defaultConfig = {
@@ -151,7 +151,7 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 	}
 
 	if (!runtimeConfig.isAdminCreated && ADMIN_LOGIN && ADMIN_PASSWORD) {
-		await createAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
+		await createSuperAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
 	}
 
 	await runMigrations();
