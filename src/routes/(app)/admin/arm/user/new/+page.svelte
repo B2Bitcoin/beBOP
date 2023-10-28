@@ -9,7 +9,7 @@
 <form method="post" class="flex flex-col gap-6">
 	<label class="form-label">
 		Role
-		<select class="form-input" name="role" required>
+		<select class="form-input" name="roleId" required>
 			{#each data.roles as role}
 				<option value={role._id} disabled={role._id === SUPER_ADMIN_ROLE_ID}>{role.name}</option>
 			{/each}
