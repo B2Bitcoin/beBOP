@@ -24,6 +24,8 @@
 
 <h2 class="text-2xl">Roles</h2>
 
+<a href="/admin/arm/role/new" class="underline">Create a role</a>
+
 <ul class="flex flex-col flex-wrap gap-2 list-disc ml-4">
 	{#each data.roles as role}
 		<li>{role.name} [{role._id}]</li>
