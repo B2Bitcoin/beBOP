@@ -34,13 +34,23 @@
 
 <a href="/admin/arm/user/new" class="underline">Create a user</a>
 
-<ul class="flex flex-col flex-wrap gap-2">
+<ul class="grid grid-cols-[auto_auto_auto_auto_auto_min-content_min-content_min-content] gap-2">
+	<li class="contents">
+		<span>Login</span>
+		<span>Recovery Email</span>
+		<span>Recovery Npub</span>
+		<span>Role</span>
+		<span>Status</span>
+		<span>Save</span>
+		<span>Password</span>
+		<span>Delete</span>
+	</li>
 	{#each data.users as user}
-		<li>
+		<li class="contents">
 			<form
 				action="/admin/arm/user/{user._id}?/update"
 				method="post"
-				class="flex gap-2"
+				class="contents"
 				use:enhance={({ action }) => {
 					return async ({ result }) => {
 						if (result.type === 'error') {
