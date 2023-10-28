@@ -28,7 +28,7 @@ export const actions = {
 		const user = {
 			_id: new ObjectId(),
 			login,
-			backupInfo: {
+			recovery: {
 				...(email && { email }),
 				...(npub && { npub })
 			},

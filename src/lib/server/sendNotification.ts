@@ -7,7 +7,7 @@ import { runtimeConfig } from './runtime-config';
 import { SignJWT } from 'jose';
 
 export async function sendResetPasswordNotification(user: User) {
-	if (user.backupInfo?.npub) {
+	if (user.recovery?.npub) {
 		const content = `Dear user,
 		
 This message was sent to you because you have requested to reset your password.
@@ -24,10 +24,10 @@ ${runtimeConfig.brandName} team`;
 			kind: Kind.EncryptedDirectMessage,
 			updatedAt: new Date(),
 			content,
-			dest: user.backupInfo.npub
+			dest: user.recovery.npub
 		});
 	}
-	if (user.backupInfo?.email) {
+	if (user.recovery?.email) {
 		const content = `<p>Dear user,</p>
 		<p>This message was sent to you because you have requested to reset your password.</p>
 		<p>Follow <a href="${ORIGIN}/admin/login/reset/${user.passwordReset?.token}">this link</a> to reset your password.</p>
@@ -39,7 +39,7 @@ ${runtimeConfig.brandName} team`;
 			updatedAt: new Date(),
 			subject: `Password Reset`,
 			htmlContent: content,
-			dest: user.backupInfo.email
+			dest: user.recovery.email
 		});
 	}
 }

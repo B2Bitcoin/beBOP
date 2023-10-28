@@ -6,7 +6,7 @@ export interface User extends Timestamps {
 	login: string;
 	// Not defined until the user logs resets their password
 	password?: string;
-	backupInfo?: {
+	recovery?: {
 		email?: string;
 		npub?: string;
 	};
