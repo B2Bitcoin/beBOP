@@ -48,7 +48,10 @@
 						}
 
 						if (action.searchParams.has('/resetPassword')) {
-							successMessage = 'Password reset for ' + user.login;
+							successMessage =
+								'Password reset for ' +
+								user.login +
+								', link to set new password sent to recovery address';
 						} else if (action.searchParams.has('/update')) {
 							successMessage = 'Account updated: ' + user.login;
 							blurActiveElement();

@@ -5,14 +5,37 @@ import { ObjectId } from 'mongodb';
 import { Kind } from 'nostr-tools';
 import { runtimeConfig } from './runtime-config';
 import { SignJWT } from 'jose';
+import { addMinutes } from 'date-fns';
 
 export async function sendResetPasswordNotification(user: User) {
+	if (!user.recovery?.email && !user.recovery?.npub) {
+		throw new Error('User has no recovery email or npub');
+	}
+	const updatedUser = (
+		await collections.users.findOneAndUpdate(
+			{ _id: user._id },
+			{
+				$set: {
+					passwordReset: {
+						token: crypto.randomUUID(),
+						expiresAt: addMinutes(new Date(), 15)
+					}
+				}
+			},
+			{
+				returnDocument: 'after'
+			}
+		)
+	).value;
+	if (!updatedUser) {
+		throw new Error('Problem updating user');
+	}
 	if (user.recovery?.npub) {
 		const content = `Dear user,
 		
 This message was sent to you because you have requested to reset your password.
 
-Follow this link to reset your password: ${ORIGIN}/admin/login/reset/${user.passwordReset?.token}
+Follow this link to reset your password: ${ORIGIN}/admin/login/reset/${updatedUser.passwordReset?.token}
 		
 If you didn't ask for this password reset procedure, please ignore this message and do nothing.
 
@@ -30,7 +53,7 @@ ${runtimeConfig.brandName} team`;
 	if (user.recovery?.email) {
 		const content = `<p>Dear user,</p>
 		<p>This message was sent to you because you have requested to reset your password.</p>
-		<p>Follow <a href="${ORIGIN}/admin/login/reset/${user.passwordReset?.token}">this link</a> to reset your password.</p>
+		<p>Follow <a href="${ORIGIN}/admin/login/reset/${updatedUser.passwordReset?.token}">this link</a> to reset your password.</p>
 		<p>If you didn't ask for this password reset procedure, please ignore this message and do nothing.</p>
 		<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
 		await collections.emailNotifications.insertOne({
