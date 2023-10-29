@@ -40,7 +40,25 @@
 	</li>
 	{#each data.roles as role}
 		<li class="contents">
-			<form class="contents" method="post" action="/admin/arm/role/{role._id}?/update">
+			<form
+				class="contents"
+				method="post"
+				action="/admin/arm/role/{role._id}?/update"
+				use:enhance={({ action }) => {
+					return async ({ result }) => {
+						if (result.type === 'error') {
+							return await applyAction(result);
+						}
+
+						if (action.searchParams.has('/update')) {
+							successMessage = 'Role updated: ' + role._id;
+							blurActiveElement();
+						} else {
+							await applyAction(result);
+						}
+					};
+				}}
+			>
 				<input type="text" name="id" class="form-input" disabled value={role._id} />
 				<input
 					type="text"

@@ -1,5 +1,6 @@
 import { collections } from '$lib/server/database.js';
-import { redirect } from '@sveltejs/kit';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User.js';
+import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const actions = {
@@ -21,6 +22,10 @@ export const actions = {
 				write: JSON.parse(data.get('write')?.toString() ?? '[]'),
 				forbidden: JSON.parse(data.get('forbidden')?.toString() ?? '[]')
 			});
+
+		if (parsed.id === CUSTOMER_ROLE_ID) {
+			throw error(403, 'You cannot edit the customer role');
+		}
 
 		await collections.roles.insertOne({
 			_id: parsed.id,
