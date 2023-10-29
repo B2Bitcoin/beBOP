@@ -96,6 +96,7 @@
 				{#each adminLinks as link}
 					<a
 						href={link.href}
+						data-sveltekit-preload-data="off"
 						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
 						>{link.label}</a
 					>
