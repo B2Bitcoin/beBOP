@@ -3,14 +3,15 @@ import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
 import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 import { ObjectId } from 'mongodb';
-import { roles } from '$lib/server/role.js';
 import { zodNpub } from '$lib/server/nostr.js';
 import { sendResetPasswordNotification } from '$lib/server/sendNotification.js';
 
 export const actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
-		const allowedRoles = (await roles()).filter((role) => role._id !== SUPER_ADMIN_ROLE_ID);
+		const allowedRoles = (await collections.roles.find().toArray()).filter(
+			(role) => role._id !== SUPER_ADMIN_ROLE_ID
+		);
 
 		const { login, email, npub, roleId } = z
 			.object({
