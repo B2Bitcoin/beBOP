@@ -1,7 +1,7 @@
-import { roles } from '$lib/server/role';
+import { collections } from '$lib/server/database';
 
 export const load = () => {
 	return {
-		roles: roles()
+		roles: collections.roles.find().sort({ createdAt: 1 }).toArray()
 	};
 };

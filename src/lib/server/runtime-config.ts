@@ -7,6 +7,7 @@ import { currencies } from '$lib/stores/currencies';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { createSuperAdminUserInDb } from './user';
 import { runMigrations } from './migrations';
+import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
 const defaultConfig = {
 	isAdminCreated: false,
@@ -152,6 +153,36 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 
 	if (!runtimeConfig.isAdminCreated && ADMIN_LOGIN && ADMIN_PASSWORD) {
 		await createSuperAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
+	}
+
+	if ((await collections.roles.countDocuments({ _id: SUPER_ADMIN_ROLE_ID })) === 0) {
+		await collections.roles.insertOne({
+			_id: SUPER_ADMIN_ROLE_ID,
+			name: 'Super Admin',
+			permissions: {
+				read: [],
+				write: ['/admin/*'],
+				forbidden: []
+			},
+			createdAt: new Date(),
+			updatedAt: new Date()
+		});
+	}
+
+	if ((await collections.roles.countDocuments({ _id: POS_ROLE_ID })) === 0) {
+		await collections.roles.insertOne({
+			_id: POS_ROLE_ID,
+			name: 'Point of sale',
+			permissions: {
+				read: [],
+				// Todo: maybe make it '/pos/*' for fully customizable roles, but for now simpler
+				// to treat POS as a special case
+				write: [],
+				forbidden: []
+			},
+			createdAt: new Date(),
+			updatedAt: new Date()
+		});
 	}
 
 	await runMigrations();

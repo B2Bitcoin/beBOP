@@ -8,7 +8,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
-import { CUSTOMER_ROLE_ID, POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User';
 import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
 import Facebook from '@auth/core/providers/facebook';
@@ -28,6 +28,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
 import { countryFromIp } from '$lib/server/geoip';
+import { isAllowedOnPage } from '$lib/server/role';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -173,7 +174,23 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 
-		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
+		const role = await collections.roles.findOne({
+			_id: event.locals.user.role
+		});
+
+		if (!role) {
+			throw error(403, 'Your role does not exist in DB.');
+		}
+
+		const method = event.request.method.toLowerCase();
+
+		if (
+			!isAllowedOnPage(
+				role,
+				event.url.pathname,
+				['get', 'head', 'options'].includes(method) ? 'read' : 'write'
+			)
+		) {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 	}

@@ -1,6 +1,5 @@
 import { collections } from '$lib/server/database.js';
 import { zodNpub } from '$lib/server/nostr.js';
-import { roles } from '$lib/server/role.js';
 import { sendResetPasswordNotification } from '$lib/server/sendNotification.js';
 import { CUSTOMER_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 import { error, redirect } from '@sveltejs/kit';
@@ -23,7 +22,9 @@ export const actions = {
 			throw error(403, 'You cannot update a customer from here');
 		}
 
-		const allowedRoles = (await roles()).filter((role) => role._id !== SUPER_ADMIN_ROLE_ID);
+		const allowedRoles = (await collections.roles.find().toArray()).filter(
+			(role) => role._id !== SUPER_ADMIN_ROLE_ID
+		);
 
 		const data = await request.formData();
 
