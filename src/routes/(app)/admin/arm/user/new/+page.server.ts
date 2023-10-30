@@ -20,7 +20,11 @@ export const actions = {
 				npub: zodNpub().optional(),
 				roleId: z.enum([allowedRoles[0]._id, ...allowedRoles.map((role) => role._id)])
 			})
-			.parse(Object.fromEntries(data));
+			.parse({
+				...Object.fromEntries(data),
+				email: data.get('email')?.toString() || undefined,
+				npub: data.get('npub')?.toString() || undefined
+			});
 
 		if (!email && !npub) {
 			throw error(400, 'You must provide a recovery email or npub');
