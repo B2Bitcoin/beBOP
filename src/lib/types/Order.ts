@@ -2,7 +2,7 @@ import type { Product } from './Product';
 import type { Currency } from './Currency';
 import type { CountryAlpha2 } from './Country';
 import type { Timestamps } from './Timestamps';
-import type { ObjectId } from 'mongodb';
+import type { UserIdentifier } from './UserIdentifier';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -72,22 +72,21 @@ export interface Order extends Timestamps {
 		};
 	};
 
-	user: {
-		sessionId: string;
-		userId?: ObjectId;
-		login?: string;
-		role?: string;
-		email?: string;
-	};
+	user: UserIdentifier;
 
 	lastPaymentStatusNotified?: OrderPaymentStatus;
 
 	discount?: {
-		amount?: number;
-		currency: Currency;
-		amountReference?: number;
-		currencyReference: Currency;
 		justification?: string;
+		type?: 'fiat' | 'percentage';
+		price?: {
+			amount: number;
+			currency: Currency;
+		};
+		referencePrice?: {
+			amount: number;
+			currency: Currency;
+		};
 	};
 
 	clientIp?: string;

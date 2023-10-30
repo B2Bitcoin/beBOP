@@ -480,7 +480,7 @@
 					/>
 
 					<select name="discountType" class="form-input" form="checkout" required>
-						<option value="fiat">{data?.currencies?.main}</option>
+						<option value="fiat">{data.currencies.main}</option>
 						<option value="percentage">%</option>
 					</select>
 
