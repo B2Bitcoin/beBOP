@@ -71,8 +71,7 @@ export async function load({ params, depends }) {
 				reasonFreeVat: order.vat.reasonFreeVat
 			},
 			shippingAddress: order.shippingAddress,
-			notifications: order.notifications,
-			discount: order.discount
+			notifications: order.notifications
 		},
 
 		digitalFiles: await Promise.all(

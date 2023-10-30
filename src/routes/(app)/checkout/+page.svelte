@@ -17,13 +17,13 @@
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
+	import { POS_ROLE_ID } from '$lib/types/User.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
 
 	export let data;
 
-	let addDiscount = false;
 	let isFreeVat = false;
 
 	const feedItems = [
@@ -446,7 +446,7 @@
 						</a>
 					</span>
 				</label>
-				{#if data.isPosUser}
+				{#if data.roleId === POS_ROLE_ID}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"
@@ -477,48 +477,6 @@
 							form="checkout"
 							name="reasonFreeVat"
 						/>
-					</label>
-				{/if}
-
-				{#if data.isPosUser}
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							bind:checked={addDiscount}
-							name="addDiscount"
-							form="checkout"
-						/>
-						<span>
-							As a POS user I apply a <a
-								href="/terms"
-								target="_blank"
-								class="text-link hover:underline"
-							>
-								gift discount
-							</a>
-						</span>
-					</label>
-				{/if}
-
-				{#if addDiscount}
-					<input
-						type="number"
-						class="form-input"
-						name="amount"
-						placeholder="Ex: 10"
-						form="checkout"
-						required
-					/>
-
-					<select name="type" class="form-input" form="checkout" required>
-						<option value="fiat">{data?.currencies?.main}</option>
-						<option value="percentage">%</option>
-					</select>
-
-					<label class="form-label col-span-3">
-						Justification
-						<input type="text" class="form-input" form="checkout" name="justification" />
 					</label>
 				{/if}
 
