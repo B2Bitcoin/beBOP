@@ -4,22 +4,13 @@ import { set } from 'lodash-es';
 import { z } from 'zod';
 import { error, redirect } from '@sveltejs/kit';
 import type { WithId } from 'mongodb';
-import type { RuntimeConfigItem } from '$lib/server/runtime-config.js';
+import { runtimeConfig, type RuntimeConfigItem } from '$lib/server/runtime-config.js';
 import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds.js';
 
 export const load = async ({ params }) => {
-	const existingConfig = await collections.runtimeConfig.findOne({
-		_id: 'confirmationBlocksThresholds'
-	});
-
-	// @ts-expect-error is not unknown
-	const existingThresholds = existingConfig?.data.find(
+	const existingThresholds = runtimeConfig.confirmationBlocksThresholds.find(
 		(el: ConfirmationThresholds) => el._id === params.id
 	);
-
-	console.log(existingThresholds);
-	console.log(params.id);
-	console.log(existingConfig);
 
 	return {
 		existingThresholds
@@ -43,16 +34,9 @@ export const actions = {
 			})
 			.parse(json);
 
-		const existingConfig: WithId<RuntimeConfigItem> | null =
-			await collections.runtimeConfig.findOne({
-				_id: 'confirmationBlocksThresholds'
-			});
+		const existingThresholds = runtimeConfig.confirmationBlocksThresholds;
 
-		const existingThresholds: ConfirmationThresholds[] = existingConfig
-			? (existingConfig.data as ConfirmationThresholds[])
-			: [];
-
-		for (const threshold of existingThresholds) {
+		for (const threshold of runtimeConfig.confirmationBlocksThresholds) {
 			if (threshold._id === params.id) {
 				continue;
 			}

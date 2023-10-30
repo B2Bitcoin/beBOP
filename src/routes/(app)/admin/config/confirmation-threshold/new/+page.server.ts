@@ -3,13 +3,13 @@ import { set } from 'lodash-es';
 import { z } from 'zod';
 import { collections } from '$lib/server/database';
 import { error, redirect } from '@sveltejs/kit';
-import { runtimeConfig, type RuntimeConfigItem } from '$lib/server/runtime-config.js';
-import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds.js';
-import type { WithId } from 'mongodb';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export const actions = {
 	default: async function ({ request }) {
 		const formData = await request.formData();
+
+		console.log('runtimeConfig ', runtimeConfig);
 
 		const json: JsonObject = {};
 		for (const [key, value] of formData) {
@@ -24,16 +24,7 @@ export const actions = {
 			})
 			.parse(json);
 
-		const existingConfig: WithId<RuntimeConfigItem> | null =
-			await collections.runtimeConfig.findOne({
-				_id: 'confirmationBlocksThresholds'
-			});
-
-		const existingThresholds: ConfirmationThresholds[] = existingConfig
-			? (existingConfig.data as ConfirmationThresholds[])
-			: [];
-
-		for (const threshold of existingThresholds) {
+		for (const threshold of runtimeConfig.confirmationBlocksThresholds) {
 			if (
 				(minAmount >= threshold.minAmount && minAmount <= threshold.maxAmount) ||
 				(maxAmount >= threshold.minAmount && maxAmount <= threshold.maxAmount) ||

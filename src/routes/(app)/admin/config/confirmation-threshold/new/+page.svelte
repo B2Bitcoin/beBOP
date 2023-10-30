@@ -1,12 +1,6 @@
 <script lang="ts">
-	export let form;
-
 	let minAmount: number;
 </script>
-
-{#if form?.success}
-	<p class="alert-success">Values updated</p>
-{/if}
 
 <h1 class="text-3xl">Add confirmation threshold</h1>
 
