@@ -71,7 +71,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	event.locals.countryCode = countryFromIp(event.getClientAddress());
 
 	const isAdminUrl =
-		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
+		event.url.pathname.startsWith('/admin/') &&
 		!(
 			event.url.pathname.startsWith('/admin/login/') ||
 			event.url.pathname === '/admin/login' ||

@@ -12,7 +12,7 @@ export interface Role extends Timestamps {
 }
 
 export const defaultRoleOptions = [
-	'/admin/*', // hard-coded ref in admin/login to check where to redirect
+	'/admin/*',
 	'/admin/layout/*',
 	'/admin/config/*',
 	'/admin/product/*',
