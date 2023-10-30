@@ -283,6 +283,22 @@
 		/>
 	</label>
 
+	<div class="flex flex-col gap-4 w-[30%]">
+		<label class="form-label"
+			>Product Tags
+			<select multiple name="tagIds" class="form-input min-h-[20rem]">
+				{#each data.tags as tag}
+					<option value={tag._id}>
+						{tag.name}
+					</option>
+				{/each}
+			</select>
+			<p class="text-gray-600 text-sm">
+				You can hold Ctrl to select indivdual items, or Shift to select multiple items at once
+			</p>
+		</label>
+	</div>
+
 	<label>
 		Type
 		<select
