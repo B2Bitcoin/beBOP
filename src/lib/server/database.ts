@@ -128,8 +128,8 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 		{ login: 1 },
 		{ unique: true, collation: { locale: 'en', strength: 1 }, name: 'case-insensitive-login' }
 	],
-	[users, { 'backupInfo.email': 1 }, { sparse: true, unique: true }],
-	[users, { 'backupInfo.npub': 1 }, { sparse: true, unique: true }],
+	[users, { 'recovery.email': 1 }, { sparse: true, unique: true }],
+	[users, { 'recovery.npub': 1 }, { sparse: true, unique: true }],
 	[sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
 	[sessions, { sessionId: 1 }, { unique: true }],
 	[discounts, { endAt: 1 }]

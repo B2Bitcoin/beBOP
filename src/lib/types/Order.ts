@@ -77,4 +77,6 @@ export interface Order extends Timestamps {
 	user: UserIdentifier;
 
 	lastPaymentStatusNotified?: OrderPaymentStatus;
+
+	clientIp?: string;
 }

@@ -6,6 +6,7 @@
 	import ProductType from '$lib/components/ProductType.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency';
+	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
@@ -129,11 +130,17 @@
 						)}</pre>
 				</div>
 			{/if}
-			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash'}
-				<form action="/admin/order/{data.order._id}?/confirm" method="post">
+			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash' && data.roleId !== CUSTOMER_ROLE_ID}
+				<form
+					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/confirm"
+					method="post"
+				>
 					<button type="submit" class="btn btn-black">Mark paid</button>
 				</form>
-				<form action="/admin/order/{data.order._id}?/cancel" method="post">
+				<form
+					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/cancel"
+					method="post"
+				>
 					<button type="submit" class="btn btn-red">Cancel</button>
 				</form>
 			{/if}

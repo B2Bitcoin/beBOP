@@ -70,10 +70,6 @@ export const actions = {
 
 		const orConditions = userQuery(subscription.user);
 
-		if (!orConditions.$or.length) {
-			throw error(500, 'No npub or email found for this subscription');
-		}
-
 		const lastOrder = await collections.orders.findOne(
 			{
 				'items.product._id': product._id,
@@ -86,7 +82,10 @@ export const actions = {
 		);
 
 		if (!lastOrder) {
-			throw error(500, 'No paid order found for this subscription');
+			throw error(
+				500,
+				'No past paid order found for this subscription, please purchase it directly instead of renewing.'
+			);
 		}
 
 		const orderId = await createOrder(

@@ -1,6 +1,7 @@
 import { NOSTR_PRIVATE_KEY } from '$env/static/private';
 import { bech32 } from 'bech32';
 import { getPublicKey } from 'nostr-tools';
+import { z } from 'zod';
 
 export const nostrPrivateKey = NOSTR_PRIVATE_KEY;
 export let nostrPublicKey = '';
@@ -27,6 +28,16 @@ export function nostrToHex(key: string): string {
 
 export function hexToNpub(hex: string) {
 	return bech32.encode('npub', bech32.toWords(Buffer.from(hex, 'hex')));
+}
+
+export function zodNpub() {
+	return z
+		.string()
+		.trim()
+		.startsWith('npub')
+		.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
+			message: 'Invalid npub address'
+		});
 }
 
 export const nostrRelays = [

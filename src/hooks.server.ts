@@ -8,7 +8,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
-import { CUSTOMER_ROLE_ID, POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User';
 import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
 import Facebook from '@auth/core/providers/facebook';
@@ -27,7 +27,8 @@ import {
 import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
-// import { countryFromIp } from '$lib/server/geoip';
+import { countryFromIp } from '$lib/server/geoip';
+import { isAllowedOnPage } from '$lib/server/role';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -67,11 +68,15 @@ export const handleError = (({ error, event }) => {
 }) satisfies HandleServerError;
 
 const handleGlobal: Handle = async ({ event, resolve }) => {
-	// event.locals.countryCode = countryFromIp(event.getClientAddress());
+	event.locals.countryCode = countryFromIp(event.getClientAddress());
 
 	const isAdminUrl =
 		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
-		!(event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login');
+		!(
+			event.url.pathname.startsWith('/admin/login/') ||
+			event.url.pathname === '/admin/login' ||
+			event.url.pathname === '/admin/logout'
+		);
 
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
@@ -105,6 +110,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	const secretSessionId = token || crypto.randomUUID();
 	event.locals.sessionId = await sha256(secretSessionId);
 
+	event.locals.clientIp = event.getClientAddress(); // IP from Client Request
+
 	// Refresh cookie expiration date
 	event.cookies.set('bootik-session', secretSessionId, {
 		path: '/',
@@ -130,7 +137,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	if (session) {
 		if (session.userId) {
 			const user = await collections.users.findOne({
-				_id: session.userId
+				_id: session.userId,
+				disabled: { $ne: true }
 			});
 			if ((session.expireUserAt && session.expireUserAt < new Date()) || !user) {
 				await collections.sessions.updateOne(
@@ -168,13 +176,34 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 
-		// Todo: proper check that POS users can only edit their own orders / look at the list of own orders
-		const isPosAllowed =
-			event.locals.user.role === POS_ROLE_ID &&
-			(event.url.pathname.startsWith('/admin/order/') || event.url.pathname === '/admin/order');
+		const role = await collections.roles.findOne({
+			_id: event.locals.user.role
+		});
 
-		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID && !isPosAllowed) {
+		if (!role) {
+			throw error(403, 'Your role does not exist in DB.');
+		}
+
+		const method = event.request.method.toLowerCase();
+
+		if (
+			!isAllowedOnPage(
+				role,
+				event.url.pathname,
+				['get', 'head', 'options'].includes(method) ? 'read' : 'write'
+			)
+		) {
 			throw error(403, 'You are not allowed to access this page.');
+		}
+	}
+
+	if (event.url.pathname.startsWith('/pos/') || event.url.pathname === '/pos') {
+		if (!event.locals.user) {
+			throw redirect(303, '/admin/login');
+		}
+
+		if (event.locals.user.role !== POS_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page, only point-of-sale accounts are.');
 		}
 	}
 
