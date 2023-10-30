@@ -27,7 +27,6 @@ export async function load({ parent, locals }) {
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
-		isPosUser: locals.user?.role === POS_ROLE_ID,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
 	};
 }
