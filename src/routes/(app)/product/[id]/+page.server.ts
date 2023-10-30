@@ -7,7 +7,6 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
-import { POS_ROLE_ID } from '$lib/types/User';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
