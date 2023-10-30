@@ -21,11 +21,11 @@ export async function load({ parent, locals }) {
 			throw redirect(303, '/cart');
 		}
 	}
-
 	return {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
+		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
 	};
 }
@@ -97,6 +97,14 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 
+		const collectIP = z
+			.object({
+				allowCollectIP: z.boolean({ coerce: true }).default(false)
+			})
+			.parse({
+				allowCollectIP: formData.get('allowCollectIP')
+			});
+
 		const orderId = await createOrder(
 			cart.items.map((item) => ({
 				quantity: item.quantity,
@@ -116,7 +124,8 @@ export const actions = {
 				},
 				cart,
 				shippingAddress: shipping,
-				vatCountry: shipping?.country ?? locals.countryCode
+				vatCountry: shipping?.country ?? locals.countryCode,
+				...(collectIP.allowCollectIP && { clientIp: locals.clientIp })
 			}
 		);
 

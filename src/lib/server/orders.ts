@@ -166,6 +166,7 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
+		clientIp?: string;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -309,6 +310,10 @@ export async function createOrder(
 		}
 	}
 
+	if (runtimeConfig.collectIPOnDeliverylessOrders && !params.shippingAddress && !params.clientIp) {
+		throw error(400, 'Missing IP address for deliveryless order');
+	}
+
 	const orderNumber = await generateOrderNumber();
 
 	await withTransaction(async (session) => {
@@ -381,7 +386,8 @@ export async function createOrder(
 					// In case the user didn't authenticate with an email but still wants to be notified,
 					// we also associate the email to the order
 					...(email && { email })
-				}
+				},
+				...(params.clientIp && { clientIp: params.clientIp })
 			},
 			{ session }
 		);
