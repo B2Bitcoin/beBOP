@@ -28,7 +28,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
 import { countryFromIp } from '$lib/server/geoip';
-import { isAllowedOnPage } from '$lib/server/role';
+import { isAllowedOnPage } from '$lib/types/Role';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -71,7 +71,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	event.locals.countryCode = countryFromIp(event.getClientAddress());
 
 	const isAdminUrl =
-		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
+		event.url.pathname.startsWith('/admin/') &&
 		!(
 			event.url.pathname.startsWith('/admin/login/') ||
 			event.url.pathname === '/admin/login' ||
