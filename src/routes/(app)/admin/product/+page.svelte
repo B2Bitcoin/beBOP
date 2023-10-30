@@ -7,8 +7,8 @@
 	let eshopVisible = data.productActionSettings?.eShop?.visible;
 	let retailVisible = data.productActionSettings?.retail?.visible;
 	let googleShoppingVisible = data.productActionSettings?.googleShopping?.visible;
-	let eshopBasket = data.productActionSettings?.eShop?.basket;
-	let retailBasket = data.productActionSettings?.retail?.basket;
+	let eshopBasket = data.productActionSettings?.eShop?.canBeAddedToBasket;
+	let retailBasket = data.productActionSettings?.retail?.canBeAddedToBasket;
 
 	let picturesByProduct = Object.fromEntries(
 		[...data.pictures].reverse().map((picture) => [picture.productId, picture])
