@@ -208,7 +208,21 @@
 				>{data.product.description}</textarea
 			>
 		</label>
-
+		<div class="flex flex-col gap-4 w-[30%]">
+			<label class="form-label"
+				>Product Tags
+				<select multiple name="tagIds" class="form-input min-h-[20rem]" value={data.product.tagIds}>
+					{#each data.tags as tag}
+						<option value={tag._id}>
+							{tag.name}
+						</option>
+					{/each}
+				</select>
+				<p class="text-gray-600 text-sm">
+					You can hold Ctrl to select indivdual items, or Shift to select multiple items at once
+				</p>
+			</label>
+		</div>
 		<label class="text-gray-450">
 			Type
 			<select class="form-input text-gray-450" disabled value={data.product.type}>

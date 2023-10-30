@@ -4,7 +4,7 @@ import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error, redirect } from '@sveltejs/kit';
 
 export const actions = {
-	confirm: async ({ params }) => {
+	confirm: async ({ params, request }) => {
 		const order = await collections.orders.findOne({
 			_id: params.id
 		});
@@ -34,9 +34,9 @@ export const actions = {
 			await onOrderPaid(order, session);
 		});
 
-		throw redirect(303, '/admin/order');
+		throw redirect(303, request.headers.get('referer') || '/admin/order');
 	},
-	cancel: async ({ params }) => {
+	cancel: async ({ params, request }) => {
 		const order = await collections.orders.findOne({
 			_id: params.id
 		});
@@ -62,6 +62,6 @@ export const actions = {
 			);
 		});
 
-		throw redirect(303, '/admin/order');
+		throw redirect(303, request.headers.get('referer') || '/admin/order');
 	}
 };

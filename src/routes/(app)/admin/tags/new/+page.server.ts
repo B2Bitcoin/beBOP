@@ -5,6 +5,10 @@ import { z } from 'zod';
 import { set } from 'lodash-es';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import type { JsonObject } from 'type-fest';
+import { getS3DownloadLink, s3client } from '$lib/server/s3';
+import { S3_BUCKET } from '$env/static/private';
+import { generatePicture } from '$lib/server/picture';
+import type { TagType } from '$lib/types/Picture';
 
 export const load = async () => {};
 
@@ -27,6 +31,11 @@ export const actions: Actions = {
 				useLightDark: z.boolean({ coerce: true }).default(false),
 				title: z.string(),
 				subtitle: z.string(),
+				mainPictureId: z.string().trim().min(1).max(500),
+				fullPictureId: z.string().trim().min(1).max(500),
+				wideBannerId: z.string().trim().min(1).max(500),
+				slimBannerId: z.string().trim().min(1).max(500),
+				avatarId: z.string().trim().min(1).max(500),
 				ctaLinks: z
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional()
@@ -42,6 +51,45 @@ export const actions: Actions = {
 		if (await collections.tags.countDocuments({ _id: parsed.slug })) {
 			throw error(409, 'tag with same slug already exists');
 		}
+		const tagPictures = [
+			{ id: parsed.mainPictureId, type: 'main' as TagType },
+			{ id: parsed.fullPictureId, type: 'full' as TagType },
+			{ id: parsed.wideBannerId, type: 'wide' as TagType },
+			{ id: parsed.slimBannerId, type: 'slim' as TagType },
+			{ id: parsed.avatarId, type: 'avatar' as TagType }
+		];
+		await Promise.all(
+			tagPictures.map(async (tagPicture) => {
+				const pendingMainPicture = await collections.pendingPictures.findOne({
+					_id: tagPicture.id
+				});
+
+				if (!pendingMainPicture) {
+					throw error(400, 'Error when uploading picture');
+				}
+
+				const resp = await fetch(await getS3DownloadLink(pendingMainPicture.storage.original.key));
+
+				if (!resp.ok) {
+					throw error(400, 'Error when uploading picture');
+				}
+
+				const buffer = await resp.arrayBuffer();
+				await generatePicture(Buffer.from(buffer), parsed.name, {
+					tag: { _id: parsed.slug, type: tagPicture.type },
+					cb: async (session) => {
+						await s3client
+							.deleteObject({
+								Key: pendingMainPicture.storage.original.key,
+								Bucket: S3_BUCKET
+							})
+							.catch();
+
+						await collections.pendingPictures.deleteOne({ _id: tagPicture.id }, { session });
+					}
+				});
+			})
+		);
 
 		await collections.tags.insertOne({
 			_id: parsed.slug,
@@ -60,7 +108,6 @@ export const actions: Actions = {
 			cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href),
 			menu: parsed.menuLinks?.filter((menuLink) => menuLink.label && menuLink.href)
 		});
-
 		throw redirect(303, '/admin/tags/' + parsed.slug);
 	}
 };

@@ -8,6 +8,7 @@ import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
 import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
+import type { Tag } from '$lib/types/Tag';
 
 export const load = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -20,16 +21,20 @@ export const load = async ({ params }) => {
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
 		.toArray();
-
 	const digitalFiles = await collections.digitalFiles
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
+		.toArray();
+	const tags = await collections.tags
+		.find({})
+		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 
 	return {
 		product,
 		pictures,
 		digitalFiles,
+		tags,
 		reserved: amountOfProductReserved(params.id),
 		sold: amountOfProductSold(params.id)
 	};
@@ -60,12 +65,14 @@ export const actions: Actions = {
 
 		const parsed = z
 			.object({
+				tagIds: z.string().array(),
 				...productBaseSchema,
 				changedDate: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				...json,
-				availableDate: formData.get('availableDate') || undefined
+				availableDate: formData.get('availableDate') || undefined,
+				tagIds: formData.getAll('tagIds')
 			});
 
 		if (product.type !== 'resource') {
@@ -143,6 +150,7 @@ export const actions: Actions = {
 							visible: parsed.googleShoppingVisible
 						}
 					},
+					tagIds: parsed.tagIds,
 					updatedAt: new Date()
 				},
 				$unset: {

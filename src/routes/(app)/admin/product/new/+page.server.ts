@@ -15,12 +15,17 @@ import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
 import { generateId } from '$lib/utils/generateId';
 import { CopyObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
+import type { Tag } from '$lib/types/Tag';
 
 export const load = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
 	let product;
 	let pictures;
 	let digitalFiles;
+	const tags = await collections.tags
+		.find({})
+		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
+		.toArray();
 
 	if (productId) {
 		product = await collections.products.findOne({ _id: productId });
@@ -40,9 +45,13 @@ export const load = async ({ url }) => {
 			productId,
 			pictures,
 			digitalFiles,
+			tags,
 			currency: runtimeConfig.priceReferenceCurrency
 		};
 	}
+	return {
+		tags
+	};
 };
 
 export const actions: Actions = {
@@ -59,11 +68,13 @@ export const actions: Actions = {
 				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				pictureId: z.string().trim().min(1).max(500),
 				type: z.enum(['resource', 'donation', 'subscription']),
+				tagIds: z.string().array(),
 				...productBaseSchema
 			})
 			.parse({
 				...json,
-				availableDate: formData.get('availableDate') || undefined
+				availableDate: formData.get('availableDate') || undefined,
+				tagIds: formData.getAll('tagIds')
 			});
 
 		if (await collections.products.countDocuments({ _id: parsed.slug })) {
@@ -153,7 +164,8 @@ export const actions: Actions = {
 							googleShopping: {
 								visible: parsed.googleShoppingVisible
 							}
-						}
+						},
+						tagIds: parsed.tagIds
 					},
 					{ session }
 				);
@@ -256,7 +268,8 @@ export const actions: Actions = {
 						googleShopping: {
 							visible: duplicate.googleShoppingVisible
 						}
-					}
+					},
+					tagIds: product.tagIds
 				},
 				{ session }
 			);

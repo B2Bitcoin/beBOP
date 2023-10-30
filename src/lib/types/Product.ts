@@ -1,6 +1,7 @@
 import type { Currency } from './Currency';
 import type { DeliveryFees } from './DeliveryFees';
 import type { ProductActionSettings } from './ProductActionSettings';
+import type { Tag } from './Tag';
 import type { Timestamps } from './Timestamps';
 
 export interface Product extends Timestamps {
@@ -33,6 +34,7 @@ export interface Product extends Timestamps {
 	standalone: boolean;
 	free: boolean;
 	actionSettings: ProductActionSettings;
+	tagIds?: Tag['_id'][];
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
