@@ -3,6 +3,9 @@
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import IconLogout from '~icons/ant-design/logout-outlined';
 	import { slide } from 'svelte/transition';
+	import { isAllowedOnPage } from '$lib/types/Role';
+
+	export let data;
 
 	let navMenuOpen = false;
 	const adminLinks = [
@@ -93,7 +96,7 @@
 						</button>
 					</form>
 				</span>
-				{#each adminLinks as link}
+				{#each adminLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
 					<a
 						href={link.href}
 						data-sveltekit-preload-data="off"

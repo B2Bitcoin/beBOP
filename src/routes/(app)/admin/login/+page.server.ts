@@ -6,8 +6,7 @@ import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createSuperAdminUserInDb } from '$lib/server/user.js';
 import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
-import { defaultRoleOptions } from '$lib/types/Role.js';
-import { isAllowedOnPage } from '$lib/server/role.js';
+import { defaultRoleOptions, isAllowedOnPage } from '$lib/types/Role.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {

@@ -28,7 +28,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
 import { countryFromIp } from '$lib/server/geoip';
-import { isAllowedOnPage } from '$lib/server/role';
+import { isAllowedOnPage } from '$lib/types/Role';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
