@@ -7,6 +7,6 @@ export async function load({ locals }) {
 	 */
 	return {
 		deliveryFees: runtimeConfig.deliveryFees,
-		role: locals.user?.role ? await collections.roles.findOne({ _id: locals.user.role }) : null
+		role: locals.user?.role ? collections.roles.findOne({ _id: locals.user.role }) : null
 	};
 }
