@@ -101,6 +101,8 @@
 						href={link.href}
 						data-sveltekit-preload-data="off"
 						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
+						class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+						class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
 						>{link.label}</a
 					>
 				{/each}
