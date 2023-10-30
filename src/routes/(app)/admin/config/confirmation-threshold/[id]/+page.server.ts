@@ -12,6 +12,10 @@ export const load = async ({ params }) => {
 		(el: ConfirmationThresholds) => el._id === params.id
 	);
 
+	if (!existingThresholds) {
+		throw error(404, 'Threshold not found');
+	}
+
 	return {
 		existingThresholds
 	};

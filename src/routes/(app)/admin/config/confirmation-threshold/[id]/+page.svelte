@@ -46,6 +46,9 @@
 			required
 		/>
 	</label>
+	{#if confirmationBlocks === 0}
+		<p class="text-red-600">This might be risky!</p>
+	{/if}
 
 	<div class="flex gap-2">
 		<button class="btn btn-red" formaction="?/delete">Delete</button>

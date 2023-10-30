@@ -1,5 +1,6 @@
 <script lang="ts">
 	let minAmount: number;
+	let confirmationBlocks: number;
 </script>
 
 <h1 class="text-3xl">Add confirmation threshold</h1>
@@ -33,6 +34,7 @@
 		Confirmation blocks
 		<input
 			type="number"
+			bind:value={confirmationBlocks}
 			min="0"
 			step="1"
 			name="confirmationBlocks"
@@ -40,6 +42,10 @@
 			required
 		/>
 	</label>
+
+	{#if confirmationBlocks === 0}
+		<p class="text-red-600">This might be risky!</p>
+	{/if}
 
 	<button type="submit" class="btn btn-black self-start"> Create </button>
 </form>
