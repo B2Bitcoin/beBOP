@@ -39,7 +39,7 @@ export const actions = {
 				(maxAmount >= threshold.minAmount && maxAmount <= threshold.maxAmount) ||
 				(minAmount < threshold.minAmount && maxAmount > threshold.maxAmount)
 			) {
-				throw error(400, 'Treshold already exist!');
+				throw error(400, 'threshold already exist!');
 			}
 		}
 

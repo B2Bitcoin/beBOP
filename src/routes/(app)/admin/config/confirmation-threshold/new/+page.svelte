@@ -8,7 +8,7 @@
 	<p class="alert-success">Values updated</p>
 {/if}
 
-<h1 class="text-3xl">Add confirmation treeshold</h1>
+<h1 class="text-3xl">Add confirmation threshold</h1>
 
 <form method="post" class="flex flex-col gap-4">
 	<label class="w-full">

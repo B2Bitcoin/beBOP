@@ -6,7 +6,7 @@
 	let confirmationBlocks: number = data.existingThresholds.confirmationBlocks;
 </script>
 
-<h1 class="text-3xl">Edit confirmation treeshold</h1>
+<h1 class="text-3xl">Edit confirmation threshold</h1>
 
 <form method="post" action="?/update" class="flex flex-col gap-4">
 	<label class="w-full">
