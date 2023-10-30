@@ -6,8 +6,8 @@ import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createSuperAdminUserInDb } from '$lib/server/user.js';
 import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
-import { defaultRoleOptions } from '$lib/types/Role.js';
-import { isAllowedOnPage } from '$lib/server/role.js';
+import { isAllowedOnPage } from '$lib/types/Role.js';
+import { adminLinks } from '../adminLinks.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
@@ -83,12 +83,12 @@ export const actions = {
 			throw redirect(303, `/admin`);
 		}
 
-		for (const option of defaultRoleOptions.slice(1)) {
-			if (isAllowedOnPage(role, option.replace(/\/\*$/, ''), 'read')) {
-				throw redirect(303, option.replace(/\/\*$/, ''));
+		for (const option of adminLinks) {
+			if (isAllowedOnPage(role, option.href, 'read')) {
+				throw redirect(303, option.href);
 			}
 		}
 
-		throw redirect(303, `/admin`);
+		throw redirect(303, `/`);
 	}
 };
