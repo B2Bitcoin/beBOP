@@ -4,6 +4,7 @@
 	import IconLogout from '~icons/ant-design/logout-outlined';
 	import { slide } from 'svelte/transition';
 	import { isAllowedOnPage } from '$lib/types/Role';
+	import { POS_ROLE_ID } from '$lib/types/User';
 
 	export let data;
 
@@ -103,9 +104,21 @@
 						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
 						class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
 						class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-						>{link.label}</a
 					>
+						{link.label}
+					</a>
 				{/each}
+				{#if data.roleId === POS_ROLE_ID}
+					<a
+						href="/pos"
+						data-sveltekit-preload-data="off"
+						class="{$page.url.pathname.startsWith('/pos')
+							? 'underline'
+							: ''} hidden sm:inline font-bold text-green-600"
+					>
+						POS session
+					</a>
+				{/if}
 			</nav>
 		</div>
 	</header>
@@ -116,10 +129,27 @@
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 	>
 		{#each adminLinks as link}
-			<a href={link.href} class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
-				>{link.label}</a
+			<a
+				href={link.href}
+				class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
+				data-sveltekit-preload-data="off"
+				class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+				class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
 			>
+				{link.label}
+			</a>
 		{/each}
+		{#if data.roleId === POS_ROLE_ID}
+			<a
+				href="/pos"
+				data-sveltekit-preload-data="off"
+				class="{$page.url.pathname.startsWith('/pos')
+					? 'underline'
+					: ''} hidden sm:inline font-bold text-green-600"
+			>
+				POS session
+			</a>
+		{/if}
 	</nav>
 {/if}
 
