@@ -59,4 +59,7 @@ export function s3ProductPrefix(productId: string): string {
 	return `products/${productId}/`;
 }
 
+export function s3TagPrefix(tagId: string): string {
+	return `tags/${tagId}/`;
+}
 export { s3client };

@@ -1,71 +1,16 @@
 <script lang="ts">
 	import { navigating, page } from '$app/stores';
 	import IconMenu from '~icons/ant-design/menu-outlined';
+	import IconLogout from '~icons/ant-design/logout-outlined';
 	import { slide } from 'svelte/transition';
+	import { isAllowedOnPage } from '$lib/types/Role';
+	import { POS_ROLE_ID } from '$lib/types/User';
+	import { adminLinks } from './adminLinks.js';
+
+	export let data;
 
 	let navMenuOpen = false;
-	const adminLinks = [
-		{
-			href: '/admin/layout',
-			label: 'Layout'
-		},
-		{
-			href: '/admin/config',
-			label: 'Config'
-		},
-		{
-			href: '/admin/product',
-			label: 'Products'
-		},
-		{
-			href: '/admin/picture',
-			label: 'Pictures'
-		},
-		{
-			href: '/admin/bitcoin',
-			label: 'Bitcoin node'
-		},
-		{
-			href: '/admin/lightning',
-			label: 'Lightning node'
-		},
-		{
-			href: '/admin/order',
-			label: 'Orders'
-		},
-		{
-			href: '/admin/nostr',
-			label: 'NostR'
-		},
-		{
-			href: '/admin/email',
-			label: 'Emails'
-		},
-		{
-			href: '/admin/cms',
-			label: 'CMS'
-		},
-		{
-			href: '/admin/challenge',
-			label: 'Challenges'
-		},
-		{
-			href: '/admin/discount',
-			label: 'Discount'
-		},
-		{
-			href: '/admin/pos',
-			label: 'POS'
-		},
-		{
-			href: '/admin/backup',
-			label: 'Backup'
-		},
-		{
-			href: '/admin/tags',
-			label: 'Tags'
-		}
-	];
+
 	$: if ($navigating) {
 		navMenuOpen = false;
 	}
@@ -73,7 +18,7 @@
 
 {#if !$page.url.pathname.startsWith('/admin/login')}
 	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-hidden">
+		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-x-auto">
 			<nav class="flex gap-6 font-light items-center">
 				<button
 					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
@@ -82,14 +27,38 @@
 				>
 					<IconMenu />
 				</button>
-				<span class="font-bold text-xl">Admin</span>
-				{#each adminLinks as link}
+				<span class="font-bold text-xl flex items-center gap-2">
+					Admin
+
+					<form action="/admin/logout" method="post" class="contents">
+						<button type="submit">
+							<span class="sr-only">Log out</span>
+							<IconLogout class="text-red-500" />
+						</button>
+					</form>
+				</span>
+				{#each adminLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
 					<a
 						href={link.href}
+						data-sveltekit-preload-data="off"
 						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
-						>{link.label}</a
+						class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+						class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
 					>
+						{link.label}
+					</a>
 				{/each}
+				{#if data.roleId === POS_ROLE_ID}
+					<a
+						href="/pos"
+						data-sveltekit-preload-data="off"
+						class="{$page.url.pathname.startsWith('/pos')
+							? 'underline'
+							: ''} hidden sm:inline font-bold text-green-600"
+					>
+						POS session
+					</a>
+				{/if}
 			</nav>
 		</div>
 	</header>
@@ -100,10 +69,27 @@
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 	>
 		{#each adminLinks as link}
-			<a href={link.href} class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
-				>{link.label}</a
+			<a
+				href={link.href}
+				class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
+				data-sveltekit-preload-data="off"
+				class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+				class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
 			>
+				{link.label}
+			</a>
 		{/each}
+		{#if data.roleId === POS_ROLE_ID}
+			<a
+				href="/pos"
+				data-sveltekit-preload-data="off"
+				class="{$page.url.pathname.startsWith('/pos')
+					? 'underline'
+					: ''} hidden sm:inline font-bold text-green-600"
+			>
+				POS session
+			</a>
+		{/if}
 	</nav>
 {/if}
 

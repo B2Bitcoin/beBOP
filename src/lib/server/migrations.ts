@@ -7,7 +7,7 @@ const migrations = [
 		_id: new ObjectId('65281201e92e590e858af6cb'),
 		name: 'Migrate CMS page content from Markdown to HTML',
 		run: async (session: ClientSession) => {
-			for await (const page of await collections.cmsPages.find()) {
+			for await (const page of collections.cmsPages.find()) {
 				await collections.cmsPages.updateOne(
 					{
 						_id: page._id
@@ -21,26 +21,50 @@ const migrations = [
 				);
 			}
 		}
+	},
+	{
+		_id: new ObjectId('653cbb1bd2af1254e82c928b'),
+		name: 'Change user.backupInfo to user.recovery',
+		run: async (session: ClientSession) => {
+			await collections.users.dropIndex('backupInfo.npub_1').catch(console.error);
+			await collections.users.dropIndex('backupInfo.email_1').catch(console.error);
+
+			await collections.users.updateMany(
+				{
+					backupInfo: { $exists: true }
+				},
+				{
+					$rename: {
+						backupInfo: 'recovery'
+					}
+				},
+				{ session }
+			);
+		}
 	}
 ];
 
 export async function runMigrations() {
-	const migrationsCollection = await collections.migrations;
-	const migrationsInDb = await migrationsCollection.find().toArray();
+	const migrationsInDb = await collections.migrations.find().toArray();
 
 	const migrationsToRun = migrations.filter(
 		(migration) => !migrationsInDb.find((migrationInDb) => migrationInDb._id.equals(migration._id))
 	);
 
 	for (const migration of migrationsToRun) {
+		console.log('running migration', migration.name);
 		await withTransaction(async (session) => {
-			await collections.migrations.insertOne({
-				_id: migration._id,
-				name: migration.name,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			});
+			await collections.migrations.insertOne(
+				{
+					_id: migration._id,
+					name: migration.name,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				},
+				{ session }
+			);
 			await migration.run(session);
 		});
+		console.log('done');
 	}
 }

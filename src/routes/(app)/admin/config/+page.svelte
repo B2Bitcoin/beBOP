@@ -124,6 +124,15 @@
 	</label>
 	<div class="flex flex-col gap-2">
 		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="collectIPOnDeliverylessOrders"
+				class="form-checkbox"
+				checked={data.collectIPOnDeliverylessOrders}
+			/>
+			Request IP collection on deliveryless order
+		</label>
+		<label class="checkbox-label">
 			<input type="checkbox" name="vatExempted" class="form-checkbox" bind:checked={vatExempted} />
 			Disable VAT for my bootik
 		</label>

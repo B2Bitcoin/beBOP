@@ -4,8 +4,10 @@ import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { createAdminUserInDb } from '$lib/server/user.js';
+import { createSuperAdminUserInDb } from '$lib/server/user.js';
 import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
+import { isAllowedOnPage } from '$lib/types/Role.js';
+import { adminLinks } from '../adminLinks.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
@@ -37,7 +39,7 @@ export const actions = {
 		let user = await collections.users.findOne({ login: login, roleId: { $ne: CUSTOMER_ROLE_ID } });
 
 		if (!user && !runtimeConfig.isAdminCreated) {
-			await createAdminUserInDb(login, password);
+			await createSuperAdminUserInDb(login, password);
 
 			user = await collections.users.findOne({ login: login });
 		}
@@ -70,7 +72,23 @@ export const actions = {
 				upsert: true
 			}
 		);
-		// Redirect to the admin dashboard upon successful login
-		throw redirect(303, user.roleId === POS_ROLE_ID ? '/pos' : `/admin`);
+
+		if (user.roleId === POS_ROLE_ID) {
+			throw redirect(303, `/pos`);
+		}
+
+		const role = await collections.roles.findOne({ _id: user.roleId });
+
+		if (!role) {
+			throw redirect(303, `/admin`);
+		}
+
+		for (const option of adminLinks) {
+			if (isAllowedOnPage(role, option.href, 'read')) {
+				throw redirect(303, option.href);
+			}
+		}
+
+		throw redirect(303, `/`);
 	}
 };

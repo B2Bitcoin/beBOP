@@ -1,11 +1,10 @@
 import { collections } from '$lib/server/database';
-import { error } from '@sveltejs/kit';
-import { POS_ROLE_ID } from '$lib/types/User.js';
+import { redirect } from '@sveltejs/kit';
 import { formatCart, formatOrder } from './formatCartOrder.js';
 
 export const load = async ({ locals }) => {
-	if (locals.user?.role !== POS_ROLE_ID) {
-		throw error(404, 'Only for POS user');
+	if (!locals.user) {
+		throw redirect(303, '/admin/login');
 	}
 
 	const cart = await collections.carts.findOne(
