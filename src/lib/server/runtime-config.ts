@@ -7,6 +7,7 @@ import { currencies } from '$lib/stores/currencies';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { createAdminUserInDb } from './user';
 import { runMigrations } from './migrations';
+import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 
 const defaultConfig = {
 	isAdminCreated: false,
@@ -71,19 +72,19 @@ const defaultConfig = {
 		} as DeliveryFees
 	},
 	plausibleScriptUrl: '',
-	defaultActionSettings: {
+	productActionSettings: {
 		eShop: {
-			visible: false,
-			basket: false
+			visible: true,
+			canBeAddedToBasket: true
 		},
 		retail: {
-			visible: false,
-			basket: false
+			visible: true,
+			canBeAddedToBasket: true
 		},
 		googleShopping: {
-			visible: false
+			visible: true
 		}
-	}
+	} as ProductActionSettings
 };
 
 exchangeRate.set({

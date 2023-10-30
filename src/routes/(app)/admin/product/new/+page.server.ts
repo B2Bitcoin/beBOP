@@ -144,11 +144,11 @@ export const actions: Actions = {
 						actionSettings: {
 							eShop: {
 								visible: parsed.eshopVisible,
-								basket: parsed.eshopBasket
+								canBeAddedToBasket: parsed.eshopBasket
 							},
 							retail: {
 								visible: parsed.retailVisible,
-								basket: parsed.retailBasket
+								canBeAddedToBasket: parsed.retailBasket
 							},
 							googleShopping: {
 								visible: parsed.googleShoppingVisible
@@ -247,11 +247,11 @@ export const actions: Actions = {
 					actionSettings: {
 						eShop: {
 							visible: duplicate.eshopVisible,
-							basket: duplicate.eshopBasket
+							canBeAddedToBasket: duplicate.eshopBasket
 						},
 						retail: {
 							visible: duplicate.retailVisible,
-							basket: duplicate.retailBasket
+							canBeAddedToBasket: duplicate.retailBasket
 						},
 						googleShopping: {
 							visible: duplicate.googleShoppingVisible

@@ -38,16 +38,18 @@
 	let hasStock = false;
 	let maxQuantityPerOrder = product?.maxQuantityPerOrder ?? DEFAULT_MAX_QUANTITY_PER_ORDER;
 	let eshopVisible =
-		product?.actionSettings?.eShop?.visible ?? data.defaultActionSettings?.eShop?.visible;
+		product?.actionSettings.eShop.visible ?? data.productActionSettings.eShop.visible;
 	let retailVisible =
-		product?.actionSettings?.retail?.visible ?? data.defaultActionSettings?.retail?.visible;
+		product?.actionSettings.retail.visible ?? data.productActionSettings.retail.visible;
 	let googleShoppingVisible =
-		product?.actionSettings?.googleShopping?.visible ??
-		data.defaultActionSettings?.googleShopping?.visible;
+		product?.actionSettings.googleShopping.visible ??
+		data.productActionSettings.googleShopping.visible;
 	let eshopBasket =
-		product?.actionSettings?.eShop?.basket ?? data.defaultActionSettings?.eShop?.basket;
+		product?.actionSettings.eShop.canBeAddedToBasket ??
+		data.productActionSettings.eShop.canBeAddedToBasket;
 	let retailBasket =
-		product?.actionSettings?.retail?.basket ?? data.defaultActionSettings?.retail?.basket;
+		product?.actionSettings.retail.canBeAddedToBasket ??
+		data.productActionSettings.retail.canBeAddedToBasket;
 
 	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);

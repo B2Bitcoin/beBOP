@@ -45,9 +45,9 @@
 		0
 	);
 
-	$: shouldShowBuyButton =
-		(data.isPosUser && data.product.actionSettings?.retail?.basket) ||
-		data.product.actionSettings?.eShop?.basket;
+	$: canBuy =
+		(data.isPosUser && data.product.actionSettings?.retail?.canBeAddedToBasket) ||
+		data.product.actionSettings?.eShop?.canBeAddedToBasket;
 
 	function addToCart() {
 		$productAddedToCart = {
@@ -302,7 +302,7 @@
 								<br />
 								Please check back later
 							</p>
-						{:else if data.showCheckoutButton && shouldShowBuyButton}
+						{:else if data.showCheckoutButton && canBuy}
 							<button class="btn btn-black" disabled={loading}>{verb} now</button>
 							<button
 								value="Add to cart"
@@ -312,7 +312,7 @@
 							>
 								Add to cart
 							</button>
-						{:else if shouldShowBuyButton}
+						{:else if canBuy}
 							<button
 								value="Add to cart"
 								formaction="?/addToCart"

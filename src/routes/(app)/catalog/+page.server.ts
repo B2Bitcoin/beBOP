@@ -8,7 +8,11 @@ type QueryType = {
 };
 
 export async function load({ locals }) {
-	const findProductQuery = getFindProductQuery(locals?.user?.role);
+	let findProductQuery: QueryType = { 'actionSettings.eShop.visible': true };
+
+	if (locals?.user?.role === POS_ROLE_ID) {
+		findProductQuery = { 'actionSettings.retail.visible': true };
+	}
 
 	return {
 		products: await collections.products
@@ -20,11 +24,4 @@ export async function load({ locals }) {
 			.sort({ createdAt: 1 })
 			.toArray()
 	};
-}
-
-function getFindProductQuery(userRole?: string): QueryType {
-	if (userRole === POS_ROLE_ID) {
-		return { 'actionSettings.retail.visible': true };
-	}
-	return { 'actionSettings.eShop.visible': true };
 }

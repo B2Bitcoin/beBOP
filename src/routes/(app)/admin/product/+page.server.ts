@@ -39,7 +39,7 @@ export const actions: Actions = {
 
 		await collections.runtimeConfig.updateOne(
 			{
-				_id: 'defaultActionSettings'
+				_id: 'productActionSettings'
 			},
 			{
 				$set: {

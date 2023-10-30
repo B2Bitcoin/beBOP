@@ -43,6 +43,8 @@ export async function createAdminUserInDb(login: string, password: string) {
 }
 
 export function userIdentifier(locals: App.Locals): UserIdentifier {
+	console.log('locals ', locals);
+
 	return {
 		ssoIds: locals.sso?.map((sso) => sso.id),
 		userId: locals.user?._id,

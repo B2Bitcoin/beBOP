@@ -27,8 +27,8 @@
 	let eshopVisible = data.product.actionSettings?.eShop?.visible;
 	let retailVisible = data.product.actionSettings?.retail?.visible;
 	let googleShoppingVisible = data.product.actionSettings?.googleShopping?.visible;
-	let eshopBasket = data.product.actionSettings?.eShop?.basket;
-	let retailBasket = data.product.actionSettings?.retail?.basket;
+	let eshopBasket = data.product.actionSettings?.eShop?.canBeAddedToBasket;
+	let retailBasket = data.product.actionSettings?.retail?.canBeAddedToBasket;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);

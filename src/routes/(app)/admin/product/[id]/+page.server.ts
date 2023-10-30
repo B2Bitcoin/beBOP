@@ -133,11 +133,11 @@ export const actions: Actions = {
 					actionSettings: {
 						eShop: {
 							visible: parsed.eshopVisible,
-							basket: parsed.eshopBasket
+							canBeAddedToBasket: parsed.eshopBasket
 						},
 						retail: {
 							visible: parsed.retailVisible,
-							basket: parsed.retailBasket
+							canBeAddedToBasket: parsed.retailBasket
 						},
 						googleShopping: {
 							visible: parsed.googleShoppingVisible

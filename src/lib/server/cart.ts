@@ -54,6 +54,9 @@ export async function addToCartInDb(
 	quantity: number,
 	params: { user: UserIdentifier; totalQuantity?: boolean; customAmount?: number }
 ) {
+	console.log('product ', product);
+	console.log('params ', params.user);
+
 	if (quantity < 0) {
 		throw new TypeError('Quantity cannot be negative');
 	}
