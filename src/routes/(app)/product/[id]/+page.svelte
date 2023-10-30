@@ -16,6 +16,7 @@
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
+	import { POS_ROLE_ID } from '$lib/types/User.js';
 
 	export let data;
 
@@ -46,7 +47,7 @@
 	);
 
 	$: canBuy =
-		(data.isPosUser && data.product.actionSettings?.retail?.canBeAddedToBasket) ||
+		(data.roleId === POS_ROLE_ID && data.product.actionSettings?.retail?.canBeAddedToBasket) ||
 		data.product.actionSettings?.eShop?.canBeAddedToBasket;
 
 	function addToCart() {

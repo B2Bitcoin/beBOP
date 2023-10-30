@@ -79,8 +79,7 @@ export const load = async ({ params, locals }) => {
 		product,
 		pictures,
 		discount,
-		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage,
-		isPosUser: locals.user?.role === POS_ROLE_ID
+		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
 };
 
