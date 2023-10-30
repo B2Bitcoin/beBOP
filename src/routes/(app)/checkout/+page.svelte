@@ -17,6 +17,7 @@
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
+	import { POS_ROLE_ID } from '$lib/types/User.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -445,7 +446,8 @@
 						</a>
 					</span>
 				</label>
-				{#if data.isPosUser}
+
+				{#if data.roleId === POS_ROLE_ID}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"
@@ -485,6 +487,25 @@
 					<label class="form-label col-span-3">
 						Justification
 						<input type="text" class="form-input" form="checkout" name="discountJustification" />
+					</label>
+				{/if}
+
+				{#if data.collectIPOnDeliverylessOrders && isDigital}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							name="allowCollectIP"
+							form="checkout"
+							required
+						/>
+						<span>
+							I agree to the collection of my IP address (<a
+								href="/why-collect-ip"
+								target="_blank"
+								class="text-link hover:underline">why?</a
+							>)
+						</span>
 					</label>
 				{/if}
 

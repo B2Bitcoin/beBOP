@@ -177,6 +177,7 @@ export async function createOrder(
 			type?: 'fiat' | 'percentage';
 			justification?: string;
 		};
+		clientIp?: string;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -351,6 +352,10 @@ export async function createOrder(
 		}
 	}
 
+	if (runtimeConfig.collectIPOnDeliverylessOrders && !params.shippingAddress && !params.clientIp) {
+		throw error(400, 'Missing IP address for deliveryless order');
+	}
+
 	const orderNumber = await generateOrderNumber();
 
 	await withTransaction(async (session) => {
@@ -432,7 +437,8 @@ export async function createOrder(
 						currency: runtimeConfig.mainCurrency,
 						justification: params?.discount?.justification
 					}
-				})
+				}),
+				...(params.clientIp && { clientIp: params.clientIp })
 			},
 			{ session }
 		);

@@ -1,9 +1,7 @@
 <script lang="ts">
 	import IconStandBy from '$lib/components/icons/IconStandBy.svelte';
-	import { upperFirst } from '$lib/utils/upperFirst';
 	import type { ActionData } from './$types';
 	export let form: ActionData;
-	let type: string;
 </script>
 
 <h1 class="text-2xl">Password recovery</h1>
@@ -13,21 +11,11 @@
 			<IconStandBy class="text-red-500" />
 		</div>
 		<label class="form-label">
-			Select the account type
-			<select class="form-input" name="accountType" bind:value={type}>
-				{#each ['super-admin', 'other admin account'] as account}
-					<option value={account} selected={form?.accountType === account}
-						>{upperFirst(account)}</option
-					>
-				{/each}
-			</select>
-		</label>
-		<label class="form-label">
 			<input
-				class="form-input {type !== 'other admin account' ? 'hidden sm-inline' : ''}"
+				class="form-input"
 				type="text"
-				name="otherLogin"
-				value={form?.otherLogin ?? ''}
+				name="login"
+				value={form?.login ?? ''}
 				placeholder="Enter other admin login"
 			/>
 		</label>

@@ -89,4 +89,6 @@ export interface Order extends Timestamps {
 		currencyReference: Currency;
 		justification?: string;
 	};
+
+	clientIp?: string;
 }
