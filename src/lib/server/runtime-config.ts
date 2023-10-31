@@ -7,6 +7,7 @@ import { currencies } from '$lib/stores/currencies';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { createSuperAdminUserInDb } from './user';
 import { runMigrations } from './migrations';
+import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
@@ -74,7 +75,20 @@ const defaultConfig = {
 			}
 		} as DeliveryFees
 	},
-	plausibleScriptUrl: ''
+	plausibleScriptUrl: '',
+	productActionSettings: {
+		eShop: {
+			visible: true,
+			canBeAddedToBasket: true
+		},
+		retail: {
+			visible: true,
+			canBeAddedToBasket: true
+		},
+		googleShopping: {
+			visible: true
+		}
+	} as ProductActionSettings
 };
 
 exchangeRate.set({

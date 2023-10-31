@@ -137,6 +137,19 @@ export const actions: Actions = {
 							available: parsed.stock - amountInCarts
 						}
 					}),
+					actionSettings: {
+						eShop: {
+							visible: parsed.eshopVisible,
+							canBeAddedToBasket: parsed.eshopBasket
+						},
+						retail: {
+							visible: parsed.retailVisible,
+							canBeAddedToBasket: parsed.retailBasket
+						},
+						googleShopping: {
+							visible: parsed.googleShoppingVisible
+						}
+					},
 					tagIds: parsed.tagIds,
 					updatedAt: new Date()
 				},

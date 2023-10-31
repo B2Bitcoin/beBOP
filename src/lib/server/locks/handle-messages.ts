@@ -216,7 +216,9 @@ const commands: Record<
 			if (!runtimeConfig.discovery) {
 				await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
 			} else {
-				const products = await collections.products.find({}).toArray();
+				const products = await collections.products
+					.find({ 'actionSettings.eShop.visible': true })
+					.toArray();
 
 				if (!products.length) {
 					await send('Catalog is empty');
@@ -243,7 +245,9 @@ const commands: Record<
 			if (!runtimeConfig.discovery) {
 				await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
 			} else {
-				const products = await collections.products.find({}).toArray();
+				const products = await collections.products
+					.find({ 'actionSettings.eShop.visible': true })
+					.toArray();
 
 				if (!products.length) {
 					await send('Catalog is empty');

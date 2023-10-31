@@ -24,6 +24,11 @@
 	let hasStock = !!data.product.stock;
 	let curr: 'SAT' | 'BTC';
 	let disableDate = true;
+	let eshopVisible = data.product.actionSettings.eShop.visible;
+	let retailVisible = data.product.actionSettings.retail.visible;
+	let googleShoppingVisible = data.product.actionSettings.googleShopping.visible;
+	let eshopBasket = data.product.actionSettings.eShop.canBeAddedToBasket;
+	let retailBasket = data.product.actionSettings.retail.canBeAddedToBasket;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -349,6 +354,67 @@
 				{/if}
 			{/if}
 		{/if}
+
+		<h3 class="text-xl">Action settings</h3>
+		<table class="w-full border border-gray-300 divide-y divide-gray-300">
+			<thead class="bg-gray-200">
+				<tr>
+					<th class="py-2 px-4 border-r border-gray-300">Action</th>
+					<th class="py-2 px-4 border-r border-gray-300">Eshop (anyone)</th>
+					<th class="py-2 px-4 border-r border-gray-300">Retail (POS logged seat)</th>
+					<th class="py-2 px-4">Google Shopping</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="py-2 px-4 border-r border-gray-300">Product is visible</td>
+					<td class="py-2 px-4 border-r border-gray-300 text-center"
+						><input
+							type="checkbox"
+							bind:checked={eshopVisible}
+							name="eshopVisible"
+							class="rounded"
+						/></td
+					>
+					<td class="py-2 px-4 border-r border-gray-300 text-center"
+						><input
+							type="checkbox"
+							bind:checked={retailVisible}
+							name="retailVisible"
+							class="rounded"
+						/></td
+					>
+					<td class="py-2 px-4 border-r border-gray-300 text-center"
+						><input
+							type="checkbox"
+							bind:checked={googleShoppingVisible}
+							name="googleShoppingVisible"
+							class="rounded"
+						/></td
+					>
+				</tr>
+				<tr>
+					<td class="py-2 px-4 border border-gray-300">Product can be added to basket</td>
+					<td class="py-2 px-4 border border-gray-300 text-center"
+						><input
+							type="checkbox"
+							bind:checked={eshopBasket}
+							name="eshopBasket"
+							class="rounded"
+						/></td
+					>
+					<td class="py-2 px-4 border border-gray-300 text-center"
+						><input
+							type="checkbox"
+							bind:checked={retailBasket}
+							name="retailBasket"
+							class="rounded"
+						/></td
+					>
+					<td class="py-2 px-4 border border-gray-300 text-center" />
+				</tr>
+			</tbody>
+		</table>
 
 		<div class="flex justify-between gap-2">
 			<button
