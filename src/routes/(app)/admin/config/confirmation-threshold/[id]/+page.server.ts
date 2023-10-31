@@ -8,16 +8,16 @@ import { runtimeConfig, type RuntimeConfigItem } from '$lib/server/runtime-confi
 import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds.js';
 
 export const load = async ({ params }) => {
-	const existingThresholds = runtimeConfig.confirmationBlocksThresholds.find(
+	const existingThreshold = runtimeConfig.confirmationBlocksThresholds.find(
 		(el: ConfirmationThresholds) => el._id === params.id
 	);
 
-	if (!existingThresholds) {
+	if (!existingThreshold) {
 		throw error(404, 'Threshold not found');
 	}
 
 	return {
-		existingThresholds
+		existingThreshold
 	};
 };
 
@@ -86,8 +86,6 @@ export const actions = {
 			? // @ts-expect-error is not unknown
 			  existingConfig.data.filter((el: ConfirmationThresholds) => el._id !== params.id)
 			: [];
-
-		console.log('filteredThresholds ', filteredThresholds);
 
 		await collections.runtimeConfig.updateOne(
 			{ _id: 'confirmationBlocksThresholds' },
