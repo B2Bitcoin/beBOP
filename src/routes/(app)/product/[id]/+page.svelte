@@ -47,8 +47,9 @@
 	);
 
 	$: canBuy =
-		(data.roleId === POS_ROLE_ID && data.product.actionSettings?.retail?.canBeAddedToBasket) ||
-		data.product.actionSettings?.eShop?.canBeAddedToBasket;
+		data.roleId === POS_ROLE_ID
+			? data.product.actionSettings.retail.canBeAddedToBasket
+			: data.product.actionSettings.eShop.canBeAddedToBasket;
 
 	function addToCart() {
 		$productAddedToCart = {
