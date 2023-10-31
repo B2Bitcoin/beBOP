@@ -42,9 +42,11 @@ export interface Order extends Timestamps {
 		};
 		rate: number;
 		country: string;
-		isFreeVat?: boolean;
-		reasonFreeVat?: string;
 	};
+	
+	vatFree?: {
+		reason: string;
+	}
 
 	totalPrice: {
 		amount: number;
