@@ -15,7 +15,7 @@ export const load = async ({ params }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	default: async ({ request, params }) => {
 		const formData = await request.formData();
 		const json: JsonObject = {};
 
@@ -23,13 +23,22 @@ export const actions: Actions = {
 			set(json, key, value);
 		}
 
+		console.log('json ', json);
 		const styleValidationSchema = createZodSchemaFromStructure(styleFormStructure);
 
+		console.log('styleValidationSchema ', styleValidationSchema);
+
 		const parsed = styleValidationSchema.parse(json);
+		console.log('parsed ', parsed);
 
 		const transformedStyle: Style = transformToStyle(parsed);
 
-		await collections.styles.insertOne(transformedStyle);
+		await collections.styles.updateOne(
+			{ _id: params.id },
+			{
+				$set: transformedStyle
+			}
+		);
 
 		throw redirect(303, '/admin/style');
 	}
@@ -59,7 +68,6 @@ const createZodSchemaFromStructure = (structure) => {
 
 function transformToStyle(data: any): Style {
 	const result = {
-		_id: crypto.randomUUID(),
 		name: data.name
 	};
 
