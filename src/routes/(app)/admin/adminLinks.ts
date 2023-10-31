@@ -4,6 +4,10 @@ export const adminLinks = [
 		label: 'Layout'
 	},
 	{
+		href: '/admin/style',
+		label: 'Style'
+	},
+	{
 		href: '/admin/config',
 		label: 'Config'
 	},

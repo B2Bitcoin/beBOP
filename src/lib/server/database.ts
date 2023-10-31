@@ -28,6 +28,7 @@ import type { Discount } from '$lib/types/Discount';
 import type { Session } from '$lib/types/Session';
 import type { Migration } from '$lib/types/Migration';
 import type { Tag } from '$lib/types/Tag';
+import type { Style } from '$lib/types/Style';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -59,6 +60,7 @@ const discounts = db.collection<Discount>('discounts');
 const sessions = db.collection<Session>('sessions');
 const migrations = db.collection<Migration>('migrations');
 const tags = db.collection<Tag>('tags');
+const styles = db.collection<Style>('styles');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -86,7 +88,8 @@ export const collections = {
 	users,
 	discounts,
 	sessions,
-	tags
+	tags,
+	styles
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
