@@ -172,7 +172,7 @@
 				/>
 				<input
 					type="text"
-					name="recoveryPassword"
+					name="recoveryNpub"
 					class="form-input"
 					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
 					value={user.recovery?.npub ?? ''}

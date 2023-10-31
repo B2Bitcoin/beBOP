@@ -36,7 +36,11 @@ export const actions = {
 				status: z.enum(['enabled', 'disabled']),
 				roleId: z.enum([allowedRoles[0]._id, ...allowedRoles.map((role) => role._id)])
 			})
-			.parse(Object.fromEntries(data));
+			.parse({
+				...Object.fromEntries(data),
+				recoveryEmail: data.get('recoveryEmail')?.toString() || undefined,
+				recoveryNpub: data.get('recoveryNpub')?.toString() || undefined
+			});
 
 		if (!parsed.recoveryEmail && !parsed.recoveryNpub) {
 			throw error(400, 'You must provide a recovery email or npub');

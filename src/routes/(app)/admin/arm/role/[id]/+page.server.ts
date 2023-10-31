@@ -61,6 +61,10 @@ export const actions = {
 			throw error(403, 'You cannot delete this role');
 		}
 
+		if (await collections.users.countDocuments({ roleId }, { limit: 1 })) {
+			throw error(403, 'This role is used by at least one user');
+		}
+
 		await collections.roles.deleteOne({
 			_id: roleId
 		});
