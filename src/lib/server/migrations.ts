@@ -68,6 +68,23 @@ const migrations = [
 				{ session }
 			);
 		}
+	},
+	{
+		name: 'Add tagIds to products',
+		_id: new ObjectId('653cbb1bd2af1254e82c928c'),
+		run: async (session: ClientSession) => {
+			await collections.products.updateMany(
+				{
+					tagIds: { $exists: false }
+				},
+				{
+					$set: {
+						tagIds: []
+					}
+				},
+				{ session }
+			);
+		}
 	}
 ];
 
