@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
-import { actions as adminOrderActions } from '../../../admin[[hash]]/order/[id]/+page.server';
+import { actions as adminOrderActions } from '../../../admin[[hash=admin_hash]]/order/[id]/+page.server';
 
 export const actions = {
 	confirm: async (event) => {

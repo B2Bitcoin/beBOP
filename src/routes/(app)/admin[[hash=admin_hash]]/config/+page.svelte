@@ -238,6 +238,24 @@
 		<p class="text-sm">The cart's reservation is extended each time the cart is updated.</p>
 	</label>
 	<label class="form-label">
+		Admin hash
+
+		<input
+			type="text"
+			name="adminHash"
+			class="form-input max-w-[25rem]"
+			value={data.adminHash}
+			placeholder="xxxxxxxx"
+			pattern="[a-zA-Z0-9]+"
+		/>
+		<p class="text-sm">
+			This will change the admin url to
+			<kbd class="px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg">
+				/admin-[hash]
+			</kbd>
+		</p>
+	</label>
+	<label class="form-label">
 		Plausible script url
 		<input
 			type="text"

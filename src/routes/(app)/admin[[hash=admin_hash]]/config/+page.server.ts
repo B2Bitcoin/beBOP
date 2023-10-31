@@ -6,6 +6,7 @@ import { CURRENCIES } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { typedKeys } from '$lib/utils/typedKeys.js';
 import { z } from 'zod';
+import { redirect } from '@sveltejs/kit';
 
 export async function load(event) {
 	return {
@@ -25,6 +26,7 @@ export async function load(event) {
 		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN,
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
+		adminHash: runtimeConfig.adminHash,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
 	};
 }
@@ -32,6 +34,7 @@ export async function load(event) {
 export const actions = {
 	default: async function ({ request }) {
 		const formData = await request.formData();
+		const oldAdminHash = runtimeConfig.adminHash;
 
 		const result = z
 			.object({
@@ -61,7 +64,8 @@ export const actions = {
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
 				actionOverwrite: z.enum(['', 'overwrite']).optional(),
 				plausibleScriptUrl: z.string(),
-				collectIPOnDeliverylessOrders: z.boolean({ coerce: true })
+				collectIPOnDeliverylessOrders: z.boolean({ coerce: true }),
+				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)])
 			})
 			.parse(Object.fromEntries(formData));
 
@@ -101,6 +105,10 @@ export const actions = {
 					}
 				);
 			}
+		}
+
+		if (oldAdminHash !== result.adminHash) {
+			throw redirect(303, `/admin${result.adminHash ? `-${result.adminHash}` : ''}/config`);
 		}
 	}
 };

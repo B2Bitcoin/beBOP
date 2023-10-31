@@ -12,6 +12,7 @@ import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
 const defaultConfig = {
+	adminHash: '',
 	isAdminCreated: false,
 	BTC_EUR: 30_000,
 	BTC_CHF: 30_000,
