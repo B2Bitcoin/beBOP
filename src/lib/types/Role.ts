@@ -31,6 +31,7 @@ export const defaultRoleOptions = [
 ];
 
 export function isAllowedOnPage(role: Role, path: string, mode: 'read' | 'write'): boolean {
+	path = path.replace(/^\/admin-[a-zA-Z0-9]+/, '/admin');
 	for (const forbidden of role.permissions.forbidden) {
 		if (forbidden.endsWith('*')) {
 			if (path.startsWith(forbidden.slice(0, -1)) || path === forbidden.replace(/\/?\*$/, '')) {

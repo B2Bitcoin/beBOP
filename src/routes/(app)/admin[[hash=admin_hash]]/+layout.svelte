@@ -14,9 +14,11 @@
 	$: if ($navigating) {
 		navMenuOpen = false;
 	}
+
+	$: isLoginPage = /^\/admin(-[0-9a-zA-Z]+)?\/login/.test($page.url.pathname);
 </script>
 
-{#if !$page.url.pathname.startsWith('/admin/login')}
+{#if !isLoginPage}
 	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
 		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-x-auto">
 			<nav class="flex gap-6 font-light items-center">
@@ -63,7 +65,7 @@
 		</div>
 	</header>
 {/if}
-{#if navMenuOpen && !$page.url.pathname.startsWith('/admin/login')}
+{#if navMenuOpen && !isLoginPage}
 	<nav
 		transition:slide
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"

@@ -5,6 +5,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { CURRENCIES } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { typedKeys } from '$lib/utils/typedKeys.js';
+import { adminPrefix } from '$lib/server/admin';
 import { z } from 'zod';
 import { redirect } from '@sveltejs/kit';
 
@@ -108,7 +109,7 @@ export const actions = {
 		}
 
 		if (oldAdminHash !== result.adminHash) {
-			throw redirect(303, `/admin${result.adminHash ? `-${result.adminHash}` : ''}/config`);
+			throw redirect(303, `${adminPrefix()}/config`);
 		}
 	}
 };
