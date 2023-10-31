@@ -253,11 +253,7 @@ export async function createOrder(
 							  ),
 						currency: 'SAT'
 					},
-					rate: vatRates[vatCountry as keyof typeof vatRates] || 0,
-					...(params.isFreeVat && {
-						isFreeVat: params.isFreeVat,
-						reasonFreeVat: params.reasonFreeVat
-					})
+					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
 			  };
 
 	if (vat && !params.isFreeVat) {
@@ -395,7 +391,12 @@ export async function createOrder(
 					// we also associate the email to the order
 					...(email && { email })
 				},
-				...(params.clientIp && { clientIp: params.clientIp })
+				...(params.clientIp && { clientIp: params.clientIp }),
+				...(params.isFreeVat && {
+					vatFree: {
+						reason: params.reasonFreeVat
+					}
+				})
 			},
 			{ session }
 		);
