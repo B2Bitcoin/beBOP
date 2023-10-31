@@ -255,8 +255,8 @@
 								main
 							/>
 							<PriceTag
-								amount={data.order.discount?.price?.amount}
-								currency={data.order.discount?.price?.currency}
+								amount={data.order.discount.price.amount}
+								currency={data.order.discount.price.currency}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>
