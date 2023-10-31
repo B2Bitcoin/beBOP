@@ -76,6 +76,9 @@ dependencies:
   sharp:
     specifier: ^0.32.0
     version: 0.32.1
+  tinygesture:
+    specifier: ^2.0.0
+    version: 2.0.0
   tinymce:
     specifier: ^6.7.0
     version: 6.7.0
@@ -4286,6 +4289,10 @@ packages:
   /tinybench@2.4.0:
     resolution: {integrity: sha512-iyziEiyFxX4kyxSp+MtY1oCH/lvjH3PxFN8PGCDeqcZWAJ/i+9y+nL85w99PxVzrIvew/GSkSbDYtiGVa85Afg==}
     dev: true
+
+  /tinygesture@2.0.0:
+    resolution: {integrity: sha512-Xhpo6tCvUOyVq7BmJh/WDi+9qFh5AtuUqbKoMG5vpG+PT6JLPGE9D5hl9kZlj1ZqsgHuGb1OrNAXoHh8qIDpjA==}
+    dev: false
 
   /tinymce@6.7.0:
     resolution: {integrity: sha512-Wf2RSobIXQ7XNw3/v4z1lPGiH3Pjsmc/6/7fG28aIS6uVWj/7IhvOPuwfJJDeOx0o0D3nSnoLHgR2KU8JAdE+w==}

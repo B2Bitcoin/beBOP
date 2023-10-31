@@ -1,4 +1,5 @@
 import type { Timestamps } from './Timestamps';
+import type { Slider } from './slider';
 export const TAGTYPES = ['main', 'full', 'wide', 'slim', 'avatar'] as const;
 export type TagType = (typeof TAGTYPES)[number];
 
@@ -16,6 +17,11 @@ export interface Picture extends Timestamps {
 	tag?: {
 		_id: string;
 		type: 'main' | 'full' | 'wide' | 'slim' | 'avatar';
+	};
+	slider?: {
+		_id: Slider['_id'];
+		url?: string;
+		openNewTab?: boolean;
 	};
 	name: string;
 

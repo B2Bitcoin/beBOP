@@ -65,6 +65,10 @@
 		{
 			href: '/admin/tags',
 			label: 'Tags'
+		},
+		{
+			href: '/admin/slider',
+			label: 'Sliders'
 		}
 	];
 	$: if ($navigating) {

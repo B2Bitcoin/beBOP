@@ -2,6 +2,7 @@
 	import type { PageData } from '../../routes/(app)/[slug]/$types';
 	import ProductWidget from './ProductWidget.svelte';
 	import ChallengeWidget from './ChallengeWidget.svelte';
+	import CarouselWidget from './CarouselWidget.svelte';
 
 	export let products: PageData['products'];
 	export let pictures: PageData['pictures'];
@@ -9,6 +10,8 @@
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
 	export let digitalFiles: PageData['digitalFiles'];
+	export let sliders: PageData['sliders'];
+	export let slidersPictures: PageData['slidersPictures'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
@@ -16,6 +19,10 @@
 	$: digitalFilesByProduct = Object.fromEntries(
 		digitalFiles.map((digitalFile) => [digitalFile.productId, digitalFile])
 	);
+	$: sliderById = Object.fromEntries(sliders.map((slider) => [slider._id, slider]));
+	function picturesBySlider(sliderId: string) {
+		return slidersPictures.filter((picture) => picture.slider?._id === sliderId);
+	}
 </script>
 
 <svelte:head>
@@ -36,6 +43,8 @@
 				/>
 			{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 				<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
+			{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
+				<CarouselWidget pictures={picturesBySlider(token.slug)} />
 			{:else}
 				{@html token.raw}
 			{/if}
@@ -56,6 +65,8 @@
 						/>
 					{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 						<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
+					{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
+						<CarouselWidget pictures={picturesBySlider(token.slug)} />
 					{:else}
 						{@html token.raw}
 					{/if}
