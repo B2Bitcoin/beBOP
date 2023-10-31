@@ -1,9 +1,9 @@
 <script lang="ts">
 	export let data;
 
-	let minAmount: number = data.existingThresholds.minAmount;
-	let maxAmount: number = data.existingThresholds.maxAmount;
-	let confirmationBlocks: number = data.existingThresholds.confirmationBlocks;
+	let minAmount: number = data.existingThreshold.minAmount;
+	let maxAmount: number = data.existingThreshold.maxAmount;
+	let confirmationBlocks: number = data.existingThreshold.confirmationBlocks;
 </script>
 
 <h1 class="text-3xl">Edit confirmation threshold</h1>
