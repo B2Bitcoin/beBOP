@@ -77,13 +77,13 @@ export interface Order extends Timestamps {
 	lastPaymentStatusNotified?: OrderPaymentStatus;
 
 	discount?: {
-		justification?: string;
-		type?: 'fiat' | 'percentage';
-		price?: {
+		justification: string;
+		type: 'fiat' | 'percentage';
+		price: {
 			amount: number;
 			currency: Currency;
 		};
-		referencePrice?: {
+		referencePrice: {
 			amount: number;
 			currency: Currency;
 		};

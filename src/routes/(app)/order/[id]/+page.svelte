@@ -250,13 +250,13 @@
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
 								class="text-2xl text-gray-800 truncate"
-								amount={data.order.discount?.price?.amount ?? 0}
-								currency={data.order.discount?.price?.currency ?? 'EUR'}
+								amount={data.order.discount.price.amount}
+								currency={data.order.discount.price.currency}
 								main
 							/>
 							<PriceTag
-								amount={data.order.discount?.price?.amount ?? 0}
-								currency={data.order.discount?.price?.currency ?? 'EUR'}
+								amount={data.order.discount?.price?.amount}
+								currency={data.order.discount?.price?.currency}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>

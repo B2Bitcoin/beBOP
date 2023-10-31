@@ -101,6 +101,10 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData));
 
+		if (discountAmount && (!discountType || !discountJustification)) {
+			throw error(400, 'Discount type and justification are required');
+		}
+
 		const collectIP = z
 			.object({
 				allowCollectIP: z.boolean({ coerce: true }).default(false)
@@ -134,13 +138,16 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				...(locals.user?.role === POS_ROLE_ID && {
-					discount: {
-						amount: discountAmount,
-						type: discountType,
-						justification: discountJustification
-					}
-				}),
+				...(locals.user?.role === POS_ROLE_ID &&
+					discountAmount &&
+					discountType &&
+					discountJustification && {
+						discount: {
+							amount: discountAmount,
+							type: discountType,
+							justification: discountJustification
+						}
+					}),
 				...(collectIP.allowCollectIP && { clientIp: locals.clientIp })
 			}
 		);

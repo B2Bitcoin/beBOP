@@ -170,9 +170,9 @@ export async function createOrder(
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
 		discount?: {
-			amount?: number;
-			type?: 'fiat' | 'percentage';
-			justification?: string;
+			amount: number;
+			type: 'fiat' | 'percentage';
+			justification: string;
 		};
 		clientIp?: string;
 	}
@@ -441,7 +441,7 @@ export async function createOrder(
 							amount: amount,
 							currency: 'SAT'
 						},
-						justification: params?.discount?.justification,
+						justification: params.discount.justification,
 						type: params.discount.type
 					}
 				}),
