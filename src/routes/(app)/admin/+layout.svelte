@@ -28,7 +28,7 @@
 					<IconMenu />
 				</button>
 				<span class="font-bold text-xl flex items-center gap-2">
-					Admin
+					<a class="hover:underline" href="/admin">Admin</a>
 
 					<form action="/admin/logout" method="post" class="contents">
 						<button type="submit">

@@ -193,6 +193,10 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 				['get', 'head', 'options'].includes(method) ? 'read' : 'write'
 			)
 		) {
+			if (method === 'get' || method === 'head') {
+				throw redirect(303, '/admin');
+			}
+
 			throw error(403, 'You are not allowed to access this page.');
 		}
 	}
