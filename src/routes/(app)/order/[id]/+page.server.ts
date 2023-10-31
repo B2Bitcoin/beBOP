@@ -69,7 +69,8 @@ export async function load({ params, depends }) {
 				rate: order.vat.rate
 			},
 			shippingAddress: order.shippingAddress,
-			notifications: order.notifications
+			notifications: order.notifications,
+			discount: order.discount
 		},
 
 		digitalFiles: await Promise.all(

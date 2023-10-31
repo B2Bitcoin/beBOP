@@ -17,11 +17,14 @@
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
+	import { POS_ROLE_ID } from '$lib/types/User.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
 
 	export let data;
+
+	let addDiscount = false;
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: 'Payment status' }
@@ -443,6 +446,50 @@
 						</a>
 					</span>
 				</label>
+
+				{#if data.roleId === POS_ROLE_ID}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							bind:checked={addDiscount}
+							name="addDiscount"
+							form="checkout"
+						/>
+						<span>
+							As a POS user I apply a <a
+								href="/gift-discount"
+								target="_blank"
+								class="text-link hover:underline"
+							>
+								gift discount
+							</a>
+						</span>
+					</label>
+				{/if}
+
+				{#if addDiscount}
+					<input
+						type="number"
+						class="form-input"
+						name="discountAmount"
+						placeholder="Ex: 10"
+						form="checkout"
+						step="any"
+						required
+					/>
+
+					<select name="discountType" class="form-input" form="checkout" required>
+						<option value="fiat">{data.currencies.main}</option>
+						<option value="percentage">%</option>
+					</select>
+
+					<label class="form-label col-span-3">
+						Justification
+						<input type="text" class="form-input" form="checkout" name="discountJustification" />
+					</label>
+				{/if}
+
 				{#if data.collectIPOnDeliverylessOrders && isDigital}
 					<label class="checkbox-label">
 						<input
