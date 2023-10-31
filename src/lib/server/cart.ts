@@ -56,9 +56,9 @@ export async function addToCartInDb(
 	params: { user: UserIdentifier; totalQuantity?: boolean; customAmount?: number }
 ) {
 	if (
-		params.user.userRoleId === POS_ROLE_ID ?
-			!product.actionSettings?.retail?.canBeAddedToBasket :
-		!product.actionSettings?.eShop?.canBeAddedToBasket
+		params.user.userRoleId === POS_ROLE_ID
+			? !product.actionSettings?.retail?.canBeAddedToBasket
+			: !product.actionSettings?.eShop?.canBeAddedToBasket
 	) {
 		throw error(400, "Product can't be added to basket");
 	}
