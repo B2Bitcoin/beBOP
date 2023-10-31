@@ -7,6 +7,7 @@ import { currencies } from '$lib/stores/currencies';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
 import { createSuperAdminUserInDb } from './user';
 import { runMigrations } from './migrations';
+import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
 const defaultConfig = {
@@ -32,6 +33,7 @@ const defaultConfig = {
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	reserveStockInMinutes: 20,
 	confirmationBlocks: 1,
+	confirmationBlocksThresholds: [] as ConfirmationThresholds[],
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logoPictureId: '',
