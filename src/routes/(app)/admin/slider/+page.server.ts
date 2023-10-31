@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 
-export const load = async ({}) => {
+export const load = async () => {
 	const sliders = await collections.sliders.find({}).toArray();
 	return {
 		sliders

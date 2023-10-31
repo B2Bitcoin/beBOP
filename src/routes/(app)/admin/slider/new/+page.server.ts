@@ -1,20 +1,11 @@
-import { collections, withTransaction } from '$lib/server/database';
+import { collections } from '$lib/server/database';
 import { generatePicture } from '$lib/server/picture';
 import type { Actions } from './$types';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import { ObjectId } from 'mongodb';
-import { ORIGIN, S3_BUCKET } from '$env/static/private';
-import { runtimeConfig } from '$lib/server/runtime-config';
-import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
-import { Kind } from 'nostr-tools';
-import { parsePriceAmount } from '$lib/types/Currency';
-import { getS3DownloadLink, s3ProductPrefix, s3client } from '$lib/server/s3';
-import type { JsonObject } from 'type-fest';
-import { set } from 'lodash-es';
-import { generateId } from '$lib/utils/generateId';
-import { CopyObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
-import type { Tag } from '$lib/types/Tag';
+import { S3_BUCKET } from '$env/static/private';
+import { MAX_NAME_LIMIT } from '$lib/types/Product';
+import { getS3DownloadLink, s3client } from '$lib/server/s3';
 
 export const load = async () => {};
 

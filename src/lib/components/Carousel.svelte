@@ -19,7 +19,7 @@
 		dots = carouselContent.children.length;
 
 		for (let i = 0; i < dots; i++) {
-			carouselContent.children.item(i)?.addEventListener('click', (item) => (currentIndex = i));
+			carouselContent.children.item(i)?.addEventListener('click', () => (currentIndex = i));
 		}
 
 		// So the dots have time to populate
