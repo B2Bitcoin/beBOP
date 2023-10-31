@@ -208,7 +208,12 @@
 			class="form-input max-w-[25rem]"
 			value={data.confirmationBlocks}
 		/>
+		<a href="/admin/config/confirmation-threshold" class="underline"
+			>Manage confirmation thresholds</a
+		>
+		<p class="text-sm">You can set a different number of confirmations for different amounts.</p>
 	</label>
+
 	<label class="form-label">
 		Set desired timeout for payment (in minutes)
 		<input
