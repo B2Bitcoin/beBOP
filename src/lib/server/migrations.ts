@@ -26,31 +26,27 @@ const migrations = [
 		_id: new ObjectId('39811201e92e590e858af8ba'),
 		name: 'Adding actionSettings to products',
 		run: async (session: ClientSession) => {
-			for await (const product of await collections.products.find()) {
-				await collections.products.updateOne(
-					{
-						_id: product._id
-					},
-					{
-						$set: {
-							actionSettings: {
-								eShop: {
-									visible: true,
-									canBeAddedToBasket: true
-								},
-								retail: {
-									visible: true,
-									canBeAddedToBasket: true
-								},
-								googleShopping: {
-									visible: true
-								}
+			await collections.products.updateMany(
+				{},
+				{
+					$set: {
+						actionSettings: {
+							eShop: {
+								visible: true,
+								canBeAddedToBasket: true
+							},
+							retail: {
+								visible: true,
+								canBeAddedToBasket: true
+							},
+							googleShopping: {
+								visible: true
 							}
 						}
-					},
-					{ session }
-				);
-			}
+					}
+				},
+				{ session }
+			);
 		}
 	},
 	{
