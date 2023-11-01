@@ -5,6 +5,7 @@
 	import PriceTag from './PriceTag.svelte';
 	import ProductType from './ProductType.svelte';
 	import AddToCart from './AddToCart.svelte';
+	import { POS_ROLE_ID } from '$lib/types/User';
 
 	export let picture: Picture | undefined;
 	export let product: Pick<
@@ -17,8 +18,10 @@
 		| 'availableDate'
 		| 'shipping'
 		| 'type'
+		| 'actionSettings'
 	>;
 	export let hasDigitalFiles: boolean;
+	export let canBuy: boolean;
 
 	let className = '';
 	export { className as class };
@@ -69,7 +72,7 @@
 				</a>
 			{/if}
 
-			{#if canAddToCart}
+			{#if canAddToCart && canBuy}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>
@@ -115,7 +118,7 @@
 					{product.shortDescription}
 				</p>
 			</a>
-			{#if canAddToCart}
+			{#if canAddToCart && canBuy}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>
@@ -148,7 +151,7 @@
 					{product.shortDescription}
 				</p>
 			</a>
-			{#if canAddToCart}
+			{#if canAddToCart && canBuy}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>
@@ -204,7 +207,7 @@
 				</div>
 			</div>
 
-			{#if canAddToCart}
+			{#if canAddToCart && canBuy}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>
@@ -246,7 +249,7 @@
 					{product.shortDescription}
 				</p>
 			</a>
-			{#if canAddToCart}
+			{#if canAddToCart && canBuy}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>

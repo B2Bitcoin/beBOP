@@ -7,13 +7,14 @@ import type { Challenge } from '$lib/types/Challenge';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import { trimSuffix } from '$lib/utils/trimSuffix.js';
 import { trimPrefix } from '$lib/utils/trimPrefix.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
 
 const PRODUCT_WIDGET_REGEX =
 	/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
 
 const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
 
-export async function load({ params }) {
+export async function load({ params, locals }) {
 	const cmsPage = await collections.cmsPages.findOne({
 		_id: params.slug
 	});
@@ -88,9 +89,15 @@ export async function load({ params }) {
 		raw: trimPrefix(cmsPage.content.slice(index), '</p>')
 	});
 
+	const query =
+		locals?.user?.role === POS_ROLE_ID
+			? { 'actionSettings.retail.visible': true }
+			: { 'actionSettings.eShop.visible': true };
+
 	const products = await collections.products
 		.find({
-			_id: { $in: [...productSlugs] }
+			_id: { $in: [...productSlugs] },
+			...query
 		})
 		.project<
 			Pick<
@@ -103,6 +110,7 @@ export async function load({ params }) {
 				| 'availableDate'
 				| 'type'
 				| 'shipping'
+				| 'actionSettings'
 			>
 		>({
 			price: 1,
@@ -111,7 +119,8 @@ export async function load({ params }) {
 			name: 1,
 			availableDate: 1,
 			type: 1,
-			shipping: 1
+			shipping: 1,
+			actionSettings: 1
 		})
 		.toArray();
 
