@@ -240,7 +240,7 @@ export async function createOrder(
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
-		!vatCountry || runtimeConfig.vatExempted
+		!vatCountry || runtimeConfig.vatExempted || params.isFreeVat
 			? undefined
 			: {
 					country: vatCountry,
@@ -256,7 +256,7 @@ export async function createOrder(
 					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
 			  };
 
-	if (vat && !params.isFreeVat) {
+	if (vat) {
 		totalSatoshis += vat.price.amount;
 	}
 

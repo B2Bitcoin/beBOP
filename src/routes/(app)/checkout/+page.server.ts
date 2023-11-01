@@ -10,6 +10,7 @@ import { vatRates } from '$lib/server/vat-rates';
 import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier } from '$lib/server/user.js';
 import { zodNpub } from '$lib/server/nostr.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -97,12 +98,34 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(formData)).paymentMethod;
 
-		const { isFreeVat, reasonFreeVat } = z
-			.object({
-				isFreeVat: z.coerce.boolean().optional(),
-				reasonFreeVat: z.string().optional()
-			})
-			.parse(Object.fromEntries(formData));
+		let isFreeVat, reasonFreeVat;
+
+		if (locals.user?.role === POS_ROLE_ID) {
+			const vatDetails = z
+				.object({
+					isFreeVat: z.coerce.boolean().optional(),
+					reasonFreeVat: z.string().optional()
+				})
+				.refine(
+					(data) => {
+						if (
+							(data.isFreeVat !== undefined && data.reasonFreeVat === undefined) ||
+							(data.isFreeVat === undefined && data.reasonFreeVat !== undefined)
+						) {
+							return false;
+						}
+						return true;
+					},
+					{
+						message: "Both 'isFreeVat' and 'reasonFreeVat' need to be provided if one is defined",
+						path: []
+					}
+				)
+				.parse(Object.fromEntries(formData));
+
+			isFreeVat = vatDetails.isFreeVat;
+			reasonFreeVat = vatDetails.reasonFreeVat;
+		}
 
 		const collectIP = z
 			.object({
