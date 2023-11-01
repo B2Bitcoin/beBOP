@@ -73,11 +73,9 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	const admin = adminPrefix();
 
 	const isAdminUrl =
-		event.url.pathname.startsWith(`${admin}/`) &&
+		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
 		!(
-			event.url.pathname.startsWith(`${admin}/login/`) ||
-			event.url.pathname === `${admin}/login` ||
-			event.url.pathname === `${admin}/logout`
+			/^\/admin(-[a-zA-Z0-9]+)?\/(login|logout)(\/|$)/.test(event.url.pathname) // Allow login/logout
 		);
 
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
@@ -169,7 +167,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		event.locals.sso = session.sso;
 	}
 	if (
-		/^\/admin-[a-zA-Z0-9+](\/|$)/.test(event.url.pathname) &&
+		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
 		!event.url.pathname.startsWith(admin)
 	) {
 		if (!event.locals.user || event.locals.user.role === CUSTOMER_ROLE_ID) {

@@ -1,4 +1,5 @@
 import type { Timestamps } from './Timestamps';
+import { CUSTOMER_ROLE_ID } from './User';
 
 export interface Role extends Timestamps {
 	_id: string;
@@ -32,6 +33,9 @@ export const defaultRoleOptions = [
 
 export function isAllowedOnPage(role: Role, path: string, mode: 'read' | 'write'): boolean {
 	path = path.replace(/^\/admin-[a-zA-Z0-9]+/, '/admin');
+	if (path === '/admin' && role._id !== CUSTOMER_ROLE_ID) {
+		return true;
+	}
 	for (const forbidden of role.permissions.forbidden) {
 		if (forbidden.endsWith('*')) {
 			if (path.startsWith(forbidden.slice(0, -1)) || path === forbidden.replace(/\/?\*$/, '')) {
