@@ -1,4 +1,4 @@
-import type { Order } from '$lib/types/Order';
+import type { DiscountType, Order } from '$lib/types/Order';
 import { ObjectId, type ClientSession, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
@@ -171,7 +171,7 @@ export async function createOrder(
 		shippingAddress: Order['shippingAddress'] | null;
 		discount?: {
 			amount: number;
-			type: 'fiat' | 'percentage';
+			type: DiscountType;
 			justification: string;
 		};
 		clientIp?: string;

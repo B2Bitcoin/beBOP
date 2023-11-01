@@ -18,6 +18,8 @@
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { POS_ROLE_ID } from '$lib/types/User.js';
+	import { toSatoshis } from '$lib/utils/toSatoshis';
+	import type { DiscountType } from '$lib/types/Order.js';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -25,6 +27,8 @@
 	export let data;
 
 	let addDiscount = false;
+	let discountAmount: number;
+	let discountType: DiscountType;
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: 'Payment status' }
@@ -100,6 +104,10 @@
 	$: vat = fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 	$: totalSatoshi = toCurrency('SAT', totalPriceWithVat, UNDERLYING_CURRENCY);
+	$: isDiscountValid =
+		(discountType === 'fiat' &&
+			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
+		(discountType === 'percentage' && discountAmount < 100);
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -476,13 +484,25 @@
 						placeholder="Ex: 10"
 						form="checkout"
 						step="any"
+						bind:value={discountAmount}
+						min="0"
 						required
 					/>
 
-					<select name="discountType" class="form-input" form="checkout" required>
+					<select
+						name="discountType"
+						bind:value={discountType}
+						class="form-input"
+						form="checkout"
+						required
+					>
 						<option value="fiat">{data.currencies.main}</option>
 						<option value="percentage">%</option>
 					</select>
+
+					{#if discountAmount && !isDiscountValid}
+						<p class="text-sm text-red-600">Discount is not valid!</p>
+					{/if}
 
 					<label class="form-label col-span-3">
 						Justification
@@ -514,7 +534,7 @@
 					class="btn btn-black btn-xl -mx-1 -mb-1 mt-1"
 					value="Proceed"
 					form="checkout"
-					disabled={isNaN(deliveryFees)}
+					disabled={isNaN(deliveryFees) || (addDiscount && !isDiscountValid)}
 				/>
 			</article>
 		</div>
