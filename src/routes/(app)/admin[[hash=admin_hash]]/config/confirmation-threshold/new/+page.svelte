@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { CURRENCIES } from '$lib/types/Currency';
+
 	let minAmount: number;
 	let confirmationBlocks: number;
 </script>
@@ -29,6 +31,14 @@
 			step="any"
 			required
 		/>
+	</label>
+	<label class="form-label">
+		Currency
+		<select name="currency" class="form-input max-w-[25rem]">
+			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
+				<option value={currency}>{currency}</option>
+			{/each}
+		</select>
 	</label>
 	<label class="w-full">
 		Confirmation blocks

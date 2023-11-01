@@ -6,6 +6,8 @@ import { error, redirect } from '@sveltejs/kit';
 import type { WithId } from 'mongodb';
 import { runtimeConfig, type RuntimeConfigItem } from '$lib/server/runtime-config.js';
 import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds.js';
+import { CURRENCIES } from '$lib/types/Currency';
+import { toSatoshis } from '$lib/utils/toSatoshis.js';
 
 export const load = async ({ params }) => {
 	const existingThreshold = runtimeConfig.confirmationBlocksThresholds.find(
@@ -30,10 +32,11 @@ export const actions = {
 			set(json, key, value);
 		}
 
-		const { minAmount, maxAmount, confirmationBlocks } = z
+		const { minAmount, maxAmount, currency, confirmationBlocks } = z
 			.object({
 				minAmount: z.number({ coerce: true }),
 				maxAmount: z.number({ coerce: true }),
+				currency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT')]),
 				confirmationBlocks: z.number({ coerce: true })
 			})
 			.parse(json);
@@ -45,12 +48,19 @@ export const actions = {
 				continue;
 			}
 
-			if (
-				(minAmount >= threshold.minAmount && minAmount <= threshold.maxAmount) ||
-				(maxAmount >= threshold.minAmount && maxAmount <= threshold.maxAmount) ||
-				(minAmount < threshold.minAmount && maxAmount > threshold.maxAmount)
-			) {
-				throw error(400, 'threshold already exist!');
+			for (const threshold of runtimeConfig.confirmationBlocksThresholds) {
+				const minAmountToSat = toSatoshis(minAmount, currency);
+				const maxAmountToSat = toSatoshis(maxAmount, currency);
+				const minThresholdAmountToSat = toSatoshis(threshold.minAmount, threshold.currency);
+				const maxThresholdAmountToSat = toSatoshis(threshold.maxAmount, threshold.currency);
+
+				if (
+					(minAmountToSat >= minThresholdAmountToSat && minAmountToSat < maxThresholdAmountToSat) ||
+					(maxAmountToSat > minThresholdAmountToSat && maxAmountToSat < maxThresholdAmountToSat) ||
+					(minAmountToSat <= minThresholdAmountToSat && maxAmountToSat >= maxThresholdAmountToSat)
+				) {
+					throw error(400, 'threshold already exist!');
+				}
 			}
 		}
 
@@ -62,6 +72,7 @@ export const actions = {
 
 		thresholdToUpdate.minAmount = minAmount;
 		thresholdToUpdate.maxAmount = maxAmount;
+		thresholdToUpdate.currency = currency;
 		thresholdToUpdate.confirmationBlocks = confirmationBlocks;
 
 		await collections.runtimeConfig.updateOne(
