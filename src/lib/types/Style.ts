@@ -343,3 +343,18 @@ export const styleFormStructure = {
 		]
 	}
 };
+
+export const systemFonts = [
+	'Arial',
+	'Verdana',
+	'Helvetica',
+	'Tahoma',
+	'Trebuchet MS',
+	'Times New Roman',
+	'Georgia',
+	'Garamond',
+	'Courier New',
+	'Brush Script MT'
+];
+
+export type StyleFormStructure = typeof styleFormStructure;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { styleFormStructure } from '$lib/types/Style.js';
+	import { styleFormStructure, systemFonts } from '$lib/types/Style.js';
 </script>
 
 <h1 class="text-3xl">Create a new theme</h1>
@@ -38,14 +38,16 @@
 			{:else}
 				<label class="form-label">
 					{field.label}
-					<input
+					<select
 						class="form-input"
-						type="text"
 						name={`${section}_${field.name}`}
 						placeholder={field.placeholder}
 						required
-						value="Arial"
-					/>
+					>
+						{#each systemFonts as font}
+							<option value={font}>{font}</option>
+						{/each}
+					</select>
 				</label>
 			{/if}
 		{/each}

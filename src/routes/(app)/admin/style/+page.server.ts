@@ -1,5 +1,6 @@
 import { collections } from '$lib/server/database';
 import type { Style } from '$lib/types/Style';
+import { z } from 'zod';
 
 export const load = async () => {
 	const styles = await collections.styles
@@ -10,4 +11,22 @@ export const load = async () => {
 	return {
 		styles
 	};
+};
+
+export const actions = {
+	default: async function ({ request }) {
+		const formData = await request.formData();
+
+		const { mainTheme } = z
+			.object({
+				mainTheme: z.string()
+			})
+			.parse(Object.fromEntries(formData));
+
+		await collections.runtimeConfig.updateOne(
+			{ _id: 'mainThemeId' },
+			{ $set: { data: mainTheme, updatedAt: new Date() } },
+			{ upsert: true }
+		);
+	}
 };

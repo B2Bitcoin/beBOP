@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { styleFormStructure } from '$lib/types/Style.js';
+	import { styleFormStructure, systemFonts } from '$lib/types/Style.js';
 
 	export let data;
 	const style = data.style;
@@ -25,7 +25,7 @@
 	}
 </script>
 
-<h1 class="text-3xl">Create a new theme</h1>
+<h1 class="text-3xl">Edit theme</h1>
 
 <form method="post" class="flex flex-col gap-4">
 	<label class="form-label">
@@ -61,14 +61,17 @@
 			{:else}
 				<label class="form-label">
 					{field.label}
-					<input
+					<select
 						class="form-input"
-						type="text"
 						name={`${section}_${field.name}`}
 						placeholder={field.placeholder}
-						required
 						bind:value={formData[section][field.name]}
-					/>
+						required
+					>
+						{#each systemFonts as font}
+							<option value={font}>{font}</option>
+						{/each}
+					</select>
 				</label>
 			{/if}
 		{/each}

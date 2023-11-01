@@ -1,9 +1,9 @@
 import type { Actions } from './$types';
 import { redirect } from '@sveltejs/kit';
-import { z } from 'zod';
+import { ZodString, z } from 'zod';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
-import { styleFormStructure, type Style } from '$lib/types/Style';
+import { styleFormStructure, type Style, type StyleFormStructure } from '$lib/types/Style';
 import { collections } from '$lib/server/database';
 
 export const load = async () => {};
@@ -29,8 +29,8 @@ export const actions: Actions = {
 	}
 };
 
-const createZodSchemaFromStructure = (structure) => {
-	const schema = {
+const createZodSchemaFromStructure = (structure: StyleFormStructure) => {
+	const schema: { [key: string]: ZodString } = {
 		name: z.string()
 	};
 
@@ -51,7 +51,7 @@ const createZodSchemaFromStructure = (structure) => {
 	return z.object(schema);
 };
 
-function transformToStyle(data: any): Style {
+function transformToStyle(data: { [key: string]: string }): Style {
 	const result = {
 		_id: crypto.randomUUID(),
 		name: data.name

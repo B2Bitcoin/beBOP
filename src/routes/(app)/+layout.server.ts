@@ -33,6 +33,8 @@ export async function load(params) {
 		? await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId })
 		: null;
 
+	const theme = await collections.styles.findOne({ _id: runtimeConfig.mainThemeId });
+
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
 		vatExempted: runtimeConfig.vatExempted,
@@ -138,6 +140,7 @@ export async function load(params) {
 						}
 					})
 			  ).then((res) => filterUndef(res))
-			: null
+			: null,
+		...(theme && { theme })
 	};
 }
