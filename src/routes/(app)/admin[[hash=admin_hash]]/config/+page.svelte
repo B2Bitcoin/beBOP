@@ -1,24 +1,28 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import IconRefresh from '$lib/components/icons/IconRefresh.svelte';
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
 
 	export let data;
+	export let form;
 
 	let vatExempted = data.vatExempted;
 	let vatSingleCountry = data.vatSingleCountry;
-	let actionForm: HTMLInputElement;
+	let priceReferenceCurrency = data.currencies.priceReference;
 
 	async function onOverwrite(event: Event) {
-		actionForm.value = 'overwrite';
 		if (!confirm('Do you want to overwrite current product currencies with this one?')) {
 			event.preventDefault();
-			actionForm.value = '';
 		}
 	}
 </script>
 
 <h1 class="text-3xl">Config</h1>
+
+{#if form?.success}
+	<div class="alert alert-success">{form.success}</div>
+{/if}
 
 <a href="/admin/config/delivery" class="underline">Deliver fees</a>
 
@@ -28,7 +32,11 @@
 	Exchange Rate: <pre>{JSON.stringify(data.exchangeRate, null, 2)}</pre>
 </div>
 
-<form method="post" class="flex flex-col gap-6">
+<form method="post" id="overwrite" action="?/overwriteCurrency" on:submit={onOverwrite} use:enhance>
+	<input type="hidden" value={priceReferenceCurrency} name="priceReferenceCurrency" />
+</form>
+
+<form method="post" action="?/update" class="flex flex-col gap-6">
 	<label class="form-label">
 		Main currency
 		<select name="mainCurrency" class="form-input max-w-[25rem]">
@@ -53,15 +61,18 @@
 	<label class="form-label">
 		Price reference currency (to avoid exchange rate fluctuations)
 		<div class="flex gap-2">
-			<select name="priceReferenceCurrency" class="form-input max-w-[25rem]">
+			<select
+				name="priceReferenceCurrency"
+				bind:value={priceReferenceCurrency}
+				class="form-input max-w-[25rem]"
+			>
 				{#each CURRENCIES as currency}
-					<option value={currency} selected={data.currencies.priceReference === currency}>
+					<option value={currency}>
 						{currency}
 					</option>
 				{/each}
 			</select>
-			<input type="hidden" name="actionOverwrite" bind:this={actionForm} />
-			<button type="submit" class="btn btn-red self-start" on:click={onOverwrite}>
+			<button type="submit" class="btn btn-red self-start" form="overwrite">
 				<IconRefresh />
 			</button>
 		</div>
