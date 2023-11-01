@@ -106,25 +106,14 @@ export const actions = {
 					isFreeVat: z.coerce.boolean().optional(),
 					reasonFreeVat: z.string().optional()
 				})
-				.refine(
-					(data) => {
-						if (
-							(data.isFreeVat !== undefined && data.reasonFreeVat === undefined) ||
-							(data.isFreeVat === undefined && data.reasonFreeVat !== undefined)
-						) {
-							return false;
-						}
-						return true;
-					},
-					{
-						message: "Both 'isFreeVat' and 'reasonFreeVat' need to be provided if one is defined",
-						path: []
-					}
-				)
 				.parse(Object.fromEntries(formData));
 
 			isFreeVat = vatDetails.isFreeVat;
 			reasonFreeVat = vatDetails.reasonFreeVat;
+		}
+
+		if (isFreeVat && !reasonFreeVat) {
+			throw error(400, 'Reason for free VAT is required');
 		}
 
 		const collectIP = z
@@ -155,8 +144,7 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				isFreeVat,
-				reasonFreeVat,
+				...(isFreeVat && { reasonFreeVat }),
 				...(collectIP.allowCollectIP && { clientIp: locals.clientIp })
 			}
 		);

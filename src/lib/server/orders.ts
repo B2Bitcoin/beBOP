@@ -166,7 +166,6 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
-		isFreeVat?: boolean;
 		reasonFreeVat?: string;
 		clientIp?: string;
 	}
@@ -240,12 +239,12 @@ export async function createOrder(
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
-		!vatCountry || runtimeConfig.vatExempted || params.isFreeVat
+		!vatCountry || runtimeConfig.vatExempted || params.reasonFreeVat
 			? undefined
 			: {
 					country: vatCountry,
 					price: {
-						amount: params.isFreeVat
+						amount: params.reasonFreeVat
 							? 0
 							: fixCurrencyRounding(
 									totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
@@ -392,7 +391,7 @@ export async function createOrder(
 					...(email && { email })
 				},
 				...(params.clientIp && { clientIp: params.clientIp }),
-				...(params.isFreeVat && {
+				...(params.reasonFreeVat && {
 					vatFree: {
 						reason: params.reasonFreeVat
 					}

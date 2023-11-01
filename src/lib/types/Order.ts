@@ -45,7 +45,7 @@ export interface Order extends Timestamps {
 	};
 
 	vatFree?: {
-		reason?: string;
+		reason: string;
 	};
 
 	totalPrice: {
