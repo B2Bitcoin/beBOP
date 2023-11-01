@@ -5,7 +5,6 @@
 	import PriceTag from './PriceTag.svelte';
 	import ProductType from './ProductType.svelte';
 	import AddToCart from './AddToCart.svelte';
-	import { POS_ROLE_ID } from '$lib/types/User';
 
 	export let picture: Picture | undefined;
 	export let product: Pick<
