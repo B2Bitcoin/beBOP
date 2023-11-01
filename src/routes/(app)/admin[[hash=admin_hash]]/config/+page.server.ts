@@ -5,7 +5,9 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { CURRENCIES } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { typedKeys } from '$lib/utils/typedKeys.js';
+import { adminPrefix } from '$lib/server/admin';
 import { z } from 'zod';
+import { redirect } from '@sveltejs/kit';
 
 export async function load(event) {
 	return {
@@ -25,13 +27,15 @@ export async function load(event) {
 		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN,
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
+		adminHash: runtimeConfig.adminHash,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
 	};
 }
 
 export const actions = {
-	default: async function ({ request }) {
+	update: async function ({ request }) {
 		const formData = await request.formData();
+		const oldAdminHash = runtimeConfig.adminHash;
 
 		const result = z
 			.object({
@@ -59,13 +63,13 @@ export const actions = {
 				confirmationBlocks: z.number({ coerce: true }).int().min(0),
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
-				actionOverwrite: z.enum(['', 'overwrite']).optional(),
 				plausibleScriptUrl: z.string(),
-				collectIPOnDeliverylessOrders: z.boolean({ coerce: true })
+				collectIPOnDeliverylessOrders: z.boolean({ coerce: true }),
+				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)])
 			})
 			.parse(Object.fromEntries(formData));
 
-		const { actionOverwrite, ...runtimeConfigUpdates } = {
+		const { ...runtimeConfigUpdates } = {
 			...result,
 			secondaryCurrency: result.secondaryCurrency || null
 		};
@@ -81,26 +85,53 @@ export const actions = {
 			}
 		}
 
-		if (actionOverwrite === 'overwrite') {
-			const products = await collections.products.find({}).toArray();
-			const currency = result.priceReferenceCurrency;
-
-			for (const product of products) {
-				const priceAmount = toCurrency(currency, product.price.amount, product.price.currency);
-
-				await collections.products.updateOne(
-					{ _id: product._id },
-					{
-						$set: {
-							price: {
-								amount: priceAmount,
-								currency
-							},
-							updatedAt: new Date()
-						}
-					}
-				);
-			}
+		if (oldAdminHash !== result.adminHash) {
+			throw redirect(303, `${adminPrefix()}/config`);
 		}
+
+		// return {
+		// 	success: 'Configuration updated.'
+		// };
+	},
+	overwriteCurrency: async function ({ request }) {
+		const formData = await request.formData();
+		const { priceReferenceCurrency } = z
+			.object({
+				priceReferenceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)])
+			})
+			.parse(Object.fromEntries(formData));
+
+		const products = await collections.products.find({}).toArray();
+		const currency = priceReferenceCurrency;
+
+		if (runtimeConfig.priceReferenceCurrency !== currency) {
+			runtimeConfig.priceReferenceCurrency = currency;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'priceReferenceCurrency' },
+				{ $set: { data: currency, updatedAt: new Date() } },
+				{ upsert: true }
+			);
+		}
+
+		for (const product of products) {
+			const priceAmount = toCurrency(currency, product.price.amount, product.price.currency);
+
+			await collections.products.updateOne(
+				{ _id: product._id },
+				{
+					$set: {
+						price: {
+							amount: priceAmount,
+							currency
+						},
+						updatedAt: new Date()
+					}
+				}
+			);
+		}
+
+		return {
+			success: 'Price reference currency updated to ' + currency + ' and all prices recalculated.'
+		};
 	}
 };
