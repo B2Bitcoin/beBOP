@@ -150,7 +150,7 @@ export const actions = {
 		await collections.sessions.deleteOne({ sessionId: event.locals.sessionId });
 
 		event.locals.sessionId = crypto.randomUUID();
-		event.cookies.delete('bootik-session', {
+		event.cookies.delete('bootik-session2', {
 			path: '/'
 		});
 	}
