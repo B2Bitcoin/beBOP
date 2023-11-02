@@ -78,7 +78,7 @@
 	</div>
 
 	<div
-		style="height: 1rem; margin: 2rem"
+		style="height: 1rem; margin: 1rem"
 		class="flex justify-center carousel-dots"
 		bind:this={carouselDots}
 	>

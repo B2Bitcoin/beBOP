@@ -6,7 +6,7 @@
 	export let pictures: Picture[];
 </script>
 
-<Carousel class="w-full mt-4 h-[36rem] ">
+<Carousel class="w-full">
 	{#each pictures as picture}
 		<div class="w-full h-full flex items-center justify-around">
 			<a
