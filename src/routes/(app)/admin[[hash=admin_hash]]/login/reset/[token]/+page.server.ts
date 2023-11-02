@@ -43,7 +43,7 @@ export const actions = {
 				'passwordReset.token': params.token,
 				roleId: { $ne: CUSTOMER_ROLE_ID }
 			},
-			{ $set: { password: passwordBcrypt } }
+			{ $set: { password: passwordBcrypt }, $unset: { passwordReset: '' } }
 		);
 		if (updateResult.matchedCount) {
 			return { success: true };

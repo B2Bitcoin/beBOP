@@ -4,7 +4,7 @@ import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 import { SvelteKitAuth } from '@auth/sveltekit';
-
+import { adminPrefix } from '$lib/server/admin';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
@@ -70,12 +70,12 @@ export const handleError = (({ error, event }) => {
 const handleGlobal: Handle = async ({ event, resolve }) => {
 	event.locals.countryCode = countryFromIp(event.getClientAddress());
 
+	const admin = adminPrefix();
+
 	const isAdminUrl =
-		event.url.pathname.startsWith('/admin/') &&
+		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
 		!(
-			event.url.pathname.startsWith('/admin/login/') ||
-			event.url.pathname === '/admin/login' ||
-			event.url.pathname === '/admin/logout'
+			/^\/admin(-[a-zA-Z0-9]+)?\/(login|logout)(\/|$)/.test(event.url.pathname) // Allow login/logout
 		);
 
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
@@ -166,10 +166,24 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		event.locals.npub = session.npub;
 		event.locals.sso = session.sso;
 	}
+	if (
+		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
+		!event.url.pathname.startsWith(admin)
+	) {
+		if (!event.locals.user || event.locals.user.role === CUSTOMER_ROLE_ID) {
+			throw error(403, 'Wrong admin prefix. Make sure to type the correct admin URL.');
+		}
+		return new Response(null, {
+			status: 307,
+			headers: {
+				location: event.url.href.replace(/\/admin(-[a-zA-Z0-9]+)?/, admin)
+			}
+		});
+	}
 	// Protect any routes under /admin
 	if (isAdminUrl) {
 		if (!event.locals.user) {
-			throw redirect(303, '/admin/login');
+			throw redirect(303, `${admin}/login`);
 		}
 
 		if (event.locals.user.role === CUSTOMER_ROLE_ID) {
@@ -193,6 +207,10 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 				['get', 'head', 'options'].includes(method) ? 'read' : 'write'
 			)
 		) {
+			if (method === 'get' || method === 'head') {
+				throw redirect(307, '/admin');
+			}
+
 			throw error(403, 'You are not allowed to access this page.');
 		}
 	}

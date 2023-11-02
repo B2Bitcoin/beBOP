@@ -16,6 +16,7 @@
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
+	import { POS_ROLE_ID } from '$lib/types/User.js';
 
 	export let data;
 
@@ -44,6 +45,11 @@
 		),
 		0
 	);
+
+	$: canBuy =
+		data.roleId === POS_ROLE_ID
+			? data.product.actionSettings.retail.canBeAddedToBasket
+			: data.product.actionSettings.eShop.canBeAddedToBasket;
 
 	function addToCart() {
 		$productAddedToCart = {
@@ -298,7 +304,7 @@
 								<br />
 								Please check back later
 							</p>
-						{:else if data.showCheckoutButton}
+						{:else if data.showCheckoutButton && canBuy}
 							<button class="btn btn-black" disabled={loading}>{verb} now</button>
 							<button
 								value="Add to cart"
@@ -308,7 +314,7 @@
 							>
 								Add to cart
 							</button>
-						{:else}
+						{:else if canBuy}
 							<button
 								value="Add to cart"
 								formaction="?/addToCart"

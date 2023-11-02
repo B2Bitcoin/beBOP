@@ -26,6 +26,7 @@ export const load = async ({ params, locals }) => {
 			| 'standalone'
 			| 'maxQuantityPerOrder'
 			| 'stock'
+			| 'actionSettings'
 		>
 	>(
 		{ _id: params.id },
@@ -43,7 +44,8 @@ export const load = async ({ params, locals }) => {
 				payWhatYouWant: 1,
 				standalone: 1,
 				maxQuantityPerOrder: 1,
-				stock: 1
+				stock: 1,
+				actionSettings: 1
 			}
 		}
 	);

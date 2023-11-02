@@ -152,6 +152,19 @@ export const actions: Actions = {
 						...(parsed.maxQuantityPerOrder && {
 							maxQuantityPerOrder: parsed.maxQuantityPerOrder
 						}),
+						actionSettings: {
+							eShop: {
+								visible: parsed.eshopVisible,
+								canBeAddedToBasket: parsed.eshopBasket
+							},
+							retail: {
+								visible: parsed.retailVisible,
+								canBeAddedToBasket: parsed.retailBasket
+							},
+							googleShopping: {
+								visible: parsed.googleShoppingVisible
+							}
+						},
 						tagIds: parsed.tagIds
 					},
 					{ session }
@@ -243,6 +256,19 @@ export const actions: Actions = {
 					standalone: duplicate.standalone,
 					free: duplicate.free,
 					displayShortDescription: duplicate.displayShortDescription,
+					actionSettings: {
+						eShop: {
+							visible: duplicate.eshopVisible,
+							canBeAddedToBasket: duplicate.eshopBasket
+						},
+						retail: {
+							visible: duplicate.retailVisible,
+							canBeAddedToBasket: duplicate.retailBasket
+						},
+						googleShopping: {
+							visible: duplicate.googleShoppingVisible
+						}
+					},
 					tagIds: product.tagIds
 				},
 				{ session }
