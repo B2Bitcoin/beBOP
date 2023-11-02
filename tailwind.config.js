@@ -60,5 +60,9 @@ module.exports = {
 		}
 	},
 	/* To style checkboxes with form-checkbox */
-	plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography'), require('flowbite/plugin')]
+	plugins: [
+			require('@tailwindcss/forms'),
+			require('@tailwindcss/typography'),
+			require('flowbite/plugin')
+		]
 };
