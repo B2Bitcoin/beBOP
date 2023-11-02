@@ -19,7 +19,7 @@
 
 {#if !isLoginPage}
 	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-x-auto">
+		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow flex-wrap">
 			<nav class="flex gap-6 font-light items-center">
 				<button
 					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"

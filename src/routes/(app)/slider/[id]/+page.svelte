@@ -4,4 +4,4 @@
 	export let data;
 </script>
 
-<CarouselWidget pictures={data.pictures} />
+<CarouselWidget autoplay={3000} pictures={data.pictures} />

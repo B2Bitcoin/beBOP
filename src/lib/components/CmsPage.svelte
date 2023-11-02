@@ -44,7 +44,10 @@
 			{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 				<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
 			{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
-				<CarouselWidget pictures={picturesBySlider(token.slug)} />
+				<CarouselWidget
+					autoplay={token.autoplay ? token.autoplay : 3000}
+					pictures={picturesBySlider(token.slug)}
+				/>
 			{:else}
 				{@html token.raw}
 			{/if}
@@ -66,7 +69,10 @@
 					{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 						<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
 					{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
-						<CarouselWidget pictures={picturesBySlider(token.slug)} />
+						<CarouselWidget
+							autoplay={token.autoplay ? token.autoplay : 3000}
+							pictures={picturesBySlider(token.slug)}
+						/>
 					{:else}
 						{@html token.raw}
 					{/if}

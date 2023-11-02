@@ -48,7 +48,7 @@ export async function load({ params }) {
 		| {
 				type: 'sliderWidget';
 				slug: string;
-				autoplay: string | undefined;
+				autoplay: number | undefined;
 				raw: string;
 		  }
 	> = [];
@@ -97,7 +97,7 @@ export async function load({ params }) {
 			tokens.push({
 				type: 'sliderWidget',
 				slug: match.groups.slug,
-				autoplay: match.groups?.autoplay,
+				autoplay: Number(match.groups?.autoplay),
 				raw: match[0]
 			});
 		}
