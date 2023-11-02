@@ -5,7 +5,13 @@
 	import { slide } from 'svelte/transition';
 	import { isAllowedOnPage } from '$lib/types/Role';
 	import { POS_ROLE_ID } from '$lib/types/User';
-	import { adminLinks } from './adminLinks.js';
+	import {
+		adminLinks,
+		configLinks,
+		merchLinks,
+		nodeManagementLinks,
+		transactiontLinks
+	} from './adminLinks.js';
 
 	export let data;
 
@@ -20,8 +26,8 @@
 
 {#if !isLoginPage}
 	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow overflow-x-auto">
-			<nav class="flex gap-6 font-light items-center">
+		<div class="mx-auto max-w-7xl flex gap-3 px-6 grow flex-col flex-wrap">
+			<nav class="flex gap-6 font-light sm:hidden items-center">
 				<button
 					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
 					class:rotate-90={navMenuOpen}
@@ -31,7 +37,6 @@
 				</button>
 				<span class="font-bold text-xl flex items-center gap-2">
 					<a class="hover:underline" href="/admin">Admin</a>
-
 					<form action="/admin/logout" method="post" class="contents">
 						<button type="submit">
 							<span class="sr-only">Log out</span>
@@ -39,29 +44,90 @@
 						</button>
 					</form>
 				</span>
-				{#each adminLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
-					<a
-						href={link.href}
-						data-sveltekit-preload-data="off"
-						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
-						class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-						class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-					>
-						{link.label}
-					</a>
-				{/each}
-				{#if data.roleId === POS_ROLE_ID}
-					<a
-						href="/pos"
-						data-sveltekit-preload-data="off"
-						class="{$page.url.pathname.startsWith('/pos')
-							? 'underline'
-							: ''} hidden sm:inline font-bold text-green-600"
-					>
-						POS session
-					</a>
-				{/if}
 			</nav>
+			<div class="hidden sm:inline">
+				<nav class="flex gap-6 font-light items-center">
+					<span class="font-bold text-xl flex items-center gap-2">
+						<a class="hover:underline" href="/admin">Merch</a>
+						<form action="/admin/logout" method="post" class="contents">
+							<button type="submit">
+								<span class="sr-only">Log out</span>
+								<IconLogout class="text-red-500" />
+							</button>
+						</form>
+					</span>
+					{#each merchLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+						<a
+							href={link.href}
+							data-sveltekit-preload-data="off"
+							class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} "
+							class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+							class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+						>
+							{link.label}
+						</a>
+					{/each}
+					{#if data.roleId === POS_ROLE_ID}
+						<a
+							href="/pos"
+							data-sveltekit-preload-data="off"
+							class="{$page.url.pathname.startsWith('/pos')
+								? 'underline'
+								: ''} hidden sm:inline font-bold text-green-600"
+						>
+							POS session
+						</a>
+					{/if}
+				</nav>
+				<nav class="flex gap-6 font-light items-center">
+					<span class="font-bold text-xl flex items-center gap-2">
+						<a class="hover:underline" href="/admin">Config</a>
+					</span>
+					{#each configLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+						<a
+							href={link.href}
+							data-sveltekit-preload-data="off"
+							class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
+							class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+							class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+						>
+							{link.label}
+						</a>
+					{/each}
+				</nav>
+				<nav class="flex gap-6 font-light items-center">
+					<span class="font-bold text-xl flex items-center gap-2">
+						<a class="hover:underline" href="/admin">Node Management</a>
+					</span>
+					{#each nodeManagementLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+						<a
+							href={link.href}
+							data-sveltekit-preload-data="off"
+							class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} "
+							class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+							class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+						>
+							{link.label}
+						</a>
+					{/each}
+				</nav>
+				<nav class="flex gap-6 font-light items-center">
+					<span class="font-bold text-xl flex items-center gap-2">
+						<a class="hover:underline" href="/admin">Transaction</a>
+					</span>
+					{#each transactiontLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+						<a
+							href={link.href}
+							data-sveltekit-preload-data="off"
+							class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
+							class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+							class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+						>
+							{link.label}
+						</a>
+					{/each}
+				</nav>
+			</div>
 		</div>
 	</header>
 {/if}

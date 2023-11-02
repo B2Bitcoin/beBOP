@@ -60,3 +60,76 @@ export const adminLinks = [
 		label: 'Tags'
 	}
 ];
+
+export const merchLinks = [
+	{
+		href: '/admin/layout',
+		label: 'Layout'
+	},
+
+	{
+		href: '/admin/product',
+		label: 'Products'
+	},
+	{
+		href: '/admin/picture',
+		label: 'Pictures'
+	},
+	{
+		href: '/admin/challenge',
+		label: 'Challenges'
+	},
+	{
+		href: '/admin/cms',
+		label: 'CMS'
+	},
+	{
+		href: '/admin/discount',
+		label: 'Discount'
+	},
+	{
+		href: '/admin/tags',
+		label: 'Tags'
+	},
+	{
+		href: '/admin/slider',
+		label: 'Sliders'
+	}
+];
+
+export const configLinks = [
+	{
+		href: '/admin/config',
+		label: 'Config'
+	},
+	{
+		href: '/admin/arm',
+		label: 'ARM'
+	}
+];
+
+export const nodeManagementLinks = [
+	{
+		href: '/admin/bitcoin',
+		label: 'Bitcoin node'
+	},
+	{
+		href: '/admin/lightning',
+		label: 'Lightning node'
+	},
+	{
+		href: '/admin/nostr',
+		label: 'NostR'
+	},
+	{
+		href: '/admin/email',
+		label: 'Emails'
+	}
+];
+
+export const transactiontLinks = [
+	{
+		href: '/admin/order',
+		label: 'Orders'
+	}
+];
