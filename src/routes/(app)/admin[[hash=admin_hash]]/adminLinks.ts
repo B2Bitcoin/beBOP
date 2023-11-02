@@ -127,7 +127,7 @@ export const nodeManagementLinks = [
 	}
 ];
 
-export const transactiontLinks = [
+export const transactionLinks = [
 	{
 		href: '/admin/order',
 		label: 'Orders'

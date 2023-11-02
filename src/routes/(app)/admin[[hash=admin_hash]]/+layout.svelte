@@ -10,7 +10,7 @@
 		configLinks,
 		merchLinks,
 		nodeManagementLinks,
-		transactiontLinks
+		transactionLinks
 	} from './adminLinks.js';
 
 	export let data;
@@ -115,7 +115,7 @@
 					<span class="font-bold text-xl flex items-center gap-2">
 						<a class="hover:underline" href="/admin">Transaction</a>
 					</span>
-					{#each transactiontLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+					{#each transactionLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
 						<a
 							href={link.href}
 							data-sveltekit-preload-data="off"
