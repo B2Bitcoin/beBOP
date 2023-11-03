@@ -80,7 +80,6 @@
 		"nostr-tools": "^1.11.1",
 		"qrcode": "^1.5.3",
 		"sharp": "^0.32.0",
-		"tinygesture": "^2.0.0",
 		"tinymce": "^6.7.0",
 		"ts-node": "^10.9.1",
 		"type-fest": "^3.11.1",
