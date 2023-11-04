@@ -26,6 +26,7 @@
 
 	export let data;
 
+	let isFreeVat = false;
 	let addDiscount = false;
 	let discountAmount: number;
 	let discountType: DiscountType;
@@ -460,6 +461,24 @@
 						<input
 							type="checkbox"
 							class="form-checkbox"
+							bind:checked={isFreeVat}
+							name="isFreeVat"
+							form="checkout"
+						/>
+						<span>
+							This is a VAT-free order <a
+								href="/terms"
+								target="_blank"
+								class="text-link hover:underline"
+							>
+								(conditions)
+							</a>
+						</span>
+					</label>
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
 							bind:checked={addDiscount}
 							name="addDiscount"
 							form="checkout"
@@ -476,6 +495,12 @@
 					</label>
 				{/if}
 
+				{#if isFreeVat}
+					<label class="form-label col-span-3">
+						VAT-free reason:
+						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" />
+					</label>
+				{/if}
 				{#if addDiscount}
 					<input
 						type="number"

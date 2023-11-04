@@ -209,21 +209,39 @@
 		</select>
 	</label>
 
-	<label class="form-label">
+	<div class="form-label">
 		Confirmation blocks
+
 		<input
 			type="number"
-			min="0"
-			step="1"
-			name="confirmationBlocks"
-			class="form-input max-w-[25rem]"
-			value={data.confirmationBlocks}
+			class="form-input"
+			value={data.confirmationBlocksThresholds.defaultBlocks}
+			disabled
 		/>
+
+		<div class="grid grid-cols-3 gap-2">
+			{#each data.confirmationBlocksThresholds.thresholds as threshold}
+				<input
+					class="form-input"
+					disabled
+					type="text"
+					value="{threshold.minAmount} {data.confirmationBlocksThresholds.currency}"
+				/>
+				<input
+					class="form-input"
+					disabled
+					type="text"
+					value="{threshold.maxAmount} {data.confirmationBlocksThresholds.currency}"
+				/>
+				<input class="form-input" disabled type="number" value={threshold.confirmationBlocks} />
+			{/each}
+		</div>
+
 		<a href="/admin/config/confirmation-threshold" class="underline"
 			>Manage confirmation thresholds</a
 		>
 		<p class="text-sm">You can set a different number of confirmations for different amounts.</p>
-	</label>
+	</div>
 
 	<label class="form-label">
 		Set desired timeout for payment (in minutes)

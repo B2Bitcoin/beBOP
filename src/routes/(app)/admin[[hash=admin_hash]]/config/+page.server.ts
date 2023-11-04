@@ -20,7 +20,6 @@ export async function load(event) {
 		discovery: runtimeConfig.discovery,
 		subscriptionDuration: runtimeConfig.subscriptionDuration,
 		subscriptionReminderSeconds: runtimeConfig.subscriptionReminderSeconds,
-		confirmationBlocks: runtimeConfig.confirmationBlocks,
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
 		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
@@ -60,7 +59,6 @@ export const actions = {
 					.int()
 					.min(0)
 					.max(24 * 60 * 60 * 7),
-				confirmationBlocks: z.number({ coerce: true }).int().min(0),
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
 				plausibleScriptUrl: z.string(),
