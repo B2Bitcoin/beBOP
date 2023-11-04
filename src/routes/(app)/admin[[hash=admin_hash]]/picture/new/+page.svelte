@@ -2,8 +2,8 @@
 	import { page } from '$app/stores';
 
 	const productId = $page.url.searchParams.get('productId');
-	let files: FileList;
-	let fileName: string;
+	let files: FileList | null = null;
+	let fileName: string = '';
 </script>
 
 <h1 class="text-3xl">Add a picture</h1>
@@ -27,7 +27,13 @@
 			type="file"
 			name="picture"
 			bind:files
-			on:change={() => (fileName = files[0].name)}
+			on:change={() => {
+				if (files && files.length > 0) {
+					fileName = files[0].name;
+				} else {
+					fileName = '';
+				}
+			}}
 			accept="image/jpeg,image/png,image/webp"
 			class="block"
 			required
