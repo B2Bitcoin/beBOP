@@ -6,6 +6,8 @@ import type { UserIdentifier } from './UserIdentifier';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
+export type DiscountType = 'fiat' | 'percentage';
+
 export interface Order extends Timestamps {
 	/**
 	 * A string - a crypto UUID. Anyone having access to the _id can access the order.
@@ -79,6 +81,19 @@ export interface Order extends Timestamps {
 	user: UserIdentifier;
 
 	lastPaymentStatusNotified?: OrderPaymentStatus;
+
+	discount?: {
+		justification: string;
+		type: DiscountType;
+		price: {
+			amount: number;
+			currency: Currency;
+		};
+		referencePrice: {
+			amount: number;
+			currency: Currency;
+		};
+	};
 
 	clientIp?: string;
 }

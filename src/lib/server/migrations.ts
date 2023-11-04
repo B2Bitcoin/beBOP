@@ -23,6 +23,33 @@ const migrations = [
 		}
 	},
 	{
+		_id: new ObjectId('39811201e92e590e858af8ba'),
+		name: 'Adding actionSettings to products',
+		run: async (session: ClientSession) => {
+			await collections.products.updateMany(
+				{},
+				{
+					$set: {
+						actionSettings: {
+							eShop: {
+								visible: true,
+								canBeAddedToBasket: true
+							},
+							retail: {
+								visible: true,
+								canBeAddedToBasket: true
+							},
+							googleShopping: {
+								visible: true
+							}
+						}
+					}
+				},
+				{ session }
+			);
+		}
+	},
+	{
 		_id: new ObjectId('653cbb1bd2af1254e82c928b'),
 		name: 'Change user.backupInfo to user.recovery',
 		run: async (session: ClientSession) => {
@@ -36,6 +63,23 @@ const migrations = [
 				{
 					$rename: {
 						backupInfo: 'recovery'
+					}
+				},
+				{ session }
+			);
+		}
+	},
+	{
+		name: 'Add tagIds to products',
+		_id: new ObjectId('653cbb1bd2af1254e82c928c'),
+		run: async (session: ClientSession) => {
+			await collections.products.updateMany(
+				{
+					tagIds: { $exists: false }
+				},
+				{
+					$set: {
+						tagIds: []
 					}
 				},
 				{ session }

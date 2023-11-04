@@ -29,7 +29,6 @@
 	async function subscribeToServerEvents() {
 		eventSourceInstance = await fetchEventSource(`/pos/session/sse`, {
 			onmessage(ev) {
-				console.log('event', ev.data, ev.data?.length);
 				if (ev.data) {
 					try {
 						const { eventType, cart: sseCart, order: sseOrder } = JSON.parse(ev.data);

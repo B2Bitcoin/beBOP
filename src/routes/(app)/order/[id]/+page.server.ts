@@ -1,8 +1,8 @@
 import { collections } from '$lib/server/database';
 import { picturesForProducts } from '$lib/server/picture';
-import { runtimeConfig } from '$lib/server/runtime-config';
 import { getS3DownloadLink } from '$lib/server/s3';
 import { UrlDependency } from '$lib/types/UrlDependency';
+import { getConfirmationBlocks } from '$lib/utils/getConfirmationBlocks.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, depends }) {
@@ -23,7 +23,7 @@ export async function load({ params, depends }) {
 		.toArray();
 
 	return {
-		confirmationBlocksRequired: runtimeConfig.confirmationBlocks,
+		confirmationBlocksRequired: getConfirmationBlocks(order.totalPrice.amount),
 		order: {
 			_id: order._id,
 			number: order.number,
@@ -70,7 +70,8 @@ export async function load({ params, depends }) {
 			},
 			shippingAddress: order.shippingAddress,
 			notifications: order.notifications,
-			vatFree: order.vatFree
+			vatFree: order.vatFree,
+			discount: order.discount
 		},
 
 		digitalFiles: await Promise.all(

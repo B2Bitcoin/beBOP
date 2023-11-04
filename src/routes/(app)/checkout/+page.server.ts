@@ -9,6 +9,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
 import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier } from '$lib/server/user.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
 import { zodNpub } from '$lib/server/nostr.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 
@@ -26,8 +27,8 @@ export async function load({ parent, locals }) {
 		paymentMethods: paymentMethods(),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
-		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
-		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
+		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
+		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
 	};
 }
 
@@ -92,11 +93,18 @@ export const actions = {
 			delete shipping.state;
 		}
 
-		const paymentMethod = z
+		const { paymentMethod, discountAmount, discountType, discountJustification } = z
 			.object({
-				paymentMethod: z.enum([paymentMethods()[0], ...paymentMethods().slice(1)])
+				paymentMethod: z.enum([paymentMethods()[0], ...paymentMethods().slice(1)]),
+				discountAmount: z.coerce.number().optional(),
+				discountType: z.enum(['fiat', 'percentage']).optional(),
+				discountJustification: z.string().optional()
 			})
-			.parse(Object.fromEntries(formData)).paymentMethod;
+			.parse(Object.fromEntries(formData));
+
+		if (discountAmount && (!discountType || !discountJustification)) {
+			throw error(400, 'Discount type and justification are required');
+		}
 
 		let isFreeVat, reasonFreeVat;
 
@@ -134,7 +142,12 @@ export const actions = {
 			})),
 			paymentMethod,
 			{
-				user: userIdentifier(locals),
+				user: {
+					sessionId: locals.sessionId,
+					userId: locals.user?._id,
+					userLogin: locals.user?.login,
+					userRoleId: locals.user?.role
+				},
 				notifications: {
 					paymentStatus: {
 						npub: npubAddress,
@@ -144,7 +157,17 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				...(isFreeVat && { reasonFreeVat }),
+				...(locals.user?.role === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
+				...(locals.user?.role === POS_ROLE_ID &&
+					discountAmount &&
+					discountType &&
+					discountJustification && {
+						discount: {
+							amount: discountAmount,
+							type: discountType,
+							justification: discountJustification
+						}
+					}),
 				...(collectIP.allowCollectIP && { clientIp: locals.clientIp })
 			}
 		);
