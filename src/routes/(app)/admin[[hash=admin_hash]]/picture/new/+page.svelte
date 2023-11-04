@@ -3,7 +3,7 @@
 
 	const productId = $page.url.searchParams.get('productId');
 	let files: FileList | null = null;
-	let fileName: string = '';
+	let fileName = '';
 </script>
 
 <h1 class="text-3xl">Add a picture</h1>
