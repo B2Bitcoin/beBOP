@@ -169,6 +169,7 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
+		reasonFreeVat?: string;
 		discount?: {
 			amount: number;
 			type: DiscountType;
@@ -246,7 +247,7 @@ export async function createOrder(
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
-		!vatCountry || runtimeConfig.vatExempted
+		!vatCountry || runtimeConfig.vatExempted || params.reasonFreeVat
 			? undefined
 			: {
 					country: vatCountry,
@@ -431,6 +432,11 @@ export async function createOrder(
 					// we also associate the email to the order
 					...(email && { email })
 				},
+				...(params.reasonFreeVat && {
+					vatFree: {
+						reason: params.reasonFreeVat
+					}
+				}),
 				...(params?.discount?.amount && {
 					discount: {
 						price: {

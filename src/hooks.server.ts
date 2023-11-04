@@ -173,7 +173,12 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		if (!event.locals.user || event.locals.user.role === CUSTOMER_ROLE_ID) {
 			throw error(403, 'Wrong admin prefix. Make sure to type the correct admin URL.');
 		}
-		throw redirect(307, `${admin}/${event.url.pathname.split('/').slice(2).join('/')}`);
+		return new Response(null, {
+			status: 307,
+			headers: {
+				location: event.url.href.replace(/\/admin(-[a-zA-Z0-9]+)?/, admin)
+			}
+		});
 	}
 	// Protect any routes under /admin
 	if (isAdminUrl) {
