@@ -20,7 +20,6 @@ export async function load(event) {
 		discovery: runtimeConfig.discovery,
 		subscriptionDuration: runtimeConfig.subscriptionDuration,
 		subscriptionReminderSeconds: runtimeConfig.subscriptionReminderSeconds,
-		confirmationBlocks: runtimeConfig.confirmationBlocks,
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
 		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
