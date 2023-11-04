@@ -27,7 +27,7 @@
 	export let displayOption = 'img-0';
 
 	$: canAddToCart =
-		!product.availableDate || product.availableDate <= new Date() || !!product.preorder;
+		canBuy && (!product.availableDate || product.availableDate <= new Date() || !!product.preorder);
 	$: baseClasses = 'relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded';
 </script>
 
@@ -71,7 +71,7 @@
 				</a>
 			{/if}
 
-			{#if canAddToCart && canBuy}
+			{#if canAddToCart}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>
@@ -117,7 +117,7 @@
 					{product.shortDescription}
 				</p>
 			</a>
-			{#if canAddToCart && canBuy}
+			{#if canAddToCart}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>
@@ -150,7 +150,7 @@
 					{product.shortDescription}
 				</p>
 			</a>
-			{#if canAddToCart && canBuy}
+			{#if canAddToCart}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>
@@ -206,7 +206,7 @@
 				</div>
 			</div>
 
-			{#if canAddToCart && canBuy}
+			{#if canAddToCart}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>
@@ -248,7 +248,7 @@
 					{product.shortDescription}
 				</p>
 			</a>
-			{#if canAddToCart && canBuy}
+			{#if canAddToCart}
 				<AddToCart {product} {picture} />
 			{/if}
 		</div>

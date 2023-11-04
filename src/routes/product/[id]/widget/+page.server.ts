@@ -16,6 +16,7 @@ export const load = async ({ params }) => {
 			| 'preorder'
 			| 'type'
 			| 'shipping'
+			| 'actionSettings'
 		>
 	>(
 		{ _id: params.id },
@@ -29,7 +30,8 @@ export const load = async ({ params }) => {
 				availableDate: 1,
 				preorder: 1,
 				type: 1,
-				shipping: 1
+				shipping: 1,
+				actionSettings: 1
 			}
 		}
 	);

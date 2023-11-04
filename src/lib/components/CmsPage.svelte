@@ -10,7 +10,7 @@
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
 	export let digitalFiles: PageData['digitalFiles'];
-	export let roleId: string | undefined;
+	export let roleId: PageData['roleId'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
