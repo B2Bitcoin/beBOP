@@ -1,6 +1,5 @@
 <script lang="ts">
 	import IconTrash from '$lib/components/icons/IconTrash.svelte';
-	import { currencies } from '$lib/stores/currencies';
 	import { CURRENCIES } from '$lib/types/Currency';
 
 	export let data;

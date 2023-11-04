@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import IconRefresh from '$lib/components/icons/IconRefresh.svelte';
-	import { currencies } from '$lib/stores/currencies';
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
 
