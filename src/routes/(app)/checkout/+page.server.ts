@@ -108,7 +108,7 @@ export const actions = {
 		let isFreeVat: boolean | undefined;
 		let reasonFreeVat: string | undefined;
 
-		if (locals.user?.role === POS_ROLE_ID) {
+		if (locals.user?.roleId === POS_ROLE_ID) {
 			const vatDetails = z
 				.object({
 					isFreeVat: z.coerce.boolean().optional(),

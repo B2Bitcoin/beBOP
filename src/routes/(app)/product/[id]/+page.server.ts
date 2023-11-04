@@ -56,7 +56,7 @@ export const load = async ({ params, locals }) => {
 	}
 
 	if (
-		locals.user?.role === POS_ROLE_ID
+		locals.user?.roleId === POS_ROLE_ID
 			? !product.actionSettings.retail.visible
 			: !product.actionSettings.eShop.visible
 	) {
