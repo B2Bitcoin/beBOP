@@ -252,12 +252,10 @@ export async function createOrder(
 			: {
 					country: vatCountry,
 					price: {
-						amount: params.reasonFreeVat
-							? 0
-							: fixCurrencyRounding(
-									totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
-									'SAT'
-							  ),
+						amount: fixCurrencyRounding(
+							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
+							'SAT'
+						),
 						currency: 'SAT'
 					},
 					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
@@ -434,7 +432,6 @@ export async function createOrder(
 					// we also associate the email to the order
 					...(email && { email })
 				},
-				...(params.clientIp && { clientIp: params.clientIp }),
 				...(params.reasonFreeVat && {
 					vatFree: {
 						reason: params.reasonFreeVat
@@ -453,7 +450,8 @@ export async function createOrder(
 						justification: params.discount.justification,
 						type: params.discount.type
 					}
-				})
+				}),
+				...(params.clientIp && { clientIp: params.clientIp })
 			},
 			{ session }
 		);

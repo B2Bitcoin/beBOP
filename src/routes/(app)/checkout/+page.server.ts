@@ -11,7 +11,6 @@ import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier } from '$lib/server/user.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { zodNpub } from '$lib/server/nostr.js';
-import { POS_ROLE_ID } from '$lib/types/User.js';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -106,7 +105,8 @@ export const actions = {
 			throw error(400, 'Discount type and justification are required');
 		}
 
-		let isFreeVat, reasonFreeVat;
+		let isFreeVat: boolean | undefined;
+		let reasonFreeVat: string | undefined;
 
 		if (locals.user?.role === POS_ROLE_ID) {
 			const vatDetails = z

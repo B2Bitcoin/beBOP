@@ -20,7 +20,6 @@
 	import { POS_ROLE_ID } from '$lib/types/User.js';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import type { DiscountType } from '$lib/types/Order.js';
-	import { last } from 'lodash-es';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -499,13 +498,7 @@
 				{#if isFreeVat}
 					<label class="form-label col-span-3">
 						VAT-free reason:
-						<input
-							required={isFreeVat}
-							type="text"
-							class="form-input"
-							form="checkout"
-							name="reasonFreeVat"
-						/>
+						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" />
 					</label>
 				{/if}
 				{#if addDiscount}
