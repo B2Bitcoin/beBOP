@@ -157,7 +157,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 					event.locals.user = {
 						_id: user._id,
 						login: user.login ? user.login : '',
-						role: user.roleId
+						roleId: user.roleId
 					};
 				}
 			}
@@ -170,7 +170,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
 		!event.url.pathname.startsWith(admin)
 	) {
-		if (!event.locals.user || event.locals.user.role === CUSTOMER_ROLE_ID) {
+		if (!event.locals.user || event.locals.user.roleId === CUSTOMER_ROLE_ID) {
 			throw error(403, 'Wrong admin prefix. Make sure to type the correct admin URL.');
 		}
 		throw redirect(307, `${admin}/${event.url.pathname.split('/').slice(2).join('/')}`);
@@ -181,12 +181,12 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw redirect(303, `${admin}/login`);
 		}
 
-		if (event.locals.user.role === CUSTOMER_ROLE_ID) {
+		if (event.locals.user.roleId === CUSTOMER_ROLE_ID) {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 
 		const role = await collections.roles.findOne({
-			_id: event.locals.user.role
+			_id: event.locals.user.roleId
 		});
 
 		if (!role) {
@@ -215,7 +215,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw redirect(303, '/admin/login');
 		}
 
-		if (event.locals.user.role !== POS_ROLE_ID) {
+		if (event.locals.user.roleId !== POS_ROLE_ID) {
 			throw error(403, 'You are not allowed to access this page, only point-of-sale accounts are.');
 		}
 	}

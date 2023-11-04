@@ -127,7 +127,7 @@ export const actions = {
 					sessionId: locals.sessionId,
 					userId: locals.user?._id,
 					userLogin: locals.user?.login,
-					userRoleId: locals.user?.role
+					userRoleId: locals.user?.roleId
 				},
 				notifications: {
 					paymentStatus: {
@@ -138,7 +138,7 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				...(locals.user?.role === POS_ROLE_ID &&
+				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&
 					discountType &&
 					discountJustification && {

@@ -8,6 +8,6 @@ export async function load({ locals }) {
 	return {
 		deliveryFees: runtimeConfig.deliveryFees,
 		productActionSettings: runtimeConfig.productActionSettings,
-		role: locals.user?.role ? collections.roles.findOne({ _id: locals.user.role }) : null
+		role: locals.user?.roleId ? collections.roles.findOne({ _id: locals.user.role }) : null
 	};
 }

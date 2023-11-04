@@ -90,7 +90,7 @@ export async function load({ params, locals }) {
 	});
 
 	const query =
-		locals?.user?.role === POS_ROLE_ID
+		locals?.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
 			: { 'actionSettings.eShop.visible': true };
 
