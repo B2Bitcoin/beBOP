@@ -20,8 +20,8 @@
 
 {#if !isLoginPage}
 	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-		<div class="mx-auto max-w-7xl flex gap-3 px-6 grow flex-wrap">
-			<nav class="flex gap-6 font-light items-center">
+		<div class="mx-auto max-w-7xl flex gap-3 px-6 grow">
+			<nav class="flex gap-x-6 gap-y-2 font-light items-center flex-wrap">
 				<button
 					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
 					class:rotate-90={navMenuOpen}
@@ -49,10 +49,8 @@
 						POS session
 					</a>
 				{/if}
-			</nav>
-			{#each adminLinks as adminLink}
-				<nav class="flex gap-6 font-light items-center">
-					<span class="font-bold text-xl flex items-center gap-2 hidden sm:inline">
+				{#each adminLinks as adminLink}
+					<span class="font-bold text-xl hidden sm:inline">
 						{adminLink.section}
 					</span>
 					{#each adminLink.links.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
@@ -68,8 +66,8 @@
 							{link.label}
 						</a>
 					{/each}
-				</nav>
-			{/each}
+				{/each}
+			</nav>
 		</div>
 	</header>
 {/if}
@@ -79,7 +77,7 @@
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 	>
 		{#each adminLinks as adminLink}
-			<span class="font-bold text-xl flex items-center gap-2">
+			<span class="font-bold text-xl">
 				{adminLink.section}
 			</span>
 			{#each adminLink.links as link}
