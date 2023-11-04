@@ -2,6 +2,7 @@
 	import type { PageData } from '../../routes/(app)/[slug]/$types';
 	import ProductWidget from './ProductWidget.svelte';
 	import ChallengeWidget from './ChallengeWidget.svelte';
+	import { POS_ROLE_ID } from '$lib/types/User';
 
 	export let products: PageData['products'];
 	export let pictures: PageData['pictures'];
@@ -9,6 +10,7 @@
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
 	export let digitalFiles: PageData['digitalFiles'];
+	export let roleId: PageData['roleId'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
@@ -32,6 +34,9 @@
 					picture={pictureByProduct[token.slug]}
 					hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 					displayOption={token.display}
+					canBuy={roleId === POS_ROLE_ID
+						? productById[token.slug].actionSettings.retail.canBeAddedToBasket
+						: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
 					class="not-prose my-5"
 				/>
 			{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
@@ -52,6 +57,9 @@
 							picture={pictureByProduct[token.slug]}
 							hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 							displayOption={token.display}
+							canBuy={roleId === POS_ROLE_ID
+								? productById[token.slug].actionSettings.retail.canBeAddedToBasket
+								: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
 							class="not-prose my-5"
 						/>
 					{:else if token.type === 'challengeWidget' && challengeById[token.slug]}

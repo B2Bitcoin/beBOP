@@ -108,7 +108,7 @@ export const actions = {
 		let isFreeVat: boolean | undefined;
 		let reasonFreeVat: string | undefined;
 
-		if (locals.user?.role === POS_ROLE_ID) {
+		if (locals.user?.roleId === POS_ROLE_ID) {
 			const vatDetails = z
 				.object({
 					isFreeVat: z.coerce.boolean().optional(),
@@ -146,7 +146,7 @@ export const actions = {
 					sessionId: locals.sessionId,
 					userId: locals.user?._id,
 					userLogin: locals.user?.login,
-					userRoleId: locals.user?.role
+					userRoleId: locals.user?.roleId
 				},
 				notifications: {
 					paymentStatus: {
@@ -157,8 +157,8 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				...(locals.user?.role === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
-				...(locals.user?.role === POS_ROLE_ID &&
+				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
+				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&
 					discountType &&
 					discountJustification && {

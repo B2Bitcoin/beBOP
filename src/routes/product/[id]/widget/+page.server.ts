@@ -1,9 +1,8 @@
 import { collections } from '$lib/server/database';
 import type { Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
-import { runtimeConfig } from '$lib/server/runtime-config';
 
-export const load = async ({ params }) => {
+export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
 		Pick<
 			Product,
@@ -16,6 +15,7 @@ export const load = async ({ params }) => {
 			| 'preorder'
 			| 'type'
 			| 'shipping'
+			| 'actionSettings'
 		>
 	>(
 		{ _id: params.id },
@@ -29,7 +29,8 @@ export const load = async ({ params }) => {
 				availableDate: 1,
 				preorder: 1,
 				type: 1,
-				shipping: 1
+				shipping: 1,
+				actionSettings: 1
 			}
 		}
 	);
@@ -50,7 +51,6 @@ export const load = async ({ params }) => {
 		product,
 		picture: pictures[0],
 		digitalFiles,
-		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage,
-		exchangeRate: runtimeConfig.BTC_EUR
+		roleId: locals.user?.roleId
 	};
 };
