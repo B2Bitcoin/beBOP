@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
+	export let data;
+
 	const productId = $page.url.searchParams.get('productId');
 	let files: FileList | null = null;
 	let fileName = '';
@@ -42,7 +44,7 @@
 
 	{#if productId}
 		<p>
-			Associated product: <a href="/admin/product/{productId}" class="hover:underline"
+			Associated product: <a href="{data.adminPrefix}/product/{productId}" class="hover:underline"
 				>{productId}</a
 			>
 		</p>

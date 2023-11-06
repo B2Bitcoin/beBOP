@@ -44,10 +44,10 @@
 			SAT
 
 			{#if order.payment.status === 'pending' && order.payment.method === 'cash'}
-				<form action="/admin/order/{order._id}?/confirm" method="post">
+				<form action="{data.adminPrefix}/order/{order._id}?/confirm" method="post">
 					<button type="submit" class="btn btn-black">Mark paid</button>
 				</form>
-				<form action="/admin/order/{order._id}?/cancel" method="post">
+				<form action="{data.adminPrefix}/order/{order._id}?/cancel" method="post">
 					<button type="submit" class="btn btn-red">Cancel</button>
 				</form>
 			{/if}

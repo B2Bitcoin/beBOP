@@ -5,6 +5,7 @@ import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 import { ObjectId } from 'mongodb';
 import { zodNpub } from '$lib/server/nostr.js';
 import { sendResetPasswordNotification } from '$lib/server/sendNotification.js';
+import { adminPrefix } from '$lib/server/admin.js';
 
 export const actions = {
 	default: async function ({ request }) {
@@ -46,6 +47,6 @@ export const actions = {
 
 		await sendResetPasswordNotification(user);
 
-		throw redirect(303, '/admin/arm');
+		throw redirect(303, `${adminPrefix()}/arm`);
 	}
 };

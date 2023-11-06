@@ -26,7 +26,7 @@
 
 <h2 class="text-2xl">Roles</h2>
 
-<a href="/admin/arm/role/new" class="underline">Create a role</a>
+<a href="{data.adminPrefix}/arm/role/new" class="underline">Create a role</a>
 
 <ul class="grid grid-cols-[auto_auto_auto_auto_auto_min-content_min-content] gap-2">
 	<li class="contents">
@@ -43,7 +43,7 @@
 			<form
 				class="contents"
 				method="post"
-				action="/admin/arm/role/{role._id}?/update"
+				action="{data.adminPrefix}/arm/role/{role._id}?/update"
 				use:enhance={({ action }) => {
 					return async ({ result }) => {
 						if (result.type === 'error') {
@@ -99,7 +99,7 @@
 				<button
 					type="submit"
 					class="btn btn-red self-start"
-					formaction="/admin/arm/role/{role._id}?/delete"
+					formaction="{data.adminPrefix}/arm/role/{role._id}?/delete"
 					disabled={role._id === SUPER_ADMIN_ROLE_ID || role._id === POS_ROLE_ID}
 					title="Delete role"
 					on:click={(e) => {
@@ -117,7 +117,7 @@
 
 <h2 class="text-2xl">Users</h2>
 
-<a href="/admin/arm/user/new" class="underline">Create a user</a>
+<a href="{data.adminPrefix}/arm/user/new" class="underline">Create a user</a>
 
 <ul class="grid grid-cols-[auto_auto_auto_auto_auto_min-content_min-content_min-content] gap-2">
 	<li class="contents">
@@ -133,7 +133,7 @@
 	{#each data.users as user}
 		<li class="contents">
 			<form
-				action="/admin/arm/user/{user._id}?/update"
+				action="{data.adminPrefix}/arm/user/{user._id}?/update"
 				method="post"
 				class="contents"
 				use:enhance={({ action }) => {
@@ -203,7 +203,7 @@
 				<button
 					type="submit"
 					class="btn btn-red self-start"
-					formaction="/admin/arm/user/{user._id}?/resetPassword"
+					formaction="{data.adminPrefix}/arm/user/{user._id}?/resetPassword"
 					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
 					title="Reset password"
 				>
@@ -212,7 +212,7 @@
 				<button
 					type="submit"
 					class="btn btn-red self-start"
-					formaction="/admin/arm/user/{user._id}?/delete"
+					formaction="{data.adminPrefix}/arm/user/{user._id}?/delete"
 					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
 					title="Delete account"
 					on:click={(e) => {

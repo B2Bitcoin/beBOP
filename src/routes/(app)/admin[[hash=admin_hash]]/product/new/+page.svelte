@@ -105,7 +105,7 @@
 				const fileSize = files[0].size;
 				const fileName = files[0].name;
 
-				const response = await fetch('/admin/picture/prepare', {
+				const response = await fetch(`${data.adminPrefix}/picture/prepare`, {
 					method: 'POST',
 					body: JSON.stringify({
 						fileName,
@@ -438,7 +438,11 @@
 						disabled={submitting}
 					/>
 					Prevent order if no specific delivery fee matches the customer's country (do not use
-					<a href="/admin/config/delivery" class="text-link hover:underline" target="_blank">
+					<a
+						href="{data.adminPrefix}/config/delivery"
+						class="text-link hover:underline"
+						target="_blank"
+					>
 						globally defined fees
 					</a> as fallback)
 				</label>
@@ -549,7 +553,7 @@
 	<div class="flex flex-row flex-wrap gap-6 mt-6">
 		{#each data.pictures as picture}
 			<div class="flex flex-col text-center">
-				<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
+				<a href="{data.adminPrefix}/picture/{picture._id}" class="flex flex-col items-center">
 					<PictureComponent {picture} class="h-36 block" style="object-fit: scale-down;" />
 					<span>{picture.name}</span>
 				</a>
@@ -563,7 +567,7 @@
 
 	<div class="flex flex-row flex-wrap gap-6 mt-6">
 		{#each data.digitalFiles as digitalFile}
-			<a href="/admin/digital-file/{digitalFile._id}" class="text-link hover:underline">
+			<a href="{data.adminPrefix}/digital-file/{digitalFile._id}" class="text-link hover:underline">
 				{digitalFile.name}
 			</a>
 		{/each}

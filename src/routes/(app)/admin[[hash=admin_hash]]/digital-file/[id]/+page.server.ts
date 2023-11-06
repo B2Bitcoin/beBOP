@@ -1,4 +1,5 @@
 import { S3_BUCKET } from '$env/static/private';
+import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
 import { getS3DownloadLink, s3client } from '$lib/server/s3';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
@@ -35,7 +36,7 @@ export const actions = {
 			.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: digitalFile.storage.key }))
 			.catch(console.error);
 
-		throw redirect(303, '/admin/product/' + digitalFile.productId);
+		throw redirect(303, `${adminPrefix()}/product/${digitalFile.productId}`);
 	},
 	update: async function (input) {
 		const formData = await input.request.formData();

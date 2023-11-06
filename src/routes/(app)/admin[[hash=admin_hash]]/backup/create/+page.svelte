@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { downloadFile } from '$lib/utils/downloadFile';
 
+	export let data;
+
 	async function exportData() {
-		const response = await fetch('/admin/backup/create', {
+		const response = await fetch(`${data.adminPrefix}/backup/create`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

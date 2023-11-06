@@ -1,3 +1,4 @@
+import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 
@@ -8,6 +9,7 @@ export async function load({ locals }) {
 	return {
 		deliveryFees: runtimeConfig.deliveryFees,
 		productActionSettings: runtimeConfig.productActionSettings,
-		role: locals.user?.roleId ? collections.roles.findOne({ _id: locals.user.roleId }) : null
+		role: locals.user?.roleId ? collections.roles.findOne({ _id: locals.user.roleId }) : null,
+		adminPrefix: adminPrefix()
 	};
 }

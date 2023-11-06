@@ -2,6 +2,7 @@ import type { Actions } from './$types';
 import { generatePicture } from '$lib/server/picture';
 import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import { adminPrefix } from '$lib/server/admin';
 
 export const actions: Actions = {
 	default: async (input) => {
@@ -20,9 +21,9 @@ export const actions: Actions = {
 		});
 
 		if (fields.productId) {
-			throw redirect(303, '/admin/product/' + fields.productId);
+			throw redirect(303, `${adminPrefix()}/product/${fields.productId}`);
 		}
 
-		throw redirect(303, '/admin/picture');
+		throw redirect(303, `${adminPrefix()}/picture`);
 	}
 };

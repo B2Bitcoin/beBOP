@@ -4,6 +4,7 @@ import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { generateId } from '$lib/utils/generateId';
+import { adminPrefix } from '$lib/server/admin';
 
 export const load = async () => {
 	const requiredSubscription = await collections.products
@@ -64,6 +65,6 @@ export const actions: Actions = {
 			updatedAt: new Date()
 		});
 
-		throw redirect(303, `/admin/discount/${slug}`);
+		throw redirect(303, `${adminPrefix()}/discount/${slug}`);
 	}
 };

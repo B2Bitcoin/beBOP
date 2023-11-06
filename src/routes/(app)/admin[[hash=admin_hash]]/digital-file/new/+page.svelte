@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 
 	const productId = $page.url.searchParams.get('productId');
+	export let data;
 
 	let files: FileList;
 	let name = '';
@@ -14,7 +15,7 @@
 			const fileSize = files[0].size;
 			const fileName = files[0].name;
 
-			const response = await fetch('/admin/digital-file/prepare', {
+			const response = await fetch(`${data.adminPrefix}/digital-file/prepare`, {
 				method: 'POST',
 				body: JSON.stringify({
 					name,
@@ -42,7 +43,7 @@
 				throw new Error(await uploadResponse.text());
 			}
 
-			const finalizeResponse = await fetch('/admin/digital-file/finalize', {
+			const finalizeResponse = await fetch(`${data.adminPrefix}/digital-file/finalize`, {
 				method: 'POST',
 				body: JSON.stringify({
 					digitalFileId
@@ -56,7 +57,7 @@
 				throw new Error(await finalizeResponse.text());
 			}
 
-			await goto(`/admin/digital-file/${digitalFileId}`);
+			await goto(`${data.adminPrefix}/digital-file/${digitalFileId}`);
 		} catch (error) {
 			alert(error);
 		} finally {
@@ -87,9 +88,9 @@
 
 	{#if productId}
 		<p>
-			Associated product: <a href="/admin/product/{productId}" class="hover:underline"
-				>{productId}</a
-			>
+			Associated product: <a href="{data.adminPrefix}/product/{productId}" class="hover:underline"
+				>{productId}
+			</a>
 		</p>
 	{/if}
 

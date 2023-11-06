@@ -1,3 +1,4 @@
+import { adminPrefix } from '$lib/server/admin';
 import { collections } from '$lib/server/database.js';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 import { error, redirect } from '@sveltejs/kit';
@@ -52,7 +53,7 @@ export const actions = {
 			}
 		);
 
-		throw redirect(303, `/admin/arm`);
+		throw redirect(303, `${adminPrefix()}/arm`);
 	},
 	delete: async function ({ params }) {
 		const roleId = params.id;
@@ -69,6 +70,6 @@ export const actions = {
 			_id: roleId
 		});
 
-		throw redirect(303, `/admin/arm`);
+		throw redirect(303, `${adminPrefix()}/arm`);
 	}
 };

@@ -206,7 +206,7 @@
 <div class="flex flex-row flex-wrap gap-6 mt-6">
 	{#each data.pictures as picture}
 		<div class="flex flex-col text-center">
-			<a href="/admin/picture/{picture._id}" class="flex flex-col items-center">
+			<a href="{data.adminPrefix}/picture/{picture._id}" class="flex flex-col items-center">
 				<PictureComponent {picture} class="h-36 block" style="object-fit: scale-down;" />
 				<span>{picture.name} / {picture.tag ? picture.tag.type : ''}</span>
 			</a>

@@ -24,7 +24,7 @@
 	<div class="alert alert-success">{form.success}</div>
 {/if}
 
-<a href="/admin/config/delivery" class="underline">Deliver fees</a>
+<a href="{data.adminPrefix}/config/delivery" class="underline">Deliver fees</a>
 
 <p>Configured URL: {data.origin}</p>
 
@@ -237,9 +237,9 @@
 			{/each}
 		</div>
 
-		<a href="/admin/config/confirmation-threshold" class="underline"
-			>Manage confirmation thresholds</a
-		>
+		<a href="{data.adminPrefix}/config/confirmation-threshold" class="underline">
+			Manage confirmation thresholds
+		</a>
 		<p class="text-sm">You can set a different number of confirmations for different amounts.</p>
 	</div>
 
@@ -280,7 +280,7 @@
 		<p class="text-sm">
 			This will change the admin url to
 			<kbd class="px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg">
-				/admin-[hash]
+				{data.adminPrefix}-[hash]
 			</kbd>
 		</p>
 	</label>

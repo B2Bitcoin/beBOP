@@ -1,3 +1,4 @@
+import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database.js';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product.js';
 import { error, redirect } from '@sveltejs/kit';
@@ -91,6 +92,6 @@ export const actions = {
 			_id: params.id
 		});
 
-		throw redirect(303, '/admin/discount');
+		throw redirect(303, `${adminPrefix()}/discount`);
 	}
 };

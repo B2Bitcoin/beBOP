@@ -9,6 +9,7 @@ import { getS3DownloadLink, s3client } from '$lib/server/s3';
 import { S3_BUCKET } from '$env/static/private';
 import { generatePicture } from '$lib/server/picture';
 import type { TagType } from '$lib/types/Picture';
+import { adminPrefix } from '$lib/server/admin';
 
 export const load = async () => {};
 
@@ -108,6 +109,6 @@ export const actions: Actions = {
 			cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href),
 			menu: parsed.menuLinks?.filter((menuLink) => menuLink.label && menuLink.href)
 		});
-		throw redirect(303, '/admin/tags/' + parsed.slug);
+		throw redirect(303, `${adminPrefix()}/tags/${parsed.slug}`);
 	}
 };

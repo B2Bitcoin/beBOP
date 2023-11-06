@@ -9,6 +9,7 @@ import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
 import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
 import type { Tag } from '$lib/types/Tag';
+import { adminPrefix } from '$lib/server/admin';
 
 export const load = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -169,13 +170,12 @@ export const actions: Actions = {
 		return {};
 	},
 
-	// Todo: disable in production
 	delete: async ({ params }) => {
 		for await (const picture of collections.pictures.find({ productId: params.id })) {
 			await deletePicture(picture._id);
 		}
 		await collections.products.deleteOne({ _id: params.id });
 
-		throw redirect(303, '/admin/product');
+		throw redirect(303, `${adminPrefix()}/product`);
 	}
 };

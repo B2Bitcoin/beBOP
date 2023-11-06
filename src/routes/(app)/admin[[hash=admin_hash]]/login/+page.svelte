@@ -79,7 +79,7 @@
 				value={data.isAdminCreated ? 'Login' : 'Create Super Admin'}
 			/>
 			{#if data.isAdminCreated}
-				<a href="/admin/login/recovery" class="btn btn-gray">Recovery</a>
+				<a href="{data.adminPrefix}/login/recovery" class="btn btn-gray">Recovery</a>
 			{/if}
 		</div>
 	</form>

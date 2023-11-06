@@ -2,7 +2,7 @@
 	export let data;
 </script>
 
-<a href="/admin/cms/new" class="underline block">Add CMS page</a>
+<a href="{data.adminPrefix}/cms/new" class="underline block">Add CMS page</a>
 
 <h1 class="text-3xl">List of CMS page</h1>
 
@@ -15,7 +15,7 @@
 	{#each data.cmsPages as cmsPage}
 		<li>
 			{cmsPage._id} -
-			<a href="/admin/cms/{cmsPage._id}" class="underline text-link">{cmsPage.title}</a>
+			<a href="{data.adminPrefix}/cms/{cmsPage._id}" class="underline text-link">{cmsPage.title}</a>
 		</li>
 	{/each}
 </ul>
