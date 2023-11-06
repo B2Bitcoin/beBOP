@@ -105,6 +105,25 @@ export const actions = {
 			throw error(400, 'Discount type and justification are required');
 		}
 
+		let isFreeVat: boolean | undefined;
+		let reasonFreeVat: string | undefined;
+
+		if (locals.user?.roleId === POS_ROLE_ID) {
+			const vatDetails = z
+				.object({
+					isFreeVat: z.coerce.boolean().optional(),
+					reasonFreeVat: z.string().optional()
+				})
+				.parse(Object.fromEntries(formData));
+
+			isFreeVat = vatDetails.isFreeVat;
+			reasonFreeVat = vatDetails.reasonFreeVat;
+		}
+
+		if (isFreeVat && !reasonFreeVat) {
+			throw error(400, 'Reason for free VAT is required');
+		}
+
 		const collectIP = z
 			.object({
 				allowCollectIP: z.boolean({ coerce: true }).default(false)
@@ -127,7 +146,7 @@ export const actions = {
 					sessionId: locals.sessionId,
 					userId: locals.user?._id,
 					userLogin: locals.user?.login,
-					userRoleId: locals.user?.role
+					userRoleId: locals.user?.roleId
 				},
 				notifications: {
 					paymentStatus: {
@@ -138,7 +157,8 @@ export const actions = {
 				cart,
 				shippingAddress: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
-				...(locals.user?.role === POS_ROLE_ID &&
+				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
+				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&
 					discountType &&
 					discountJustification && {

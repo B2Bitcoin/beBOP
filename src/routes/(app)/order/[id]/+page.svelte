@@ -108,6 +108,10 @@
 					{/each}
 				</ul>
 			{/if}
+
+			{#if data.order.vatFree}
+				<p>This order is free of VAT. Reason: {data.order.vatFree.reason}</p>
+			{/if}
 			<p class="text-base">
 				Created at
 				<time

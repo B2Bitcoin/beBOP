@@ -19,8 +19,8 @@
 
 {#if !isLoginPage}
 	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-		<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow flex-wrap">
-			<nav class="flex gap-6 font-light items-center">
+		<div class="mx-auto max-w-7xl flex gap-3 px-6 grow">
+			<nav class="flex gap-x-6 gap-y-2 font-light items-center flex-wrap">
 				<button
 					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
 					class:rotate-90={navMenuOpen}
@@ -30,7 +30,6 @@
 				</button>
 				<span class="font-bold text-xl flex items-center gap-2">
 					<a class="hover:underline" href="/admin">Admin</a>
-
 					<form action="/admin/logout" method="post" class="contents">
 						<button type="submit">
 							<span class="sr-only">Log out</span>
@@ -38,17 +37,6 @@
 						</button>
 					</form>
 				</span>
-				{#each adminLinks.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
-					<a
-						href={link.href}
-						data-sveltekit-preload-data="off"
-						class="{$page.url.pathname.startsWith(link.href) ? 'underline' : ''} hidden sm:inline"
-						class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-						class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-					>
-						{link.label}
-					</a>
-				{/each}
 				{#if data.roleId === POS_ROLE_ID}
 					<a
 						href="/pos"
@@ -60,6 +48,24 @@
 						POS session
 					</a>
 				{/if}
+				{#each adminLinks as adminLink}
+					<span class="font-bold text-xl hidden sm:inline">
+						{adminLink.section}
+					</span>
+					{#each adminLink.links.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+						<a
+							href={link.href}
+							data-sveltekit-preload-data="off"
+							class="{$page.url.pathname.startsWith(link.href)
+								? 'underline'
+								: ''}  hidden sm:inline"
+							class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+							class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+						>
+							{link.label}
+						</a>
+					{/each}
+				{/each}
 			</nav>
 		</div>
 	</header>
@@ -69,16 +75,21 @@
 		transition:slide
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 	>
-		{#each adminLinks as link}
-			<a
-				href={link.href}
-				class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
-				data-sveltekit-preload-data="off"
-				class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-				class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-			>
-				{link.label}
-			</a>
+		{#each adminLinks as adminLink}
+			<span class="font-bold text-xl">
+				{adminLink.section}
+			</span>
+			{#each adminLink.links as link}
+				<a
+					href={link.href}
+					class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
+					data-sveltekit-preload-data="off"
+					class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+					class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+				>
+					{link.label}
+				</a>
+			{/each}
 		{/each}
 		{#if data.roleId === POS_ROLE_ID}
 			<a

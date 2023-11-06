@@ -17,15 +17,17 @@
 		| 'availableDate'
 		| 'shipping'
 		| 'type'
+		| 'actionSettings'
 	>;
 	export let hasDigitalFiles: boolean;
+	export let canBuy: boolean;
 
 	let className = '';
 	export { className as class };
 	export let displayOption = 'img-0';
 
 	$: canAddToCart =
-		!product.availableDate || product.availableDate <= new Date() || !!product.preorder;
+		canBuy && (!product.availableDate || product.availableDate <= new Date() || !!product.preorder);
 	$: baseClasses = 'relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded';
 </script>
 

@@ -34,8 +34,11 @@ const defaultConfig = {
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	reserveStockInMinutes: 20,
-	confirmationBlocks: 1,
-	confirmationBlocksThresholds: [] as ConfirmationThresholds[],
+	confirmationBlocksThresholds: {
+		currency: 'SAT',
+		thresholds: [],
+		defaultBlocks: 1
+	} as ConfirmationThresholds,
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logoPictureId: '',

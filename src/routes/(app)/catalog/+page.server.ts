@@ -5,7 +5,7 @@ import { POS_ROLE_ID } from '$lib/types/User.js';
 
 export async function load({ locals }) {
 	const query =
-		locals?.user?.role === POS_ROLE_ID
+		locals?.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
 			: { 'actionSettings.eShop.visible': true };
 

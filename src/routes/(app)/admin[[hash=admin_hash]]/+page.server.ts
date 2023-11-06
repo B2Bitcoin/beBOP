@@ -7,7 +7,7 @@ export async function load({ locals }) {
 		throw redirect(303, `${adminPrefix()}/login`);
 	}
 
-	if (locals.user.role === CUSTOMER_ROLE_ID) {
+	if (locals.user.roleId === CUSTOMER_ROLE_ID) {
 		throw error(403, 'This page is only accessible to administrators');
 	}
 }
