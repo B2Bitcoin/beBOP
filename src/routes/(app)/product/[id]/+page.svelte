@@ -256,73 +256,77 @@
 						}}
 						class="flex flex-col gap-2"
 					>
-						{#if data.product.payWhatYouWant}
-							<hr class="border-gray-300 md:hidden mt-4 pb-2" />
-							<div class="flex flex-col gap-2 justify-between">
-								<label class="w-full form-label">
-									Name your price ({data.currencies.main}):
-									<input
-										class="form-input"
-										type="number"
-										min={customAmount < 0.01 && data.product.price.amount !== 0
-											? '0.01'
-											: toCurrency(
-													data.currencies.main,
-													data.product.price.amount,
-													data.product.price.currency
-											  )}
-										name="customPrice"
-										bind:value={customAmount}
-										placeholder="Price"
-										required
-										step="any"
-									/>
+						{#if canBuy}
+							{#if data.product.payWhatYouWant}
+								<hr class="border-gray-300 md:hidden mt-4 pb-2" />
+								<div class="flex flex-col gap-2 justify-between">
+									<label class="w-full form-label">
+										Name your price ({data.currencies.main}):
+										<input
+											class="form-input"
+											type="number"
+											min={customAmount < 0.01 && data.product.price.amount !== 0
+												? '0.01'
+												: toCurrency(
+														data.currencies.main,
+														data.product.price.amount,
+														data.product.price.currency
+												  )}
+											name="customPrice"
+											bind:value={customAmount}
+											placeholder="Price"
+											required
+											step="any"
+										/>
+									</label>
+								</div>
+							{/if}
+							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
+								<label class="mb-2">
+									Amount: <select
+										name="quantity"
+										bind:value={quantity}
+										class="form-input w-16 ml-2 inline cursor-pointer"
+									>
+										{#each Array(amountAvailable)
+											.fill(0)
+											.map((_, i) => i + 1) as i}
+											<option value={i}>{i}</option>
+										{/each}
+									</select>
 								</label>
-							</div>
-						{/if}
-						{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
-							<label class="mb-2">
-								Amount: <select
-									name="quantity"
-									bind:value={quantity}
-									class="form-input w-16 ml-2 inline cursor-pointer"
+							{/if}
+							{#if errorMessage}
+								<p class="text-red-500">{errorMessage}</p>
+							{/if}
+							{#if amountAvailable === 0}
+								<p class="text-red-500">
+									<span class="font-bold">Out of stock</span>
+									<br />
+									Please check back later
+								</p>
+							{:else if data.showCheckoutButton}
+								<button class="btn btn-black" disabled={loading}>{verb} now</button>
+								<button
+									value="Add to cart"
+									formaction="?/addToCart"
+									disabled={loading}
+									class="btn btn-gray"
 								>
-									{#each Array(amountAvailable)
-										.fill(0)
-										.map((_, i) => i + 1) as i}
-										<option value={i}>{i}</option>
-									{/each}
-								</select>
-							</label>
-						{/if}
-						{#if errorMessage}
-							<p class="text-red-500">{errorMessage}</p>
-						{/if}
-						{#if amountAvailable === 0}
-							<p class="text-red-500">
-								<span class="font-bold">Out of stock</span>
-								<br />
-								Please check back later
-							</p>
-						{:else if data.showCheckoutButton && canBuy}
-							<button class="btn btn-black" disabled={loading}>{verb} now</button>
-							<button
-								value="Add to cart"
-								formaction="?/addToCart"
-								disabled={loading}
-								class="btn btn-gray"
-							>
-								Add to cart
-							</button>
-						{:else if canBuy}
-							<button
-								value="Add to cart"
-								formaction="?/addToCart"
-								disabled={loading}
-								class="btn btn-black"
-							>
-								{verb}
-							</button>
+									Add to cart
+								</button>
+							{:else}
+								<button
+									value="Add to cart"
+									formaction="?/addToCart"
+									disabled={loading}
+									class="btn btn-black"
+								>
+									{verb}
+								</button>
+							{/if}
+						{:else}
+							<p>This product is not available for sale</p>
 						{/if}
 					</form>
 				{:else}
