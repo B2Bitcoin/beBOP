@@ -1,3 +1,4 @@
+import { adminPrefix } from '$lib/server/admin';
 import { collections } from '$lib/server/database.js';
 import { zodNpub } from '$lib/server/nostr.js';
 import { sendResetPasswordNotification } from '$lib/server/sendNotification.js';
@@ -61,7 +62,7 @@ export const actions = {
 			}
 		);
 
-		throw redirect(303, '/admin/arm');
+		throw redirect(303, `${adminPrefix()}/arm`);
 	},
 	resetPassword: async function ({ params }) {
 		const user = await collections.users.findOne({ _id: new ObjectId(params.id) });
@@ -99,7 +100,7 @@ export const actions = {
 
 		await sendResetPasswordNotification(user);
 
-		throw redirect(303, '/admin/arm');
+		throw redirect(303, `${adminPrefix()}/arm`);
 	},
 	delete: async function ({ params }) {
 		const user = await collections.users.findOne({ _id: new ObjectId(params.id) });
@@ -118,6 +119,6 @@ export const actions = {
 
 		await collections.users.deleteOne({ _id: user._id });
 
-		throw redirect(303, '/admin/arm');
+		throw redirect(303, `${adminPrefix()}/arm`);
 	}
 };

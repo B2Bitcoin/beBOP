@@ -6,9 +6,12 @@
 
 <form method="post" action="?/update" use:enhance class="flex flex-col gap-4">
 	{#if data.digitalFile.productId}
-		<a href="/admin/product/{data.digitalFile.productId}" class="underline text-link text-center"
-			>Back to product</a
+		<a
+			href="{data.adminPrefix}/product/{data.digitalFile.productId}"
+			class="underline text-link text-center"
 		>
+			Back to product
+		</a>
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.digitalFile.name} />

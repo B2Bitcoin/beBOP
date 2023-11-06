@@ -15,7 +15,7 @@
 	);
 
 	async function exportData() {
-		const response = await fetch('/admin/backup/create', {
+		const response = await fetch(`${data.adminPrefix}/backup/create`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -32,10 +32,12 @@
 	}
 </script>
 
-<a href="/admin/product/new" class="underline block">Add product</a>
-<a href="/admin/product/prices" class="underline block">Products price</a>
+<a href="{data.adminPrefix}/product/new" class="underline block">Add product</a>
+<a href="{data.adminPrefix}/product/prices" class="underline block">Products price</a>
 <button on:click={exportData} class="btn btn-black self-start">Export catalog</button>
-<a href="/admin/backup/import?type=catalog" class="btn btn-black self-start">Import catalog</a>
+<a href="{data.adminPrefix}/backup/import?type=catalog" class="btn btn-black self-start"
+	>Import catalog</a
+>
 
 <form method="post" class="flex flex-col gap-4" action="?/update">
 	<h3 class="text-xl">Default action settings</h3>

@@ -26,7 +26,7 @@
 	}
 </script>
 
-<a href="/admin/tags/new" class="underline block">Create new tag</a>
+<a href="{data.adminPrefix}/tags/new" class="underline block">Create new tag</a>
 
 <h1 class="text-3xl">List of Tags</h1>
 
@@ -43,7 +43,7 @@
 		<ul class="ml-5">
 			{#each tagsCreators as tag}
 				<li>
-					<a href={'/admin/tags/' + tag._id} class="underline text-blue">
+					<a href="{data.adminPrefix}/tags/{tag._id}" class="underline text-blue">
 						{tag.name}
 					</a>
 					- <span class="text-gray-550">[tag={tag._id}]</span>
@@ -65,7 +65,7 @@
 		<ul class="ml-5">
 			{#each tagsRetailers as tag}
 				<li>
-					<a href={'/admin/tags/' + tag._id} class="underline text-blue">
+					<a href="{data.adminPrefix}/tags/{tag._id}" class="underline text-blue">
 						{tag.name}
 					</a>
 					- <span class="text-gray-550">[tag={tag._id}]</span>
@@ -87,7 +87,7 @@
 		<ul class="ml-5">
 			{#each tagsTemporal as tag}
 				<li>
-					<a href={'/admin/tags/' + tag._id} class="underline text-blue">
+					<a href="{data.adminPrefix}/tags/{tag._id}" class="underline text-blue">
 						{tag.name}
 					</a>
 					- <span class="text-gray-550">[tag={tag._id}]</span>
@@ -105,7 +105,7 @@
 		<ul class="ml-5">
 			{#each tagsEvents as tag}
 				<li>
-					<a href={'/admin/tags/' + tag._id} class="underline text-blue">
+					<a href="{data.adminPrefix}/tags/{tag._id}" class="underline text-blue">
 						{tag.name}
 					</a>
 					- <span class="text-gray-550">[tag={tag._id}]</span>

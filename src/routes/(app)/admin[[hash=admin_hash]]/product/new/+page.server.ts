@@ -16,6 +16,7 @@ import { productBaseSchema } from '../product-schema';
 import { generateId } from '$lib/utils/generateId';
 import { CopyObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import type { Tag } from '$lib/types/Tag';
+import { adminPrefix } from '$lib/server/admin';
 
 export const load = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
@@ -183,7 +184,7 @@ export const actions: Actions = {
 
 		onProductCreated({ _id: parsed.slug, name: parsed.name });
 
-		throw redirect(303, '/admin/product/' + parsed.slug);
+		throw redirect(303, `${adminPrefix()}/product/${parsed.slug}`);
 	},
 
 	duplicate: async ({ request }) => {
@@ -370,7 +371,7 @@ export const actions: Actions = {
 
 		onProductCreated({ _id: duplicate.slug, name: duplicate.name });
 
-		throw redirect(303, '/admin/product/' + duplicate.slug);
+		throw redirect(303, `${adminPrefix()}/product/${duplicate.slug}`);
 	}
 };
 

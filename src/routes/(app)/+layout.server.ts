@@ -1,3 +1,4 @@
+import { adminPrefix } from '$lib/server/admin.js';
 import { getCartFromDb } from '$lib/server/cart.js';
 import { countryNameByAlpha2 } from '$lib/server/country-codes';
 import { collections } from '$lib/server/database';
@@ -17,8 +18,8 @@ export async function load(params) {
 				"Admin account hasn't been created yet. Please open a new private window to create admin account"
 			);
 		}
-		if (params.url.pathname !== '/admin/login') {
-			throw redirect(302, '/admin/login');
+		if (params.url.pathname !== `${adminPrefix()}/login`) {
+			throw redirect(302, `${adminPrefix()}/login`);
 		}
 	}
 

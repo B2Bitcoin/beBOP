@@ -1,3 +1,4 @@
+import { adminPrefix } from '$lib/server/admin.js';
 import { collections, withTransaction } from '$lib/server/database';
 import { onOrderPaid } from '$lib/server/orders';
 import { toSatoshis } from '$lib/utils/toSatoshis';
@@ -34,7 +35,7 @@ export const actions = {
 			await onOrderPaid(order, session);
 		});
 
-		throw redirect(303, request.headers.get('referer') || '/admin/order');
+		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
 	},
 	cancel: async ({ params, request }) => {
 		const order = await collections.orders.findOne({
@@ -62,6 +63,6 @@ export const actions = {
 			);
 		});
 
-		throw redirect(303, request.headers.get('referer') || '/admin/order');
+		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
 	}
 };

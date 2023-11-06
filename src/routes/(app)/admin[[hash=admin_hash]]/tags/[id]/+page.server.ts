@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
+import { adminPrefix } from '$lib/server/admin';
 
 export const load = async ({ params }) => {
 	const tag = await collections.tags.findOne({ _id: params.id });
@@ -79,13 +80,12 @@ export const actions: Actions = {
 			}
 		);
 
-		throw redirect(303, '/admin/tags/' + params.id);
+		throw redirect(303, `${adminPrefix()}/tags/${params.id}`);
 	},
 
-	// Todo: disable in production
 	delete: async ({ params }) => {
 		await collections.tags.deleteOne({ _id: params.id });
 
-		throw redirect(303, '/admin/tags');
+		throw redirect(303, `${adminPrefix()}/tags`);
 	}
 };

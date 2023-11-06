@@ -3,6 +3,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { deletePicture } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import { adminPrefix } from '$lib/server/admin';
 
 export const load = async ({ params }) => {
 	const picture = await collections.pictures.findOne({ _id: params.id });
@@ -42,7 +43,9 @@ export const actions: Actions = {
 
 		throw redirect(
 			303,
-			picture.productId ? '/admin/product/' + picture.productId : '/admin/picture'
+			picture.productId
+				? `${adminPrefix()}/product/${picture.productId}`
+				: `${adminPrefix()}/picture`
 		);
 	},
 

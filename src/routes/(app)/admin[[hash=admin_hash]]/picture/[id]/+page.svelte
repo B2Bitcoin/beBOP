@@ -7,11 +7,12 @@
 
 <form method="post" action="?/update" use:enhance class="flex flex-col gap-4">
 	{#if data.picture.productId}
-		<a href="/admin/product/{data.picture.productId}" class="underline text-link text-center"
-			>Back to product</a
+		<a
+			href="{data.adminPrefix}/product/{data.picture.productId}"
+			class="underline text-link text-center">Back to product</a
 		>
 	{:else}
-		<a href="/admin/picture" class="underline text-link text-center">Back to list</a>
+		<a href="{data.adminPrefix}/picture" class="underline text-link text-center">Back to list</a>
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.picture.name} />

@@ -5,7 +5,7 @@
 	import { slide } from 'svelte/transition';
 	import { isAllowedOnPage } from '$lib/types/Role';
 	import { POS_ROLE_ID } from '$lib/types/User';
-	import { adminLinks } from './adminLinks.js';
+	import { adminLinks as adminLinksImported } from './adminLinks.js';
 
 	export let data;
 
@@ -14,6 +14,14 @@
 	$: if ($navigating) {
 		navMenuOpen = false;
 	}
+
+	const adminLinks = adminLinksImported.map((link) => ({
+		...link,
+		links: link.links.map((l) => ({
+			...l,
+			href: l.href.replace('/admin', data.adminPrefix)
+		}))
+	}));
 
 	$: isLoginPage = /^\/admin(-[0-9a-zA-Z]+)?\/login/.test($page.url.pathname);
 </script>
@@ -30,8 +38,8 @@
 					<IconMenu />
 				</button>
 				<span class="font-bold text-xl flex items-center gap-2">
-					<a class="hover:underline" href="/admin">Admin</a>
-					<form action="/admin/logout" method="post" class="contents">
+					<a class="hover:underline" href={data.adminPrefix}>Admin</a>
+					<form action="{data.adminPrefix}/logout" method="post" class="contents">
 						<button type="submit">
 							<span class="sr-only">Log out</span>
 							<IconLogout class="text-red-500" />
@@ -50,22 +58,24 @@
 					</a>
 				{/if}
 				{#each adminLinks as adminLink}
-					<span class="font-bold text-xl hidden sm:inline">
-						{adminLink.section}
-					</span>
-					{#each adminLink.links.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
-						<a
-							href={link.href}
-							data-sveltekit-preload-data="off"
-							class="{$page.url.pathname.startsWith(link.href)
-								? 'underline'
-								: ''}  hidden sm:inline"
-							class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-							class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-						>
-							{link.label}
-						</a>
-					{/each}
+					<nav class="flex gap-x-6 items-center">
+						<span class="font-bold text-xl hidden sm:inline">
+							{adminLink.section}
+						</span>
+						{#each adminLink.links.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+							<a
+								href={link.href}
+								data-sveltekit-preload-data="off"
+								class="{$page.url.pathname.startsWith(link.href)
+									? 'underline'
+									: ''}  hidden sm:inline"
+								class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+								class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+							>
+								{link.label}
+							</a>
+						{/each}
+					</nav>
 				{/each}
 			</nav>
 		</div>

@@ -1,3 +1,4 @@
+import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
@@ -62,6 +63,6 @@ export const actions = {
 			_id: params.slug
 		});
 
-		throw redirect(303, '/admin/cms');
+		throw redirect(303, `${adminPrefix()}/cms`);
 	}
 };

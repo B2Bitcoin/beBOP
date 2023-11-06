@@ -6,6 +6,7 @@ import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createSuperAdminUserInDb } from '$lib/server/user.js';
 import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
+import { adminPrefix } from '$lib/server/admin.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
@@ -75,6 +76,6 @@ export const actions = {
 			throw redirect(303, `/pos`);
 		}
 
-		throw redirect(303, `/admin`);
+		throw redirect(303, adminPrefix());
 	}
 };

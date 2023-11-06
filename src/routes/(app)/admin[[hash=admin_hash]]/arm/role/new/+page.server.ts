@@ -1,3 +1,4 @@
+import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database.js';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User.js';
 import { error, redirect } from '@sveltejs/kit';
@@ -39,6 +40,6 @@ export const actions = {
 			updatedAt: new Date()
 		});
 
-		throw redirect(303, `/admin/arm`);
+		throw redirect(303, `${adminPrefix()}/arm`);
 	}
 };

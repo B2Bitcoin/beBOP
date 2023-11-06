@@ -4,6 +4,8 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 
+	export let data;
+
 	let name = '';
 	let slug = '';
 	let formElement: HTMLFormElement;
@@ -54,7 +56,7 @@
 		const fileSize = files[0].size;
 		const fileName = files[0].name;
 
-		const response = await fetch('/admin/picture/prepare', {
+		const response = await fetch(`${data.adminPrefix}/picture/prepare`, {
 			method: 'POST',
 			body: JSON.stringify({
 				fileName,
