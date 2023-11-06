@@ -73,6 +73,10 @@
 			cartOpen = false;
 		}
 	});
+
+	$: if (items.length === 0) {
+		cartOpen = false;
+	}
 </script>
 
 <svelte:head>

@@ -77,7 +77,7 @@ export async function addToCartInDb(
 
 	const availableAmount = await computeAvailableAmount(product, cart);
 
-	if (availableAmount < 0) {
+	if (availableAmount <= 0) {
 		throw error(400, 'Product is out of stock');
 	}
 
