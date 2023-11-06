@@ -77,7 +77,7 @@ export async function addToCartInDb(
 
 	const availableAmount = await computeAvailableAmount(product, cart);
 
-	if (availableAmount < 0) {
+	if (availableAmount <= 0) {
 		throw error(400, 'Product is out of stock');
 	}
 
@@ -194,7 +194,7 @@ export async function removeFromCartInDb(
 async function computeAvailableAmount(product: Product, cart: Cart): Promise<number> {
 	return !product.stock
 		? Infinity
-		: product.stock.total +
+		: product.stock.total -
 				(await amountOfProductReserved(product._id, {
 					exclude: {
 						sessionId: cart.user.sessionId,

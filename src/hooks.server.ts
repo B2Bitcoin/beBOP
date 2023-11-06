@@ -89,6 +89,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
+	event.locals.clientIp = event.getClientAddress(); // IP from Client Request
+
 	if (
 		runtimeConfig.isMaintenance &&
 		!isAdminUrl &&
@@ -97,7 +99,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		!event.url.pathname.startsWith('/picture/raw/') &&
 		event.url.pathname !== '/lightning/pay' &&
 		!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
-		!runtimeConfig.maintenanceIps.split(',').includes(event.getClientAddress())
+		!runtimeConfig.maintenanceIps.split(',').includes(event.locals.clientIp)
 	) {
 		if (event.request.method !== 'GET') {
 			throw error(405, 'Site is in maintenance mode. Please try again later.');
@@ -109,8 +111,6 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const secretSessionId = token || crypto.randomUUID();
 	event.locals.sessionId = await sha256(secretSessionId);
-
-	event.locals.clientIp = event.getClientAddress(); // IP from Client Request
 
 	// Refresh cookie expiration date
 	event.cookies.set('bootik-session', secretSessionId, {

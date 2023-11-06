@@ -23,7 +23,7 @@ export async function load({ parent, locals }) {
 		}
 	}
 	return {
-		paymentMethods: paymentMethods(),
+		paymentMethods: paymentMethods(locals.user?.roleId),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
@@ -33,7 +33,8 @@ export async function load({ parent, locals }) {
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		if (!paymentMethods().length) {
+		const methods = paymentMethods(locals.user?.roleId);
+		if (!methods.length) {
 			throw error(500, 'No payment methods configured for the bootik');
 		}
 		const cart = await getCartFromDb({ user: userIdentifier(locals) });
@@ -94,7 +95,7 @@ export const actions = {
 
 		const { paymentMethod, discountAmount, discountType, discountJustification } = z
 			.object({
-				paymentMethod: z.enum([paymentMethods()[0], ...paymentMethods().slice(1)]),
+				paymentMethod: z.enum([methods[0], ...methods.slice(1)]),
 				discountAmount: z.coerce.number().optional(),
 				discountType: z.enum(['fiat', 'percentage']).optional(),
 				discountJustification: z.string().optional()
