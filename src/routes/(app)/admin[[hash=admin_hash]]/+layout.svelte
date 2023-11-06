@@ -70,7 +70,7 @@
 				{/if}
 			</nav>
 			<nav class="flex gap-x-6 items-center">
-				{#each adminLinks.filter((item) => item.section === sectionName) as adminLink}
+				{#each adminLinks.filter((item) => item.section === decodeURIComponent($page.url.hash.replace('#', '')) || item.section === sectionName) as adminLink}
 					<span class="font-bold text-xl hidden sm:inline">
 						{adminLink.section}
 					</span>
