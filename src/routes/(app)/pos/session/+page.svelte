@@ -6,6 +6,7 @@
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 	import { onMount } from 'svelte';
+	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -71,13 +72,13 @@
 	});
 
 	$: totalPrice = sumCurrency(
-		data.currencies.main,
+		UNDERLYING_CURRENCY,
 		cart.map((item) => ({
 			currency: (item.customPrice || item.product.price).currency,
 			amount: (item.customPrice || item.product.price).amount * item.quantity
 		}))
 	);
-	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), data.currencies.main);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 </script>
 
@@ -182,18 +183,14 @@
 					<div class="flex flex-col items-end">
 						<PriceTag
 							amount={view === 'pending' ? order?.vat?.price?.amount || 0 : vat}
-							currency={view === 'pending'
-								? order?.vat?.price?.currency || 'USD'
-								: data.currencies.main}
+							currency={UNDERLYING_CURRENCY}
 							main
 							class="text-[28px] text-gray-800"
 						/>
 						<PriceTag
 							class="text-base text-gray-600"
 							amount={view === 'pending' ? order?.vat?.price?.amount || 0 : vat}
-							currency={view === 'pending'
-								? order?.vat?.price?.currency || 'USD'
-								: data.currencies.main}
+							currency={UNDERLYING_CURRENCY}
 							secondary
 						/>
 					</div>
@@ -205,18 +202,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={view === 'pending' ? order?.totalPrice?.amount || 0 : totalPriceWithVat}
-						currency={view === 'pending'
-							? order?.totalPrice?.currency || 'USD'
-							: data.currencies.main}
+						currency={UNDERLYING_CURRENCY}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={view === 'pending' ? order?.totalPrice?.amount || 0 : totalPriceWithVat}
-						currency={view === 'pending'
-							? order?.totalPrice?.currency || 'USD'
-							: data.currencies.main}
+						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
