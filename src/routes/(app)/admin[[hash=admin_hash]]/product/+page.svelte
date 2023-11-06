@@ -53,54 +53,39 @@
 		<tbody>
 			<tr>
 				<td class="py-2 px-4 border-r border-gray-300">Product is visible</td>
-				<td class="py-2 px-4 border-r border-gray-300 text-center"
-					><input
-						type="checkbox"
-						bind:checked={eshopVisible}
-						name="eshopVisible"
-						class="rounded"
-					/></td
-				>
-				<td class="py-2 px-4 border-r border-gray-300 text-center"
-					><input
+				<td class="py-2 px-4 border-r border-gray-300 text-center">
+					<input type="checkbox" bind:checked={eshopVisible} name="eshopVisible" class="rounded" />
+				</td>
+				<td class="py-2 px-4 border-r border-gray-300 text-center">
+					<input
 						type="checkbox"
 						bind:checked={retailVisible}
 						name="retailVisible"
 						class="rounded"
-					/></td
-				>
-				<td class="py-2 px-4 border-r border-gray-300 text-center"
-					><input
+					/>
+				</td>
+				<td class="py-2 px-4 border-r border-gray-300 text-center">
+					<input
 						type="checkbox"
 						bind:checked={googleShoppingVisible}
 						name="googleShoppingVisible"
 						class="rounded"
-					/></td
-				>
+					/>
+				</td>
 			</tr>
 			<tr>
 				<td class="py-2 px-4 border border-gray-300">Product can be added to basket</td>
-				<td class="py-2 px-4 border border-gray-300 text-center"
-					><input
-						type="checkbox"
-						bind:checked={eshopBasket}
-						name="eshopBasket"
-						class="rounded"
-					/></td
-				>
-				<td class="py-2 px-4 border border-gray-300 text-center"
-					><input
-						type="checkbox"
-						bind:checked={retailBasket}
-						name="retailBasket"
-						class="rounded"
-					/></td
-				>
+				<td class="py-2 px-4 border border-gray-300 text-center">
+					<input type="checkbox" bind:checked={eshopBasket} name="eshopBasket" class="rounded" />
+				</td>
+				<td class="py-2 px-4 border border-gray-300 text-center">
+					<input type="checkbox" bind:checked={retailBasket} name="retailBasket" class="rounded" />
+				</td>
 				<td class="py-2 px-4 border border-gray-300 text-center" />
 			</tr>
 		</tbody>
 	</table>
-	<button type="submit" class="btn btn-blue">Update</button>
+	<button type="submit" class="btn btn-blue self-start">Update</button>
 </form>
 
 <h1 class="text-3xl">List of products</h1>

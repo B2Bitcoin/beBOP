@@ -3,6 +3,7 @@ import type { JsonObject } from 'type-fest';
 import { z } from 'zod';
 import { set } from 'lodash-es';
 import type { Actions } from './$types';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const load = async () => {
 	const products = await collections.products.find({}).toArray();
@@ -46,11 +47,11 @@ export const actions: Actions = {
 					data: {
 						eShop: {
 							visible: eshopVisible,
-							basket: eshopBasket
+							canBeAddedToBasket: eshopBasket
 						},
 						retail: {
 							visible: retailVisible,
-							basket: retailBasket
+							canBeAddedToBasket: retailBasket
 						},
 						googleShopping: {
 							visible: googleShoppingVisible
@@ -63,6 +64,20 @@ export const actions: Actions = {
 				upsert: true
 			}
 		);
+
+		runtimeConfig.productActionSettings = {
+			eShop: {
+				visible: eshopVisible,
+				canBeAddedToBasket: eshopBasket
+			},
+			retail: {
+				visible: retailVisible,
+				canBeAddedToBasket: retailBasket
+			},
+			googleShopping: {
+				visible: googleShoppingVisible
+			}
+		};
 
 		return {};
 	}
