@@ -7,6 +7,7 @@ import {
 } from '$lib/server/bitcoin';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import type { Order } from '$lib/types/Order.js';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 
@@ -15,13 +16,15 @@ export async function load() {
 
 	const transactions = wallets.length ? await listTransactions() : [];
 
-	const orders = collections.orders.find({
-		_id: {
-			$in: transactions
-				.filter((item) => item.label.startsWith('order:'))
-				.map((item) => item.label.slice('order:'.length))
-		}
-	});
+	const orders = collections.orders
+		.find({
+			_id: {
+				$in: transactions
+					.filter((item) => item.label.startsWith('order:'))
+					.map((item) => item.label.slice('order:'.length))
+			}
+		})
+		.project<Omit<Order, 'user'>>({ user: 0 });
 
 	return {
 		currentWallet: runtimeConfig.bitcoinWallet,
