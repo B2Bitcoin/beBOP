@@ -195,10 +195,19 @@
 			class="form-input"
 		/>
 	</label>
-	<input type="submit" class="btn btn-blue self-start text-white" value="Update" />
-	<button type="submit" class="ml-auto btn btn-red" formaction="?/delete" on:click={confirmDelete}>
-		Delete
-	</button>
+	<div class="flex flex-row justify-between gap-2">
+		<input type="submit" class="btn btn-blue self-start text-white" value="Update" />
+		<a href="/tag/{data.tag._id}" class="btn btn-gray">View</a>
+
+		<button
+			type="submit"
+			class="ml-auto btn btn-red"
+			formaction="?/delete"
+			on:click={confirmDelete}
+		>
+			Delete
+		</button>
+	</div>
 </form>
 
 <h2 class="text-2xl my-4">Photos</h2>

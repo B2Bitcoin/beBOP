@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Picture } from '$lib/types/Picture';
 	import type { Tag } from '$lib/types/Tag';
 
 	let className = '';
@@ -7,13 +8,23 @@
 		Tag,
 		'_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'
 	>;
+	export let picture: Picture | undefined;
 
 	$: baseClasses = 'mx-auto bg-gray-240 gap-4 rounded';
 </script>
 
 <div class="{baseClasses} {className}">
 	<div>
-		<img src="https://imgur.com/rjdvjFT.png" alt="img watch" class="w-full" />
+		{#if picture}
+			<img
+				srcset={picture.storage.formats
+					.map((format) => `/picture/raw/${picture?._id}/format/${format.width} ${format.width}w`)
+					.join(', ')}
+				alt="img watch"
+				class="w-full"
+			/>
+		{/if}
+
 		<div class="flex flex-col my-[-25px] text-center justify-center">
 			<div class="mx-auto text-center bg-white">
 				<h2 class="text-md uppercase md:text-2xl lg:text-5xl">{tag.title}</h2>

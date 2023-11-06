@@ -21,7 +21,7 @@
 	</div>
 
 	<div class="relative">
-		<img src="https://i.imgur.com/vUISISW.png" alt="Image" />
+		<img src="https://i.imgur.com/vUISISW.png" alt="vUISISW" />
 		<div class="flex text-centern justify-between mt-auto">
 			{#each tag.cta as cta}
 				<div class="bg-blue-500 font-semibold text-white text-xl text-center w-auto p-1">

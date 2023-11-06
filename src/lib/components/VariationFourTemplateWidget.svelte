@@ -12,8 +12,7 @@
 </script>
 
 <div class="{baseClasses} {className} relative">
-	<!-- svelte-ignore a11y-img-redundant-alt -->
-	<img src="https://imgur.com/rjdvjFT.png" alt="Image" class="w-full h-auto" />
+	<img src="https://imgur.com/rjdvjFT.png" alt="rjdvjFT" class="w-full h-auto" />
 	<div
 		class="mt-12 md:mt-[150px] lg:mt-[200px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
 	>
