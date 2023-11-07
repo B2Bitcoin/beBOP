@@ -13,7 +13,7 @@
 	}
 </script>
 
-<h1 class="text-3xl">Add a tag</h1>
+<h1 class="text-3xl">Edit a tag</h1>
 
 <form method="post" class="flex flex-col gap-4" action="?/update">
 	<label class="form-label">

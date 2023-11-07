@@ -12,16 +12,21 @@ export const actions: Actions = {
 			.object({
 				name: z.string(),
 				productId: z.string().optional(),
+				sliderId: z.string().optional(),
 				picture: z.instanceof(File)
 			})
 			.parse(Object.fromEntries(formData));
 
 		await generatePicture(new Uint8Array(await fields.picture.arrayBuffer()), fields.name, {
-			productId: fields.productId || undefined
+			productId: fields.productId || undefined,
+			slider: fields.sliderId ? { _id: fields.sliderId } : undefined
 		});
 
 		if (fields.productId) {
 			throw redirect(303, `${adminPrefix()}/product/${fields.productId}`);
+		}
+		if (fields.sliderId) {
+			throw redirect(303, '/admin/slider/' + fields.sliderId);
 		}
 
 		throw redirect(303, `${adminPrefix()}/picture`);

@@ -10,7 +10,6 @@
 	export let data;
 
 	let navMenuOpen = false;
-
 	$: if ($navigating) {
 		navMenuOpen = false;
 	}

@@ -4,6 +4,7 @@
 	export let data;
 
 	const productId = $page.url.searchParams.get('productId');
+	const sliderId = $page.url.searchParams.get('sliderId');
 	let files: FileList | null = null;
 	let fileName = '';
 </script>
@@ -52,6 +53,16 @@
 
 	{#if productId}
 		<input type="hidden" name="productId" value={productId} />
+	{/if}
+
+	{#if sliderId}
+		<p>
+			Associated slider: <a href="/admin/slider/{sliderId}" class="hover:underline">{sliderId}</a>
+		</p>
+	{/if}
+
+	{#if sliderId}
+		<input type="hidden" name="sliderId" value={sliderId} />
 	{/if}
 
 	<input type="submit" class="btn btn-gray self-start" value="Add" />
