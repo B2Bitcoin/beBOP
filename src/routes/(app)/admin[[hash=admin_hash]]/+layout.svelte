@@ -25,7 +25,7 @@
 	function findSectionByHref(href: string) {
 		for (const sectionItem of adminLinks) {
 			for (const linkItem of sectionItem.links) {
-				if (linkItem.href === href) {
+				if (href.startsWith(linkItem.href)) {
 					return sectionItem.section;
 				}
 			}
