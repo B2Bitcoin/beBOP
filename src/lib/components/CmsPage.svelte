@@ -5,6 +5,7 @@
 	import CarouselWidget from './CarouselWidget.svelte';
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import VariationThreeTemplateWidget from './VariationThreeTemplateWidget.svelte';
+	import VariationFourTemplateWidget from './VariationFourTemplateWidget.svelte';
 
 	export let products: PageData['products'];
 	export let pictures: PageData['pictures'];
@@ -94,10 +95,18 @@
 							pictures={picturesBySlider(token.slug)}
 						/>
 					{:else if token.type === 'tagWidget' && tagById[token.slug]}
-						<VariationThreeTemplateWidget
-							tag={tagById[token.slug]}
-							picture={picturesByTag(token.slug)[0]}
-						/>
+						{#if token.display === 'var-3'}
+							<VariationThreeTemplateWidget
+								tag={tagById[token.slug]}
+								picture={picturesByTag(token.slug)[0]}
+							/>
+						{/if}
+						{#if token.display === 'var-4'}
+							<VariationFourTemplateWidget
+								tag={tagById[token.slug]}
+								picture={picturesByTag(token.slug)[0]}
+							/>
+						{/if}
 					{:else}
 						{@html token.raw}
 					{/if}
