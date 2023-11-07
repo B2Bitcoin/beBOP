@@ -22,10 +22,19 @@
 			href: l.href.replace('/admin', data.adminPrefix)
 		}))
 	}));
-
+	function findSectionByHref(href: string) {
+		for (const sectionItem of adminLinks) {
+			for (const linkItem of sectionItem.links) {
+				if (linkItem.href === href) {
+					return sectionItem.section;
+				}
+			}
+		}
+	}
 	$: isLoginPage = /^\/admin(-[0-9a-zA-Z]+)?\/login/.test($page.url.pathname);
-
-	let sectionName = '';
+	$: sectionName =
+		decodeURIComponent($page.url.hash.replace('#', '')) ||
+		findSectionByHref(decodeURIComponent($page.url.pathname));
 </script>
 
 {#if !isLoginPage}
@@ -50,11 +59,7 @@
 				</span>
 				{#each adminLinks as adminLink}
 					<span class="text-xl hidden sm:inline">
-						<a
-							class="hover:underline"
-							href="#{adminLink.section}"
-							on:click={() => (sectionName = adminLink.section)}>{adminLink.section}</a
-						>
+						<a class="hover:underline" href="#{adminLink.section}">{adminLink.section}</a>
 					</span>
 				{/each}
 				{#if data.roleId === POS_ROLE_ID}
@@ -70,7 +75,7 @@
 				{/if}
 			</nav>
 			<nav class="flex gap-x-6 items-center">
-				{#each adminLinks.filter((item) => item.section === decodeURIComponent($page.url.hash.replace('#', '')) || item.section === sectionName) as adminLink}
+				{#each adminLinks.filter((item) => item.section === sectionName) as adminLink}
 					<span class="font-bold text-xl hidden sm:inline">
 						{adminLink.section}
 					</span>
