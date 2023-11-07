@@ -216,3 +216,9 @@ export function picturesForSliders(sliderIds: string[]): Promise<Picture[]> {
 		])
 		.toArray();
 }
+
+export function picturesForTags(tagIds: string[]): Promise<Picture[]> {
+	return collections.pictures
+		.aggregate<Picture>([{ $match: { 'tag._id': { $in: tagIds } } }, { $sort: { createdAt: 1 } }])
+		.toArray();
+}

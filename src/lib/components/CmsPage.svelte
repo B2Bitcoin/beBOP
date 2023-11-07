@@ -4,6 +4,7 @@
 	import ChallengeWidget from './ChallengeWidget.svelte';
 	import CarouselWidget from './CarouselWidget.svelte';
 	import { POS_ROLE_ID } from '$lib/types/User';
+	import VariationThreeTemplateWidget from './VariationThreeTemplateWidget.svelte';
 
 	export let products: PageData['products'];
 	export let pictures: PageData['pictures'];
@@ -13,6 +14,8 @@
 	export let digitalFiles: PageData['digitalFiles'];
 	export let sliders: PageData['sliders'];
 	export let slidersPictures: PageData['slidersPictures'];
+	export let tags: PageData['tags'];
+	export let tagsPictures: PageData['tagsPictures'];
 	export let roleId: PageData['roleId'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
@@ -24,6 +27,10 @@
 	$: sliderById = Object.fromEntries(sliders.map((slider) => [slider._id, slider]));
 	function picturesBySlider(sliderId: string) {
 		return slidersPictures.filter((picture) => picture.slider?._id === sliderId);
+	}
+	$: tagById = Object.fromEntries(tags.map((tag) => [tag._id, tag]));
+	function picturesByTag(tagId: string) {
+		return tagsPictures.filter((picture) => picture.tag?._id === tagId);
 	}
 </script>
 
@@ -53,6 +60,11 @@
 					autoplay={token.autoplay ? token.autoplay : 3000}
 					pictures={picturesBySlider(token.slug)}
 				/>
+			{:else if token.type === 'tagWidget' && tagById[token.slug]}
+				<VariationThreeTemplateWidget
+					tag={tagById[token.slug]}
+					picture={picturesByTag(token.slug)[0]}
+				/>
 			{:else}
 				{@html token.raw}
 			{/if}
@@ -80,6 +92,11 @@
 						<CarouselWidget
 							autoplay={token.autoplay ? token.autoplay : 3000}
 							pictures={picturesBySlider(token.slug)}
+						/>
+					{:else if token.type === 'tagWidget' && tagById[token.slug]}
+						<VariationThreeTemplateWidget
+							tag={tagById[token.slug]}
+							picture={picturesByTag(token.slug)[0]}
 						/>
 					{:else}
 						{@html token.raw}
