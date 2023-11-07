@@ -21,6 +21,7 @@ export async function generatePicture(
 	opts?: {
 		productId?: string;
 		tag?: { _id: string; type: TagType };
+		slider?: { _id: string; url?: string; openNewTab?: boolean };
 		cb?: (session: ClientSession) => Promise<void>;
 	}
 ): Promise<void> {
@@ -54,6 +55,8 @@ export async function generatePicture(
 		? s3ProductPrefix(opts.productId)
 		: opts?.tag
 		? s3TagPrefix(opts.tag._id)
+		: opts?.slider
+		? s3TagPrefix(opts.slider._id)
 		: `pictures/`;
 
 	const path = `${pathPrefix}${_id}${extension}`;
@@ -146,6 +149,12 @@ export async function generatePicture(
 					},
 					...(opts?.productId && { productId: opts.productId }),
 					...(opts?.tag && { tag: { _id: opts?.tag._id, type: opts?.tag.type } }),
+					...(opts?.slider && {
+						slider: {
+							_id: opts?.slider._id,
+							...(opts.slider.url && { url: opts.slider.url, openNewTab: opts.slider.openNewTab })
+						}
+					}),
 					createdAt: new Date(),
 					updatedAt: new Date()
 				},
@@ -195,6 +204,15 @@ export function picturesForProducts(productIds: string[]): Promise<Picture[]> {
 				}
 			},
 			{ $replaceRoot: { newRoot: '$value' } }
+		])
+		.toArray();
+}
+
+export function picturesForSliders(sliderIds: string[]): Promise<Picture[]> {
+	return collections.pictures
+		.aggregate<Picture>([
+			{ $match: { 'slider._id': { $in: sliderIds } } },
+			{ $sort: { createdAt: 1 } }
 		])
 		.toArray();
 }

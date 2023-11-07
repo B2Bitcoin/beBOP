@@ -11,7 +11,7 @@ import { redirect } from '@sveltejs/kit';
 
 export async function load(event) {
 	return {
-		ip: event.getClientAddress(),
+		ip: event.locals.clientIp,
 		includeOrderUrlInQRCode: runtimeConfig.includeOrderUrlInQRCode,
 		enableCashSales: runtimeConfig.enableCashSales,
 		isMaintenance: runtimeConfig.isMaintenance,

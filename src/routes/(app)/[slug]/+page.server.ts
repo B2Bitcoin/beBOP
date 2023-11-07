@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import type { Product } from '$lib/types/Product';
-import { picturesForProducts } from '$lib/server/picture';
+import { picturesForProducts, picturesForSliders } from '$lib/server/picture';
 import { omit } from 'lodash-es';
 import type { Challenge } from '$lib/types/Challenge';
 import type { DigitalFile } from '$lib/types/DigitalFile';
@@ -14,6 +14,9 @@ const PRODUCT_WIDGET_REGEX =
 
 const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
 
+const SLIDER_WIDGET_REGEX =
+	/\[Slider=(?<slug>[a-z0-9-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/gi;
+
 export async function load({ params, locals }) {
 	const cmsPage = await collections.cmsPages.findOne({
 		_id: params.slug
@@ -25,6 +28,7 @@ export async function load({ params, locals }) {
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
+	const sliderSlugs = new Set<string>();
 
 	const tokens: Array<
 		| {
@@ -42,10 +46,17 @@ export async function load({ params, locals }) {
 				slug: string;
 				raw: string;
 		  }
+		| {
+				type: 'sliderWidget';
+				slug: string;
+				autoplay: number | undefined;
+				raw: string;
+		  }
 	> = [];
 
 	const productMatches = cmsPage.content.matchAll(PRODUCT_WIDGET_REGEX);
 	const challengeMatches = cmsPage.content.matchAll(CHALLENGE_WIDGET_REGEX);
+	const sliderMatches = cmsPage.content.matchAll(SLIDER_WIDGET_REGEX);
 
 	let index = 0;
 
@@ -55,6 +66,9 @@ export async function load({ params, locals }) {
 		),
 		...[...challengeMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
+		),
+		...[...sliderMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
 		)
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
@@ -77,6 +91,14 @@ export async function load({ params, locals }) {
 			tokens.push({
 				type: 'challengeWidget',
 				slug: match.groups.slug,
+				raw: match[0]
+			});
+		} else if (match.type === 'sliderWidget' && match.groups?.slug) {
+			sliderSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'sliderWidget',
+				slug: match.groups.slug,
+				autoplay: Number(match.groups?.autoplay),
 				raw: match[0]
 			});
 		}
@@ -135,6 +157,12 @@ export async function load({ params, locals }) {
 			endsAt: 1
 		})
 		.toArray();
+	const sliders = await collections.sliders
+		.find({
+			_id: { $in: [...sliderSlugs] }
+		})
+		.toArray();
+
 	const digitalFiles = await collections.digitalFiles
 		.find({})
 		.project<Pick<DigitalFile, '_id' | 'name' | 'productId'>>({
@@ -151,6 +179,8 @@ export async function load({ params, locals }) {
 		products,
 		pictures: await picturesForProducts(products.map((product) => product._id)),
 		challenges,
-		digitalFiles
+		digitalFiles,
+		sliders,
+		slidersPictures: await picturesForSliders(sliders.map((slider) => slider._id))
 	};
 }
