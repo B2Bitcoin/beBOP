@@ -169,7 +169,7 @@
 						<a
 							href="/cart"
 							on:click={(ev) => {
-								if (!data.cart || $page.url.pathname === '/checkout') {
+								if (!items.length || $page.url.pathname === '/checkout') {
 									return;
 								}
 								cartOpen = !cartOpen;
