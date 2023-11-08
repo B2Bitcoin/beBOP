@@ -10,6 +10,7 @@
 	import VariationFourTemplateWidget from './VariationFourTemplateWidget.svelte';
 	import VariationFiveTemplateWidget from './VariationFiveTemplateWidget.svelte';
 	import VariationSixTemplateWidget from './VariationSixTemplateWidget.svelte';
+	import TagWidget from './TagWidget.svelte';
 
 	export let products: PageData['products'];
 	export let pictures: PageData['pictures'];
@@ -66,44 +67,12 @@
 					pictures={picturesBySlider(token.slug)}
 				/>
 			{:else if token.type === 'tagWidget' && tagById[token.slug]}
-				{#if token.display === 'var-1'}
-					<VariationOneTemplateWidget tag={tagById[token.slug]} class="not-prose mb-12" />
-				{/if}
-				{#if token.display === 'var-2'}
-					<VariationTwoTemplateWidget
-						tag={tagById[token.slug]}
-						picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'wide')}
-						class="not-prose mb-12"
-					/>
-				{/if}
-				{#if token.display === 'var-3'}
-					<VariationThreeTemplateWidget
-						tag={tagById[token.slug]}
-						picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'main')}
-						class="not-prose mb-12"
-					/>
-				{/if}
-				{#if token.display === 'var-4'}
-					<VariationFourTemplateWidget
-						tag={tagById[token.slug]}
-						picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'avatar')}
-						class="not-prose mb-12"
-					/>
-				{/if}
-				{#if token.display === 'var-5'}
-					<VariationFiveTemplateWidget
-						tag={tagById[token.slug]}
-						picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'slim')}
-						class="not-prose mb-12"
-					/>
-				{/if}
-				{#if token.display === 'var-6'}
-					<VariationSixTemplateWidget
-						tag={tagById[token.slug]}
-						picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'slim')}
-						class="not-prose mb-12"
-					/>
-				{/if}
+				<TagWidget
+					tag={tagById[token.slug]}
+					pictures={picturesByTag(token.slug)}
+					displayOption={token.display}
+					class="not-prose mb-12"
+				/>
 			{:else}
 				{@html token.raw}
 			{/if}
@@ -133,46 +102,12 @@
 							pictures={picturesBySlider(token.slug)}
 						/>
 					{:else if token.type === 'tagWidget' && tagById[token.slug]}
-						{#if token.display === 'var-1'}
-							<VariationOneTemplateWidget tag={tagById[token.slug]} class="not-prose mb-12" />
-						{/if}
-						{#if token.display === 'var-2'}
-							<VariationTwoTemplateWidget
-								tag={tagById[token.slug]}
-								picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'wide')}
-								class="not-prose mb-12"
-							/>
-						{/if}
-						{#if token.display === 'var-3'}
-							<VariationThreeTemplateWidget
-								tag={tagById[token.slug]}
-								picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'main')}
-								class="not-prose mb-12"
-							/>
-						{/if}
-						{#if token.display === 'var-4'}
-							<VariationFourTemplateWidget
-								tag={tagById[token.slug]}
-								picture={picturesByTag(token.slug).find(
-									(picture) => picture.tag?.type === 'avatar'
-								)}
-								class="not-prose mb-12"
-							/>
-						{/if}
-						{#if token.display === 'var-5'}
-							<VariationFiveTemplateWidget
-								tag={tagById[token.slug]}
-								picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'slim')}
-								class="not-prose mb-12"
-							/>
-						{/if}
-						{#if token.display === 'var-6'}
-							<VariationSixTemplateWidget
-								tag={tagById[token.slug]}
-								picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'slim')}
-								class="not-prose mb-12"
-							/>
-						{/if}
+						<TagWidget
+							tag={tagById[token.slug]}
+							pictures={picturesByTag(token.slug)}
+							displayOption={token.display}
+							class="not-prose mb-12"
+						/>
 					{:else}
 						{@html token.raw}
 					{/if}

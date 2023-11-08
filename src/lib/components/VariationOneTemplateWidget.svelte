@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Tag } from '$lib/types/Tag';
+	import type { Picture } from '$lib/types/Picture';
+	import PictureComponent from './Picture.svelte';
 
 	let className = '';
 	export { className as class };
@@ -8,6 +10,7 @@
 		Tag,
 		'_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'
 	>;
+	export let picture: Picture | undefined;
 </script>
 
 <div class="flex mt-12 mb-12">
@@ -29,14 +32,8 @@
 			</div>
 		</div>
 
-		<div class="flex bg-[url(https://i.imgur.com/X5xMNd2.png)] background-image w-[50%] h-[100%]" />
+		<div class="flex relative w-[50%]">
+			<PictureComponent {picture} class="h-full w-full absolute" />
+		</div>
 	</div>
 </div>
-
-<style>
-	.background-image {
-		background-size: auto 100%;
-		background-repeat: no-repeat;
-		background-position: left top;
-	}
-</style>

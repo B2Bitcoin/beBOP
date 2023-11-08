@@ -30,11 +30,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.background-image {
-		background-size: cover 100%;
-		background-repeat: no-repeat;
-		background-position: left top;
-	}
-</style>

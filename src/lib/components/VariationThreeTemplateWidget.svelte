@@ -17,7 +17,7 @@
 	<div
 		class="mt-16 mt-[100px] md:mt-[300px] lg:mt-[400px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
 	>
-		<div class="mb-8 text-center background-col md:mb-16 lg:mb-24">
+		<div class="mb-8 text-center bg-[rgba(243,240,240,0.5)] md:mb-16 lg:mb-24">
 			<h2 class="text-3xl md:text-md uppercase md:text-4xl lg:text-6xl">{tag.title}</h2>
 		</div>
 		<div class="text-center">
@@ -38,16 +38,6 @@
 </div>
 
 <style>
-	.background-image {
-		background-image: url(https://imgur.com/rjdvjFT.png);
-		background-size: 100%;
-		background-repeat: no-repeat;
-		background-position: left top;
-	}
-	.background-col {
-		background-color: rgba(243, 240, 240, 0.5);
-	}
-
 	.short-content {
 		text-shadow: #000 1px 0 10px;
 		color: #fff;
