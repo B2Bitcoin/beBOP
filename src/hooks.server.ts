@@ -245,6 +245,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 				transformed = true;
 				return html.replace('<html', `<html lang="${event.locals.language}"`);
 			}
+			return html;
 		}
 	});
 
