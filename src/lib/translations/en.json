@@ -1,4 +1,5 @@
 {
-	"hello": "Hello",
-	"world": "World"
+	"cart": {
+		"quantity": "Quantity"
+	}
 }

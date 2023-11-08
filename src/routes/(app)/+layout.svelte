@@ -4,7 +4,7 @@
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { navigating, page } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';
@@ -25,6 +25,8 @@
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { PUBLIC_COMMIT_ID } from '$env/static/public';
+	import { useI18n } from '$lib/i18n';
+	import { _ } from 'svelte-i18n';
 
 	export let data;
 
@@ -35,6 +37,10 @@
 	let cartErrorProductId = '';
 
 	let actionCount = 0;
+
+	setContext('language', data.language);
+
+	useI18n();
 
 	$exchangeRate = data.exchangeRate;
 	$currencies = data.currencies;
@@ -253,7 +259,7 @@
 												</a>
 												{#if item.product.type !== 'subscription' && !item.product.standalone}
 													<div class="flex items-center gap-2 text-gray-700">
-														<span class="text-xs">Quantity: </span>
+														<span class="text-xs">{$_('cart.quantity')}: </span>
 														<CartQuantity {item} sm />
 													</div>
 												{/if}

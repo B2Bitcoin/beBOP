@@ -95,7 +95,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		.get('accept-language')
 		?.split(',')
 		?.map((lang) => lang.slice(0, 2)) || ['en'];
-	event.locals.language = acceptLanguages.find((l) => l === 'en') || 'en';
+	event.locals.language = acceptLanguages.find((l) => l === 'en' || l === 'fr') || 'en';
 
 	if (
 		runtimeConfig.isMaintenance &&
