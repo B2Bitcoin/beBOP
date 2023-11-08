@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Picture } from '$lib/types/Picture';
 	import type { Tag } from '$lib/types/Tag';
 
 	let className = '';
@@ -7,7 +8,7 @@
 		Tag,
 		'_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'
 	>;
-
+	export let picture: Picture | undefined;
 	$: baseClasses = 'mx-auto bg-gray-240 gap-4 rounded';
 </script>
 

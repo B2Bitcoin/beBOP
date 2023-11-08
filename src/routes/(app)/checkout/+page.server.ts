@@ -3,13 +3,14 @@ import { paymentMethods } from '$lib/server/payment-methods';
 import { COUNTRY_ALPHA2S } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import { bech32 } from 'bech32';
 import { createOrder } from '$lib/server/orders';
 import { emailsEnabled } from '$lib/server/email';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
 import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier } from '$lib/server/user.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
+import { zodNpub } from '$lib/server/nostr.js';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -21,18 +22,19 @@ export async function load({ parent, locals }) {
 			throw redirect(303, '/cart');
 		}
 	}
-
 	return {
-		paymentMethods: paymentMethods(),
+		paymentMethods: paymentMethods(locals.user?.roleId),
 		emailsEnabled,
 		deliveryFees: runtimeConfig.deliveryFees,
-		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]]))
+		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
+		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
 	};
 }
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		if (!paymentMethods().length) {
+		const methods = paymentMethods(locals.user?.roleId);
+		if (!methods.length) {
 			throw error(500, 'No payment methods configured for the bootik');
 		}
 		const cart = await getCartFromDb({ user: userIdentifier(locals) });
@@ -75,13 +77,7 @@ export const actions = {
 
 		const notifications = z
 			.object({
-				paymentStatusNPUB: z
-					.string()
-					.startsWith('npub')
-					.refine((npubAddress) => bech32.decodeUnsafe(npubAddress, 90)?.prefix === 'npub', {
-						message: 'Invalid npub address'
-					})
-					.optional(),
+				paymentStatusNPUB: zodNpub().optional(),
 				paymentStatusEmail: z.string().email().optional()
 			})
 			.parse({
@@ -97,11 +93,45 @@ export const actions = {
 			delete shipping.state;
 		}
 
-		const paymentMethod = z
+		const { paymentMethod, discountAmount, discountType, discountJustification } = z
 			.object({
-				paymentMethod: z.enum([paymentMethods()[0], ...paymentMethods().slice(1)])
+				paymentMethod: z.enum([methods[0], ...methods.slice(1)]),
+				discountAmount: z.coerce.number().optional(),
+				discountType: z.enum(['fiat', 'percentage']).optional(),
+				discountJustification: z.string().optional()
 			})
-			.parse(Object.fromEntries(formData)).paymentMethod;
+			.parse(Object.fromEntries(formData));
+
+		if (discountAmount && (!discountType || !discountJustification)) {
+			throw error(400, 'Discount type and justification are required');
+		}
+
+		let isFreeVat: boolean | undefined;
+		let reasonFreeVat: string | undefined;
+
+		if (locals.user?.roleId === POS_ROLE_ID) {
+			const vatDetails = z
+				.object({
+					isFreeVat: z.coerce.boolean().optional(),
+					reasonFreeVat: z.string().optional()
+				})
+				.parse(Object.fromEntries(formData));
+
+			isFreeVat = vatDetails.isFreeVat;
+			reasonFreeVat = vatDetails.reasonFreeVat;
+		}
+
+		if (isFreeVat && !reasonFreeVat) {
+			throw error(400, 'Reason for free VAT is required');
+		}
+
+		const collectIP = z
+			.object({
+				allowCollectIP: z.boolean({ coerce: true }).default(false)
+			})
+			.parse({
+				allowCollectIP: formData.get('allowCollectIP')
+			});
 
 		const orderId = await createOrder(
 			cart.items.map((item) => ({
@@ -113,7 +143,12 @@ export const actions = {
 			})),
 			paymentMethod,
 			{
-				user: userIdentifier(locals),
+				user: {
+					sessionId: locals.sessionId,
+					userId: locals.user?._id,
+					userLogin: locals.user?.login,
+					userRoleId: locals.user?.roleId
+				},
 				notifications: {
 					paymentStatus: {
 						npub: npubAddress,
@@ -122,7 +157,19 @@ export const actions = {
 				},
 				cart,
 				shippingAddress: shipping,
-				vatCountry: shipping?.country ?? locals.countryCode
+				vatCountry: shipping?.country ?? locals.countryCode,
+				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
+				...(locals.user?.roleId === POS_ROLE_ID &&
+					discountAmount &&
+					discountType &&
+					discountJustification && {
+						discount: {
+							amount: discountAmount,
+							type: discountType,
+							justification: discountJustification
+						}
+					}),
+				...(collectIP.allowCollectIP && { clientIp: locals.clientIp })
 			}
 		);
 

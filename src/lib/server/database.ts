@@ -28,6 +28,7 @@ import type { Discount } from '$lib/types/Discount';
 import type { Session } from '$lib/types/Session';
 import type { Migration } from '$lib/types/Migration';
 import type { Tag } from '$lib/types/Tag';
+import type { Slider } from '$lib/types/slider';
 
 const client = new MongoClient(MONGODB_URL, {
 	// directConnection: true
@@ -59,6 +60,7 @@ const discounts = db.collection<Discount>('discounts');
 const sessions = db.collection<Session>('sessions');
 const migrations = db.collection<Migration>('migrations');
 const tags = db.collection<Tag>('tags');
+const sliders = db.collection<Slider>('sliders');
 
 const errors = db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors');
 
@@ -86,7 +88,8 @@ export const collections = {
 	users,
 	discounts,
 	sessions,
-	tags
+	tags,
+	sliders
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -128,8 +131,8 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 		{ login: 1 },
 		{ unique: true, collation: { locale: 'en', strength: 1 }, name: 'case-insensitive-login' }
 	],
-	[users, { 'backupInfo.email': 1 }, { sparse: true, unique: true }],
-	[users, { 'backupInfo.npub': 1 }, { sparse: true, unique: true }],
+	[users, { 'recovery.email': 1 }, { sparse: true, unique: true }],
+	[users, { 'recovery.npub': 1 }, { sparse: true, unique: true }],
 	[sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
 	[sessions, { sessionId: 1 }, { unique: true }],
 	[discounts, { endAt: 1 }]

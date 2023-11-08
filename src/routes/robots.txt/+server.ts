@@ -4,6 +4,7 @@ export function GET() {
 Disallow: /order/
 Disallow: /subscription/
 Disallow: /admin/
+Disallow: /admin-*/
 Disallow: /checkout
 Disallow: /cart
 `,

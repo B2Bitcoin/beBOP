@@ -4,11 +4,11 @@ import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 import { SvelteKitAuth } from '@auth/sveltekit';
-
+import { adminPrefix } from '$lib/server/admin';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
-import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User';
 import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
 import Facebook from '@auth/core/providers/facebook';
@@ -27,7 +27,8 @@ import {
 import { sequence } from '@sveltejs/kit/hooks';
 import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
-// import { countryFromIp } from '$lib/server/geoip';
+import { countryFromIp } from '$lib/server/geoip';
+import { isAllowedOnPage } from '$lib/types/Role';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -67,11 +68,15 @@ export const handleError = (({ error, event }) => {
 }) satisfies HandleServerError;
 
 const handleGlobal: Handle = async ({ event, resolve }) => {
-	// event.locals.countryCode = countryFromIp(event.getClientAddress());
+	event.locals.countryCode = countryFromIp(event.getClientAddress());
+
+	const admin = adminPrefix();
 
 	const isAdminUrl =
-		(event.url.pathname.startsWith('/admin/') || event.url.pathname === '/admin') &&
-		!(event.url.pathname.startsWith('/admin/login/') || event.url.pathname === '/admin/login');
+		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
+		!(
+			/^\/admin(-[a-zA-Z0-9]+)?\/(login|logout)(\/|$)/.test(event.url.pathname) // Allow login/logout
+		);
 
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
@@ -84,6 +89,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
+	event.locals.clientIp = event.getClientAddress(); // IP from Client Request
+
 	if (
 		runtimeConfig.isMaintenance &&
 		!isAdminUrl &&
@@ -92,7 +99,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		!event.url.pathname.startsWith('/picture/raw/') &&
 		event.url.pathname !== '/lightning/pay' &&
 		!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
-		!runtimeConfig.maintenanceIps.split(',').includes(event.getClientAddress())
+		!runtimeConfig.maintenanceIps.split(',').includes(event.locals.clientIp)
 	) {
 		if (event.request.method !== 'GET') {
 			throw error(405, 'Site is in maintenance mode. Please try again later.');
@@ -130,7 +137,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	if (session) {
 		if (session.userId) {
 			const user = await collections.users.findOne({
-				_id: session.userId
+				_id: session.userId,
+				disabled: { $ne: true }
 			});
 			if ((session.expireUserAt && session.expireUserAt < new Date()) || !user) {
 				await collections.sessions.updateOne(
@@ -149,7 +157,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 					event.locals.user = {
 						_id: user._id,
 						login: user.login ? user.login : '',
-						role: user.roleId
+						roleId: user.roleId
 					};
 				}
 			}
@@ -158,13 +166,62 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		event.locals.npub = session.npub;
 		event.locals.sso = session.sso;
 	}
+	if (
+		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
+		!event.url.pathname.startsWith(admin)
+	) {
+		if (!event.locals.user || event.locals.user.roleId === CUSTOMER_ROLE_ID) {
+			throw error(403, 'Wrong admin prefix. Make sure to type the correct admin URL.');
+		}
+		return new Response(null, {
+			status: 307,
+			headers: {
+				location: event.url.href.replace(/\/admin(-[a-zA-Z0-9]+)?/, admin)
+			}
+		});
+	}
 	// Protect any routes under /admin
 	if (isAdminUrl) {
 		if (!event.locals.user) {
+			throw redirect(303, `${admin}/login`);
+		}
+
+		if (event.locals.user.roleId === CUSTOMER_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page.');
+		}
+
+		const role = await collections.roles.findOne({
+			_id: event.locals.user.roleId
+		});
+
+		if (!role) {
+			throw error(403, 'Your role does not exist in DB.');
+		}
+
+		const method = event.request.method.toLowerCase();
+
+		if (
+			!isAllowedOnPage(
+				role,
+				event.url.pathname,
+				['get', 'head', 'options'].includes(method) ? 'read' : 'write'
+			)
+		) {
+			if (method === 'get' || method === 'head') {
+				throw redirect(307, '/admin');
+			}
+
+			throw error(403, 'You are not allowed to access this page.');
+		}
+	}
+
+	if (event.url.pathname.startsWith('/pos/') || event.url.pathname === '/pos') {
+		if (!event.locals.user) {
 			throw redirect(303, '/admin/login');
 		}
-		if (event.locals.user.role !== SUPER_ADMIN_ROLE_ID) {
-			throw error(403, 'You are not allowed to access this page.');
+
+		if (event.locals.user.roleId !== POS_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page, only point-of-sale accounts are.');
 		}
 	}
 

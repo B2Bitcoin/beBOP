@@ -1,19 +1,25 @@
 import { collections } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import type { Product } from '$lib/types/Product';
-import { picturesForProducts } from '$lib/server/picture';
+import { picturesForProducts, picturesForSliders, picturesForTags } from '$lib/server/picture';
 import { omit } from 'lodash-es';
 import type { Challenge } from '$lib/types/Challenge';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import { trimSuffix } from '$lib/utils/trimSuffix.js';
 import { trimPrefix } from '$lib/utils/trimPrefix.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
 
 const PRODUCT_WIDGET_REGEX =
 	/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
 
 const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
 
-export async function load({ params }) {
+const SLIDER_WIDGET_REGEX =
+	/\[Slider=(?<slug>[a-z0-9-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/gi;
+
+const TAG_WIDGET_REGEX = /\[Tag=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
+
+export async function load({ params, locals }) {
 	const cmsPage = await collections.cmsPages.findOne({
 		_id: params.slug
 	});
@@ -24,6 +30,8 @@ export async function load({ params }) {
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
+	const sliderSlugs = new Set<string>();
+	const tagSlugs = new Set<string>();
 
 	const tokens: Array<
 		| {
@@ -41,10 +49,24 @@ export async function load({ params }) {
 				slug: string;
 				raw: string;
 		  }
+		| {
+				type: 'sliderWidget';
+				slug: string;
+				autoplay: number | undefined;
+				raw: string;
+		  }
+		| {
+				type: 'tagWidget';
+				slug: string;
+				display: string | undefined;
+				raw: string;
+		  }
 	> = [];
 
 	const productMatches = cmsPage.content.matchAll(PRODUCT_WIDGET_REGEX);
 	const challengeMatches = cmsPage.content.matchAll(CHALLENGE_WIDGET_REGEX);
+	const sliderMatches = cmsPage.content.matchAll(SLIDER_WIDGET_REGEX);
+	const tagMatches = cmsPage.content.matchAll(TAG_WIDGET_REGEX);
 
 	let index = 0;
 
@@ -54,7 +76,11 @@ export async function load({ params }) {
 		),
 		...[...challengeMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
-		)
+		),
+		...[...sliderMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
+		),
+		...[...tagMatches].map((m) => Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' }))
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	for (const match of orderedMatches) {
@@ -78,6 +104,22 @@ export async function load({ params }) {
 				slug: match.groups.slug,
 				raw: match[0]
 			});
+		} else if (match.type === 'sliderWidget' && match.groups?.slug) {
+			sliderSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'sliderWidget',
+				slug: match.groups.slug,
+				autoplay: Number(match.groups?.autoplay),
+				raw: match[0]
+			});
+		} else if (match.type === 'tagWidget' && match.groups?.slug) {
+			tagSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'tagWidget',
+				slug: match.groups.slug,
+				display: match.groups?.display,
+				raw: match[0]
+			});
 		}
 
 		index = match.index + match[0].length;
@@ -88,9 +130,15 @@ export async function load({ params }) {
 		raw: trimPrefix(cmsPage.content.slice(index), '</p>')
 	});
 
+	const query =
+		locals?.user?.roleId === POS_ROLE_ID
+			? { 'actionSettings.retail.visible': true }
+			: { 'actionSettings.eShop.visible': true };
+
 	const products = await collections.products
 		.find({
-			_id: { $in: [...productSlugs] }
+			_id: { $in: [...productSlugs] },
+			...query
 		})
 		.project<
 			Pick<
@@ -103,6 +151,7 @@ export async function load({ params }) {
 				| 'availableDate'
 				| 'type'
 				| 'shipping'
+				| 'actionSettings'
 			>
 		>({
 			price: 1,
@@ -111,7 +160,8 @@ export async function load({ params }) {
 			name: 1,
 			availableDate: 1,
 			type: 1,
-			shipping: 1
+			shipping: 1,
+			actionSettings: 1
 		})
 		.toArray();
 
@@ -126,6 +176,17 @@ export async function load({ params }) {
 			endsAt: 1
 		})
 		.toArray();
+	const sliders = await collections.sliders
+		.find({
+			_id: { $in: [...sliderSlugs] }
+		})
+		.toArray();
+	const tags = await collections.tags
+		.find({
+			_id: { $in: [...tagSlugs] }
+		})
+		.toArray();
+
 	const digitalFiles = await collections.digitalFiles
 		.find({})
 		.project<Pick<DigitalFile, '_id' | 'name' | 'productId'>>({
@@ -142,6 +203,10 @@ export async function load({ params }) {
 		products,
 		pictures: await picturesForProducts(products.map((product) => product._id)),
 		challenges,
-		digitalFiles
+		digitalFiles,
+		sliders,
+		slidersPictures: await picturesForSliders(sliders.map((slider) => slider._id)),
+		tags,
+		tagsPictures: await picturesForTags(tags.map((tag) => tag._id))
 	};
 }

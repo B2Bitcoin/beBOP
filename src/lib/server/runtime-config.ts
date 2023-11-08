@@ -5,10 +5,14 @@ import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
 import type { DeliveryFees } from '$lib/types/DeliveryFees';
 import { currencies } from '$lib/stores/currencies';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
-import { createAdminUserInDb } from './user';
+import { createSuperAdminUserInDb } from './user';
 import { runMigrations } from './migrations';
+import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
+import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
+import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
 const defaultConfig = {
+	adminHash: '',
 	isAdminCreated: false,
 	BTC_EUR: 30_000,
 	BTC_CHF: 30_000,
@@ -30,7 +34,11 @@ const defaultConfig = {
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	reserveStockInMinutes: 20,
-	confirmationBlocks: 1,
+	confirmationBlocksThresholds: {
+		currency: 'SAT',
+		thresholds: [],
+		defaultBlocks: 1
+	} as ConfirmationThresholds,
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logoPictureId: '',
@@ -55,6 +63,7 @@ const defaultConfig = {
 	vatExemptionReason: '',
 	vatSingleCountry: false,
 	vatCountry: '',
+	collectIPOnDeliverylessOrders: false,
 
 	checkoutButtonOnProductPage: true,
 	discovery: true,
@@ -70,7 +79,20 @@ const defaultConfig = {
 			}
 		} as DeliveryFees
 	},
-	plausibleScriptUrl: ''
+	plausibleScriptUrl: '',
+	productActionSettings: {
+		eShop: {
+			visible: true,
+			canBeAddedToBasket: true
+		},
+		retail: {
+			visible: true,
+			canBeAddedToBasket: true
+		},
+		googleShopping: {
+			visible: true
+		}
+	} as ProductActionSettings
 };
 
 exchangeRate.set({
@@ -151,7 +173,37 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 	}
 
 	if (!runtimeConfig.isAdminCreated && ADMIN_LOGIN && ADMIN_PASSWORD) {
-		await createAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
+		await createSuperAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
+	}
+
+	if ((await collections.roles.countDocuments({ _id: SUPER_ADMIN_ROLE_ID })) === 0) {
+		await collections.roles.insertOne({
+			_id: SUPER_ADMIN_ROLE_ID,
+			name: 'Super Admin',
+			permissions: {
+				read: [],
+				write: ['/admin/*'],
+				forbidden: []
+			},
+			createdAt: new Date(),
+			updatedAt: new Date()
+		});
+	}
+
+	if ((await collections.roles.countDocuments({ _id: POS_ROLE_ID })) === 0) {
+		await collections.roles.insertOne({
+			_id: POS_ROLE_ID,
+			name: 'Point of sale',
+			permissions: {
+				read: [],
+				// Todo: maybe make it '/pos/*' for fully customizable roles, but for now simpler
+				// to treat POS as a special case
+				write: [],
+				forbidden: []
+			},
+			createdAt: new Date(),
+			updatedAt: new Date()
+		});
 	}
 
 	await runMigrations();

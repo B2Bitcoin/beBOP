@@ -6,7 +6,7 @@
 </script>
 
 {#if data.cms}
-	<CmsPage {...data.cms} />
+	<CmsPage {...data} {...data.cms} />
 {:else}
 	<Catalog {...data.catalog} />
 {/if}

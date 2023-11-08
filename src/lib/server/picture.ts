@@ -3,11 +3,11 @@ import { collections, withTransaction } from '$lib/server/database';
 import { generateId } from '$lib/utils/generateId';
 import type { ClientSession } from 'mongodb';
 import { error } from '@sveltejs/kit';
-import { s3ProductPrefix, s3client } from './s3';
+import { s3ProductPrefix, s3TagPrefix, s3client } from './s3';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { S3_BUCKET } from '$env/static/private';
 import * as mimeTypes from 'mime-types';
-import type { ImageData, Picture } from '../types/Picture';
+import type { ImageData, Picture, TagType } from '../types/Picture';
 
 /**
  * Upload picture to S3 under different formats, and create a document in db.pictures.
@@ -18,7 +18,12 @@ import type { ImageData, Picture } from '../types/Picture';
 export async function generatePicture(
 	buffer: Buffer | Uint8Array,
 	name: string,
-	opts?: { productId?: string; cb?: (session: ClientSession) => Promise<void> }
+	opts?: {
+		productId?: string;
+		tag?: { _id: string; type: TagType };
+		slider?: { _id: string; url?: string; openNewTab?: boolean };
+		cb?: (session: ClientSession) => Promise<void>;
+	}
 ): Promise<void> {
 	if (buffer.length > 10 * 1024 * 1024) {
 		throw error(400, 'Image too big, 10MB max');
@@ -46,7 +51,13 @@ export async function generatePicture(
 
 	const uploadedKeys: string[] = [];
 
-	const pathPrefix = opts?.productId ? s3ProductPrefix(opts.productId) : `pictures/`;
+	const pathPrefix = opts?.productId
+		? s3ProductPrefix(opts.productId)
+		: opts?.tag
+		? s3TagPrefix(opts.tag._id)
+		: opts?.slider
+		? s3TagPrefix(opts.slider._id)
+		: `pictures/`;
 
 	const path = `${pathPrefix}${_id}${extension}`;
 
@@ -137,6 +148,13 @@ export async function generatePicture(
 						formats
 					},
 					...(opts?.productId && { productId: opts.productId }),
+					...(opts?.tag && { tag: { _id: opts?.tag._id, type: opts?.tag.type } }),
+					...(opts?.slider && {
+						slider: {
+							_id: opts?.slider._id,
+							...(opts.slider.url && { url: opts.slider.url, openNewTab: opts.slider.openNewTab })
+						}
+					}),
 					createdAt: new Date(),
 					updatedAt: new Date()
 				},
@@ -187,5 +205,20 @@ export function picturesForProducts(productIds: string[]): Promise<Picture[]> {
 			},
 			{ $replaceRoot: { newRoot: '$value' } }
 		])
+		.toArray();
+}
+
+export function picturesForSliders(sliderIds: string[]): Promise<Picture[]> {
+	return collections.pictures
+		.aggregate<Picture>([
+			{ $match: { 'slider._id': { $in: sliderIds } } },
+			{ $sort: { createdAt: 1 } }
+		])
+		.toArray();
+}
+
+export function picturesForTags(tagIds: string[]): Promise<Picture[]> {
+	return collections.pictures
+		.aggregate<Picture>([{ $match: { 'tag._id': { $in: tagIds } } }, { $sort: { createdAt: 1 } }])
 		.toArray();
 }

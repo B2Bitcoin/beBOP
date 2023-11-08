@@ -2,6 +2,10 @@
 	import type { PageData } from '../../routes/(app)/[slug]/$types';
 	import ProductWidget from './ProductWidget.svelte';
 	import ChallengeWidget from './ChallengeWidget.svelte';
+	import CarouselWidget from './CarouselWidget.svelte';
+	import { POS_ROLE_ID } from '$lib/types/User';
+	import VariationThreeTemplateWidget from './VariationThreeTemplateWidget.svelte';
+	import VariationFourTemplateWidget from './VariationFourTemplateWidget.svelte';
 
 	export let products: PageData['products'];
 	export let pictures: PageData['pictures'];
@@ -9,6 +13,11 @@
 	export let tokens: PageData['tokens'];
 	export let cmsPage: PageData['cmsPage'];
 	export let digitalFiles: PageData['digitalFiles'];
+	export let sliders: PageData['sliders'];
+	export let slidersPictures: PageData['slidersPictures'];
+	export let tags: PageData['tags'];
+	export let tagsPictures: PageData['tagsPictures'];
+	export let roleId: PageData['roleId'];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
@@ -16,6 +25,14 @@
 	$: digitalFilesByProduct = Object.fromEntries(
 		digitalFiles.map((digitalFile) => [digitalFile.productId, digitalFile])
 	);
+	$: sliderById = Object.fromEntries(sliders.map((slider) => [slider._id, slider]));
+	function picturesBySlider(sliderId: string) {
+		return slidersPictures.filter((picture) => picture.slider?._id === sliderId);
+	}
+	$: tagById = Object.fromEntries(tags.map((tag) => [tag._id, tag]));
+	function picturesByTag(tagId: string) {
+		return tagsPictures.filter((picture) => picture.tag?._id === tagId);
+	}
 </script>
 
 <svelte:head>
@@ -32,10 +49,23 @@
 					picture={pictureByProduct[token.slug]}
 					hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 					displayOption={token.display}
+					canBuy={roleId === POS_ROLE_ID
+						? productById[token.slug].actionSettings.retail.canBeAddedToBasket
+						: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
 					class="not-prose my-5"
 				/>
 			{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 				<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
+			{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
+				<CarouselWidget
+					autoplay={token.autoplay ? token.autoplay : 3000}
+					pictures={picturesBySlider(token.slug)}
+				/>
+			{:else if token.type === 'tagWidget' && tagById[token.slug]}
+				<VariationThreeTemplateWidget
+					tag={tagById[token.slug]}
+					picture={picturesByTag(token.slug)[0]}
+				/>
 			{:else}
 				{@html token.raw}
 			{/if}
@@ -52,10 +82,31 @@
 							picture={pictureByProduct[token.slug]}
 							hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 							displayOption={token.display}
+							canBuy={roleId === POS_ROLE_ID
+								? productById[token.slug].actionSettings.retail.canBeAddedToBasket
+								: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
 							class="not-prose my-5"
 						/>
 					{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 						<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
+					{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
+						<CarouselWidget
+							autoplay={token.autoplay ? token.autoplay : 3000}
+							pictures={picturesBySlider(token.slug)}
+						/>
+					{:else if token.type === 'tagWidget' && tagById[token.slug]}
+						{#if token.display === 'var-3'}
+							<VariationThreeTemplateWidget
+								tag={tagById[token.slug]}
+								picture={picturesByTag(token.slug)[0]}
+							/>
+						{/if}
+						{#if token.display === 'var-4'}
+							<VariationFourTemplateWidget
+								tag={tagById[token.slug]}
+								picture={picturesByTag(token.slug)[0]}
+							/>
+						{/if}
 					{:else}
 						{@html token.raw}
 					{/if}

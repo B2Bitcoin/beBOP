@@ -1,5 +1,5 @@
-import type { Order } from '$lib/types/Order';
-import type { ClientSession, WithId } from 'mongodb';
+import type { DiscountType, Order } from '$lib/types/Order';
+import { ObjectId, type ClientSession, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
@@ -20,8 +20,11 @@ import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
-import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { userQuery } from './user';
+import { SMTP_USER, EMAIL_REPLY_TO } from '$env/static/private';
+import { toCurrency } from '$lib/utils/toCurrency';
+import { POS_ROLE_ID } from '$lib/types/User';
+import type { UserIdentifier } from '$lib/types/UserIdentifier';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -166,6 +169,13 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
+		reasonFreeVat?: string;
+		discount?: {
+			amount: number;
+			type: DiscountType;
+			justification: string;
+		};
+		clientIp?: string;
 	}
 ): Promise<Order['_id']> {
 	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
@@ -237,7 +247,7 @@ export async function createOrder(
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
-		!vatCountry || runtimeConfig.vatExempted
+		!vatCountry || runtimeConfig.vatExempted || params.reasonFreeVat
 			? undefined
 			: {
 					country: vatCountry,
@@ -255,7 +265,45 @@ export async function createOrder(
 		totalSatoshis += vat.price.amount;
 	}
 
+	const orderNumber = await generateOrderNumber();
 	const orderId = crypto.randomUUID();
+
+	let discountInCurrency = 0;
+	let amount = 0;
+	if (params.user.userRoleId === POS_ROLE_ID && params?.discount?.amount) {
+		if (params.discount.type === 'fiat') {
+			amount = toSatoshis(params.discount.amount, runtimeConfig.mainCurrency);
+		} else if (params.discount.type === 'percentage') {
+			amount = fixCurrencyRounding(totalSatoshis * (params.discount.amount / 100), 'SAT');
+		}
+
+		if (amount > totalSatoshis) {
+			throw error(400, 'Discount cannot be greater than the total price.');
+		}
+
+		await collections.emailNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			subject: 'NEW DISCOUNT',
+			htmlContent: `A discount of ${params?.discount?.amount}${
+				params.discount.type === 'fiat' ? runtimeConfig.mainCurrency : '%'
+			} (${amount} SAT) has been applied to the <a href="${ORIGIN}/order/${orderId}">order ${orderNumber}</a> (${toCurrency(
+				runtimeConfig.mainCurrency,
+				totalSatoshis,
+				'SAT'
+			)}${runtimeConfig.mainCurrency}). The discount was applied by ${
+				params.user.userLogin
+			}. Justification: ${params?.discount?.justification ?? '-'} `,
+			dest: EMAIL_REPLY_TO || SMTP_USER
+		});
+
+		discountInCurrency =
+			params.discount.type === 'fiat'
+				? params?.discount?.amount
+				: toCurrency(runtimeConfig.mainCurrency, amount, 'SAT');
+		totalSatoshis -= amount;
+	}
 
 	const subscriptions = items.filter((item) => item.product.type === 'subscription');
 
@@ -309,7 +357,9 @@ export async function createOrder(
 		}
 	}
 
-	const orderNumber = await generateOrderNumber();
+	if (runtimeConfig.collectIPOnDeliverylessOrders && !params.shippingAddress && !params.clientIp) {
+		throw error(400, 'Missing IP address for deliveryless order');
+	}
 
 	await withTransaction(async (session) => {
 		const expiresAt =
@@ -381,7 +431,27 @@ export async function createOrder(
 					// In case the user didn't authenticate with an email but still wants to be notified,
 					// we also associate the email to the order
 					...(email && { email })
-				}
+				},
+				...(params.reasonFreeVat && {
+					vatFree: {
+						reason: params.reasonFreeVat
+					}
+				}),
+				...(params?.discount?.amount && {
+					discount: {
+						price: {
+							amount: discountInCurrency,
+							currency: runtimeConfig.mainCurrency
+						},
+						referencePrice: {
+							amount: amount,
+							currency: 'SAT'
+						},
+						justification: params.discount.justification,
+						type: params.discount.type
+					}
+				}),
+				...(params.clientIp && { clientIp: params.clientIp })
 			},
 			{ session }
 		);

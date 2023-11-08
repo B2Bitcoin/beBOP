@@ -6,6 +6,7 @@
 	import ProductType from '$lib/components/ProductType.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { UrlDependency } from '$lib/types/UrlDependency';
+	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { pluralize } from '$lib/utils/pluralize';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
@@ -107,6 +108,10 @@
 					{/each}
 				</ul>
 			{/if}
+
+			{#if data.order.vatFree}
+				<p>This order is free of VAT. Reason: {data.order.vatFree.reason}</p>
+			{/if}
 			<p class="text-base">
 				Created at
 				<time
@@ -125,11 +130,17 @@
 						)}</pre>
 				</div>
 			{/if}
-			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash'}
-				<form action="/admin/order/{data.order._id}?/confirm" method="post">
+			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash' && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+				<form
+					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/confirm"
+					method="post"
+				>
 					<button type="submit" class="btn btn-black">Mark paid</button>
 				</form>
-				<form action="/admin/order/{data.order._id}?/cancel" method="post">
+				<form
+					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/cancel"
+					method="post"
+				>
 					<button type="submit" class="btn btn-red">Cancel</button>
 				</form>
 			{/if}
@@ -255,6 +266,28 @@
 							<PriceTag
 								amount={data.order.vat.price.amount}
 								currency={data.order.vat.price.currency}
+								class="text-base text-gray-600 truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{/if}
+
+				{#if data.order?.discount}
+					<div class="flex justify-between items-center">
+						<h3 class="text-base text-gray-700 flex items-center gap-2">Discount</h3>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl text-gray-800 truncate"
+								amount={data.order.discount.price.amount}
+								currency={data.order.discount.price.currency}
+								main
+							/>
+							<PriceTag
+								amount={data.order.discount.price.amount}
+								currency={data.order.discount.price.currency}
 								class="text-base text-gray-600 truncate"
 								secondary
 							/>

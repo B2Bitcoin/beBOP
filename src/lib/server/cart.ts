@@ -8,6 +8,8 @@ import type { Cart } from '$lib/types/Cart';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { isEqual } from 'lodash-es';
 import { userQuery } from './user';
+import { removeEmpty } from '$lib/utils/removeEmpty';
+import { POS_ROLE_ID } from '$lib/types/User';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	if (!params.user.sessionId && !params.user.npub) {
@@ -26,7 +28,7 @@ export async function getCartFromDb(params: { user: UserIdentifier }): Promise<C
 		};
 	}
 
-	if (!isEqual(res.user, params.user)) {
+	if (!isEqual(removeEmpty(res.user), removeEmpty(params.user))) {
 		res.user = params.user;
 		res.updatedAt = new Date();
 		await collections.carts.updateOne(
@@ -53,6 +55,14 @@ export async function addToCartInDb(
 	quantity: number,
 	params: { user: UserIdentifier; totalQuantity?: boolean; customAmount?: number }
 ) {
+	if (
+		params.user.userRoleId === POS_ROLE_ID
+			? !product.actionSettings?.retail?.canBeAddedToBasket
+			: !product.actionSettings?.eShop?.canBeAddedToBasket
+	) {
+		throw error(400, "Product can't be added to basket");
+	}
+
 	if (quantity < 0) {
 		throw new TypeError('Quantity cannot be negative');
 	}
@@ -67,7 +77,7 @@ export async function addToCartInDb(
 
 	const availableAmount = await computeAvailableAmount(product, cart);
 
-	if (availableAmount < 0) {
+	if (availableAmount <= 0) {
 		throw error(400, 'Product is out of stock');
 	}
 
@@ -184,7 +194,7 @@ export async function removeFromCartInDb(
 async function computeAvailableAmount(product: Product, cart: Cart): Promise<number> {
 	return !product.stock
 		? Infinity
-		: product.stock.total +
+		: product.stock.total -
 				(await amountOfProductReserved(product._id, {
 					exclude: {
 						sessionId: cart.user.sessionId,

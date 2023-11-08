@@ -7,6 +7,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
+import { POS_ROLE_ID } from '$lib/types/User';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -26,6 +27,7 @@ export const load = async ({ params, locals }) => {
 			| 'standalone'
 			| 'maxQuantityPerOrder'
 			| 'stock'
+			| 'actionSettings'
 		>
 	>(
 		{ _id: params.id },
@@ -43,13 +45,22 @@ export const load = async ({ params, locals }) => {
 				payWhatYouWant: 1,
 				standalone: 1,
 				maxQuantityPerOrder: 1,
-				stock: 1
+				stock: 1,
+				actionSettings: 1
 			}
 		}
 	);
 
 	if (!product) {
 		throw error(404, 'Resource not found');
+	}
+
+	if (
+		locals.user?.roleId === POS_ROLE_ID
+			? !product.actionSettings.retail.visible
+			: !product.actionSettings.eShop.visible
+	) {
+		throw redirect(303, '/');
 	}
 
 	const pictures = await collections.pictures
