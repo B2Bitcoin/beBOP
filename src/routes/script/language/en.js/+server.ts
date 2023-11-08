@@ -1,9 +1,7 @@
-const translations = {
-	hello: 'Bonjour'
-};
+import messages from '$lib/translations/en.json';
 
-const responseText = `window.language = window.language || {}; window.language['fr'] = ${JSON.stringify(
-	translations
+const responseText = `window.language = window.language || {}; window.language['en'] = ${JSON.stringify(
+	messages
 )};`;
 
 export const GET = async () => {
