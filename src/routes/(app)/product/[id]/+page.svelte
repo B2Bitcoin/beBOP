@@ -16,7 +16,9 @@
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
-	import { POS_ROLE_ID } from '$lib/types/User.js';
+	import { POS_ROLE_ID } from '$lib/types/User';
+	import { _ } from 'svelte-i18n';
+	import { useI18n } from '$lib/i18n';
 
 	export let data;
 
@@ -61,6 +63,8 @@
 			picture: currentPicture
 		};
 	}
+
+	useI18n();
 </script>
 
 <svelte:head>
@@ -225,12 +229,12 @@
 				{/if}
 				{#if !data.product.availableDate || data.product.availableDate <= new Date() || isPreorder}
 					{@const verb = isPreorder
-						? 'Preorder'
+						? 'preorder'
 						: data.product.type === 'donation'
-						? 'Donate'
+						? 'donate'
 						: data.product.type === 'subscription'
-						? 'Subscribe'
-						: 'Buy'}
+						? 'subscribe'
+						: 'buy'}
 					<form
 						action="?/buy"
 						method="post"
@@ -283,7 +287,8 @@
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">
-									Amount: <select
+									{$_('cart.quantity')}:
+									<select
 										name="quantity"
 										bind:value={quantity}
 										class="form-input w-16 ml-2 inline cursor-pointer"
@@ -306,14 +311,15 @@
 									Please check back later
 								</p>
 							{:else if data.showCheckoutButton}
-								<button class="btn btn-black" disabled={loading}>{verb} now</button>
+								<button class="btn btn-black" disabled={loading}>{$_(`product.cta.${verb}`)}</button
+								>
 								<button
 									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
 									class="btn btn-gray"
 								>
-									Add to cart
+									{$_('product.cta.add')}
 								</button>
 							{:else}
 								<button

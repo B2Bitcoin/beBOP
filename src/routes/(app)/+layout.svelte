@@ -24,6 +24,8 @@
 	import { currencies } from '$lib/stores/currencies';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
+	import { useI18n } from '$lib/i18n';
+	import { _ } from 'svelte-i18n';
 
 	export let data;
 
@@ -77,12 +79,9 @@
 	$: if (items.length === 0) {
 		cartOpen = false;
 	}
-</script>
 
-<svelte:head>
-	<title>B2Bitcoin Bootik</title>
-	<meta name="description" content="B2Bitcoin's official bootik" />
-</svelte:head>
+	useI18n();
+</script>
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
 	{#if $page.data.layoutReset}
@@ -248,7 +247,7 @@
 												</a>
 												{#if item.product.type !== 'subscription' && !item.product.standalone}
 													<div class="flex items-center gap-2 text-gray-700">
-														<span class="text-xs">Quantity: </span>
+														<span class="text-xs">{$_('cart.quantity')}: </span>
 														<CartQuantity {item} sm />
 													</div>
 												{/if}
@@ -279,7 +278,7 @@
 									{/each}
 									{#if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
-											Vat ({data.vatRate}%) <PriceTag
+											{$_('cart.vat')} ({data.vatRate}%) <PriceTag
 												currency={data.currencies.main}
 												amount={vat}
 												main
@@ -293,10 +292,12 @@
 											main
 										/>
 									</div>
-									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
-									{#if items.length > 0}<a href="/checkout" class="btn btn-black">
-											Checkout
-										</a>{/if}
+									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap">
+										{$_('cart.cta.view')}
+									</a>
+									<a href="/checkout" class="btn btn-black">
+										{$_('cart.cta.checkout')}
+									</a>
 								</div>
 							</Popup>
 						{/if}

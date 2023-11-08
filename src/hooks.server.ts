@@ -29,8 +29,15 @@ import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
 import { countryFromIp } from '$lib/server/geoip';
 import { isAllowedOnPage } from '$lib/types/Role';
+import { languages } from '$lib/translations';
+import { addMessages } from 'svelte-i18n';
 
 const SSO_COOKIE = 'next-auth.session-token';
+
+for (const entry of Object.entries(languages)) {
+	console.log('loading language', entry[0]);
+	addMessages(entry[0], entry[1]);
+}
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
@@ -89,7 +96,13 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
-	event.locals.clientIp = event.getClientAddress(); // IP from Client Request
+	event.locals.clientIp = event.getClientAddress();
+
+	const acceptLanguages = event.request.headers
+		.get('accept-language')
+		?.split(',')
+		?.map((lang) => lang.slice(0, 2)) || ['en'];
+	event.locals.language = acceptLanguages.find((l) => l in languages) || 'en';
 
 	if (
 		runtimeConfig.isMaintenance &&
@@ -225,7 +238,16 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	const response = await resolve(event);
+	let transformed = false;
+	const response = await resolve(event, {
+		transformPageChunk: ({ html }) => {
+			if (!transformed) {
+				transformed = true;
+				return html.replace('<html', `<html lang="${event.locals.language}"`);
+			}
+			return html;
+		}
+	});
 
 	if (
 		response.status >= 500 &&
