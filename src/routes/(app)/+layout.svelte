@@ -24,6 +24,7 @@
 	import { currencies } from '$lib/stores/currencies';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
+	import { PUBLIC_COMMIT_ID } from '$env/static/public';
 
 	export let data;
 
@@ -82,6 +83,10 @@
 <svelte:head>
 	<title>B2Bitcoin Bootik</title>
 	<meta name="description" content="B2Bitcoin's official bootik" />
+	<script lang="javascript" src="/script/language/en.js?v={PUBLIC_COMMIT_ID}"></script>
+	{#if data.language !== 'en'}
+		<script lang="javascript" src={`/script/language/${data.language}.js`}></script>
+	{/if}
 </svelte:head>
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">

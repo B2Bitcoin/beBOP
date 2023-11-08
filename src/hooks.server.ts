@@ -89,7 +89,13 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
-	event.locals.clientIp = event.getClientAddress(); // IP from Client Request
+	event.locals.clientIp = event.getClientAddress();
+
+	const acceptLanguages = event.request.headers
+		.get('accept-language')
+		?.split(',')
+		?.map((lang) => lang.slice(0, 2)) || ['en'];
+	event.locals.language = acceptLanguages.find((l) => l === 'en') || 'en';
 
 	if (
 		runtimeConfig.isMaintenance &&
