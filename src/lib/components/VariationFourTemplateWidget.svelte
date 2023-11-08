@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Picture } from '$lib/types/Picture';
 	import type { Tag } from '$lib/types/Tag';
+	import PictureComponent from './Picture.svelte';
 
 	let className = '';
 	export { className as class };
@@ -13,15 +14,7 @@
 </script>
 
 <div class="{baseClasses} {className} relative">
-	{#if picture}
-		<img
-			srcset={picture.storage.formats
-				.map((format) => `/picture/raw/${picture?._id}/format/${format.width} ${format.width}w`)
-				.join(', ')}
-			alt="rjdvjFT"
-			class="w-full h-auto"
-		/>
-	{/if}
+	<PictureComponent {picture} class="w-full h-auto" />
 	<div
 		class="mt-16 mt-[100px] md:mt-[300px] lg:mt-[400px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
 	>
