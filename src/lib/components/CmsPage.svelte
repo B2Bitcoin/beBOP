@@ -4,12 +4,6 @@
 	import ChallengeWidget from './ChallengeWidget.svelte';
 	import CarouselWidget from './CarouselWidget.svelte';
 	import { POS_ROLE_ID } from '$lib/types/User';
-	import VariationOneTemplateWidget from './VariationOneTemplateWidget.svelte';
-	import VariationTwoTemplateWidget from './VariationTwoTemplateWidget.svelte';
-	import VariationThreeTemplateWidget from './VariationThreeTemplateWidget.svelte';
-	import VariationFourTemplateWidget from './VariationFourTemplateWidget.svelte';
-	import VariationFiveTemplateWidget from './VariationFiveTemplateWidget.svelte';
-	import VariationSixTemplateWidget from './VariationSixTemplateWidget.svelte';
 	import TagWidget from './TagWidget.svelte';
 
 	export let products: PageData['products'];
