@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Picture } from '$lib/types/Picture';
 	import type { Tag } from '$lib/types/Tag';
+	import { typedInclude } from '$lib/utils/typedIncludes';
+	import { typedKeys } from '$lib/utils/typedKeys';
 	import VariationFiveTemplateWidget from './VariationFiveTemplateWidget.svelte';
 	import VariationFourTemplateWidget from './VariationFourTemplateWidget.svelte';
 	import VariationOneTemplateWidget from './VariationOneTemplateWidget.svelte';
@@ -16,47 +18,42 @@
 	>;
 	export let pictures: Picture[];
 	export let displayOption = 'var-1';
+
+	const widgets = {
+		'var-1': {
+			component: VariationOneTemplateWidget,
+			pictureType: 'avatar'
+		},
+		'var-2': {
+			component: VariationTwoTemplateWidget,
+			pictureType: 'wide'
+		},
+		'var-3': {
+			component: VariationThreeTemplateWidget,
+			pictureType: 'main'
+		},
+		'var-4': {
+			component: VariationFourTemplateWidget,
+			pictureType: 'avatar'
+		},
+		'var-5': {
+			component: VariationFiveTemplateWidget,
+			pictureType: 'slim'
+		},
+		'var-6': {
+			component: VariationSixTemplateWidget,
+			pictureType: 'slim'
+		}
+	};
+
+	$: widget = typedInclude(typedKeys(widgets), displayOption) ? widgets[displayOption] : null;
 </script>
 
-{#if displayOption === 'var-1'}
-	<VariationOneTemplateWidget
+{#if widget}
+	<svelte:component
+		this={widget.component}
 		{tag}
-		picture={pictures.find((picture) => picture.tag?.type === 'avatar')}
-		class={className}
-	/>
-{/if}
-{#if displayOption === 'var-2'}
-	<VariationTwoTemplateWidget
-		{tag}
-		picture={pictures.find((picture) => picture.tag?.type === 'wide')}
-		class={className}
-	/>
-{/if}
-{#if displayOption === 'var-3'}
-	<VariationThreeTemplateWidget
-		{tag}
-		picture={pictures.find((picture) => picture.tag?.type === 'main')}
-		class={className}
-	/>
-{/if}
-{#if displayOption === 'var-4'}
-	<VariationFourTemplateWidget
-		{tag}
-		picture={pictures.find((picture) => picture.tag?.type === 'avatar')}
-		class={className}
-	/>
-{/if}
-{#if displayOption === 'var-5'}
-	<VariationFiveTemplateWidget
-		{tag}
-		picture={pictures.find((picture) => picture.tag?.type === 'slim')}
-		class={className}
-	/>
-{/if}
-{#if displayOption === 'var-6'}
-	<VariationSixTemplateWidget
-		{tag}
-		picture={pictures.find((picture) => picture.tag?.type === 'slim')}
+		picture={pictures.find((picture) => picture.tag?.type === widget?.pictureType)}
 		class={className}
 	/>
 {/if}
