@@ -38,10 +38,6 @@
 
 	let actionCount = 0;
 
-	setContext('language', data.language);
-
-	useI18n();
-
 	$exchangeRate = data.exchangeRate;
 	$currencies = data.currencies;
 
@@ -84,16 +80,9 @@
 	$: if (items.length === 0) {
 		cartOpen = false;
 	}
-</script>
 
-<svelte:head>
-	<title>B2Bitcoin Bootik</title>
-	<meta name="description" content="B2Bitcoin's official bootik" />
-	<script lang="javascript" src="/script/language/en.js?v={PUBLIC_COMMIT_ID}"></script>
-	{#if data.language !== 'en'}
-		<script lang="javascript" src={`/script/language/${data.language}.js`}></script>
-	{/if}
-</svelte:head>
+	useI18n();
+</script>
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
 	{#if $page.data.layoutReset}
@@ -304,10 +293,12 @@
 											main
 										/>
 									</div>
-									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
-									{#if items.length > 0}<a href="/checkout" class="btn btn-black">
-											Checkout
-										</a>{/if}
+									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap">
+										{$_('cart.cta.view')}
+									</a>
+									<a href="/checkout" class="btn btn-black">
+										{$_('cart.cta.checkout')}
+									</a>
 								</div>
 							</Popup>
 						{/if}

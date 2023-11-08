@@ -8,11 +8,27 @@
 	import '@fontsource/poppins/400.css';
 	import '@fontsource/gloock/400.css';
 	import { page } from '$app/stores';
+	import { setContext } from 'svelte';
+	import { useI18n } from '$lib/i18n';
+	import { PUBLIC_COMMIT_ID } from '$env/static/public';
 
 	export let data;
+
+	setContext('language', data.language);
+
+	useI18n();
 </script>
 
 <svelte:head>
+	<title>B2Bitcoin Bootik</title>
+	<meta name="description" content="B2Bitcoin's official bootik" />
+	<script lang="javascript" src="/script/language/en.js?v={PUBLIC_COMMIT_ID}"></script>
+	{#if data.language !== 'en'}
+		<script
+			lang="javascript"
+			src="/script/language/{data.language}.js?v={PUBLIC_COMMIT_ID}"
+		></script>
+	{/if}
 	{#if data.plausibleScriptUrl}
 		<script defer data-domain={$page.url.host} src={data.plausibleScriptUrl}>
 		</script>

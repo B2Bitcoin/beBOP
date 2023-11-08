@@ -1,6 +1,18 @@
 {
 	"cart": {
-		"add": "Ajouter au panier",
-		"quantity": "Quantité"
+		"quantity": "Quantité",
+		"cta": {
+			"view": "Voir le panier",
+			"checkout": "Passer à la caisse"
+		}
+	},
+	"product": {
+		"cta": {
+			"preorder": "Précommander",
+			"add": "Ajouter au panier",
+			"buy": "Acheter",
+			"donate": "Faire un don",
+			"subscribe": "S'abonner"
+		}
 	}
 }

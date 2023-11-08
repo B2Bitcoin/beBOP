@@ -21,7 +21,7 @@ export const GET = async ({ params }) => {
 
 	return new Response(responseText, {
 		headers: {
-			'Content-Type': 'application/javascript',
+			'Content-Type': 'application/javascript; charset=utf-8',
 			...(import.meta.env.DEV
 				? {}
 				: {

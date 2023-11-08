@@ -1,6 +1,18 @@
 {
 	"cart": {
-		"add": "Add to cart",
-		"quantity": "Quantity"
+		"quantity": "Quantity",
+		"cta": {
+			"view": "View cart",
+			"checkout": "Checkout"
+		}
+	},
+	"product": {
+		"cta": {
+			"preorder": "Pre-order now",
+			"add": "Add to cart",
+			"buy": "Buy now",
+			"donate": "Donate now",
+			"subscribe": "Subscribe now"
+		}
 	}
 }
