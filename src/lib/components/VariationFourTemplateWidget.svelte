@@ -13,8 +13,15 @@
 </script>
 
 <div class="{baseClasses} {className} relative">
-	<!-- svelte-ignore a11y-img-redundant-alt -->
-	<img src="https://i.imgur.com/1mAMnn1.png" alt="Image" class="w-full h-auto" />
+	{#if picture}
+		<img
+			srcset={picture.storage.formats
+				.map((format) => `/picture/raw/${picture?._id}/format/${format.width} ${format.width}w`)
+				.join(', ')}
+			alt="rjdvjFT"
+			class="w-full h-auto"
+		/>
+	{/if}
 	<div
 		class="mt-16 mt-[100px] md:mt-[300px] lg:mt-[400px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
 	>

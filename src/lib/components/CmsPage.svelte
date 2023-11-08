@@ -64,7 +64,7 @@
 			{:else if token.type === 'tagWidget' && tagById[token.slug]}
 				<VariationThreeTemplateWidget
 					tag={tagById[token.slug]}
-					picture={picturesByTag(token.slug)[0]}
+					picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'wide')}
 				/>
 			{:else}
 				{@html token.raw}
@@ -98,13 +98,15 @@
 						{#if token.display === 'var-3'}
 							<VariationThreeTemplateWidget
 								tag={tagById[token.slug]}
-								picture={picturesByTag(token.slug)[0]}
+								picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'wide')}
+								class="not-prose mb-12"
 							/>
 						{/if}
 						{#if token.display === 'var-4'}
 							<VariationFourTemplateWidget
 								tag={tagById[token.slug]}
-								picture={picturesByTag(token.slug)[0]}
+								picture={picturesByTag(token.slug).find((picture) => picture.tag?.type === 'main')}
+								class="not-prose mb-12"
 							/>
 						{/if}
 					{:else}

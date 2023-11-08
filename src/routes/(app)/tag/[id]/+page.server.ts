@@ -21,7 +21,7 @@ export const load = async ({ params }) => {
 	);
 
 	if (!tag) {
-		throw error(404, 'Challenge not found');
+		throw error(404, 'Tag not found');
 	}
 	const pictures = await collections.pictures
 		.find({ 'tag._id': params.id })

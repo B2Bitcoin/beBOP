@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Product } from '$lib/types/Product';
-	import type { Tag } from '$lib/types/Tag';
 	import type { Picture } from '$lib/types/Picture';
 	import PictureComponent from './Picture.svelte';
 
