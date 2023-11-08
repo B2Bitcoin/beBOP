@@ -9,11 +9,9 @@
 	export let product: Pick<Product, '_id' | 'name' | 'description'>;
 	export let picture: Picture | undefined;
 	export let pictures: Picture[] | [];
-
-	$: baseClasses = 'mx-auto bg-gray-240 rounded p-4 sm:gap-2';
 </script>
 
-<div class="{baseClasses} {className}">
+<div class="mx-auto bg-gray-240 rounded p-4 sm:gap-2 {className}">
 	<div class="flex relative">
 		<div class="flex flex-col w-[80%] mr-1 p-4 bg-gray-100">
 			<h2 class="text-4xl pb-2 uppercase">{product.name}</h2>

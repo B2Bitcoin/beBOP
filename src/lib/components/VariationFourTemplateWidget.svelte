@@ -5,52 +5,36 @@
 
 	let className = '';
 	export { className as class };
+
 	export let tag: Pick<
 		Tag,
 		'_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'
 	>;
 	export let picture: Picture | undefined;
-	$: baseClasses = 'mx-auto bg-gray-240 gap-4 rounded';
 </script>
 
-<div class="{baseClasses} {className} relative">
-	<PictureComponent {picture} class="w-full h-auto" />
-	<div
-		class="mt-16 mt-[100px] md:mt-[300px] lg:mt-[400px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
-	>
-		<div class="mb-8 text-center background-col md:mb-16 lg:mb-24">
-			<h2 class="text-3xl md:text-md uppercase md:text-4xl lg:text-6xl">{tag.title}</h2>
-		</div>
-		<div class="text-center">
-			<h2 class="text-2xl mt-1 md:text-xl lg:text-3xl px-6 lg:mt-4 pb-2 short-content">
-				{tag.shortContent}
-			</h2>
-		</div>
-		<div class="flex text-centern justify-evenly mt-auto">
-			{#each tag.cta as cta}
-				<div
-					class="text-xl bg-blue-500 font-semibold mx-32 text-white md:text-xl text-center w-auto p-1"
-				>
-					{cta.label}
-				</div>
-			{/each}
+<div class="mx-auto bg-gray-240 flex rounded sm:gap-2 {className}">
+	<div class="flex flex-col">
+		<h2 class="text-4xl pb-2 uppercase">{tag.title}</h2>
+		<h2 class="text-lg pb-2 md:text-3xl">
+			{tag.shortContent}
+		</h2>
+	</div>
+
+	<div class="relative">
+		<PictureComponent {picture} />
+		<div
+			class="bg-blue-500 font-semibold text-white text-xl absolute bottom-0 right-0 text-center p-1"
+		>
+			{tag.cta[0].label}
 		</div>
 	</div>
 </div>
 
 <style>
 	.background-image {
-		background-image: url(https://imgur.com/rjdvjFT.png);
-		background-size: 100%;
+		background-size: cover 100%;
 		background-repeat: no-repeat;
 		background-position: left top;
-	}
-	.background-col {
-		background-color: rgba(243, 240, 240, 0.5);
-	}
-
-	.short-content {
-		text-shadow: #000 1px 0 10px;
-		color: #fff;
 	}
 </style>

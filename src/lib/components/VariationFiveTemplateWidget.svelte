@@ -1,40 +1,44 @@
 <script lang="ts">
+	import type { Picture } from '$lib/types/Picture';
 	import type { Tag } from '$lib/types/Tag';
+	import PictureComponent from './Picture.svelte';
 
 	let className = '';
 	export { className as class };
-
 	export let tag: Pick<
 		Tag,
 		'_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'
 	>;
-
-	$: baseClasses = 'mx-auto bg-gray-240 flex rounded sm:gap-2';
+	export let picture: Picture | undefined;
 </script>
 
-<div class="{baseClasses} {className}">
-	<div class="flex flex-col">
-		<h2 class="text-4xl pb-2 uppercase">{tag.title}</h2>
-		<h2 class="text-lg pb-2 md:text-3xl">
-			{tag.shortContent}
-		</h2>
-	</div>
+<div class="mx-auto bg-gray-240 gap-4 rounded relative {className}">
+	<PictureComponent {picture} class="w-full" />
 
-	<div class="relative">
-		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<img src="https://i.imgur.com/vUISISW.png" alt="Image" />
-		<div
-			class="bg-blue-500 font-semibold text-white text-xl absolute bottom-0 right-0 text-center p-1"
-		>
-			{tag.cta[0].label}
+	<img src="https://i.imgur.com/mwi2zTi.png" alt="img watch" class="w-full" />
+	<div class="flex flex-col text-center justify-center">
+		<div class="top-4 mx-auto text-center absolute lg:top-28 right-0 background-color">
+			<h2 class="text-sm uppercase md:text-2xl lg:text-5xl">{tag.title}</h2>
+		</div>
+		<div class="flex justify-evenly py-4 items-center">
+			<div class="bg-blue-500 font-semibold text-white text-xl text-center w-auto p-1">
+				{tag.cta[0].label}
+			</div>
+			<h2 class="text-lg pb-2">
+				{tag.shortContent}
+			</h2>
 		</div>
 	</div>
 </div>
 
 <style>
 	.background-image {
-		background-size: cover 100%;
+		background-image: url(https://imgur.com/rjdvjFT.png);
+		background-size: 100%;
 		background-repeat: no-repeat;
 		background-position: left top;
+	}
+	.background-color {
+		background-color: rgba(243, 240, 240, 0.5);
 	}
 </style>
