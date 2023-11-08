@@ -24,7 +24,7 @@ export function useI18n() {
 			languageLoaded.set(true);
 		}
 	} else {
-		//
+		// loaded in hooks.server.ts
 	}
 
 	locale.set(language);

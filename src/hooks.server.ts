@@ -29,8 +29,15 @@ import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
 import { countryFromIp } from '$lib/server/geoip';
 import { isAllowedOnPage } from '$lib/types/Role';
+import { languages } from '$lib/translations';
+import { addMessages } from 'svelte-i18n';
 
 const SSO_COOKIE = 'next-auth.session-token';
+
+for (const entry of Object.entries(languages)) {
+	console.log('loading language', entry[0]);
+	addMessages(entry[0], entry[1]);
+}
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);

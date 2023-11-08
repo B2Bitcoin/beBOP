@@ -16,7 +16,9 @@
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
-	import { POS_ROLE_ID } from '$lib/types/User.js';
+	import { POS_ROLE_ID } from '$lib/types/User';
+	import { _ } from 'svelte-i18n';
+	import { useI18n } from '$lib/i18n';
 
 	export let data;
 
@@ -61,6 +63,8 @@
 			picture: currentPicture
 		};
 	}
+
+	useI18n();
 </script>
 
 <svelte:head>
@@ -313,7 +317,7 @@
 									disabled={loading}
 									class="btn btn-gray"
 								>
-									Add to cart
+									{$_('cart.addToCart')}
 								</button>
 							{:else}
 								<button

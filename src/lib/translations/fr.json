@@ -1,5 +1,6 @@
 {
 	"cart": {
+		"add": "Ajouter au panier",
 		"quantity": "Quantité"
 	}
 }
