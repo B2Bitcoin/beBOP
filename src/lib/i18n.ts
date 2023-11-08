@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import { getContext } from 'svelte';
-import { addMessages, locale } from 'svelte-i18n';
+import { addMessages, locale, init } from 'svelte-i18n';
 import { get } from 'svelte/store';
 import { languageLoaded } from './stores/languageLoaded';
 
@@ -11,7 +11,16 @@ type LocalesDictionary = {
 	[key: string]: LocaleDictionary;
 };
 
+let isInit = false;
+
 export function useI18n() {
+	if (!isInit) {
+		init({
+			fallbackLocale: 'en'
+		});
+		isInit = true;
+	}
+
 	const language = getContext<string>('language');
 
 	if (browser) {

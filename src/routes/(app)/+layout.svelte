@@ -4,7 +4,7 @@
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
 	import IconBasket from '$lib/components/icons/IconBasket.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { onMount, setContext } from 'svelte';
+	import { onMount } from 'svelte';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { navigating, page } from '$app/stores';
 	import { UrlDependency } from '$lib/types/UrlDependency';
@@ -24,7 +24,6 @@
 	import { currencies } from '$lib/stores/currencies';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
-	import { PUBLIC_COMMIT_ID } from '$env/static/public';
 	import { useI18n } from '$lib/i18n';
 	import { _ } from 'svelte-i18n';
 
@@ -279,7 +278,7 @@
 									{/each}
 									{#if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
-											Vat ({data.vatRate}%) <PriceTag
+											{$_('cart.vat')} ({data.vatRate}%) <PriceTag
 												currency={data.currencies.main}
 												amount={vat}
 												main
