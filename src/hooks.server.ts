@@ -238,7 +238,15 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	const response = await resolve(event);
+	let transformed = false;
+	const response = await resolve(event, {
+		transformPageChunk: ({ html }) => {
+			if (!transformed) {
+				transformed = true;
+				return html.replace('<html', `<html lang="${event.locals.language}"`);
+			}
+		}
+	});
 
 	if (
 		response.status >= 500 &&
