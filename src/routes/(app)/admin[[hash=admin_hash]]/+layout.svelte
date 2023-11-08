@@ -21,14 +21,25 @@
 			href: l.href.replace('/admin', data.adminPrefix)
 		}))
 	}));
-
+	function findSectionByHref(href: string) {
+		for (const sectionItem of adminLinks) {
+			for (const linkItem of sectionItem.links) {
+				if (href.startsWith(linkItem.href)) {
+					return sectionItem.section;
+				}
+			}
+		}
+	}
 	$: isLoginPage = /^\/admin(-[0-9a-zA-Z]+)?\/login/.test($page.url.pathname);
+	$: sectionName =
+		decodeURIComponent($page.url.hash.replace('#', '')) ||
+		findSectionByHref(decodeURIComponent($page.url.pathname));
 </script>
 
 {#if !isLoginPage}
 	<header class="bg-gray-400 text-gray-800 py-2 items-center flex">
-		<div class="mx-auto max-w-7xl flex gap-3 px-6 grow">
-			<nav class="flex gap-x-6 gap-y-2 font-light items-center flex-wrap">
+		<div class="mx-auto max-w-7xl flex gap-3 px-6 grow flex-col">
+			<nav class="flex gap-x-6 gap-y-2 font-light items-center">
 				<button
 					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
 					class:rotate-90={navMenuOpen}
@@ -45,6 +56,14 @@
 						</button>
 					</form>
 				</span>
+				{#each adminLinks as adminLink}
+					<span class="text-xl hidden sm:inline">
+						<a
+							class={sectionName === adminLink.section ? 'underline' : ''}
+							href="#{adminLink.section}">{adminLink.section}</a
+						>
+					</span>
+				{/each}
 				{#if data.roleId === POS_ROLE_ID}
 					<a
 						href="/pos"
@@ -56,25 +75,25 @@
 						POS session
 					</a>
 				{/if}
-				{#each adminLinks as adminLink}
-					<nav class="flex gap-x-6 items-center">
-						<span class="font-bold text-xl hidden sm:inline">
-							{adminLink.section}
-						</span>
-						{#each adminLink.links.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
-							<a
-								href={link.href}
-								data-sveltekit-preload-data="off"
-								class="{$page.url.pathname.startsWith(link.href)
-									? 'underline'
-									: ''}  hidden sm:inline"
-								class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-								class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
-							>
-								{link.label}
-							</a>
-						{/each}
-					</nav>
+			</nav>
+			<nav class="flex gap-x-6 items-center">
+				{#each adminLinks.filter((item) => item.section === sectionName) as adminLink}
+					<span class="font-bold text-xl hidden sm:inline">
+						{adminLink.section}
+					</span>
+					{#each adminLink.links.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+						<a
+							href={link.href}
+							data-sveltekit-preload-data="off"
+							class="{$page.url.pathname.startsWith(link.href)
+								? 'underline'
+								: ''}  hidden sm:inline"
+							class:italic={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+							class:opacity-70={data.role && !isAllowedOnPage(data.role, link.href, 'write')}
+						>
+							{link.label}
+						</a>
+					{/each}
 				{/each}
 			</nav>
 		</div>
