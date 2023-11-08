@@ -59,7 +59,10 @@
 				</span>
 				{#each adminLinks as adminLink}
 					<span class="text-xl hidden sm:inline">
-						<a class="hover:underline" href="#{adminLink.section}">{adminLink.section}</a>
+						<a
+							class={sectionName === adminLink.section ? 'underline' : ''}
+							href="#{adminLink.section}">{adminLink.section}</a
+						>
 					</span>
 				{/each}
 				{#if data.roleId === POS_ROLE_ID}
