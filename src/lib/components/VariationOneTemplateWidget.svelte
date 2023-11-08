@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Picture } from '$lib/types/Picture';
 	import type { Tag } from '$lib/types/Tag';
 
 	let className = '';
