@@ -22,7 +22,7 @@
 	const widgets = {
 		'var-1': {
 			component: VariationOneTemplateWidget,
-			pictureType: 'avatar'
+			pictureType: 'full'
 		},
 		'var-2': {
 			component: VariationTwoTemplateWidget,

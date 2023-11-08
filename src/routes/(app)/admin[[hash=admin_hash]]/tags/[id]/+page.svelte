@@ -125,7 +125,6 @@
 			class="form-input"
 		/>
 	</label>
-
 	{#if data.tag.cta}
 		<h3 class="text-xl">CTAs</h3>
 		{#each [...data.tag.cta, ...Array(3 - data.tag.cta.length).fill( { href: '', label: '' } )] as link, i}

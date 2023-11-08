@@ -25,11 +25,14 @@
 				{tag.shortContent}
 			</h2>
 		</div>
-		<div class="flex text-centern justify-evenly mt-auto">
+		<div class="flex text-center justify-evenly mt-auto">
 			{#each tag.cta as cta}
 				<div
-					class="text-xl bg-blue-500 font-semibold mx-32 text-white md:text-xl text-center w-auto p-1"
+					class="text-xl bg-blue-500 font-semibold mx-20 text-white md:text-xl text-center w-auto p-1 hidden sm:inline"
 				>
+					{cta.label}
+				</div>
+				<div class="text-xl bg-blue-500 font-semibold mx-1 sm:hidden text-white text-center p-1">
 					{cta.label}
 				</div>
 			{/each}
