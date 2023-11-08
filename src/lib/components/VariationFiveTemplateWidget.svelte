@@ -13,7 +13,7 @@
 </script>
 
 <div class="{baseClasses} {className}">
-	<div class="flex flex-col text-end">
+	<div class="flex flex-col">
 		<h2 class="text-4xl pb-2 uppercase">{tag.title}</h2>
 		<h2 class="text-lg pb-2 md:text-3xl">
 			{tag.shortContent}
@@ -21,13 +21,12 @@
 	</div>
 
 	<div class="relative">
+		<!-- svelte-ignore a11y-img-redundant-alt -->
 		<img src="https://i.imgur.com/vUISISW.png" alt="Image" />
-		<div class="flex text-centern justify-between mt-auto">
-			{#each tag.cta as cta}
-				<div class="bg-blue-500 font-semibold text-white text-xl text-center w-auto p-1">
-					{cta.label}
-				</div>
-			{/each}
+		<div
+			class="bg-blue-500 font-semibold text-white text-xl absolute bottom-0 right-0 text-center p-1"
+		>
+			{tag.cta[0].label}
 		</div>
 	</div>
 </div>

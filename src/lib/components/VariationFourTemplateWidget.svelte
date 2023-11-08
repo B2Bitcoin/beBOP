@@ -13,20 +13,22 @@
 
 <div class="{baseClasses} {className} relative">
 	<!-- svelte-ignore a11y-img-redundant-alt -->
-	<img src="https://imgur.com/rjdvjFT.png" alt="Image" class="w-full h-auto" />
+	<img src="https://i.imgur.com/1mAMnn1.png" alt="Image" class="w-full h-auto" />
 	<div
-		class="mt-12 md:mt-[150px] lg:mt-[200px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
+		class="mt-16 mt-[100px] md:mt-[300px] lg:mt-[400px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
 	>
-		<div class="text-center background-col">
-			<h2 class="text-sm md:text-md uppercase md:text-2xl lg:text-5xl">{tag.title}</h2>
+		<div class="mb-8 text-center background-col md:mb-16 lg:mb-24">
+			<h2 class="text-3xl md:text-md uppercase md:text-4xl lg:text-6xl">{tag.title}</h2>
 		</div>
-		<h2 class="text-sm mt-1 md:text-md lg:text-lg lg:mt-4 pb-2 short-content">
-			{tag.shortContent}
-		</h2>
+		<div class="text-center">
+			<h2 class="text-2xl mt-1 md:text-xl lg:text-3xl px-6 lg:mt-4 pb-2 short-content">
+				{tag.shortContent}
+			</h2>
+		</div>
 		<div class="flex text-centern justify-evenly mt-auto">
 			{#each tag.cta as cta}
 				<div
-					class="text-sm bg-blue-500 font-semibold mx-32 text-white md:text-xl text-center w-auto lg:p-1"
+					class="text-xl bg-blue-500 font-semibold mx-32 text-white md:text-xl text-center w-auto p-1"
 				>
 					{cta.label}
 				</div>
