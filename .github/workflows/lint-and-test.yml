@@ -27,3 +27,6 @@ jobs:
       - name: 'Checking type errors'
         run: |
           pnpm run check
+      - name: 'Build'
+        run: |
+          pnpm run build

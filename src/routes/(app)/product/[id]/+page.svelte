@@ -17,8 +17,7 @@
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
 	import { POS_ROLE_ID } from '$lib/types/User';
-	import { _ } from 'svelte-i18n';
-	import { useI18n } from '$lib/i18n';
+	import { useI18n, t } from '$lib/i18n';
 
 	export let data;
 
@@ -287,7 +286,7 @@
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">
-									{$_('cart.quantity')}:
+									{t('cart.quantity')}:
 									<select
 										name="quantity"
 										bind:value={quantity}
@@ -311,15 +310,14 @@
 									Please check back later
 								</p>
 							{:else if data.showCheckoutButton}
-								<button class="btn btn-black" disabled={loading}>{$_(`product.cta.${verb}`)}</button
-								>
+								<button class="btn btn-black" disabled={loading}>{t(`product.cta.${verb}`)}</button>
 								<button
 									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
 									class="btn btn-gray"
 								>
-									{$_('product.cta.add')}
+									{t('product.cta.add')}
 								</button>
 							{:else}
 								<button

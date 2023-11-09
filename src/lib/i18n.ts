@@ -1,8 +1,6 @@
 import { browser } from '$app/environment';
 import { getContext } from 'svelte';
-import { addMessages, locale, init } from 'svelte-i18n';
-import { get } from 'svelte/store';
-import { languageLoaded } from './stores/languageLoaded';
+import { I18n } from 'i18n-js/dist/require';
 
 interface LocaleDictionary {
 	[key: string]: LocaleDictionary | string | Array<string | LocaleDictionary> | null;
@@ -11,30 +9,33 @@ type LocalesDictionary = {
 	[key: string]: LocaleDictionary;
 };
 
-let isInit = false;
+const i18n = new I18n();
+
+i18n.defaultLocale = 'en';
+
+let languagesLoaded = false;
 
 export function useI18n() {
-	if (!isInit) {
-		init({
-			fallbackLocale: 'en'
-		});
-		isInit = true;
-	}
-
 	const language = getContext<string>('language');
 
+	i18n.locale = language;
+
 	if (browser) {
-		if (!get(languageLoaded)) {
+		if (!languagesLoaded) {
 			const languages = 'language' in window ? (window.language as LocalesDictionary) : {};
 			for (const entry of Object.entries(languages)) {
 				console.log('loading language', entry[0]);
-				addMessages(entry[0], entry[1]);
+				i18n.store({
+					[entry[0]]: entry[1]
+				});
 			}
-			languageLoaded.set(true);
+			languagesLoaded = true;
 		}
 	} else {
 		// loaded in hooks.server.ts
 	}
-
-	locale.set(language);
 }
+
+const t = i18n.t.bind(i18n);
+
+export { t, i18n };
