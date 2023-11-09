@@ -10,6 +10,7 @@ import { runMigrations } from './migrations';
 import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { building } from '$app/environment';
 
 const defaultConfig = {
 	adminHash: '',
@@ -117,7 +118,9 @@ export type RuntimeConfigItem = {
 let changeStream: ChangeStream<RuntimeConfigItem, ChangeStreamDocument<RuntimeConfigItem>> | null =
 	null;
 
-changeStream = collections.runtimeConfig.watch().on('change', refresh);
+if (!building) {
+	changeStream = collections.runtimeConfig.watch().on('change', refresh);
+}
 process.on('SIGINT', () => {
 	changeStream?.close().catch(console.error);
 });
@@ -215,4 +218,4 @@ export function stop(): void {
 
 export const runtimeConfig = { ...defaultConfig };
 
-export const refreshPromise = refresh();
+export const refreshPromise = building ? Promise.resolve() : refresh();

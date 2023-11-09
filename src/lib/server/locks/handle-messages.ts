@@ -12,6 +12,7 @@ import type { Product } from '$lib/types/Product';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
+import { building } from '$app/environment';
 
 const lock = new Lock('received-messages');
 
@@ -19,11 +20,13 @@ const processingIds = new Set<string>();
 
 export const NOSTR_PROTOCOL_VERSION = 1;
 
-collections.nostrReceivedMessages
-	.watch([{ $match: { operationType: 'insert' } }], {
-		fullDocument: 'updateLookup'
-	})
-	.on('change', (ev) => handleChanges(ev).catch(console.error));
+if (!building) {
+	collections.nostrReceivedMessages
+		.watch([{ $match: { operationType: 'insert' } }], {
+			fullDocument: 'updateLookup'
+		})
+		.on('change', (ev) => handleChanges(ev).catch(console.error));
+}
 
 async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>): Promise<void> {
 	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {

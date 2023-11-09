@@ -8,6 +8,7 @@ import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
 import { refreshPromise } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
+import { building } from '$app/environment';
 
 const lock = new Lock('order-notifications');
 
@@ -41,46 +42,48 @@ const watch = [
 	}
 ];
 
-let changeStream = collections.orders
-	.watch(watch, {
-		fullDocument: 'updateLookup',
-		startAfter:
-			(await collections.runtimeConfig
-				.findOne({ _id: 'orderNotificationsResumeToken' })
-				.then((val) => val?.data)) || undefined
-	})
-	.on('change', (ev) => handleChanges(ev).catch(console.error))
-	.once('error', async (err) => {
-		// In case it couldn't resume correctly, start from 1 hour ago
-		await changeStream.close().catch(console.error);
+if (!building) {
+	let changeStream = collections.orders
+		.watch(watch, {
+			fullDocument: 'updateLookup',
+			startAfter:
+				(await collections.runtimeConfig
+					.findOne({ _id: 'orderNotificationsResumeToken' })
+					.then((val) => val?.data)) || undefined
+		})
+		.on('change', (ev) => handleChanges(ev).catch(console.error))
+		.once('error', async (err) => {
+			// In case it couldn't resume correctly, start from 1 hour ago
+			await changeStream.close().catch(console.error);
 
-		if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
-			changeStream = collections.orders
-				.watch(watch, {
-					fullDocument: 'updateLookup',
-					startAtOperationTime: Timestamp.fromBits(0, getUnixTime(subHours(new Date(), 1)))
-				})
-				.on('change', (ev) => handleChanges(ev).catch(console.error))
-				.once('error', async (err) => {
-					// This time, start from now
-					await changeStream.close().catch(console.error);
+			if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
+				changeStream = collections.orders
+					.watch(watch, {
+						fullDocument: 'updateLookup',
+						startAtOperationTime: Timestamp.fromBits(0, getUnixTime(subHours(new Date(), 1)))
+					})
+					.on('change', (ev) => handleChanges(ev).catch(console.error))
+					.once('error', async (err) => {
+						// This time, start from now
+						await changeStream.close().catch(console.error);
 
-					if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
-						changeStream = collections.orders
-							.watch(watch, {
-								fullDocument: 'updateLookup'
-							})
-							.on('change', (ev) => handleChanges(ev).catch(console.error));
-					} else {
-						console.error(err);
-						process.exit(1);
-					}
-				});
-		} else {
-			console.error(err);
-			process.exit(1);
-		}
-	});
+						if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
+							changeStream = collections.orders
+								.watch(watch, {
+									fullDocument: 'updateLookup'
+								})
+								.on('change', (ev) => handleChanges(ev).catch(console.error));
+						} else {
+							console.error(err);
+							process.exit(1);
+						}
+					});
+			} else {
+				console.error(err);
+				process.exit(1);
+			}
+		});
+}
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
 	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
