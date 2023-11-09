@@ -35,6 +35,8 @@ export interface Product extends Timestamps {
 	free: boolean;
 	actionSettings: ProductActionSettings;
 	tagIds?: Tag['_id'][];
+	contentBefore?: string;
+	contentAfter?: string;
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;

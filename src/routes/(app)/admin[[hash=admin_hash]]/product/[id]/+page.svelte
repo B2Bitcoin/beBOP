@@ -10,6 +10,9 @@
 	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { page } from '$app/stores';
+	import Editor from '@tinymce/tinymce-svelte';
+	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
+	import { TINYMCE_PLUGINS, TINYMCE_TOOLBAR } from '../../cms/tinymce-plugins.js';
 
 	export let data;
 
@@ -29,6 +32,8 @@
 	let googleShoppingVisible = data.product.actionSettings.googleShopping.visible;
 	let eshopBasket = data.product.actionSettings.eShop.canBeAddedToBasket;
 	let retailBasket = data.product.actionSettings.retail.canBeAddedToBasket;
+	let contentBefore = data.product.contentBefore;
+	let contentAfter = data.product.contentAfter;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -419,7 +424,48 @@
 				</tr>
 			</tbody>
 		</table>
-
+		<label class="block w-full mt-4">
+			Add CMS code and widgets before product page core
+			<Editor
+				scriptSrc="/tinymce/tinymce.js"
+				bind:value={contentBefore}
+				conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
+			/>
+			<p class="text-gray-700 my-3">
+				To include tags, add a paragraph with only <code class="font-mono">[Tag=slug]</code>, where
+				<code class="font-mono">slug</code> is the slug of your tag
+			</p>
+			<textarea
+				name="contentBefore"
+				cols="30"
+				rows="10"
+				maxlength={MAX_CONTENT_LIMIT}
+				placeholder="HTML content"
+				class="form-input block w-full"
+				bind:value={contentBefore}
+			/>
+		</label>
+		<label class="block w-full mt-4">
+			Add CMS code and widgets after product page core
+			<Editor
+				scriptSrc="/tinymce/tinymce.js"
+				bind:value={contentAfter}
+				conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
+			/>
+			<p class="text-gray-700 my-3">
+				To include tags, add a paragraph with only <code class="font-mono">[Tag=slug]</code>, where
+				<code class="font-mono">slug</code> is the slug of your tag
+			</p>
+			<textarea
+				name="contentAfter"
+				cols="30"
+				rows="10"
+				maxlength={MAX_CONTENT_LIMIT}
+				placeholder="HTML content"
+				class="form-input block w-full"
+				bind:value={contentAfter}
+			/>
+		</label>
 		<div class="flex justify-between gap-2">
 			<button
 				type="submit"

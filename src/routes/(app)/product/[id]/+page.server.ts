@@ -8,6 +8,9 @@ import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
+import { trimSuffix } from '$lib/utils/trimSuffix';
+import { trimPrefix } from '$lib/utils/trimPrefix';
+import { picturesForSliders } from '$lib/server/picture';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -28,6 +31,8 @@ export const load = async ({ params, locals }) => {
 			| 'maxQuantityPerOrder'
 			| 'stock'
 			| 'actionSettings'
+			| 'contentBefore'
+			| 'contentAfter'
 		>
 	>(
 		{ _id: params.id },
@@ -46,7 +51,9 @@ export const load = async ({ params, locals }) => {
 				standalone: 1,
 				maxQuantityPerOrder: 1,
 				stock: 1,
-				actionSettings: 1
+				actionSettings: 1,
+				contentBefore: 1,
+				contentAfter: 1
 			}
 		}
 	);
@@ -83,10 +90,38 @@ export const load = async ({ params, locals }) => {
 			sort: { percentage: -1 }
 		}
 	);
+	const challenges = product.contentBefore
+		? (await getCMSProduct(product.contentBefore)).challenges
+		: [];
+	const tokens = product.contentBefore ? (await getCMSProduct(product.contentBefore)).tokens : [];
+	const sliders = product.contentBefore ? (await getCMSProduct(product.contentBefore)).sliders : [];
+	const slidersPictures = product.contentBefore
+		? (await getCMSProduct(product.contentBefore)).slidersPictures
+		: [];
+	const challengesAfter = product.contentAfter
+		? (await getCMSProduct(product.contentAfter)).challenges
+		: [];
+	const tokensAfter = product.contentAfter
+		? (await getCMSProduct(product.contentAfter)).tokens
+		: [];
+	const slidersAfter = product.contentAfter
+		? (await getCMSProduct(product.contentAfter)).sliders
+		: [];
+	const slidersPicturesAfter = product.contentAfter
+		? (await getCMSProduct(product.contentAfter)).slidersPictures
+		: [];
 	return {
 		product,
 		pictures,
 		discount,
+		challenges,
+		tokens,
+		sliders,
+		slidersPictures,
+		challengesAfter,
+		tokensAfter,
+		slidersAfter,
+		slidersPicturesAfter,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
 };
@@ -129,3 +164,94 @@ export const actions = {
 
 	addToCart
 };
+
+async function getCMSProduct(content: string) {
+	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
+
+	const SLIDER_WIDGET_REGEX =
+		/\[Slider=(?<slug>[a-z0-9-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/gi;
+
+	const challengeSlugs = new Set<string>();
+	const sliderSlugs = new Set<string>();
+
+	const tokens: Array<
+		| {
+				type: 'html';
+				raw: string;
+		  }
+		| {
+				type: 'challengeWidget';
+				slug: string;
+				raw: string;
+		  }
+		| {
+				type: 'sliderWidget';
+				slug: string;
+				autoplay: number | undefined;
+				raw: string;
+		  }
+	> = [];
+
+	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
+	const sliderMatches = content.matchAll(SLIDER_WIDGET_REGEX);
+
+	let index = 0;
+
+	const orderedMatches = [
+		...[...challengeMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
+		),
+		...[...sliderMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
+		)
+	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+
+	for (const match of orderedMatches) {
+		tokens.push({
+			type: 'html',
+			raw: trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>')
+		});
+
+		if (match.type === 'challengeWidget' && match.groups?.slug) {
+			challengeSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'challengeWidget',
+				slug: match.groups.slug,
+				raw: match[0]
+			});
+		} else if (match.type === 'sliderWidget' && match.groups?.slug) {
+			sliderSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'sliderWidget',
+				slug: match.groups.slug,
+				autoplay: Number(match.groups?.autoplay),
+				raw: match[0]
+			});
+		}
+
+		index = match.index + match[0].length;
+	}
+
+	tokens.push({
+		type: 'html',
+		raw: trimPrefix(content.slice(index), '</p>')
+	});
+
+	const challenges = await collections.challenges
+		.find({
+			_id: { $in: [...challengeSlugs] }
+		})
+		.toArray();
+	const sliders = await collections.sliders
+		.find({
+			_id: { $in: [...sliderSlugs] }
+		})
+		.toArray();
+
+	return {
+		tokens,
+		challenges,
+		sliders,
+		slidersPictures: await picturesForSliders(sliders.map((slider) => slider._id))
+	};
+}

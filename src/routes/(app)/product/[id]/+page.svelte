@@ -18,6 +18,7 @@
 	import { differenceInHours } from 'date-fns';
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import { useI18n, t } from '$lib/i18n';
+	import ProductCms from '$lib/components/ProductCms.svelte';
 
 	export let data;
 
@@ -87,6 +88,12 @@
 	<meta property="og:type" content="og:product" />
 </svelte:head>
 
+<ProductCms
+	challenges={data.challenges}
+	tokens={data.tokens}
+	sliders={data.sliders}
+	slidersPictures={data.slidersPictures}
+/>
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
 		<div class="flex flex-col gap-2 w-14 min-w-[48px] py-12 hidden md:block">
@@ -347,3 +354,10 @@
 		</div>
 	</article>
 </main>
+
+<ProductCms
+	challenges={data.challengesAfter}
+	tokens={data.tokensAfter}
+	sliders={data.slidersAfter}
+	slidersPictures={data.slidersPicturesAfter}
+/>
