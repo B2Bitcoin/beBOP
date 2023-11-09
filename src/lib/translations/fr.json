@@ -4,7 +4,8 @@
     "cta": {
       "view": "Voir le panier",
       "checkout": "Passer à la caisse"
-    }
+    },
+    "vat": "TVA"
   },
   "product": {
     "cta": {

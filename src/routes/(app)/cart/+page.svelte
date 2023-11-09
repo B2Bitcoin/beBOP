@@ -5,6 +5,8 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import Trans from '$lib/components/Trans.svelte';
+	import { t, useI18n } from '$lib/i18n.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
@@ -28,6 +30,8 @@
 	);
 	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
+
+	useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
@@ -157,14 +161,15 @@
 			{#if data.vatCountry && !data.vatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
-						<h2 class="text-gray-800 text-[28px]">Vat ({data.vatRate}%):</h2>
+						<h2 class="text-gray-800 text-[28px]">{t('cart.vat')} ({data.vatRate}%):</h2>
 						<p class="text-sm text-gray-600">
-							VAT rate for {data.vatCountry}.
+							{t('cart.vatRate', { country: data.vatCountry })}.
 							{#if data.vatSingleCountry}
-								The country is the seller's country.
+								{t('cart.vatSellerCountry')}
 							{:else}
-								The country is determined through data from
-								<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+								<Trans key="cart.vatIpCountry">
+									<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+								</Trans>
 							{/if}
 						</p>
 					</div>
@@ -185,7 +190,7 @@
 				</div>
 			{/if}
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
-				<h2 class="text-gray-800 text-[32px]">Total:</h2>
+				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={totalPriceWithVat}
@@ -202,10 +207,10 @@
 				</div>
 			</div>
 			<div class="flex justify-end">
-				<a href="/checkout" class="btn btn-black w-80">Checkout</a>
+				<a href="/checkout" class="btn btn-black w-80">{t('cart.cta.checkout')}</a>
 			</div>
 		{:else}
-			<p>Cart is empty</p>
+			<p>{t('cart.empty')}</p>
 		{/if}
 	</div>
 </main>

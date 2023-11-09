@@ -7,7 +7,6 @@
 	import { COUNTRIES } from '$lib/types/Country';
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
-	import { pluralize } from '$lib/utils/pluralize';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import { computeDeliveryFees } from '$lib/types/Cart';
@@ -20,6 +19,8 @@
 	import { POS_ROLE_ID } from '$lib/types/User.js';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import type { DiscountType } from '$lib/types/Order.js';
+	import { t, useI18n } from '$lib/i18n.js';
+	import Trans from '$lib/components/Trans.svelte';
 
 	let actionCount = 0;
 	let country = typedKeys(COUNTRIES)[0];
@@ -31,8 +32,10 @@
 	let discountAmount: number;
 	let discountType: DiscountType;
 
+	useI18n();
+
 	const feedItems = [
-		{ key: 'paymentStatus', label: 'Payment status' }
+		{ key: 'paymentStatus', label: t('checkout.paymentStatus') }
 		// { key: 'productChanges', label: 'Product changes' },
 		// { key: 'newsletter', label: 'Newsletter' }
 	] as const;
@@ -61,7 +64,7 @@
 				input.value &&
 				(!input.value.startsWith('npub1') || bech32.decodeUnsafe(input.value)?.prefix !== 'npub')
 			) {
-				input.setCustomValidity('Invalid NostR public address');
+				input.setCustomValidity(t('checkout.invalidNpub'));
 				input.reportValidity();
 
 				event.preventDefault();
@@ -75,9 +78,9 @@
 	);
 
 	const paymentMethodDesc = {
-		bitcoin: 'Onchain',
-		lightning: 'Lightning',
-		cash: 'Cash'
+		bitcoin: t('checkout.paymentMethod.bitcoin'),
+		lightning: t('checkout.paymentMethod.lighthing'),
+		cash: t('checkout.paymentMethod.cash')
 	};
 
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
@@ -116,19 +119,18 @@
 		class="w-full rounded-xl bg-white border-gray-300 border p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
 	>
 		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
-			<h1 class="page-title">Checkout</h1>
+			<h1 class="page-title">{t('checkout.title')}</h1>
 
 			<section class="gap-4 grid grid-cols-6 w-4/5">
-				<h2 class="font-light text-2xl col-span-6">Shipment info</h2>
+				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
 
 				{#if isDigital}
 					<p class="col-span-6 text-gray-800">
-						All products in your cart are digital products. You don't need to provide any shipping
-						information.
+						{t('checkout.digitalNoShippingNeeded')}
 					</p>
 				{:else}
 					<label class="form-label col-span-3">
-						First name
+						{t('address.firstName')}
 						<input
 							type="text"
 							class="form-input"
@@ -139,7 +141,7 @@
 					</label>
 
 					<label class="form-label col-span-3">
-						Last name
+						{t('address.lastName')}
 						<input
 							type="text"
 							class="form-input"
@@ -150,7 +152,7 @@
 					</label>
 
 					<label class="form-label col-span-6">
-						Address
+						{t('address.address')}
 						<input
 							type="text"
 							class="form-input"
@@ -161,7 +163,7 @@
 					</label>
 
 					<label class="form-label col-span-3">
-						Country
+						{t('address.country')}
 						<select name="country" class="form-input" required bind:value={country}>
 							{#each Object.entries(COUNTRIES) as [code, countryTxt]}
 								<option value={code} selected={code === country}>{countryTxt}</option>
@@ -172,17 +174,17 @@
 					<span class="col-span-3" />
 
 					<label class="form-label col-span-2">
-						State
+						{t('address.state')}
 
 						<input type="text" name="state" class="form-input" />
 					</label>
 					<label class="form-label col-span-2">
-						City
+						{t('address.city')}
 
 						<input type="text" name="city" class="form-input" required />
 					</label>
 					<label class="form-label col-span-2">
-						Zip code
+						{t('address.zipCode')}
 
 						<input type="text" name="zip" class="form-input" required autocomplete="postal-code" />
 					</label>
@@ -190,10 +192,10 @@
 			</section>
 
 			<section class="gap-4 flex flex-col">
-				<h2 class="font-light text-2xl">Payment</h2>
+				<h2 class="font-light text-2xl">{t('checkout.payment.title')}</h2>
 
 				<label class="form-label">
-					Payment method
+					{t('checkout.payment.method')}
 
 					<div class="grid grid-cols-2 gap-4 items-center">
 						<select
@@ -208,21 +210,17 @@
 							{/each}
 						</select>
 						{#if paymentMethods.length === 0}
-							<p class="text-red-400">No payment methods available.</p>
+							<p class="text-red-400">{t('checkout.paymentMethod.unavailable')}</p>
 						{/if}
 						{#if 0}
 							<a href="/connect" class="underline text-link"> Connect another wallet </a>
 						{/if}
 					</div>
 				</label>
-
-				{#if paymentMethod === 'cash'}
-					<p class="alert-info">Cash payments need manual confirmation from the seller.</p>
-				{/if}
 			</section>
 
 			<section class="gap-4 flex flex-col">
-				<h2 class="font-light text-2xl">Feed & Notifications</h2>
+				<h2 class="font-light text-2xl">{t('checkout.notifications.title')}</h2>
 
 				{#each feedItems as { key, label }}
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
@@ -233,7 +231,7 @@
 						</div>
 						<div class="p-4 flex flex-col gap-3">
 							<label class="form-label">
-								NostR public address
+								{t('checkout.notifications.npub')}
 								<input
 									type="text"
 									class="form-input"
@@ -247,7 +245,7 @@
 							</label>
 							{#if data.emailsEnabled}
 								<label class="form-label">
-									Email
+									{t('checkout.notifications.email')}
 									<input
 										type="email"
 										class="form-input"
@@ -267,8 +265,8 @@
 				class="rounded sticky top-4 md:-mr-2 md:-mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
 				<div class="flex justify-between">
-					<a href="/cart" class="text-link hover:underline">&lt;&lt;Back to cart</a>
-					<p>{data.cart?.length} {pluralize(data.cart?.length ?? 0, 'product')}</p>
+					<a href="/cart" class="text-link hover:underline">&lt;&lt;{t('checkout.backToCart')}</a>
+					<p>{t('checkout.numProducts', { count: data.cart?.length ?? 0 })}</p>
 				</div>
 				{#each items as item}
 					<form
@@ -368,7 +366,7 @@
 
 				{#if deliveryFees}
 					<div class="flex justify-between items-center">
-						<h3 class="text-base text-gray-700">Delivery fees</h3>
+						<h3 class="text-base text-gray-700">{t('checkout.deliveryFees')}</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
@@ -388,7 +386,7 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{:else if isNaN(deliveryFees)}
 					<div class="alert-error mt-3">
-						Delivery is not available in your country for some of the items of your cart.
+						{t('checkout.noDeliveryInCountry')}
 					</div>
 				{/if}
 
@@ -396,13 +394,13 @@
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base text-gray-700 flex flex-row gap-2 items-center">
-								Vat ({actualVatRate}%)
+								{t('cart.vat')} ({actualVatRate}%)
 								<div
-									title="VAT rate for {actualCountry}. {data.vatSingleCountry
-										? "The VAT country is the seller's country"
+									title="{t('cart.vatRate', { country: actualCountry })}. {data.vatSingleCountry
+										? t('cart.vatSellerCountry')
 										: isDigital
-										? 'The country is determined with data from https://lite.ip2location.com'
-										: 'The country is determined by the shipping address'}"
+										? `${t('cart.vatIpCountry', { link: 'https://lite.ip2location.com' })}`
+										: t('checkout.vatShippingAddress')}"
 								>
 									<IconInfo class="cursor-pointer" />
 								</div>
@@ -431,7 +429,7 @@
 
 				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
 					<div class="flex justify-between">
-						<span class="text-xl text-gray-850">Total</span>
+						<span class="text-xl text-gray-850">{t('cart.total')}</span>
 						<PriceTag
 							class="text-2xl text-gray-800"
 							amount={totalPriceWithVat}
@@ -450,9 +448,11 @@
 				<label class="checkbox-label">
 					<input type="checkbox" class="form-checkbox" name="teecees" form="checkout" required />
 					<span>
-						I agree to the <a href="/terms" target="_blank" class="text-link hover:underline">
-							terms of service
-						</a>
+						<Trans key="checkout.tosAgree"
+							><a href="/terms" target="_blank" class="text-link hover:underline">
+								{t('checkout.tos')}
+							</a></Trans
+						>
 					</span>
 				</label>
 
@@ -466,13 +466,11 @@
 							form="checkout"
 						/>
 						<span>
-							This is a VAT-free order <a
-								href="/terms"
-								target="_blank"
-								class="text-link hover:underline"
+							<Trans key="pos.vatFree"
+								><a href="/terms" target="_blank" class="text-link hover:underline">
+									{t('pos.vatFreeConditions')}
+								</a></Trans
 							>
-								(conditions)
-							</a>
 						</span>
 					</label>
 					<label class="checkbox-label">
@@ -484,20 +482,18 @@
 							form="checkout"
 						/>
 						<span>
-							As a POS user I apply a <a
-								href="/gift-discount"
-								target="_blank"
-								class="text-link hover:underline"
-							>
-								gift discount
-							</a>
+							<Trans key="pos.applyGiftDiscount">
+								<a href="/gift-discount" target="_blank" class="text-link hover:underline">
+									{t('pos.gitDiscount')}
+								</a>
+							</Trans>
 						</span>
 					</label>
 				{/if}
 
 				{#if isFreeVat}
 					<label class="form-label col-span-3">
-						VAT-free reason:
+						{t('pos.vatFreeReason')}:
 						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" />
 					</label>
 				{/if}
@@ -526,11 +522,11 @@
 					</select>
 
 					{#if discountAmount && !isDiscountValid}
-						<p class="text-sm text-red-600">Discount is not valid!</p>
+						<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
 					{/if}
 
 					<label class="form-label col-span-3">
-						Justification
+						{t('pos.discountJustification')}
 						<input type="text" class="form-input" form="checkout" name="discountJustification" />
 					</label>
 				{/if}
@@ -545,11 +541,11 @@
 							required
 						/>
 						<span>
-							I agree to the collection of my IP address (<a
-								href="/why-collect-ip"
-								target="_blank"
-								class="text-link hover:underline">why?</a
-							>)
+							<Trans key="checkout.agreeIpCollect"
+								><a href="/why-collect-ip" target="_blank" class="text-link hover:underline"
+									>{t('checkout.ipCollectWhy')}</a
+								></Trans
+							>
 						</span>
 					</label>
 				{/if}

@@ -1,22 +1,91 @@
 {
-  "cart": {
-    "quantity": "Quantity",
-    "cta": {
-      "view": "View cart",
-      "checkout": "Checkout"
-    },
-    "vat": "VAT"
-  },
-  "product": {
-    "cta": {
-      "preorder": "Pre-order now",
-      "add": "Add to cart",
-      "buy": "Buy now",
-      "donate": "Donate now",
-      "subscribe": "Subscribe now"
-    }
-  },
-  "error": {
-    "title": "Error"
-  }
+	"address": {
+		"address": "Address",
+		"city": "City",
+		"country": "Country",
+		"firstName": "First name",
+		"lastName": "Last name",
+		"state": "State",
+		"zipCode": "Zip code"
+	},
+	"cart": {
+		"cta": {
+			"checkout": "Checkout",
+			"view": "View cart"
+		},
+		"empty": "Cart is empty",
+		"quantity": "Quantity",
+		"sr": {
+			"remove": "Remove item from cart"
+		},
+		"total": "Total",
+		"vat": "VAT",
+		"vatIpCountry": "The country is determined through data from %{link}",
+		"vatRate": "VAT rate for %{country}",
+		"vatSellerCountry": "The country is the seller's country."
+	},
+	"challenge": {
+		"list": "List of challenges",
+		"singleTitle": "Challenge #%{name}",
+		"title": "Challenges"
+	},
+	"checkout": {
+		"agreeIpCollect": "I agree to the collection of my IP address (%{link})",
+		"backToCart": "Back to cart",
+		"deliveryFees": "Delivery fees",
+		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
+		"invalidNpub": "Invalid NostR public address",
+		"ipCollectWhy": "why?",
+		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
+		"notifications": {
+			"email": "Email",
+			"npub": "NostR public address",
+			"title": "Feed & Notifications"
+		},
+		"numProducts": {
+			"one": "%{count} product",
+			"other": "%{count} products",
+			"zero": "%{count} products"
+		},
+		"payment": {
+			"method": "Payment method",
+			"title": "Payment"
+		},
+		"paymentMethod": {
+			"bitcoin": "Onchain",
+			"cash": "Cash",
+			"lighthing": "Lightning",
+			"unavailable": "No payment methods available."
+		},
+		"paymentStatus": "Payment status",
+		"shipmentInfo": "Shipment info",
+		"title": "Checkout",
+		"tos": "terms of service",
+		"tosAgree": "I agree to the %{termsOfService}",
+		"vatShippingAddress": "The country is determined by the shipping address"
+	},
+	"error": {
+		"title": "Error"
+	},
+	"footer": {
+		"poweredBy": "Powered by"
+	},
+	"pos": {
+		"applyGiftDiscount": "As a POS user I apply a %{giftDiscount}",
+		"discountJustification": "Justification",
+		"gitDiscount": "gift discount",
+		"invalidDiscount": "Discount is not valid!",
+		"vatFree": "This is a VAT-free order (%{conditions})",
+		"vatFreeConditions": "conditions",
+		"vatFreeReason": "VAT-free reason"
+	},
+	"product": {
+		"cta": {
+			"add": "Add to cart",
+			"buy": "Buy now",
+			"donate": "Donate now",
+			"preorder": "Pre-order now",
+			"subscribe": "Subscribe now"
+		}
+	}
 }

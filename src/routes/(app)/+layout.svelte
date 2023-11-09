@@ -270,7 +270,7 @@
 
 												<button formaction="/cart/{item.product._id}/?/remove">
 													<IconTrash class="text-gray-800" />
-													<span class="sr-only">Remove item from cart</span>
+													<span class="sr-only">{t('cart.sr.remove')}</span>
 												</button>
 											</div>
 										</form>
@@ -285,11 +285,8 @@
 										</div>
 									{/if}
 									<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-										Total <PriceTag
-											currency={data.currencies.main}
-											amount={totalPriceWithVat}
-											main
-										/>
+										{t('cart.total')}
+										<PriceTag currency={data.currencies.main} amount={totalPriceWithVat} main />
 									</div>
 									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap">
 										{t('cart.cta.view')}
@@ -319,7 +316,9 @@
 		</div>
 		<footer class="bg-gray-850 h-[90px] items-center flex">
 			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 text-gray-550 grow">
-				<span class="font-light">Powered by</span><span class="font-display text-xl text-white">
+				<span class="font-light">{t('footer.poweredBy')}</span><span
+					class="font-display text-xl text-white"
+				>
 					LaBookinerie.
 				</span>
 				<div class="ml-auto flex gap-4 items-center">

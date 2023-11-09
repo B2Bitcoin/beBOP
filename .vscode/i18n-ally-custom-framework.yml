@@ -13,12 +13,14 @@ usageMatchRegex:
   # the `{key}` will be placed by a proper keypath matching regex,
   # you can ignore it and use your own matching rules as well
   # To visualize the regex, you can use https://regexper.com/
+  - <Trans key=['"`]({key})['"`]
   - (?:i18n(?:-\w+)?[ \n]\s*(?:\w+=['"][^'"]*['"][ \n]\s*)?(?:key)?path=|v-t=[\'"`{]|(?:this\.|\$|i18n\.|[^\w\d])(?:t|tc|te)\()\s*['"`]({key})['"`]
 
 supportAutoExtraction:
   - 'svelte'
 
 refactorTemplates:
-  - t('$1')
   - "{ t('$1') }"
+  - t('$1')
   - $1
+  - <Trans key='$1'></Trans>
