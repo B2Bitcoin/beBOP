@@ -22,6 +22,7 @@ import {
 	verifySignature
 } from 'nostr-tools';
 import { NOSTR_PROTOCOL_VERSION } from './handle-messages';
+import { building } from '$app/environment';
 
 const lock = nostrPrivateKeyHex ? new Lock('notifications.nostr') : null;
 const processingIds = new Set<string>();
@@ -45,7 +46,7 @@ async function maintainLock() {
 	}
 }
 
-if (nostrPrivateKeyHex) {
+if (nostrPrivateKeyHex && !building) {
 	if (lock) {
 		lock.onAcquire = async () => {
 			const unprocessedNotifications = collections.nostrNotifications.find({
