@@ -1,19 +1,22 @@
 {
-	"cart": {
-		"quantity": "Quantity",
-		"cta": {
-			"view": "View cart",
-			"checkout": "Checkout"
-		},
-		"vat": "VAT"
-	},
-	"product": {
-		"cta": {
-			"preorder": "Pre-order now",
-			"add": "Add to cart",
-			"buy": "Buy now",
-			"donate": "Donate now",
-			"subscribe": "Subscribe now"
-		}
-	}
+  "cart": {
+    "quantity": "Quantity",
+    "cta": {
+      "view": "View cart",
+      "checkout": "Checkout"
+    },
+    "vat": "VAT"
+  },
+  "product": {
+    "cta": {
+      "preorder": "Pre-order now",
+      "add": "Add to cart",
+      "buy": "Buy now",
+      "donate": "Donate now",
+      "subscribe": "Subscribe now"
+    }
+  },
+  "error": {
+    "title": "Error"
+  }
 }
