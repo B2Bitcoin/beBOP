@@ -1,6 +1,8 @@
 import { browser } from '$app/environment';
 import { getContext } from 'svelte';
-import { I18n } from 'i18n-js';
+// @ts-expect-error - using dist import :(
+import { I18n } from 'i18n-js/dist/require';
+import type { I18n as RealType } from 'i18n-js';
 
 interface LocaleDictionary {
 	[key: string]: LocaleDictionary | string | Array<string | LocaleDictionary> | null;
@@ -9,7 +11,7 @@ type LocalesDictionary = {
 	[key: string]: LocaleDictionary;
 };
 
-const i18n = new I18n();
+const i18n = new I18n() as RealType;
 
 i18n.defaultLocale = 'en';
 

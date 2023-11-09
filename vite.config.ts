@@ -36,10 +36,5 @@ export default defineConfig({
 	],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
-	},
-	resolve: {
-		alias: {
-			'i18n-js': 'i18n-js/dist/require'
-		}
 	}
 });
