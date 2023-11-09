@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import { getContext } from 'svelte';
-import { I18n } from 'i18n-js/dist/require';
+import { I18n } from 'i18n-js';
 
 interface LocaleDictionary {
 	[key: string]: LocaleDictionary | string | Array<string | LocaleDictionary> | null;
