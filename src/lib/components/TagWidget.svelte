@@ -50,10 +50,27 @@
 </script>
 
 {#if widget}
-	<svelte:component
-		this={widget.component}
-		{tag}
-		picture={pictures.find((picture) => picture.tag?.type === widget?.pictureType)}
-		class={className}
-	/>
+	{#if widget?.component === VariationOneTemplateWidget}
+		<div class="hidden sm:inline">
+			<svelte:component
+				this={widget.component}
+				{tag}
+				picture={pictures.find((picture) => picture.tag?.type === widget?.pictureType)}
+				class={className}
+			/>
+		</div>
+		<svelte:component
+			this={widgets['var-4'].component}
+			{tag}
+			picture={pictures.find((picture) => picture.tag?.type === widgets['var-4']?.pictureType)}
+			class="{className} sm:hidden"
+		/>
+	{:else}
+		<svelte:component
+			this={widget.component}
+			{tag}
+			picture={pictures.find((picture) => picture.tag?.type === widget?.pictureType)}
+			class={className}
+		/>
+	{/if}
 {/if}
