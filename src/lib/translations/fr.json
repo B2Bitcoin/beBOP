@@ -28,7 +28,7 @@
 	},
 	"challenge": {
 		"list": "Liste des défis",
-		"singleTitle": "Défi",
+		"singleTitle": "Défi %{name}",
 		"title": "Défis"
 	},
 	"checkout": {
@@ -63,7 +63,7 @@
 		"shipmentInfo": "Informations d'expédition",
 		"title": "Vérifier",
 		"tos": "conditions d'utilisation",
-		"tosAgree": "J'accepte les conditions d'utilisation}",
+		"tosAgree": "J'accepte les %{termsOfService}",
 		"vatShippingAddress": "Le pays est déterminé par l'adresse de livraison"
 	},
 	"error": {
@@ -117,9 +117,9 @@
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},
-		"singleTitle": "Commande",
+		"singleTitle": "Commande %#{number}",
 		"timeRemaining": "Temps restant : %{minutes} minutes",
-		"vatFree": "Cette commande est hors TVA. \nRaison : %{raison}"
+		"vatFree": "Cette commande est hors TVA. \nRaison : %{reason}"
 	},
 	"orderPaymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
 	"pos": {
@@ -190,7 +190,7 @@
 		},
 		"initiallyCreated": "Créé initialement : %{date}",
 		"paidUntil": "Payé jusqu'au : %{date}",
-		"singleTitle": "Abonnement",
+		"singleTitle": "Abonnement #%{number}",
 		"status": {
 			"expired": "expiré"
 		}

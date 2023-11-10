@@ -28,7 +28,7 @@
 	},
 	"challenge": {
 		"list": "List of challenges",
-		"singleTitle": "Challenge #%{name}",
+		"singleTitle": "Challenge %{name}",
 		"title": "Challenges"
 	},
 	"checkout": {
