@@ -3,12 +3,12 @@
 	import type { Tag } from '$lib/types/Tag';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import { typedKeys } from '$lib/utils/typedKeys';
-	import VariationFiveTemplateWidget from './VariationFiveTemplateWidget.svelte';
-	import VariationFourTemplateWidget from './VariationFourTemplateWidget.svelte';
-	import VariationOneTemplateWidget from './VariationOneTemplateWidget.svelte';
-	import VariationSixTemplateWidget from './VariationSixTemplateWidget.svelte';
-	import VariationThreeTemplateWidget from './VariationThreeTemplateWidget.svelte';
-	import VariationTwoTemplateWidget from './VariationTwoTemplateWidget.svelte';
+	import VariationFiveTemplateWidget from './TagWidget/VariationFiveTemplateWidget.svelte';
+	import VariationFourTemplateWidget from './TagWidget/VariationFourTemplateWidget.svelte';
+	import VariationOneTemplateWidget from './TagWidget/VariationOneTemplateWidget.svelte';
+	import VariationSixTemplateWidget from './TagWidget/VariationSixTemplateWidget.svelte';
+	import VariationThreeTemplateWidget from './TagWidget/VariationThreeTemplateWidget.svelte';
+	import VariationTwoTemplateWidget from './TagWidget/VariationTwoTemplateWidget.svelte';
 
 	let className = '';
 	export { className as class };

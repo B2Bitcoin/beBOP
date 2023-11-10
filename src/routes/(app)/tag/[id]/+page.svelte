@@ -1,10 +1,10 @@
 <script lang="ts">
-	import VariationFiveTemplateWidget from '$lib/components/VariationFiveTemplateWidget.svelte';
-	import VariationFourTemplateWidget from '$lib/components/VariationFourTemplateWidget.svelte';
-	import VariationOneTemplateWidget from '$lib/components/VariationOneTemplateWidget.svelte';
-	import VariationSixTemplateWidget from '$lib/components/VariationSixTemplateWidget.svelte';
-	import VariationThreeTemplateWidget from '$lib/components/VariationThreeTemplateWidget.svelte';
-	import VariationTwoTemplateWidget from '$lib/components/VariationTwoTemplateWidget.svelte';
+	import VariationFiveTemplateWidget from '$lib/components/TagWidget/VariationFiveTemplateWidget.svelte';
+	import VariationFourTemplateWidget from '$lib/components/TagWidget/VariationFourTemplateWidget.svelte';
+	import VariationOneTemplateWidget from '$lib/components/TagWidget/VariationOneTemplateWidget.svelte';
+	import VariationSixTemplateWidget from '$lib/components/TagWidget/VariationSixTemplateWidget.svelte';
+	import VariationThreeTemplateWidget from '$lib/components/TagWidget/VariationThreeTemplateWidget.svelte';
+	import VariationTwoTemplateWidget from '$lib/components/TagWidget/VariationTwoTemplateWidget.svelte';
 
 	export let data;
 </script>

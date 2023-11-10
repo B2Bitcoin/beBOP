@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Picture } from '$lib/types/Picture';
 	import type { Tag } from '$lib/types/Tag';
-	import PictureComponent from './Picture.svelte';
+	import PictureComponent from '../Picture.svelte';
 
 	let className = '';
 	export { className as class };
