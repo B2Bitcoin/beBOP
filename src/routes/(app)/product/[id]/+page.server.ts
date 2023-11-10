@@ -196,7 +196,7 @@ export const actions = {
 	addToCart
 };
 
-async function getCMSProduct(content: string, locals: { user: { roleId: string } }) {
+async function getCMSProduct(content: string, locals: Locale) {
 	const PRODUCT_WIDGET_REGEX =
 		/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
