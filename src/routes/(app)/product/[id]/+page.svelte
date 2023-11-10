@@ -18,7 +18,7 @@
 	import { differenceInHours } from 'date-fns';
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import { useI18n } from '$lib/i18n';
-	import ProductCms from '$lib/components/ProductCms.svelte';
+	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
 
@@ -92,7 +92,7 @@
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
 		<div class="flex flex-col w-full py-10 px-6">
 			{#if data.productCMSBefore}
-				<ProductCms
+				<CmsDesign
 					challenges={data.productCMSBefore.challenges}
 					tokens={data.productCMSBefore.tokens}
 					sliders={data.productCMSBefore.sliders}
@@ -372,7 +372,7 @@
 				</div>
 			</div>
 			{#if data.productCMSAfter}
-				<ProductCms
+				<CmsDesign
 					challenges={data.productCMSAfter.challenges}
 					tokens={data.productCMSAfter.tokens}
 					sliders={data.productCMSAfter.sliders}
