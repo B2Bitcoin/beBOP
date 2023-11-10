@@ -92,14 +92,16 @@ export const load = async ({ params, locals }) => {
 			sort: { percentage: -1 }
 		}
 	);
-	const productCMSBefore = await getCMSProduct(product.contentBefore!, locals?.user?.roleId);
-	const productCMSAfter = await getCMSProduct(product.contentAfter!, locals?.user?.roleId);
 	return {
 		product,
 		pictures,
 		discount,
-		productCMSBefore,
-		productCMSAfter,
+		...(product.contentBefore && {
+			productCMSBefore: await getCMSProduct(product.contentBefore, locals?.user?.roleId)
+		}),
+		...(product.contentAfter && {
+			productCMSAfter: await getCMSProduct(product.contentAfter, locals?.user?.roleId)
+		}),
 		roleId: locals.user?.roleId,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
