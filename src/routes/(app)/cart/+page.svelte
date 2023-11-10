@@ -6,7 +6,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import Trans from '$lib/components/Trans.svelte';
-	import { useI18n } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';

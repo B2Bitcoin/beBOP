@@ -6,7 +6,7 @@
 	import ProductType from '$lib/components/ProductType.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import { useI18n } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { toBitcoins } from '$lib/utils/toBitcoins';

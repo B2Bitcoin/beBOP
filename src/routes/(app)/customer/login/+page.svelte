@@ -8,7 +8,7 @@
 	import IconTwitter from '~icons/ant-design/twitter-outlined';
 	import IconTrash from '$lib/components/icons/IconTrash.svelte';
 	import { enhance } from '$app/forms';
-	import { useI18n } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n';
 
 	const { t } = useI18n();
 
