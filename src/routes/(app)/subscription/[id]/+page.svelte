@@ -1,30 +1,38 @@
 <script lang="ts">
 	import ProductItem from '$lib/components/ProductItem.svelte';
+	import Trans from '$lib/components/Trans.svelte';
+	import { i18n, t, useI18n } from '$lib/i18n.js';
+
+	useI18n();
 
 	export let data;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 flex flex-col gap-4 items-start">
 	<h1 class="text-3xl">
-		Subscription {data.subscription.number}
+		{t('subscription.singleTitle', { number: data.subscription.number })}
 	</h1>
 
 	<ProductItem product={data.product} picture={data.picture} />
 
-	<p>Associated to npub: {data.subscription.npub}</p>
+	<p>{t('subscription.associated.npub', { npub: data.subscription.npub })}</p>
 
 	<p>
-		Initially created: <time datetime={data.subscription.createdAt.toJSON()}
-			>{new Date(data.subscription.createdAt).toLocaleString('en-UK')}</time
+		<Trans key="subscription.initiallyCreated"
+			><time datetime={data.subscription.createdAt.toJSON()}
+				>{new Date(data.subscription.createdAt).toLocaleString(i18n.locale)}</time
+			></Trans
 		>
 	</p>
 
 	<p>
-		Paid until: <time datetime={data.subscription.paidUntil.toJSON()}
-			>{new Date(data.subscription.paidUntil).toLocaleString('en-UK')}</time
+		<Trans key="subscription.paidUntil"
+			><time datetime={data.subscription.paidUntil.toJSON()}
+				>{new Date(data.subscription.paidUntil).toLocaleString(i18n.locale)}</time
+			></Trans
 		>
 		{#if data.subscription.paidUntil < new Date()}
-			<span class="text-red-500">(expired)</span>
+			<span class="text-red-500">({t('subscription.status.expired')})</span>
 		{/if}
 	</p>
 
@@ -32,7 +40,7 @@
 		<button
 			class="btn btn-black"
 			disabled={!data.canRenew}
-			title={data.canRenew ? '' : 'Subscription not due for renewal'}>Renew</button
+			title={data.canRenew ? '' : t('subscription.cantRenew')}>{t('subscription.cta.renew')}</button
 		>
 	</form>
 </main>

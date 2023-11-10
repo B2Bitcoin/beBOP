@@ -70,22 +70,117 @@
 	"footer": {
 		"poweredBy": "Powered by"
 	},
+	"login": {
+		"authenticate": {
+			"inputLabel": "Email or npub",
+			"title": "Add authentication"
+		},
+		"cta": {
+			"authenticateAs": "Authenticate as %{as}",
+			"clearSession": "Clear session",
+			"logout": "Log out",
+			"signInWith": "Sign In With %{provider}"
+		},
+		"session": {
+			"email": "Email: %{email}",
+			"npub": "Npub: %{npub}",
+			"title": "Session",
+			"userId": "UserId: %{userId}"
+		},
+		"sso": {
+			"title": "Or sign in with"
+		},
+		"willReceiveSessionLink": "You will receive a session link on your address"
+	},
+	"order": {
+		"createdAt": "Created at %{date}",
+		"discount": {
+			"title": "Discount"
+		},
+		"linkReminder": "Keep this link: %{link} to access the order later.",
+		"payToComplete": "Pay to complete the order.",
+		"payToCompleteBitcoin": {
+			"one": "Order will be marked as paid after 1 confirmation.",
+			"other": "Order will be marked as paid after %{count} confirmations.",
+			"zero": "Order will be marked as paid without waiting for confirmations."
+		},
+		"paymentAddress": "Payment address",
+		"paymentAmount": "Payment amount",
+		"paymentStatus": {
+			"canceledTemplate": "Order canceled!",
+			"expiredTemplate": "Order expired!",
+			"paid": "paid",
+			"paidTemplate": "Order %{paymentStatus}!"
+		},
+		"shippingAddress": {
+			"title": "Shipping address"
+		},
+		"singleTitle": "Order #%{number}",
+		"timeRemaining": "Time remaining: %{minutes} minutes",
+		"vatFree": "This order is free of VAT. Reason: %{reason}"
+	},
+	"orderPaymentStatusNpub": "NostR public address for payment status",
 	"pos": {
 		"applyGiftDiscount": "As a POS user I apply a %{giftDiscount}",
+		"cta": {
+			"cancelOrder": "Cancel",
+			"markOrderPaid": "Mark paid"
+		},
 		"discountJustification": "Justification",
 		"gitDiscount": "gift discount",
 		"invalidDiscount": "Discount is not valid!",
+		"lastOrders": {
+			"title": "Last orders"
+		},
+		"order": {
+			"satReceived": "received"
+		},
+		"session": {
+			"waitingPaymentConfirmation": "Waiting confirmation",
+			"welcomeMessage": "We're happy to see you",
+			"welcomeTitle": "Welcome"
+		},
+		"sessionLink": "POS session",
 		"vatFree": "This is a VAT-free order (%{conditions})",
 		"vatFreeConditions": "conditions",
 		"vatFreeReason": "VAT-free reason"
 	},
 	"product": {
+		"availableOn": "Available on %{date}",
+		"checkBackLater": "Please check back later",
 		"cta": {
 			"add": "Add to cart",
 			"buy": "Buy now",
 			"donate": "Donate now",
 			"preorder": "Pre-order now",
 			"subscribe": "Subscribe now"
+		},
+		"digitalFiles": {
+			"title": "Digital Files"
+		},
+		"discountBanner": "%{discountPercent}% of for %{hours}h",
+		"freeWithSub": "This product is available for free with your monthly subscription",
+		"freeWithTitle": "Free with \"xxxxx",
+		"nameYourPrice": "Name your price (%{currency})",
+		"notForSale": "This product is not available for sale",
+		"outOfStock": "Out of stock",
+		"preorderText": "This is a preorder, your product will be available on %{date}",
+		"pricePlaceholder": "Price",
+		"seeInCabinet": "See in MyCabinet"
+	},
+	"subscription": {
+		"associated": {
+			"npub": "Associated to npub: %{npub}"
+		},
+		"cantRenew": "Subscription not due for renewal",
+		"cta": {
+			"renew": "Renew"
+		},
+		"initiallyCreated": "Initially created: %{date}",
+		"paidUntil": "Paid until: %{date}",
+		"singleTitle": "Subscription #{number}",
+		"status": {
+			"expired": "expired"
 		}
 	}
 }

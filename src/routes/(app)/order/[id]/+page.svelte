@@ -4,10 +4,11 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import Trans from '$lib/components/Trans.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import { t } from '$lib/i18n.js';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
-	import { pluralize } from '$lib/utils/pluralize';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { differenceInMinutes, format } from 'date-fns';
@@ -38,34 +39,35 @@
 		class="w-full rounded-xl bg-white border-gray-300 border p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
 	>
 		<div class="col-span-2 flex flex-col gap-2">
-			<h1 class="text-3xl">Order #{data.order.number}</h1>
+			<h1 class="text-3xl">{t('order.singleTitle', { number: data.order.number })}</h1>
 			{#if data.order.notifications?.paymentStatus?.npub}
 				<p>
-					NostR public address for payment status: <span class="font-mono break-all break-words">
+					{t('orderPaymentStatusNpub')}:
+					<span class="font-mono break-all break-words">
 						{data.order.notifications.paymentStatus.npub}</span
 					>
 				</p>
 			{/if}
 			{#if data.order.payment.status !== 'expired' && data.order.payment.status !== 'canceled'}
 				<div>
-					Keep this link: <a class="underline text-link break-all break-words" href={$page.url.href}
-						>{$page.url.href}</a
-					> to access the order later.
+					<Trans key="order.linkReminder"
+						><a class="underline text-link break-all break-words" href={$page.url.href}
+							>{$page.url.href}</a
+						></Trans
+					>
 				</div>
 			{/if}
 
 			{#if data.order.payment.status === 'pending'}
-				{#if data.order.payment.method === 'cash'}
-					<p class="text-xl">Your order awaits confirmation from the seller.</p>
-				{:else}
+				{#if data.order.payment.method !== 'cash'}
 					<ul>
 						<li>
-							Payment address: <code class="break-words break-all"
-								>{data.order.payment.address}</code
-							>
+							{t('order.paymentAddress')}:
+							<code class="break-words break-all">{data.order.payment.address}</code>
 						</li>
 						<li>
-							Payment amount: <code class="break-words">
+							{t('order.paymentAmount')}:
+							<code class="break-words">
 								{(data.order.payment.method === 'bitcoin'
 									? toBitcoins(data.order.totalPrice.amount, data.order.totalPrice.currency)
 									: toSatoshis(data.order.totalPrice.amount, data.order.totalPrice.currency)
@@ -74,26 +76,31 @@
 							</code>
 						</li>
 						<li>
-							Time remaining: {differenceInMinutes(data.order.payment.expiresAt, currentDate)} minutes
+							{t('order.timeRemaining')}
 						</li>
 					</ul>
 					<img src="{$page.url.pathname}/qrcode" class="w-96 h-96" alt="QR code" />
 					<div class="text-xl">
-						Pay to complete the order. {#if data.order.payment.method === 'bitcoin'}
-							Order will be marked as paid after {data.confirmationBlocksRequired}
-							{pluralize(data.confirmationBlocksRequired, 'confirmation')}.{/if}
+						{t('order.payToComplete')}
+						{#if data.order.payment.method === 'bitcoin'}
+							{t('order.payToCompleteBitcoin', { confirmations: data.confirmationBlocksRequired })}
+						{/if}
 					</div>
 				{/if}
 			{:else if data.order.payment.status === 'paid'}
-				<p>Order <span class="text-green-500">paid</span>!</p>
+				<p>
+					<Trans key="order.paymentStatus.paidTemplate"
+						><span class="text-green-500">{t('order.paymentStatus.paid')}</span></Trans
+					>
+				</p>
 			{:else if data.order.payment.status === 'expired'}
-				<p>Order expired!</p>
+				<p>{t('order.paymentStatus.expiredTemplate')}</p>
 			{:else if data.order.payment.status === 'canceled'}
-				<p class="font-bold">Order canceled!</p>
+				<p class="font-bold">{t('order.paymentStatus.canceledTemplate')}</p>
 			{/if}
 
 			{#if data.digitalFiles.length}
-				<h2 class="text-2xl">Digital Files</h2>
+				<h2 class="text-2xl">{t('product.digitalFiles.title')}</h2>
 				<ul>
 					{#each data.digitalFiles as digitalFile}
 						<li>
@@ -110,24 +117,22 @@
 			{/if}
 
 			{#if data.order.vatFree}
-				<p>This order is free of VAT. Reason: {data.order.vatFree.reason}</p>
+				<p>{t('order.vatFree', { reason: data.order.vatFree.reason })}</p>
 			{/if}
 			<p class="text-base">
-				Created at
-				<time
-					datetime={data.order.createdAt.toJSON()}
-					title={data.order.createdAt.toLocaleString('en')}
-					>{format(data.order.createdAt, 'dd-MM-yyyy HH:mm:ss')}</time
+				<Trans key="order.createdAt"
+					><time
+						datetime={data.order.createdAt.toJSON()}
+						title={data.order.createdAt.toLocaleString('en')}
+						>{format(data.order.createdAt, 'dd-MM-yyyy HH:mm:ss')}</time
+					></Trans
 				>
 			</p>
 
 			{#if data.order.shippingAddress}
 				<div>
-					Shipping address: <pre class="break-words">{JSON.stringify(
-							data.order.shippingAddress,
-							null,
-							2
-						)}</pre>
+					{t('order.shippingAddress.title')}:
+					<pre class="break-words">{JSON.stringify(data.order.shippingAddress, null, 2)}</pre>
 				</div>
 			{/if}
 			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash' && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
@@ -135,13 +140,13 @@
 					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/confirm"
 					method="post"
 				>
-					<button type="submit" class="btn btn-black">Mark paid</button>
+					<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
 				</form>
 				<form
 					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/cancel"
 					method="post"
 				>
-					<button type="submit" class="btn btn-red">Cancel</button>
+					<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
 				</form>
 			{/if}
 			{#if data.order.payment.status === 'pending' && 0}
@@ -155,8 +160,7 @@
 				class="rounded sticky top-4 -mr-2 -mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
 				<div class="flex justify-between">
-					{data.order.items.length}
-					{pluralize(data.order.items.length ?? 0, 'product')}
+					{t('checkout.numProducts', { count: data.order.items.length ?? 0 })}
 				</div>
 				{#each data.order.items as item}
 					<a href="/product/{item.product._id}">
@@ -186,7 +190,7 @@
 							</div>
 							<div>
 								{#if item.quantity > 1}
-									Quantity: {item.quantity}
+									{t('cart.quantity')}: {item.quantity}
 								{/if}
 							</div>
 						</div>
@@ -227,7 +231,7 @@
 
 				{#if data.order.shippingPrice}
 					<div class="flex justify-between items-center">
-						<h3 class="text-base text-gray-700">Delivery fees</h3>
+						<h3 class="text-base text-gray-700">{t('checkout.deliveryFees')}</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
@@ -276,7 +280,9 @@
 
 				{#if data.order?.discount}
 					<div class="flex justify-between items-center">
-						<h3 class="text-base text-gray-700 flex items-center gap-2">Discount</h3>
+						<h3 class="text-base text-gray-700 flex items-center gap-2">
+							{t('order.discount.title')}
+						</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
@@ -300,7 +306,7 @@
 
 				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
 					<div class="flex justify-between">
-						<span class="text-xl text-gray-850">Total</span>
+						<span class="text-xl text-gray-850">{t('cart.total')}</span>
 						<PriceTag
 							class="text-2xl text-gray-800"
 							amount={data.order.totalPrice.amount}

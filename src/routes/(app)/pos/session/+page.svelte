@@ -7,6 +7,8 @@
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 	import { onMount } from 'svelte';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
+	import { t, useI18n } from '$lib/i18n.js';
+	import Trans from '$lib/components/Trans.svelte';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -80,6 +82,8 @@
 	);
 	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
+
+	useI18n();
 </script>
 
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
@@ -140,27 +144,27 @@
 		{/if}
 	{:else if view === 'pending'}
 		{#if order?.payment?.method === 'cash'}
-			<div class="text-2xl text-center">Waiting confirmation</div>
+			<div class="text-2xl text-center">{t('pos.session.waitingPaymentConfirmation')}</div>
 		{:else}
 			<div class="flex flex-col items-center gap-3">
-				<h1 class="text-3xl text-center">Order #{order?.number}</h1>
+				<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
 				<img src="/order/{order?._id}/qrcode" alt="QR code" />
 			</div>
 		{/if}
 	{:else if view === 'canceled'}
-		<div class="text-2xl text-center">Order cancelled</div>
+		<div class="text-2xl text-center">{t('order.paymentStatus.canceledTemplate')}</div>
 	{:else if view === 'expired'}
-		<div class="text-2xl text-center">Order expired</div>
+		<div class="text-2xl text-center">{t('order.paymentStatus.expiredTemplate')}</div>
 	{:else if view === 'paid'}
 		<div class="flex flex-col items-center gap-3">
-			<h1 class="text-3xl text-center">Order #{order?.number}</h1>
+			<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
 			<CheckCircleOutlined font-size="160" />
 		</div>
 	{:else if view === 'welcome'}
 		<div class="flex flex-col items-center">
-			<h1 class="text-3xl">Welcome</h1>
+			<h1 class="text-3xl">{t('pos.session.welcomeTitle')}</h1>
 			<Picture class="" picture={data.logoPicture || undefined} />
-			<h2 class="text-2xl">We're happy to see you</h2>
+			<h2 class="text-2xl">{t('pos.session.welcomeMessage')}</h2>
 		</div>
 	{/if}
 
@@ -171,12 +175,13 @@
 					<div class="flex flex-col">
 						<h2 class="text-gray-800 text-[28px]">Vat ({data.vatRate}%):</h2>
 						<p class="text-sm text-gray-600">
-							VAT rate for {data.vatCountry}.
+							{(t('cart.vatRate'), { country: data.vatCountry })}.
 							{#if data.vatSingleCountry}
-								The country is the seller's country.
+								{t('cart.vatSellerCountry')}
 							{:else}
-								The country is determined through data from
-								<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+								<Trans key="cart.vatIpCountry">
+									<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+								</Trans>
 							{/if}
 						</p>
 					</div>
@@ -198,7 +203,7 @@
 			{/if}
 
 			<div class="flex justify-between">
-				<h2 class="text-gray-800 text-[32px]">Total:</h2>
+				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={view === 'pending' ? order?.totalPrice?.amount || 0 : totalPriceWithVat}

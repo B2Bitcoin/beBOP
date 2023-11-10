@@ -1,20 +1,23 @@
 <script>
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import IconBitcoin from '$lib/components/icons/IconBitcoin.svelte';
+	import { t, useI18n } from '$lib/i18n.js';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { formatDistance } from 'date-fns';
+
+	useI18n();
 
 	export let data;
 </script>
 
 <main class="max-w-7xl p-4 flex flex-col gap-4">
-	<a href="/pos/session" class="text-link hover:underline">POS session</a>
+	<a href="/pos/session" class="text-link hover:underline">{t('pos.sessionLink')}</a>
 
 	<form action="/admin/logout" method="POST">
-		<button type="submit" class="btn btn-red">Log out</button>
+		<button type="submit" class="btn btn-red">{t('login.cta.logout')}</button>
 	</form>
 
-	<h2 class="text-2xl">Last orders</h2>
+	<h2 class="text-2xl">{t('pos.lastOrders.title')}</h2>
 
 	<ul class="flex flex-col gap-4">
 		{#each data.orders as order}
@@ -32,9 +35,10 @@
 						addSuffix: true
 					})}</time
 				>
-				- Total: {toSatoshis(order.totalPrice.amount, order.totalPrice.currency).toLocaleString(
-					'en'
-				)}
+				- {t('cart.total')}: {toSatoshis(
+					order.totalPrice.amount,
+					order.totalPrice.currency
+				).toLocaleString('en')}
 				SAT {#if data.currencies.priceReference !== 'SAT'}(<PriceTag
 						currency={order.totalPrice.currency}
 						amount={order.totalPrice.amount}
@@ -49,15 +53,15 @@
 				>
 					{order.payment.status}</span
 				>
-				- received: {(order.payment.totalReceived ?? 0).toLocaleString('en')}
+				- {t('pos.order.satReceived')}: {(order.payment.totalReceived ?? 0).toLocaleString('en')}
 				SAT
 
 				{#if order.payment.status === 'pending' && order.payment.method === 'cash'}
 					<form action="/pos/order/{order._id}?/confirm" method="post">
-						<button type="submit" class="btn btn-black">Mark paid</button>
+						<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
 					</form>
 					<form action="/pos/order/{order._id}?/cancel" method="post">
-						<button type="submit" class="btn btn-red">Cancel</button>
+						<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
 					</form>
 				{/if}
 			</li>
