@@ -8,11 +8,6 @@ import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
-import { trimSuffix } from '$lib/utils/trimSuffix';
-import { trimPrefix } from '$lib/utils/trimPrefix';
-import { picturesForProducts, picturesForSliders } from '$lib/server/picture';
-import type { DigitalFile } from '$lib/types/DigitalFile';
-import type { Challenge } from '$lib/types/Challenge';
 import { cmsFromContent } from '$lib/server/cms';
 
 export const load = async ({ params, locals }) => {
