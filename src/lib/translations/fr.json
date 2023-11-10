@@ -27,7 +27,15 @@
 		"vatSellerCountry": "Le pays est le pays du vendeur."
 	},
 	"challenge": {
+		"endsAt": "Se termine le %{date}",
+		"goalMet": "Bon travail les gars! \n👏👏",
+		"goalOvershot": "Vous êtes incroyables les gars ! \n🤭",
 		"list": "Liste des défis",
+		"numProducts": {
+			"one": "%{count} produit",
+			"other": "%{count} produits",
+			"zero": "%{count} produits"
+		},
 		"singleTitle": "Défi %{name}",
 		"title": "Défis"
 	},

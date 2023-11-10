@@ -4,12 +4,13 @@
 	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
 	import { useI18n } from '$lib/i18n';
+	import Trans from './Trans.svelte';
 
 	let className = '';
 	export { className as class };
 	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>;
 
-	const { t } = useI18n();
+	const { t, i18n } = useI18n();
 </script>
 
 <div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col {className}">
@@ -18,15 +19,19 @@
 			{challenge.name}
 		</h3>
 		<span class="text-base font-light text-gray-550"
-			>Ends <time datetime={challenge.endsAt.toJSON()} title={challenge.endsAt.toLocaleString('en')}
-				>{format(challenge.endsAt, 'MMMM dd, Y')}</time
-			></span
-		>
+			><Trans key="challenge.endsAt"
+				><time
+					datetime={challenge.endsAt.toJSON()}
+					title={challenge.endsAt.toLocaleString(i18n.locale)}
+					>{format(challenge.endsAt, 'MMMM dd, Y')}</time
+				></Trans
+			>
+		</span>
 	</div>
 	<GoalProgress
 		class="font-bold mt-3"
 		text="{challenge.goal.currency
-			? Number(Math.max(0, challenge.progress)).toLocaleString('en', {
+			? Number(Math.max(0, challenge.progress)).toLocaleString(i18n.locale, {
 					style: 'currency',
 					currency: challenge.goal.currency,
 					minimumFractionDigits: 0
@@ -39,9 +44,9 @@
 		<!-- <a href="/" class="text-link underline">How can I contribute?</a> -->
 		<p />
 		{#if challenge.progress === challenge.goal.amount}
-			<p>Good job guys! 👏👏</p>
+			<p>{t('challenge.goalMet')}</p>
 		{:else if challenge.progress > challenge.goal.amount}
-			<p>You are amazing guys! 🤭</p>
+			<p>{t('challenge.goalOvershot')}</p>
 		{:else if challenge.goal.currency}
 			<PriceTag
 				amount={challenge.goal.amount}
@@ -50,7 +55,7 @@
 				main
 			/>
 		{:else}
-			{challenge.goal.amount} products
+			{t('challenge.numProducts', { count: challenge.goal.amount })}
 		{/if}
 	</div>
 </div>

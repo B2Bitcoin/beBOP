@@ -27,7 +27,15 @@
 		"vatSellerCountry": "The country is the seller's country."
 	},
 	"challenge": {
+		"endsAt": "Ends %{date}",
+		"goalMet": "Good job guys! 👏👏",
+		"goalOvershot": "You are amazing guys! 🤭",
 		"list": "List of challenges",
+		"numProducts": {
+			"one": "%{count} product",
+			"other": "%{count} products",
+			"zero": "%{count} products"
+		},
 		"singleTitle": "Challenge %{name}",
 		"title": "Challenges"
 	},
