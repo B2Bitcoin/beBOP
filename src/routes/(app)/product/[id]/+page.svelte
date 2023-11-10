@@ -92,13 +92,13 @@
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-2">
 		<div class="flex flex-col w-full py-10 px-6">
 			<ProductCms
-				challenges={data.challenges}
-				tokens={data.tokens}
-				sliders={data.sliders}
-				slidersPictures={data.slidersPictures}
-				products={data.productsBefore}
-				pictures={data.picturesBefore}
-				digitalFiles={data.digitalFilesBefore}
+				challenges={data.productCMSBefore.challenges}
+				tokens={data.productCMSBefore.tokens}
+				sliders={data.productCMSBefore.sliders}
+				slidersPictures={data.productCMSBefore.slidersPictures}
+				products={data.productCMSBefore.products}
+				pictures={data.productCMSBefore.pictures}
+				digitalFiles={data.productCMSBefore.digitalFiles}
 				roleId={data.roleId ? data.roleId : ''}
 			/>
 			<div class="flex flex-row py-3">
@@ -369,13 +369,13 @@
 				</div>
 			</div>
 			<ProductCms
-				challenges={data.challenges}
-				tokens={data.tokens}
-				sliders={data.sliders}
-				slidersPictures={data.slidersPictures}
-				products={data.productsBefore}
-				pictures={data.picturesBefore}
-				digitalFiles={data.digitalFilesBefore}
+				challenges={data.productCMSAfter.challenges}
+				tokens={data.productCMSAfter.tokens}
+				sliders={data.productCMSAfter.sliders}
+				slidersPictures={data.productCMSAfter.slidersPictures}
+				products={data.productCMSAfter.products}
+				pictures={data.productCMSAfter.pictures}
+				digitalFiles={data.productCMSAfter.digitalFiles}
 				roleId={data.roleId ? data.roleId : ''}
 			/>
 		</div>
