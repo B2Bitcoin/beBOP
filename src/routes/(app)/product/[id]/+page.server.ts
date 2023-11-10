@@ -93,46 +93,46 @@ export const load = async ({ params, locals }) => {
 		}
 	);
 	const productsBefore = product.contentBefore
-		? (await getCMSProduct(product.contentBefore, locals?.user?.roleId)).products
+		? (await getCMSProduct(product.contentBefore, locals)).products
 		: [];
 	const picturesBefore = product.contentBefore
-		? (await getCMSProduct(product.contentBefore, locals?.user?.roleId)).pictures
+		? (await getCMSProduct(product.contentBefore, locals)).pictures
 		: [];
 	const digitalFilesBefore = product.contentBefore
-		? (await getCMSProduct(product.contentBefore, locals?.user?.roleId)).digitalFiles
+		? (await getCMSProduct(product.contentBefore, locals)).digitalFiles
 		: [];
 	const challenges = product.contentBefore
-		? (await getCMSProduct(product.contentBefore, locals?.user?.roleId)).challenges
+		? (await getCMSProduct(product.contentBefore, locals)).challenges
 		: [];
 	const tokens = product.contentBefore
-		? (await getCMSProduct(product.contentBefore, locals?.user?.roleId)).tokens
+		? (await getCMSProduct(product.contentBefore, locals)).tokens
 		: [];
 	const sliders = product.contentBefore
-		? (await getCMSProduct(product.contentBefore, locals?.user?.roleId)).sliders
+		? (await getCMSProduct(product.contentBefore, locals)).sliders
 		: [];
 	const slidersPictures = product.contentBefore
-		? (await getCMSProduct(product.contentBefore, locals?.user?.roleId)).slidersPictures
+		? (await getCMSProduct(product.contentBefore, locals)).slidersPictures
 		: [];
 	const challengesAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter, locals?.user?.roleId)).challenges
+		? (await getCMSProduct(product.contentAfter, locals)).challenges
 		: [];
 	const tokensAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter, locals?.user?.roleId)).tokens
+		? (await getCMSProduct(product.contentAfter, locals)).tokens
 		: [];
 	const slidersAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter, locals?.user?.roleId)).sliders
+		? (await getCMSProduct(product.contentAfter, locals)).sliders
 		: [];
 	const slidersPicturesAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter, locals?.user?.roleId)).slidersPictures
+		? (await getCMSProduct(product.contentAfter, locals)).slidersPictures
 		: [];
 	const productsAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter, locals?.user?.roleId)).products
+		? (await getCMSProduct(product.contentAfter, locals)).products
 		: [];
 	const picturesAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter, locals?.user?.roleId)).pictures
+		? (await getCMSProduct(product.contentAfter, locals)).pictures
 		: [];
 	const digitalFilesAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter, locals?.user?.roleId)).digitalFiles
+		? (await getCMSProduct(product.contentAfter, locals)).digitalFiles
 		: [];
 	return {
 		product,
@@ -196,7 +196,7 @@ export const actions = {
 	addToCart
 };
 
-async function getCMSProduct(content: string, userRoleId: string) {
+async function getCMSProduct(content: string, locals: { user: { roleId: string } }) {
 	const PRODUCT_WIDGET_REGEX =
 		/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
@@ -287,7 +287,7 @@ async function getCMSProduct(content: string, userRoleId: string) {
 		raw: trimPrefix(content.slice(index), '</p>')
 	});
 	const query =
-		userRoleId === POS_ROLE_ID
+		locals?.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
 			: { 'actionSettings.eShop.visible': true };
 
