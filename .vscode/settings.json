@@ -13,5 +13,7 @@
 	"githubPullRequests.ignoredPullRequestBranches": ["main", "main"],
 	"i18n-ally.keystyle": "nested",
 	"i18n-ally.localesPaths": ["src/lib/translations"],
-	"i18n-ally.sourceLanguage": "en"
+	"i18n-ally.sourceLanguage": "en",
+	"i18n-ally.tabStyle": "tab",
+	"i18n-ally.sortKeys": true
 }

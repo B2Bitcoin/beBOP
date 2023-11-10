@@ -6,6 +6,7 @@
 	import IconCross from './icons/IconCross.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import type { Currency } from '$lib/types/Currency';
+	import { useI18n } from '$lib/i18n';
 
 	export let product: BasicProductFrontend;
 	export let picture: PictureType | undefined;
@@ -14,13 +15,15 @@
 	let className = '';
 	export { className as class };
 
+	const { t } = useI18n();
+
 	const dispatch = createEventDispatcher<{ dismiss: void }>();
 </script>
 
 <div class="{className} flex flex-wrap p-2 gap-4 relative">
 	<Picture {picture} class="w-[138px] h-[138px] border-gray-300 border rounded object-cover" />
 	<div class="flex flex-col grow gap-1">
-		<h2 class="text-black text-[22px] font-medium">Product added to cart</h2>
+		<h2 class="text-black text-[22px] font-medium">{t('product.addedToCart')}</h2>
 		<h3 class="text-gray-850 text-base font-light">{product.name}</h3>
 		{#if customPrice}
 			<PriceTag
@@ -39,8 +42,8 @@
 		{/if}
 
 		<div class="flex gap-2">
-			<a href="/cart" class="grow basis-0 btn btn-gray"> View cart </a>
-			<a href="/checkout" class="grow basis-0 btn btn-black"> Checkout </a>
+			<a href="/cart" class="grow basis-0 btn btn-gray"> {t('cart.cta.view')} </a>
+			<a href="/checkout" class="grow basis-0 btn btn-black"> {t('cart.cta.checkout')} </a>
 		</div>
 	</div>
 	<IconCross class="absolute top-2 right-2 cursor-pointer" on:click={() => dispatch('dismiss')} />

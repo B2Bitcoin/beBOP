@@ -17,7 +17,7 @@
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
 	import { POS_ROLE_ID } from '$lib/types/User';
-	import { useI18n, t } from '$lib/i18n';
+	import { useI18n } from '$lib/i18n';
 	import ProductCms from '$lib/components/ProductCms.svelte';
 
 	export let data;
@@ -64,7 +64,7 @@
 		};
 	}
 
-	useI18n();
+	const { t, i18n } = useI18n();
 </script>
 
 <svelte:head>
@@ -101,7 +101,7 @@
 				digitalFiles={data.digitalFilesBefore}
 				roleId={data.roleId ? data.roleId : ''}
 			/>
-			<div class="flex flex-row">
+			<div class="flex flex-row py-3">
 				<div class="flex flex-col gap-2 w-14 min-w-[48px] py-12 hidden md:block">
 					{#if data.pictures.length > 1}
 						{#each data.pictures as picture, i}
@@ -170,7 +170,7 @@
 								</div>
 								<GoalProgress
 									class="font-bold mt-3"
-									text="{Number(7).toLocaleString('en', {
+									text="{Number(7).toLocaleString(i18n.locale, {
 										style: 'currency',
 										currency: 'EUR',
 										minimumFractionDigits: 0
@@ -208,7 +208,10 @@
 						{#if data.discount}
 							<hr class="border-gray-300" />
 							<h3 class="text-gray-850 text-[22px]">
-								{data.discount.percentage}% off for {hoursDifference}h
+								{t('product.discountBanner', {
+									discountPercentage: data.discount.percentage,
+									hours: hoursDifference
+								})}
 							</h3>
 							{#if 0}
 								<GoalProgress text="1h32min left" goal={600} progress={444} />
@@ -218,11 +221,13 @@
 								<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
 									<IconInfo class="text-[#E4C315]" />
 									<div>
-										<h3 class="font-semibold text-gray-800">Free with "xxxxx"</h3>
+										<h3 class="font-semibold text-gray-800">{t('product.freeWithTitle')}</h3>
 										<p class="text-gray-700">
-											This product is available for free with your monthly subscription
+											{t('product.freeWithSub')}
 										</p>
-										<a href="/cabinet" class="text-[#E4C315] hover:underline">See in MyCabinet</a>
+										<a href="/cabinet" class="text-[#E4C315] hover:underline"
+											>{t('product.seeInCabinet')}</a
+										>
 									</div>
 								</div>
 							{/if}
@@ -231,11 +236,12 @@
 
 						{#if isPreorder && data.product.availableDate}
 							<p>
-								This is a preorder, your product will be available on
-								{new Date(data.product.availableDate).toLocaleDateString('en', {
-									year: 'numeric',
-									month: 'long',
-									day: 'numeric'
+								{t('product.preorderText', {
+									date: new Date(data.product.availableDate).toLocaleDateString(i18n.locale, {
+										year: 'numeric',
+										month: 'long',
+										day: 'numeric'
+									})
 								})}
 							</p>
 						{/if}
@@ -277,7 +283,7 @@
 										<hr class="border-gray-300 md:hidden mt-4 pb-2" />
 										<div class="flex flex-col gap-2 justify-between">
 											<label class="w-full form-label">
-												Name your price ({data.currencies.main}):
+												{t('product.nameYourPrice', { currency: data.currencies.main })}
 												<input
 													class="form-input"
 													type="number"
@@ -290,7 +296,7 @@
 														  )}
 													name="customPrice"
 													bind:value={customAmount}
-													placeholder="Price"
+													placeholder={t('product.pricePlaceholder')}
 													required
 													step="any"
 												/>
@@ -318,9 +324,9 @@
 									{/if}
 									{#if amountAvailable === 0}
 										<p class="text-red-500">
-											<span class="font-bold">Out of stock</span>
+											<span class="font-bold">{t('product.outOfStock')}</span>
 											<br />
-											Please check back later
+											{t('product.checkBackLater')}
 										</p>
 									{:else if data.showCheckoutButton}
 										<button class="btn btn-black" disabled={loading}
@@ -345,16 +351,17 @@
 										</button>
 									{/if}
 								{:else}
-									<p>This product is not available for sale</p>
+									<p>{t('product.notForSale')}</p>
 								{/if}
 							</form>
 						{:else}
 							<p>
-								Available on
-								{new Date(data.product.availableDate).toLocaleDateString('en', {
-									year: 'numeric',
-									month: 'long',
-									day: 'numeric'
+								{t('product.availableOn', {
+									date: new Date(data.product.availableDate).toLocaleDateString(i18n.locale, {
+										year: 'numeric',
+										month: 'long',
+										day: 'numeric'
+									})
 								})}
 							</p>
 						{/if}
@@ -362,13 +369,13 @@
 				</div>
 			</div>
 			<ProductCms
-				challenges={data.challengesAfter}
-				tokens={data.tokensAfter}
-				sliders={data.slidersAfter}
-				slidersPictures={data.slidersPicturesAfter}
-				products={data.productsAfter}
-				pictures={data.picturesAfter}
-				digitalFiles={data.digitalFilesAfter}
+				challenges={data.challenges}
+				tokens={data.tokens}
+				sliders={data.sliders}
+				slidersPictures={data.slidersPictures}
+				products={data.productsBefore}
+				pictures={data.picturesBefore}
+				digitalFiles={data.digitalFilesBefore}
 				roleId={data.roleId ? data.roleId : ''}
 			/>
 		</div>
