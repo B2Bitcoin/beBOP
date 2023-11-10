@@ -36,8 +36,12 @@ export function useI18n() {
 	} else {
 		// loaded in hooks.server.ts
 	}
+
+	return { t: i18n.t.bind(i18n), i18n };
 }
 
-const t = i18n.t.bind(i18n);
-
-export { t, i18n };
+export function addTranslations(locale: string, translations: LocaleDictionary) {
+	i18n.store({
+		[locale]: translations
+	});
+}

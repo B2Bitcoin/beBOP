@@ -7,6 +7,7 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
+	import { useI18n } from '$lib/i18n';
 
 	let loading = false;
 	export let picture: Picture | undefined;
@@ -31,6 +32,8 @@
 			widget
 		};
 	}
+
+	const { t } = useI18n();
 </script>
 
 <div class="flex flex-row items-end justify-end">
@@ -55,12 +58,11 @@
 		<div class="relative">
 			<button
 				type="submit"
-				value="Add to cart"
 				disabled={loading}
 				formaction="/product/{product._id}?/addToCart"
 				class="btn btn-gray"
 			>
-				Add to cart
+				{t('product.cta.add')}
 			</button>
 
 			{#if $productAddedToCart && $productAddedToCart.widget === widget}

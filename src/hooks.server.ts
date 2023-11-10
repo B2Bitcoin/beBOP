@@ -30,11 +30,13 @@ import { sha256 } from '$lib/utils/sha256';
 import { countryFromIp } from '$lib/server/geoip';
 import { isAllowedOnPage } from '$lib/types/Role';
 import { languages } from '$lib/translations';
-import { i18n } from '$lib/i18n';
+import { addTranslations } from '$lib/i18n';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
-i18n.store(languages);
+for (const entry of Object.entries(languages)) {
+	addTranslations(entry[0], entry[1]);
+}
 
 export const handleError = (({ error, event }) => {
 	console.error('handleError', error);
