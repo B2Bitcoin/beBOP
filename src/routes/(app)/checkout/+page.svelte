@@ -324,7 +324,7 @@
 									{#if 0}
 										<CartQuantity {item} sm />
 									{:else if item.quantity > 1}
-										Quantity: {item.quantity}
+										{t('cart.quantity')}: {item.quantity}
 									{/if}
 								</div>
 							</div>
