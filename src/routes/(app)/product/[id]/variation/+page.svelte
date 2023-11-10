@@ -10,8 +10,3 @@
 	picture={data.pictures[0]}
 	pictures={data.pictures}
 />
-<ProductWidgetVariationTwo
-	product={data.product}
-	picture={data.pictures[0]}
-	pictures={data.pictures}
-/>
