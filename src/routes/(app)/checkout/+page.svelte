@@ -553,7 +553,7 @@
 				<input
 					type="submit"
 					class="btn btn-black btn-xl -mx-1 -mb-1 mt-1"
-					value="Proceed"
+					value={t('checkout.cta.submit')}
 					form="checkout"
 					disabled={isNaN(deliveryFees) || (addDiscount && !isDiscountValid)}
 				/>

@@ -34,6 +34,9 @@
 	"checkout": {
 		"agreeIpCollect": "I agree to the collection of my IP address (%{link})",
 		"backToCart": "Back to cart",
+		"cta": {
+			"submit": "Proceed"
+		},
 		"deliveryFees": "Delivery fees",
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
 		"invalidNpub": "Invalid NostR public address",

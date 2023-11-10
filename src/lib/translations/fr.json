@@ -34,6 +34,9 @@
 	"checkout": {
 		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (%{link})",
 		"backToCart": "Retour au panier",
+		"cta": {
+			"submit": "Payer"
+		},
 		"deliveryFees": "Frais de livraison",
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'informations d'expédition.",
 		"invalidNpub": "Adresse publique NostR invalide",
