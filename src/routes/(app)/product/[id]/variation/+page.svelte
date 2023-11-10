@@ -1,6 +1,5 @@
 <script>
 	import ProductWidgetVariationOne from '$lib/components/ProductWidget/ProductWidgetVariationOne.svelte';
-	import ProductWidgetVariationTwo from '$lib/components/ProductWidget/ProductWidgetVariationTwo.svelte';
 
 	export let data;
 </script>
