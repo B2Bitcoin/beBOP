@@ -39,3 +39,9 @@ export function useI18n() {
 
 	return { t: i18n.t.bind(i18n), i18n };
 }
+
+export function addTranslations(locale: string, translations: LocaleDictionary) {
+	i18n.store({
+		[locale]: translations
+	});
+}
