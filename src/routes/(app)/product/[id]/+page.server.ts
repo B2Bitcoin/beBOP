@@ -10,7 +10,9 @@ import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { trimSuffix } from '$lib/utils/trimSuffix';
 import { trimPrefix } from '$lib/utils/trimPrefix';
-import { picturesForSliders } from '$lib/server/picture';
+import { picturesForProducts, picturesForSliders } from '$lib/server/picture';
+import type { DigitalFile } from '$lib/types/DigitalFile';
+import type { Challenge } from '$lib/types/Challenge';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -90,25 +92,47 @@ export const load = async ({ params, locals }) => {
 			sort: { percentage: -1 }
 		}
 	);
-	const challenges = product.contentBefore
-		? (await getCMSProduct(product.contentBefore)).challenges
+	const productsBefore = product.contentBefore
+		? (await getCMSProduct(product.contentBefore, locals)).products
 		: [];
-	const tokens = product.contentBefore ? (await getCMSProduct(product.contentBefore)).tokens : [];
-	const sliders = product.contentBefore ? (await getCMSProduct(product.contentBefore)).sliders : [];
+	const picturesBefore = product.contentBefore
+		? (await getCMSProduct(product.contentBefore, locals)).pictures
+		: [];
+	const digitalFilesBefore = product.contentBefore
+		? (await getCMSProduct(product.contentBefore, locals)).digitalFiles
+		: [];
+	const challenges = product.contentBefore
+		? (await getCMSProduct(product.contentBefore, locals)).challenges
+		: [];
+	const tokens = product.contentBefore
+		? (await getCMSProduct(product.contentBefore, locals)).tokens
+		: [];
+	const sliders = product.contentBefore
+		? (await getCMSProduct(product.contentBefore, locals)).sliders
+		: [];
 	const slidersPictures = product.contentBefore
-		? (await getCMSProduct(product.contentBefore)).slidersPictures
+		? (await getCMSProduct(product.contentBefore, locals)).slidersPictures
 		: [];
 	const challengesAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter)).challenges
+		? (await getCMSProduct(product.contentAfter, locals)).challenges
 		: [];
 	const tokensAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter)).tokens
+		? (await getCMSProduct(product.contentAfter, locals)).tokens
 		: [];
 	const slidersAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter)).sliders
+		? (await getCMSProduct(product.contentAfter, locals)).sliders
 		: [];
 	const slidersPicturesAfter = product.contentAfter
-		? (await getCMSProduct(product.contentAfter)).slidersPictures
+		? (await getCMSProduct(product.contentAfter, locals)).slidersPictures
+		: [];
+	const productsAfter = product.contentAfter
+		? (await getCMSProduct(product.contentAfter, locals)).products
+		: [];
+	const picturesAfter = product.contentAfter
+		? (await getCMSProduct(product.contentAfter, locals)).pictures
+		: [];
+	const digitalFilesAfter = product.contentAfter
+		? (await getCMSProduct(product.contentAfter, locals)).digitalFiles
 		: [];
 	return {
 		product,
@@ -122,6 +146,13 @@ export const load = async ({ params, locals }) => {
 		tokensAfter,
 		slidersAfter,
 		slidersPicturesAfter,
+		productsBefore,
+		productsAfter,
+		picturesBefore,
+		picturesAfter,
+		digitalFilesAfter,
+		digitalFilesBefore,
+		roleId: locals.user?.roleId,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
 };
@@ -165,18 +196,26 @@ export const actions = {
 	addToCart
 };
 
-async function getCMSProduct(content: string) {
+async function getCMSProduct(content: string, locals: any) {
+	const PRODUCT_WIDGET_REGEX =
+		/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
-
 	const SLIDER_WIDGET_REGEX =
 		/\[Slider=(?<slug>[a-z0-9-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/gi;
 
+	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
 	const sliderSlugs = new Set<string>();
 
 	const tokens: Array<
 		| {
 				type: 'html';
+				raw: string;
+		  }
+		| {
+				type: 'productWidget';
+				slug: string;
+				display: string | undefined;
 				raw: string;
 		  }
 		| {
@@ -192,12 +231,16 @@ async function getCMSProduct(content: string) {
 		  }
 	> = [];
 
+	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
 	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
 	const sliderMatches = content.matchAll(SLIDER_WIDGET_REGEX);
 
 	let index = 0;
 
 	const orderedMatches = [
+		...[...productMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'productWidget' })
+		),
 		...[...challengeMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
 		),
@@ -211,8 +254,15 @@ async function getCMSProduct(content: string) {
 			type: 'html',
 			raw: trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>')
 		});
-
-		if (match.type === 'challengeWidget' && match.groups?.slug) {
+		if (match.type === 'productWidget' && match.groups?.slug) {
+			productSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'productWidget',
+				slug: match.groups.slug,
+				display: match.groups?.display,
+				raw: match[0]
+			});
+		} else if (match.type === 'challengeWidget' && match.groups?.slug) {
 			challengeSlugs.add(match.groups.slug);
 			tokens.push({
 				type: 'challengeWidget',
@@ -236,10 +286,49 @@ async function getCMSProduct(content: string) {
 		type: 'html',
 		raw: trimPrefix(content.slice(index), '</p>')
 	});
+	const query =
+		locals?.user?.roleId === POS_ROLE_ID
+			? { 'actionSettings.retail.visible': true }
+			: { 'actionSettings.eShop.visible': true };
 
+	const products = await collections.products
+		.find({
+			_id: { $in: [...productSlugs] },
+			...query
+		})
+		.project<
+			Pick<
+				Product,
+				| '_id'
+				| 'price'
+				| 'name'
+				| 'shortDescription'
+				| 'preorder'
+				| 'availableDate'
+				| 'type'
+				| 'shipping'
+				| 'actionSettings'
+			>
+		>({
+			price: 1,
+			shortDescription: 1,
+			preorder: 1,
+			name: 1,
+			availableDate: 1,
+			type: 1,
+			shipping: 1,
+			actionSettings: 1
+		})
+		.toArray();
 	const challenges = await collections.challenges
 		.find({
 			_id: { $in: [...challengeSlugs] }
+		})
+		.project<Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>>({
+			name: 1,
+			goal: 1,
+			progress: 1,
+			endsAt: 1
 		})
 		.toArray();
 	const sliders = await collections.sliders
@@ -248,10 +337,21 @@ async function getCMSProduct(content: string) {
 		})
 		.toArray();
 
+	const digitalFiles = await collections.digitalFiles
+		.find({})
+		.project<Pick<DigitalFile, '_id' | 'name' | 'productId'>>({
+			name: 1,
+			productId: 1
+		})
+		.sort({ createdAt: 1 })
+		.toArray();
 	return {
 		tokens,
 		challenges,
 		sliders,
-		slidersPictures: await picturesForSliders(sliders.map((slider) => slider._id))
+		slidersPictures: await picturesForSliders(sliders.map((slider) => slider._id)),
+		products,
+		pictures: await picturesForProducts(products.map((product) => product._id)),
+		digitalFiles
 	};
 }
