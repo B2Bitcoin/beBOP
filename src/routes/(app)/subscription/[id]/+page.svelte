@@ -1,9 +1,9 @@
 <script lang="ts">
 	import ProductItem from '$lib/components/ProductItem.svelte';
 	import Trans from '$lib/components/Trans.svelte';
-	import { i18n, t, useI18n } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n.js';
 
-	useI18n();
+	const { t, i18n } = useI18n();
 
 	export let data;
 </script>

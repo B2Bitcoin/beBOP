@@ -17,7 +17,7 @@
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
 	import { POS_ROLE_ID } from '$lib/types/User';
-	import { useI18n, t, i18n } from '$lib/i18n';
+	import { useI18n } from '$lib/i18n';
 
 	export let data;
 
@@ -63,7 +63,7 @@
 		};
 	}
 
-	useI18n();
+	const { t, i18n } = useI18n();
 </script>
 
 <svelte:head>

@@ -24,7 +24,7 @@
 	import { currencies } from '$lib/stores/currencies';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
-	import { useI18n, t } from '$lib/i18n';
+	import { useI18n } from '$lib/i18n';
 
 	export let data;
 
@@ -79,7 +79,7 @@
 		cartOpen = false;
 	}
 
-	useI18n();
+	const { t } = useI18n();
 </script>
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">

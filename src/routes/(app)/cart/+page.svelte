@@ -6,7 +6,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import Trans from '$lib/components/Trans.svelte';
-	import { t, useI18n } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
@@ -31,7 +31,7 @@
 	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 
-	useI18n();
+	const { t } = useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">

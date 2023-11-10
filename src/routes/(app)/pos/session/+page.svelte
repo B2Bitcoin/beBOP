@@ -7,7 +7,7 @@
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 	import { onMount } from 'svelte';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
-	import { t, useI18n } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n.js';
 	import Trans from '$lib/components/Trans.svelte';
 
 	interface CustomEventSource {
@@ -83,7 +83,7 @@
 	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 
-	useI18n();
+	const { t } = useI18n();
 </script>
 
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">

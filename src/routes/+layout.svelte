@@ -9,14 +9,11 @@
 	import '@fontsource/gloock/400.css';
 	import { page } from '$app/stores';
 	import { setContext } from 'svelte';
-	import { useI18n } from '$lib/i18n';
 	import { PUBLIC_COMMIT_ID } from '$env/static/public';
 
 	export let data;
 
 	setContext('language', data.language);
-
-	useI18n();
 </script>
 
 <svelte:head>

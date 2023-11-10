@@ -16,6 +16,8 @@
 		"empty": "Cart is empty",
 		"quantity": "Quantity",
 		"sr": {
+			"decrease": "Decrease quantity",
+			"increase": "Increase quantity",
 			"remove": "Remove item from cart"
 		},
 		"total": "Total",
@@ -65,7 +67,7 @@
 		"vatShippingAddress": "The country is determined by the shipping address"
 	},
 	"error": {
-		"title": "Error"
+		"title": "Error %{status}"
 	},
 	"footer": {
 		"poweredBy": "Powered by"
@@ -146,6 +148,7 @@
 		"vatFreeReason": "VAT-free reason"
 	},
 	"product": {
+		"addedToCart": "Product added to cart",
 		"availableOn": "Available on %{date}",
 		"checkBackLater": "Please check back later",
 		"cta": {
@@ -166,7 +169,16 @@
 		"outOfStock": "Out of stock",
 		"preorderText": "This is a preorder, your product will be available on %{date}",
 		"pricePlaceholder": "Price",
-		"seeInCabinet": "See in MyCabinet"
+		"seeInCabinet": "See in MyCabinet",
+		"type": {
+			"digitalResource": "Digital Resource",
+			"donation": "Donation",
+			"phisical": "Physical",
+			"preorder": "Preorder",
+			"preview": "Preview",
+			"resource": "Resource",
+			"subscription": "Subscription"
+		}
 	},
 	"subscription": {
 		"associated": {

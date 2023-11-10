@@ -19,7 +19,7 @@
 	import { POS_ROLE_ID } from '$lib/types/User.js';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import type { DiscountType } from '$lib/types/Order.js';
-	import { t, useI18n } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n.js';
 	import Trans from '$lib/components/Trans.svelte';
 
 	let actionCount = 0;
@@ -32,7 +32,7 @@
 	let discountAmount: number;
 	let discountType: DiscountType;
 
-	useI18n();
+	const { t } = useI18n();
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: t('checkout.paymentStatus') }

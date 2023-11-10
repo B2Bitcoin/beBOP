@@ -1,22 +1,22 @@
 {
-  "cart": {
-    "quantity": "Quantité",
-    "cta": {
-      "view": "Voir le panier",
-      "checkout": "Passer à la caisse"
-    },
-    "vat": "TVA"
-  },
-  "product": {
-    "cta": {
-      "preorder": "Précommander",
-      "add": "Ajouter au panier",
-      "buy": "Acheter",
-      "donate": "Faire un don",
-      "subscribe": "S'abonner"
-    }
-  },
-  "error": {
-    "title": "Erreur"
-  }
+	"cart": {
+		"cta": {
+			"checkout": "Passer à la caisse",
+			"view": "Voir le panier"
+		},
+		"quantity": "Quantité",
+		"vat": "TVA"
+	},
+	"error": {
+		"title": "Erreur %{status}"
+	},
+	"product": {
+		"cta": {
+			"add": "Ajouter au panier",
+			"buy": "Acheter",
+			"donate": "Faire un don",
+			"preorder": "Précommander",
+			"subscribe": "S'abonner"
+		}
+	}
 }

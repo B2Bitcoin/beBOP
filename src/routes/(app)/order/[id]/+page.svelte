@@ -6,7 +6,7 @@
 	import ProductType from '$lib/components/ProductType.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import { t } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n.js';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
@@ -32,6 +32,8 @@
 		}, 1000);
 		return () => clearInterval(interval);
 	});
+
+	const { t } = useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -76,7 +78,9 @@
 							</code>
 						</li>
 						<li>
-							{t('order.timeRemaining')}
+							{t('order.timeRemaining', {
+								minutes: differenceInMinutes(data.order.payment.expiresAt, currentDate)
+							})}
 						</li>
 					</ul>
 					<img src="{$page.url.pathname}/qrcode" class="w-96 h-96" alt="QR code" />

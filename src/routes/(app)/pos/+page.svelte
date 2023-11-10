@@ -1,11 +1,11 @@
 <script>
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import IconBitcoin from '$lib/components/icons/IconBitcoin.svelte';
-	import { t, useI18n } from '$lib/i18n.js';
+	import { useI18n } from '$lib/i18n.js';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { formatDistance } from 'date-fns';
 
-	useI18n();
+	const { t } = useI18n();
 
 	export let data;
 </script>

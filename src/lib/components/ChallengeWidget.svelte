@@ -3,10 +3,13 @@
 	import { format } from 'date-fns';
 	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
+	import { useI18n } from '$lib/i18n';
 
 	let className = '';
 	export { className as class };
 	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>;
+
+	const { t } = useI18n();
 </script>
 
 <div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col {className}">
