@@ -44,7 +44,7 @@
 			<h1 class="text-3xl">{t('order.singleTitle', { number: data.order.number })}</h1>
 			{#if data.order.notifications?.paymentStatus?.npub}
 				<p>
-					{t('orderPaymentStatusNpub')}:
+					{t('order.paymentStatusNpub')}:
 					<span class="font-mono break-all break-words">
 						{data.order.notifications.paymentStatus.npub}</span
 					>

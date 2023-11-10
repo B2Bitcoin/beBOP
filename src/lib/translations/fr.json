@@ -125,6 +125,7 @@
 			"paid": "payé",
 			"paidTemplate": "Commande %{paymentStatus} !"
 		},
+		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},
@@ -132,7 +133,6 @@
 		"timeRemaining": "Temps restant : %{minutes} minutes",
 		"vatFree": "Cette commande est hors TVA. \nRaison : %{reason}"
 	},
-	"orderPaymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
 	"pos": {
 		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique un %{giftDiscount}",
 		"cta": {
