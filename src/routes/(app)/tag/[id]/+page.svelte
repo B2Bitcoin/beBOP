@@ -13,7 +13,8 @@
 	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex flex-col gap-2">
 		<VariationOneTemplateWidget
 			tag={data.tag}
-			picture={data.pictures.find((picture) => picture.tag?.type === 'avatar')}
+			picture={data.pictures.find((picture) => picture.tag?.type === 'full')}
+			avatar={data.pictures.find((picture) => picture.tag?.type === 'avatar')}
 		/>
 
 		<VariationTwoTemplateWidget
