@@ -225,14 +225,3 @@ export function pictureIdsForProducts(productIds: string[]): Promise<string[]> {
 		.map((picture) => picture._id)
 		.toArray();
 }
-
-export function picturesForSliders(sliderIds: string[]): Promise<Picture[]> {
-	return collections.pictures
-		.find({ 'slider._id': { $in: sliderIds } })
-		.sort({ createdAt: 1 })
-		.toArray();
-}
-
-export function picturesForTags(tagIds: string[]): Promise<Picture[]> {
-	return collections.pictures.find({ 'tag._id': { $in: tagIds } }).toArray();
-}
