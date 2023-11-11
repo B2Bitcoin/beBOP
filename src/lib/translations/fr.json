@@ -129,7 +129,7 @@
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},
-		"singleTitle": "Commande %#{number}",
+		"singleTitle": "Commande #%{number}",
 		"timeRemaining": "Temps restant : %{minutes} minutes",
 		"vatFree": "Cette commande est hors TVA. \nRaison : %{reason}"
 	},

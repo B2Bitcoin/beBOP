@@ -2,7 +2,7 @@
 	import type { Tag } from '$lib/types/Tag';
 	import type { Picture } from '$lib/types/Picture';
 	import PictureComponent from '../Picture.svelte';
-	import VariationFourTemplateWidget from './VariationFourTemplateWidget.svelte';
+	import VariationFourTemplateWidget from './TagWidgetVariation4.svelte';
 
 	let className = '';
 	export { className as class };

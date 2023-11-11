@@ -3,12 +3,12 @@
 	import type { Tag } from '$lib/types/Tag';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import { typedKeys } from '$lib/utils/typedKeys';
-	import VariationFiveTemplateWidget from './TagWidget/VariationFiveTemplateWidget.svelte';
-	import VariationFourTemplateWidget from './TagWidget/VariationFourTemplateWidget.svelte';
-	import VariationOneTemplateWidget from './TagWidget/VariationOneTemplateWidget.svelte';
-	import VariationSixTemplateWidget from './TagWidget/VariationSixTemplateWidget.svelte';
-	import VariationThreeTemplateWidget from './TagWidget/VariationThreeTemplateWidget.svelte';
-	import VariationTwoTemplateWidget from './TagWidget/VariationTwoTemplateWidget.svelte';
+	import TagWidgetVariation1 from './TagWidget/TagWidgetVariation1.svelte';
+	import TagWidgetVariation2 from './TagWidget/TagWidgetVariation2.svelte';
+	import TagWidgetVariation3 from './TagWidget/TagWidgetVariation3.svelte';
+	import TagWidgetVariation4 from './TagWidget/TagWidgetVariation4.svelte';
+	import TagWidgetVariation5 from './TagWidget/TagWidgetVariation5.svelte';
+	import TagWidgetVariation6 from './TagWidget/TagWidgetVariation6.svelte';
 
 	let className = '';
 	export { className as class };
@@ -21,27 +21,27 @@
 
 	const widgets = {
 		'var-1': {
-			component: VariationOneTemplateWidget,
+			component: TagWidgetVariation1,
 			pictureType: 'full'
 		},
 		'var-2': {
-			component: VariationTwoTemplateWidget,
+			component: TagWidgetVariation2,
 			pictureType: 'wide'
 		},
 		'var-3': {
-			component: VariationThreeTemplateWidget,
+			component: TagWidgetVariation3,
 			pictureType: 'main'
 		},
 		'var-4': {
-			component: VariationFourTemplateWidget,
+			component: TagWidgetVariation4,
 			pictureType: 'avatar'
 		},
 		'var-5': {
-			component: VariationFiveTemplateWidget,
+			component: TagWidgetVariation5,
 			pictureType: 'slim'
 		},
 		'var-6': {
-			component: VariationSixTemplateWidget,
+			component: TagWidgetVariation6,
 			pictureType: 'slim'
 		}
 	};
