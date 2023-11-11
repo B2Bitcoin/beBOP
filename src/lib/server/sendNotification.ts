@@ -36,9 +36,8 @@ export async function sendResetPasswordNotification(user: User) {
 		
 This message was sent to you because you have requested to reset your password.
 
-Follow this link to reset your password: ${ORIGIN}${adminPrefix()}/login/reset/${
-			updatedUser.passwordReset?.token
-		}
+Follow this link to reset your password: ${ORIGIN}${adminPrefix()}/login/reset/${updatedUser
+			.passwordReset?.token}
 		
 If you didn't ask for this password reset procedure, please ignore this message and do nothing.
 

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
-	import { P } from 'flowbite-svelte';
 	import { MultiSelect } from 'svelte-multiselect';
 
 	export let data;

@@ -9,7 +9,6 @@
 	let beginsAt = new Date().toJSON().slice(0, 10);
 	let endsAt = addMonths(new Date(), 30).toJSON().slice(0, 10);
 	let endsAtElement: HTMLInputElement;
-	let availableProductList = data.products;
 
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {

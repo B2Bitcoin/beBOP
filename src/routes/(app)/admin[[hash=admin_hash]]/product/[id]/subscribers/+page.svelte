@@ -40,7 +40,7 @@
 		link.click();
 	}
 
-	const { i18n } = useI18n();
+	const { locale } = useI18n();
 </script>
 
 <!-- <h1 class="text-3xl">Edit a product</h1> -->
@@ -114,7 +114,7 @@
 							{subscriptionStatus(subscription)}
 						</td>
 						<td class="px-6 py-4 whitespace-no-wrap">
-							{subscription.updatedAt.toLocaleDateString(i18n.locale)}</td
+							{subscription.updatedAt.toLocaleDateString($locale)}</td
 						>
 						<td class="px-6 py-4 whitespace-no-wrap">
 							{subscription.user.npub ? subscription.user.npub : ''}</td

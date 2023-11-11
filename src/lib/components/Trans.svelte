@@ -10,7 +10,7 @@
 	function getTokens(key: string) {
 		let translation = t(key);
 		const props = Object.fromEntries(
-			[...translation.matchAll(/%{([^}]+)}/g)].map((match) => [match[1], match[0]])
+			[...translation.matchAll(/{([^}]+)}/g)].map((match) => [match[1], match[0]])
 		);
 		// Alternative is fetching the raw translation from the messages store
 		translation = t(key, props);
@@ -19,7 +19,7 @@
 		let index = 0;
 
 		do {
-			let nextIndex = translation.indexOf('%{', index);
+			let nextIndex = translation.indexOf('{', index);
 
 			if (nextIndex === -1) {
 				ret.push(translation.slice(index));
