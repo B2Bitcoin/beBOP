@@ -76,7 +76,7 @@ export const actions: Actions = {
 			.parse({
 				...json,
 				availableDate: formData.get('availableDate') || undefined,
-				tagIds: formData.getAll('tagIds'),
+				tagIds: JSON.parse(String(formData.get('tagIds'))).map((x: { value: string }) => x.value),
 				contentBefore: formData.get('contentBefore'),
 				contentAfter: formData.get('contentAfter')
 			});
