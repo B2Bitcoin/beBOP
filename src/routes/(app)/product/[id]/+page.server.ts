@@ -98,7 +98,6 @@ export const load = async ({ params, locals }) => {
 		...(product.contentAfter && {
 			productCMSAfter: cmsFromContent(product.contentAfter, locals?.user?.roleId)
 		}),
-		roleId: locals.user?.roleId,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
 };
