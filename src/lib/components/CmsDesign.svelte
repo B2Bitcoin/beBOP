@@ -74,6 +74,7 @@
 				class="not-prose mb-12"
 			/>
 		{:else}
+			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html token.raw}
 		{/if}
 	{/each}

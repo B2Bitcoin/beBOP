@@ -46,5 +46,7 @@
 			<a href="/checkout" class="grow basis-0 btn btn-black"> {t('cart.cta.checkout')} </a>
 		</div>
 	</div>
-	<IconCross class="absolute top-2 right-2 cursor-pointer" on:click={() => dispatch('dismiss')} />
+	<button class="absolute top-2 right-2" type="button" on:click={() => dispatch('dismiss')}>
+		<IconCross />
+	</button>
 </div>

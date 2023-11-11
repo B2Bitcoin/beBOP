@@ -157,6 +157,7 @@
 								: 'Description'}
 						</h2>
 						<p class="text-gray-800 prose">
+							<!-- eslint-disable svelte/no-at-html-tags -->
 							{@html marked(data.product.description.replaceAll('<', '&lt;'))}
 						</p>
 					{/if}
