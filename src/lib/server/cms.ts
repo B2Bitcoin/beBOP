@@ -1,5 +1,4 @@
 import type { Challenge } from '$lib/types/Challenge';
-import type { CmsToken } from '$lib/types/CmsPage';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { Product } from '$lib/types/Product';
 import { POS_ROLE_ID } from '$lib/types/User';
@@ -21,7 +20,35 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 	const sliderSlugs = new Set<string>();
 	const tagSlugs = new Set<string>();
 
-	const tokens: CmsToken[] = [];
+	const tokens: Array<
+		| {
+				type: 'html';
+				raw: string;
+		  }
+		| {
+				type: 'productWidget';
+				slug: string;
+				display: string | undefined;
+				raw: string;
+		  }
+		| {
+				type: 'challengeWidget';
+				slug: string;
+				raw: string;
+		  }
+		| {
+				type: 'sliderWidget';
+				slug: string;
+				autoplay: number | undefined;
+				raw: string;
+		  }
+		| {
+				type: 'tagWidget';
+				slug: string;
+				display: string | undefined;
+				raw: string;
+		  }
+	> = [];
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
 	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
@@ -179,3 +206,11 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 		roleId: userRoleId
 	};
 }
+
+export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens'][number];
+export type CmsProduct = Awaited<ReturnType<typeof cmsFromContent>>['products'][number];
+export type CmsChallenge = Awaited<ReturnType<typeof cmsFromContent>>['challenges'][number];
+export type CmsSlider = Awaited<ReturnType<typeof cmsFromContent>>['sliders'][number];
+export type CmsTag = Awaited<ReturnType<typeof cmsFromContent>>['tags'][number];
+export type CmsPicture = Awaited<ReturnType<typeof cmsFromContent>>['pictures'][number];
+export type CmsDigitalFile = Awaited<ReturnType<typeof cmsFromContent>>['digitalFiles'][number];

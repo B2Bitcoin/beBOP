@@ -1,38 +1,30 @@
 <script lang="ts">
 	import ChallengeWidget from './ChallengeWidget.svelte';
 	import CarouselWidget from './CarouselWidget.svelte';
-	import type { Challenge } from '$lib/types/Challenge';
-	import type { Slider } from '$lib/types/slider';
 	import type { Picture } from '$lib/types/Picture';
-	import type { Product } from '$lib/types/Product';
-	import type { DigitalFile } from '$lib/types/DigitalFile';
 	import ProductWidget from './ProductWidget.svelte';
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import { groupBy } from 'lodash-es';
 	import type { SetRequired } from 'type-fest';
-	import type { Tag } from '$lib/types/Tag';
 	import TagWidget from './TagWidget.svelte';
-	import type { CmsToken } from '$lib/types/CmsPage';
+	import type {
+		CmsChallenge,
+		CmsDigitalFile,
+		CmsPicture,
+		CmsProduct,
+		CmsSlider,
+		CmsTag,
+		CmsToken
+	} from '$lib/server/cms';
 
-	export let products: Pick<
-		Product,
-		| '_id'
-		| 'name'
-		| 'price'
-		| 'shortDescription'
-		| 'preorder'
-		| 'availableDate'
-		| 'shipping'
-		| 'type'
-		| 'actionSettings'
-	>[];
-	export let pictures: Picture[];
-	export let challenges: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>[];
+	export let products: CmsProduct[];
+	export let pictures: CmsPicture[];
+	export let challenges: CmsChallenge[];
 	export let tokens: CmsToken[] = [];
-	export let sliders: Slider[];
-	export let digitalFiles: Pick<DigitalFile, '_id' | 'name' | 'productId'>[];
+	export let sliders: CmsSlider[];
+	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
-	export let tags: Tag[];
+	export let tags: CmsTag[];
 	let classNames = '';
 	export { classNames as class };
 
