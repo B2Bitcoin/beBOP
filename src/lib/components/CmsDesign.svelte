@@ -33,6 +33,8 @@
 	export let digitalFiles: Pick<DigitalFile, '_id' | 'name' | 'productId'>[];
 	export let roleId: string | undefined;
 	export let tags: Tag[];
+	let classNames = '';
+	export { classNames as class };
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
@@ -52,7 +54,7 @@
 	);
 </script>
 
-<div class="prose max-w-full">
+<div class="prose max-w-full {classNames}">
 	{#each tokens as token}
 		{#if token.type === 'productWidget' && productById[token.slug]}
 			<ProductWidget
