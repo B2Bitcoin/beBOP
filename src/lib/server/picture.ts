@@ -210,9 +210,11 @@ export function picturesForProducts(productIds: string[]): Promise<Picture[]> {
 
 export function picturesForSliders(sliderIds: string[]): Promise<Picture[]> {
 	return collections.pictures
-		.aggregate<Picture>([
-			{ $match: { 'slider._id': { $in: sliderIds } } },
-			{ $sort: { createdAt: 1 } }
-		])
+		.find({ 'slider._id': { $in: sliderIds } })
+		.sort({ createdAt: 1 })
 		.toArray();
+}
+
+export function picturesForTags(tagIds: string[]): Promise<Picture[]> {
+	return collections.pictures.find({ 'tag._id': { $in: tagIds } }).toArray();
 }

@@ -1,0 +1,60 @@
+<script lang="ts">
+	import type { Picture } from '$lib/types/Picture';
+	import type { Tag } from '$lib/types/Tag';
+	import { typedInclude } from '$lib/utils/typedIncludes';
+	import { typedKeys } from '$lib/utils/typedKeys';
+	import TagWidgetVariation1 from './TagWidget/TagWidgetVariation1.svelte';
+	import TagWidgetVariation2 from './TagWidget/TagWidgetVariation2.svelte';
+	import TagWidgetVariation3 from './TagWidget/TagWidgetVariation3.svelte';
+	import TagWidgetVariation4 from './TagWidget/TagWidgetVariation4.svelte';
+	import TagWidgetVariation5 from './TagWidget/TagWidgetVariation5.svelte';
+	import TagWidgetVariation6 from './TagWidget/TagWidgetVariation6.svelte';
+
+	let className = '';
+	export { className as class };
+	export let tag: Pick<
+		Tag,
+		'_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'
+	>;
+	export let pictures: Picture[];
+	export let displayOption = 'var-1';
+
+	const widgets = {
+		'var-1': {
+			component: TagWidgetVariation1,
+			pictureType: 'full'
+		},
+		'var-2': {
+			component: TagWidgetVariation2,
+			pictureType: 'wide'
+		},
+		'var-3': {
+			component: TagWidgetVariation3,
+			pictureType: 'main'
+		},
+		'var-4': {
+			component: TagWidgetVariation4,
+			pictureType: 'avatar'
+		},
+		'var-5': {
+			component: TagWidgetVariation5,
+			pictureType: 'slim'
+		},
+		'var-6': {
+			component: TagWidgetVariation6,
+			pictureType: 'slim'
+		}
+	};
+
+	$: widget = typedInclude(typedKeys(widgets), displayOption) ? widgets[displayOption] : null;
+</script>
+
+{#if widget}
+	<svelte:component
+		this={widget.component}
+		{tag}
+		picture={pictures.find((picture) => picture.tag?.type === widget?.pictureType)}
+		avatar={pictures.find((picture) => picture.tag?.type === 'avatar')}
+		class={className}
+	/>
+{/if}
