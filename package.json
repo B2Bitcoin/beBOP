@@ -11,9 +11,9 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
-		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"lint:ci": "(prettier --plugin-search-dir . --check . || (git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier --plugin-search-dir . . -w --loglevel silent && git --no-pager diff; git restore .) && false)) && eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
+		"lint": "prettier --check . && eslint .",
+		"lint:ci": "(prettier  --check . || (git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .) && false)) && eslint .",
+		"format": "prettier --write .",
 		"copy-bootik": "ts-node --esm scripts/copy-bootik.ts"
 	},
 	"devDependencies": {
