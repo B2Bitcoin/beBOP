@@ -94,7 +94,7 @@
 			{:else if data.order.payment.status === 'paid'}
 				<p>
 					<Trans key="order.paymentStatus.paidTemplate"
-						><span class="text-green-500">{t('order.paymentStatus.paid')}</span></Trans
+						><span class="text-green-500" let:translation slot="0">{translation}</span></Trans
 					>
 				</p>
 			{:else if data.order.payment.status === 'expired'}

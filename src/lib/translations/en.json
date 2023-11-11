@@ -24,12 +24,13 @@
 		},
 		"total": "Total",
 		"vat": "VAT",
-		"vatIpCountry": "The country is determined through data from {link}",
+		"vatIpCountry": "The country is determined through data from <0></0>",
+		"vatIpCountryText": "The country is determined through data from {link}",
 		"vatRate": "VAT rate for {country}",
 		"vatSellerCountry": "The country is the seller's country."
 	},
 	"challenge": {
-		"endsAt": "Ends {date}",
+		"endsAt": "Ends <0></0>",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
 		"list": "List of challenges",
@@ -42,7 +43,7 @@
 		"title": "Challenges"
 	},
 	"checkout": {
-		"agreeIpCollect": "I agree to the collection of my IP address ({link})",
+		"agreeIpCollect": "I agree to the collection of my IP address (<0>why?</0>)",
 		"backToCart": "Back to cart",
 		"cta": {
 			"submit": "Proceed"
@@ -50,7 +51,6 @@
 		"deliveryFees": "Delivery fees",
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
 		"invalidNpub": "Invalid NostR public address",
-		"ipCollectWhy": "why?",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
 		"notifications": {
 			"email": "Email",
@@ -75,8 +75,7 @@
 		"paymentStatus": "Payment status",
 		"shipmentInfo": "Shipment info",
 		"title": "Checkout",
-		"tos": "terms of service",
-		"tosAgree": "I agree to the {termsOfService}",
+		"tosAgree": "I agree to the <0>terms of service</0>",
 		"vatShippingAddress": "The country is determined by the shipping address"
 	},
 	"error": {
@@ -108,11 +107,11 @@
 		"willReceiveSessionLink": "You will receive a session link on your address"
 	},
 	"order": {
-		"createdAt": "Created at {date}",
+		"createdAt": "Created at <0></0>",
 		"discount": {
 			"title": "Discount"
 		},
-		"linkReminder": "Keep this link: {link} to access the order later.",
+		"linkReminder": "Keep this link: <0></0> to access the order later.",
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
 			"one": "Order will be marked as paid after 1 confirmation.",
@@ -124,8 +123,7 @@
 		"paymentStatus": {
 			"canceledTemplate": "Order canceled!",
 			"expiredTemplate": "Order expired!",
-			"paid": "paid",
-			"paidTemplate": "Order {paymentStatus}!"
+			"paidTemplate": "Order <0>paid</0>!"
 		},
 		"paymentStatusNpub": "NostR public address for payment status",
 		"shippingAddress": {
@@ -136,13 +134,12 @@
 		"vatFree": "This order is free of VAT. Reason: {reason}"
 	},
 	"pos": {
-		"applyGiftDiscount": "As a POS user I apply a {giftDiscount}",
+		"applyGiftDiscount": "As a POS user I apply a <0>gift discount</0>",
 		"cta": {
 			"cancelOrder": "Cancel",
 			"markOrderPaid": "Mark paid"
 		},
 		"discountJustification": "Justification",
-		"gitDiscount": "gift discount",
 		"invalidDiscount": "Discount is not valid!",
 		"lastOrders": {
 			"title": "Last orders"
@@ -156,8 +153,7 @@
 			"welcomeTitle": "Welcome"
 		},
 		"sessionLink": "POS session",
-		"vatFree": "This is a VAT-free order ({conditions})",
-		"vatFreeConditions": "conditions",
+		"vatFree": "This is a VAT-free order (<0>conditions</0>)",
 		"vatFreeReason": "VAT-free reason"
 	},
 	"product": {
@@ -201,8 +197,8 @@
 		"cta": {
 			"renew": "Renew"
 		},
-		"initiallyCreated": "Initially created: {date}",
-		"paidUntil": "Paid until: {date}",
+		"initiallyCreated": "Initially created: <0></0>",
+		"paidUntil": "Paid until: <0></0>",
 		"singleTitle": "Subscription #{number}",
 		"status": {
 			"expired": "expired"
