@@ -1,11 +1,12 @@
 import type { Challenge } from '$lib/types/Challenge';
+import type { CmsToken } from '$lib/types/CmsPage';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import type { Product } from '$lib/types/Product';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { trimPrefix } from '$lib/utils/trimPrefix';
 import { trimSuffix } from '$lib/utils/trimSuffix';
 import { collections } from './database';
-import { picturesForProducts, picturesForSliders } from './picture';
+import { pictureIdsForProducts } from './picture';
 
 export async function cmsFromContent(content: string, userRoleId: string | undefined) {
 	const PRODUCT_WIDGET_REGEX =
@@ -17,30 +18,9 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
 	const sliderSlugs = new Set<string>();
+	const tagSlugs = new Set<string>();
 
-	const tokens: Array<
-		| {
-				type: 'html';
-				raw: string;
-		  }
-		| {
-				type: 'productWidget';
-				slug: string;
-				display: string | undefined;
-				raw: string;
-		  }
-		| {
-				type: 'challengeWidget';
-				slug: string;
-				raw: string;
-		  }
-		| {
-				type: 'sliderWidget';
-				slug: string;
-				autoplay: number | undefined;
-				raw: string;
-		  }
-	> = [];
+	const tokens: CmsToken[] = [];
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
 	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
@@ -88,9 +68,17 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 				autoplay: Number(match.groups?.autoplay),
 				raw: match[0]
 			});
+		} else if (match.type === 'tagWidget' && match.groups?.slug) {
+			tagSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'tagWidget',
+				slug: match.groups.slug,
+				display: match.groups?.display,
+				raw: match[0]
+			});
+		} else if (match.type) {
+			index = match.index + match[0].length;
 		}
-
-		index = match.index + match[0].length;
 	}
 
 	tokens.push({
@@ -149,20 +137,43 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 		.toArray();
 
 	const digitalFiles = await collections.digitalFiles
-		.find({})
+		.find({ productId: { $in: products.map((product) => product._id) } })
 		.project<Pick<DigitalFile, '_id' | 'name' | 'productId'>>({
 			name: 1,
 			productId: 1
 		})
 		.sort({ createdAt: 1 })
 		.toArray();
+	const tags = await collections.tags
+		.find({
+			_id: { $in: [...tagSlugs] }
+		})
+		.toArray();
+
+	const pictureIds = await pictureIdsForProducts(products.map((product) => product._id));
+
 	return {
 		tokens,
 		challenges,
 		sliders,
-		slidersPictures: await picturesForSliders(sliders.map((slider) => slider._id)),
 		products,
-		pictures: await picturesForProducts(products.map((product) => product._id)),
-		digitalFiles
+		tags,
+		pictures: await collections.pictures
+			.find({
+				$or: [
+					{
+						_id: { $in: [...pictureIds] }
+					},
+					{
+						'slider._id': { $in: [...sliderSlugs] }
+					},
+					{
+						'tag._id': { $in: [...tagSlugs] }
+					}
+				]
+			})
+			.toArray(),
+		digitalFiles,
+		roleId: userRoleId
 	};
 }

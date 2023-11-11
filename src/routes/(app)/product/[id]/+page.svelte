@@ -96,9 +96,9 @@
 					challenges={data.productCMSBefore.challenges}
 					tokens={data.productCMSBefore.tokens}
 					sliders={data.productCMSBefore.sliders}
-					slidersPictures={data.productCMSBefore.slidersPictures}
 					products={data.productCMSBefore.products}
 					pictures={data.productCMSBefore.pictures}
+					tags={data.productCMSBefore.tags}
 					digitalFiles={data.productCMSBefore.digitalFiles}
 					roleId={data.roleId ? data.roleId : ''}
 				/>
@@ -376,7 +376,7 @@
 					challenges={data.productCMSAfter.challenges}
 					tokens={data.productCMSAfter.tokens}
 					sliders={data.productCMSAfter.sliders}
-					slidersPictures={data.productCMSAfter.slidersPictures}
+					tags={data.productCMSAfter.tags}
 					products={data.productCMSAfter.products}
 					pictures={data.productCMSAfter.pictures}
 					digitalFiles={data.productCMSAfter.digitalFiles}

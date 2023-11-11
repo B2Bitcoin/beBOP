@@ -93,10 +93,10 @@ export const load = async ({ params, locals }) => {
 		pictures,
 		discount,
 		...(product.contentBefore && {
-			productCMSBefore: await cmsFromContent(product.contentBefore, locals?.user?.roleId)
+			productCMSBefore: cmsFromContent(product.contentBefore, locals?.user?.roleId)
 		}),
 		...(product.contentAfter && {
-			productCMSAfter: await cmsFromContent(product.contentAfter, locals?.user?.roleId)
+			productCMSAfter: cmsFromContent(product.contentAfter, locals?.user?.roleId)
 		}),
 		roleId: locals.user?.roleId,
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage

@@ -8,6 +8,11 @@
 	import type { DigitalFile } from '$lib/types/DigitalFile';
 	import ProductWidget from './ProductWidget.svelte';
 	import { POS_ROLE_ID } from '$lib/types/User';
+	import { groupBy } from 'lodash-es';
+	import type { SetRequired } from 'type-fest';
+	import type { Tag } from '$lib/types/Tag';
+	import TagWidget from './TagWidget.svelte';
+	import type { CmsToken } from '$lib/types/CmsPage';
 
 	export let products: Pick<
 		Product,
@@ -23,33 +28,11 @@
 	>[];
 	export let pictures: Picture[];
 	export let challenges: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>[];
-	export let tokens: Array<
-		| {
-				type: 'html';
-				raw: string;
-		  }
-		| {
-				type: 'productWidget';
-				slug: string;
-				display: string | undefined;
-				raw: string;
-		  }
-		| {
-				type: 'challengeWidget';
-				slug: string;
-				raw: string;
-		  }
-		| {
-				type: 'sliderWidget';
-				slug: string;
-				autoplay: number | undefined;
-				raw: string;
-		  }
-	> = [];
+	export let tokens: CmsToken[] = [];
 	export let sliders: Slider[];
-	export let slidersPictures: Picture[];
 	export let digitalFiles: Pick<DigitalFile, '_id' | 'name' | 'productId'>[];
-	export let roleId: string;
+	export let roleId: string | undefined;
+	export let tags: Tag[];
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
@@ -58,9 +41,15 @@
 	);
 	$: challengeById = Object.fromEntries(challenges.map((challenge) => [challenge._id, challenge]));
 	$: sliderById = Object.fromEntries(sliders.map((slider) => [slider._id, slider]));
-	function picturesBySlider(sliderId: string) {
-		return slidersPictures.filter((picture) => picture.slider?._id === sliderId);
-	}
+	$: tagById = Object.fromEntries(tags.map((tag) => [tag._id, tag]));
+	$: picturesByTag = groupBy(
+		pictures.filter((picture): picture is SetRequired<Picture, 'tag'> => !!picture.tag),
+		'tag._id'
+	);
+	$: picturesBySlider = groupBy(
+		pictures.filter((picture): picture is SetRequired<Picture, 'slider'> => !!picture.slider),
+		'slider._id'
+	);
 </script>
 
 <div class="prose max-w-full">
@@ -81,7 +70,14 @@
 		{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
 			<CarouselWidget
 				autoplay={token.autoplay ? token.autoplay : 3000}
-				pictures={picturesBySlider(token.slug)}
+				pictures={picturesBySlider[token.slug]}
+			/>
+		{:else if token.type === 'tagWidget' && tagById[token.slug]}
+			<TagWidget
+				tag={tagById[token.slug]}
+				pictures={picturesByTag[token.slug]}
+				displayOption={token.display}
+				class="not-prose mb-12"
 			/>
 		{:else}
 			{@html token.raw}
