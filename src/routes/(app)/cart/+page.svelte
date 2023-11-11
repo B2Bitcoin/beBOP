@@ -36,7 +36,7 @@
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 bg-white border-gray-300 border">
-		<h1 class="page-title">Products</h1>
+		<h1 class="page-title">{t('cart.items')}</h1>
 
 		{#if errorMessage && !errorProductId}
 			<p class="text-red-600">{errorMessage}</p>
@@ -110,7 +110,7 @@
 								formaction="/cart/{item.product._id}/?/remove"
 								class="mt-auto mr-auto hover:underline text-link text-base font-light"
 							>
-								Discard
+								{t('cart.cta.discardItem')}
 							</button>
 						</div>
 

@@ -11,9 +11,11 @@
 	"cart": {
 		"cta": {
 			"checkout": "Checkout",
+			"discardItem": "Discard",
 			"view": "View cart"
 		},
 		"empty": "Cart is empty",
+		"items": "Products",
 		"quantity": "Quantity",
 		"sr": {
 			"decrease": "Decrease quantity",
@@ -22,25 +24,25 @@
 		},
 		"total": "Total",
 		"vat": "VAT",
-		"vatIpCountry": "The country is determined through data from %{link}",
-		"vatRate": "VAT rate for %{country}",
+		"vatIpCountry": "The country is determined through data from {link}",
+		"vatRate": "VAT rate for {country}",
 		"vatSellerCountry": "The country is the seller's country."
 	},
 	"challenge": {
-		"endsAt": "Ends %{date}",
+		"endsAt": "Ends {date}",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
 		"list": "List of challenges",
 		"numProducts": {
-			"one": "%{count} product",
-			"other": "%{count} products",
-			"zero": "%{count} products"
+			"one": "{count} product",
+			"other": "{count} products",
+			"zero": "{count} products"
 		},
-		"singleTitle": "Challenge %{name}",
+		"singleTitle": "Challenge {name}",
 		"title": "Challenges"
 	},
 	"checkout": {
-		"agreeIpCollect": "I agree to the collection of my IP address (%{link})",
+		"agreeIpCollect": "I agree to the collection of my IP address ({link})",
 		"backToCart": "Back to cart",
 		"cta": {
 			"submit": "Proceed"
@@ -56,9 +58,9 @@
 			"title": "Feed & Notifications"
 		},
 		"numProducts": {
-			"one": "%{count} product",
-			"other": "%{count} products",
-			"zero": "%{count} products"
+			"one": "{count} product",
+			"other": "{count} products",
+			"zero": "{count} products"
 		},
 		"payment": {
 			"method": "Payment method",
@@ -74,11 +76,11 @@
 		"shipmentInfo": "Shipment info",
 		"title": "Checkout",
 		"tos": "terms of service",
-		"tosAgree": "I agree to the %{termsOfService}",
+		"tosAgree": "I agree to the {termsOfService}",
 		"vatShippingAddress": "The country is determined by the shipping address"
 	},
 	"error": {
-		"title": "Error %{status}"
+		"title": "Error {status}"
 	},
 	"footer": {
 		"poweredBy": "Powered by"
@@ -89,16 +91,16 @@
 			"title": "Add authentication"
 		},
 		"cta": {
-			"authenticateAs": "Authenticate as %{as}",
+			"authenticateAs": "Authenticate as {as}",
 			"clearSession": "Clear session",
 			"logout": "Log out",
-			"signInWith": "Sign In With %{provider}"
+			"signInWith": "Sign In With {provider}"
 		},
 		"session": {
-			"email": "Email: %{email}",
-			"npub": "Npub: %{npub}",
+			"email": "Email: {email}",
+			"npub": "Npub: {npub}",
 			"title": "Session",
-			"userId": "UserId: %{userId}"
+			"userId": "UserId: {userId}"
 		},
 		"sso": {
 			"title": "Or sign in with"
@@ -106,15 +108,15 @@
 		"willReceiveSessionLink": "You will receive a session link on your address"
 	},
 	"order": {
-		"createdAt": "Created at %{date}",
+		"createdAt": "Created at {date}",
 		"discount": {
 			"title": "Discount"
 		},
-		"linkReminder": "Keep this link: %{link} to access the order later.",
+		"linkReminder": "Keep this link: {link} to access the order later.",
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
 			"one": "Order will be marked as paid after 1 confirmation.",
-			"other": "Order will be marked as paid after %{count} confirmations.",
+			"other": "Order will be marked as paid after {count} confirmations.",
 			"zero": "Order will be marked as paid without waiting for confirmations."
 		},
 		"paymentAddress": "Payment address",
@@ -123,18 +125,18 @@
 			"canceledTemplate": "Order canceled!",
 			"expiredTemplate": "Order expired!",
 			"paid": "paid",
-			"paidTemplate": "Order %{paymentStatus}!"
+			"paidTemplate": "Order {paymentStatus}!"
 		},
 		"paymentStatusNpub": "NostR public address for payment status",
 		"shippingAddress": {
 			"title": "Shipping address"
 		},
-		"singleTitle": "Order #%{number}",
-		"timeRemaining": "Time remaining: %{minutes} minutes",
-		"vatFree": "This order is free of VAT. Reason: %{reason}"
+		"singleTitle": "Order #{number}",
+		"timeRemaining": "Time remaining: {minutes} minutes",
+		"vatFree": "This order is free of VAT. Reason: {reason}"
 	},
 	"pos": {
-		"applyGiftDiscount": "As a POS user I apply a %{giftDiscount}",
+		"applyGiftDiscount": "As a POS user I apply a {giftDiscount}",
 		"cta": {
 			"cancelOrder": "Cancel",
 			"markOrderPaid": "Mark paid"
@@ -154,13 +156,13 @@
 			"welcomeTitle": "Welcome"
 		},
 		"sessionLink": "POS session",
-		"vatFree": "This is a VAT-free order (%{conditions})",
+		"vatFree": "This is a VAT-free order ({conditions})",
 		"vatFreeConditions": "conditions",
 		"vatFreeReason": "VAT-free reason"
 	},
 	"product": {
 		"addedToCart": "Product added to cart",
-		"availableOn": "Available on %{date}",
+		"availableOn": "Available on {date}",
 		"checkBackLater": "Please check back later",
 		"cta": {
 			"add": "Add to cart",
@@ -172,13 +174,13 @@
 		"digitalFiles": {
 			"title": "Digital Files"
 		},
-		"discountBanner": "%{discountPercent}% of for %{hours}h",
+		"discountBanner": "{discountPercent}% of for {hours}h",
 		"freeWithSub": "This product is available for free with your monthly subscription",
 		"freeWithTitle": "Free with \"xxxxx",
-		"nameYourPrice": "Name your price (%{currency})",
+		"nameYourPrice": "Name your price ({currency})",
 		"notForSale": "This product is not available for sale",
 		"outOfStock": "Out of stock",
-		"preorderText": "This is a preorder, your product will be available on %{date}",
+		"preorderText": "This is a preorder, your product will be available on {date}",
 		"pricePlaceholder": "Price",
 		"seeInCabinet": "See in MyCabinet",
 		"type": {
@@ -193,14 +195,14 @@
 	},
 	"subscription": {
 		"associated": {
-			"npub": "Associated to npub: %{npub}"
+			"npub": "Associated to npub: {npub}"
 		},
 		"cantRenew": "Subscription not due for renewal",
 		"cta": {
 			"renew": "Renew"
 		},
-		"initiallyCreated": "Initially created: %{date}",
-		"paidUntil": "Paid until: %{date}",
+		"initiallyCreated": "Initially created: {date}",
+		"paidUntil": "Paid until: {date}",
 		"singleTitle": "Subscription #{number}",
 		"status": {
 			"expired": "expired"

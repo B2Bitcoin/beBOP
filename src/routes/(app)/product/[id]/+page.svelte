@@ -64,7 +64,7 @@
 		};
 	}
 
-	const { t, i18n } = useI18n();
+	const { t, locale } = useI18n();
 </script>
 
 <svelte:head>
@@ -176,7 +176,7 @@
 							</div>
 							<GoalProgress
 								class="font-bold mt-3"
-								text="{Number(7).toLocaleString(i18n.locale, {
+								text="{Number(7).toLocaleString($locale, {
 									style: 'currency',
 									currency: 'EUR',
 									minimumFractionDigits: 0
@@ -243,7 +243,7 @@
 					{#if isPreorder && data.product.availableDate}
 						<p>
 							{t('product.preorderText', {
-								date: new Date(data.product.availableDate).toLocaleDateString(i18n.locale, {
+								date: new Date(data.product.availableDate).toLocaleDateString($locale, {
 									year: 'numeric',
 									month: 'long',
 									day: 'numeric'
@@ -363,7 +363,7 @@
 					{:else}
 						<p>
 							{t('product.availableOn', {
-								date: new Date(data.product.availableDate).toLocaleDateString(i18n.locale, {
+								date: new Date(data.product.availableDate).toLocaleDateString($locale, {
 									year: 'numeric',
 									month: 'long',
 									day: 'numeric'
