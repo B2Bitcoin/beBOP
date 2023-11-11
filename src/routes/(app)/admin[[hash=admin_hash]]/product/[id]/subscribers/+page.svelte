@@ -114,7 +114,7 @@
 							{subscriptionStatus(subscription)}
 						</td>
 						<td class="px-6 py-4 whitespace-no-wrap">
-							updatedAt.toLocaleDateString(i18n.locale)}</td
+							{subscription.updatedAt.toLocaleDateString(i18n.locale)}</td
 						>
 						<td class="px-6 py-4 whitespace-no-wrap">
 							{subscription.user.npub ? subscription.user.npub : ''}</td
