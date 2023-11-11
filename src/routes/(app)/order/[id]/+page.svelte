@@ -11,7 +11,7 @@
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
-	import { differenceInMinutes, format } from 'date-fns';
+	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();
@@ -33,7 +33,7 @@
 		return () => clearInterval(interval);
 	});
 
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
@@ -53,7 +53,7 @@
 			{#if data.order.payment.status !== 'expired' && data.order.payment.status !== 'canceled'}
 				<div>
 					<Trans key="order.linkReminder"
-						><a class="underline text-link break-all break-words" href={$page.url.href}
+						><a class="underline text-link break-all break-words" href={$page.url.href} slot="0"
 							>{$page.url.href}</a
 						></Trans
 					>
@@ -127,8 +127,8 @@
 				<Trans key="order.createdAt"
 					><time
 						datetime={data.order.createdAt.toJSON()}
-						title={data.order.createdAt.toLocaleString('en')}
-						>{format(data.order.createdAt, 'dd-MM-yyyy HH:mm:ss')}</time
+						title={data.order.createdAt.toLocaleString($locale)}
+						slot="0">{data.order.createdAt.toLocaleString($locale)}</time
 					></Trans
 				>
 			</p>

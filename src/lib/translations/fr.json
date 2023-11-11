@@ -107,7 +107,7 @@
 		"willReceiveSessionLink": "Vous recevrez un lien de session sur votre adresse"
 	},
 	"order": {
-		"createdAt": "Créée à <0></0>",
+		"createdAt": "Créée le <0></0>",
 		"discount": {
 			"title": "Rabais"
 		},
