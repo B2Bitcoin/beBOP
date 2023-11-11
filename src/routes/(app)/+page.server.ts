@@ -1,22 +1,22 @@
-import { load as cmsLoad } from './[slug]/+page.server';
+import { collections } from '$lib/server/database';
+import { omit } from 'lodash-es';
 import { load as catalogLoad } from './catalog/+page.server';
+import { cmsFromContent } from '$lib/server/cms';
 
 export const load = async ({ locals }) => {
-	try {
-		return {
-			// @ts-expect-error only params is needed
-			cms: await cmsLoad({ params: { slug: 'home' } })
-		};
-	} catch (e) {
-		// also, body: { message: 'CMS Page not found' }
-		const is404 = e && typeof e === 'object' && 'status' in e && e.status === 404;
-		if (!is404) {
-			throw e;
-		}
+	const cmsPage = await collections.cmsPages.findOne({
+		_id: 'home'
+	});
 
+	if (!cmsPage) {
 		return {
 			// @ts-expect-error only locals is needed
 			catalog: catalogLoad({ locals: locals })
 		};
 	}
+
+	return {
+		cmsPage: omit(cmsPage, ['content']),
+		cmsData: cmsFromContent(cmsPage.content, locals.user?.roleId)
+	};
 };

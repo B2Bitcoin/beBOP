@@ -208,13 +208,20 @@ export function picturesForProducts(productIds: string[]): Promise<Picture[]> {
 		.toArray();
 }
 
-export function picturesForSliders(sliderIds: string[]): Promise<Picture[]> {
+export function pictureIdsForProducts(productIds: string[]): Promise<string[]> {
 	return collections.pictures
-		.find({ 'slider._id': { $in: sliderIds } })
-		.sort({ createdAt: 1 })
+		.aggregate<Pick<Picture, '_id'>>([
+			{ $match: { productId: { $in: productIds } } },
+			{ $sort: { createdAt: 1 } },
+			{ $project: { _id: 1 } },
+			{
+				$group: {
+					_id: '$productId',
+					value: { $first: '$$ROOT' }
+				}
+			},
+			{ $replaceRoot: { newRoot: '$value' } }
+		])
+		.map((picture) => picture._id)
 		.toArray();
-}
-
-export function picturesForTags(tagIds: string[]): Promise<Picture[]> {
-	return collections.pictures.find({ 'tag._id': { $in: tagIds } }).toArray();
 }

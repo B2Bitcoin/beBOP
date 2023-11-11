@@ -10,6 +10,7 @@ import { productBaseSchema } from '../product-schema';
 import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
+import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 
 export const load = async ({ params }) => {
 	const product = await collections.products.findOne({ _id: params.id });
@@ -68,12 +69,16 @@ export const actions: Actions = {
 			.object({
 				tagIds: z.string().array(),
 				...productBaseSchema,
-				changedDate: z.boolean({ coerce: true }).default(false)
+				changedDate: z.boolean({ coerce: true }).default(false),
+				contentBefore: z.string().max(MAX_CONTENT_LIMIT),
+				contentAfter: z.string().max(MAX_CONTENT_LIMIT)
 			})
 			.parse({
 				...json,
 				availableDate: formData.get('availableDate') || undefined,
-				tagIds: formData.getAll('tagIds')
+				tagIds: formData.getAll('tagIds'),
+				contentBefore: formData.get('contentBefore'),
+				contentAfter: formData.get('contentAfter')
 			});
 
 		if (product.type !== 'resource') {
@@ -152,6 +157,8 @@ export const actions: Actions = {
 						}
 					},
 					tagIds: parsed.tagIds,
+					contentBefore: parsed.contentBefore,
+					contentAfter: parsed.contentAfter,
 					updatedAt: new Date()
 				},
 				$unset: {

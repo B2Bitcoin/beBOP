@@ -46,7 +46,7 @@
 					<a href="{data.adminPrefix}/tags/{tag._id}" class="underline text-blue">
 						{tag.name}
 					</a>
-					- <span class="text-gray-550">[tag={tag._id}]</span>
+					- <span class="text-gray-550">[Tag={tag._id}]</span>
 				</li>
 			{:else}
 				No tags yet
@@ -68,7 +68,7 @@
 					<a href="{data.adminPrefix}/tags/{tag._id}" class="underline text-blue">
 						{tag.name}
 					</a>
-					- <span class="text-gray-550">[tag={tag._id}]</span>
+					- <span class="text-gray-550">[Tag={tag._id}]</span>
 				</li>
 			{:else}
 				No tags yet
@@ -90,7 +90,7 @@
 					<a href="{data.adminPrefix}/tags/{tag._id}" class="underline text-blue">
 						{tag.name}
 					</a>
-					- <span class="text-gray-550">[tag={tag._id}]</span>
+					- <span class="text-gray-550">[Tag={tag._id}]</span>
 				</li>
 			{:else}
 				No tags yet
@@ -108,7 +108,7 @@
 					<a href="{data.adminPrefix}/tags/{tag._id}" class="underline text-blue">
 						{tag.name}
 					</a>
-					- <span class="text-gray-550">[tag={tag._id}]</span>
+					- <span class="text-gray-550">[Tag={tag._id}]</span>
 				</li>
 			{:else}
 				No tags yet

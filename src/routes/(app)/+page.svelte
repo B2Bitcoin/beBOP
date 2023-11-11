@@ -5,8 +5,8 @@
 	export let data;
 </script>
 
-{#if data.cms}
-	<CmsPage {...data} {...data.cms} />
+{#if data.cmsData}
+	<CmsPage {...data} {...data.cmsData} />
 {:else}
 	<Catalog {...data.catalog} />
 {/if}
