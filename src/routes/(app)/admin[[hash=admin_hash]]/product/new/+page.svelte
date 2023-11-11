@@ -12,6 +12,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays } from 'date-fns';
 	import PictureComponent from '$lib/components/Picture.svelte';
+	import { MultiSelect } from 'svelte-multiselect';
 
 	export let data;
 	let product = data.product;
@@ -50,6 +51,7 @@
 	let retailBasket =
 		product?.actionSettings.retail.canBeAddedToBasket ??
 		data.productActionSettings.retail.canBeAddedToBasket;
+	let tagIds = product?.tagIds ?? [];
 
 	let curr: 'SAT' | 'BTC';
 	$: enablePreorder = availableDate && availableDate > new Date().toJSON().slice(0, 10);
@@ -296,21 +298,21 @@
 		/>
 	</label>
 
-	<div class="flex flex-col gap-4 w-[30%]">
-		<label class="form-label"
-			>Product Tags
-			<select multiple name="tagIds" class="form-input min-h-[20rem]">
-				{#each data.tags as tag}
-					<option value={tag._id}>
-						{tag.name}
-					</option>
-				{/each}
-			</select>
-			<p class="text-gray-600 text-sm">
-				You can hold Ctrl to select indivdual items, or Shift to select multiple items at once
-			</p>
-		</label>
-	</div>
+	<!-- svelte-ignore a11y-label-has-associated-control -->
+	<label class="form-label"
+		>Product Tags
+		<MultiSelect
+			name="tagIds"
+			options={data.tags.map((tag) => ({
+				value: tag._id,
+				label: tag.name
+			}))}
+			selected={tagIds.map((tagId) => ({
+				value: tagId,
+				label: data.tags.find((tag) => tag._id === tagId)?.name ?? tagId
+			}))}
+		/>
+	</label>
 
 	<label>
 		Type

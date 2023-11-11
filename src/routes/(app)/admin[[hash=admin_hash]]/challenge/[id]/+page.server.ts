@@ -50,7 +50,9 @@ export const actions = {
 			})
 			.parse({
 				name: data.get('name'),
-				productIds: data.getAll('productIds'),
+				productIds: JSON.parse(String(data.get('productIds'))).map(
+					(x: { value: string }) => x.value
+				),
 				goalAmount: data.get('goalAmount'),
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
+	import { P } from 'flowbite-svelte';
+	import { MultiSelect } from 'svelte-multiselect';
 
 	export let data;
 
@@ -93,16 +95,18 @@
 		</label>
 	</div>
 
-	<div class="flex flex-col gap-4 w-[30%]">
-		<h2 class="text-xl">Products</h2>
-		<select multiple name="productIds" value={data.challenge.productIds}>
-			{#each data.products as product}
-				<option value={product._id}>
-					{product.name}
-				</option>
-			{/each}
-		</select>
-	</div>
+	<!-- svelte-ignore a11y-label-has-associated-control -->
+	<label class="form-label">
+		Products
+		<MultiSelect
+			name="productIds"
+			options={data.products.map((p) => ({ label: p.name, value: p._id }))}
+			selected={data.challenge.productIds.map((productId) => ({
+				value: productId,
+				label: data.products.find((p) => p._id === productId)?.name ?? productId
+			}))}
+		/>
+	</label>
 
 	<div class="flex flex-row justify-between gap-2">
 		<input type="submit" class="btn btn-blue text-white" formaction="?/update" value="Update" />

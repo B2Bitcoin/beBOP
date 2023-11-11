@@ -15,7 +15,7 @@ export async function load({ params }) {
 
 	const beginsAt = discount.beginsAt?.toJSON().slice(0, 10);
 	const endsAt = discount.endsAt.toJSON().slice(0, 10);
-	const requiredSubscription = await collections.products
+	const subscriptions = await collections.products
 		.find({ type: 'subscription' })
 		.project<Pick<Product, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
@@ -32,7 +32,7 @@ export async function load({ params }) {
 		beginsAt,
 		endsAt,
 		products,
-		requiredSubscription
+		subscriptions
 	};
 }
 
@@ -60,8 +60,12 @@ export const actions = {
 			})
 			.parse({
 				name: data.get('name'),
-				subscriptionIds: data.getAll('subscriptionIds'),
-				productIds: data.getAll('productIds'),
+				subscriptionIds: JSON.parse(String(data.get('subscriptionIds'))).map(
+					(x: { value: string }) => x.value
+				),
+				productIds: JSON.parse(String(data.get('productIds'))).map(
+					(x: { value: string }) => x.value
+				),
 				wholeCatalog: data.get('wholeCatalog'),
 				percentage: data.get('percentage'),
 				beginsAt: data.get('beginsAt'),
