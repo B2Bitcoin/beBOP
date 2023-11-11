@@ -1,3 +1,7 @@
+import child_process from 'child_process';
+
+process.env.PUBLIC_COMMIT_ID = child_process.execSync('git rev-parse HEAD').toString().trim();
+
 import 'sharp'; // Otherwise build errors with "module did not self-register"
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';

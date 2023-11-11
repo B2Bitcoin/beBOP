@@ -1,7 +1,8 @@
 import { runtimeConfig } from '$lib/server/runtime-config';
 
-export async function load() {
+export async function load(event) {
 	return {
-		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl
+		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
+		language: event.locals.language
 	};
 }

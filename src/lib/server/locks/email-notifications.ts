@@ -3,6 +3,7 @@ import { Lock } from '../lock';
 import { collections } from '../database';
 import type { EmailNotification } from '$lib/types/EmailNotification';
 import { emailsEnabled, sendEmail } from '../email';
+import { building } from '$app/environment';
 
 const lock = emailsEnabled ? new Lock('notifications.email') : null;
 
@@ -58,7 +59,7 @@ async function handleEmailNotification(email: EmailNotification): Promise<void> 
 	}
 }
 
-if (emailsEnabled) {
+if (emailsEnabled && !building) {
 	collections.emailNotifications
 		.watch([{ $match: { operationType: 'insert' } }], {
 			fullDocument: 'updateLookup'

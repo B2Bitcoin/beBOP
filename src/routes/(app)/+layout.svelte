@@ -24,6 +24,7 @@
 	import { currencies } from '$lib/stores/currencies';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
+	import { useI18n } from '$lib/i18n';
 
 	export let data;
 
@@ -77,12 +78,9 @@
 	$: if (items.length === 0) {
 		cartOpen = false;
 	}
-</script>
 
-<svelte:head>
-	<title>B2Bitcoin Bootik</title>
-	<meta name="description" content="B2Bitcoin's official bootik" />
-</svelte:head>
+	const { t } = useI18n();
+</script>
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
 	{#if $page.data.layoutReset}
@@ -248,7 +246,7 @@
 												</a>
 												{#if item.product.type !== 'subscription' && !item.product.standalone}
 													<div class="flex items-center gap-2 text-gray-700">
-														<span class="text-xs">Quantity: </span>
+														<span class="text-xs">{t('cart.quantity')}: </span>
 														<CartQuantity {item} sm />
 													</div>
 												{/if}
@@ -272,14 +270,14 @@
 
 												<button formaction="/cart/{item.product._id}/?/remove">
 													<IconTrash class="text-gray-800" />
-													<span class="sr-only">Remove item from cart</span>
+													<span class="sr-only">{t('cart.sr.remove')}</span>
 												</button>
 											</div>
 										</form>
 									{/each}
 									{#if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
-											Vat ({data.vatRate}%) <PriceTag
+											{t('cart.vat')} ({data.vatRate}%) <PriceTag
 												currency={data.currencies.main}
 												amount={vat}
 												main
@@ -287,16 +285,15 @@
 										</div>
 									{/if}
 									<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
-										Total <PriceTag
-											currency={data.currencies.main}
-											amount={totalPriceWithVat}
-											main
-										/>
+										{t('cart.total')}
+										<PriceTag currency={data.currencies.main} amount={totalPriceWithVat} main />
 									</div>
-									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap"> View cart </a>
-									{#if items.length > 0}<a href="/checkout" class="btn btn-black">
-											Checkout
-										</a>{/if}
+									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap">
+										{t('cart.cta.view')}
+									</a>
+									<a href="/checkout" class="btn btn-black">
+										{t('cart.cta.checkout')}
+									</a>
 								</div>
 							</Popup>
 						{/if}
@@ -319,7 +316,9 @@
 		</div>
 		<footer class="bg-gray-850 h-[90px] items-center flex">
 			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 text-gray-550 grow">
-				<span class="font-light">Powered by</span><span class="font-display text-xl text-white">
+				<span class="font-light">{t('footer.poweredBy')}</span><span
+					class="font-display text-xl text-white"
+				>
 					LaBookinerie.
 				</span>
 				<div class="ml-auto flex gap-4 items-center">

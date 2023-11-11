@@ -69,6 +69,7 @@
 		"devalue": "^4.3.2",
 		"fetch-socks": "^1.2.0",
 		"html-to-text": "^9.0.5",
+		"i18n-js": "^4.3.2",
 		"jose": "^4.14.4",
 		"lodash-es": "^4.17.21",
 		"marked": "^4.3.0",

@@ -1,0 +1,209 @@
+{
+	"address": {
+		"address": "Adresse",
+		"city": "Ville",
+		"country": "Pays",
+		"firstName": "Prénom",
+		"lastName": "Nom de famille",
+		"state": "État",
+		"zipCode": "Code postal"
+	},
+	"cart": {
+		"cta": {
+			"checkout": "Passer à la caisse",
+			"view": "Voir le panier"
+		},
+		"empty": "Le panier est vide",
+		"quantity": "Quantité",
+		"sr": {
+			"decrease": "Diminuer la quantité",
+			"increase": "Augmenter la quantité",
+			"remove": "Supprimer l'article du panier"
+		},
+		"total": "Total",
+		"vat": "TVA",
+		"vatIpCountry": "Le pays est déterminé grâce aux données de %{link}",
+		"vatRate": "Taux de TVA pour %{country}",
+		"vatSellerCountry": "Le pays est le pays du vendeur."
+	},
+	"challenge": {
+		"endsAt": "Se termine le %{date}",
+		"goalMet": "Bon travail les gars! \n👏👏",
+		"goalOvershot": "Vous êtes incroyables les gars ! \n🤭",
+		"list": "Liste des défis",
+		"numProducts": {
+			"one": "%{count} produit",
+			"other": "%{count} produits",
+			"zero": "%{count} produits"
+		},
+		"singleTitle": "Défi %{name}",
+		"title": "Défis"
+	},
+	"checkout": {
+		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (%{link})",
+		"backToCart": "Retour au panier",
+		"cta": {
+			"submit": "Payer"
+		},
+		"deliveryFees": "Frais de livraison",
+		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'informations d'expédition.",
+		"invalidNpub": "Adresse publique NostR invalide",
+		"ipCollectWhy": "pourquoi ?",
+		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
+		"notifications": {
+			"email": "E-mail",
+			"npub": "Sonorisation publique NostR",
+			"title": "Alimentation"
+		},
+		"numProducts": {
+			"one": "%{count} produit",
+			"other": "%{count} produits",
+			"zero": "%{count} produits"
+		},
+		"payment": {
+			"method": "Mode de paiement",
+			"title": "Paiement"
+		},
+		"paymentMethod": {
+			"bitcoin": "En chaîne",
+			"cash": "Espèces",
+			"lighthing": "Foudre",
+			"unavailable": "Aucun mode de paiement disponible."
+		},
+		"paymentStatus": "Statut de paiement",
+		"shipmentInfo": "Informations d'expédition",
+		"title": "Vérifier",
+		"tos": "conditions d'utilisation",
+		"tosAgree": "J'accepte les %{termsOfService}",
+		"vatShippingAddress": "Le pays est déterminé par l'adresse de livraison"
+	},
+	"error": {
+		"title": "Erreur %{status}"
+	},
+	"footer": {
+		"poweredBy": "Alimenté par"
+	},
+	"login": {
+		"authenticate": {
+			"inputLabel": "E-mail ou npub",
+			"title": "Ajouter une authentification"
+		},
+		"cta": {
+			"authenticateAs": "Authentifiez-vous en tant que %{as}",
+			"clearSession": "Effacer la session",
+			"logout": "Se déconnecter",
+			"signInWith": "Connectez-vous avec %{provider}"
+		},
+		"session": {
+			"email": "E-mail : %{e-mail}",
+			"npub": "Npub : %{npub}",
+			"title": "Session",
+			"userId": "ID utilisateur : %{userId}"
+		},
+		"sso": {
+			"title": "Ou connectez-vous avec"
+		},
+		"willReceiveSessionLink": "Vous recevrez un lien de session sur votre adresse"
+	},
+	"order": {
+		"createdAt": "Créé à %{date}",
+		"discount": {
+			"title": "Rabais"
+		},
+		"linkReminder": "Conservez ce lien : %{link} pour accéder à la commande ultérieurement.",
+		"payToComplete": "Payez pour finaliser la commande.",
+		"payToCompleteBitcoin": {
+			"one": "La commande sera marquée comme payée après 1 confirmation.",
+			"other": "La commande sera marquée comme payée après %{count} confirmations.",
+			"zero": "La commande sera marquée comme payée sans attendre les confirmations."
+		},
+		"paymentAddress": "Adresse de facturation",
+		"paymentAmount": "Montant du paiement",
+		"paymentStatus": {
+			"canceledTemplate": "Commande annulée !",
+			"expiredTemplate": "Commande expirée !",
+			"paid": "payé",
+			"paidTemplate": "Commande %{paymentStatus} !"
+		},
+		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
+		"shippingAddress": {
+			"title": "Adresse de livraison"
+		},
+		"singleTitle": "Commande %#{number}",
+		"timeRemaining": "Temps restant : %{minutes} minutes",
+		"vatFree": "Cette commande est hors TVA. \nRaison : %{reason}"
+	},
+	"pos": {
+		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique un %{giftDiscount}",
+		"cta": {
+			"cancelOrder": "Annuler",
+			"markOrderPaid": "Marc a payé"
+		},
+		"discountJustification": "Justification",
+		"gitDiscount": "remise cadeau",
+		"invalidDiscount": "La réduction n'est pas valable !",
+		"lastOrders": {
+			"title": "Dernières commandes"
+		},
+		"order": {
+			"satReceived": "reçu"
+		},
+		"session": {
+			"waitingPaymentConfirmation": "En attente de confirmation",
+			"welcomeMessage": "Nous sommes heureux de vous voir",
+			"welcomeTitle": "Accueillir"
+		},
+		"sessionLink": "Possession",
+		"vatFree": "Il s'agit d'une commande sans TVA (%{conditions})",
+		"vatFreeConditions": "conditions",
+		"vatFreeReason": "Motif hors TVA"
+	},
+	"product": {
+		"addedToCart": "Produit ajouté au panier",
+		"availableOn": "Disponible le %{date}",
+		"checkBackLater": "Veuillez revenir plus tard",
+		"cta": {
+			"add": "Ajouter au panier",
+			"buy": "Acheter",
+			"donate": "Faire un don",
+			"preorder": "Précommander",
+			"subscribe": "S'abonner"
+		},
+		"digitalFiles": {
+			"title": "Fichiers numériques"
+		},
+		"discountBanner": "%{discountPercent}% de pour %{hours}h",
+		"freeWithSub": "Ce produit est disponible gratuitement avec votre abonnement mensuel",
+		"freeWithTitle": "Gratuit avec \"xxxxx",
+		"nameYourPrice": "Nommez votre prix (%{currency})",
+		"notForSale": "Ce produit n'est pas disponible à la vente",
+		"outOfStock": "En rupture de stock",
+		"preorderText": "Ceci est une précommande, votre produit sera disponible le %{date}",
+		"pricePlaceholder": "Prix",
+		"seeInCabinet": "Voir dans MonCabinet",
+		"type": {
+			"digitalResource": "Ressource numérique",
+			"donation": "Don",
+			"phisical": "Physique",
+			"preorder": "Pré-commander",
+			"preview": "Aperçu",
+			"resource": "Ressource",
+			"subscription": "Abonnement"
+		}
+	},
+	"subscription": {
+		"associated": {
+			"npub": "Associé à npub : %{npub}"
+		},
+		"cantRenew": "Abonnement non renouvelable",
+		"cta": {
+			"renew": "Renouveler"
+		},
+		"initiallyCreated": "Créé initialement : %{date}",
+		"paidUntil": "Payé jusqu'au : %{date}",
+		"singleTitle": "Abonnement #%{number}",
+		"status": {
+			"expired": "expiré"
+		}
+	}
+}
