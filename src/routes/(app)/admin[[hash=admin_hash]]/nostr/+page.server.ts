@@ -40,9 +40,9 @@ export const actions = {
 			? await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId })
 			: null;
 		const pictureUrl = picture
-			? `${ORIGIN}/picture/raw/${picture._id}/format/${
-					picture.storage.formats.find((f) => f.width <= 512 || f.height <= 512)?.width
-			  }`
+			? `${ORIGIN}/picture/raw/${picture._id}/format/${picture.storage.formats.find(
+					(f) => f.width <= 512 || f.height <= 512
+			  )?.width}`
 			: null;
 
 		const lndInfo = isLightningConfigured ? await lndGetInfo() : null;
