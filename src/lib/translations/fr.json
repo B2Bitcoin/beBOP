@@ -24,12 +24,13 @@
 		},
 		"total": "Total",
 		"vat": "TVA",
-		"vatIpCountry": "Le pays est déterminé grâce aux données de {link}",
+		"vatIpCountry": "Le pays est déterminé grâce aux données de <0></0>",
+		"vatIpCountryText": "Le pays est déterminé grâce aux données de {link}",
 		"vatRate": "Taux de TVA pour {country}",
 		"vatSellerCountry": "Le pays est le pays du vendeur."
 	},
 	"challenge": {
-		"endsAt": "Se termine le {date}",
+		"endsAt": "Se termine le <0></0>",
 		"goalMet": "Bon travail les gars! \n👏👏",
 		"goalOvershot": "Vous êtes incroyables les gars ! \n🤭",
 		"list": "Liste des défis",
@@ -42,7 +43,7 @@
 		"title": "Défis"
 	},
 	"checkout": {
-		"agreeIpCollect": "J'accepte la collecte de mon adresse IP ({link})",
+		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (<0>pourquoi?</0>)",
 		"backToCart": "Retour au panier",
 		"cta": {
 			"submit": "Payer"
@@ -50,7 +51,6 @@
 		"deliveryFees": "Frais de livraison",
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'informations d'expédition.",
 		"invalidNpub": "Adresse publique NostR invalide",
-		"ipCollectWhy": "pourquoi ?",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"notifications": {
 			"email": "E-mail",
@@ -75,8 +75,7 @@
 		"paymentStatus": "Statut de paiement",
 		"shipmentInfo": "Informations d'expédition",
 		"title": "Vérifier",
-		"tos": "conditions d'utilisation",
-		"tosAgree": "J'accepte les {termsOfService}",
+		"tosAgree": "J'accepte les <0>conditions d'utilisation</0>",
 		"vatShippingAddress": "Le pays est déterminé par l'adresse de livraison"
 	},
 	"error": {
@@ -108,11 +107,11 @@
 		"willReceiveSessionLink": "Vous recevrez un lien de session sur votre adresse"
 	},
 	"order": {
-		"createdAt": "Créé à {date}",
+		"createdAt": "Créée le <0></0>",
 		"discount": {
 			"title": "Rabais"
 		},
-		"linkReminder": "Conservez ce lien : {link} pour accéder à la commande ultérieurement.",
+		"linkReminder": "Conservez ce lien : <0></0> pour accéder à la commande ultérieurement.",
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
 			"one": "La commande sera marquée comme payée après 1 confirmation.",
@@ -124,8 +123,7 @@
 		"paymentStatus": {
 			"canceledTemplate": "Commande annulée !",
 			"expiredTemplate": "Commande expirée !",
-			"paid": "payé",
-			"paidTemplate": "Commande {paymentStatus} !"
+			"paidTemplate": "Commande <0>payée</0> !"
 		},
 		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
 		"shippingAddress": {
@@ -136,13 +134,12 @@
 		"vatFree": "Cette commande est hors TVA. \nRaison : {reason}"
 	},
 	"pos": {
-		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique un {giftDiscount}",
+		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique une <0>remise cadeau</0>",
 		"cta": {
 			"cancelOrder": "Annuler",
 			"markOrderPaid": "Marc a payé"
 		},
 		"discountJustification": "Justification",
-		"gitDiscount": "remise cadeau",
 		"invalidDiscount": "La réduction n'est pas valable !",
 		"lastOrders": {
 			"title": "Dernières commandes"
@@ -156,8 +153,7 @@
 			"welcomeTitle": "Accueillir"
 		},
 		"sessionLink": "Possession",
-		"vatFree": "Il s'agit d'une commande sans TVA ({conditions})",
-		"vatFreeConditions": "conditions",
+		"vatFree": "Il s'agit d'une commande sans TVA (<0>conditions</0>)",
 		"vatFreeReason": "Motif hors TVA"
 	},
 	"product": {
@@ -201,8 +197,8 @@
 		"cta": {
 			"renew": "Renouveler"
 		},
-		"initiallyCreated": "Créé initialement : {date}",
-		"paidUntil": "Payé jusqu'au : {date}",
+		"initiallyCreated": "Créé initialement : <0></0>",
+		"paidUntil": "Payé jusqu'au : <0></0>",
 		"singleTitle": "Abonnement #{number}",
 		"status": {
 			"expired": "expiré"

@@ -19,7 +19,7 @@
 
 	<p>
 		<Trans key="subscription.initiallyCreated"
-			><time datetime={data.subscription.createdAt.toJSON()}
+			><time datetime={data.subscription.createdAt.toJSON()} slot="0"
 				>{new Date(data.subscription.createdAt).toLocaleString($locale)}</time
 			></Trans
 		>
@@ -27,7 +27,7 @@
 
 	<p>
 		<Trans key="subscription.paidUntil"
-			><time datetime={data.subscription.paidUntil.toJSON()}
+			><time datetime={data.subscription.paidUntil.toJSON()} slot="0"
 				>{new Date(data.subscription.paidUntil).toLocaleString($locale)}</time
 			></Trans
 		>

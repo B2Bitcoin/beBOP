@@ -19,7 +19,10 @@
 		</h3>
 		<span class="text-base font-light text-gray-550"
 			><Trans key="challenge.endsAt"
-				><time datetime={challenge.endsAt.toJSON()} title={challenge.endsAt.toLocaleString($locale)}
+				><time
+					datetime={challenge.endsAt.toJSON()}
+					slot="0"
+					title={challenge.endsAt.toLocaleString($locale)}
 					>{challenge.endsAt.toLocaleDateString($locale)}</time
 				></Trans
 			>
