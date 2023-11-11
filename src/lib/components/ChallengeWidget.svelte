@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Challenge } from '$lib/types/Challenge';
-	import { format } from 'date-fns';
 	import GoalProgress from './GoalProgress.svelte';
 	import PriceTag from './PriceTag.svelte';
 	import { useI18n } from '$lib/i18n';
@@ -23,7 +22,7 @@
 				><time
 					datetime={challenge.endsAt.toJSON()}
 					title={challenge.endsAt.toLocaleString(i18n.locale)}
-					>{format(challenge.endsAt, 'MMMM dd, Y')}</time
+					>{challenge.endsAt.toLocaleDateString(i18n.locale)}</time
 				></Trans
 			>
 		</span>

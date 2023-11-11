@@ -31,6 +31,7 @@ import { countryFromIp } from '$lib/server/geoip';
 import { isAllowedOnPage } from '$lib/types/Role';
 import { languages } from '$lib/translations';
 import { addTranslations } from '$lib/i18n';
+import { filterNullish } from '$lib/utils/fillterNullish';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -97,10 +98,15 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	event.locals.clientIp = event.getClientAddress();
 
-	const acceptLanguages = event.request.headers
-		.get('accept-language')
-		?.split(',')
-		?.map((lang) => lang.slice(0, 2)) || ['en'];
+	// Prioritize lang in URL, then in accept-language header, then default to en
+	const acceptLanguages = filterNullish([
+		event.url.searchParams.get('lang'),
+		...(event.request.headers
+			.get('accept-language')
+			?.split(',')
+			?.map((lang) => lang.slice(0, 2)) ?? []),
+		'en'
+	]);
 	event.locals.language = acceptLanguages.find((l) => l in languages) || 'en';
 
 	if (
