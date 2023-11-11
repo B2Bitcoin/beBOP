@@ -14,6 +14,7 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
 	const SLIDER_WIDGET_REGEX =
 		/\[Slider=(?<slug>[a-z0-9-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/gi;
+	const TAG_WIDGET_REGEX = /\[Tag=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -25,6 +26,7 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
 	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
 	const sliderMatches = content.matchAll(SLIDER_WIDGET_REGEX);
+	const tagMatches = content.matchAll(TAG_WIDGET_REGEX);
 
 	let index = 0;
 
@@ -37,7 +39,8 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 		),
 		...[...sliderMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
-		)
+		),
+		...[...tagMatches].map((m) => Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' }))
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	for (const match of orderedMatches) {
@@ -76,9 +79,8 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 				display: match.groups?.display,
 				raw: match[0]
 			});
-		} else if (match.type) {
-			index = match.index + match[0].length;
 		}
+		index = match.index + match[0].length;
 	}
 
 	tokens.push({
