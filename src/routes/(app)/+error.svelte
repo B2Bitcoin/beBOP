@@ -9,7 +9,7 @@
 	<article
 		class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 gap-4 flex flex-col text-center"
 	>
-		<h1 class="text-3xl">{(t('error.title'), { status: $page.error?.status ?? $page.status })}</h1>
+		<h1 class="text-3xl">{t('error.title', { status: $page.error?.status ?? $page.status })}</h1>
 		<h2 class="text-2xl">{$page.error?.message}</h2>
 	</article>
 </main>
