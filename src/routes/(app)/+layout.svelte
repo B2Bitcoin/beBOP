@@ -82,6 +82,10 @@
 	const { t } = useI18n();
 </script>
 
+<!--
+	We use data-sveltekit-preload-data="off" on header/footer links due to this: 	https://github.com/sveltejs/kit/issues/9508#issuecomment-1807200239
+-->
+
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
 	{#if $page.data.layoutReset}
 		<slot />
@@ -99,7 +103,9 @@
 				<span class="grow" />
 				<nav class="flex gap-10 text-[22px] font-semibold">
 					{#each data.links.topbar as link}
-						<a href={link.href} class="hidden sm:inline">{link.label}</a>
+						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off"
+							>{link.label}</a
+						>
 					{/each}
 				</nav>
 				{#if 0}
@@ -121,7 +127,7 @@
 				class="bg-gray-850 flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
 			>
 				{#each data.links.topbar as link}
-					<a class="py-4" href={link.href}>{link.label}</a>
+					<a class="py-4" href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
 				{/each}
 			</nav>
 		{/if}
@@ -139,7 +145,9 @@
 						<a href="/categories" class="flex gap-2 items-center">Categories <IconDownArrow /></a>
 					{/if}
 					{#each data.links.navbar as link}
-						<a href={link.href} class="hidden sm:inline">{link.label}</a>
+						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off"
+							>{link.label}</a
+						>
 					{/each}
 				</nav>
 				{#if 0}
@@ -307,7 +315,9 @@
 				class="bg-gray-240 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 			>
 				{#each data.links.navbar as link}
-					<a class="py-2 hover:underline" href={link.href}>{link.label}</a>
+					<a class="py-2 hover:underline" data-sveltekit-preload-data="off" href={link.href}
+						>{link.label}</a
+					>
 				{/each}
 			</nav>
 		{/if}
@@ -323,7 +333,9 @@
 				</span>
 				<div class="ml-auto flex gap-4 items-center">
 					{#each data.links.footer as link}
-						<a href={link.href} class="text-gray-550">{link.label}</a>
+						<a href={link.href} data-sveltekit-preload-data="off" class="text-gray-550"
+							>{link.label}</a
+						>
 					{/each}
 				</div>
 			</div>
