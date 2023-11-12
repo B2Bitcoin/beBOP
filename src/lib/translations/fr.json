@@ -4,13 +4,13 @@
 		"city": "Ville",
 		"country": "Pays",
 		"firstName": "Prénom",
-		"lastName": "Nom de famille",
-		"state": "État",
+		"lastName": "Nom",
+		"state": "État / Région",
 		"zipCode": "Code postal"
 	},
 	"cart": {
 		"cta": {
-			"checkout": "Passer à la caisse",
+			"checkout": "Commander",
 			"discardItem": "Supprimer",
 			"view": "Voir le panier"
 		},
@@ -24,15 +24,15 @@
 		},
 		"total": "Total",
 		"vat": "TVA",
-		"vatIpCountry": "Le pays est déterminé grâce aux données de <0></0>",
-		"vatIpCountryText": "Le pays est déterminé grâce aux données de {link}",
-		"vatRate": "Taux de TVA pour {country}",
-		"vatSellerCountry": "Le pays est le pays du vendeur."
+		"vatIpCountry": "\nDéterminé par votre adresse IP et grâce aux données de <0></0>",
+		"vatIpCountryText": "\nDéterminé par votre adresse IP et grâce aux données de {link}",
+		"vatRate": "Taux de TVA : {country}",
+		"vatSellerCountry": "\nLa TVA est celle du pays du vendeur."
 	},
 	"challenge": {
-		"endsAt": "Se termine le <0></0>",
-		"goalMet": "Bon travail les gars! \n👏👏",
-		"goalOvershot": "Vous êtes incroyables les gars ! \n🤭",
+		"endsAt": "Termine le <0></0>",
+		"goalMet": "Merci à tous ! \n👏👏",
+		"goalOvershot": "Vous êtes incroyables ! \n🤭",
 		"list": "Liste des défis",
 		"numProducts": {
 			"one": "{count} produit",
@@ -48,13 +48,13 @@
 		"cta": {
 			"submit": "Payer"
 		},
-		"deliveryFees": "Frais de livraison",
+		"deliveryFees": "Participation forfaitaire aux frais de port",
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'informations d'expédition.",
-		"invalidNpub": "Adresse publique NostR invalide",
+		"invalidNpub": "Adresse publique Nostr invalide",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"notifications": {
 			"email": "E-mail",
-			"npub": "Sonorisation publique NostR",
+			"npub": "Adresse publique Nostr",
 			"title": "Alimentation"
 		},
 		"numProducts": {
@@ -67,9 +67,9 @@
 			"title": "Paiement"
 		},
 		"paymentMethod": {
-			"bitcoin": "En chaîne",
+			"bitcoin": "BTC on-chain",
 			"cash": "Espèces",
-			"lighthing": "Foudre",
+			"lighthing": "Lightning",
 			"unavailable": "Aucun mode de paiement disponible."
 		},
 		"paymentStatus": "Statut de paiement",
@@ -162,7 +162,7 @@
 		"checkBackLater": "Veuillez revenir plus tard",
 		"cta": {
 			"add": "Ajouter au panier",
-			"buy": "Acheter",
+			"buy": "Commander",
 			"donate": "Faire un don",
 			"preorder": "Précommander",
 			"subscribe": "S'abonner"
@@ -170,13 +170,13 @@
 		"digitalFiles": {
 			"title": "Fichiers numériques"
 		},
-		"discountBanner": "{discountPercent}% de pour {hours}h",
+		"discountBanner": "%{discountPercent}% de réduction",
 		"freeWithSub": "Ce produit est disponible gratuitement avec votre abonnement mensuel",
 		"freeWithTitle": "Gratuit avec \"xxxxx",
-		"nameYourPrice": "Nommez votre prix ({currency})",
+		"nameYourPrice": "Choisissez votre prix ({currency})",
 		"notForSale": "Ce produit n'est pas disponible à la vente",
 		"outOfStock": "En rupture de stock",
-		"preorderText": "Ceci est une précommande, votre produit sera disponible le {date}",
+		"preorderText": "En précommande, disponible le {date}",
 		"pricePlaceholder": "Prix",
 		"seeInCabinet": "Voir dans MonCabinet",
 		"type": {
