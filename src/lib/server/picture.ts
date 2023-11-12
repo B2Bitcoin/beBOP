@@ -213,7 +213,7 @@ export function pictureIdsForProducts(productIds: string[]): Promise<string[]> {
 		.aggregate<Pick<Picture, '_id'>>([
 			{ $match: { productId: { $in: productIds } } },
 			{ $sort: { createdAt: 1 } },
-			{ $project: { _id: 1 } },
+			{ $project: { _id: 1, productId: 1 } },
 			{
 				$group: {
 					_id: '$productId',
