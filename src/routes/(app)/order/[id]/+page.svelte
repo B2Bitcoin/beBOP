@@ -87,7 +87,7 @@
 					<div class="text-xl">
 						{t('order.payToComplete')}
 						{#if data.order.payment.method === 'bitcoin'}
-							{t('order.payToCompleteBitcoin', { confirmations: data.confirmationBlocksRequired })}
+							{t('order.payToCompleteBitcoin', { count: data.confirmationBlocksRequired })}
 						{/if}
 					</div>
 				{/if}
