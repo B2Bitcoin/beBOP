@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { format } from 'date-fns';
+	import { useI18n } from '$lib/i18n.js';
 	import type { PaidSubscription } from '$lib/types/PaidSubscription.js';
 
 	export let data;
@@ -39,6 +39,8 @@
 		document.body.appendChild(link);
 		link.click();
 	}
+
+	const { locale } = useI18n();
 </script>
 
 <!-- <h1 class="text-3xl">Edit a product</h1> -->
@@ -112,7 +114,7 @@
 							{subscriptionStatus(subscription)}
 						</td>
 						<td class="px-6 py-4 whitespace-no-wrap">
-							{format(subscription.updatedAt, 'MMMM-dd-Y')}</td
+							{subscription.updatedAt.toLocaleDateString($locale)}</td
 						>
 						<td class="px-6 py-4 whitespace-no-wrap">
 							{subscription.user.npub ? subscription.user.npub : ''}</td

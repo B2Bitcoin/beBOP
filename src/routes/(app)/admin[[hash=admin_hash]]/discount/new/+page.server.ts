@@ -7,7 +7,7 @@ import { generateId } from '$lib/utils/generateId';
 import { adminPrefix } from '$lib/server/admin';
 
 export const load = async () => {
-	const requiredSubscription = await collections.products
+	const subscriptions = await collections.products
 		.find({ type: 'subscription' })
 		.project<Pick<Product, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
@@ -23,7 +23,7 @@ export const load = async () => {
 
 	return {
 		products,
-		requiredSubscription
+		subscriptions
 	};
 };
 
@@ -43,8 +43,12 @@ export const actions: Actions = {
 			})
 			.parse({
 				name: data.get('name'),
-				subscriptionIds: data.getAll('subscriptionIds'),
-				productIds: data.getAll('productIds'),
+				subscriptionIds: JSON.parse(String(data.get('subscriptionIds'))).map(
+					(x: { value: string }) => x.value
+				),
+				productIds: JSON.parse(String(data.get('productIds'))).map(
+					(x: { value: string }) => x.value
+				),
 				wholeCatalog: data.get('wholeCatalog'),
 				percentage: data.get('percentage'),
 				beginsAt: data.get('beginsAt'),

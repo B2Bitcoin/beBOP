@@ -8,6 +8,7 @@ import { addToCartInDb } from '$lib/server/cart';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
+import { cmsFromContent } from '$lib/server/cms';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -28,6 +29,8 @@ export const load = async ({ params, locals }) => {
 			| 'maxQuantityPerOrder'
 			| 'stock'
 			| 'actionSettings'
+			| 'contentBefore'
+			| 'contentAfter'
 		>
 	>(
 		{ _id: params.id },
@@ -46,7 +49,9 @@ export const load = async ({ params, locals }) => {
 				standalone: 1,
 				maxQuantityPerOrder: 1,
 				stock: 1,
-				actionSettings: 1
+				actionSettings: 1,
+				contentBefore: 1,
+				contentAfter: 1
 			}
 		}
 	);
@@ -87,6 +92,12 @@ export const load = async ({ params, locals }) => {
 		product,
 		pictures,
 		discount,
+		...(product.contentBefore && {
+			productCMSBefore: cmsFromContent(product.contentBefore, locals?.user?.roleId)
+		}),
+		...(product.contentAfter && {
+			productCMSAfter: cmsFromContent(product.contentAfter, locals?.user?.roleId)
+		}),
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};
 };

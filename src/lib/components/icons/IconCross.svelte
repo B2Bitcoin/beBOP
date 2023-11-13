@@ -1,6 +1,5 @@
 <svg
 	{...$$restProps}
-	on:click
 	width="16"
 	height="16"
 	viewBox="0 0 16 16"

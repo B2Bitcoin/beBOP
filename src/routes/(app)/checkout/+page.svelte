@@ -399,7 +399,7 @@
 									title="{t('cart.vatRate', { country: actualCountry })}. {data.vatSingleCountry
 										? t('cart.vatSellerCountry')
 										: isDigital
-										? `${t('cart.vatIpCountry', { link: 'https://lite.ip2location.com' })}`
+										? `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`
 										: t('checkout.vatShippingAddress')}"
 								>
 									<IconInfo class="cursor-pointer" />
@@ -449,8 +449,14 @@
 					<input type="checkbox" class="form-checkbox" name="teecees" form="checkout" required />
 					<span>
 						<Trans key="checkout.tosAgree"
-							><a href="/terms" target="_blank" class="text-link hover:underline">
-								{t('checkout.tos')}
+							><a
+								href="/terms"
+								target="_blank"
+								class="text-link hover:underline"
+								slot="0"
+								let:translation
+							>
+								{translation}
 							</a></Trans
 						>
 					</span>
@@ -467,8 +473,14 @@
 						/>
 						<span>
 							<Trans key="pos.vatFree"
-								><a href="/terms" target="_blank" class="text-link hover:underline">
-									{t('pos.vatFreeConditions')}
+								><a
+									href="/terms"
+									target="_blank"
+									class="text-link hover:underline"
+									slot="0"
+									let:translation
+								>
+									{translation}
 								</a></Trans
 							>
 						</span>
@@ -483,8 +495,14 @@
 						/>
 						<span>
 							<Trans key="pos.applyGiftDiscount">
-								<a href="/gift-discount" target="_blank" class="text-link hover:underline">
-									{t('pos.gitDiscount')}
+								<a
+									href="/gift-discount"
+									target="_blank"
+									class="text-link hover:underline"
+									slot="0"
+									let:translation
+								>
+									{translation}
 								</a>
 							</Trans>
 						</span>
@@ -542,8 +560,12 @@
 						/>
 						<span>
 							<Trans key="checkout.agreeIpCollect"
-								><a href="/why-collect-ip" target="_blank" class="text-link hover:underline"
-									>{t('checkout.ipCollectWhy')}</a
+								><a
+									href="/why-collect-ip"
+									target="_blank"
+									class="text-link hover:underline"
+									slot="0"
+									let:translation>{translation}</a
 								></Trans
 							>
 						</span>

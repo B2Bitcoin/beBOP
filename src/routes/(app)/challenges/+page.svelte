@@ -17,7 +17,7 @@
 			<br />
 
 			<ul>
-				{#each data.challenges as chal, i}
+				{#each data.challenges as chal}
 					<li>
 						<a href={'challenges/' + chal._id} class="underline text-link">
 							{chal.name}

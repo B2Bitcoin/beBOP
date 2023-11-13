@@ -2,13 +2,13 @@
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays, addMonths } from 'date-fns';
+	import { MultiSelect } from 'svelte-multiselect';
 
 	export let data;
 	let mode = 'moneyAmount';
 	let beginsAt = new Date().toJSON().slice(0, 10);
 	let endsAt = addMonths(new Date(), 30).toJSON().slice(0, 10);
 	let endsAtElement: HTMLInputElement;
-	let availableProductList = data.products;
 
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
@@ -82,18 +82,13 @@
 		</label>
 	</div>
 
+	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label"
 		>Products
-		<select multiple name="productIds" class="form-input min-h-[20rem]">
-			{#each availableProductList as product}
-				<option value={product._id}>
-					{product.name}
-				</option>
-			{/each}
-		</select>
-		<p class="text-gray-600 text-sm">
-			You can hold Ctrl to select indivdual items, or Shift to select multiple items at once
-		</p>
+		<MultiSelect
+			name="productIds"
+			options={data.products.map((p) => ({ label: p.name, value: p._id }))}
+		/>
 	</label>
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />

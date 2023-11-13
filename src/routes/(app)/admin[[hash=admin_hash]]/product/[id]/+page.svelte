@@ -10,6 +10,10 @@
 	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
 	import DeliveryFeesSelector from '$lib/components/DeliveryFeesSelector.svelte';
 	import { page } from '$app/stores';
+	import Editor from '@tinymce/tinymce-svelte';
+	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
+	import { TINYMCE_PLUGINS, TINYMCE_TOOLBAR } from '../../cms/tinymce-plugins.js';
+	import { MultiSelect } from 'svelte-multiselect';
 
 	export let data;
 
@@ -29,6 +33,8 @@
 	let googleShoppingVisible = data.product.actionSettings.googleShopping.visible;
 	let eshopBasket = data.product.actionSettings.eShop.canBeAddedToBasket;
 	let retailBasket = data.product.actionSettings.retail.canBeAddedToBasket;
+	let contentBefore = data.product.contentBefore;
+	let contentAfter = data.product.contentAfter;
 
 	$: changedDate = availableDateStr !== availableDate?.toJSON().slice(0, 10);
 	$: enablePreorder = availableDateStr && availableDateStr > new Date().toJSON().slice(0, 10);
@@ -202,27 +208,27 @@
 			Display the short description on product page
 		</label>
 
-		<label>
+		<label class="form-label">
 			Description
 			<textarea name="description" cols="30" rows="10" maxlength="10000" class="block form-input"
 				>{data.product.description}</textarea
 			>
 		</label>
-		<div class="flex flex-col gap-4 w-[30%]">
-			<label class="form-label"
-				>Product Tags
-				<select multiple name="tagIds" class="form-input min-h-[20rem]" value={data.product.tagIds}>
-					{#each data.tags as tag}
-						<option value={tag._id}>
-							{tag.name}
-						</option>
-					{/each}
-				</select>
-				<p class="text-gray-600 text-sm">
-					You can hold Ctrl to select indivdual items, or Shift to select multiple items at once
-				</p>
-			</label>
-		</div>
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="form-label"
+			>Product Tags
+			<MultiSelect
+				name="tagIds"
+				options={data.tags.map((tag) => ({
+					value: tag._id,
+					label: tag.name
+				}))}
+				selected={data.product.tagIds?.map((tagId) => ({
+					value: tagId,
+					label: data.tags.find((tag) => tag._id === tagId)?.name ?? tagId
+				})) ?? []}
+			/>
+		</label>
 		<label class="text-gray-450">
 			Type
 			<select class="form-input text-gray-450" disabled value={data.product.type}>
@@ -419,7 +425,48 @@
 				</tr>
 			</tbody>
 		</table>
-
+		<label class="block w-full mt-4">
+			Add CMS code and widgets before product page core
+			<Editor
+				scriptSrc="/tinymce/tinymce.js"
+				bind:value={contentBefore}
+				conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
+			/>
+			<p class="text-gray-700 my-3">
+				To include tags, add a paragraph with only <code class="font-mono">[Tag=slug]</code>, where
+				<code class="font-mono">slug</code> is the slug of your tag
+			</p>
+			<textarea
+				name="contentBefore"
+				cols="30"
+				rows="10"
+				maxlength={MAX_CONTENT_LIMIT}
+				placeholder="HTML content"
+				class="form-input block w-full"
+				bind:value={contentBefore}
+			/>
+		</label>
+		<label class="block w-full mt-4">
+			Add CMS code and widgets after product page core
+			<Editor
+				scriptSrc="/tinymce/tinymce.js"
+				bind:value={contentAfter}
+				conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
+			/>
+			<p class="text-gray-700 my-3">
+				To include tags, add a paragraph with only <code class="font-mono">[Tag=slug]</code>, where
+				<code class="font-mono">slug</code> is the slug of your tag
+			</p>
+			<textarea
+				name="contentAfter"
+				cols="30"
+				rows="10"
+				maxlength={MAX_CONTENT_LIMIT}
+				placeholder="HTML content"
+				class="form-input block w-full"
+				bind:value={contentAfter}
+			/>
+		</label>
 		<div class="flex justify-between gap-2">
 			<button
 				type="submit"

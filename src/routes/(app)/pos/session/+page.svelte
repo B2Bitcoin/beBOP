@@ -180,7 +180,7 @@
 								{t('cart.vatSellerCountry')}
 							{:else}
 								<Trans key="cart.vatIpCountry">
-									<a href="https://lite.ip2location.com"> https://lite.ip2location.com </a>
+									<a href="https://lite.ip2location.com" slot="0"> https://lite.ip2location.com </a>
 								</Trans>
 							{/if}
 						</p>

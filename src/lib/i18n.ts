@@ -1,35 +1,31 @@
 import { browser } from '$app/environment';
+import { get } from 'lodash-es';
 import { getContext } from 'svelte';
-// @ts-expect-error - using dist import :(
-import { I18n } from 'i18n-js/dist/require';
-import type { I18n as RealType } from 'i18n-js';
+import { writable, get as storeGet } from 'svelte/store';
 
 interface LocaleDictionary {
-	[key: string]: LocaleDictionary | string | Array<string | LocaleDictionary> | null;
+	[key: string]: LocaleDictionary | string;
 }
 type LocalesDictionary = {
 	[key: string]: LocaleDictionary;
 };
 
-const i18n = new I18n() as RealType;
+const locale = writable<string>('en');
 
-i18n.defaultLocale = 'en';
+const data: LocalesDictionary = {};
 
 let languagesLoaded = false;
 
 export function useI18n() {
 	const language = getContext<string>('language');
 
-	i18n.locale = language;
+	locale.set(language);
 
 	if (browser) {
 		if (!languagesLoaded) {
 			const languages = 'language' in window ? (window.language as LocalesDictionary) : {};
 			for (const entry of Object.entries(languages)) {
-				console.log('loading language', entry[0]);
-				i18n.store({
-					[entry[0]]: entry[1]
-				});
+				addTranslations(entry[0], entry[1]);
 			}
 			languagesLoaded = true;
 		}
@@ -37,11 +33,25 @@ export function useI18n() {
 		// loaded in hooks.server.ts
 	}
 
-	return { t: i18n.t.bind(i18n), i18n };
+	return { t, locale };
+}
+
+export function t(key: string, params?: Record<string, string | number | undefined>) {
+	let translation = get(data[storeGet(locale)], key) ?? get(data.en, key);
+
+	if (typeof translation !== 'string') {
+		if (params?.count) {
+			translation = translation[params.count === 1 ? 'one' : params.count === 0 ? 'zero' : 'other'];
+		}
+	}
+
+	if (typeof translation !== 'string') {
+		return key;
+	}
+
+	return translation.replaceAll(/{(\w+)}/g, (_, key) => String(params?.[key] ?? `{${key}}`));
 }
 
 export function addTranslations(locale: string, translations: LocaleDictionary) {
-	i18n.store({
-		[locale]: translations
-	});
+	data[locale] = translations;
 }

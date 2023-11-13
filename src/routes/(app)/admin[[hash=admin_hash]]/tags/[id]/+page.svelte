@@ -125,7 +125,6 @@
 			class="form-input"
 		/>
 	</label>
-
 	{#if data.tag.cta}
 		<h3 class="text-xl">CTAs</h3>
 		{#each [...data.tag.cta, ...Array(3 - data.tag.cta.length).fill( { href: '', label: '' } )] as link, i}
@@ -195,10 +194,19 @@
 			class="form-input"
 		/>
 	</label>
-	<input type="submit" class="btn btn-blue self-start text-white" value="Update" />
-	<button type="submit" class="ml-auto btn btn-red" formaction="?/delete" on:click={confirmDelete}>
-		Delete
-	</button>
+	<div class="flex flex-row justify-between gap-2">
+		<input type="submit" class="btn btn-blue self-start text-white" value="Update" />
+		<a href="/tag/{data.tag._id}" class="btn btn-gray">View</a>
+
+		<button
+			type="submit"
+			class="ml-auto btn btn-red"
+			formaction="?/delete"
+			on:click={confirmDelete}
+		>
+			Delete
+		</button>
+	</div>
 </form>
 
 <h2 class="text-2xl my-4">Photos</h2>
