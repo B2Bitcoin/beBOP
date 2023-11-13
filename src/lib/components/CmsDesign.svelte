@@ -16,7 +16,6 @@
 		CmsTag,
 		CmsToken
 	} from '$lib/server/cms';
-	import { json } from '@sveltejs/kit';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
