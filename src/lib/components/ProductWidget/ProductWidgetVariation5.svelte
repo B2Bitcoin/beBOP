@@ -6,7 +6,18 @@
 	let className = '';
 	export { className as class };
 
-	export let product: Pick<Product, '_id' | 'name' | 'description'>;
+	export let product: Pick<
+		Product,
+		| '_id'
+		| 'name'
+		| 'price'
+		| 'shortDescription'
+		| 'preorder'
+		| 'availableDate'
+		| 'shipping'
+		| 'type'
+		| 'actionSettings'
+	>;
 	export let picture: Picture | undefined;
 	export let pictures: Picture[] | [];
 </script>
@@ -17,7 +28,7 @@
 			<h2 class="text-4xl pb-2 uppercase">{product.name}</h2>
 			<div class="w-[50%]">
 				<h2 class="text-md md:text-2xl">
-					{product.description}
+					{product.shortDescription}
 				</h2>
 			</div>
 			<div class="flex text-centern mt-32 gap-8">
@@ -30,13 +41,13 @@
 			</div>
 		</div>
 		<div
-			class="flex absolute mt-16 w-[225px] md:w-[250px] lg:w-[500px] right-24 md:right-[100px] lg:right-[200px]"
+			class="flex absolute mt-6 w-[225px] md:w-[250px] lg:w-[500px] right-24 md:right-[100px] lg:right-[200px]"
 		>
-			<PictureComponent {picture} class="mx-auto  rounded mr-4 h-auto object-contain" />
+			<PictureComponent {picture} class="mx-auto  rounded mr-4 h-335 object-contain" />
 		</div>
 
 		<div
-			class="flex flex-col gap-2 h-16 w-16 lg:h-24 lg:w-24 absolute right-0 lg:right-16 hidden md:block"
+			class="flex flex-col gap-2 h-16 w-16 lg:h-24 lg:w-24 absolute right-0 lg:right-16 md:block"
 		>
 			{#if pictures.length > 1}
 				{#each pictures as picture}

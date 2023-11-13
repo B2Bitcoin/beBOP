@@ -52,6 +52,7 @@
 			<ProductWidget
 				product={productById[token.slug]}
 				picture={pictureByProduct[token.slug]}
+				pictures={pictureByProduct[token.slug]}
 				hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 				displayOption={token.display}
 				canBuy={roleId === POS_ROLE_ID
