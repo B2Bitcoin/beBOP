@@ -9,7 +9,8 @@
 
 <ProductWidget
 	product={data.product}
-	picture={data.picture}
+	picture={data.picture[0]}
+	pictures={data.picture}
 	displayOption={display ? display : 'img-0'}
 	hasDigitalFiles={data.digitalFiles.length >= 1}
 	canBuy={data.roleId === POS_ROLE_ID

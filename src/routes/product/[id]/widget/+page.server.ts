@@ -49,7 +49,7 @@ export const load = async ({ params, locals }) => {
 		.toArray();
 	return {
 		product,
-		picture: pictures[0],
+		picture: pictures,
 		digitalFiles,
 		roleId: locals.user?.roleId
 	};
