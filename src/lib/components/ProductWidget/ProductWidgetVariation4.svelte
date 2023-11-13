@@ -20,13 +20,10 @@
 		| 'actionSettings'
 	>;
 	export let hasDigitalFiles: boolean;
-	export let canBuy: boolean;
+	export let canAddToCart: boolean;
 
 	let className = '';
 	export { className as class };
-
-	$: canAddToCart =
-		canBuy && (!product.availableDate || product.availableDate <= new Date() || !!product.preorder);
 </script>
 
 <div class="relative mx-auto max-w-[264px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">

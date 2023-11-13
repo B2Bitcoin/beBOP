@@ -20,17 +20,13 @@
 		| 'actionSettings'
 	>;
 	export let hasDigitalFiles: boolean;
-	export let canBuy: boolean;
+	export let canAddToCart: boolean;
 
 	let className = '';
 	export { className as class };
-
-	$: canAddToCart =
-		canBuy && (!product.availableDate || product.availableDate <= new Date() || !!product.preorder);
-	$: baseClasses = 'relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded';
 </script>
 
-<div class="{baseClasses} {className}">
+<div class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
 	<div class="flex flex-row justify-end -mt-6 -mr-6">
 		<ProductType {product} {hasDigitalFiles} class="last:rounded-tr first:rounded-bl pl-2" />
 	</div>

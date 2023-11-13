@@ -31,6 +31,8 @@
 	let className = '';
 	export { className as class };
 	export let displayOption = 'img-0';
+	$: canAddToCart =
+		canBuy && (!product.availableDate || product.availableDate <= new Date() || !!product.preorder);
 
 	const widgets = {
 		'img-0': {
@@ -68,7 +70,7 @@
 		{picture}
 		{pictures}
 		{hasDigitalFiles}
-		{canBuy}
+		{canAddToCart}
 		class={className}
 	/>
 {/if}
