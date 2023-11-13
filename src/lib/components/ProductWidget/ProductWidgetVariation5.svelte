@@ -22,38 +22,39 @@
 	export let pictures: Picture[] | [];
 </script>
 
-<div class="mx-auto bg-gray-240 rounded p-4 sm:gap-2 {className}">
-	<div class="flex relative">
-		<div class="flex flex-col w-[80%] mr-1 p-4 bg-gray-100">
-			<h2 class="text-4xl pb-2 uppercase">{product.name}</h2>
-			<div class="w-[50%]">
-				<h2 class="text-md md:text-2xl">
-					{product.shortDescription}
-				</h2>
-			</div>
-			<div class="flex text-centern mt-32 gap-8">
-				<div class="bg-blue-500 font-semibold text-white text-xl text-center w-[200px] p-1">
+<div class="flex flex-col mx-auto rounded p-4 sm:flex-row sm:gap-2 {className}">
+	<!-- Left Section: Product Information -->
+	<div class="flex flex-wrap bg-gray-100 w-full sm:w-5/6 mb-4 sm:mb-0">
+		<div class="p-4 w-full sm:w-2/3">
+			<!-- Nom du produit -->
+			<h2 class="text-2xl font-bold mb-2">{product.name}</h2>
+
+			<!-- Description du produit -->
+			<p class="text-gray-600 mb-4">{product.shortDescription}</p>
+
+			<!-- Boutons -->
+			<div class="flex flex-wrap gap-6 items-end">
+				<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
 					Buy now
 				</div>
-				<div class="bg-blue-500 font-semibold text-white text-xl text-center w-[200px] p-1">
+				<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
 					Details
 				</div>
 			</div>
 		</div>
-		<div
-			class="flex absolute mt-6 w-[225px] md:w-[250px] lg:w-[500px] right-24 md:right-[100px] lg:right-[200px]"
-		>
-			<PictureComponent {picture} class="mx-auto  rounded mr-4 h-335 object-contain" />
-		</div>
 
-		<div
-			class="flex flex-col gap-2 h-16 w-16 lg:h-24 lg:w-24 absolute right-0 lg:right-16 md:block"
-		>
-			{#if pictures.length > 1}
-				{#each pictures as picture}
-					<PictureComponent {picture} class="h-full w-full rounded-sm m-2 cursor-pointer" />
-				{/each}
-			{/if}
+		<!-- Image principale du produit -->
+		<div class="justify-end w-full sm:w-1/3 sm:mt-0">
+			<PictureComponent {picture} class="h-[280px] mt-5 ml-auto object-contain" />
 		</div>
+	</div>
+
+	<!-- Right Section: Sous-images -->
+	<div class="ml-0 sm:ml-4 w-full sm:w-1/6 flex-col hidden sm:inline">
+		{#if pictures.length > 1}
+			{#each pictures as picture}
+				<PictureComponent {picture} class="h-[100px] w-[100px] rounded-sm mb-2 cursor-pointer" />
+			{/each}
+		{/if}
 	</div>
 </div>

@@ -22,34 +22,33 @@
 	export let pictures: Picture[] | [];
 </script>
 
-<div class="mx-auto bg-gray-240 rounded p-4 sm:gap-2 {className}">
-	<div class="flex flex-row-reverse relative">
-		<div class="flex flex-col absolute gap-2 h-16 w-16 lg:h-24 lg:w-24 left-0 lg:left-16 md:block">
-			{#if pictures.length > 1}
-				{#each pictures as picture}
-					<PictureComponent {picture} class="h-full w-full rounded-sm m-2 cursor-pointer" />
-				{/each}
-			{/if}
+<div class="flex flex-col mx-auto rounded p-4 sm:flex-row sm:gap-2 {className}">
+	<div class="ml-0 sm:ml-4 w-full sm:w-1/6 flex-col hidden sm:inline">
+		{#if pictures.length > 1}
+			{#each pictures as picture}
+				<PictureComponent {picture} class="h-[100px] w-[100px] rounded-sm mb-2 cursor-pointer" />
+			{/each}
+		{/if}
+	</div>
+	<!-- Left Section: Product Information -->
+	<div class="flex flex-wrap bg-gray-100 w-full sm:w-5/6 mb-4 sm:mb-0">
+		<!-- Image principale du produit -->
+		<div class="justify-center w-full sm:w-1/3 mt-4 sm:mt-0">
+			<PictureComponent {picture} class="h-[280px] mt-5 mr-auto object-contain" />
 		</div>
-		<div
-			class="flex mt-16 w-[225px] absolute left-0 md:left-[125px] lg:left-[250px] md:w-[250px] lg:w-[500px]"
-		>
-			<PictureComponent {picture} class="mx-auto rounded mr-4 h-auto object-contain" />
-		</div>
-		<div class="flex flex-col w-[80%] mr-1 items-center p-4 bg-gray-100">
-			<h2 class="text-4xl pb-2 ml-16 uppercase">{product.name}</h2>
-			<div class="w-[50%] mr-[-100px] md:mr-[-370px]">
-				<h2 class="text-md md:text-2xl">
-					{product.shortDescription}
-				</h2>
-			</div>
-			<div class="flex text-centern md:mr-[-250px] mt-32 gap-8">
-				<div
-					class="bg-blue-500 font-semibold text-white text-xl text-center w-auto md:w-[200px] p-1"
-				>
+		<div class="p-4 w-full sm:w-2/3">
+			<!-- Nom du produit -->
+			<h2 class="text-2xl font-bold mb-2">{product.name}</h2>
+
+			<!-- Description du produit -->
+			<p class="text-gray-600 mb-4">{product.shortDescription}</p>
+
+			<!-- Boutons -->
+			<div class="flex flex-wrap gap-6 items-end">
+				<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
 					Buy now
 				</div>
-				<div class="bg-blue-500 font-semibold text-white text-xl text-center md:w-[200px] p-1">
+				<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
 					Details
 				</div>
 			</div>

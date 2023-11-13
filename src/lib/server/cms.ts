@@ -198,6 +198,9 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 					},
 					{
 						'tag._id': { $in: [...tagSlugs] }
+					},
+					{
+						productId: { $in: [...productSlugs] }
 					}
 				]
 			})
