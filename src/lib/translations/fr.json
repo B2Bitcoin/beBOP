@@ -163,10 +163,11 @@
 		"cta": {
 			"add": "Ajouter au panier",
 			"buy": "Commander",
+			"details": "Détails",
 			"donate": "Faire un don",
+			"hello": "Bonjour le monde ",
 			"preorder": "Précommander",
-			"subscribe": "S'abonner",
-			"details": "Détails"
+			"subscribe": "S'abonner"
 		},
 		"digitalFiles": {
 			"title": "Fichiers téléchargeables"

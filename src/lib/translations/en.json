@@ -163,10 +163,11 @@
 		"cta": {
 			"add": "Add to cart",
 			"buy": "Buy now",
+			"details": "Details",
 			"donate": "Donate now",
+			"hello": "Hello World",
 			"preorder": "Pre-order now",
-			"subscribe": "Subscribe now",
-			"details": "Details"
+			"subscribe": "Subscribe now"
 		},
 		"digitalFiles": {
 			"title": "Digital Files"
