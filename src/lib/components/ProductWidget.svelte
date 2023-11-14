@@ -66,7 +66,6 @@
 	<svelte:component
 		this={widget.component}
 		{product}
-		picture={pictures[0]}
 		{pictures}
 		{hasDigitalFiles}
 		{canAddToCart}

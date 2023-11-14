@@ -6,7 +6,7 @@
 	import ProductType from '../ProductType.svelte';
 	import AddToCart from '../AddToCart.svelte';
 
-	export let picture: Picture | undefined;
+	export let pictures: Picture[] | [];
 	export let product: Pick<
 		Product,
 		| '_id'
@@ -54,7 +54,7 @@
 			</p>
 		</a>
 		{#if canAddToCart}
-			<AddToCart {product} {picture} />
+			<AddToCart {product} picture={pictures[0]} />
 		{/if}
 	</div>
 	<div class="flex flex-col">
@@ -66,7 +66,7 @@
 			/>
 		</div>
 		<a href="/product/{product._id}" class="-mr-6">
-			<PictureComponent {picture} class="object-contain max-h-[264px] max-w-[264px]" />
+			<PictureComponent picture={pictures[0]} class="object-contain max-h-[264px] max-w-[264px]" />
 		</a>
 	</div>
 </div>

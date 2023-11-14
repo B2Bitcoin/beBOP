@@ -18,7 +18,6 @@
 		| 'type'
 		| 'actionSettings'
 	>;
-	export let picture: Picture | undefined;
 	export let pictures: Picture[] | [];
 </script>
 
@@ -34,7 +33,7 @@
 	<div class="flex flex-wrap bg-gray-100 w-full sm:w-5/6 mb-4 sm:mb-0">
 		<!-- Image principale du produit -->
 		<div class="justify-center w-full sm:w-1/3 mt-4 sm:mt-0">
-			<PictureComponent {picture} class="h-[280px] mt-5 mr-auto object-contain" />
+			<PictureComponent picture={pictures[0]} class="h-[280px] mt-5 mr-auto object-contain" />
 		</div>
 		<div class="p-4 w-full sm:w-2/3">
 			<!-- Nom du produit -->
