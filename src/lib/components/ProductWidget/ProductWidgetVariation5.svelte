@@ -2,6 +2,7 @@
 	import type { Product } from '$lib/types/Product';
 	import type { Picture } from '$lib/types/Picture';
 	import PictureComponent from '../Picture.svelte';
+	import { useI18n } from '$lib/i18n';
 
 	let className = '';
 	export { className as class };
@@ -19,6 +20,8 @@
 		| 'actionSettings'
 	>;
 	export let pictures: Picture[] | [];
+	const { t } = useI18n();
+	let loading = false;
 </script>
 
 <div class="flex flex-col mx-auto rounded p-4 sm:flex-row sm:gap-2 {className}">
@@ -30,14 +33,24 @@
 			<a href="/product/{product._id}">
 				<p class="text-gray-600 mb-4">{product.shortDescription}</p>
 			</a>
-			<div class="flex flex-wrap gap-6 items-end">
-				<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
-					Buy now
+			<form method="post" class="contents">
+				<div class="flex flex-wrap gap-6 items-end">
+					<button
+						type="submit"
+						formaction="/product/{product._id}?/buy"
+						on:submit={() => (loading = true)}
+						disabled={loading}
+						class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1"
+					>
+						{t('product.cta.buy')}
+					</button>
+					<a href="/product/{product._id}">
+						<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
+							{t('product.cta.details')}
+						</div>
+					</a>
 				</div>
-				<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
-					<a href="/product/{product._id}"> Details</a>
-				</div>
-			</div>
+			</form>
 		</div>
 
 		<div class="justify-end w-full sm:w-1/3 sm:mt-0">
@@ -50,7 +63,7 @@
 	<div class="ml-0 sm:ml-4 w-full sm:w-1/6 flex-col hidden sm:inline">
 		{#if pictures.length > 1}
 			{#each pictures as picture}
-				<PictureComponent {picture} class="h-[100px] w-[100px] rounded-sm mb-2 cursor-pointer" />
+				<PictureComponent {picture} class="w-[90px] h-[90px] rounded-sm mb-2 cursor-pointer" />
 			{/each}
 		{/if}
 	</div>

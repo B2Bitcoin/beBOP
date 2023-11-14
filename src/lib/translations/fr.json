@@ -165,7 +165,8 @@
 			"buy": "Commander",
 			"donate": "Faire un don",
 			"preorder": "Précommander",
-			"subscribe": "S'abonner"
+			"subscribe": "S'abonner",
+			"details": "Détails"
 		},
 		"digitalFiles": {
 			"title": "Fichiers téléchargeables"

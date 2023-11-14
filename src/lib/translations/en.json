@@ -165,7 +165,8 @@
 			"buy": "Buy now",
 			"donate": "Donate now",
 			"preorder": "Pre-order now",
-			"subscribe": "Subscribe now"
+			"subscribe": "Subscribe now",
+			"details": "Details"
 		},
 		"digitalFiles": {
 			"title": "Digital Files"
