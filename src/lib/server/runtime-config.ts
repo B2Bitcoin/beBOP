@@ -93,7 +93,8 @@ const defaultConfig = {
 		googleShopping: {
 			visible: true
 		}
-	} as ProductActionSettings
+	} as ProductActionSettings,
+	mainThemeId: ''
 };
 
 exchangeRate.set({
