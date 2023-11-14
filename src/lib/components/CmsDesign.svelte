@@ -54,7 +54,6 @@
 		{#if token.type === 'productWidget' && productById[token.slug]}
 			<ProductWidget
 				product={productById[token.slug]}
-				picture={picturesByProduct[token.slug][0]}
 				pictures={picturesByProduct[token.slug]}
 				hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 				displayOption={token.display}

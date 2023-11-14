@@ -5,7 +5,6 @@ import { POS_ROLE_ID } from '$lib/types/User';
 import { trimPrefix } from '$lib/utils/trimPrefix';
 import { trimSuffix } from '$lib/utils/trimSuffix';
 import { collections } from './database';
-import { pictureIdsForProducts } from './picture';
 
 export async function cmsFromContent(content: string, userRoleId: string | undefined) {
 	const PRODUCT_WIDGET_REGEX =
@@ -179,8 +178,6 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 		})
 		.toArray();
 
-	const pictureIds = await pictureIdsForProducts(products.map((product) => product._id));
-
 	return {
 		tokens,
 		challenges,
@@ -190,9 +187,6 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 		pictures: await collections.pictures
 			.find({
 				$or: [
-					{
-						_id: { $in: [...pictureIds] }
-					},
 					{
 						'slider._id': { $in: [...sliderSlugs] }
 					},
@@ -204,6 +198,7 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 					}
 				]
 			})
+			.sort({ createdAt: 1 })
 			.toArray(),
 		digitalFiles,
 		roleId: userRoleId
