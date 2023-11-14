@@ -117,7 +117,7 @@
 	<div class="ml-0 sm:ml-4 w-full sm:w-1/6 flex-col hidden sm:inline">
 		{#if pictures.length > 1}
 			{#each pictures as picture, i}
-				<button on:click={() => (pictureId = i)}>
+				<button type="button" on:click={() => (pictureId = i)}>
 					<PictureComponent
 						{picture}
 						class="w-[100px] h-[100px] border-gray-300 border rounded object-cover mb-2 {pictureId ===
