@@ -38,7 +38,7 @@
 					);
 					return refreshAccessToken();
 				},
-				onInvalidGrant: (refreshAuthCodeOrRefreshToken) => {
+				onInvalidGrant: (/* refreshAuthCodeOrRefreshToken */) => {
 					console.log('Auth grant or refresh token expired! Get a new authorization grant code.');
 					// Normally call refreshAuthCodeOrRefreshToken(); which calls fetchAuthorizationCode().
 					// But you can do whatever you want - maybe you want a user to press
