@@ -1,3 +1,4 @@
+import { ORIGIN } from '$env/static/private';
 import { collections } from '$lib/server/database';
 import type { Style } from '$lib/types/Style';
 import { z } from 'zod';
@@ -28,5 +29,11 @@ export const actions = {
 			{ $set: { data: mainTheme, updatedAt: new Date() } },
 			{ upsert: true }
 		);
+		await fetch(`${ORIGIN}/theme.css`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/javascript; charset=utf-8'
+			}
+		});
 	}
 };

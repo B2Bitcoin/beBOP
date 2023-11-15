@@ -11,3 +11,5 @@ build.zip
 
 # Copied in vite.config.ts
 static/tinymce
+static/generated-theme-dark.css
+static/generated-theme-light.css
