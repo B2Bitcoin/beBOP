@@ -2,6 +2,9 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies';
 	import { pick } from 'lodash-es';
+	import { BityApiClient, type BityApiClientInterface } from '@bity/api';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	export let data;
 
@@ -10,6 +13,50 @@
 	$: fees = cashoutAmount * 0.008;
 	$: total = cashoutAmount - fees;
 	$: remaining = data.balance - cashoutAmount;
+
+	let bity: BityApiClientInterface;
+
+	onMount(() => {
+		// @ts-expect-error Bity needs to get their types right
+		bity = new BityApiClient({
+			exchangeApiUrl: 'https://exchange.api.bity.com/v2/',
+			oauthConfig: {
+				authorizationUrl: 'https://connect.bity.com/oauth2/auth',
+				tokenUrl: 'https://connect.bity.com/oauth2/token',
+				clientId: 'your-client-id',
+				scopes: [
+					'https://auth.bity.com/scopes/exchange.place',
+					'https://auth.bity.com/scopes/exchange.history'
+				],
+				redirectUrl: $page.url.origin + '/auth/bity/callback',
+				onAccessTokenExpiry: (refreshAccessToken) => {
+					// As a developer you don't really need to handle anything here. But don't
+					// forget this section. If refreshAccessToken() is not called, tokens will
+					// not auto-renew.
+					console.log(
+						'Access token expired! Trying to get new token from re-using auth grant code.'
+					);
+					return refreshAccessToken();
+				},
+				onInvalidGrant: (refreshAuthCodeOrRefreshToken) => {
+					console.log('Auth grant or refresh token expired! Get a new authorization grant code.');
+					// Normally call refreshAuthCodeOrRefreshToken(); which calls fetchAuthorizationCode().
+					// But you can do whatever you want - maybe you want a user to press
+					// a button that executes fetchAuthorizationCode() instead.
+				}
+			}
+		});
+	});
+
+	function authorize() {
+		// Redirects user to Bity OAuth 2.0 service
+		bity.fetchAuthorizationCode();
+	}
+
+	// function createOrder function() {
+	//   // Will automatically pass and renew tokens.
+	//   bity.createOrder(...);
+	// }
 </script>
 
 <h1 class="text-3xl">Bitcoin node - Bity cash out</h1>
@@ -79,6 +126,6 @@
 {/if}
 
 <div class="flex justify-between">
-	<button class="btn btn-orange">Request cashout</button>
+	<button class="btn btn-orange" on:click={authorize}>Request cashout</button>
 	<a href="{data.adminPrefix}/bitcoin" class="btn btn-gray">Cancel</a>
 </div>
