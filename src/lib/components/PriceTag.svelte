@@ -8,6 +8,7 @@
 	export let amount: number;
 	export let currency: Currency;
 	export let convertedTo: Currency | undefined = undefined;
+	export let force = false;
 	/**
 	 * Convert to the main currency
 	 */
@@ -28,18 +29,20 @@
 	$: actualCurrency = main ? mainCurrency : secondary ? secondaryCurrency : convertedTo ?? currency;
 	$: actualAmount = actualCurrency === null ? 0 : toCurrency(actualCurrency, amount, currency);
 
-	$: displayedAmount =
-		actualCurrency === 'BTC' && actualAmount < 0.01
+	$: displayedAmount = !force
+		? actualCurrency === 'BTC' && actualAmount < 0.01
 			? actualAmount * SATOSHIS_PER_BTC
 			: actualCurrency === 'SAT' && actualAmount >= 1_000_000
 			? actualAmount / SATOSHIS_PER_BTC
-			: actualAmount;
-	$: displayedCurrency =
-		actualCurrency === 'BTC' && actualAmount < 0.01
+			: actualAmount
+		: actualAmount;
+	$: displayedCurrency = !force
+		? actualCurrency === 'BTC' && actualAmount < 0.01
 			? 'SAT'
 			: actualCurrency === 'SAT' && actualAmount >= 1_000_000
 			? 'BTC'
-			: actualCurrency || 'BTC';
+			: actualCurrency || 'BTC'
+		: actualCurrency || 'BTC';
 
 	$: displayed =
 		displayedCurrency !== 'BTC' && actualAmount > 0 && displayedAmount < 0.01

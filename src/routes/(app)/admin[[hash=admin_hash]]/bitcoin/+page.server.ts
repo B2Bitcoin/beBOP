@@ -32,7 +32,8 @@ export async function load() {
 		transactions: transactions.reverse(),
 		balance: wallets.length ? getBalance() : 0,
 		orders: orders.toArray(),
-		blockchainInfo: getBlockchainInfo()
+		blockchainInfo: getBlockchainInfo(),
+		hasIBAN: !!runtimeConfig.sellerIdentity?.bank
 	};
 }
 
