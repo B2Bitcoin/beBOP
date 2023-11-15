@@ -49,10 +49,14 @@
 
 <a href="{data.adminPrefix}/bitcoin/cash-in" class="btn btn-blue self-start">Cash in</a>
 
-{#if data.hasIBAN}
+{#if data.hasIBAN && data.hasBity}
 	<a href="{data.adminPrefix}/bitcoin/cash-out" class="btn btn-red self-start">Cash out</a>
-{:else}
+{:else if !data.hasIBAN}
 	<p class="text-red-500">You need to set your IBAN to cash out</p>
+{:else if !data.hasBity}
+	<p class="text-red-500">
+		You need to set create a Bity account to cash out and configure <code>BITY_CLIENT_ID</code>
+	</p>
 {/if}
 
 <h2 class="text-2xl">Chain</h2>

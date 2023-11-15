@@ -1,3 +1,4 @@
+import { BITY_CLIENT_ID } from '$env/static/private';
 import {
 	createWallet,
 	listWallets,
@@ -33,7 +34,8 @@ export async function load() {
 		balance: wallets.length ? getBalance() : 0,
 		orders: orders.toArray(),
 		blockchainInfo: getBlockchainInfo(),
-		hasIBAN: !!runtimeConfig.sellerIdentity?.bank
+		hasIBAN: !!runtimeConfig.sellerIdentity?.bank,
+		hasBity: !!BITY_CLIENT_ID
 	};
 }
 
