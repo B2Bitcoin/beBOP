@@ -6,7 +6,6 @@ export const adminLinks = [
 				href: '/admin/layout',
 				label: 'Layout'
 			},
-
 			{
 				href: '/admin/product',
 				label: 'Products'
@@ -47,6 +46,10 @@ export const adminLinks = [
 			{
 				href: '/admin/arm',
 				label: 'ARM'
+			},
+			{
+				href: '/admin/identity',
+				label: 'Identity'
 			}
 		]
 	},
