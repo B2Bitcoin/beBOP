@@ -25,6 +25,7 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `BITCOIN_RPC_URL` - The RPC url for the bitcoin node. Set to http://127.0.0.1:8332 if you run a bitcoin node locally with default configuration
 - `BITCOIN_RPC_USER` - The RPC user
 - `BITCOIN_RPC_PASSWORD` - The RPC password
+- `BITY_CLIENT_ID` - The client ID for Bity, if you want to use Bity for cashouts and refunds. You can create your client ID here: https://oauth.my.bity.com/clients, set the redirect URL to `https://<...>/api/callback/bity`
 - `EMAIL_REPLY_TO` - The "reply-to" for emails sent from the bootik
 - `LND_REST_URL` - The LND Rest interface URL. Set to http://127.0.0.1:8080 if you run a lnd node locally with default configuration
 - `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
@@ -43,6 +44,17 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `SMTP_PORT` - Specify all the SMTP variables to enable email notifications
 - `SMTP_USER` - Specify all the SMTP variables to enable email notifications
 - `TOR_PROXY_URL` - Url of the SOCKS5 proxy used to access TOR. If set, and the hostname for `BITCOIN_RPC_URL` is a `.onion` address, the app will use the proxy to access the bitcoin node. In the same manner, if `LND_REST_URL` is a `.onion` address, TOR will be used to access the lightning node.
+
+You can also set the following environment variables to allow SSO. Set your redirect url to `https://<...>/api/callback/<provider>`, where `<provider>` is one of `github`, `google`, `facebook`, `twitter`, when you create your app on the provider's website:
+
+- `GITHUB_ID`
+- `GITHUB_SECRET`
+- `GOOGLE_ID`
+- `GOOGLE_SECRET`
+- `FACEBOOK_ID`
+- `FACEBOOK_SECRET`
+- `TWITTER_ID`
+- `TWITTER_SECRET`
 
 ## Production
 

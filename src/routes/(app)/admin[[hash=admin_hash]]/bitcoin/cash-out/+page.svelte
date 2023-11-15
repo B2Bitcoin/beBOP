@@ -28,7 +28,7 @@
 					'https://auth.bity.com/scopes/exchange.place',
 					'https://auth.bity.com/scopes/exchange.history'
 				],
-				redirectUrl: $page.url.origin + '/auth/bity/callback',
+				redirectUrl: $page.url.origin + '/api/auth/callback/bity',
 				onAccessTokenExpiry: (refreshAccessToken) => {
 					// As a developer you don't really need to handle anything here. But don't
 					// forget this section. If refreshAccessToken() is not called, tokens will
