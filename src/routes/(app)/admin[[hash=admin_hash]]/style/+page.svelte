@@ -6,7 +6,7 @@
 </script>
 
 <h1 class="text-3xl">Style</h1>
-<a href="/admin/style/new">Create a new theme</a>
+<a href="/admin/style/new" class="underline">Create a new theme</a>
 
 {#if data.styles.length > 0}
 	<h2 class="text-2xl">Choose your theme</h2>
@@ -25,5 +25,5 @@
 
 <h2 class="text-2xl">Theme list :</h2>
 {#each data.styles as style}
-	<a href={`/admin/style/${style._id}`}>{style.name}</a>
+	<a href={`/admin/style/${style._id}`} class="font-semibold underline">{style.name}</a>
 {/each}
