@@ -67,7 +67,9 @@
 			</p>
 		</a>
 		{#if canAddToCart}
-			<AddToCart {product} picture={pictures[0]} />
+			<div class="flex flex-row items-end justify-end">
+				<AddToCart {product} picture={pictures[0]} btnName="product.cta.add" class="btn btn-gray" />
+			</div>
 		{/if}
 	</div>
 </div>

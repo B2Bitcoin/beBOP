@@ -62,13 +62,11 @@
 		: widgets['img-0'];
 </script>
 
-{#if widget}
-	<svelte:component
-		this={widget.component}
-		{product}
-		{pictures}
-		{hasDigitalFiles}
-		{canAddToCart}
-		class={className}
-	/>
-{/if}
+<svelte:component
+	this={widget.component}
+	{product}
+	{pictures}
+	{hasDigitalFiles}
+	{canAddToCart}
+	class={className}
+/>

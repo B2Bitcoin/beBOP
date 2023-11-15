@@ -3,12 +3,9 @@
 	import type { Picture } from '$lib/types/Picture';
 	import PictureComponent from '../Picture.svelte';
 	import { useI18n } from '$lib/i18n';
-	import Popup from '../Popup.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
-	import ProductAddedToCart from '../ProductAddedToCart.svelte';
-	import { applyAction, enhance } from '$app/forms';
-	import { invalidate } from '$app/navigation';
-	import { UrlDependency } from '$lib/types/UrlDependency';
+
+	import AddToCart from '../AddToCart.svelte';
 
 	let className = '';
 	export { className as class };
@@ -75,56 +72,19 @@
 			<a href="/product/{product._id}">
 				<p class="text-gray-600 mb-4">{product.shortDescription}</p>
 			</a>
-			<form
-				method="post"
-				class="contents"
-				use:enhance={() => {
-					loading = true;
-					return async ({ result }) => {
-						loading = false;
-						if (result.type === 'error') {
-							return await applyAction(result);
-						}
-
-						await invalidate(UrlDependency.Cart);
-						addToCart();
-						// Not for the widget, see https://github.com/B2Bitcoin/B2BitcoinBootik/issues/243
-						//document.body.scrollIntoView();
-					};
-				}}
-			>
-				<div class="flex flex-wrap gap-6 items-end">
-					{#if canAddToCart}
-						<div class="relative">
-							<button
-								type="submit"
-								disabled={loading}
-								formaction="/product/{product._id}?/addToCart"
-								class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1"
-							>
-								{t('product.cta.buy')}
-							</button>
-
-							{#if $productAddedToCart && $productAddedToCart.widget === widget}
-								<Popup>
-									<ProductAddedToCart
-										class="w-[562px] max-w-full"
-										on:dismiss={() => ($productAddedToCart = null)}
-										product={$productAddedToCart.product}
-										picture={$productAddedToCart.picture}
-										customPrice={$productAddedToCart.customPrice}
-									/>
-								</Popup>
-							{/if}
-						</div>
-					{/if}
-					<a href="/product/{product._id}">
-						<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
-							{t('product.cta.details')}
-						</div>
-					</a>
+			{#if canAddToCart}
+				<div class="relative">
+					<div class="flex flex-wrap gap-6 items-end absolute">
+						<AddToCart
+							{product}
+							picture={pictures[0]}
+							btnName="product.cta.buy"
+							class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1"
+							detailBtn={true}
+						/>
+					</div>
 				</div>
-			</form>
+			{/if}
 		</div>
 	</div>
 </div>

@@ -32,50 +32,55 @@
 			widget
 		};
 	}
-
+	let className = '';
+	export { className as class };
+	export let detailBtn = false;
+	export let btnName: string;
 	const { t } = useI18n();
 </script>
 
-<div class="flex flex-row items-end justify-end">
-	<form
-		method="post"
-		class="contents"
-		use:enhance={() => {
-			loading = true;
-			return async ({ result }) => {
-				loading = false;
-				if (result.type === 'error') {
-					return await applyAction(result);
-				}
+<form
+	method="post"
+	class="contents"
+	use:enhance={() => {
+		loading = true;
+		return async ({ result }) => {
+			loading = false;
+			if (result.type === 'error') {
+				return await applyAction(result);
+			}
 
-				await invalidate(UrlDependency.Cart);
-				addToCart();
-				// Not for the widget, see https://github.com/B2Bitcoin/B2BitcoinBootik/issues/243
-				//document.body.scrollIntoView();
-			};
-		}}
+			await invalidate(UrlDependency.Cart);
+			addToCart();
+			// Not for the widget, see https://github.com/B2Bitcoin/B2BitcoinBootik/issues/243
+			//document.body.scrollIntoView();
+		};
+	}}
+>
+	<button
+		type="submit"
+		disabled={loading}
+		formaction="/product/{product._id}?/addToCart"
+		class={className}
 	>
-		<div class="relative">
-			<button
-				type="submit"
-				disabled={loading}
-				formaction="/product/{product._id}?/addToCart"
-				class="btn btn-gray"
-			>
-				{t('product.cta.add')}
-			</button>
-
-			{#if $productAddedToCart && $productAddedToCart.widget === widget}
-				<Popup>
-					<ProductAddedToCart
-						class="w-[562px] max-w-full"
-						on:dismiss={() => ($productAddedToCart = null)}
-						product={$productAddedToCart.product}
-						picture={$productAddedToCart.picture}
-						customPrice={$productAddedToCart.customPrice}
-					/>
-				</Popup>
-			{/if}
-		</div>
-	</form>
-</div>
+		{t(btnName)}
+	</button>
+	{#if detailBtn}
+		<a href="/product/{product._id}">
+			<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
+				{t('product.cta.details')}
+			</div>
+		</a>
+	{/if}
+	{#if $productAddedToCart && $productAddedToCart.widget === widget}
+		<Popup>
+			<ProductAddedToCart
+				class="w-[562px] max-w-full"
+				on:dismiss={() => ($productAddedToCart = null)}
+				product={$productAddedToCart.product}
+				picture={$productAddedToCart.picture}
+				customPrice={$productAddedToCart.customPrice}
+			/>
+		</Popup>
+	{/if}
+</form>
