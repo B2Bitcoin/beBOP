@@ -6,7 +6,7 @@ import { writeFile } from 'fs/promises';
 const cache: Record<string, string> = {};
 
 export const GET = async () => {
-	let responseText = cache['css-generated'];
+	const responseText = cache['css-generated'];
 	const theme = await collections.styles.findOne({ _id: runtimeConfig.mainThemeId });
 
 	const cssContentLight = theme ? generateCss(theme, 'light') : '';
