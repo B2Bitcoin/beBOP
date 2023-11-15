@@ -1,7 +1,4 @@
 <script lang="ts">
-	import ProductItem from '$lib/components/ProductItem.svelte';
-	import { downloadFile } from '$lib/utils/downloadFile.js';
-
 	export let data;
 </script>
 
