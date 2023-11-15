@@ -2,8 +2,6 @@
 	import type { Product } from '$lib/types/Product';
 	import type { Picture } from '$lib/types/Picture';
 	import PictureComponent from '../Picture.svelte';
-	import { useI18n } from '$lib/i18n';
-	import { productAddedToCart } from '$lib/stores/productAddedToCart';
 
 	import AddToCart from '../AddToCart.svelte';
 
@@ -24,19 +22,6 @@
 	>;
 	export let pictures: Picture[] | [];
 	export let canAddToCart: boolean;
-
-	const widget = {};
-	function addToCart() {
-		$productAddedToCart = {
-			product,
-			quantity: 1,
-			picture: pictures[0],
-			widget
-		};
-	}
-	let loading = false;
-
-	const { t } = useI18n();
 	let pictureId = 0;
 </script>
 
