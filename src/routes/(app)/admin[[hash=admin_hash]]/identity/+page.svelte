@@ -85,7 +85,7 @@
 			ZIP code
 			<input
 				type="text"
-				name="address.zipCode"
+				name="address.zip"
 				class="form-input max-w-[25rem]"
 				required
 				value={id?.address.zip ?? ''}
@@ -99,7 +99,7 @@
 		Email
 		<input
 			type="email"
-			name="email"
+			name="contact.email"
 			class="form-input max-w-[25rem]"
 			required
 			value={id?.contact.email ?? ''}
@@ -110,7 +110,7 @@
 		Phone
 		<input
 			type="tel"
-			name="phone"
+			name="contact.phone"
 			class="form-input max-w-[25rem]"
 			value={id?.contact.phone ?? ''}
 		/>
@@ -122,7 +122,7 @@
 		IBAN
 		<input
 			type="text"
-			name="iban"
+			name="bank.iban"
 			class="form-input max-w-[25rem]"
 			bind:value={iban}
 			required={!!bic}
@@ -133,7 +133,7 @@
 		BIC
 		<input
 			type="text"
-			name="bic"
+			name="bank.bic"
 			class="form-input max-w-[25rem]"
 			bind:value={bic}
 			required={!!iban}
