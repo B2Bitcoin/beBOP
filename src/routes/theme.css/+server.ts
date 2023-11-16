@@ -4,7 +4,7 @@ import type { Style } from '$lib/types/Style';
 
 export const GET = async () => {
 	const theme = await collections.styles.findOne({ _id: runtimeConfig.mainThemeId });
-	const responseText = generateCss(theme, 'dark');
+	const responseText = theme ? generateCss(theme, 'dark') : '';
 	return new Response(responseText, {
 		headers: {
 			'Content-Type': 'text/css',
@@ -17,7 +17,7 @@ export const GET = async () => {
 	});
 };
 
-function generateCss(themeData: Style) {
+function generateCss(themeData: Style, themeMode: string) {
 	let css = '';
 
 	function processStyleObject(styleObject: Style, prefix = '') {
@@ -36,5 +36,6 @@ function generateCss(themeData: Style) {
 	:root {
 	${css}
   }
+  ${themeMode}
   `;
 }
