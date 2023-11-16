@@ -11,6 +11,7 @@ import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import { building } from '$app/environment';
+import type { SellerIdentity } from '$lib/types/SellerIdentity';
 
 const defaultConfig = {
 	adminHash: '',
@@ -78,7 +79,7 @@ const defaultConfig = {
 				amount: 0,
 				currency: 'EUR'
 			}
-		} as DeliveryFees
+		} satisfies DeliveryFees as DeliveryFees
 	},
 	plausibleScriptUrl: '',
 	productActionSettings: {
@@ -93,8 +94,9 @@ const defaultConfig = {
 		googleShopping: {
 			visible: true
 		}
-	} as ProductActionSettings,
-	mainThemeId: ''
+	} satisfies ProductActionSettings as ProductActionSettings,
+	mainThemeId: '',
+	sellerIdentity: null as SellerIdentity | null
 };
 
 exchangeRate.set({
