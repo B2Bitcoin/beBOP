@@ -64,7 +64,7 @@
 						<AddToCart
 							{product}
 							picture={pictures[0]}
-							btnName="product.cta.buy"
+							btnTranslationKey="product.cta.buy"
 							class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1"
 							detailBtn={true}
 						/>

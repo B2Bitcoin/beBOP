@@ -35,7 +35,7 @@
 	let className = '';
 	export { className as class };
 	export let detailBtn = false;
-	export let btnName: string;
+	export let btnTranslationKey = 'product.cta.add';
 	const { t } = useI18n();
 </script>
 
@@ -63,7 +63,7 @@
 		formaction="/product/{product._id}?/addToCart"
 		class={className}
 	>
-		{t(btnName)}
+		{t(btnTranslationKey)}
 	</button>
 	{#if detailBtn}
 		<a href="/product/{product._id}">

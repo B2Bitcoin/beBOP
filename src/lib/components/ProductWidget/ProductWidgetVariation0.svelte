@@ -64,7 +64,7 @@
 		</a>
 		{#if canAddToCart}
 			<div class="flex flex-row items-end justify-end">
-				<AddToCart {product} picture={pictures[0]} btnName="product.cta.add" class="btn btn-gray" />
+				<AddToCart {product} picture={pictures[0]} class="btn btn-gray" />
 			</div>
 		{/if}
 	</div>
