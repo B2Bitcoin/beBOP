@@ -207,21 +207,3 @@ export function picturesForProducts(productIds: string[]): Promise<Picture[]> {
 		])
 		.toArray();
 }
-
-export function pictureIdsForProducts(productIds: string[]): Promise<string[]> {
-	return collections.pictures
-		.aggregate<Pick<Picture, '_id'>>([
-			{ $match: { productId: { $in: productIds } } },
-			{ $sort: { createdAt: 1 } },
-			{ $project: { _id: 1, productId: 1 } },
-			{
-				$group: {
-					_id: '$productId',
-					value: { $first: '$$ROOT' }
-				}
-			},
-			{ $replaceRoot: { newRoot: '$value' } }
-		])
-		.map((picture) => picture._id)
-		.toArray();
-}

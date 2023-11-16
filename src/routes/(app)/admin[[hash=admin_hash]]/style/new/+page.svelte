@@ -18,10 +18,9 @@
 					<input
 						class="form-input"
 						type="text"
-						name={`${section}_${field.name}_light`}
+						name={`${section}.${field.name}.light`}
 						placeholder={field.placeholder}
 						required
-						value="FFFFFF"
 					/>
 				</label>
 				<label class="form-label">
@@ -29,10 +28,9 @@
 					<input
 						class="form-input"
 						type="text"
-						name={`${section}_${field.name}_dark`}
+						name={`${section}.${field.name}.dark`}
 						placeholder={field.placeholder}
 						required
-						value="FFFFFF"
 					/>
 				</label>
 			{:else}
@@ -40,7 +38,7 @@
 					{field.label}
 					<select
 						class="form-input"
-						name={`${section}_${field.name}`}
+						name={`${section}.${field.name}`}
 						placeholder={field.placeholder}
 						required
 					>

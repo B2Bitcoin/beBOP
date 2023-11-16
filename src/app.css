@@ -33,6 +33,14 @@
 		@apply hover:bg-[#ff3d1a];
 	}
 
+	.btn-orange {
+		@apply bg-[#ff7f00] text-white;
+	}
+
+	.btn-orange:not([disabled]) {
+		@apply hover:bg-[#ff9933];
+	}
+
 	.btn-blue {
 		@apply bg-link text-white;
 	}
