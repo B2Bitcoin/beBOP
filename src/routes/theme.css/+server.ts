@@ -17,7 +17,7 @@ export const GET = async () => {
 	});
 };
 
-function generateCss(themeData: Style, themeMode: string) {
+function generateCss(themeData: Style) {
 	let css = '';
 
 	function processStyleObject(styleObject: Style, prefix = '') {
