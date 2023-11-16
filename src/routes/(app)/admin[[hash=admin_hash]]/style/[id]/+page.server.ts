@@ -6,7 +6,6 @@ import { collections } from '$lib/server/database';
 
 export const load = async ({ params }) => {
 	const style = await collections.styles.findOne({ _id: params.id });
-
 	return {
 		style
 	};

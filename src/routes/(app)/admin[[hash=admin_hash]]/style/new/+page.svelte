@@ -21,7 +21,6 @@
 						name={`${section}.${field.name}.light`}
 						placeholder={field.placeholder}
 						required
-						value="FFFFFF"
 					/>
 				</label>
 				<label class="form-label">
@@ -32,7 +31,6 @@
 						name={`${section}.${field.name}.dark`}
 						placeholder={field.placeholder}
 						required
-						value="FFFFFF"
 					/>
 				</label>
 			{:else}
