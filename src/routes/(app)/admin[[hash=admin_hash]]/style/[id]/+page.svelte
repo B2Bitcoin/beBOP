@@ -41,7 +41,7 @@
 					<input
 						class="form-input"
 						type="text"
-						name={`${section}_${field.name}_light`}
+						name={`${section}.${field.name}.light`}
 						placeholder={field.placeholder}
 						required
 						bind:value={formData[section][field.name].light}
@@ -52,7 +52,7 @@
 					<input
 						class="form-input"
 						type="text"
-						name={`${section}_${field.name}_dark`}
+						name={`${section}.${field.name}.dark`}
 						placeholder={field.placeholder}
 						required
 						bind:value={formData[section][field.name].dark}
@@ -63,7 +63,7 @@
 					{field.label}
 					<select
 						class="form-input"
-						name={`${section}_${field.name}`}
+						name={`${section}.${field.name}`}
 						placeholder={field.placeholder}
 						bind:value={formData[section][field.name]}
 						required

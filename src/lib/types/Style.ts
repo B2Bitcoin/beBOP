@@ -1,159 +1,202 @@
 import type { Timestamps } from './Timestamps';
 
-interface StyleHeader {
+export interface StyleHeader {
 	backgroundColor: {
 		dark: string;
 		light: string;
 	};
-	shopNameFont: string;
-	tabFont: string;
-	shopNameFontColor: {
-		dark: string;
-		light: string;
+	shopName: {
+		color: {
+			dark: string;
+			light: string;
+		};
+		fontFamily: string;
 	};
-	tabFontColor: {
-		dark: string;
-		light: string;
+	tab: {
+		color: {
+			dark: string;
+			light: string;
+		};
+		fontFamily: string;
 	};
-	activeTabUnderlineColor: {
-		dark: string;
-		light: string;
+	activeTabUnderline: {
+		color: {
+			dark: string;
+			light: string;
+		};
 	};
 }
 
-interface StyleNavbar {
+export interface StyleNavbar {
 	backgroundColor: {
 		dark: string;
 		light: string;
 	};
-	font: string;
-	fontColor: {
+	fontFamily: string;
+	color: {
 		dark: string;
 		light: string;
 	};
-	searchInputBackgroundColor: {
-		dark: string;
-		light: string;
+	searchInput: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
 	};
 }
 
-interface StyleFooter {
+export interface StyleFooter {
 	backgroundColor: {
 		dark: string;
 		light: string;
 	};
-	font: string;
-	fontColor: {
+	fontFamily: string;
+	color: {
 		dark: string;
 		light: string;
 	};
 }
 
-interface StyleCartPreview {
+export interface StyleCartPreview {
 	backgroundColor: {
 		dark: string;
 		light: string;
 	};
-	mainCTABackgroundColor: {
+	fontFamily: string;
+	color: {
 		dark: string;
 		light: string;
 	};
-	secondaryCTABackgroundColor: {
-		dark: string;
-		light: string;
+	cta: {
+		fontFamily: string;
 	};
-	font: string;
-	fontColor: {
-		dark: string;
-		light: string;
+	mainCTA: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+		color: {
+			dark: string;
+			light: string;
+		};
 	};
-	CTAFont: string;
-	mainCTAFontColor: {
-		dark: string;
-		light: string;
-	};
-	secondaryCTAFontColor: {
-		dark: string;
-		light: string;
-	};
-}
-
-interface StyleBody {
-	secondPlanBackgroundColor: {
-		dark: string;
-		light: string;
-	};
-	mainBackgroundColor: {
-		dark: string;
-		light: string;
-	};
-	titleFont: string;
-	titleFontColor: {
-		dark: string;
-		light: string;
-	};
-	textFont: string;
-	textFontColor: {
-		dark: string;
-		light: string;
-	};
-	secondaryTextFont: string;
-	secondaryTextFontColor: {
-		dark: string;
-		light: string;
-	};
-	mainCTABackgroundColor: {
-		dark: string;
-		light: string;
-	};
-	secondaryCTABackgroundColor: {
-		dark: string;
-		light: string;
-	};
-	CTAFont: string;
-	mainCTAFontColor: {
-		dark: string;
-		light: string;
-	};
-	secondaryCTAFontColor: {
-		dark: string;
-		light: string;
-	};
-	hyperlinkColor: {
-		dark: string;
-		light: string;
+	secondaryCTA: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+		color: {
+			dark: string;
+			light: string;
+		};
 	};
 }
 
-interface StyleTagWidget {
-	mainBackgroundColor: {
+export interface StyleBody {
+	secondPlan: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+	};
+	mainPlan: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+	};
+	title: {
+		fontFamily: string;
+		color: {
+			dark: string;
+			light: string;
+		};
+	};
+	text: {
+		fontFamily: string;
+		color: {
+			dark: string;
+			light: string;
+		};
+	};
+	secondaryText: {
+		fontFamily: string;
+		color: {
+			dark: string;
+			light: string;
+		};
+	};
+	cta: {
+		fontFamily: string;
+	};
+	mainCTA: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+		color: {
+			dark: string;
+			light: string;
+		};
+	};
+	secondaryCTA: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+		color: {
+			dark: string;
+			light: string;
+		};
+	};
+
+	hyperlink: {
+		color: {
+			dark: string;
+			light: string;
+		};
+	};
+}
+
+export interface StyleTagWidget {
+	main: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+	};
+	transparent: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+	};
+	secondary: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+	};
+	cta: {
+		backgroundColor: {
+			dark: string;
+			light: string;
+		};
+		color: {
+			dark: string;
+			light: string;
+		};
+	};
+	fontFamily: string;
+	color: {
 		dark: string;
 		light: string;
 	};
-	transparentBackgroundColor: {
-		dark: string;
-		light: string;
-	};
-	secondaryBackgroundColor: {
-		dark: string;
-		light: string;
-	};
-	CTAbackgroundColor: {
-		dark: string;
-		light: string;
-	};
-	font: string;
-	fontColor: {
-		dark: string;
-		light: string;
-	};
-	CTAFontColor: {
-		dark: string;
-		light: string;
-	};
-	hyperlinkColor: {
-		dark: string;
-		light: string;
+	hyperlink: {
+		color: {
+			dark: string;
+			light: string;
+		};
 	};
 }
 
@@ -175,21 +218,26 @@ export const styleFormStructure = {
 			{ label: 'Background color', name: 'backgroundColor', isColor: true, placeholder: 'FFFFFF' },
 			{
 				label: 'Shop name font',
-				name: 'shopNameFont',
+				name: 'shopName.fontFamily',
 				isColor: false,
 				placeholder: 'Arial, sans-serif'
 			},
-			{ label: 'Tab font', name: 'tabFont', isColor: false, placeholder: 'Arial, sans-serif' },
+			{
+				label: 'Tab font',
+				name: 'tab.fontFamily',
+				isColor: false,
+				placeholder: 'Arial, sans-serif'
+			},
 			{
 				label: 'Shop name font color',
-				name: 'shopNameFontColor',
+				name: 'shopName.color',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
-			{ label: 'Tab font color', name: 'tabFontColor', isColor: true, placeholder: 'FFFFFF' },
+			{ label: 'Tab font color', name: 'tab.color', isColor: true, placeholder: 'FFFFFF' },
 			{
 				label: 'Active tab underline color',
-				name: 'activeTabUnderlineColor',
+				name: 'activeTabUnderline.color',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			}
@@ -199,11 +247,11 @@ export const styleFormStructure = {
 		label: 'Navigation bar',
 		elements: [
 			{ label: 'Background color', name: 'backgroundColor', isColor: true, placeholder: 'FFFFFF' },
-			{ label: 'Font', name: 'font', isColor: false, placeholder: 'Arial, sans-serif' },
-			{ label: 'Font color', name: 'fontColor', isColor: true, placeholder: 'FFFFFF' },
+			{ label: 'Font', name: 'fontFamily', isColor: false, placeholder: 'Arial, sans-serif' },
+			{ label: 'Font color', name: 'color', isColor: true, placeholder: 'FFFFFF' },
 			{
 				label: 'Search input background color',
-				name: 'searchInputBackgroundColor',
+				name: 'searchInput.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			}
@@ -213,8 +261,8 @@ export const styleFormStructure = {
 		label: 'Footer',
 		elements: [
 			{ label: 'Background color', name: 'backgroundColor', isColor: true, placeholder: 'FFFFFF' },
-			{ label: 'Font', name: 'font', isColor: false, placeholder: 'Arial, sans-serif' },
-			{ label: 'Font color', name: 'fontColor', isColor: true, placeholder: 'FFFFFF' }
+			{ label: 'Font', name: 'fontFamily', isColor: false, placeholder: 'Arial, sans-serif' },
+			{ label: 'Font color', name: 'color', isColor: true, placeholder: 'FFFFFF' }
 		]
 	},
 	cartPreview: {
@@ -223,28 +271,33 @@ export const styleFormStructure = {
 			{ label: 'Background color', name: 'backgroundColor', isColor: true, placeholder: 'FFFFFF' },
 			{
 				label: 'Main CTA background color',
-				name: 'mainCTABackgroundColor',
+				name: 'mainCTA.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'Secondary CTA background color',
-				name: 'secondaryCTABackgroundColor',
+				name: 'secondaryCTA.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
-			{ label: 'Font', name: 'font', isColor: false, placeholder: 'Arial, sans-serif' },
-			{ label: 'Font color', name: 'fontColor', isColor: true, placeholder: 'FFFFFF' },
-			{ label: 'CTA Font', name: 'CTAFont', isColor: false, placeholder: 'Arial, sans-serif' },
+			{ label: 'Font', name: 'fontFamily', isColor: false, placeholder: 'Arial, sans-serif' },
+			{ label: 'Font color', name: 'color', isColor: true, placeholder: 'FFFFFF' },
+			{
+				label: 'CTA Font',
+				name: 'cta.fontFamily',
+				isColor: false,
+				placeholder: 'Arial, sans-serif'
+			},
 			{
 				label: 'Main CTA font color',
-				name: 'mainCTAFontColor',
+				name: 'mainCTA.color',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'Secondary CTA font color',
-				name: 'secondaryCTAFontColor',
+				name: 'secondaryCTA.color',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			}
@@ -254,59 +307,74 @@ export const styleFormStructure = {
 		label: 'Body',
 		elements: [
 			{
-				label: '2nd plan background color',
-				name: 'secondPlanBackgroundColor',
+				label: 'Second plan background color',
+				name: 'secondPlan.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'Main background color',
-				name: 'mainBackgroundColor',
+				name: 'mainPlan.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
-			{ label: 'Title font', name: 'titleFont', isColor: false, placeholder: 'Arial, sans-serif' },
-			{ label: 'Title font color', name: 'titleFontColor', isColor: true, placeholder: 'FFFFFF' },
-			{ label: 'Text font', name: 'textFont', isColor: false, placeholder: 'Arial, sans-serif' },
-			{ label: 'Text font color', name: 'textFontColor', isColor: true, placeholder: 'FFFFFF' },
+			{
+				label: 'Title font',
+				name: 'title.fontFamily',
+				isColor: false,
+				placeholder: 'Arial, sans-serif'
+			},
+			{ label: 'Title font color', name: 'title.color', isColor: true, placeholder: 'FFFFFF' },
+			{
+				label: 'Text font',
+				name: 'text.fontFamily',
+				isColor: false,
+				placeholder: 'Arial, sans-serif'
+			},
+			{ label: 'Text font color', name: 'text.color', isColor: true, placeholder: 'FFFFFF' },
 			{
 				label: 'Secondary text font',
-				name: 'secondaryTextFont',
+				name: 'secondaryText.fontFamily',
 				isColor: false,
 				placeholder: 'Arial, sans-serif'
 			},
 			{
 				label: 'Secondary text font color',
-				name: 'secondaryTextFontColor',
+				name: 'secondaryText.color',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'Main CTA background color',
-				name: 'mainCTABackgroundColor',
+				name: 'mainCTA.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'Secondary CTA background color',
-				name: 'secondaryCTABackgroundColor',
+				name: 'secondaryCTA.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
-			{ label: 'CTA Font', name: 'CTAFont', isColor: false, placeholder: 'Arial, sans-serif' },
+			{
+				label: 'CTA Font',
+				name: 'cta.fontFamily',
+				isColor: false,
+				placeholder: 'Arial, sans-serif'
+			},
 			{
 				label: 'Main CTA font color',
-				name: 'mainCTAFontColor',
+				name: 'mainCTA.color',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'Secondary CTA font color',
-				name: 'secondaryCTAFontColor',
+				name: 'secondaryCTA.color',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
-			{ label: 'Hyperlink color', name: 'hyperlinkColor', isColor: true, placeholder: 'FFFFFF' }
+			{ label: 'Hyperlink color', name: 'hyperlink.color', isColor: true, placeholder: 'FFFFFF' }
 		]
 	},
 	tagWidget: {
@@ -314,32 +382,32 @@ export const styleFormStructure = {
 		elements: [
 			{
 				label: 'Main background color',
-				name: 'mainBackgroundColor',
+				name: 'main.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'Transparent background color',
-				name: 'transparentBackgroundColor',
+				name: 'transparent.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'Secondary background color',
-				name: 'secondaryBackgroundColor',
+				name: 'secondary.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
 			{
 				label: 'CTA background color',
-				name: 'CTAbackgroundColor',
+				name: 'cta.backgroundColor',
 				isColor: true,
 				placeholder: 'FFFFFF'
 			},
-			{ label: 'Font', name: 'font', isColor: false, placeholder: 'Arial, sans-serif' },
-			{ label: 'Font color', name: 'fontColor', isColor: true, placeholder: 'FFFFFF' },
-			{ label: 'CTA font color', name: 'CTAFontColor', isColor: true, placeholder: 'FFFFFF' },
-			{ label: 'Hyperlink color', name: 'hyperlinkColor', isColor: true, placeholder: 'FFFFFF' }
+			{ label: 'Font', name: 'fontFamily', isColor: false, placeholder: 'Arial, sans-serif' },
+			{ label: 'Font color', name: 'color', isColor: true, placeholder: 'FFFFFF' },
+			{ label: 'CTA font color', name: 'cta.color', isColor: true, placeholder: 'FFFFFF' },
+			{ label: 'Hyperlink color', name: 'hyperlink.color', isColor: true, placeholder: 'FFFFFF' }
 		]
 	}
 };
