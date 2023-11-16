@@ -29,7 +29,6 @@
 	export { classNames as class };
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
-	$: pictureByProduct = Object.fromEntries(pictures.map((picture) => [picture.productId, picture]));
 	$: digitalFilesByProduct = Object.fromEntries(
 		digitalFiles.map((digitalFile) => [digitalFile.productId, digitalFile])
 	);
@@ -44,6 +43,10 @@
 		pictures.filter((picture): picture is SetRequired<Picture, 'slider'> => !!picture.slider),
 		'slider._id'
 	);
+	$: picturesByProduct = groupBy(
+		pictures.filter((picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId),
+		'productId'
+	);
 </script>
 
 <div class="prose max-w-full {classNames}">
@@ -51,7 +54,7 @@
 		{#if token.type === 'productWidget' && productById[token.slug]}
 			<ProductWidget
 				product={productById[token.slug]}
-				picture={pictureByProduct[token.slug]}
+				pictures={picturesByProduct[token.slug]}
 				hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 				displayOption={token.display}
 				canBuy={roleId === POS_ROLE_ID
