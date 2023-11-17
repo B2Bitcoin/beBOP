@@ -43,6 +43,9 @@ dependencies:
   fetch-socks:
     specifier: ^1.2.0
     version: 1.2.0
+  flat:
+    specifier: ^6.0.1
+    version: 6.0.1
   html-to-text:
     specifier: ^9.0.5
     version: 9.0.5
@@ -2905,6 +2908,12 @@ packages:
       flatted: 3.2.7
       rimraf: 3.0.2
     dev: true
+
+  /flat@6.0.1:
+    resolution: {integrity: sha512-/3FfIa8mbrg3xE7+wAhWeV+bd7L2Mof+xtZb5dRDKZ+wDvYJK4WDYeIOuOhre5Yv5aQObZrlbRmk3RTSiuQBtw==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dev: false
 
   /flatted@3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
