@@ -66,11 +66,14 @@
 		{t(btnTranslationKey)}
 	</button>
 	{#if detailBtn}
-		<a href="/product/{product._id}">
-			<div class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1">
+		<button
+			type="button"
+			class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1"
+		>
+			<a href="/product/{product._id}">
 				{t('product.cta.details')}
-			</div>
-		</a>
+			</a>
+		</button>
 	{/if}
 	{#if $productAddedToCart && $productAddedToCart.widget === widget}
 		<Popup>
