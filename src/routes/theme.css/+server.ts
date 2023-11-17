@@ -35,50 +35,55 @@ function generateCss(themeData: Style, themeMode: string) {
 	processStyleObject(themeData);
 
 	return `
-	@import 'tailwindcss/base';
-	@import 'tailwindcss/components';
-	@import 'tailwindcss/utilities';
-
 	:root {${css}}
- 
-	body .secondPlan {
-		background-color: var(--body-secondPlan-backgroundColor-${themeMode});
-	  }
-	  
-	  body .mainPlan {
-		background-color: var(--body-mainPlan-backgroundColor-${themeMode});
-	  }
-	  
-	  body title {
+		body .secondPlan {
+		@apply bg-[color:var(--body-secondPlan-backgroundColor-dark)];
+		}
+		body .mainPlan {
+		@apply bg-[color:var(--body-mainPlan-backgroundColor-dark)];
+		}
+		body title {
+		@apply text-[color:var(--body-title-color-dark)];
 		font-family: var(--body-title-fontFamily);
-		color: var(--body-title-color-${themeMode});
-	  }
-	  
-	  body .text {
+		}
+		body {
+		@apply text-[color:var(--body-text-color-dark)];
 		font-family: var(--body-text-fontFamily);
-	  }
-	  
-	  body .secondaryText {
+		}
+		body .secondaryText {
+		@apply text-[color:var(--body-secondaryText-color-dark)];
 		font-family: var(--body-secondaryText-fontFamily);
-		color: var(--body-secondaryText-color-${themeMode});
-	  }
-	  
-	  body .mainCTA {
-		background-color: var(--body-mainCTA-backgroundColor-${themeMode});
-		color: var(--body-mainCTA-color-${themeMode});
-	  }
-	  
-	  body .secondaryCTA {
-		background-color: var(--body-secondaryCTA-backgroundColor-${themeMode});
-		color: var(--body-secondaryCTA-color-${themeMode});
-	  }
-	  
-	  body .cta {
+		}
+		body .mainCTA {
+		@apply bg-[color:var(--body-mainCTA-backgroundColor-dark)] text-[color:var(--body-mainCTA-color-dark)];
+		}
+		body .secondaryCTA {
+		@apply bg-[color:var(--body-secondaryCTA-backgroundColor-dark)] text-[color:var(--body-secondaryCTA-color-dark)];
+		}
+		body .cta {
 		font-family: var(--body-cta-fontFamily);
-	  }
-	  
-	  body .hyperlink {
-		color: var(--body-hyperlink-color-${themeMode});
-	  }
+		}
+		body .hyperlink {
+		@apply text-[color:var(--body-hyperlink-color-dark)];
+		}
+		--header-backgroundColor-light:FFFFFF;
+--header-backgroundColor-dark:FFFFFF;
+--header-shopName-fontFamily:Arial;
+--header-shopName-color-light:FFFFFF;
+--header-shopName-color-dark:FFFFFF;
+--header-tab-fontFamily:Helvetica;
+--header-tab-color-light:FFFFFF;
+--header-tab-color-dark:FFFFFF;
+--header-activeTabUnderline-color-light:FFFFFF;
+--header-activeTabUnderline-color-dark:FFFFFF;
+
+		header {
+		@apply bg-[color:var(--header-backgroundColor-dark)]
+		}
+		header .shopName {
+			font-family: var(--header-shopName-fontFamily);
+			@apply text-[color:var(--header-shopName-color-dark)]
+			}
+
  	 `;
 }
