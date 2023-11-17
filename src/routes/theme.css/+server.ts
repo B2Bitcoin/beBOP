@@ -37,7 +37,7 @@ function generateCss(themeData: Style, themeMode: string) {
 	return `
 	:root {${css}}
 		body .secondPlan {
-		@apply bg-[color:var(--body-secondPlan-backgroundColor-dark)];
+		@apply bg-[color:var(--body-secondPlan-backgroundColor-${themeMode})];
 		}
 		body .mainPlan {
 		@apply bg-[color:var(--body-mainPlan-backgroundColor-dark)];
