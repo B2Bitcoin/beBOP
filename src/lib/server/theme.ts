@@ -65,11 +65,10 @@ export const themeValidator = z.object({
 	body: z.object({
 		mainPlan: z.object({ backgroundColor }),
 		secondPlan: z.object({ backgroundColor }),
-		cta: z.object({ fontFamily, color }),
+		cta: z.object({ fontFamily }),
 		title: z.object({ fontFamily, color }),
 		text: z.object({ fontFamily, color }),
 		secondaryText: z.object({ fontFamily, color }),
-		mainBody: z.object({}),
 		mainCTA: z.object({ backgroundColor, color }),
 		secondaryCTA: z.object({ backgroundColor, color }),
 		hyperlink: z.object({ color })

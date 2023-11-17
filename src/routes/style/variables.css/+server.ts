@@ -49,17 +49,17 @@ function generateCss(themeData: ThemeData) {
 	const { nonColors, darkModeColors, lightModeColors } = generateVariables(themeData);
 
 	return `html {
-		${Object.entries(nonColors)
-			.map(([key, value]) => `--${key.replaceAll('.', '-')}:${value};`)
-			.join('\n')}
-		${Object.entries(lightModeColors)
-			.map(([key, value]) => `--${key.replaceAll('.', '-')}:${value};`)
-			.join('\n')}
-	}
+${Object.entries(nonColors)
+	.map(([key, value]) => `\t--${key.replaceAll('.', '-')}:${value};`)
+	.join('\n')}
+${Object.entries(lightModeColors)
+	.map(([key, value]) => `\t--${key.replaceAll('.', '-')}:${value};`)
+	.join('\n')}
+}
 
-	html.dark {
-		${Object.entries(darkModeColors)
-			.map(([key, value]) => `--${key.replaceAll('.', '-')}:${value};`)
-			.join('\n')}
-	}`;
+html.dark {
+${Object.entries(darkModeColors)
+	.map(([key, value]) => `\t--${key.replaceAll('.', '-')}:${value};`)
+	.join('\n')}
+}`;
 }
