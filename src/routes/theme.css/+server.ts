@@ -80,7 +80,7 @@ function generateCss(themeData: Style, themeMode: string) {
 		navbar {
 			@apply bg-[color:var(--navbar-backgroundColor-${themeMode})]
 			font-family: var(--navbar-fontFamily);
-			@apply text-[color:var(----navbar-color-${themeMode})];
+			@apply text-[color:var(--navbar-color-${themeMode})];
 		}
 		navbar .searchInput {
 			@apply bg-[color:var(--navbar-searchInput-backgroundColor-${themeMode})]
