@@ -1,126 +1,11 @@
+import type { ThemeData } from '$lib/server/theme';
 import type { Timestamps } from './Timestamps';
 import type { Paths } from 'type-fest';
 
-interface ColorChoice {
-	dark: string;
-	light: string;
-}
-export interface StyleHeader {
-	backgroundColor: ColorChoice;
-	shopName: {
-		color: ColorChoice;
-		fontFamily: string;
-	};
-	tab: {
-		color: ColorChoice;
-		fontFamily: string;
-	};
-	activeTab: {
-		textDecoration: {
-			color: ColorChoice;
-		};
-	};
-}
-
-export interface StyleNavbar {
-	backgroundColor: ColorChoice;
-	fontFamily: string;
-	color: ColorChoice;
-	searchInput: {
-		backgroundColor: ColorChoice;
-	};
-}
-
-export interface StyleFooter {
-	backgroundColor: ColorChoice;
-	fontFamily: string;
-	color: ColorChoice;
-}
-
-export interface StyleCartPreview {
-	backgroundColor: ColorChoice;
-	fontFamily: string;
-	color: ColorChoice;
-	cta: {
-		fontFamily: string;
-	};
-	mainCTA: {
-		backgroundColor: ColorChoice;
-		color: ColorChoice;
-	};
-	secondaryCTA: {
-		backgroundColor: ColorChoice;
-		color: ColorChoice;
-	};
-}
-
-export interface StyleBody {
-	secondPlan: {
-		backgroundColor: ColorChoice;
-	};
-	mainPlan: {
-		backgroundColor: ColorChoice;
-	};
-	title: {
-		fontFamily: string;
-		color: ColorChoice;
-	};
-	text: {
-		fontFamily: string;
-		color: ColorChoice;
-	};
-	secondaryText: {
-		fontFamily: string;
-		color: ColorChoice;
-	};
-	cta: {
-		fontFamily: string;
-	};
-	mainCTA: {
-		backgroundColor: ColorChoice;
-		color: ColorChoice;
-	};
-	secondaryCTA: {
-		backgroundColor: ColorChoice;
-		color: ColorChoice;
-	};
-
-	hyperlink: {
-		color: ColorChoice;
-	};
-}
-
-export interface StyleTagWidget {
-	main: {
-		backgroundColor: ColorChoice;
-	};
-	transparent: {
-		backgroundColor: ColorChoice;
-	};
-	secondary: {
-		backgroundColor: ColorChoice;
-	};
-	cta: {
-		backgroundColor: ColorChoice;
-		color: ColorChoice;
-	};
-	fontFamily: string;
-	color: ColorChoice;
-	hyperlink: {
-		color: ColorChoice;
-	};
-}
-
-export interface Theme extends Timestamps {
+export type Theme = Timestamps & {
 	_id: string;
 	name: string;
-	header: StyleHeader;
-	navbar: StyleNavbar;
-	footer: StyleFooter;
-	cartPreview: StyleCartPreview;
-	body: StyleBody;
-	tagWidget: StyleTagWidget;
-}
+} & ThemeData;
 
 export const themeFormStructure = {
 	header: {
@@ -272,7 +157,7 @@ export const themeFormStructure = {
 		]
 	}
 } satisfies {
-	[key in keyof Omit<Theme, '_id' | keyof Timestamps | 'name'>]: {
+	[key in keyof Omit<ThemeData, 'name'>]: {
 		label: string;
 		elements: {
 			label: string;

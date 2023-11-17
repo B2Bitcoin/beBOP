@@ -4,6 +4,9 @@ import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { collections } from '$lib/server/database';
 import { adminPrefix } from '$lib/server/admin';
+import type { Theme } from '$lib/types/Theme';
+import type { Timestamps } from '$lib/types/Timestamps';
+import { themeValidator } from '$lib/server/theme';
 
 export async function load({ params }) {
 	const theme = await collections.themes.findOne({ _id: params.id });
@@ -25,10 +28,16 @@ export const actions: Actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+
+		const theme = themeValidator.parse(json) satisfies Omit<Theme, '_id' | keyof Timestamps>;
+
 		await collections.themes.updateOne(
 			{ _id: params.id },
 			{
-				$set: json
+				$set: {
+					...theme,
+					updatedAt: new Date()
+				}
 			}
 		);
 
