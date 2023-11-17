@@ -2,9 +2,9 @@ import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Style } from '$lib/types/Style';
 
-export const GET = async () => {
+export const GET = async ({ params }) => {
 	const theme = await collections.styles.findOne({ _id: runtimeConfig.mainThemeId });
-	const responseText = theme ? generateCss(theme, 'dark') : '';
+	const responseText = theme ? generateCss(theme, params.mode) : '';
 	return new Response(responseText, {
 		headers: {
 			'Content-Type': 'text/css',

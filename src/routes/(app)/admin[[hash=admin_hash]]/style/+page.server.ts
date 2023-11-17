@@ -29,7 +29,7 @@ export const actions = {
 			{ $set: { data: mainTheme, updatedAt: new Date() } },
 			{ upsert: true }
 		);
-		await fetch(`${ORIGIN}/theme.css`, {
+		await fetch(`${ORIGIN}/theme.css/light`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/javascript; charset=utf-8'
