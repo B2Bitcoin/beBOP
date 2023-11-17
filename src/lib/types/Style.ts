@@ -1,4 +1,5 @@
 import type { Timestamps } from './Timestamps';
+import type { Paths } from 'type-fest';
 
 interface ColorChoice {
 	dark: string;
@@ -320,6 +321,16 @@ export const styleFormStructure = {
 			{ label: 'Hyperlink color', name: 'hyperlink.color', isColor: true, placeholder: '#FFFFFF' }
 		]
 	}
+} satisfies {
+	[key in keyof Omit<Style, '_id' | keyof Timestamps | 'name'>]: {
+		label: string;
+		elements: {
+			label: string;
+			name: Paths<Style[key]>;
+			isColor: boolean;
+			placeholder: string;
+		}[];
+	};
 };
 
 export const systemFonts = [
