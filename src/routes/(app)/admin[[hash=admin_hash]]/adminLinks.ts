@@ -35,8 +35,8 @@ export const adminLinks = [
 				label: 'Sliders'
 			},
 			{
-				href: '/admin/style',
-				label: 'Styles'
+				href: '/admin/theme',
+				label: 'Themes'
 			}
 		]
 	},

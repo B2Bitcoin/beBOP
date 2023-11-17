@@ -1,16 +1,17 @@
-import { ORIGIN } from '$env/static/private';
 import { collections } from '$lib/server/database';
-import type { Style } from '$lib/types/Style';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
+import type { Theme } from '$lib/types/Theme';
 import { z } from 'zod';
 
 export const load = async () => {
-	const styles = await collections.styles
+	const themes = await collections.themes
 		.find()
-		.project<Pick<Style, '_id' | 'name'>>({ _id: 1, name: 1 })
+		.project<Pick<Theme, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 
 	return {
-		styles
+		themes,
+		themeId: runtimeConfig.mainThemeId
 	};
 };
 
@@ -29,11 +30,7 @@ export const actions = {
 			{ $set: { data: mainTheme, updatedAt: new Date() } },
 			{ upsert: true }
 		);
-		await fetch(`${ORIGIN}/theme.css/light`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/javascript; charset=utf-8'
-			}
-		});
+
+		runtimeConfig.mainThemeId = mainTheme;
 	}
 };
