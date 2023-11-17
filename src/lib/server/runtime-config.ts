@@ -95,6 +95,7 @@ const defaultConfig = {
 			visible: true
 		}
 	} satisfies ProductActionSettings as ProductActionSettings,
+	mainThemeId: '',
 	sellerIdentity: null as SellerIdentity | null
 };
 

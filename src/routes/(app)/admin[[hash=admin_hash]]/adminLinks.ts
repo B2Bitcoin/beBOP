@@ -33,6 +33,10 @@ export const adminLinks = [
 			{
 				href: '/admin/slider',
 				label: 'Sliders'
+			},
+			{
+				href: '/admin/theme',
+				label: 'Themes'
 			}
 		]
 	},
