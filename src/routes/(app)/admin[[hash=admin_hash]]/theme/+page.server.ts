@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 import type { Theme } from '$lib/types/Theme';
 import { z } from 'zod';
 
@@ -28,5 +29,7 @@ export const actions = {
 			{ $set: { data: mainTheme, updatedAt: new Date() } },
 			{ upsert: true }
 		);
+
+		runtimeConfig.mainThemeId = mainTheme;
 	}
 };

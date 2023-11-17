@@ -11,6 +11,7 @@ import type {
 	StyleTagWidget
 } from '$lib/types/Theme';
 import { collections } from '$lib/server/database';
+import { adminPrefix } from '$lib/server/admin';
 
 export async function load() {}
 
@@ -36,6 +37,6 @@ export const actions: Actions = {
 
 		await collections.themes.insertOne(json);
 
-		throw redirect(303, '/admin/style');
+		throw redirect(303, `${adminPrefix()}/theme`);
 	}
 };

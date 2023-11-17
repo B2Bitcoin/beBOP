@@ -9,7 +9,7 @@ export async function load({ params }) {
 	const theme = await collections.themes.findOne({ _id: params.id });
 
 	if (!theme) {
-		throw redirect(303, `${adminPrefix}/style`);
+		throw redirect(303, `${adminPrefix()}/style`);
 	}
 
 	return {
@@ -32,6 +32,6 @@ export const actions: Actions = {
 			}
 		);
 
-		throw redirect(303, `${adminPrefix}/style`);
+		throw redirect(303, `${adminPrefix()}/style`);
 	}
 };
