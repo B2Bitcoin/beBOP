@@ -7,16 +7,20 @@ import { adminPrefix } from '$lib/server/admin';
 import type { Theme } from '$lib/types/Theme';
 import type { Timestamps } from '$lib/types/Timestamps';
 import { increaseThemeChangeNumber, themeValidator } from '$lib/server/theme';
+import { ObjectId } from 'mongodb';
 
 export async function load({ params }) {
-	const theme = await collections.themes.findOne({ _id: params.id });
+	const theme = await collections.themes.findOne({ _id: new ObjectId(params.id) });
 
 	if (!theme) {
-		throw redirect(303, `${adminPrefix()}/style`);
+		throw redirect(303, `${adminPrefix()}/theme`);
 	}
 
 	return {
-		theme
+		theme: {
+			...theme,
+			_id: theme._id.toString()
+		}
 	};
 }
 
@@ -32,7 +36,7 @@ export const actions: Actions = {
 		const theme = themeValidator.parse(json) satisfies Omit<Theme, '_id' | keyof Timestamps>;
 
 		await collections.themes.updateOne(
-			{ _id: params.id },
+			{ _id: new ObjectId(params.id) },
 			{
 				$set: {
 					...theme,
@@ -42,7 +46,5 @@ export const actions: Actions = {
 		);
 
 		await increaseThemeChangeNumber();
-
-		throw redirect(303, `${adminPrefix()}/style`);
 	}
 };

@@ -21,7 +21,7 @@
 
 {#if data.themes.length}
 	<h2 class="text-2xl">Theme list :</h2>
-	{#each data.themes as style}
-		<a href="{data.adminPrefix}/theme/${style._id}" class="font-semibold underline">{style.name}</a>
+	{#each data.themes as theme}
+		<a href="{data.adminPrefix}/theme/{theme._id}" class="font-semibold underline">{theme.name}</a>
 	{/each}
 {/if}

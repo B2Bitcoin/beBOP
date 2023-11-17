@@ -1,9 +1,10 @@
 import type { ThemeData } from '$lib/server/theme';
+import type { ObjectId } from 'mongodb';
 import type { Timestamps } from './Timestamps';
 import type { Paths } from 'type-fest';
 
 export type Theme = Timestamps & {
-	_id: string;
+	_id: ObjectId;
 	name: string;
 } & ThemeData;
 

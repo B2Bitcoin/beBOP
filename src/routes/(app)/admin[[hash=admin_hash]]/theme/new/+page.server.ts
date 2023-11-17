@@ -6,6 +6,7 @@ import { adminPrefix } from '$lib/server/admin';
 import type { Theme } from '$lib/types/Theme';
 import type { Timestamps } from '$lib/types/Timestamps';
 import { themeValidator } from '$lib/server/theme';
+import { ObjectId } from 'mongodb';
 
 export async function load() {}
 
@@ -20,13 +21,13 @@ export const actions: Actions = {
 
 		const theme = themeValidator.parse(json) satisfies Omit<Theme, '_id' | keyof Timestamps>;
 
-		await collections.themes.insertOne({
+		const { insertedId } = await collections.themes.insertOne({
+			_id: new ObjectId(),
 			...theme,
 			createdAt: new Date(),
-			updatedAt: new Date(),
-			_id: crypto.randomUUID()
+			updatedAt: new Date()
 		});
 
-		throw redirect(303, `${adminPrefix()}/theme`);
+		throw redirect(303, `${adminPrefix()}/theme/${insertedId}`);
 	}
 };

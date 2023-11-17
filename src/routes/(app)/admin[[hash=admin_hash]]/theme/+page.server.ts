@@ -8,6 +8,7 @@ export const load = async () => {
 	const themes = await collections.themes
 		.find()
 		.project<Pick<Theme, '_id' | 'name'>>({ _id: 1, name: 1 })
+		.map((theme) => ({ ...theme, _id: theme._id.toString() }))
 		.toArray();
 
 	return {
@@ -22,7 +23,10 @@ export const actions = {
 
 		const { mainTheme } = z
 			.object({
-				mainTheme: z.string()
+				mainTheme: z.enum([
+					'',
+					...(await collections.themes.distinct('_id')).map((id) => id.toString())
+				])
 			})
 			.parse(Object.fromEntries(formData));
 
