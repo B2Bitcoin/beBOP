@@ -12,7 +12,7 @@ import type {
 } from '$lib/types/Theme';
 import { collections } from '$lib/server/database';
 
-export const load = async () => {};
+export async function load() {}
 
 export const actions: Actions = {
 	default: async ({ request }) => {

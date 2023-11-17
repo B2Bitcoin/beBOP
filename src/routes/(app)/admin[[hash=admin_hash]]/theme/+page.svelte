@@ -3,7 +3,7 @@
 </script>
 
 <h1 class="text-3xl">Theme</h1>
-<a href="/admin/style/new" class="underline">Create a new theme</a>
+<a href="{data.adminPrefix}/theme/new" class="underline">Create a new theme</a>
 
 {#if data.themes.length > 0}
 	<h2 class="text-2xl">Choose your theme</h2>
@@ -20,7 +20,9 @@
 	</form>
 {/if}
 
-<h2 class="text-2xl">Theme list :</h2>
-{#each data.themes as style}
-	<a href={`/admin/style/${style._id}`} class="font-semibold underline">{style.name}</a>
-{/each}
+{#if data.themes.length}
+	<h2 class="text-2xl">Theme list :</h2>
+	{#each data.themes as style}
+		<a href="{data.adminPrefix}/theme/${style._id}" class="font-semibold underline">{style.name}</a>
+	{/each}
+{/if}
