@@ -1,3 +1,4 @@
+import { adminLinks } from '../../routes/(app)/admin[[hash=admin_hash]]/adminLinks';
 import type { Timestamps } from './Timestamps';
 import { CUSTOMER_ROLE_ID } from './User';
 
@@ -14,21 +15,7 @@ export interface Role extends Timestamps {
 
 export const defaultRoleOptions = [
 	'/admin/*',
-	'/admin/layout/*',
-	'/admin/config/*',
-	'/admin/product/*',
-	'/admin/picture/*',
-	'/admin/bitcoin/*',
-	'/admin/lightning/*',
-	'/admin/order/*',
-	'/admin/nostr/*',
-	'/admin/email/*',
-	'/admin/cms/*',
-	'/admin/challenge/*',
-	'/admin/discount/*',
-	'/admin/arm/*',
-	'/admin/backup/*',
-	'/admin/tags/*'
+	...adminLinks.map((section) => section.links.map((link) => link.href + '/*')).flat()
 ];
 
 export function isAllowedOnPage(role: Role, path: string, mode: 'read' | 'write'): boolean {
