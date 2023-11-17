@@ -331,7 +331,9 @@ export const systemFonts = [
 	'Garamond',
 	'Courier New',
 	'Brush Script MT',
-	'Outfit'
+	'Outfit',
+	'Gloock',
+	'Poppins'
 ];
 
 export type StyleFormStructure = typeof styleFormStructure;
