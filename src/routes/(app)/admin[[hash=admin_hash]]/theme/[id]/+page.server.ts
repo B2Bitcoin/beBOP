@@ -6,7 +6,7 @@ import { collections } from '$lib/server/database';
 import { adminPrefix } from '$lib/server/admin';
 import type { Theme } from '$lib/types/Theme';
 import type { Timestamps } from '$lib/types/Timestamps';
-import { themeValidator } from '$lib/server/theme';
+import { increaseThemeChangeNumber, themeValidator } from '$lib/server/theme';
 
 export async function load({ params }) {
 	const theme = await collections.themes.findOne({ _id: params.id });
@@ -40,6 +40,8 @@ export const actions: Actions = {
 				}
 			}
 		);
+
+		await increaseThemeChangeNumber();
 
 		throw redirect(303, `${adminPrefix()}/style`);
 	}

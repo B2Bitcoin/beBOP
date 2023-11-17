@@ -4,10 +4,17 @@ import { themeValidator, type ThemeData } from '$lib/server/theme.js';
 import { trimSuffix } from '$lib/utils/trimSuffix.js';
 import { flatten } from 'flat';
 
+let cache = '';
+let cacheId = -1;
+
 export const GET = async ({}) => {
-	const theme = await collections.themes.findOne({ _id: runtimeConfig.mainThemeId });
-	const responseText = theme ? generateCss(theme) : '';
-	return new Response(responseText, {
+	if (cacheId !== runtimeConfig.themeChangeNumber) {
+		const theme = await collections.themes.findOne({ _id: runtimeConfig.mainThemeId });
+		cache = theme ? generateCss(theme) : '';
+		cacheId = runtimeConfig.themeChangeNumber;
+	}
+
+	return new Response(cache, {
 		headers: {
 			'Content-Type': 'text/css',
 			...(import.meta.env.DEV
