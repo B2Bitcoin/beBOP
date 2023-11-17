@@ -10,7 +10,8 @@ export const load = async () => {
 		.toArray();
 
 	return {
-		themes
+		themes,
+		themeId: runtimeConfig.mainThemeId
 	};
 };
 
