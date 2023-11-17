@@ -4,8 +4,6 @@ import type { Style } from '$lib/types/Style';
 
 export const GET = async () => {
 	const theme = await collections.styles.findOne({ _id: runtimeConfig.mainThemeId });
-	console.log('hello' + theme);
-
 	const responseText = theme ? generateCss(theme, 'dark') : '';
 	return new Response(responseText, {
 		headers: {
