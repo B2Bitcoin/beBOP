@@ -7,7 +7,7 @@
 <form method="post" class="flex flex-col gap-4">
 	<label class="form-label">
 		Theme name
-		<input class="form-input" type="text" name="name" required value="FFFFFF" />
+		<input class="form-input" type="text" name="name" required value="My Theme" />
 	</label>
 	<ThemeForm />
 
