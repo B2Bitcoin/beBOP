@@ -145,7 +145,7 @@ export const styleFormStructure = {
 			{ label: 'Tab font color', name: 'tab.color', isColor: true, placeholder: '#FFFFFF' },
 			{
 				label: 'Active tab underline color',
-				name: 'activeTabUnderline.color',
+				name: 'activeTab.textDecoration.color',
 				isColor: true,
 				placeholder: '#FFFFFF'
 			}
