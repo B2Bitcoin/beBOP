@@ -40,7 +40,9 @@ export interface StyleCartPreview {
 	backgroundColor: ColorChoice;
 	fontFamily: string;
 	color: ColorChoice;
-	cta: ColorChoice;
+	cta: {
+		fontFamily: string;
+	};
 	mainCTA: {
 		backgroundColor: ColorChoice;
 		color: ColorChoice;
