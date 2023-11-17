@@ -29,8 +29,7 @@ import type { UserIdentifier } from '$lib/types/UserIdentifier';
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
 		{ _id: 'orderNumber' },
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		{ $inc: { data: 1 } as any },
+		{ $inc: { data: 1 as never } },
 		{ upsert: true, returnDocument: 'after' }
 	);
 

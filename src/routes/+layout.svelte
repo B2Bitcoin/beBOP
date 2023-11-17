@@ -19,6 +19,7 @@
 <svelte:head>
 	<title>B2Bitcoin Bootik</title>
 	<meta name="description" content="B2Bitcoin's official bootik" />
+	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
 	<script lang="javascript" src="/script/language/en.js?v={PUBLIC_COMMIT_ID}"></script>
 	{#if data.language !== 'en'}
 		<script

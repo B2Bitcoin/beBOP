@@ -3,8 +3,7 @@ import { collections } from './database';
 export async function generateSubscriptionNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
 		{ _id: 'subscriptionNumber' },
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		{ $inc: { data: 1 } as any },
+		{ $inc: { data: 1 as never } },
 		{ upsert: true, returnDocument: 'after' }
 	);
 

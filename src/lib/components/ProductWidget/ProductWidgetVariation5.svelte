@@ -36,7 +36,7 @@
 			</a>
 			{#if canAddToCart}
 				<div class="relative">
-					<div class="flex flex-wrap gap-6 items-end absolute">
+					<div class="flex flex-wrap gap-6 items-end">
 						<AddToCart
 							{product}
 							picture={pictures[0]}

@@ -28,6 +28,7 @@ const defaultConfig = {
 	priceReferenceCurrency: 'SAT' as Currency,
 	orderNumber: 0,
 	subscriptionNumber: 0,
+	themeChangeNumber: 0,
 	enableCashSales: false,
 	isMaintenance: false,
 	includeOrderUrlInQRCode: false,

@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { collections } from './database';
+import { runtimeConfig } from './runtime-config';
 
 const backgroundColor = z.object({
 	light: z.string().regex(/^#[0-9a-f]{6}$/i),
@@ -65,11 +67,10 @@ export const themeValidator = z.object({
 	body: z.object({
 		mainPlan: z.object({ backgroundColor }),
 		secondPlan: z.object({ backgroundColor }),
-		cta: z.object({ fontFamily, color }),
+		cta: z.object({ fontFamily }),
 		title: z.object({ fontFamily, color }),
 		text: z.object({ fontFamily, color }),
 		secondaryText: z.object({ fontFamily, color }),
-		mainBody: z.object({}),
 		mainCTA: z.object({ backgroundColor, color }),
 		secondaryCTA: z.object({ backgroundColor, color }),
 		hyperlink: z.object({ color })
@@ -86,3 +87,23 @@ export const themeValidator = z.object({
 });
 
 export type ThemeData = z.infer<typeof themeValidator>;
+
+export async function increaseThemeChangeNumber() {
+	await collections.runtimeConfig.updateOne(
+		{
+			_id: 'themeChangeNumber'
+		},
+		{
+			$inc: {
+				data: 1 as never
+			},
+			$set: {
+				updatedAt: new Date()
+			}
+		},
+		{
+			upsert: true
+		}
+	);
+	runtimeConfig.themeChangeNumber++;
+}

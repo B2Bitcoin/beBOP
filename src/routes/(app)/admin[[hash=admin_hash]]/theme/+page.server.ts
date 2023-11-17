@@ -1,5 +1,6 @@
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { increaseThemeChangeNumber } from '$lib/server/theme.js';
 import type { Theme } from '$lib/types/Theme';
 import { z } from 'zod';
 
@@ -32,5 +33,7 @@ export const actions = {
 		);
 
 		runtimeConfig.mainThemeId = mainTheme;
+
+		await increaseThemeChangeNumber();
 	}
 };
