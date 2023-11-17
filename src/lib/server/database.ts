@@ -31,7 +31,7 @@ import type { Migration } from '$lib/types/Migration';
 import type { Tag } from '$lib/types/Tag';
 import type { Slider } from '$lib/types/slider';
 import { building } from '$app/environment';
-import type { Style } from '$lib/types/Style';
+import type { Theme } from '$lib/types/Theme';
 
 const client = building
 	? (null as unknown as MongoClient)
@@ -67,7 +67,7 @@ const genCollection = () => ({
 	migrations: db.collection<Migration>('migrations'),
 	tags: db.collection<Tag>('tags'),
 	sliders: db.collection<Slider>('sliders'),
-	styles: db.collection<Style>('styles'),
+	themes: db.collection<Theme>('themes'),
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
 

@@ -1,15 +1,15 @@
 import { collections } from '$lib/server/database';
-import type { Style } from '$lib/types/Style';
+import type { Theme } from '$lib/types/Theme';
 import { z } from 'zod';
 
 export const load = async () => {
-	const styles = await collections.styles
+	const themes = await collections.themes
 		.find()
-		.project<Pick<Style, '_id' | 'name'>>({ _id: 1, name: 1 })
+		.project<Pick<Theme, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 
 	return {
-		styles
+		themes
 	};
 };
 
