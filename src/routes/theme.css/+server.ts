@@ -37,53 +37,99 @@ function generateCss(themeData: Style, themeMode: string) {
 	return `
 	:root {${css}}
 		body .secondPlan {
-		@apply bg-[color:var(--body-secondPlan-backgroundColor-${themeMode})];
+			@apply bg-[color:var(--body-secondPlan-backgroundColor-${themeMode})];
 		}
 		body .mainPlan {
-		@apply bg-[color:var(--body-mainPlan-backgroundColor-dark)];
+			@apply bg-[color:var(--body-mainPlan-backgroundColor-${themeMode})];
 		}
 		body title {
-		@apply text-[color:var(--body-title-color-dark)];
-		font-family: var(--body-title-fontFamily);
+			@apply text-[color:var(--body-title-color-${themeMode})];
+			font-family: var(--body-title-fontFamily);
 		}
 		body {
-		@apply text-[color:var(--body-text-color-dark)];
-		font-family: var(--body-text-fontFamily);
+			@apply text-[color:var(--body-text-color-${themeMode})];
+			font-family: var(--body-text-fontFamily);
 		}
 		body .secondaryText {
-		@apply text-[color:var(--body-secondaryText-color-dark)];
-		font-family: var(--body-secondaryText-fontFamily);
+			@apply text-[color:var(--body-secondaryText-color-${themeMode})];
+			font-family: var(--body-secondaryText-fontFamily);
 		}
 		body .mainCTA {
-		@apply bg-[color:var(--body-mainCTA-backgroundColor-dark)] text-[color:var(--body-mainCTA-color-dark)];
+			@apply bg-[color:var(--body-mainCTA-backgroundColor-${themeMode})] text-[color:var(--body-mainCTA-color-${themeMode})];
 		}
 		body .secondaryCTA {
-		@apply bg-[color:var(--body-secondaryCTA-backgroundColor-dark)] text-[color:var(--body-secondaryCTA-color-dark)];
+			@apply bg-[color:var(--body-secondaryCTA-backgroundColor-${themeMode})] text-[color:var(--body-secondaryCTA-color-${themeMode})];
 		}
 		body .cta {
-		font-family: var(--body-cta-fontFamily);
+			font-family: var(--body-cta-fontFamily);
 		}
 		body .hyperlink {
-		@apply text-[color:var(--body-hyperlink-color-dark)];
+			@apply text-[color:var(--body-hyperlink-color-${themeMode})];
 		}
-		--header-backgroundColor-light:FFFFFF;
---header-backgroundColor-dark:FFFFFF;
---header-shopName-fontFamily:Arial;
---header-shopName-color-light:FFFFFF;
---header-shopName-color-dark:FFFFFF;
---header-tab-fontFamily:Helvetica;
---header-tab-color-light:FFFFFF;
---header-tab-color-dark:FFFFFF;
---header-activeTabUnderline-color-light:FFFFFF;
---header-activeTabUnderline-color-dark:FFFFFF;
-
 		header {
-		@apply bg-[color:var(--header-backgroundColor-dark)]
+			@apply bg-[color:var(--header-backgroundColor-${themeMode})]
 		}
 		header .shopName {
 			font-family: var(--header-shopName-fontFamily);
-			@apply text-[color:var(--header-shopName-color-dark)]
-			}
+			@apply text-[color:var(--header-shopName-color-${themeMode})]
+		}
+		header .tab {
+			font-family: var(--header-tab-fontFamily);
+			@apply text-[color:var(--header-tab-color-${themeMode})]
+		}
+		header .activeTab {
+			text-decoration: underline --header-activeTab-textDecoration-color-${themeMode};
+		}
+		navbar {
+			@apply bg-[color:var(--navbar-backgroundColor-${themeMode})]
+			font-family: var(--navbar-fontFamily);
+			@apply text-[color:var(----navbar-color-${themeMode})];
+		}
+		navbar .searchInput {
+			@apply bg-[color:var(--navbar-searchInput-backgroundColor-${themeMode})]
+		}
+		footer {
+			@apply bg-[color:var(--footer-backgroundColor-${themeMode})]
+			font-family: var(--footer-fontFamily);
+			@apply text-[color:var(--footer-color-${themeMode})];
+		}
 
+		cartPreview {
+			@apply bg-[color:var(--cartPreview-backgroundColor-${themeMode})]
+			font-family: var(--cartPreview-fontFamily);
+			@apply text-[color:var(--cartPreview-color-${themeMode})]
+		}
+		cartPreview .cta{
+			font-family: var(--cartPreview-cta-fontFamily);
+		}
+		cartPreview .mainCTA {
+			@apply bg-[color:var(--cartPreview-mainCTA-backgroundColor-${themeMode})]
+			@apply text-[color:var(--cartPreview-mainCTA-color-${themeMode})]
+		}
+		cartPreview .secondaryCTA {
+			@apply bg-[color:var(--cartPreview-secondaryCTA-backgroundColor-${themeMode})]
+			@apply text-[color:var(--cartPreview-secondaryCTA-color-${themeMode})]
+		}
+		tagWidget {
+			font-family: var(--tagWidget-fontFamily);
+			@apply text-[color:var(--tagWidget-color-${themeMode})]
+		}
+		tagWidget .main{
+			@apply bg-[color:var(--tagWidget-main-backgroundColor-${themeMode})]
+		}
+		tagWidget .transparent{
+			@apply bg-[color:var(--tagWidget-transparent-backgroundColor-${themeMode})]
+		}
+		tagWidget .secondary{
+			@apply bg-[color:var(--tagWidget-secondary-backgroundColor-${themeMode})]
+		}
+		tagWidget .cta{
+			@apply bg-[color:var(--tagWidget-cta-backgroundColor-${themeMode})]
+			@apply text-[color:var(--tagWidget-cta-color-${themeMode})]
+
+		}
+		tagWidget .hyperlink{
+			@apply text-[color:var(--tagWidget-hyperlink-${themeMode})]
+		}
  	 `;
 }
