@@ -109,6 +109,9 @@ export async function addToCartInDb(
 			existingItem.quantity = 1;
 		}
 	} else {
+		if (quantity > availableAmount) {
+			throw error(400, `You can only order ${availableAmount} of this product`);
+		}
 		cart.items.push({
 			productId: product._id,
 			quantity: product.type === 'subscription' ? 1 : quantity,

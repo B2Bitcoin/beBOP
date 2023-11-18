@@ -154,8 +154,8 @@ export async function createOrder(
 	paymentMethod: Order['payment']['method'],
 	params: {
 		user: UserIdentifier;
-		notifications: {
-			paymentStatus: {
+		notifications?: {
+			paymentStatus?: {
 				npub?: string;
 				email?: string;
 			};
@@ -177,7 +177,8 @@ export async function createOrder(
 		clientIp?: string;
 	}
 ): Promise<Order['_id']> {
-	const { notifications: { paymentStatus: { npub: npubAddress, email } = {} } = {} } = params;
+	const npubAddress = params.notifications?.paymentStatus?.npub;
+	const email = params.notifications?.paymentStatus?.email;
 
 	const canBeNotified = !!(npubAddress || (emailsEnabled && email));
 
