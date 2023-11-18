@@ -90,7 +90,7 @@
 	{#if $page.data.layoutReset}
 		<slot />
 	{:else}
-		<header class="bg-gray-850 items-center flex h-[100px]">
+		<header class="bg-lxheaderbgdark items-center flex h-[100px]">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
 				<a class="flex items-center gap-4" href="/">
 					{#if data.logoPicture}
