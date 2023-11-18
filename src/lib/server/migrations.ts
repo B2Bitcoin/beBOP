@@ -1,6 +1,7 @@
 import { ClientSession, ObjectId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { marked } from 'marked';
+import { env } from '$env/dynamic/private';
 
 const migrations = [
 	{
@@ -89,6 +90,9 @@ const migrations = [
 ];
 
 export async function runMigrations() {
+	if (env.VITEST) {
+		return;
+	}
 	const migrationsInDb = await collections.migrations.find().toArray();
 
 	const migrationsToRun = migrations.filter(

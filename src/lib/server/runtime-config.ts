@@ -12,6 +12,7 @@ import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import { building } from '$app/environment';
 import type { SellerIdentity } from '$lib/types/SellerIdentity';
+import { isUniqueConstraintError } from './utils/isUniqueConstraintError';
 
 const defaultConfig = {
 	adminHash: '',
@@ -184,33 +185,47 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 	}
 
 	if ((await collections.roles.countDocuments({ _id: SUPER_ADMIN_ROLE_ID })) === 0) {
-		await collections.roles.insertOne({
-			_id: SUPER_ADMIN_ROLE_ID,
-			name: 'Super Admin',
-			permissions: {
-				read: [],
-				write: ['/admin/*'],
-				forbidden: []
-			},
-			createdAt: new Date(),
-			updatedAt: new Date()
-		});
+		await collections.roles
+			.insertOne({
+				_id: SUPER_ADMIN_ROLE_ID,
+				name: 'Super Admin',
+				permissions: {
+					read: [],
+					write: ['/admin/*'],
+					forbidden: []
+				},
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.catch((err) => {
+				if (isUniqueConstraintError(err)) {
+					return;
+				}
+				throw err;
+			});
 	}
 
 	if ((await collections.roles.countDocuments({ _id: POS_ROLE_ID })) === 0) {
-		await collections.roles.insertOne({
-			_id: POS_ROLE_ID,
-			name: 'Point of sale',
-			permissions: {
-				read: [],
-				// Todo: maybe make it '/pos/*' for fully customizable roles, but for now simpler
-				// to treat POS as a special case
-				write: [],
-				forbidden: []
-			},
-			createdAt: new Date(),
-			updatedAt: new Date()
-		});
+		await collections.roles
+			.insertOne({
+				_id: POS_ROLE_ID,
+				name: 'Point of sale',
+				permissions: {
+					read: [],
+					// Todo: maybe make it '/pos/*' for fully customizable roles, but for now simpler
+					// to treat POS as a special case
+					write: [],
+					forbidden: []
+				},
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.catch((err) => {
+				if (isUniqueConstraintError(err)) {
+					return;
+				}
+				throw err;
+			});
 	}
 
 	await runMigrations();
