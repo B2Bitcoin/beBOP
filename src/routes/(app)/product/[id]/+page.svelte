@@ -89,7 +89,7 @@
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-<!--	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-4 flex-col"> -->
+	<article class="w-full rounded-xl bg-white border-gray-300 border py-3 px-3 flex gap-4 flex-col">
 		{#if data.productCMSBefore}
 			<CmsDesign
 				class="px-6"
@@ -388,5 +388,5 @@
 				roleId={data.roleId ? data.roleId : ''}
 			/>
 		{/if}
-<!--	</article> -->
+	</article>
 </main>
