@@ -11,11 +11,15 @@
 </script>
 
 {#each Object.entries(themeFormStructure) as [section, fields]}
+	<label class="form-label max-w-7xl">
+		Theme name
+		<input class="form-input" type="text" name="name" value={theme?.name ?? ''} required />
+	</label>
 	<h2 class="text-2xl">{fields.label}</h2>
 	{#each fields.elements as field}
 		{@const key = `${section}.${field.name}`}
 		{#if key.endsWith('color') || key.endsWith('Color')}
-			<div class="flex gap-2 w-full">
+			<div class="flex gap-2 max-w-7xl">
 				<label class="form-label grow">
 					{field.label} (light)
 					<input
@@ -40,7 +44,7 @@
 				</label>
 			</div>
 		{:else}
-			<label class="form-label">
+			<label class="form-label max-w-7xl">
 				{field.label}
 				<select class="form-input" name={key} required value={getValueForKey(key) ?? 'Outfit'}>
 					{#each systemFonts as font}

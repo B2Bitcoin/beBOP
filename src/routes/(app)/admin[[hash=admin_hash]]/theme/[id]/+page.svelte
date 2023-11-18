@@ -7,10 +7,6 @@
 <h1 class="text-3xl">Edit theme</h1>
 
 <form method="post" class="flex flex-col gap-4">
-	<label class="form-label">
-		Theme name
-		<input class="form-input" type="text" name="name" value={data.theme.name} required />
-	</label>
 	<ThemeForm theme={data.theme} />
 
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
