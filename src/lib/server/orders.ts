@@ -21,7 +21,7 @@ import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
 import { userQuery } from './user';
-import { SMTP_USER, EMAIL_REPLY_TO } from '$env/static/private';
+import { SMTP_USER } from '$env/static/private';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { POS_ROLE_ID } from '$lib/types/User';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
@@ -294,7 +294,7 @@ export async function createOrder(
 			)}${runtimeConfig.mainCurrency}). The discount was applied by ${
 				params.user.userLogin
 			}. Justification: ${params?.discount?.justification ?? '-'} `,
-			dest: EMAIL_REPLY_TO || SMTP_USER
+			dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
 		});
 
 		discountInCurrency =

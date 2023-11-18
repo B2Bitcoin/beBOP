@@ -7,10 +7,21 @@ import { runtimeConfig } from './runtime-config';
 import { SignJWT } from 'jose';
 import { addMinutes } from 'date-fns';
 import { adminPrefix } from '$lib/server/admin';
+import { error } from '@sveltejs/kit';
 
-export async function sendResetPasswordNotification(user: User) {
-	if (!user.recovery?.email && !user.recovery?.npub) {
-		throw new Error('User has no recovery email or npub');
+export async function sendResetPasswordNotification(
+	user: User,
+	opts?: { alternateEmail?: string }
+) {
+	let email = user.recovery?.email;
+	const npub = user.recovery?.npub;
+
+	if (!email && !npub) {
+		if (opts?.alternateEmail) {
+			email = opts.alternateEmail;
+		} else {
+			throw error(400, 'User has no recovery email or npub');
+		}
 	}
 	const updatedUser = (
 		await collections.users.findOneAndUpdate(
@@ -31,7 +42,7 @@ export async function sendResetPasswordNotification(user: User) {
 	if (!updatedUser) {
 		throw new Error('Problem updating user');
 	}
-	if (user.recovery?.npub) {
+	if (npub) {
 		const content = `Dear user,
 		
 This message was sent to you because you have requested to reset your password.
@@ -49,13 +60,14 @@ ${runtimeConfig.brandName} team`;
 			kind: Kind.EncryptedDirectMessage,
 			updatedAt: new Date(),
 			content,
-			dest: user.recovery.npub
+			dest: npub
 		});
 	}
-	if (user.recovery?.email) {
+	if (email) {
 		const content = `<p>Dear user,</p>
 		<p>This message was sent to you because you have requested to reset your password.</p>
-		<p>Follow <a href="${ORIGIN}/admin/login/reset/${updatedUser.passwordReset?.token}">this link</a> to reset your password.</p>
+		<p>Follow <a href="${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset
+			?.token}">this link</a> to reset your password.</p>
 		<p>If you didn't ask for this password reset procedure, please ignore this message and do nothing.</p>
 		<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
 		await collections.emailNotifications.insertOne({
@@ -64,9 +76,14 @@ ${runtimeConfig.brandName} team`;
 			updatedAt: new Date(),
 			subject: `Password Reset`,
 			htmlContent: content,
-			dest: user.recovery.email
+			dest: email
 		});
 	}
+
+	return {
+		email,
+		npub
+	};
 }
 
 export async function sendAuthentificationlink(session: { email?: string; npub?: string }) {

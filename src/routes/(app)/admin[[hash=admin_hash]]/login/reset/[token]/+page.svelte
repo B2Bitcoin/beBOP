@@ -22,7 +22,7 @@
 </script>
 
 <h1 class="text-2xl">Password reset</h1>
-<div class="flex justify-center items-center {form?.success ? 'hidden sm-inline' : ''}">
+<div class="flex justify-center items-center">
 	<form
 		method="post"
 		class="flex-col gap-2 space-between p-6 w-[30em]"
@@ -66,23 +66,11 @@
 				<p class="text-red-500">Invalid credentials, please try again</p>
 			{/if}
 			{#if failedMatch}
-				<p class="text-red-500">passwords do not match</p>
+				<p class="text-red-500">Passwords do not match</p>
 			{/if}
 		</div>
 		<div class="flex justify-center gap-4 mt-2">
 			<input type="submit" class="btn btn-blue text-white" value="Update" />
 		</div>
 	</form>
-</div>
-
-<div class="flex-col justify-center items-center {!form?.success ? 'hidden sm-inline' : ''}">
-	<div class="flex justify-center mb-2">
-		<IconStandBy class="text-green-500" />
-	</div>
-	<div class="flex-wrap text-center">
-		<p class="text-green-500">Your credential were resetted.</p>
-	</div>
-	<div class="flex justify-center gap-4 mt-2">
-		<button class="btn btn-blue"><a href="/admin/login">Go to login</a></button>
-	</div>
 </div>

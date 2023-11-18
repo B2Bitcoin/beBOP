@@ -2,6 +2,8 @@ import { collections } from '$lib/server/database';
 import { z } from 'zod';
 import { sendResetPasswordNotification } from '$lib/server/sendNotification';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
+import { SMTP_USER } from '$env/static/private';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export const load = async () => {};
 
@@ -9,19 +11,25 @@ export const actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 
-		const { accountType, login } = z
+		const { login } = z
 			.object({
-				accountType: z.string(),
 				login: z.string()
 			})
 			.parse(Object.fromEntries(data));
 
 		const user = await collections.users.findOne({ login, roleId: { $ne: CUSTOMER_ROLE_ID } });
 		if (user) {
-			await sendResetPasswordNotification(user);
-			return { success: true };
+			const ret = await sendResetPasswordNotification(user, {
+				alternateEmail: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
+			});
+			return {
+				success: true,
+				npub: !!ret.npub,
+				email: !!ret.email,
+				isBackupEmail: ret.email === runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
+			};
 		} else {
-			return { failedFindUser: true, accountType, login };
+			return { failedFindUser: true, login };
 		}
 	}
 };
