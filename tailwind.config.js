@@ -54,7 +54,13 @@ module.exports = {
 				200: '#ffe984',
 				500: '#ffa000',
 				700: '#c25300'
-			}
+			},
+			lxheaderbgdark: '#232323',
+			lxnavbarbgdark: '#272727',
+			lxyellow: '#F3C52E',
+			lxinputdark: '#323232',
+			lxbackgrounddark: '#111111'
+			
 		},
 		fontFamily: {
 			display: ['Gloock', 'ui-serif'],
