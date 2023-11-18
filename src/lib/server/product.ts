@@ -1,7 +1,5 @@
 import type { ClientSession } from 'mongodb';
 import { collections } from './database';
-import { subMinutes } from 'date-fns';
-import { runtimeConfig } from './runtime-config';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { getCartFromDb } from './cart';
 
@@ -28,10 +26,18 @@ export async function amountOfProductReserved(
 					[
 						{
 							$match: {
+								'items.productId': productId
+							}
+						},
+						{
+							$unwind: '$items'
+						},
+						{
+							$match: {
 								'items.productId': productId,
 								$or: [
 									{
-										updatedAt: { $gt: subMinutes(new Date(), runtimeConfig.reserveStockInMinutes) }
+										'items.reservedUntil': { $gt: new Date() }
 									},
 									...(opts?.include && cart
 										? [
@@ -42,14 +48,6 @@ export async function amountOfProductReserved(
 										: [])
 								],
 								...(opts?.exclude && cart && { _id: { $ne: cart._id } })
-							}
-						},
-						{
-							$unwind: '$items'
-						},
-						{
-							$match: {
-								'items.productId': productId
 							}
 						},
 						{
