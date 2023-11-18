@@ -32,16 +32,17 @@ import type { Tag } from '$lib/types/Tag';
 import type { Slider } from '$lib/types/slider';
 import { building } from '$app/environment';
 import type { Theme } from '$lib/types/Theme';
+import { env } from '$env/dynamic/private';
 
 const client = building
 	? (null as unknown as MongoClient)
-	: new MongoClient(MONGODB_URL, {
-			// directConnection: true
+	: new MongoClient(env.VITEST ? 'mongodb://127.0.0.1:27017' : MONGODB_URL, {
+			directConnection: !!env.VITEST
 	  });
 
 export const connectPromise = building ? Promise.resolve() : client.connect().catch(console.error);
 
-const db = building ? (null as unknown as Db) : client.db(MONGODB_DB);
+const db = building ? (null as unknown as Db) : client.db(env.VITEST ? 'bootik-test' : MONGODB_DB);
 
 const genCollection = () => ({
 	pictures: db.collection<Picture>('pictures'),
@@ -122,39 +123,44 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.discounts, { endAt: 1 }]
 ];
 
-if (!building) {
-	client.on('open', () => {
-		for (const [collection, index, options] of indexes) {
-			collection
-				.createIndex(index, options)
-				.catch(async (err) => {
-					if (err instanceof MongoServerError && err.code === 86) {
-						const indexes = await collection.indexes();
+export async function createIndexes() {
+	await Promise.all(
+		indexes.map(async ([collection, index, options]) => {
+			try {
+				await collection.createIndex(index, options);
+			} catch (err) {
+				if (err instanceof MongoServerError && err.code === 86) {
+					const indexes = await collection.indexes();
 
-						for (const existingIndex of indexes) {
-							if (JSON.stringify(existingIndex.key) === JSON.stringify(index)) {
-								if (
-									options?.expireAfterSeconds !== existingIndex.expireAfterSeconds ||
-									options?.unique !== existingIndex.unique ||
-									options?.sparse !== existingIndex.sparse ||
-									JSON.stringify(options?.partialFilterExpression) !==
-										JSON.stringify(existingIndex.partialFilterExpression)
-								) {
-									await collection.dropIndex(existingIndex.name);
-									await collection.createIndex(index, options);
+					for (const existingIndex of indexes) {
+						if (JSON.stringify(existingIndex.key) === JSON.stringify(index)) {
+							if (
+								options?.expireAfterSeconds !== existingIndex.expireAfterSeconds ||
+								options?.unique !== existingIndex.unique ||
+								options?.sparse !== existingIndex.sparse ||
+								JSON.stringify(options?.partialFilterExpression) !==
+									JSON.stringify(existingIndex.partialFilterExpression)
+							) {
+								await collection.dropIndex(existingIndex.name);
+								await collection.createIndex(index, options);
 
-									console.log(
-										`Recreated index ${existingIndex.name} on ${collection.collectionName}`
-									);
+								console.log(
+									`Recreated index ${existingIndex.name} on ${collection.collectionName}`
+								);
 
-									break;
-								}
+								break;
 							}
 						}
 					}
-				})
-				.catch(console.error);
-		}
+				}
+			}
+		})
+	);
+}
+
+if (!building) {
+	client.on('open', () => {
+		createIndexes().catch(console.error);
 	});
 }
 

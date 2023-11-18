@@ -3,6 +3,7 @@ import { collections } from './database';
 import { processClosed } from './process';
 import { setTimeout } from 'node:timers/promises';
 import { NO_LOCK } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 const processId = new ObjectId();
 
@@ -19,7 +20,7 @@ export class Lock {
 	}
 
 	private async maintain() {
-		if (NO_LOCK === 'true') {
+		if (NO_LOCK === 'true' || env.VITEST) {
 			return;
 		}
 		while (!processClosed) {
