@@ -1,14 +1,14 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { applyAction, enhance } from '$app/forms';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies.js';
-	import { CURRENCIES, type Currency } from '$lib/types/Currency';
+	import { CURRENCIES } from '$lib/types/Currency';
+	import { bityEstimate, type BityEstimate, type BityPaymentMethod } from '$lib/types/bity';
 	import { debounce } from 'lodash-es';
-	import { onMount } from 'svelte';
 
 	let estimating = false;
 	let generating = false;
-	let estimationDone = false;
 	let estimationError = '';
 	let cashinAmount = 200;
 	let cashinBtcAddress = '';
@@ -19,111 +19,40 @@
 
 	let paymentMethod: BityPaymentMethod = 'bank_account';
 
-	type BityAmount = {
-		currency: Currency;
-		amount: string;
-	};
-
-	type BityPaymentMethod = 'bank_account' | 'online_instant_payment';
-
-	let output: {
-		currency: Currency;
-		amount: number;
-	};
-
-	let fee: {
-		currency: Currency;
-		amount: number;
-	};
-
-	let transactionCost: {
-		currency: Currency;
-		amount: number;
-	};
+	let estimateVal: BityEstimate | null = null;
 
 	async function estimate() {
 		try {
-			estimationDone = false;
 			estimating = true;
+			estimateVal = null;
 			estimationError = '';
 			let requestedAmount = cashinAmount;
-			const response = await fetch('https://exchange.api.bity.com/v2/orders/estimate', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					input: {
-						currency: currency,
-						amount: String(cashinAmount),
-						type: paymentMethod
-					},
-					output: {
-						currency: 'BTC'
-					}
-				})
+			const estimate = await bityEstimate({
+				amount: cashinAmount,
+				from: currency,
+				to: 'BTC',
+				paymentMethod
 			});
-
-			if (!response.ok) {
-				estimationError = await response.text();
-				return;
-			}
-
-			const jsonResp: {
-				input: BityAmount & {
-					object_information_optional: boolean;
-					type: BityPaymentMethod;
-					minimum_amount: string;
-				};
-				output: {
-					type: 'crypto_address';
-				} & BityAmount;
-				price_breakdown: {
-					customer_trading_fee: BityAmount;
-					output_transaction_cost: BityAmount;
-					'non-verified_fee': BityAmount;
-				};
-			} = await response.json();
 
 			if (cashinAmount !== requestedAmount) {
 				return;
 			}
 
-			if (Number(jsonResp.input.amount) !== requestedAmount) {
-				estimationError = `Bity doesn't support the requested amount. Estimation based on ${jsonResp.input.amount} ${jsonResp.input.currency} instead.`;
+			if (Number(estimate.input.amount) !== requestedAmount) {
+				estimationError = `Bity doesn't support the requested amount. Estimation based on ${estimate.input.amount} ${estimate.input.currency} instead.`;
 			}
 
-			output = {
-				currency: jsonResp.output.currency,
-				amount: Number(jsonResp.output.amount)
-			};
-
-			fee = {
-				currency: jsonResp.price_breakdown.customer_trading_fee.currency,
-				amount:
-					Number(jsonResp.price_breakdown.customer_trading_fee.amount) +
-					Number(jsonResp.price_breakdown['non-verified_fee'].amount)
-			};
-
-			transactionCost = {
-				currency: jsonResp.price_breakdown.output_transaction_cost.currency,
-				amount: Number(jsonResp.price_breakdown.output_transaction_cost.amount)
-			};
-
-			estimationDone = true;
+			estimateVal = estimate;
+		} catch (err) {
+			estimationError = (err as Error).message;
 		} finally {
 			estimating = false;
 		}
 	}
 
 	const debouncedEstimate = debounce(estimate, 500);
-	let mounted = false;
 
-	onMount(() => {
-		mounted = true;
-	});
-
-	$: if (mounted) {
+	$: if (browser) {
 		debouncedEstimate(), [cashinAmount, currency, paymentMethod];
 	}
 </script>
@@ -187,25 +116,39 @@
 {/if}
 {#if estimating}
 	<p>Estimating...</p>
-{:else if estimationDone}
+{:else if estimateVal}
 	<h3 class="text-xl">Fees</h3>
 
 	<ul class="list-disc ml-4">
 		<li class="flex gap-2 items-center">
-			Bity fee: <PriceTag amount={fee.amount} currency={fee.currency} />
+			Bity fee: <PriceTag
+				amount={+estimateVal.price_breakdown.customer_trading_fee.amount +
+					+estimateVal.price_breakdown['non-verified_fee'].amount}
+				currency={estimateVal.price_breakdown.customer_trading_fee.currency}
+			/>
 		</li>
 		<li class="flex gap-2 items-center">
 			Transaction cost of the BTC network: <PriceTag
-				amount={transactionCost.amount}
-				currency={transactionCost.currency}
+				amount={+estimateVal.price_breakdown.output_transaction_cost.amount}
+				currency={estimateVal.price_breakdown.output_transaction_cost.currency}
 			/>
 		</li>
 	</ul>
 
 	<h3 class="text-xl">Cash-in estimation</h3>
 
-	<PriceTag amount={output.amount} currency={output.currency} convertedTo="BTC" force />
-	<PriceTag amount={output.amount} currency={output.currency} convertedTo="SAT" force />
+	<PriceTag
+		amount={+estimateVal.output.amount}
+		currency={estimateVal.output.currency}
+		convertedTo="BTC"
+		force
+	/>
+	<PriceTag
+		amount={+estimateVal.output.amount}
+		currency={estimateVal.output.currency}
+		convertedTo="SAT"
+		force
+	/>
 {/if}
 
 {#if !cashinBtcAddress}
