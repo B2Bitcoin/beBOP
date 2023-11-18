@@ -280,7 +280,7 @@
 		<p class="text-sm">
 			This will change the admin url to
 			<kbd class="px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg">
-				{data.adminPrefix}-[hash]
+				/admin-[hash]
 			</kbd>
 		</p>
 	</label>
