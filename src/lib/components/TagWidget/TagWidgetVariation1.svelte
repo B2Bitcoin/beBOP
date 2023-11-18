@@ -20,7 +20,7 @@
 		<div class="mx-auto bg-gray-240 flex rounded sm:gap-2 {className}">
 			<div class="flex flex-col text-end w-[50%]">
 				<h2 class="text-4xl pb-2 uppercase">{tag.title}</h2>
-				<h2 class="text-md md:text-2xl">
+				<h2 class="text-md md:text-xl">
 					{tag.content}
 				</h2>
 				<div class="flex text-centern justify-between mt-auto">
