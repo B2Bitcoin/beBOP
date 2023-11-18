@@ -131,7 +131,7 @@
 				{/each}
 			</nav>
 		{/if}
-		<header class="bg-gray-240 text-gray-800 h-[66px] items-center flex">
+		<header class="bg-lxnavbarbgdark text-white h-[66px] items-center flex">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 				<nav class="flex gap-6 font-light items-center">
 					<button
@@ -312,7 +312,7 @@
 		{#if navMenuOpen}
 			<nav
 				transition:slide
-				class="bg-gray-240 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
+				class="bg-lxnavbarbgdark text-white font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 			>
 				{#each data.links.navbar as link}
 					<a class="py-2 hover:underline" data-sveltekit-preload-data="off" href={link.href}
@@ -321,10 +321,10 @@
 				{/each}
 			</nav>
 		{/if}
-		<div class="grow bg-gray-75">
+		<div class="grow bg-lxbackgrounddark text-white">
 			<slot />
 		</div>
-		<footer class="bg-gray-850 h-[90px] items-center flex">
+		<footer class="bg-lxnavbarbgdark text-white h-[90px] items-center flex">
 			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 text-gray-550 grow">
 				<span class="font-light">{t('footer.poweredBy')}</span><span
 					class="font-display text-xl text-white"
