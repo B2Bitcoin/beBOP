@@ -6,7 +6,7 @@ import { runtimeConfig } from './runtime-config';
 
 export const paymentMethods = (role?: string) =>
 	env.VITEST
-		? ['lightning', 'bitcoin', 'cash']
+		? (['lightning', 'bitcoin', 'cash'] as const)
 		: [
 				...(isLightningConfigured ? (['lightning'] as const) : []),
 				...(isBitcoinConfigured ? (['bitcoin'] as const) : []),
