@@ -1,14 +1,8 @@
 import { createTestAccount, createTransport, type Transporter } from 'nodemailer';
-import {
-	EMAIL_REPLY_TO,
-	SMTP_FAKE,
-	SMTP_HOST,
-	SMTP_PASSWORD,
-	SMTP_PORT,
-	SMTP_USER
-} from '$env/static/private';
+import { SMTP_FAKE, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USER } from '$env/static/private';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { htmlToText } from 'html-to-text';
+import { runtimeConfig } from './runtime-config';
 
 const fakeEmail = SMTP_FAKE === 'true' || SMTP_FAKE === '1';
 export const emailsEnabled = !!(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASSWORD) || fakeEmail;
@@ -56,6 +50,8 @@ export async function sendEmail(params: { to: string; subject: string; html: str
 		subject: params.subject,
 		html: params.html,
 		text: htmlToText(params.html),
-		...(!!EMAIL_REPLY_TO && { replyTo: EMAIL_REPLY_TO })
+		...(!!runtimeConfig.sellerIdentity?.contact.email && {
+			replyTo: runtimeConfig.sellerIdentity?.contact.email
+		})
 	});
 }

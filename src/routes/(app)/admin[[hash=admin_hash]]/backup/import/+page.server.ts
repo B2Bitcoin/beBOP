@@ -2,20 +2,14 @@ import { fail } from '@sveltejs/kit';
 import * as devalue from 'devalue';
 import type { Challenge } from '$lib/types/Challenge.js';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import {
-	S3_REGION,
-	S3_KEY_ID,
-	S3_KEY_SECRET,
-	S3_BUCKET,
-	SMTP_USER,
-	EMAIL_REPLY_TO
-} from '$env/static/private';
+import { S3_REGION, S3_KEY_ID, S3_KEY_SECRET, S3_BUCKET, SMTP_USER } from '$env/static/private';
 import type { Picture } from '$lib/types/Picture';
 import type { DigitalFile } from '$lib/types/DigitalFile';
 import { sendEmail } from '$lib/server/email.js';
 import { z } from 'zod';
 import { collections, db } from '$lib/server/database.js';
 import { ObjectId } from 'mongodb';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export function load({ url }) {
 	return {
@@ -258,7 +252,7 @@ async function alertUser(importType: string | undefined, invalidFiles: string[])
 
 async function sendNotification(subject: string, htmlContent: string) {
 	await sendEmail({
-		to: EMAIL_REPLY_TO || SMTP_USER,
+		to: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER,
 		subject: subject,
 		html: htmlContent
 	});
@@ -269,7 +263,7 @@ async function sendNotification(subject: string, htmlContent: string) {
 		updatedAt: new Date(),
 		subject: subject,
 		htmlContent: htmlContent,
-		dest: EMAIL_REPLY_TO || SMTP_USER
+		dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
 	});
 }
 

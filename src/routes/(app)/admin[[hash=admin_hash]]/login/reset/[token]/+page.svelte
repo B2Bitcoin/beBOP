@@ -66,7 +66,7 @@
 				<p class="text-red-500">Invalid credentials, please try again</p>
 			{/if}
 			{#if failedMatch}
-				<p class="text-red-500">passwords do not match</p>
+				<p class="text-red-500">Passwords do not match</p>
 			{/if}
 		</div>
 		<div class="flex justify-center gap-4 mt-2">
@@ -80,9 +80,9 @@
 		<IconStandBy class="text-green-500" />
 	</div>
 	<div class="flex-wrap text-center">
-		<p class="text-green-500">Your credential were resetted.</p>
+		<p class="text-green-500">Your credentials were reset.</p>
 	</div>
 	<div class="flex justify-center gap-4 mt-2">
-		<button class="btn btn-blue"><a href="/admin/login">Go to login</a></button>
+		<button class="btn btn-blue"><a href="{data.adminPrefix}/login">Go to login</a></button>
 	</div>
 </div>
