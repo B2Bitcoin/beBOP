@@ -1,17 +1,27 @@
 <script lang="ts">
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies';
-	import { pick } from 'lodash-es';
+	import { debounce, pick } from 'lodash-es';
 	import { BityApiClient, type BityApiClientInterface } from '@bity/api';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { bityEstimate, type BityEstimate } from '$lib/types/bity.js';
+	import { browser } from '$app/environment';
+	import { sumCurrency } from '$lib/utils/sumCurrency.js';
+	import { useI18n } from '$lib/i18n.js';
 
 	export let data;
 
 	let cashoutAmount = 0;
+	let currency =
+		$currencies.priceReference === 'SAT' || $currencies.priceReference === 'BTC'
+			? 'EUR'
+			: $currencies.priceReference;
 
-	$: fees = cashoutAmount * 0.008;
-	$: total = cashoutAmount - fees;
+	let estimate: BityEstimate | null = null;
+	let estimating = false;
+	let estimationError = '';
+
 	$: remaining = data.balance - cashoutAmount;
 
 	let bity: BityApiClientInterface;
@@ -57,6 +67,57 @@
 	//   // Will automatically pass and renew tokens.
 	//   bity.createOrder(...);
 	// }
+
+	async function estimateFees() {
+		try {
+			estimating = true;
+			estimate = null;
+			estimationError = '';
+			let requestedAmount = cashoutAmount;
+			estimate = await bityEstimate({
+				amount: requestedAmount,
+				from: 'BTC',
+				to: 'EUR',
+				paymentMethod: 'crypto_address'
+			});
+			if (requestedAmount !== cashoutAmount) {
+				return;
+			}
+			if (+estimate.input.amount !== cashoutAmount) {
+				estimationError =
+					'Amount requested is invalid, estimation is done with: ' + estimate.input.amount + ' BTC';
+			}
+		} catch (err) {
+			estimationError = (err as Error).message;
+		} finally {
+			estimating = false;
+		}
+	}
+
+	const debouncedEstimate = debounce(estimateFees, 500);
+
+	$: if (browser) {
+		debouncedEstimate(), [cashoutAmount];
+	}
+
+	const { locale } = useI18n();
+
+	$: estimatedFees = estimate
+		? sumCurrency('BTC', [
+				{
+					amount: +estimate.price_breakdown.customer_trading_fee.amount,
+					currency: estimate.price_breakdown.customer_trading_fee.currency
+				},
+				{
+					amount: +estimate.price_breakdown['non-verified_fee'].amount,
+					currency: estimate.price_breakdown['non-verified_fee'].currency
+				},
+				{
+					amount: +estimate.price_breakdown.output_transaction_cost.amount,
+					currency: estimate.price_breakdown.output_transaction_cost.currency
+				}
+		  ])
+		: 0;
 </script>
 
 <h1 class="text-3xl">Bitcoin node - Bity cash out</h1>
@@ -66,9 +127,7 @@
 <PriceTag amount={data.balance} currency="BTC" force />
 <PriceTag amount={data.balance} convertedTo="SAT" force currency="BTC" />
 
-{#if $currencies.priceReference !== 'BTC' && $currencies.priceReference !== 'SAT'}
-	<PriceTag amount={data.balance} convertedTo={$currencies.priceReference} currency="BTC" />
-{/if}
+<PriceTag amount={data.balance} convertedTo={currency} currency="BTC" />
 
 <h2 class="text-2xl">Current exchange rate</h2>
 
@@ -84,12 +143,16 @@
 
 <h2 class="text-2xl">Billing currency estimation</h2>
 
+{#if estimationError}
+	<p class="text-red-500">{estimationError}</p>
+{/if}
+
 <p>
 	Selected amount: <PriceTag
 		amount={cashoutAmount}
 		currency="BTC"
 		class="inline-flex font-bold"
-		convertedTo={$currencies.priceReference}
+		convertedTo={currency}
 	/>
 </p>
 
@@ -98,32 +161,36 @@
 	different. This is an estimation.
 </p>
 
-<p>
-	Estimated fees: <PriceTag
-		amount={-fees}
-		currency="BTC"
-		convertedTo={$currencies.priceReference}
-		class="inline-flex font-bold"
-	/> (0.8%)
-</p>
+{#if estimating}
+	<p>Estimating...</p>
+{:else if estimate}
+	<p>
+		Estimated fees: <PriceTag
+			amount={estimatedFees}
+			currency="BTC"
+			convertedTo={$currencies.priceReference}
+			class="inline-flex font-bold"
+		/> ({((estimatedFees / +estimate.input.amount) * 100).toLocaleString($locale, {
+			maximumFractionDigits: 2
+		})}%)
+	</p>
 
-<p>
-	Total amount, fees deducted: <PriceTag
-		amount={total}
-		currency="BTC"
-		convertedTo={$currencies.priceReference}
-		class="inline-flex font-bold"
-	/>
-</p>
+	<p>
+		Total amount, fees deducted: <PriceTag
+			amount={+estimate.output.amount}
+			currency={estimate.output.currency}
+			convertedTo={$currencies.priceReference}
+			class="inline-flex font-bold"
+		/>
+	</p>
+{/if}
 
 <h2 class="text-2xl">Remaining balance after withdrawal</h2>
 
 <PriceTag amount={remaining} currency="BTC" force />
 <PriceTag amount={remaining} convertedTo="SAT" force currency="BTC" />
 
-{#if $currencies.priceReference !== 'BTC' && $currencies.priceReference !== 'SAT'}
-	<PriceTag amount={remaining} convertedTo={$currencies.priceReference} currency="BTC" />
-{/if}
+<PriceTag amount={remaining} convertedTo={currency} currency="BTC" />
 
 <div class="flex justify-between">
 	<button class="btn btn-orange" on:click={authorize}>Request cashout</button>
