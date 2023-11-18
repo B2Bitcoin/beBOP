@@ -34,17 +34,15 @@
 	<CmsDesign {products} {pictures} {challenges} {tokens} {digitalFiles} {sliders} {tags} {roleId} />
 {:else}
 	<main class="mx-auto max-w-7xl py-10 px-6">
-		<article class="w-full rounded-xl bg-white border-gray-300 border p-6">
-			<CmsDesign
-				{products}
-				{pictures}
-				{challenges}
-				{tokens}
-				{digitalFiles}
-				{sliders}
-				{tags}
-				{roleId}
-			/>
-		</article>
+		<CmsDesign
+			{products}
+			{pictures}
+			{challenges}
+			{tokens}
+			{digitalFiles}
+			{sliders}
+			{tags}
+			{roleId}
+		/>
 	</main>
 {/if}
