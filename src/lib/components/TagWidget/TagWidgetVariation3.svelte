@@ -15,20 +15,20 @@
 <div class="mx-auto bg-gray-240 gap-4 rounded {className} relative">
 	<PictureComponent {picture} class="w-full h-auto" />
 	<div
-		class="mt-[100px] md:mt-[300px] lg:mt-[400px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
+		class="mt-[100px] md:mt-[800px] lg:mt-[10000px] pb-6 absolute inset-0 flex flex-col items-center justify-center"
 	>
 		<div class="mb-8 text-center bg-[rgba(243,240,240,0.5)] md:mb-16 lg:mb-24">
-			<h2 class="text-3xl md:text-md uppercase md:text-4xl lg:text-6xl">{tag.title}</h2>
+			<h2 class="text-3xl md:text-md uppercase md:text-6xl lg:text-9xl">{tag.title}</h2>
 		</div>
 		<div class="text-center">
-			<h2 class="text-2xl mt-1 md:text-xl lg:text-3xl px-6 lg:mt-4 pb-2 short-content">
+			<h2 class="text-3xl mt-1 md:text-3xl lg:text-3xl px-6 lg:mt-4 pb-2 short-content">
 				{tag.shortContent}
 			</h2>
 		</div>
 		<div class="flex text-center justify-evenly mt-auto">
 			{#each tag.cta as cta}
 				<div
-					class="text-xl bg-blue-500 font-semibold mx-20 text-white md:text-xl text-center w-auto p-1 hidden sm:inline"
+					class="text-4xl bg-blue-500 font-semibold mx-20 text-white md:text-4xl text-center w-auto p-1 hidden sm:inline"
 				>
 					{cta.label}
 				</div>
