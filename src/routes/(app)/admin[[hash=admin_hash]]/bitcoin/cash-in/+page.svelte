@@ -1,16 +1,17 @@
 <script lang="ts">
+	import { applyAction, enhance } from '$app/forms';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies.js';
 	import { CURRENCIES, type Currency } from '$lib/types/Currency';
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';
 
-	export let data;
-
 	let estimating = false;
+	let generating = false;
 	let estimationDone = false;
 	let estimationError = '';
 	let cashinAmount = 200;
+	let cashinBtcAddress = '';
 	let currency =
 		$currencies.priceReference === 'SAT' || $currencies.priceReference === 'BTC'
 			? 'EUR'
@@ -205,4 +206,44 @@
 
 	<PriceTag amount={output.amount} currency={output.currency} convertedTo="BTC" force />
 	<PriceTag amount={output.amount} currency={output.currency} convertedTo="SAT" force />
+{/if}
+
+{#if !cashinBtcAddress}
+	<form
+		class="contents"
+		use:enhance={() => {
+			generating = true;
+			return async ({ result }) => {
+				generating = false;
+				if (result.type === 'success') {
+					cashinBtcAddress = String(result.data?.btcAddress);
+				} else {
+					applyAction(result);
+				}
+			};
+		}}
+		method="post"
+	>
+		<button class="btn btn-blue self-start" disabled={generating}>
+			Generate BTC address for cash-in
+		</button>
+	</form>
+{:else}
+	<h2 class="text-2xl">Cash-in instructions</h2>
+
+	<p>
+		Copy this BTC address and paste it in Bity's field:
+		<code class="font-mono bg-gray-500 px-[2px] py-[1px] rounded text-white"
+			>{cashinBtcAddress}</code
+		>
+	</p>
+
+	<form
+		method="get"
+		action="https://bity.com/exchange/#/amount/{cashinAmount}/{currency}/-/BTC"
+		class="contents"
+		target="_blank"
+	>
+		<button class="btn btn-blue self-start"> Open Bity to cash in</button>
+	</form>
 {/if}
