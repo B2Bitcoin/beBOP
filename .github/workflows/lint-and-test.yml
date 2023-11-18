@@ -17,7 +17,7 @@ jobs:
           version: 8.3.1
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'pnpm'
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.10.0
