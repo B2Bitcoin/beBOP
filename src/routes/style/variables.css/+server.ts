@@ -3,13 +3,16 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { themeValidator, type ThemeData } from '$lib/server/theme.js';
 import { trimSuffix } from '$lib/utils/trimSuffix.js';
 import { flatten } from 'flat';
+import { ObjectId } from 'mongodb';
 
 let cache = '';
 let cacheId = -1;
 
 export const GET = async ({}) => {
 	if (cacheId !== runtimeConfig.themeChangeNumber) {
-		const theme = await collections.themes.findOne({ _id: runtimeConfig.mainThemeId });
+		const theme = runtimeConfig.mainThemeId
+			? await collections.themes.findOne({ _id: new ObjectId(runtimeConfig.mainThemeId) })
+			: null;
 		cache = theme ? generateCss(theme) : '';
 		cacheId = runtimeConfig.themeChangeNumber;
 	}
