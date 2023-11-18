@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect } from 'vitest';
+import { describe, beforeEach, it, expect, assert } from 'vitest';
 import { collections } from './database';
 import { cleanDb } from './test-utils';
 import { addToCartInDb } from './cart';
@@ -55,7 +55,10 @@ describe('cart', () => {
 				sessionId: 'test-session-id'
 			}
 		});
-		await collections.carts.updateOne({}, { $set: { updatedAt: new Date(0) } });
+		const cart = await collections.carts.findOne({ 'user.sessionId': 'test-session-id' });
+		assert(cart, 'Cart should exist');
+		cart.items[0].reservedUntil = new Date(0);
+		await collections.carts.updateOne({ _id: cart._id }, { $set: { items: cart.items } });
 		await addToCartInDb(testProduct, LIMITED_STOCK, {
 			user: {
 				sessionId: 'test-session-id2'
@@ -67,6 +70,8 @@ describe('cart', () => {
 				sessionId: 'test-session-id'
 			}
 		});
+		const cart2 = await collections.carts.findOne({ 'user.sessionId': 'test-session-id2' });
+		assert(cart2, 'Cart 2 should exist');
 		// Second user should be able to check out
 		await expect(
 			createOrder(
@@ -78,6 +83,7 @@ describe('cart', () => {
 				],
 				'cash',
 				{
+					cart: cart2,
 					user: {
 						sessionId: 'test-session-id2'
 					},

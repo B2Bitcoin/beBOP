@@ -10,6 +10,7 @@ import { isEqual } from 'lodash-es';
 import { userQuery } from './user';
 import { removeEmpty } from '$lib/utils/removeEmpty';
 import { POS_ROLE_ID } from '$lib/types/User';
+import { addMinutes } from 'date-fns';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	if (!params.user.sessionId && !params.user.npub) {
@@ -91,7 +92,8 @@ export async function addToCartInDb(
 			...(params.customAmount &&
 				product.type !== 'subscription' && {
 					customPrice: { amount: params.customAmount, currency: runtimeConfig.mainCurrency }
-				})
+				}),
+			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes)
 		});
 	} else if (existingItem) {
 		existingItem.quantity = params.totalQuantity ? quantity : existingItem.quantity + quantity;
@@ -108,6 +110,7 @@ export async function addToCartInDb(
 		if (product.type === 'subscription') {
 			existingItem.quantity = 1;
 		}
+		existingItem.reservedUntil = addMinutes(new Date(), runtimeConfig.reserveStockInMinutes);
 	} else {
 		if (quantity > availableAmount) {
 			throw error(400, `You can only order ${availableAmount} of this product`);
@@ -118,7 +121,8 @@ export async function addToCartInDb(
 			...(params.customAmount &&
 				product.type !== 'subscription' && {
 					customPrice: { amount: params.customAmount, currency: runtimeConfig.mainCurrency }
-				})
+				}),
+			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes)
 		});
 	}
 

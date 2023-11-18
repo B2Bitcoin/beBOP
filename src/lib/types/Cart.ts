@@ -16,6 +16,7 @@ export interface Cart extends Timestamps {
 		productId: string;
 		quantity: number;
 		customPrice?: { amount: number; currency: Currency };
+		reservedUntil?: Date;
 	}>;
 }
 
