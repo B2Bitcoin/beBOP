@@ -4,7 +4,13 @@ import type { Product } from '$lib/types/Product';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { trimPrefix } from '$lib/utils/trimPrefix';
 import { trimSuffix } from '$lib/utils/trimSuffix';
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
 import { collections } from './database';
+import { ALLOW_JS_INJECTION } from '$env/static/private';
+
+const window = new JSDOM('').window;
+const purify = DOMPurify(window);
 
 export async function cmsFromContent(content: string, userRoleId: string | undefined) {
 	const PRODUCT_WIDGET_REGEX =
@@ -70,9 +76,10 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	for (const match of orderedMatches) {
+		const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
 		tokens.push({
 			type: 'html',
-			raw: trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>')
+			raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html)
 		});
 		if (match.type === 'productWidget' && match.groups?.slug) {
 			productSlugs.add(match.groups.slug);
