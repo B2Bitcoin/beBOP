@@ -189,19 +189,19 @@
 		color: var(--footer-color);
 	}
 	.cartPreview {
-		backgroundcolor: var(--cartPreview-backgroundColor);
-		fontfamily: var(--cartPreview-fontFamily);
+		background-color: var(--cartPreview-backgroundColor);
+		font-family: var(--cartPreview-fontFamily);
 		color: var(--cartPreview-color);
 	}
 	.cartPreview-cta {
 		font-family: var(--cartPreview-cta-fontFamily);
 	}
 	.cartPreview-mainCTA {
-		backgroundcolor: var(--cartPreview-mainCTA-backgroundColor);
+		background-color: var(--cartPreview-mainCTA-backgroundColor);
 		color: var(--cartPreview-mainCTA-color);
 	}
 	.cartPreview-secondaryCTA {
-		backgroundcolor: var(--cartPreview-secondaryCTA-backgroundColor);
+		background-color: var(--cartPreview-secondaryCTA-backgroundColor);
 		color: var(--cartPreview-secondaryCTA-color);
 	}
 	.tagWidget {
@@ -209,16 +209,16 @@
 		color: var(--tagWidget-color);
 	}
 	.tagWidget-main {
-		backgroundcolor: var(--tagWidget-main-backgroundColor);
+		background-color: var(--tagWidget-main-backgroundColor);
 	}
 	.tagWidget-transparent {
-		backgroundcolor: var(--tagWidget-transparent-backgroundColor);
+		background-color: var(--tagWidget-transparent-backgroundColor);
 	}
 	.tagWidget-secondary {
-		backgroundcolor: var(--tagWidget-secondary-backgroundColor);
+		background-color: var(--tagWidget-secondary-backgroundColor);
 	}
 	.tagWidget-cta {
-		backgroundcolor: var(--tagWidget-cta-backgroundColor);
+		background-color: var(--tagWidget-cta-backgroundColor);
 		color: var(--tagWidget-cta-color);
 	}
 	.tagWidget-hyperlink {
