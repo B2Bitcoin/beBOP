@@ -171,7 +171,7 @@
 		"digitalFiles": {
 			"title": "Fichiers téléchargeables"
 		},
-		"discountBanner": "%{discountPercent}% de réduction",
+		"discountBanner": "{discountPercent}% de réduction pour {hours}h",
 		"freeWithSub": "Ce produit est disponible gratuitement avec votre abonnement mensuel",
 		"freeWithTitle": "Gratuit avec \"xxxxx",
 		"nameYourPrice": "Choisissez votre prix ({currency})",
