@@ -1,4 +1,8 @@
-:root {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
 	--header-shopName-fontFamily: Outfit;
 	--header-tab-fontFamily: Outfit;
 	--navbar-fontFamily: Outfit;
@@ -42,11 +46,7 @@
 	--tagWidget-cta-color: #ffffff;
 	--tagWidget-color: #000000;
 	--tagWidget-hyperlink-color: #2271b1;
-}
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+} */
 @layer base {
 	html {
 		@apply h-full;
@@ -175,99 +175,99 @@
 	}
 
 	.body-secondPlan {
-		background-color: var(--body-secondPlan-backgroundColor);
+		background-color: var(--body-secondPlan-backgroundColor, #ffffff);
 	}
 	.body-mainPlan {
-		background-color: var(--body-mainPlan-backgroundColor);
+		background-color: var(--body-mainPlan-backgroundColor, #ffffff);
 	}
 	.body-title {
-		color: var(--body-title-color);
+		color: var(--body-title-color, #292929);
 		font-family: var(--body-title-fontFamily);
 	}
 	.body {
-		color: var(--body-color);
+		color: var(--body-color, #292929);
 		font-family: var(--body-text-fontFamily);
 	}
 	.body-secondaryText {
-		color: var(--body-secondaryText-color);
+		color: var(--body-secondaryText-color, #292929);
 		font-family: var(--body-secondaryText-fontFamily);
 	}
 	.body-mainCTA {
-		background-color: var(--body-mainCTA-backgroundColor);
-		color: var(--body-mainCTA-color);
+		background-color: var(--body-mainCTA-backgroundColor, #292929);
+		color: var(--body-mainCTA-color, #ffffff);
 	}
 	.body-secondaryCTA {
-		background-color: var(--body-secondaryCTA-backgroundColor);
-		color: var(--body-secondaryCTA-color);
+		background-color: var(--body-secondaryCTA-backgroundColor, #000000);
+		color: var(--body-secondaryCTA-color, #ffffff);
 	}
 	.body-cta {
 		font-family: var(--body-cta-fontFamily);
 	}
 	.body-hyperlink {
-		color: var(--body-hyperlink-color);
+		color: var(--body-hyperlink-color, #2271b1);
 	}
 	.header {
-		background-color: var(--header-backgroundColor);
+		background-color: var(--header-backgroundColor, #292929);
 	}
 	.header-shopName {
-		font-family: var(--header-shopName-fontFamily);
-		color: var(--header-shopName-color);
+		font-family: var(--header-shopName-fontFamily, 'Outfit');
+		color: var(--header-shopName-color, #ffffff);
 	}
 	.header-tab {
-		font-family: var(--header-tab-fontFamily);
-		color: var(--header-tab-color);
+		font-family: var(--header-tab-fontFamily, 'Outfit');
+		color: var(--header-tab-color, #ffffff);
 	}
 	.header-activeTab {
 		text-decoration: underline --header-activeTab-textDecoration-color;
 	}
 	.navbar {
-		background-color: var(--navbar-backgroundColor);
+		background-color: var(--navbar-backgroundColor, #ededed);
 		font-family: var(--navbar-fontFamily);
-		color: var(--navbar-color);
+		color: var(--navbar-color, #4a4a4a);
 	}
 	.navbar-searchInput {
-		background-color: var(--navbar-searchInput-backgroundColor);
+		background-color: var(--navbar-searchInput-backgroundColor, #ffffff);
 	}
 	.footer {
-		background-color: var(--footer-backgroundColor);
+		background-color: var(--footer-backgroundColor, #292929);
 		font-family: var(--footer-fontFamily);
-		color: var(--footer-color);
+		color: var(--footer-color, #8d8d8d);
 	}
 	.cartPreview {
-		background-color: var(--cartPreview-backgroundColor);
+		background-color: var(--cartPreview-backgroundColor, #ffffff);
 		font-family: var(--cartPreview-fontFamily);
-		color: var(--cartPreview-color);
+		color: var(--cartPreview-color, #000000);
 	}
 	.cartPreview-cta {
 		font-family: var(--cartPreview-cta-fontFamily);
 	}
 	.cartPreview-mainCTA {
-		background-color: var(--cartPreview-mainCTA-backgroundColor);
-		color: var(--cartPreview-mainCTA-color);
+		background-color: var(--cartPreview-mainCTA-backgroundColor, #cfcfcf);
+		color: var(--cartPreview-mainCTA-color, #000000);
 	}
 	.cartPreview-secondaryCTA {
-		background-color: var(--cartPreview-secondaryCTA-backgroundColor);
-		color: var(--cartPreview-secondaryCTA-color);
+		background-color: var(--cartPreview-secondaryCTA-backgroundColor, #292929);
+		color: var(--cartPreview-secondaryCTA-color, #ffffff);
 	}
 	.tagWidget {
 		font-family: var(--tagWidget-fontFamily);
-		color: var(--tagWidget-color);
+		color: var(--tagWidget-color, #000000);
 	}
 	.tagWidget-main {
-		background-color: var(--tagWidget-main-backgroundColor);
+		background-color: var(--tagWidget-main-backgroundColor, #ededed);
 	}
 	.tagWidget-transparent {
-		background-color: var(--tagWidget-transparent-backgroundColor);
+		background-color: var(--tagWidget-transparent-backgroundColor, #ffffff);
 	}
 	.tagWidget-secondary {
-		background-color: var(--tagWidget-secondary-backgroundColor);
+		background-color: var(--tagWidget-secondary-backgroundColor, #ffffff);
 	}
 	.tagWidget-cta {
-		background-color: var(--tagWidget-cta-backgroundColor);
-		color: var(--tagWidget-cta-color);
+		background-color: var(--tagWidget-cta-backgroundColor, #3f83f8);
+		color: var(--tagWidget-cta-color, #ffffff);
 	}
 	.tagWidget-hyperlink {
-		color: var(--tagWidget-hyperlink-color);
+		color: var(--tagWidget-hyperlink-color, #2271b1);
 	}
 }
 
