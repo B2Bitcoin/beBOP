@@ -130,99 +130,99 @@
 	}
 
 	.body-secondPlan {
-		background-color: var(--body-secondPlan-backgroundColor);
+		background-color: var(--body-secondPlan-backgroundColor, white);
 	}
 	.body-mainPlan {
-		background-color: var(--body-mainPlan-backgroundColor);
+		background-color: var(--body-mainPlan-backgroundColor, white);
 	}
 	.body-title {
-		color: var(--body-title-color);
+		color: var(--body-title-color, #292929);
 		font-family: var(--body-title-fontFamily);
 	}
 	.body {
-		color: var(--body-color);
+		color: var(--body-color, #292929);
 		font-family: var(--body-text-fontFamily);
 	}
 	.body-secondaryText {
-		color: var(--body-secondaryText-color);
+		color: var(--body-secondaryText-color, #292929);
 		font-family: var(--body-secondaryText-fontFamily);
 	}
 	.body-mainCTA {
-		background-color: var(--body-mainCTA-backgroundColor);
+		background-color: var(--body-mainCTA-backgroundColor, #292929);
 		color: var(--body-mainCTA-color);
 	}
 	.body-secondaryCTA {
-		background-color: var(--body-secondaryCTA-backgroundColor);
+		background-color: var(--body-secondaryCTA-backgroundColor, #292929);
 		color: var(--body-secondaryCTA-color);
 	}
 	.body-cta {
 		font-family: var(--body-cta-fontFamily);
 	}
 	.body-hyperlink {
-		color: var(--body-hyperlink-color);
+		color: var(--body-hyperlink-color, #292929);
 	}
 	.header {
-		background-color: var(--header-backgroundColor);
+		background-color: var(--header-backgroundColor, #292929);
 	}
 	.header-shopName {
 		font-family: var(--header-shopName-fontFamily);
-		color: var(--header-shopName-color);
+		color: var(--header-shopName-color, white);
 	}
 	.header-tab {
 		font-family: var(--header-tab-fontFamily);
-		color: var(--header-tab-color);
+		color: var(--header-tab-color, white);
 	}
 	.header-activeTab {
 		text-decoration: underline --header-activeTab-textDecoration-color;
 	}
 	.navbar {
-		background-color: var(--navbar-backgroundColor);
+		background-color: var(--navbar-backgroundColor, #ededed);
 		font-family: var(--navbar-fontFamily);
-		color: var(--navbar-color);
+		color: var(--navbar-color, #4a4a4a);
 	}
 	.navbar-searchInput {
-		background-color: var(--navbar-searchInput-backgroundColor);
+		background-color: var(--navbar-searchInput-backgroundColor, white);
 	}
 	.footer {
-		background-color: var(--footer-backgroundColor);
+		background-color: var(--footer-backgroundColor, #292929);
 		font-family: var(--footer-fontFamily);
-		color: var(--footer-color);
+		color: var(--footer-color, #8d8d8d);
 	}
 	.cartPreview {
-		background-color: var(--cartPreview-backgroundColor);
+		background-color: var(--cartPreview-backgroundColor, white);
 		font-family: var(--cartPreview-fontFamily);
-		color: var(--cartPreview-color);
+		color: var(--cartPreview-color, black);
 	}
 	.cartPreview-cta {
 		font-family: var(--cartPreview-cta-fontFamily);
 	}
 	.cartPreview-mainCTA {
-		background-color: var(--cartPreview-mainCTA-backgroundColor);
+		background-color: var(--cartPreview-mainCTA-backgroundColor, #cfcfcf);
 		color: var(--cartPreview-mainCTA-color);
 	}
 	.cartPreview-secondaryCTA {
-		background-color: var(--cartPreview-secondaryCTA-backgroundColor);
-		color: var(--cartPreview-secondaryCTA-color);
+		background-color: var(--cartPreview-secondaryCTA-backgroundColor, #292929);
+		color: var(--cartPreview-secondaryCTA-color, white);
 	}
 	.tagWidget {
 		font-family: var(--tagWidget-fontFamily);
-		color: var(--tagWidget-color);
+		color: var(--tagWidget-color, black);
 	}
 	.tagWidget-main {
-		background-color: var(--tagWidget-main-backgroundColor);
+		background-color: var(--tagWidget-main-backgroundColor, white);
 	}
 	.tagWidget-transparent {
-		background-color: var(--tagWidget-transparent-backgroundColor);
+		background-color: var(--tagWidget-transparent-backgroundColor, rgb(137, 137, 137));
 	}
 	.tagWidget-secondary {
-		background-color: var(--tagWidget-secondary-backgroundColor);
+		background-color: var(--tagWidget-secondary-backgroundColor, rgb(255, 173, 173));
 	}
 	.tagWidget-cta {
-		background-color: var(--tagWidget-cta-backgroundColor);
-		color: var(--tagWidget-cta-color);
+		background-color: var(--tagWidget-cta-backgroundColor, rgb(63, 131, 248));
+		color: var(--tagWidget-cta-color, white);
 	}
 	.tagWidget-hyperlink {
-		color: var(--tagWidget-hyperlink-color);
+		color: var(--tagWidget-hyperlink-color, rgb(137, 137, 137));
 	}
 }
 

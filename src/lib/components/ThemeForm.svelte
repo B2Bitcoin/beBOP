@@ -10,11 +10,11 @@
 	}
 </script>
 
+<label class="form-label max-w-7xl">
+	Theme name
+	<input class="form-input" type="text" name="name" value={theme?.name ?? ''} required />
+</label>
 {#each Object.entries(themeFormStructure) as [section, fields]}
-	<label class="form-label max-w-7xl">
-		Theme name
-		<input class="form-input" type="text" name="name" value={theme?.name ?? ''} required />
-	</label>
 	<h2 class="text-2xl">{fields.label}</h2>
 	{#each fields.elements as field}
 		{@const key = `${section}.${field.name}`}
