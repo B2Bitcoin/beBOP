@@ -78,6 +78,14 @@ BODY_SIZE_LIMIT=20000000 pm2 start --name bootik --update-env build/index.js
 # ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 BODY_SIZE_LIMIT=20000000 pm2 start --name bootik --update-env build/index.js
 ```
 
+Sometimes the app will respond with very long link headers, and nginx will show a 502 error. To fix this, you can add this to your nginx config:
+
+```nginx
+proxy_busy_buffers_size   512k;
+proxy_buffers   4 512k;
+proxy_buffer_size   256k;
+```
+
 ### Maintenance mode
 
 It's possible to enable maintenance mode in the admin.
