@@ -326,7 +326,9 @@
 		</div>
 		<footer class="footer h-[90px] items-center flex">
 			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 grow">
-				<span class="font-light">{t('footer.poweredBy')}</span><span class="font-display text-xl">
+				<span class="font-light">{t('footer.poweredBy')}</span><span
+					class="font-display text-xl text-white"
+				>
 					LaBookinerie.
 				</span>
 				<div class="ml-auto flex gap-4 items-center">

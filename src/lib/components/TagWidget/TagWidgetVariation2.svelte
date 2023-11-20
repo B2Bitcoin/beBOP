@@ -12,7 +12,7 @@
 	export let picture: Picture | undefined;
 </script>
 
-<div class="mx-auto bg-gray-240 rounded {className}">
+<div class="mx-auto tagWidget-main rounded {className}">
 	<div>
 		<PictureComponent {picture} class="w-full" />
 
@@ -25,7 +25,7 @@
 			</h2>
 			<div class="flex text-centern justify-evenly mt-auto">
 				{#each tag.cta as cta}
-					<div class="bg-blue-500 font-semibold text-white text-xl text-center w-auto p-1">
+					<div class="tagWidget-cta font-semibold text-white text-xl text-center w-auto p-1">
 						{cta.label}
 					</div>
 				{/each}

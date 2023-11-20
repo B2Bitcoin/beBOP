@@ -28,11 +28,11 @@
 		<div class="flex text-center justify-evenly mt-auto">
 			{#each tag.cta as cta}
 				<div
-					class="text-4xl bg-blue-500 font-semibold mx-20 text-white md:text-4xl text-center w-auto p-1 hidden sm:inline"
+					class="text-4xl tagWidget-cta font-semibold mx-20 text-white md:text-4xl text-center w-auto p-1 hidden sm:inline"
 				>
 					{cta.label}
 				</div>
-				<div class="text-xl bg-blue-500 font-semibold mx-1 sm:hidden text-white text-center p-1">
+				<div class="text-xl tagWidget-cta font-semibold mx-1 sm:hidden text-white text-center p-1">
 					{cta.label}
 				</div>
 			{/each}
