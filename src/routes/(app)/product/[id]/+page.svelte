@@ -335,9 +335,7 @@
 									{t('product.checkBackLater')}
 								</p>
 							{:else if data.showCheckoutButton}
-								<button class="btn btn-black" disabled={loading}
-									>{t(`product.cta.${verb}`)}</button
-								>
+								<button class="btn btn-black" disabled={loading}>{t(`product.cta.${verb}`)}</button>
 								<button
 									value="Add to cart"
 									formaction="?/addToCart"

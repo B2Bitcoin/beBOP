@@ -116,7 +116,7 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6">
 	<div
-		class="w-full rounded-xl bg-white border-gray-300 border p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
+		class="w-full rounded-xl body-secondPlan border-gray-300 border p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
 	>
 		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
 			<h1 class="page-title">{t('checkout.title')}</h1>
