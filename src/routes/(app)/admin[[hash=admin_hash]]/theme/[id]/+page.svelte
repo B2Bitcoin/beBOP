@@ -1,6 +1,5 @@
 <script lang="ts">
 	import ThemeForm from '$lib/components/ThemeForm.svelte';
-	import PictureComponent from '$lib/components/Picture.svelte';
 
 	export let data;
 </script>
