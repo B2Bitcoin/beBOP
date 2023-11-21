@@ -17,7 +17,7 @@
 
 <div class="hidden sm:inline">
 	<div class="flex mt-12 mb-12">
-		<div class="mx-auto tagWidget-main flex rounded sm:gap-2 {className}">
+		<div class="mx-auto background tagWidget-main flex rounded sm:gap-2 {className}">
 			<div class="flex flex-col text-end w-[50%]">
 				<h2 class="text-4xl pb-2 uppercase">{tag.title}</h2>
 				<h2 class="text-md md:text-xl">
@@ -32,8 +32,8 @@
 				</div>
 			</div>
 
-			<div class="flex relative w-[50%]">
-				<PictureComponent {picture} class="h-full w-full absolute" />
+			<div class="flex w-[50%]">
+				<PictureComponent {picture} class="w-auto h-[50%] object-cover" />
 			</div>
 		</div>
 	</div>
