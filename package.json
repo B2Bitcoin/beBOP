@@ -53,7 +53,7 @@
 		"typescript": "^5.0.4",
 		"unplugin-icons": "^0.16.3",
 		"vite": "^4.3.1",
-		"vitest": "^0.25.8"
+		"vitest": "^0.34.6"
 	},
 	"type": "module",
 	"dependencies": {
