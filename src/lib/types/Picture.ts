@@ -2,6 +2,8 @@ import type { Timestamps } from './Timestamps';
 import type { Slider } from './slider';
 export const TAGTYPES = ['main', 'full', 'wide', 'slim', 'avatar'] as const;
 export type TagType = (typeof TAGTYPES)[number];
+export const LOGOTYPES = ['light', 'dark'] as const;
+export type LogoType = (typeof LOGOTYPES)[number];
 
 export interface ImageData {
 	key: string;
@@ -22,6 +24,10 @@ export interface Picture extends Timestamps {
 		_id: Slider['_id'];
 		url?: string;
 		openNewTab?: boolean;
+	};
+	theme?: {
+		_id: string;
+		type: 'light' | 'dark';
 	};
 	name: string;
 
