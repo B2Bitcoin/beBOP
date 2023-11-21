@@ -327,7 +327,7 @@
 				{/each}
 			</nav>
 		{/if}
-		<div class="grow">
+		<div class="grow body-mainPlan">
 			<slot />
 		</div>
 		<footer class="footer h-[90px] items-center flex">
