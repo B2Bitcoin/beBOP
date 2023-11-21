@@ -15,17 +15,12 @@ export async function load({ params }) {
 	if (!theme) {
 		throw redirect(303, `${adminPrefix()}/theme`);
 	}
-	const pictures = await collections.pictures
-		.find({ 'theme._id': params.id })
-		.sort({ createdAt: 1 })
-		.toArray();
 
 	return {
 		theme: {
 			...theme,
 			_id: theme._id.toString()
-		},
-		pictures
+		}
 	};
 }
 

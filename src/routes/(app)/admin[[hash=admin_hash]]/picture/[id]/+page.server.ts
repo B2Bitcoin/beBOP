@@ -62,11 +62,11 @@ export const actions: Actions = {
 
 		await collections.runtimeConfig.updateOne(
 			{
-				_id: 'logoPictureId'
+				_id: 'logo'
 			},
 			{
 				$set: {
-					data: picture._id,
+					data: { pictureId: picture._id, isWide: true },
 					updatedAt: new Date()
 				}
 			},
@@ -74,14 +74,14 @@ export const actions: Actions = {
 				upsert: true
 			}
 		);
-		runtimeConfig.logoPictureId = picture._id;
+		runtimeConfig.logo.pictureId = picture._id;
 	},
 
 	removeLogo: async function ({ params }) {
-		if (runtimeConfig.logoPictureId === params.id) {
+		if (runtimeConfig.logo.pictureId === params.id) {
 			await collections.runtimeConfig.updateOne(
 				{
-					_id: 'logoPictureId',
+					_id: 'logo',
 					data: params.id
 				},
 				{
@@ -94,7 +94,7 @@ export const actions: Actions = {
 					upsert: true
 				}
 			);
-			runtimeConfig.logoPictureId = '';
+			runtimeConfig.logo.pictureId = '';
 		}
 	}
 };

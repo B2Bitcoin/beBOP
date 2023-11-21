@@ -93,17 +93,16 @@
 		<header class="header items-center flex h-[100px]">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
 				<a class="flex items-center gap-4" href="/">
-					{#if data.themeLogo.length}
-						<Picture
-							class="h-[60px] w-auto"
-							picture={data.themeLogo.find((logo) => logo.theme?.type === 'light')}
-						/>
-					{:else}
-						{#if data.logoPicture}
-							<Picture class="h-[60px] w-[60px] rounded-full" picture={data.logoPicture} />
+					{#if data.logoPicture}
+						{#if data.logoWide}
+							<Picture class="h-[60px] w-auto" picture={data.logoPicture} />
 						{:else}
-							<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="Main logo" />
+							<Picture class="h-[60px] w-[60px] rounded-full" picture={data.logoPicture} />
 						{/if}
+					{:else}
+						<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="Main logo" />
+					{/if}
+					{#if !data.logoWide}
 						<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
 					{/if}
 				</a>

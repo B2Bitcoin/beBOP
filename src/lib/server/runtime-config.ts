@@ -45,7 +45,7 @@ const defaultConfig = {
 	} as ConfirmationThresholds,
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
-	logoPictureId: '',
+	logo: { isWide: false, pictureId: '', darkModePictureId: '' },
 	lnurlPayMetadataJwtSigningKey: '',
 	authLinkJwtSigningKey: '',
 	ssoSecret: '',

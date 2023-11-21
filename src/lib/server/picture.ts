@@ -7,7 +7,7 @@ import { s3ProductPrefix, s3TagPrefix, s3client } from './s3';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { S3_BUCKET } from '$env/static/private';
 import * as mimeTypes from 'mime-types';
-import type { ImageData, LogoType, Picture, TagType } from '../types/Picture';
+import type { ImageData, Picture, TagType } from '../types/Picture';
 
 /**
  * Upload picture to S3 under different formats, and create a document in db.pictures.
@@ -21,7 +21,6 @@ export async function generatePicture(
 	opts?: {
 		productId?: string;
 		tag?: { _id: string; type: TagType };
-		theme?: { _id: string; type: LogoType };
 		slider?: { _id: string; url?: string; openNewTab?: boolean };
 		cb?: (session: ClientSession) => Promise<void>;
 	}
@@ -154,12 +153,6 @@ export async function generatePicture(
 						slider: {
 							_id: opts?.slider._id,
 							...(opts.slider.url && { url: opts.slider.url, openNewTab: opts.slider.openNewTab })
-						}
-					}),
-					...(opts?.theme && {
-						theme: {
-							_id: opts?.theme._id,
-							type: opts?.theme.type
 						}
 					}),
 					createdAt: new Date(),
