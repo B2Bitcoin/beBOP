@@ -26,7 +26,9 @@
 	export { className as class };
 </script>
 
-<div class="relative mx-auto max-w-max bg-gray-240 flex flex-wrap gap-4 p-6 rounded {className}">
+<div
+	class="relative mx-auto max-w-max tagWidget tagWidget-main flex flex-wrap gap-4 p-6 rounded {className}"
+>
 	<div class="flex flex-col">
 		<div class="flex flex-row justify-start -mt-6 -ml-6">
 			<ProductType
