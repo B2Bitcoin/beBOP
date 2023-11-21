@@ -12,7 +12,7 @@
 	export let picture: Picture | undefined;
 </script>
 
-<div class="mx-auto bg-gray-240 gap-4 rounded relative {className}">
+<div class="mx-auto tagWidget-main gap-4 rounded relative {className}">
 	<PictureComponent {picture} class="w-full" />
 	<div class="flex flex-col text-center justify-center">
 		<div class="top-6 mx-auto text-center absolute md:top-12 lg:top-28 left-0 background-color">
@@ -20,7 +20,7 @@
 		</div>
 
 		<div
-			class="text-sm bg-blue-500 font-semibold absolute bottom-0 right-0 text-white md:text-xl lg:text-xl text-center w-auto p-1"
+			class="text-sm tagWidget-cta font-semibold absolute bottom-0 right-0 text-white md:text-xl lg:text-xl text-center w-auto p-1"
 		>
 			{tag.cta[0].label}
 		</div>

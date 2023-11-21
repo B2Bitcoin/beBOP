@@ -42,8 +42,10 @@
 		{/if}
 
 		<div class="flex gap-2">
-			<a href="/cart" class="grow basis-0 btn btn-gray"> {t('cart.cta.view')} </a>
-			<a href="/checkout" class="grow basis-0 btn btn-black"> {t('cart.cta.checkout')} </a>
+			<a href="/cart" class="grow basis-0 btn cartPreview-mainCTA"> {t('cart.cta.view')} </a>
+			<a href="/checkout" class="grow basis-0 btn cartPreview-secondaryCTA">
+				{t('cart.cta.checkout')}
+			</a>
 		</div>
 	</div>
 	<button class="absolute top-2 right-2" type="button" on:click={() => dispatch('dismiss')}>

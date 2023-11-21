@@ -90,7 +90,7 @@
 	{#if $page.data.layoutReset}
 		<slot />
 	{:else}
-		<header class="bg-gray-850 items-center flex h-[100px]">
+		<header class="header items-center flex h-[100px]">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
 				<a class="flex items-center gap-4" href="/">
 					{#if data.logoPicture}
@@ -98,7 +98,7 @@
 					{:else}
 						<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="Main logo" />
 					{/if}
-					<span class="font-bold text-[32px]">{data.brandName}</span>
+					<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
 				</a>
 				<span class="grow" />
 				<nav class="flex gap-10 text-[22px] font-semibold">
@@ -131,7 +131,7 @@
 				{/each}
 			</nav>
 		{/if}
-		<header class="bg-gray-240 text-gray-800 h-[66px] items-center flex">
+		<header class="navbar h-[66px] items-center flex">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 				<nav class="flex gap-6 font-light items-center">
 					<button
@@ -296,10 +296,10 @@
 										{t('cart.total')}
 										<PriceTag currency={data.currencies.main} amount={totalPriceWithVat} main />
 									</div>
-									<a href="/cart" class="btn btn-gray mt-1 whitespace-nowrap">
+									<a href="/cart" class="btn cartPreview-mainCTA mt-1 whitespace-nowrap">
 										{t('cart.cta.view')}
 									</a>
-									<a href="/checkout" class="btn btn-black">
+									<a href="/checkout" class="btn cartPreview-secondaryCTA">
 										{t('cart.cta.checkout')}
 									</a>
 								</div>
@@ -324,8 +324,8 @@
 		<div class="grow bg-gray-75">
 			<slot />
 		</div>
-		<footer class="bg-gray-850 h-[90px] items-center flex">
-			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 text-gray-550 grow">
+		<footer class="footer h-[90px] items-center flex">
+			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 grow">
 				<span class="font-light">{t('footer.poweredBy')}</span><span
 					class="font-display text-xl text-white"
 				>
@@ -333,9 +333,7 @@
 				</span>
 				<div class="ml-auto flex gap-4 items-center">
 					{#each data.links.footer as link}
-						<a href={link.href} data-sveltekit-preload-data="off" class="text-gray-550"
-							>{link.label}</a
-						>
+						<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
 					{/each}
 				</div>
 			</div>

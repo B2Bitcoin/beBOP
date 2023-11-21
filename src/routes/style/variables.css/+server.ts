@@ -58,7 +58,8 @@ function generateVariables(themeData: ThemeData) {
 function generateCss(themeData: ThemeData) {
 	const { nonColors, darkModeColors, lightModeColors } = generateVariables(themeData);
 
-	return `html {
+	return `/* html:root has more specificity than :root, so it will override the default values */
+html:root {
 ${Object.entries(nonColors)
 	.map(([key, value]) => `\t--${key.replaceAll('.', '-')}:${value};`)
 	.join('\n')}
@@ -67,7 +68,7 @@ ${Object.entries(lightModeColors)
 	.join('\n')}
 }
 
-html.dark {
+html:root.dark {
 ${Object.entries(darkModeColors)
 	.map(([key, value]) => `\t--${key.replaceAll('.', '-')}:${value};`)
 	.join('\n')}

@@ -68,7 +68,7 @@
 	{#if detailBtn}
 		<a
 			href="/product/{product._id}"
-			class=" bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1"
+			class="cartPreview-secondaryCTA text-xl text-center w-full md:w-[150px] p-1"
 		>
 			{t('product.cta.details')}
 		</a>

@@ -65,7 +65,7 @@
 							{product}
 							picture={pictures[0]}
 							btnTranslationKey="product.cta.buy"
-							class="bg-blue-500 text-white text-xl text-center w-full md:w-[150px] p-1"
+							class="cartPreview-mainCTA text-xl text-center w-full md:w-[150px] p-1"
 							detailBtn={true}
 						/>
 					</div>
