@@ -26,7 +26,9 @@
 	export { className as class };
 </script>
 
-<div class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
+<div
+	class="relative mx-auto max-w-[800px] tagWidget tagWidget-main flex flex-col gap-4 p-6 rounded {className}"
+>
 	<div class="flex flex-row justify-end -mt-6 -mr-6">
 		<ProductType {product} {hasDigitalFiles} class="last:rounded-tr first:rounded-bl pl-2" />
 	</div>

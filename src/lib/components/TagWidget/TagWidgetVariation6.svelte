@@ -12,10 +12,12 @@
 	export let picture: Picture | undefined;
 </script>
 
-<div class="mx-auto tagWidget-main gap-4 rounded relative {className}">
+<div class="mx-auto tagWidget tagWidget-main gap-4 rounded relative {className}">
 	<PictureComponent {picture} class="w-full" />
 	<div class="flex flex-col text-center justify-center">
-		<div class="top-6 mx-auto text-center absolute md:top-12 lg:top-28 left-0 background-color">
+		<div
+			class="top-6 mx-auto text-center absolute md:top-12 lg:top-28 left-0 bg-[rgba(243,240,240,0.5)]"
+		>
 			<h2 class="text-sm uppercase md:text-2xl lg:text-5xl">{tag.title}</h2>
 		</div>
 
@@ -26,15 +28,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.background-image {
-		background-image: url(https://imgur.com/rjdvjFT.png);
-		background-size: 100%;
-		background-repeat: no-repeat;
-		background-position: left top;
-	}
-	.background-color {
-		background-color: rgba(243, 240, 240, 0.5);
-	}
-</style>

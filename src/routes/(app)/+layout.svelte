@@ -101,7 +101,7 @@
 					<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
 				</a>
 				<span class="grow" />
-				<nav class="flex gap-10 text-[22px] font-semibold">
+				<nav class="flex gap-10 text-[22px] font-semibold header-tab">
 					{#each data.links.topbar as link}
 						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off"
 							>{link.label}</a
@@ -124,7 +124,7 @@
 		{#if topMenuOpen}
 			<nav
 				transition:slide
-				class="bg-gray-850 flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
+				class="header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
 			>
 				{#each data.links.topbar as link}
 					<a class="py-4" href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
@@ -198,7 +198,7 @@
 							</Popup>
 						{:else if cartOpen}
 							<Popup>
-								<div class="p-2 gap-2 flex flex-col">
+								<div class="p-2 gap-2 flex flex-col cartPreview">
 									{#each items as item}
 										{#if cartErrorMessage && cartErrorProductId === item.product._id}
 											<div class="text-red-600 text-sm">{cartErrorMessage}</div>
