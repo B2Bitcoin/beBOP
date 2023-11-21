@@ -225,7 +225,7 @@
 				{#each feedItems as { key, label }}
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
 						<div
-							class="pl-4 py-2 bg-gray-190 border-b border-gray-300 text-base font-light text-gray-800"
+							class="pl-4 py-2 body-secondPlan border-b border-gray-300 text-base font-light text-gray-800"
 						>
 							{label}
 						</div>
