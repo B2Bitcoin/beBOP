@@ -328,7 +328,7 @@
 			</nav>
 		{/if}
 
-		{#if $page.url.pathname.match('/admin')}
+		{#if $page.url.pathname.startsWith('/admin')}
 			<div class="grow">
 				<slot />
 			</div>
