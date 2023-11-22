@@ -32,8 +32,8 @@
 				</div>
 			</div>
 
-			<div class="flex relative w-[50%]">
-				<PictureComponent {picture} class="h-full w-full absolute" />
+			<div class="flex w-[50%]">
+				<PictureComponent {picture} class="w-auto h-full object-cover" />
 			</div>
 		</div>
 	</div>
