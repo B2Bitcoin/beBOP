@@ -108,7 +108,7 @@
 							</div>
 							<button
 								formaction="/cart/{item.product._id}/?/remove"
-								class="mt-auto mr-auto hover:underline text-link text-base font-light"
+								class="mt-auto mr-auto hover:underline body-hyperlink text-base font-light"
 							>
 								{t('cart.cta.discardItem')}
 							</button>
