@@ -41,7 +41,7 @@
 	<div class="flex flex-col">
 		<div class="flex flex-row justify-between">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
-				<h2 class="text-2xl">{product.name}</h2>
+				<h2 class="text-2xl body-title">{product.name}</h2>
 			</a>
 
 			<div class="flex flex-row gap-2 items-end justify-center">

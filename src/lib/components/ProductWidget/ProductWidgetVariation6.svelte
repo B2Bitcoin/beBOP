@@ -53,7 +53,7 @@
 		</div>
 		<div class="p-4 w-full sm:w-2/3">
 			<a href="/product/{product._id}">
-				<h2 class="text-2xl font-bold mb-2">{product.name}</h2>
+				<h2 class="text-2xl font-bold body-title mb-2">{product.name}</h2>
 			</a>
 			<a href="/product/{product._id}">
 				<p class="text-gray-600 mb-4">{product.shortDescription}</p>
