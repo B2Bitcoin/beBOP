@@ -3,6 +3,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 
 	export let data;
+	let darkPicture = 'light';
 </script>
 
 <form method="post" action="?/update" use:enhance class="flex flex-col gap-4">
@@ -19,6 +20,7 @@
 	<Picture picture={data.picture} class="object-contain max-h-[500px] max-w-full" />
 	<div class="flex gap-4">
 		<input type="submit" value="Update" class="btn btn-black" />
+		<input type="hidden" name="darkPicture" bind:value={darkPicture} />
 		{#if !data.picture.productId}
 			{#if data.logo.pictureId === data.picture._id}
 				<input
@@ -34,15 +36,17 @@
 				<input
 					type="submit"
 					value="Remove from dark logo"
-					formaction="?/removeDarkLogo"
+					formaction="?/removeLogo"
 					class="btn btn-gray"
+					on:click={() => (darkPicture = 'dark')}
 				/>
 			{:else}
 				<input
 					type="submit"
 					value="Set as dark logo"
-					formaction="?/setAsDarkLogo"
+					formaction="?/setAsLogo"
 					class="btn btn-gray"
+					on:click={() => (darkPicture = 'dark')}
 				/>
 			{/if}
 		{/if}
