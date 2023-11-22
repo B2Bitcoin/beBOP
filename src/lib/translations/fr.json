@@ -138,7 +138,7 @@
 		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique une <0>remise cadeau</0>",
 		"cta": {
 			"cancelOrder": "Annuler",
-			"markOrderPaid": "Marc a payé"
+			"markOrderPaid": "Marquer comme payé"
 		},
 		"discountJustification": "Justification",
 		"invalidDiscount": "La réduction n'est pas valable !",

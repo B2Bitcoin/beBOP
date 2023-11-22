@@ -1,5 +1,4 @@
 import { collections } from '$lib/server/database.js';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { userIdentifier, userQuery } from '$lib/server/user.js';
 
 export const load = async (event) => {
@@ -15,10 +14,11 @@ export const load = async (event) => {
 		orders: lastOrders.map((order) => ({
 			_id: order._id,
 			payment: order.payment,
+			totalReceived: order.totalReceived,
+			amountsInOtherCurrencies: order.amountsInOtherCurrencies,
 			totalPrice: order.totalPrice,
 			number: order.number,
 			createdAt: order.createdAt
-		})),
-		priceReferenceCurrency: runtimeConfig.priceReferenceCurrency
+		}))
 	};
 };

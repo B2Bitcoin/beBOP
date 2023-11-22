@@ -9,8 +9,10 @@ import { inspect } from 'node:util';
 import { lndLookupInvoice } from '../lightning';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { onOrderPaid } from '../orders';
-import { refreshPromise } from '../runtime-config';
+import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { getConfirmationBlocks } from '$lib/utils/getConfirmationBlocks';
+import type { StrictUpdateFilter } from 'mongodb';
+import { toCurrency } from '$lib/utils/toCurrency';
 
 const lock = new Lock('orders');
 
@@ -55,9 +57,27 @@ async function maintainOrders() {
 									'payment.paidAt': new Date(),
 									'payment.transactions': transactions.map((transaction) => ({
 										txid: transaction.txid,
-										amount: transaction.amount
+										amount: transaction.amount,
+										currency: 'BTC' as const
 									})),
-									'payment.totalReceived': satReceived
+									totalReceived: {
+										amount: satReceived,
+										currency: 'SAT' as const
+									},
+									'amountsInOtherCurrencies.main.totalReceived': {
+										amount: toCurrency(runtimeConfig.mainCurrency, satReceived, 'SAT'),
+										currency: runtimeConfig.mainCurrency
+									},
+									...(runtimeConfig.secondaryCurrency && {
+										'amountsInOtherCurrencies.secondary.totalReceived': {
+											amount: toCurrency(runtimeConfig.secondaryCurrency, satReceived, 'SAT'),
+											currency: runtimeConfig.secondaryCurrency
+										}
+									}),
+									'amountsInOtherCurrencies.priceReference.totalReceived': {
+										amount: toCurrency(runtimeConfig.priceReferenceCurrency, satReceived, 'SAT'),
+										currency: runtimeConfig.priceReferenceCurrency
+									}
 								}
 							},
 							{ session }
@@ -100,8 +120,33 @@ async function maintainOrders() {
 								$set: {
 									'payment.status': 'paid',
 									'payment.paidAt': invoice.settled_at,
-									'payment.totalReceived': invoice.amt_paid_sat
-								}
+									totalReceived: {
+										amount: invoice.amt_paid_sat,
+										currency: 'SAT' as const
+									},
+									'amountsInOtherCurrencies.main.totalReceived': {
+										amount: toCurrency(runtimeConfig.mainCurrency, invoice.amt_paid_sat, 'SAT'),
+										currency: runtimeConfig.mainCurrency
+									},
+									...(runtimeConfig.secondaryCurrency && {
+										'amountsInOtherCurrencies.secondary.totalReceived': {
+											amount: toCurrency(
+												runtimeConfig.secondaryCurrency,
+												invoice.amt_paid_sat,
+												'SAT'
+											),
+											currency: runtimeConfig.secondaryCurrency
+										}
+									}),
+									'amountsInOtherCurrencies.priceReference.totalReceived': {
+										amount: toCurrency(
+											runtimeConfig.priceReferenceCurrency,
+											invoice.amt_paid_sat,
+											'SAT'
+										),
+										currency: runtimeConfig.priceReferenceCurrency
+									}
+								} satisfies StrictUpdateFilter<Order>
 							},
 							{ returnDocument: 'after' }
 						);
