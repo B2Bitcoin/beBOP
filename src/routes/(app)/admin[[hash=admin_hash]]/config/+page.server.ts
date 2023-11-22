@@ -63,8 +63,7 @@ export const actions = {
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
 				plausibleScriptUrl: z.string(),
 				collectIPOnDeliverylessOrders: z.boolean({ coerce: true }),
-				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)]),
-				logo: z.boolean({ coerce: true })
+				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)])
 			})
 			.parse(Object.fromEntries(formData));
 
@@ -74,22 +73,7 @@ export const actions = {
 		};
 
 		for (const key of typedKeys(runtimeConfigUpdates)) {
-			if (key === 'logo') {
-				await collections.runtimeConfig.updateOne(
-					{
-						_id: 'logo'
-					},
-					{
-						$set: {
-							'data.isWide': runtimeConfigUpdates[key],
-							updatedAt: new Date()
-						}
-					},
-					{
-						upsert: true
-					}
-				);
-			} else if (runtimeConfig[key] !== runtimeConfigUpdates[key]) {
+			if (runtimeConfig[key] !== runtimeConfigUpdates[key]) {
 				runtimeConfig[key] = runtimeConfigUpdates[key] as never;
 				await collections.runtimeConfig.updateOne(
 					{ _id: key },

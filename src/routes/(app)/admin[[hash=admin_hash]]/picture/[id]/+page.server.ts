@@ -59,13 +59,17 @@ export const actions: Actions = {
 		if (picture.productId) {
 			throw error(400, 'Picture is already associated to a product');
 		}
-		const logoMode = String((await request.formData()).get('darkPicture'));
+		const formData = await request.formData();
+		const logoMode = String(formData.get('darkPicture'));
+		const logoIsWide = Boolean(formData.get('isWide'));
+
 		await collections.runtimeConfig.updateOne(
 			{
 				_id: 'logo'
 			},
 			{
 				$set: {
+					'data.isWide': logoIsWide,
 					...(logoMode === 'light' && { 'data.pictureId': picture._id }),
 					...(logoMode === 'dark' && { 'data.darkModePictureId': picture._id }),
 					updatedAt: new Date()

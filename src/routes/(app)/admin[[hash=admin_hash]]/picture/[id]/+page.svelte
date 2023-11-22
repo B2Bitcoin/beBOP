@@ -17,6 +17,7 @@
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.picture.name} />
+
 	<Picture picture={data.picture} class="object-contain max-h-[500px] max-w-full" />
 	<div class="flex gap-4">
 		<input type="submit" value="Update" class="btn btn-black" />
@@ -30,6 +31,10 @@
 					class="btn btn-gray"
 				/>
 			{:else}
+				<label class="checkbox-label">
+					<input type="checkbox" name="isWide" class="form-checkbox" checked={data.logo.isWide} />
+					Image will be a wide logo
+				</label>
 				<input type="submit" value="Set as logo" formaction="?/setAsLogo" class="btn btn-gray" />
 			{/if}
 			{#if data.logo.darkModePictureId === data.picture._id}

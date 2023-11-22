@@ -294,10 +294,6 @@
 			value={data.plausibleScriptUrl}
 		/>
 	</label>
-	<label class="checkbox-label">
-		<input type="checkbox" name="logo" class="form-checkbox" checked={data.logo.isWide} />
-		Use wide logo
-	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>
 
