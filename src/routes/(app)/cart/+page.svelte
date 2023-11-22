@@ -34,9 +34,9 @@
 	const { t } = useI18n();
 </script>
 
-<main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10">
-	<div class="w-full rounded-xl p-6 flex flex-col gap-6 bg-white border-gray-300 border">
-		<h1 class="page-title">{t('cart.items')}</h1>
+<main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10 body-mainPlan">
+	<div class="w-full rounded-xl p-6 flex flex-col gap-6 body-mainPlan border-gray-300">
+		<h1 class="page-title body-title">{t('cart.items')}</h1>
 
 		{#if errorMessage && !errorProductId}
 			<p class="text-red-600">{errorMessage}</p>
@@ -96,9 +96,9 @@
 						</a>
 						<div class="flex flex-col gap-2">
 							<a href="/product/{item.product._id}">
-								<h2 class="text-2xl text-gray-850">{item.product.name}</h2>
+								<h2 class="text-2xl">{item.product.name}</h2>
 							</a>
-							<p class="text-sm text-gray-600">{item.product.shortDescription}</p>
+							<p class="text-sm">{item.product.shortDescription}</p>
 							<div class="grow" />
 							<div class="flex flex-row gap-2">
 								<ProductType
@@ -108,7 +108,7 @@
 							</div>
 							<button
 								formaction="/cart/{item.product._id}/?/remove"
-								class="mt-auto mr-auto hover:underline text-link text-base font-light"
+								class="mt-auto mr-auto hover:underline body-hyperlink text-base font-light"
 							>
 								{t('cart.cta.discardItem')}
 							</button>
@@ -126,10 +126,10 @@
 									amount={item.quantity * item.customPrice.amount}
 									currency={item.customPrice.currency}
 									main
-									class="text-2xl text-gray-800 truncate"
+									class="text-2xl truncate"
 								/>
 								<PriceTag
-									class="text-base text-gray-600 truncate"
+									class="text-base truncate"
 									amount={item.quantity * item.customPrice.amount}
 									currency={item.customPrice.currency}
 									secondary
@@ -139,10 +139,10 @@
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									main
-									class="text-2xl text-gray-800 truncate"
+									class="text-2xl truncate"
 								/>
 								<PriceTag
-									class="text-base text-gray-600 truncate"
+									class="text-base truncate"
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									secondary
@@ -161,8 +161,8 @@
 			{#if data.vatCountry && !data.vatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
-						<h2 class="text-gray-800 text-[28px]">{t('cart.vat')} ({data.vatRate}%):</h2>
-						<p class="text-sm text-gray-600">
+						<h2 class="text-[28px]">{t('cart.vat')} ({data.vatRate}%):</h2>
+						<p class="text-sm">
 							{t('cart.vatRate', { country: data.vatCountry })}.
 							{#if data.vatSingleCountry}
 								{t('cart.vatSellerCountry')}
@@ -174,32 +174,22 @@
 						</p>
 					</div>
 					<div class="flex flex-col items-end">
-						<PriceTag
-							amount={vat}
-							currency={UNDERLYING_CURRENCY}
-							main
-							class="text-[28px] text-gray-800"
-						/>
-						<PriceTag
-							class="text-base text-gray-600"
-							amount={vat}
-							currency={UNDERLYING_CURRENCY}
-							secondary
-						/>
+						<PriceTag amount={vat} currency={UNDERLYING_CURRENCY} main class="text-[28px]" />
+						<PriceTag class="text-base" amount={vat} currency={UNDERLYING_CURRENCY} secondary />
 					</div>
 				</div>
 			{/if}
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
-				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
+				<h2 class="text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={totalPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						main
-						class="text-[32px] text-gray-800"
+						class="text-[32px]"
 					/>
 					<PriceTag
-						class="text-base text-gray-600"
+						class="text-base"
 						amount={totalPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						secondary

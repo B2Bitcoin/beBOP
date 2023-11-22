@@ -43,6 +43,7 @@
 			{sliders}
 			{tags}
 			{roleId}
+			class="body-mainPlan"
 		/>
 	</main>
 {/if}

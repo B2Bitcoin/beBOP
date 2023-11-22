@@ -106,8 +106,8 @@
 						<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
 					{/if}
 				</a>
-				<span class="grow" />
-				<nav class="flex gap-10 text-[22px] font-semibold">
+				<span class="grow body-mainPlan" />
+				<nav class="flex gap-10 text-[22px] font-semibold header-tab">
 					{#each data.links.topbar as link}
 						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off"
 							>{link.label}</a
@@ -130,7 +130,7 @@
 		{#if topMenuOpen}
 			<nav
 				transition:slide
-				class="bg-gray-850 flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
+				class="header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
 			>
 				{#each data.links.topbar as link}
 					<a class="py-4" href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
@@ -172,7 +172,7 @@
 								currency="BTC"
 								amount={0.00_220_625}
 								secondary
-								class="ml-auto text-sm text-gray-550"
+								class="ml-auto text-sm"
 							/>
 						</div>
 						<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
@@ -204,7 +204,7 @@
 							</Popup>
 						{:else if cartOpen}
 							<Popup>
-								<div class="p-2 gap-2 flex flex-col">
+								<div class="p-2 gap-2 flex flex-col cartPreview">
 									{#each items as item}
 										{#if cartErrorMessage && cartErrorProductId === item.product._id}
 											<div class="text-red-600 text-sm">{cartErrorMessage}</div>
@@ -256,10 +256,10 @@
 											</a>
 											<div class="flex flex-col">
 												<a href="/product/{item.product._id}">
-													<h3 class="text-base text-gray-850 font-medium">{item.product.name}</h3>
+													<h3 class="text-base font-medium">{item.product.name}</h3>
 												</a>
 												{#if item.product.type !== 'subscription' && !item.product.standalone}
-													<div class="flex items-center gap-2 text-gray-700">
+													<div class="flex items-center gap-2">
 														<span class="text-xs">{t('cart.quantity')}: </span>
 														<CartQuantity {item} sm />
 													</div>
@@ -268,14 +268,14 @@
 											<div class="flex flex-col items-end gap-[6px] ml-auto">
 												{#if item.product.type !== 'subscription' && item.customPrice}
 													<PriceTag
-														class="text-gray-600 text-base"
+														class="text-base"
 														amount={item.quantity * item.customPrice.amount}
 														currency={item.customPrice.currency}
 														main
 													/>
 												{:else}
 													<PriceTag
-														class="text-gray-600 text-base"
+														class="text-base"
 														amount={item.quantity * item.product.price.amount}
 														currency={item.product.price.currency}
 														main
@@ -283,14 +283,14 @@
 												{/if}
 
 												<button formaction="/cart/{item.product._id}/?/remove">
-													<IconTrash class="text-gray-800" />
+													<IconTrash class="body-secondaryText" />
 													<span class="sr-only">{t('cart.sr.remove')}</span>
 												</button>
 											</div>
 										</form>
 									{/each}
 									{#if data.countryCode && !data.vatExempted}
-										<div class="flex gap-1 text-lg text-gray-850 justify-end items-center">
+										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.vat')} ({data.vatRate}%) <PriceTag
 												currency={data.currencies.main}
 												amount={vat}
@@ -298,7 +298,7 @@
 											/>
 										</div>
 									{/if}
-									<div class="flex gap-1 text-xl text-gray-850 justify-end items-center">
+									<div class="flex gap-1 text-xl justify-end items-center">
 										{t('cart.total')}
 										<PriceTag currency={data.currencies.main} amount={totalPriceWithVat} main />
 									</div>
@@ -318,7 +318,7 @@
 		{#if navMenuOpen}
 			<nav
 				transition:slide
-				class="bg-gray-240 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
+				class="bg-gray-240 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 			>
 				{#each data.links.navbar as link}
 					<a class="py-2 hover:underline" data-sveltekit-preload-data="off" href={link.href}
@@ -327,9 +327,20 @@
 				{/each}
 			</nav>
 		{/if}
-		<div class="grow bg-gray-75">
-			<slot />
-		</div>
+
+		{#if $page.url.pathname.startsWith('/admin')}
+			<div class="grow">
+				<slot />
+			</div>
+		{:else if $page.url.pathname === '/pos'}
+			<div class="grow">
+				<slot />
+			</div>
+		{:else}
+			<div class="grow body-mainPlan">
+				<slot />
+			</div>
+		{/if}
 		<footer class="footer h-[90px] items-center flex">
 			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 grow">
 				<span class="font-light">{t('footer.poweredBy')}</span><span

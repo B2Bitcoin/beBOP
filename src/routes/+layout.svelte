@@ -33,4 +33,4 @@
 	{/if}
 </svelte:head>
 
-<slot />
+<slot class="body body-mainPlan" />
