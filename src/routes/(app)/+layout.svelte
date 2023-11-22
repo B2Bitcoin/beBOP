@@ -337,7 +337,7 @@
 				<slot />
 			</div>
 		{:else}
-			<div class="grow body-mainPlan">
+			<div class="grow body-text-color body-mainPlan">
 				<slot />
 			</div>
 		{/if}
