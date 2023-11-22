@@ -9,7 +9,7 @@ import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
 import { lndCreateInvoice } from './lightning';
-import { ORIGIN } from '$env/static/private';
+import { ORIGIN, SUMUP_API_KEY, SUMUP_CURRENCY, SUMUP_MERCHANT_CODE } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
@@ -382,10 +382,16 @@ export async function createOrder(
 				items,
 				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
 				...(vat && { vat }),
-				totalPrice: {
-					amount: totalSatoshis,
-					currency: 'SAT'
-				},
+				totalPrice:
+					paymentMethod === 'card'
+						? {
+								amount: toCurrency(SUMUP_CURRENCY as Currency, totalSatoshis, 'SAT'),
+								currency: SUMUP_CURRENCY as Currency
+						  }
+						: {
+								amount: totalSatoshis,
+								currency: 'SAT'
+						  },
 				...(shippingPrice
 					? {
 							shippingPrice
@@ -416,6 +422,35 @@ export async function createOrder(
 							}
 							case 'cash': {
 								return {};
+							}
+							case 'card': {
+								const resp = await fetch('https://api.sumup.com/v0.1/checkouts', {
+									method: 'POST',
+									headers: {
+										Authorization: `Bearer ${SUMUP_API_KEY}`,
+										'Content-Type': 'application/json'
+									},
+									body: JSON.stringify({
+										amount: toCurrency(SUMUP_CURRENCY as Currency, totalSatoshis, 'SAT'),
+										currency: SUMUP_CURRENCY,
+										checkout_reference: orderId,
+										merchant_code: SUMUP_MERCHANT_CODE,
+										redirect_url: `${ORIGIN}/order/${orderId}?status=success`,
+										...(params.user.userId && { customer_id: params.user.userId.toString() }),
+										description: 'Order ' + orderNumber,
+										valid_until: expiresAt.toISOString()
+									})
+								});
+
+								if (!resp.ok) {
+									console.error(await resp.text());
+									throw error(402, 'Sumup checkout creation failed');
+								}
+
+								const json = await resp.json();
+								return {
+									checkoutId: json.checkout_id
+								};
 							}
 							default:
 								throw error(400, 'Invalid payment method: ' + paymentMethod);

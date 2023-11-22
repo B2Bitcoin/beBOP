@@ -180,7 +180,7 @@ async function maintainOrders() {
 
 			for (const order of cardOrders) {
 				try {
-					const checkoutId = order.payment.address;
+					const checkoutId = order.payment.checkoutId;
 
 					if (!checkoutId) {
 						throw new Error('Missing checkout ID on card order');
