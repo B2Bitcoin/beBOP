@@ -32,7 +32,7 @@
 				>
 					{cta.label}
 				</div>
-				<div class="text-xl tagWidget-cta font-semibold mx-1 sm:hidden text-white text-center p-1">
+				<div class="text-xl tagWidget-cta font-semibold mx-1 sm:hidden text-center p-1">
 					{cta.label}
 				</div>
 			{/each}
