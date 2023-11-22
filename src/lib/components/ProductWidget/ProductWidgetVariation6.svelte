@@ -42,7 +42,7 @@
 			{/each}
 		{/if}
 	</div>
-	<div class="flex flex-wrap bg-gray-100 w-full sm:w-5/6 mb-4 sm:mb-0">
+	<div class="flex flex-wrap tagWidget tagWidget-main w-full sm:w-5/6 mb-4 sm:mb-0">
 		<div class="justify-center w-full sm:w-1/3 mt-4 sm:mt-0">
 			<a href="/product/{product._id}">
 				<PictureComponent
@@ -53,7 +53,7 @@
 		</div>
 		<div class="p-4 w-full sm:w-2/3">
 			<a href="/product/{product._id}">
-				<h2 class="text-2xl font-bold mb-2">{product.name}</h2>
+				<h2 class="text-2xl font-bold body-title mb-2">{product.name}</h2>
 			</a>
 			<a href="/product/{product._id}">
 				<p class="text-gray-600 mb-4">{product.shortDescription}</p>

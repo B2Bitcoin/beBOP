@@ -174,11 +174,14 @@
 	.alert-info {
 		@apply border border-blue-400 p-2 text-blue-600 rounded;
 	}
-
 	.body-secondPlan {
+		color: var(--body-text-color);
+		font-family: var(--body-text-fontFamily);
 		background-color: var(--body-secondPlan-backgroundColor);
 	}
 	.body-mainPlan {
+		color: var(--body-text-color);
+		font-family: var(--body-text-fontFamily);
 		background-color: var(--body-mainPlan-backgroundColor);
 	}
 	.body-title {
@@ -186,7 +189,7 @@
 		font-family: var(--body-title-fontFamily);
 	}
 	.body {
-		color: var(--body-color);
+		color: var(--body-text-color);
 		font-family: var(--body-text-fontFamily);
 	}
 	.body-secondaryText {

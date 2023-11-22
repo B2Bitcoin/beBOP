@@ -69,7 +69,7 @@
 	{:else}
 		<h2 class="text-2xl">{t('login.authenticate.title')}</h2>
 		<form method="post" class="flex flex-col gap-4" action="?/sendLink">
-			<label class="form-label">
+			<label class="form-label body-secondaryText">
 				{t('login.authenticate.inputLabel')}
 				<input
 					class="form-input"

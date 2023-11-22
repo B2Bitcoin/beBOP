@@ -36,8 +36,8 @@ export const actions = {
 	certify: async () => {
 		const domainName = new URL(ORIGIN).hostname;
 
-		const picture = runtimeConfig.logoPictureId
-			? await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId })
+		const picture = runtimeConfig.logo
+			? await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })
 			: null;
 		const pictureUrl = picture
 			? `${ORIGIN}/picture/raw/${picture._id}/format/${picture.storage.formats.find(
@@ -56,7 +56,7 @@ export const actions = {
 				website: ORIGIN,
 				...(lnAddress && { lud16: `ln@${domainName}` }),
 				// about: '',
-				...(runtimeConfig.logoPictureId && { picture: pictureUrl }),
+				...(runtimeConfig.logo && { picture: pictureUrl }),
 				nip05: `_@${domainName}`,
 				bootikVersion: NOSTR_PROTOCOL_VERSION
 			}),

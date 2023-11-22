@@ -30,8 +30,8 @@ export async function load(params) {
 
 	const cart = await getCartFromDb({ user: userIdentifier(locals) });
 
-	const logoPicture = runtimeConfig.logoPictureId
-		? await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId })
+	const logoPicture = runtimeConfig.logo
+		? await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })
 		: null;
 
 	return {
@@ -69,12 +69,13 @@ export async function load(params) {
 		},
 		brandName: runtimeConfig.brandName,
 		logoPicture,
+		logoWide: runtimeConfig.logo.isWide,
 		links: {
 			footer: runtimeConfig.footerLinks,
 			navbar: runtimeConfig.navbarLinks,
 			topbar: runtimeConfig.topbarLinks
 		},
-		logo: runtimeConfig.logoPictureId,
+		logo: runtimeConfig.logo,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
