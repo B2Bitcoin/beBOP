@@ -5,6 +5,7 @@
 
 	const productId = $page.url.searchParams.get('productId');
 	const sliderId = $page.url.searchParams.get('sliderId');
+
 	let files: FileList | null = null;
 	let fileName = '';
 </script>
@@ -12,18 +13,6 @@
 <h1 class="text-3xl">Add a picture</h1>
 
 <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
-	<label>
-		Name of the picture
-		<input
-			class="form-input block"
-			type="text"
-			name="name"
-			placeholder="Final name"
-			required
-			bind:value={fileName}
-		/>
-	</label>
-
 	<label>
 		JPEG or PNG file
 		<input
@@ -40,6 +29,18 @@
 			accept="image/jpeg,image/png,image/webp"
 			class="block"
 			required
+		/>
+	</label>
+
+	<label>
+		Name of the picture
+		<input
+			class="form-input block"
+			type="text"
+			name="name"
+			placeholder="Final name"
+			required
+			bind:value={fileName}
 		/>
 	</label>
 

@@ -5,8 +5,8 @@ import { collections } from '$lib/server/database';
 import { DEFAULT_LOGO } from '$lib/types/Picture';
 
 export const GET = async () => {
-	if (runtimeConfig.logoPictureId) {
-		const picture = await collections.pictures.findOne({ _id: runtimeConfig.logoPictureId });
+	if (runtimeConfig.logo) {
+		const picture = await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId });
 
 		if (picture) {
 			const width = picture.storage.formats[0].width;

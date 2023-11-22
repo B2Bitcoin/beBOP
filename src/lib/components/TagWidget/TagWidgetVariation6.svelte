@@ -18,13 +18,13 @@
 		<div
 			class="top-6 mx-auto text-center absolute md:top-12 lg:top-28 left-0 bg-[rgba(243,240,240,0.5)]"
 		>
-			<h2 class="text-sm uppercase md:text-2xl lg:text-5xl">{tag.title}</h2>
+			<h2 class="text-sm uppercase md:text-2xl lg:text-5xl body-title">{tag.title}</h2>
 		</div>
 
 		<div
-			class="text-sm tagWidget-cta font-semibold absolute bottom-0 right-0 text-white md:text-xl lg:text-xl text-center w-auto p-1"
+			class="text-sm tagWidget-cta font-semibold absolute bottom-0 right-0 md:text-xl lg:text-xl text-center w-auto p-1"
 		>
-			{tag.cta[0].label}
+			<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
 		</div>
 	</div>
 </div>

@@ -19,14 +19,14 @@
 	<div class="flex mt-12 mb-12">
 		<div class="mx-auto tagWidget tagWidget-main flex rounded sm:gap-2 {className}">
 			<div class="flex flex-col text-end w-[50%]">
-				<h2 class="text-4xl pb-2 uppercase">{tag.title}</h2>
+				<h2 class="text-6xl body-title pb-2 uppercase">{tag.title}</h2>
 				<h2 class="text-md md:text-xl">
 					{tag.content}
 				</h2>
 				<div class="flex text-centern justify-between mt-auto">
 					{#each tag.cta as cta}
 						<div class="tagWidget-cta font-semibold text-xl text-center w-auto p-1">
-							{cta.label}
+							<a class="tagWidget-hyperlink" href={cta.href}>{cta.label}</a>
 						</div>
 					{/each}
 				</div>

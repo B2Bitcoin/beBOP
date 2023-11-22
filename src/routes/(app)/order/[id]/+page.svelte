@@ -36,16 +36,16 @@
 	const { t, locale } = useI18n();
 </script>
 
-<main class="mx-auto max-w-7xl py-10 px-6">
+<main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
 	<div
-		class="w-full rounded-xl body-secondPlan border-gray-300 border p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
+		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
 	>
 		<div class="col-span-2 flex flex-col gap-2">
-			<h1 class="text-3xl">{t('order.singleTitle', { number: data.order.number })}</h1>
+			<h1 class="text-3xl body-title">{t('order.singleTitle', { number: data.order.number })}</h1>
 			{#if data.order.notifications?.paymentStatus?.npub}
 				<p>
 					{t('order.paymentStatusNpub')}:
-					<span class="font-mono break-all break-words">
+					<span class="font-mono break-all break-words body-secondaryText">
 						{data.order.notifications.paymentStatus.npub}</span
 					>
 				</p>
@@ -53,8 +53,10 @@
 			{#if data.order.payment.status !== 'expired' && data.order.payment.status !== 'canceled'}
 				<div>
 					<Trans key="order.linkReminder"
-						><a class="underline text-link break-all break-words" href={$page.url.href} slot="0"
-							>{$page.url.href}</a
+						><a
+							class="underline body-hyperlink break-all break-words body-secondaryText"
+							href={$page.url.href}
+							slot="0">{$page.url.href}</a
 						></Trans
 					>
 				</div>
@@ -65,11 +67,13 @@
 					<ul>
 						<li>
 							{t('order.paymentAddress')}:
-							<code class="break-words break-all">{data.order.payment.address}</code>
+							<code class="break-words body-secondaryText break-all"
+								>{data.order.payment.address}</code
+							>
 						</li>
 						<li>
 							{t('order.paymentAmount')}:
-							<code class="break-words">
+							<code class="break-words body-secondaryText">
 								{(data.order.payment.method === 'bitcoin'
 									? toBitcoins(data.order.totalPrice.amount, data.order.totalPrice.currency)
 									: toSatoshis(data.order.totalPrice.amount, data.order.totalPrice.currency)
@@ -109,7 +113,7 @@
 					{#each data.digitalFiles as digitalFile}
 						<li>
 							{#if digitalFile.link}
-								<a href={digitalFile.link} class="text-link hover:underline" target="_blank"
+								<a href={digitalFile.link} class="body-hyperlink hover:underline" target="_blank"
 									>{digitalFile.name}</a
 								>
 							{:else}
@@ -136,7 +140,11 @@
 			{#if data.order.shippingAddress}
 				<div>
 					{t('order.shippingAddress.title')}:
-					<pre class="break-words">{JSON.stringify(data.order.shippingAddress, null, 2)}</pre>
+					<pre class="break-words body-secondaryText">{JSON.stringify(
+							data.order.shippingAddress,
+							null,
+							2
+						)}</pre>
 				</div>
 			{/if}
 			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash' && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
@@ -168,7 +176,7 @@
 				</div>
 				{#each data.order.items as item}
 					<a href="/product/{item.product._id}">
-						<h3 class="text-base text-gray-700">{item.product.name}</h3>
+						<h3 class="text-base">{item.product.name}</h3>
 					</a>
 
 					<div class="flex flex-row gap-2">
@@ -202,7 +210,7 @@
 						<div class="flex flex-col ml-auto items-end justify-center">
 							{#if item.customPrice}
 								<PriceTag
-									class="text-2xl text-gray-800 truncate"
+									class="text-2xl truncate"
 									amount={item.quantity * item.customPrice.amount}
 									currency={item.customPrice.currency}
 									main
@@ -210,12 +218,12 @@
 								<PriceTag
 									amount={item.quantity * item.customPrice.amount}
 									currency={item.customPrice.currency}
-									class="text-base text-gray-600 truncate"
+									class="text-base truncate"
 									secondary
 								/>
 							{:else}
 								<PriceTag
-									class="text-2xl text-gray-800 truncate"
+									class="text-2xl truncate"
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
 									main
@@ -223,7 +231,7 @@
 								<PriceTag
 									amount={item.quantity * item.product.price.amount}
 									currency={item.product.price.currency}
-									class="text-base text-gray-600 truncate"
+									class="text-base truncate"
 									secondary
 								/>
 							{/if}
@@ -235,11 +243,11 @@
 
 				{#if data.order.shippingPrice}
 					<div class="flex justify-between items-center">
-						<h3 class="text-base text-gray-700">{t('checkout.deliveryFees')}</h3>
+						<h3 class="text-base">{t('checkout.deliveryFees')}</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
-								class="text-2xl text-gray-800 truncate"
+								class="text-2xl truncate"
 								amount={data.order.shippingPrice.amount}
 								currency={data.order.shippingPrice.currency}
 								main
@@ -247,7 +255,7 @@
 							<PriceTag
 								amount={data.order.shippingPrice.amount}
 								currency={data.order.shippingPrice.currency}
-								class="text-base text-gray-600 truncate"
+								class="text-base truncate"
 								secondary
 							/>
 						</div>
@@ -257,7 +265,7 @@
 
 				{#if data.order.vat}
 					<div class="flex justify-between items-center">
-						<h3 class="text-base text-gray-700 flex items-center gap-2">
+						<h3 class="text-base flex items-center gap-2">
 							Vat ({data.order.vat.rate}%)
 							<div title="VAT rate for {data.order.vat.country}">
 								<IconInfo class="cursor-pointer" />
@@ -266,7 +274,7 @@
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
-								class="text-2xl text-gray-800 truncate"
+								class="text-2xl truncate"
 								amount={data.order.vat.price.amount}
 								currency={data.order.vat.price.currency}
 								main
@@ -274,7 +282,7 @@
 							<PriceTag
 								amount={data.order.vat.price.amount}
 								currency={data.order.vat.price.currency}
-								class="text-base text-gray-600 truncate"
+								class="text-base truncate"
 								secondary
 							/>
 						</div>
@@ -284,13 +292,13 @@
 
 				{#if data.order?.discount}
 					<div class="flex justify-between items-center">
-						<h3 class="text-base text-gray-700 flex items-center gap-2">
+						<h3 class="text-base flex items-center gap-2">
 							{t('order.discount.title')}
 						</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
-								class="text-2xl text-gray-800 truncate"
+								class="text-2xl truncate"
 								amount={data.order.discount.price.amount}
 								currency={data.order.discount.price.currency}
 								main
@@ -298,7 +306,7 @@
 							<PriceTag
 								amount={data.order.discount.price.amount}
 								currency={data.order.discount.price.currency}
-								class="text-base text-gray-600 truncate"
+								class="text-base truncate"
 								secondary
 							/>
 						</div>
@@ -308,18 +316,18 @@
 
 				<span class="py-1" />
 
-				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
+				<div class="-mx-3 p-3 flex flex-col">
 					<div class="flex justify-between">
-						<span class="text-xl text-gray-850">{t('cart.total')}</span>
+						<span class="text-xl">{t('cart.total')}</span>
 						<PriceTag
-							class="text-2xl text-gray-800"
+							class="text-2xl"
 							amount={data.order.totalPrice.amount}
 							currency={data.order.totalPrice.currency}
 							main
 						/>
 					</div>
 					<PriceTag
-						class="self-end text-gray-600"
+						class="self-end"
 						amount={data.order.totalPrice.amount}
 						currency={data.order.totalPrice.currency}
 						secondary
