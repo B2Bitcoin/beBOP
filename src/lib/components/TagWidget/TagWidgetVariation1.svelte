@@ -33,7 +33,7 @@
 			</div>
 
 			<div class="flex w-[50%]">
-				<PictureComponent {picture} class="w-auto h-[50%] object-cover" />
+				<PictureComponent {picture} class="w-auto h-full object-cover" />
 			</div>
 		</div>
 	</div>
