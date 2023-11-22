@@ -23,19 +23,19 @@
 <div class="{className} cartPreview flex flex-wrap p-2 gap-4 relative">
 	<Picture {picture} class="w-[138px] h-[138px] border-gray-300 border rounded object-cover" />
 	<div class="flex flex-col grow gap-1">
-		<h2 class="text-black text-[22px] font-medium">{t('product.addedToCart')}</h2>
-		<h3 class="text-gray-850 text-base font-light">{product.name}</h3>
+		<h2 class="body-title text-[22px] font-medium">{t('product.addedToCart')}</h2>
+		<h3 class="text-base font-light">{product.name}</h3>
 		{#if customPrice}
 			<PriceTag
 				currency={customPrice.currency}
-				class="text-xl text-gray-800"
+				class="text-xl"
 				amount={customPrice.amount}
 				main
 			/>
 		{:else}
 			<PriceTag
 				currency={product.price.currency}
-				class="text-xl text-gray-800"
+				class="text-xl body-secondaryText"
 				amount={product.price.amount}
 				main
 			/>
