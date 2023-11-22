@@ -30,10 +30,10 @@
 				<div
 					class="text-4xl tagWidget-cta font-semibold mx-20 md:text-4xl text-center w-auto p-1 hidden sm:inline"
 				>
-					{cta.label}
+					<a class="tagWidget-hyperlink" href="{cta.href}">{cta.label}</a>
 				</div>
 				<div class="text-xl tagWidget-cta font-semibold mx-1 sm:hidden text-center p-1">
-					{cta.label}
+					<a class="tagWidget-hyperlink" href="{cta.href}">{cta.label}</a>
 				</div>
 			{/each}
 		</div>
