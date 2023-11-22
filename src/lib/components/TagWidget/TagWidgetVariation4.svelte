@@ -24,7 +24,7 @@
 	<div class="relative">
 		<PictureComponent {picture} />
 		<div
-			class="tagWidget-cta font-semibold text-white text-xl absolute bottom-0 right-0 text-center p-1"
+			class="tagWidget-cta font-semibold text-xl absolute bottom-0 right-0 text-center p-1"
 		>
 			{tag.cta[0].label}
 		</div>
