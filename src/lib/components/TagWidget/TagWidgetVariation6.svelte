@@ -24,7 +24,7 @@
 		<div
 			class="text-sm tagWidget-cta font-semibold absolute bottom-0 right-0 md:text-xl lg:text-xl text-center w-auto p-1"
 		>
-			{tag.cta[0].label}
+			<a class="tagWidget-hyperlink" href="{tag.cta[0].href}">{tag.cta[0].label}</a>
 		</div>
 	</div>
 </div>
