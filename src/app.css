@@ -186,7 +186,7 @@
 		font-family: var(--body-title-fontFamily);
 	}
 	.body {
-		color: var(--body-color);
+		color: var(--body-text-color);
 		font-family: var(--body-text-fontFamily);
 	}
 	.body-secondaryText {
