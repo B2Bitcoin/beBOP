@@ -155,7 +155,7 @@
 							? data.product.shortDescription
 							: 'Description'}
 					</h2>
-					<p class="prose">
+					<p class="prose body-secondaryText">
 						<!-- eslint-disable svelte/no-at-html-tags -->
 						{@html marked(data.product.description.replaceAll('<', '&lt;'))}
 					</p>
