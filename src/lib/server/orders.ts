@@ -208,7 +208,10 @@ export async function createOrder(
 	await checkCartItems(items, params.cart);
 
 	const isDigital = products.every((product) => !product.shipping);
-	let deliveryFees = 0;
+	const shippingPrice = {
+		currency: runtimeConfig.mainCurrency,
+		amount: 0
+	};
 
 	if (!isDigital) {
 		if (!params.shippingAddress) {
@@ -216,20 +219,20 @@ export async function createOrder(
 		} else {
 			const { country } = params.shippingAddress;
 
-			deliveryFees = computeDeliveryFees(
+			shippingPrice.amount = computeDeliveryFees(
 				runtimeConfig.mainCurrency,
 				country,
 				items,
 				runtimeConfig.deliveryFees
 			);
 
-			if (isNaN(deliveryFees)) {
+			if (isNaN(shippingPrice.amount)) {
 				throw error(400, 'Some products are not available in your country');
 			}
 		}
 	}
 
-	let totalSatoshis = toSatoshis(deliveryFees, runtimeConfig.mainCurrency);
+	let totalSatoshis = toSatoshis(shippingPrice.amount, shippingPrice.currency);
 
 	const itemPrices = items.map((item) => {
 		const price = parseFloat(item.product.price.amount.toString());
@@ -268,7 +271,10 @@ export async function createOrder(
 	const orderNumber = await generateOrderNumber();
 	const orderId = crypto.randomUUID();
 
-	let discountInCurrency = 0;
+	let discount: {
+		currency: Currency;
+		amount: number;
+	} | null = null;
 	let amount = 0;
 	if (params.user.userRoleId === POS_ROLE_ID && params?.discount?.amount) {
 		if (params.discount.type === 'fiat') {
@@ -278,7 +284,7 @@ export async function createOrder(
 		}
 
 		if (amount > totalSatoshis) {
-			throw error(400, 'Discount cannot be greater than the total price.');
+			amount = totalSatoshis;
 		}
 
 		await collections.emailNotifications.insertOne({
@@ -298,10 +304,10 @@ export async function createOrder(
 			dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
 		});
 
-		discountInCurrency =
-			params.discount.type === 'fiat'
-				? params?.discount?.amount
-				: toCurrency(runtimeConfig.mainCurrency, amount, 'SAT');
+		discount = {
+			currency: params.discount.type === 'fiat' ? runtimeConfig.mainCurrency : 'SAT',
+			amount: params.discount.type === 'fiat' ? params?.discount?.amount : amount
+		};
 		totalSatoshis -= amount;
 	}
 
@@ -380,12 +386,9 @@ export async function createOrder(
 					amount: totalSatoshis,
 					currency: 'SAT'
 				},
-				...(deliveryFees
+				...(shippingPrice
 					? {
-							shippingPrice: {
-								amount: deliveryFees,
-								currency: runtimeConfig.mainCurrency
-							}
+							shippingPrice
 					  }
 					: undefined),
 				payment: {
@@ -437,21 +440,123 @@ export async function createOrder(
 						reason: params.reasonFreeVat
 					}
 				}),
-				...(params?.discount?.amount && {
-					discount: {
-						price: {
-							amount: discountInCurrency,
+				...(discount &&
+					params.discount && {
+						discount: {
+							price: discount,
+							justification: params.discount.justification,
+							type: params.discount.type
+						}
+					}),
+				...(params.clientIp && { clientIp: params.clientIp }),
+				amountsInOtherCurrencies: {
+					main: {
+						totalPrice: {
+							amount: toCurrency(runtimeConfig.mainCurrency, totalSatoshis, 'SAT'),
 							currency: runtimeConfig.mainCurrency
 						},
-						referencePrice: {
-							amount: amount,
-							currency: 'SAT'
+						...(shippingPrice && {
+							shippingPrice: {
+								amount: toCurrency(
+									runtimeConfig.mainCurrency,
+									shippingPrice.amount,
+									shippingPrice.currency
+								),
+								currency: runtimeConfig.mainCurrency
+							}
+						}),
+						...(vat && {
+							vat: {
+								amount: toCurrency(
+									runtimeConfig.mainCurrency,
+									vat.price.amount,
+									vat.price.currency
+								),
+								currency: runtimeConfig.mainCurrency
+							}
+						}),
+						...(discount && {
+							discount: {
+								amount: toCurrency(runtimeConfig.mainCurrency, discount.amount, discount.currency),
+								currency: runtimeConfig.mainCurrency
+							}
+						})
+					},
+					...(runtimeConfig.secondaryCurrency && {
+						secondary: {
+							totalPrice: {
+								amount: toCurrency(runtimeConfig.secondaryCurrency, totalSatoshis, 'SAT'),
+								currency: runtimeConfig.secondaryCurrency
+							},
+							...(shippingPrice && {
+								shippingPrice: {
+									amount: toCurrency(
+										runtimeConfig.secondaryCurrency,
+										shippingPrice.amount,
+										shippingPrice.currency
+									),
+									currency: runtimeConfig.secondaryCurrency
+								}
+							}),
+							...(vat && {
+								vat: {
+									amount: toCurrency(
+										runtimeConfig.secondaryCurrency,
+										vat.price.amount,
+										vat.price.currency
+									),
+									currency: runtimeConfig.secondaryCurrency
+								}
+							}),
+							...(discount && {
+								discount: {
+									amount: toCurrency(
+										runtimeConfig.secondaryCurrency,
+										discount.amount,
+										discount.currency
+									),
+									currency: runtimeConfig.secondaryCurrency
+								}
+							})
+						}
+					}),
+					priceReference: {
+						totalPrice: {
+							amount: toCurrency(runtimeConfig.priceReferenceCurrency, totalSatoshis, 'SAT'),
+							currency: runtimeConfig.priceReferenceCurrency
 						},
-						justification: params.discount.justification,
-						type: params.discount.type
+						...(shippingPrice && {
+							shippingPrice: {
+								amount: toCurrency(
+									runtimeConfig.priceReferenceCurrency,
+									shippingPrice.amount,
+									shippingPrice.currency
+								),
+								currency: runtimeConfig.priceReferenceCurrency
+							}
+						}),
+						...(vat && {
+							vat: {
+								amount: toCurrency(
+									runtimeConfig.priceReferenceCurrency,
+									vat.price.amount,
+									vat.price.currency
+								),
+								currency: runtimeConfig.priceReferenceCurrency
+							}
+						}),
+						...(discount && {
+							discount: {
+								amount: toCurrency(
+									runtimeConfig.priceReferenceCurrency,
+									discount.amount,
+									discount.currency
+								),
+								currency: runtimeConfig.priceReferenceCurrency
+							}
+						})
 					}
-				}),
-				...(params.clientIp && { clientIp: params.clientIp })
+				}
 			},
 			{ session }
 		);
