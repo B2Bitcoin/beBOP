@@ -185,7 +185,7 @@
 							progress={422}
 						/>
 						<div class="flex justify-between mt-1 items-center">
-							<a href="/" class="text-link underline">How can I contribute?</a>
+							<a href="/" class="body-hyperlink underline">How can I contribute?</a>
 							<PriceTag amount={600} class="text-base" currency="EUR" />
 						</div>
 					</div>
