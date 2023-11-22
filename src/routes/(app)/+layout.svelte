@@ -106,7 +106,7 @@
 						<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
 					{/if}
 				</a>
-				<span class="grow" />
+				<span class="grow body-mainPlan" />
 				<nav class="flex gap-10 text-[22px] font-semibold header-tab">
 					{#each data.links.topbar as link}
 						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off"
@@ -327,9 +327,20 @@
 				{/each}
 			</nav>
 		{/if}
-		<div class="grow">
-			<slot />
-		</div>
+
+		{#if $url.pathname === '/admin'}
+			<div class="grow">
+				<slot />
+			</div>
+		{:else if $url.pathname === '/pos'}
+			<div class="grow">
+				<slot />
+			</div>
+		{:else}
+			<div class="grow body-mainPlan">
+				<slot />
+			</div>
+		{/if}
 		<footer class="footer h-[90px] items-center flex">
 			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 grow">
 				<span class="font-light">{t('footer.poweredBy')}</span><span
