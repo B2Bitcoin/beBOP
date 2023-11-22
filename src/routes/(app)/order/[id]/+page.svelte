@@ -53,7 +53,7 @@
 			{#if data.order.payment.status !== 'expired' && data.order.payment.status !== 'canceled'}
 				<div>
 					<Trans key="order.linkReminder"
-						><a class="underline text-link break-all break-words body-secondaryText" href={$page.url.href} slot="0"
+						><a class="underline body-hyperlink break-all break-words body-secondaryText" href={$page.url.href} slot="0"
 							>{$page.url.href}</a
 						></Trans
 					>
@@ -109,7 +109,7 @@
 					{#each data.digitalFiles as digitalFile}
 						<li>
 							{#if digitalFile.link}
-								<a href={digitalFile.link} class="text-link hover:underline" target="_blank"
+								<a href={digitalFile.link} class="body-hyperlink hover:underline" target="_blank"
 									>{digitalFile.name}</a
 								>
 							{:else}
