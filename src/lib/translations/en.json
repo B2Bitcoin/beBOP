@@ -68,6 +68,7 @@
 		},
 		"paymentMethod": {
 			"bitcoin": "Onchain",
+			"card": "Credit card",
 			"cash": "Cash",
 			"lighthing": "Lightning",
 			"unavailable": "No payment methods available."
