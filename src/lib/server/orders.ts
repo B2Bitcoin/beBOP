@@ -436,7 +436,6 @@ export async function createOrder(
 										checkout_reference: orderId,
 										merchant_code: SUMUP_MERCHANT_CODE,
 										redirect_url: `${ORIGIN}/order/${orderId}?status=success`,
-										...(params.user.userId && { customer_id: params.user.userId.toString() }),
 										description: 'Order ' + orderNumber,
 										valid_until: expiresAt.toISOString()
 									})
@@ -448,8 +447,10 @@ export async function createOrder(
 								}
 
 								const json = await resp.json();
+
 								return {
-									checkoutId: json.checkout_id
+									checkoutId: json.id,
+									meta: json
 								};
 							}
 							default:
