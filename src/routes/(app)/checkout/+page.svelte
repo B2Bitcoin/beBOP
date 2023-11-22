@@ -114,18 +114,18 @@
 		(discountType === 'percentage' && discountAmount < 100);
 </script>
 
-<main class="mx-auto max-w-7xl py-10 px-6">
+<main class="mx-auto max-w-7xl py-10 px-6 body-secondPlan">
 	<div
 		class="w-full rounded-xl body-secondPlan border-gray-300 p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
 	>
 		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
-			<h1 class="page-title">{t('checkout.title')}</h1>
+			<h1 class="page-title body-title">{t('checkout.title')}</h1>
 
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
 
 				{#if isDigital}
-					<p class="col-span-6 text-gray-800">
+					<p class="col-span-6">
 						{t('checkout.digitalNoShippingNeeded')}
 					</p>
 				{:else}
@@ -225,7 +225,7 @@
 				{#each feedItems as { key, label }}
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
 						<div
-							class="pl-4 py-2 body-secondPlan border-b border-gray-300 text-base font-light text-gray-800"
+							class="pl-4 py-2 body-secondPlan border-b border-gray-300 text-base font-light"
 						>
 							{label}
 						</div>
@@ -296,7 +296,7 @@
 						}}
 					>
 						<a href="/product/{item.product._id}">
-							<h3 class="text-base text-gray-700">{item.product.name}</h3>
+							<h3 class="text-base">{item.product.name}</h3>
 						</a>
 
 						<div class="flex flex-row gap-2">
@@ -332,7 +332,7 @@
 							<div class="flex flex-col ml-auto items-end justify-center">
 								{#if item.product.type !== 'subscription' && item.customPrice}
 									<PriceTag
-										class="text-2xl text-gray-800 truncate"
+										class="text-2xl truncate"
 										amount={item.quantity * item.customPrice.amount}
 										currency={item.customPrice.currency}
 										main
@@ -340,12 +340,12 @@
 									<PriceTag
 										amount={item.quantity * item.customPrice.amount}
 										currency={item.customPrice.currency}
-										class="text-base text-gray-600 truncate"
+										class="text-base truncate"
 										secondary
 									/>
 								{:else}
 									<PriceTag
-										class="text-2xl text-gray-800 truncate"
+										class="text-2xl truncate"
 										amount={item.quantity * item.product.price.amount}
 										currency={item.product.price.currency}
 										main
@@ -353,7 +353,7 @@
 									<PriceTag
 										amount={item.quantity * item.product.price.amount}
 										currency={item.product.price.currency}
-										class="text-base text-gray-600 truncate"
+										class="text-base truncate"
 										secondary
 									/>
 								{/if}
@@ -366,11 +366,11 @@
 
 				{#if deliveryFees}
 					<div class="flex justify-between items-center">
-						<h3 class="text-base text-gray-700">{t('checkout.deliveryFees')}</h3>
+						<h3 class="text-base">{t('checkout.deliveryFees')}</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
-								class="text-2xl text-gray-800 truncate"
+								class="text-2xl truncate"
 								amount={deliveryFees}
 								currency={UNDERLYING_CURRENCY}
 								main
@@ -378,7 +378,7 @@
 							<PriceTag
 								amount={deliveryFees}
 								currency={UNDERLYING_CURRENCY}
-								class="text-base text-gray-600 truncate"
+								class="text-base truncate"
 								secondary
 							/>
 						</div>
@@ -393,7 +393,7 @@
 				{#if data.vatCountry && !data.vatExempted}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
-							<h3 class="text-base text-gray-700 flex flex-row gap-2 items-center">
+							<h3 class="text-base flex flex-row gap-2 items-center">
 								{t('cart.vat')} ({actualVatRate}%)
 								<div
 									title="{t('cart.vatRate', { country: actualCountry })}. {data.vatSingleCountry
@@ -409,7 +409,7 @@
 
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
-								class="text-2xl text-gray-800 truncate"
+								class="text-2xl truncate"
 								amount={vat}
 								currency={UNDERLYING_CURRENCY}
 								main
@@ -417,7 +417,7 @@
 							<PriceTag
 								amount={vat}
 								currency={UNDERLYING_CURRENCY}
-								class="text-base text-gray-600 truncate"
+								class="text-base truncate"
 								secondary
 							/>
 						</div>
@@ -429,16 +429,16 @@
 
 				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
 					<div class="flex justify-between">
-						<span class="text-xl text-gray-850">{t('cart.total')}</span>
+						<span class="text-xl ">{t('cart.total')}</span>
 						<PriceTag
-							class="text-2xl text-gray-800"
+							class="text-2xl"
 							amount={totalPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							main
 						/>
 					</div>
 					<PriceTag
-						class="self-end text-gray-600"
+						class="self-end"
 						amount={totalPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						secondary
