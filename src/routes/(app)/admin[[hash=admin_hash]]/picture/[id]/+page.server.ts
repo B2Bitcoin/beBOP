@@ -49,7 +49,7 @@ export const actions: Actions = {
 		);
 	},
 
-	setAsLogo: async function ({ params }) {
+	setAsLogo: async function ({ params, request }) {
 		const picture = await collections.pictures.findOne({ _id: params.id });
 
 		if (!picture) {
@@ -59,14 +59,19 @@ export const actions: Actions = {
 		if (picture.productId) {
 			throw error(400, 'Picture is already associated to a product');
 		}
+		const formData = await request.formData();
+		const logoMode = String(formData.get('darkPicture'));
+		const logoIsWide = Boolean(formData.get('isWide'));
 
 		await collections.runtimeConfig.updateOne(
 			{
-				_id: 'logoPictureId'
+				_id: 'logo'
 			},
 			{
 				$set: {
-					data: picture._id,
+					'data.isWide': logoIsWide,
+					...(logoMode === 'light' && { 'data.pictureId': picture._id }),
+					...(logoMode === 'dark' && { 'data.darkModePictureId': picture._id }),
 					updatedAt: new Date()
 				}
 			},
@@ -74,19 +79,22 @@ export const actions: Actions = {
 				upsert: true
 			}
 		);
-		runtimeConfig.logoPictureId = picture._id;
+		logoMode === 'dark'
+			? (runtimeConfig.logo.darkModePictureId = picture._id)
+			: (runtimeConfig.logo.pictureId = picture._id);
 	},
 
-	removeLogo: async function ({ params }) {
-		if (runtimeConfig.logoPictureId === params.id) {
+	removeLogo: async function ({ params, request }) {
+		const logoMode = String((await request.formData()).get('darkPicture'));
+		if (runtimeConfig.logo.pictureId === params.id) {
 			await collections.runtimeConfig.updateOne(
 				{
-					_id: 'logoPictureId',
-					data: params.id
+					_id: 'logo'
 				},
 				{
 					$set: {
-						data: '',
+						...(logoMode === 'light' && { 'data.pictureId': '' }),
+						...(logoMode === 'dark' && { 'data.darkModePictureId': '' }),
 						updatedAt: new Date()
 					}
 				},
@@ -94,7 +102,9 @@ export const actions: Actions = {
 					upsert: true
 				}
 			);
-			runtimeConfig.logoPictureId = '';
+			logoMode === 'dark'
+				? (runtimeConfig.logo.darkModePictureId = '')
+				: (runtimeConfig.logo.pictureId = '');
 		}
 	}
 };

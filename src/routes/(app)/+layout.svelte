@@ -94,11 +94,17 @@
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
 				<a class="flex items-center gap-4" href="/">
 					{#if data.logoPicture}
-						<Picture class="h-[60px] w-[60px] rounded-full" picture={data.logoPicture} />
+						{#if data.logoWide}
+							<Picture class="h-[60px] w-auto" picture={data.logoPicture} />
+						{:else}
+							<Picture class="h-[60px] w-[60px] rounded-full" picture={data.logoPicture} />
+						{/if}
 					{:else}
 						<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="Main logo" />
 					{/if}
-					<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
+					{#if !data.logoWide}
+						<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
+					{/if}
 				</a>
 				<span class="grow" />
 				<nav class="flex gap-10 text-[22px] font-semibold">
