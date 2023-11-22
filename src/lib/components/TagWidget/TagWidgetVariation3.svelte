@@ -21,7 +21,7 @@
 			<h2 class="text-3xl md:text-md uppercase md:text-6xl lg:text-9xl body-title">{tag.title}</h2>
 		</div>
 		<div class="text-center">
-			<h2 class="text-3xl mt-1 md:text-3xl lg:text-3xl px-6 lg:mt-4 pb-2 short-content">
+			<h2 class="text-3xl mt-1 md:text-3xl lg:text-3xl px-6 lg:mt-4 pb-2">
 				{tag.shortContent}
 			</h2>
 		</div>
