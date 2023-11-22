@@ -213,7 +213,7 @@
 							<p class="text-red-400">{t('checkout.paymentMethod.unavailable')}</p>
 						{/if}
 						{#if 0}
-							<a href="/connect" class="underline text-link"> Connect another wallet </a>
+							<a href="/connect" class="underline body-hyperlink"> Connect another wallet </a>
 						{/if}
 					</div>
 				</label>
@@ -265,7 +265,7 @@
 				class="rounded sticky top-4 md:-mr-2 md:-mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
 				<div class="flex justify-between">
-					<a href="/cart" class="text-link hover:underline">&lt;&lt;{t('checkout.backToCart')}</a>
+					<a href="/cart" class="body-hyperlink hover:underline">&lt;&lt;{t('checkout.backToCart')}</a>
 					<p>{t('checkout.numProducts', { count: data.cart?.length ?? 0 })}</p>
 				</div>
 				{#each items as item}
@@ -452,7 +452,7 @@
 							><a
 								href="/terms"
 								target="_blank"
-								class="text-link hover:underline"
+								class="body-hyperlink hover:underline"
 								slot="0"
 								let:translation
 							>
@@ -476,7 +476,7 @@
 								><a
 									href="/terms"
 									target="_blank"
-									class="text-link hover:underline"
+									class="body-hyperlink hover:underline"
 									slot="0"
 									let:translation
 								>
@@ -498,7 +498,7 @@
 								<a
 									href="/gift-discount"
 									target="_blank"
-									class="text-link hover:underline"
+									class="body-hyperlink hover:underline"
 									slot="0"
 									let:translation
 								>
@@ -563,7 +563,7 @@
 								><a
 									href="/why-collect-ip"
 									target="_blank"
-									class="text-link hover:underline"
+									class="body-hyperlink hover:underline"
 									slot="0"
 									let:translation>{translation}</a
 								></Trans
