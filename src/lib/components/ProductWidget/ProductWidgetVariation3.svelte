@@ -26,11 +26,13 @@
 	export { className as class };
 </script>
 
-<div class="relative mx-auto max-w-max bg-gray-240 flex flex-wrap gap-4 p-6 rounded {className}">
+<div
+	class="relative mx-auto max-w-max tagWidget tagWidget-main flex flex-wrap gap-4 p-6 rounded {className}"
+>
 	<div class="flex flex-col gap-2 mb-4">
 		<div class="flex flex-col gap-2 justify-between">
 			<a href="/product/{product._id}" class="flex flex-col">
-				<h2 class="text-2xl">{product.name}</h2>
+				<h2 class="text-2xl body-title">{product.name}</h2>
 			</a>
 
 			<div class="flex flex-row gap-2">

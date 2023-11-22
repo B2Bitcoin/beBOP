@@ -125,7 +125,7 @@
 		<div class="flex flex-col md:grid md:grid-cols-[70%_1fr] gap-2 grow pb-12">
 			<div class="flex flex-col gap-4">
 				<!-- add product name -->
-				<h2 class="text-4xl">{data.product.name}</h2>
+				<h2 class="text-4xl body-title">{data.product.name}</h2>
 				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
 				<div class="aspect-video w-full overflow-hidden">
 					<Picture
@@ -150,29 +150,29 @@
 				</div>
 				{#if data.product.description.trim() || data.product.shortDescription.trim()}
 					<hr class="border-gray-300" />
-					<h2 class="text-gray-850 text-[22px]">
+					<h2 class="text-[22px]">
 						{data.product.displayShortDescription && data.product.shortDescription
 							? data.product.shortDescription
 							: 'Description'}
 					</h2>
-					<p class="text-gray-800 prose">
+					<p class="prose body-secondaryText">
 						<!-- eslint-disable svelte/no-at-html-tags -->
 						{@html marked(data.product.description.replaceAll('<', '&lt;'))}
 					</p>
 				{/if}
 				{#if 0}
 					<hr class="border-gray-300" />
-					<h2 class="text-gray-850 text-[22px]">This product is part of a challenge</h2>
-					<p class="text-gray-800">
+					<h2 class="text-[22px]">This product is part of a challenge</h2>
+					<p>
 						By purchasing this product, 20% of its price will go to the funds of the next
 						crowdfunding:
 					</p>
 					<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col">
 						<div class="flex justify-between items-center">
-							<h3 class="font-medium text-[22px] text-gray-850">
+							<h3 class="font-medium text-[22px]">
 								WACOM CINTIQ 24" for an emerging artist.
 							</h3>
-							<span class="text-base font-light text-gray-550">Ends April 25</span>
+							<span class="text-base font-light">Ends April 25</span>
 						</div>
 						<GoalProgress
 							class="font-bold mt-3"
@@ -185,14 +185,14 @@
 							progress={422}
 						/>
 						<div class="flex justify-between mt-1 items-center">
-							<a href="/" class="text-link underline">How can I contribute?</a>
-							<PriceTag amount={600} class="text-gray-800 text-base" currency="EUR" />
+							<a href="/" class="body-hyperlink underline">How can I contribute?</a>
+							<PriceTag amount={600} class="text-base" currency="EUR" />
 						</div>
 					</div>
 				{/if}
 			</div>
 			<div
-				class="flex flex-col text-gray-850 gap-2 border-gray-300 md:border-l md:border-b md:rounded md:pl-4 md:pb-4 h-fit overflow-hidden"
+				class="flex flex-col gap-2 border-gray-300 md:border-l md:border-b md:rounded md:pl-4 md:pb-4 h-fit overflow-hidden"
 			>
 				<hr class="border-gray-300 md:hidden mt-4 pb-2" />
 				<div class="flex gap-2 md:flex-col md:items-start items-center justify-between">
@@ -213,7 +213,7 @@
 
 				{#if data.discount}
 					<hr class="border-gray-300" />
-					<h3 class="text-gray-850 text-[22px]">
+					<h3 class="text-[22px]">
 						{t('product.discountBanner', {
 							discountPercentage: data.discount.percentage,
 							hours: hoursDifference
@@ -227,8 +227,8 @@
 						<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
 							<IconInfo class="text-[#E4C315]" />
 							<div>
-								<h3 class="font-semibold text-gray-800">{t('product.freeWithTitle')}</h3>
-								<p class="text-gray-700">
+								<h3 class="font-semibold">{t('product.freeWithTitle')}</h3>
+								<p>
 									{t('product.freeWithSub')}
 								</p>
 								<a href="/cabinet" class="text-[#E4C315] hover:underline"
@@ -335,9 +335,7 @@
 									{t('product.checkBackLater')}
 								</p>
 							{:else if data.showCheckoutButton}
-								<button class="btn btn-black" disabled={loading}
-									>{t(`product.cta.${verb}`)}</button
-								>
+								<button class="btn btn-black" disabled={loading}>{t(`product.cta.${verb}`)}</button>
 								<button
 									value="Add to cart"
 									formaction="?/addToCart"

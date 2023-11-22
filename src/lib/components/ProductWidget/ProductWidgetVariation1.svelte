@@ -26,7 +26,9 @@
 	export { className as class };
 </script>
 
-<div class="relative mx-auto max-w-[800px] bg-gray-240 flex flex-col gap-4 p-6 rounded {className}">
+<div
+	class="relative mx-auto max-w-[800px] tagWidget tagWidget-main flex flex-col gap-4 p-6 rounded {className}"
+>
 	<div class="flex flex-row justify-end -mt-6 -mr-6">
 		<ProductType {product} {hasDigitalFiles} class="last:rounded-tr first:rounded-bl pl-2" />
 	</div>
@@ -39,7 +41,7 @@
 	<div class="flex flex-col">
 		<div class="flex flex-row justify-between">
 			<a href="/product/{product._id}" class="flex flex-col items-center">
-				<h2 class="text-2xl">{product.name}</h2>
+				<h2 class="text-2xl body-title">{product.name}</h2>
 			</a>
 
 			<div class="flex flex-row gap-2 items-end justify-center">
