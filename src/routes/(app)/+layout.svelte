@@ -328,11 +328,11 @@
 			</nav>
 		{/if}
 
-		{#if $url.pathname === '/admin'}
+		{#if $page.url.pathname === '/admin'}
 			<div class="grow">
 				<slot />
 			</div>
-		{:else if $url.pathname === '/pos'}
+		{:else if $page.url.pathname === '/pos'}
 			<div class="grow">
 				<slot />
 			</div>
