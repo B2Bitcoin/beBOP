@@ -16,7 +16,7 @@
 	<PictureComponent {picture} class="w-full" />
 	<div class="flex flex-col text-center justify-center">
 		<div class="top-4 mx-auto text-center absolute lg:top-28 right-0 bg-[rgba(243,240,240,0.5)]">
-			<h2 class="text-sm uppercase md:text-2xl lg:text-5xl">{tag.title}</h2>
+			<h2 class="text-sm uppercase md:text-2xl lg:text-5xl body-title">{tag.title}</h2>
 		</div>
 		<div class="flex justify-evenly py-4 items-center">
 			<div class="tagWidget-cta font-semibold text-xl text-center w-auto p-1">
