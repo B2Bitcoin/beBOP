@@ -176,9 +176,13 @@
 	}
 
 	.body-secondPlan {
+		color: var(--body-text-color);
+		font-family: var(--body-text-fontFamily);
 		background-color: var(--body-secondPlan-backgroundColor);
 	}
 	.body-mainPlan {
+		color: var(--body-text-color);
+		font-family: var(--body-text-fontFamily);
 		background-color: var(--body-mainPlan-backgroundColor);
 	}
 	.body-title {
