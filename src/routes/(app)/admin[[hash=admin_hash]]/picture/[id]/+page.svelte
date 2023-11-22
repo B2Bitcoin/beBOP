@@ -20,7 +20,7 @@
 	<div class="flex gap-4">
 		<input type="submit" value="Update" class="btn btn-black" />
 		{#if !data.picture.productId}
-			{#if data.logo === data.picture._id}
+			{#if data.logo.pictureId === data.picture._id}
 				<input
 					type="submit"
 					value="Remove from logo"
@@ -29,6 +29,21 @@
 				/>
 			{:else}
 				<input type="submit" value="Set as logo" formaction="?/setAsLogo" class="btn btn-gray" />
+			{/if}
+			{#if data.logo.darkModePictureId === data.picture._id}
+				<input
+					type="submit"
+					value="Remove from dark logo"
+					formaction="?/removeDarkLogo"
+					class="btn btn-gray"
+				/>
+			{:else}
+				<input
+					type="submit"
+					value="Set as dark logo"
+					formaction="?/setAsDarkLogo"
+					class="btn btn-gray"
+				/>
 			{/if}
 		{/if}
 		<input type="submit" value="Delete" formaction="?/delete" class="btn btn-red ml-auto" />

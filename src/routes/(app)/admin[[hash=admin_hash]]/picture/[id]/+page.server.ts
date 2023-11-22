@@ -66,7 +66,7 @@ export const actions: Actions = {
 			},
 			{
 				$set: {
-					data: { pictureId: picture._id, isWide: true },
+					'data.pictureId': picture._id,
 					updatedAt: new Date()
 				}
 			},
@@ -86,7 +86,7 @@ export const actions: Actions = {
 				},
 				{
 					$set: {
-						data: '',
+						'data.pictureId': '',
 						updatedAt: new Date()
 					}
 				},
@@ -95,6 +95,54 @@ export const actions: Actions = {
 				}
 			);
 			runtimeConfig.logo.pictureId = '';
+		}
+	},
+	setAsDarkLogo: async function ({ params }) {
+		const picture = await collections.pictures.findOne({ _id: params.id });
+
+		if (!picture) {
+			throw error(404);
+		}
+
+		if (picture.productId) {
+			throw error(400, 'Picture is already associated to a product');
+		}
+
+		await collections.runtimeConfig.updateOne(
+			{
+				_id: 'logo'
+			},
+			{
+				$set: {
+					'data.darkModePictureId': picture._id,
+					updatedAt: new Date()
+				}
+			},
+			{
+				upsert: true
+			}
+		);
+		runtimeConfig.logo.darkModePictureId = picture._id;
+	},
+
+	removeDarkLogo: async function ({ params }) {
+		if (runtimeConfig.logo.pictureId === params.id) {
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'logo',
+					data: params.id
+				},
+				{
+					$set: {
+						'data.darkModePictureId': '',
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+			runtimeConfig.logo.darkModePictureId = '';
 		}
 	}
 };
