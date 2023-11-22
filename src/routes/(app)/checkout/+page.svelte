@@ -427,7 +427,7 @@
 
 				<span class="py-1" />
 
-				<div class="bg-gray-190 -mx-3 p-3 flex flex-col">
+				<div class="-mx-3 p-3 flex flex-col">
 					<div class="flex justify-between">
 						<span class="text-xl ">{t('cart.total')}</span>
 						<PriceTag
