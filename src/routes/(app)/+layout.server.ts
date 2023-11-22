@@ -80,7 +80,7 @@ export async function load(params) {
 			navbar: runtimeConfig.navbarLinks,
 			topbar: runtimeConfig.topbarLinks
 		},
-		logo: runtimeConfig.logo.pictureId,
+		logo: runtimeConfig.logo,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {

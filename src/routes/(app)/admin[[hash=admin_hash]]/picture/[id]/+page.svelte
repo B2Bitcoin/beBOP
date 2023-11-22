@@ -3,6 +3,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 
 	export let data;
+	let darkPicture = 'light';
 </script>
 
 <form method="post" action="?/update" use:enhance class="flex flex-col gap-4">
@@ -16,11 +17,13 @@
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.picture.name} />
+
 	<Picture picture={data.picture} class="object-contain max-h-[500px] max-w-full" />
 	<div class="flex gap-4">
 		<input type="submit" value="Update" class="btn btn-black" />
+		<input type="hidden" name="darkPicture" bind:value={darkPicture} />
 		{#if !data.picture.productId}
-			{#if data.logo === data.picture._id}
+			{#if data.logo.pictureId === data.picture._id}
 				<input
 					type="submit"
 					value="Remove from logo"
@@ -28,7 +31,28 @@
 					class="btn btn-gray"
 				/>
 			{:else}
+				<label class="checkbox-label">
+					<input type="checkbox" name="isWide" class="form-checkbox" checked={data.logo.isWide} />
+					Image will be a wide logo
+				</label>
 				<input type="submit" value="Set as logo" formaction="?/setAsLogo" class="btn btn-gray" />
+			{/if}
+			{#if data.logo.darkModePictureId === data.picture._id}
+				<input
+					type="submit"
+					value="Remove from dark logo"
+					formaction="?/removeLogo"
+					class="btn btn-gray"
+					on:click={() => (darkPicture = 'dark')}
+				/>
+			{:else}
+				<input
+					type="submit"
+					value="Set as dark logo"
+					formaction="?/setAsLogo"
+					class="btn btn-gray"
+					on:click={() => (darkPicture = 'dark')}
+				/>
 			{/if}
 		{/if}
 		<input type="submit" value="Delete" formaction="?/delete" class="btn btn-red ml-auto" />
