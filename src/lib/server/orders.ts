@@ -448,6 +448,13 @@ export async function createOrder(
 
 								const json = await resp.json();
 
+								const checkoutId = json.id;
+
+								if (!checkoutId || typeof checkoutId !== 'string') {
+									console.error('no checkout id', json);
+									throw error(402, 'Sumup checkout creation failed');
+								}
+
 								return {
 									checkoutId: json.id,
 									meta: json
