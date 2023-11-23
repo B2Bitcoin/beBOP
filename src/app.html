@@ -4,6 +4,11 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=1000" />
+		<script>
+			if (window.localStorage.getItem('theme') === 'dark') {
+				document.querySelector('html').classList.add('dark');
+			}
+		</script>
 		%sveltekit.head%
 	</head>
 

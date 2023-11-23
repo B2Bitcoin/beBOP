@@ -25,6 +25,8 @@
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { useI18n } from '$lib/i18n';
+	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
+	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 
 	export let data;
 
@@ -177,7 +179,7 @@
 						</div>
 						<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
 					{/if}
-					<div class="relative">
+					<div class="flex flex-row relative">
 						<a
 							href="/cart"
 							on:click={(ev) => {
@@ -228,7 +230,10 @@
 													if (actionCount === currentCount) {
 														if (result.type === 'redirect') {
 															// Invalidate all to remove 0-quantity items
-															await goto(result.location, { noScroll: true, invalidateAll: true });
+															await goto(result.location, {
+																noScroll: true,
+																invalidateAll: true
+															});
 															return;
 														}
 														if (result.type === 'error' && result.error?.message) {
@@ -311,6 +316,19 @@
 								</div>
 							</Popup>
 						{/if}
+						<button
+							type="button"
+							on:click={() => {
+								window.localStorage.setItem('theme', 'light'), window.location.reload();
+							}}><IconModeLight class="ml-4 hidden dark:inline" /></button
+						>
+						<button
+							type="button"
+							on:click={() => {
+								window.localStorage.setItem('theme', 'dark'), window.location.reload();
+							}}
+							><IconModeDark class="ml-4 dark:hidden" />
+						</button>
 					</div>
 				</div>
 			</div>
