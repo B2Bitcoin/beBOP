@@ -35,7 +35,7 @@ export async function load(params) {
 	const logoPictureDark = runtimeConfig.logo.darkModePictureId
 		? (await collections.pictures.findOne({ _id: runtimeConfig.logo.darkModePictureId })) ||
 		  logoPicture
-		: null;
+		: logoPicture;
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
 		vatExempted: runtimeConfig.vatExempted,
