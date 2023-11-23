@@ -153,7 +153,7 @@
 			"welcomeMessage": "Nous sommes heureux de vous voir",
 			"welcomeTitle": "Accueillir"
 		},
-		"sessionLink": "Possession",
+		"sessionLink": "Session point de vente",
 		"vatFree": "Il s'agit d'une commande sans TVA (<0>conditions</0>)",
 		"vatFreeReason": "Motif hors TVA"
 	},
@@ -185,7 +185,7 @@
 			"digitalResource": "Ressource numérique",
 			"donation": "Don",
 			"phisical": "Physique",
-			"preorder": "Pré-commander",
+			"preorder": "Pré-commande",
 			"preview": "Aperçu",
 			"resource": "Ressource",
 			"subscription": "Abonnement"
