@@ -9,6 +9,7 @@ import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { error, redirect } from '@sveltejs/kit';
+import { get } from 'svelte/store';
 
 export async function load(params) {
 	if (!runtimeConfig.isAdminCreated) {
@@ -29,11 +30,12 @@ export async function load(params) {
 	depends(UrlDependency.Cart);
 
 	const cart = await getCartFromDb({ user: userIdentifier(locals) });
-
 	const logoPicture = runtimeConfig.logo
 		? await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })
 		: null;
-
+	const logoPictureDark = runtimeConfig.logo
+		? await collections.pictures.findOne({ _id: runtimeConfig.logo.darkModePictureId })
+		: null;
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
 		vatExempted: runtimeConfig.vatExempted,
@@ -69,13 +71,13 @@ export async function load(params) {
 		},
 		brandName: runtimeConfig.brandName,
 		logoPicture,
-		logoWide: runtimeConfig.logo.isWide,
+		logoPictureDark,
+		logo: runtimeConfig.logo,
 		links: {
 			footer: runtimeConfig.footerLinks,
 			navbar: runtimeConfig.navbarLinks,
 			topbar: runtimeConfig.topbarLinks
 		},
-		logo: runtimeConfig.logo,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
