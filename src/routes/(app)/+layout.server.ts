@@ -9,7 +9,6 @@ import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { error, redirect } from '@sveltejs/kit';
-import { get } from 'svelte/store';
 
 export async function load(params) {
 	if (!runtimeConfig.isAdminCreated) {
