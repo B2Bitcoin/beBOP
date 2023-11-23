@@ -457,7 +457,8 @@ export async function createOrder(
 
 								return {
 									checkoutId: json.id,
-									meta: json
+									meta: json,
+									address: `${ORIGIN}/order/${orderId}/pay`
 								};
 							}
 							default:

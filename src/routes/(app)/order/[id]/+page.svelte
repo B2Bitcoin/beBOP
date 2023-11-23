@@ -66,10 +66,15 @@
 				{#if data.order.payment.method !== 'cash'}
 					<ul>
 						<li>
-							{t('order.paymentAddress')}:
-							<code class="break-words body-secondaryText break-all"
-								>{data.order.payment.address}</code
-							>
+							{t('order.paymentAddress')}: {#if data.order.payment.method === 'card'}
+								<a href="/order/{data.order._id}/pay" class="body-hyperlink break-all break-words"
+									>{$page.url.origin}/{data.order._id}/pay</a
+								>
+							{:else}
+								<code class="break-words body-secondaryText break-all"
+									>{data.order.payment.address}</code
+								>
+							{/if}
 						</li>
 						<li>
 							{t('order.paymentAmount')}:
