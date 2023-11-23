@@ -575,7 +575,7 @@
 
 				<input
 					type="submit"
-					class="btn btn-black btn-xl -mx-1 -mb-1 mt-1"
+					class="btn body-cta body-mainCTA btn-xl -mx-1 -mb-1 mt-1"
 					value={t('checkout.cta.submit')}
 					form="checkout"
 					disabled={isNaN(deliveryFees) || (addDiscount && !isDiscountValid)}

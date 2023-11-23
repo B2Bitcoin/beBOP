@@ -169,9 +169,7 @@
 					</p>
 					<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col">
 						<div class="flex justify-between items-center">
-							<h3 class="font-medium text-[22px]">
-								WACOM CINTIQ 24" for an emerging artist.
-							</h3>
+							<h3 class="font-medium text-[22px]">WACOM CINTIQ 24" for an emerging artist.</h3>
 							<span class="text-base font-light">Ends April 25</span>
 						</div>
 						<GoalProgress
@@ -335,12 +333,14 @@
 									{t('product.checkBackLater')}
 								</p>
 							{:else if data.showCheckoutButton}
-								<button class="btn btn-black" disabled={loading}>{t(`product.cta.${verb}`)}</button>
+								<button class="btn body-cta body-mainCTA" disabled={loading}
+									>{t(`product.cta.${verb}`)}</button
+								>
 								<button
 									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
-									class="btn btn-gray"
+									class="btn body-cta body-secondaryCTA"
 								>
 									{t('product.cta.add')}
 								</button>
@@ -349,7 +349,7 @@
 									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
-									class="btn btn-black"
+									class="btn body-cta body-secondaryCTA"
 								>
 									{verb}
 								</button>
