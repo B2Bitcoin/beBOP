@@ -12,12 +12,12 @@
 	const { t, locale } = useI18n();
 </script>
 
-<div class="bg-gray-75 border-gray-300 border rounded p-4 flex flex-col {className}">
+<div class="rounded p-4 flex flex-col {className}">
 	<div class="flex justify-between items-center">
-		<h3 class="font-medium text-[22px] text-gray-850">
+		<h3 class="font-medium text-[22px] body-title">
 			{challenge.name}
 		</h3>
-		<span class="text-base font-light text-gray-550"
+		<span class="text-base font-light body-secondaryText"
 			><Trans key="challenge.endsAt"
 				><time
 					datetime={challenge.endsAt.toJSON()}
@@ -29,7 +29,7 @@
 		</span>
 	</div>
 	<GoalProgress
-		class="font-bold mt-3"
+		class="font-bold mt-3 body-title"
 		text="{challenge.goal.currency
 			? Number(Math.max(0, challenge.progress)).toLocaleString($locale, {
 					style: 'currency',

@@ -80,7 +80,8 @@
 	const paymentMethodDesc = {
 		bitcoin: t('checkout.paymentMethod.bitcoin'),
 		lightning: t('checkout.paymentMethod.lighthing'),
-		cash: t('checkout.paymentMethod.cash')
+		cash: t('checkout.paymentMethod.cash'),
+		card: t('checkout.paymentMethod.card')
 	};
 
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;

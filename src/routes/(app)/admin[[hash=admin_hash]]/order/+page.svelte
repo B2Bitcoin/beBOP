@@ -40,8 +40,13 @@
 			>
 				{order.payment.status}</span
 			>
-			- received: {(order.payment.totalReceived ?? 0).toLocaleString('en')}
-			SAT
+			{#if order.totalReceived}
+				- received: <PriceTag
+					class="inline-flex"
+					currency={order.totalReceived.currency}
+					amount={order.totalReceived.amount}
+				/>
+			{/if}
 
 			{#if order.payment.status === 'pending' && order.payment.method === 'cash'}
 				<form action="{data.adminPrefix}/order/{order._id}?/confirm" method="post">
