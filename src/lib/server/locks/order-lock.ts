@@ -9,8 +9,12 @@ import { inspect } from 'node:util';
 import { lndLookupInvoice } from '../lightning';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { onOrderPaid } from '../orders';
-import { refreshPromise } from '../runtime-config';
+import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { getConfirmationBlocks } from '$lib/utils/getConfirmationBlocks';
+import type { StrictUpdateFilter } from 'mongodb';
+import { toCurrency } from '$lib/utils/toCurrency';
+import { SUMUP_API_KEY } from '$env/static/private';
+import { addMinutes } from 'date-fns';
 
 const lock = new Lock('orders');
 
@@ -54,11 +58,29 @@ async function maintainOrders() {
 									'payment.status': 'paid',
 									'payment.paidAt': new Date(),
 									'payment.transactions': transactions.map((transaction) => ({
-										txid: transaction.txid,
-										amount: transaction.amount
+										id: transaction.txid,
+										amount: transaction.amount,
+										currency: 'BTC' as const
 									})),
-									'payment.totalReceived': satReceived
-								}
+									totalReceived: {
+										amount: satReceived,
+										currency: 'SAT' as const
+									},
+									'amountsInOtherCurrencies.main.totalReceived': {
+										amount: toCurrency(runtimeConfig.mainCurrency, satReceived, 'SAT'),
+										currency: runtimeConfig.mainCurrency
+									},
+									...(runtimeConfig.secondaryCurrency && {
+										'amountsInOtherCurrencies.secondary.totalReceived': {
+											amount: toCurrency(runtimeConfig.secondaryCurrency, satReceived, 'SAT'),
+											currency: runtimeConfig.secondaryCurrency
+										}
+									}),
+									'amountsInOtherCurrencies.priceReference.totalReceived': {
+										amount: toCurrency(runtimeConfig.priceReferenceCurrency, satReceived, 'SAT'),
+										currency: runtimeConfig.priceReferenceCurrency
+									}
+								} satisfies StrictUpdateFilter<Order>
 							},
 							{ session }
 						);
@@ -100,8 +122,33 @@ async function maintainOrders() {
 								$set: {
 									'payment.status': 'paid',
 									'payment.paidAt': invoice.settled_at,
-									'payment.totalReceived': invoice.amt_paid_sat
-								}
+									totalReceived: {
+										amount: invoice.amt_paid_sat,
+										currency: 'SAT' as const
+									},
+									'amountsInOtherCurrencies.main.totalReceived': {
+										amount: toCurrency(runtimeConfig.mainCurrency, invoice.amt_paid_sat, 'SAT'),
+										currency: runtimeConfig.mainCurrency
+									},
+									...(runtimeConfig.secondaryCurrency && {
+										'amountsInOtherCurrencies.secondary.totalReceived': {
+											amount: toCurrency(
+												runtimeConfig.secondaryCurrency,
+												invoice.amt_paid_sat,
+												'SAT'
+											),
+											currency: runtimeConfig.secondaryCurrency
+										}
+									}),
+									'amountsInOtherCurrencies.priceReference.totalReceived': {
+										amount: toCurrency(
+											runtimeConfig.priceReferenceCurrency,
+											invoice.amt_paid_sat,
+											'SAT'
+										),
+										currency: runtimeConfig.priceReferenceCurrency
+									}
+								} satisfies StrictUpdateFilter<Order>
 							},
 							{ returnDocument: 'after' }
 						);
@@ -121,7 +168,103 @@ async function maintainOrders() {
 			}
 		}
 
-		await setTimeout(5_000);
+		if (SUMUP_API_KEY) {
+			const cardOrders = await collections.orders
+				.find({ 'payment.status': 'pending', 'payment.method': 'card' })
+				.project<Pick<Order, 'payment' | 'totalPrice' | '_id'>>({ payment: 1, totalPrice: 1 })
+				.toArray()
+				.catch((err) => {
+					console.error(inspect(err, { depth: 10 }));
+					return [];
+				});
+
+			for (const order of cardOrders) {
+				try {
+					const checkoutId = order.payment.checkoutId;
+
+					if (!checkoutId) {
+						throw new Error('Missing checkout ID on card order');
+					}
+
+					const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + checkoutId, {
+						headers: {
+							Authorization: 'Bearer ' + SUMUP_API_KEY
+						}
+					});
+
+					if (!response.ok) {
+						throw new Error('Failed to fetch checkout status');
+					}
+
+					const checkout = await response.json();
+
+					if (checkout.status === 'PAID') {
+						await withTransaction(async (session) => {
+							const result = await collections.orders.findOneAndUpdate(
+								{ _id: order._id },
+								{
+									$set: {
+										'payment.status': 'paid',
+										'payment.paidAt': new Date(),
+										'payment.transactions': checkout.transactions,
+										totalReceived: {
+											amount: checkout.amount,
+											currency: checkout.currency
+										},
+										'amountsInOtherCurrencies.main.totalReceived': {
+											amount: toCurrency(
+												runtimeConfig.mainCurrency,
+												checkout.amount,
+												checkout.currency
+											),
+											currency: runtimeConfig.mainCurrency
+										},
+										...(runtimeConfig.secondaryCurrency && {
+											'amountsInOtherCurrencies.secondary.totalReceived': {
+												amount: toCurrency(
+													runtimeConfig.secondaryCurrency,
+													checkout.amount,
+													checkout.currency
+												),
+												currency: runtimeConfig.secondaryCurrency
+											}
+										}),
+										'amountsInOtherCurrencies.priceReference.totalReceived': {
+											amount: toCurrency(
+												runtimeConfig.priceReferenceCurrency,
+												checkout.amount,
+												checkout.currency
+											),
+											currency: runtimeConfig.priceReferenceCurrency
+										}
+									} satisfies StrictUpdateFilter<Order>
+								},
+								{ returnDocument: 'after' }
+							);
+							if (!result.value) {
+								throw new Error('Failed to update order');
+							}
+							await onOrderPaid(result.value, session);
+						});
+					} else if (checkout.status === 'FAILED') {
+						await collections.orders.updateOne(
+							{ _id: order._id },
+							{ $set: { 'payment.status': 'expired' } }
+						);
+					}
+				} catch (err) {
+					console.error(inspect(err, { depth: 10 }));
+					if (addMinutes(order.payment.expiresAt, 10) < new Date()) {
+						await collections.orders.updateOne(
+							{ _id: order._id },
+							{ $set: { 'payment.status': 'expired' } }
+						);
+					}
+				}
+			}
+		}
+
+		await setTimeout(2_000);
 	}
 }
 

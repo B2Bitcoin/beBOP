@@ -1,8 +1,11 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections, withTransaction } from '$lib/server/database';
 import { onOrderPaid } from '$lib/server/orders';
-import { toSatoshis } from '$lib/utils/toSatoshis';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import type { Order } from '$lib/types/Order.js';
+import { toCurrency } from '$lib/utils/toCurrency';
 import { error, redirect } from '@sveltejs/kit';
+import type { StrictFilter } from 'mongodb';
 
 export const actions = {
 	confirm: async ({ params, request }) => {
@@ -26,8 +29,34 @@ export const actions = {
 						updatedAt: new Date(),
 						'payment.status': 'paid',
 						'payment.paidAt': new Date(),
-						'payment.totalReceived': toSatoshis(order.totalPrice.amount, order.totalPrice.currency)
-					}
+						totalReceived: order.totalPrice,
+						'amountsInOtherCurrencies.main.totalReceived': {
+							amount: toCurrency(
+								runtimeConfig.mainCurrency,
+								order.totalPrice.amount,
+								order.totalPrice.currency
+							),
+							currency: runtimeConfig.mainCurrency
+						},
+						...(runtimeConfig.secondaryCurrency && {
+							'amountsInOtherCurrencies.secondary.totalReceived': {
+								amount: toCurrency(
+									runtimeConfig.secondaryCurrency,
+									order.totalPrice.amount,
+									order.totalPrice.currency
+								),
+								currency: runtimeConfig.secondaryCurrency
+							}
+						}),
+						'amountsInOtherCurrencies.priceReference.totalReceived': {
+							amount: toCurrency(
+								runtimeConfig.priceReferenceCurrency,
+								order.totalPrice.amount,
+								order.totalPrice.currency
+							),
+							currency: runtimeConfig.priceReferenceCurrency
+						}
+					} satisfies StrictFilter<Order>
 				},
 				{ session }
 			);
@@ -57,7 +86,7 @@ export const actions = {
 					$set: {
 						'payment.status': 'canceled',
 						updatedAt: new Date()
-					}
+					} satisfies StrictFilter<Order>
 				},
 				{ session }
 			);

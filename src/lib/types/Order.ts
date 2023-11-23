@@ -55,19 +55,97 @@ export interface Order extends Timestamps {
 		currency: Currency;
 	};
 
+	totalReceived?: {
+		amount: number;
+		currency: Currency;
+	};
+
+	amountsInOtherCurrencies: {
+		main: {
+			totalPrice: {
+				amount: number;
+				currency: Currency;
+			};
+			totalReceived?: {
+				amount: number;
+				currency: Currency;
+			};
+			vat?: {
+				amount: number;
+				currency: Currency;
+			};
+			shippingPrice?: {
+				amount: number;
+				currency: Currency;
+			};
+			discount?: {
+				amount: number;
+				currency: Currency;
+			};
+		};
+		priceReference: {
+			totalPrice: {
+				amount: number;
+				currency: Currency;
+			};
+			totalReceived?: {
+				amount: number;
+				currency: Currency;
+			};
+			vat?: {
+				amount: number;
+				currency: Currency;
+			};
+			shippingPrice?: {
+				amount: number;
+				currency: Currency;
+			};
+			discount?: {
+				amount: number;
+				currency: Currency;
+			};
+		};
+		secondary?: {
+			totalPrice: {
+				amount: number;
+				currency: Currency;
+			};
+			totalReceived?: {
+				amount: number;
+				currency: Currency;
+			};
+			vat?: {
+				amount: number;
+				currency: Currency;
+			};
+			shippingPrice?: {
+				amount: number;
+				currency: Currency;
+			};
+			discount?: {
+				amount: number;
+				currency: Currency;
+			};
+		};
+	};
+
 	payment: {
-		method: 'bitcoin' | 'lightning' | 'cash';
+		method: 'bitcoin' | 'lightning' | 'cash' | 'card';
 		status: OrderPaymentStatus;
 		expiresAt: Date;
 		/** Bitcoin / LN address */
 		address?: string;
 		paidAt?: Date;
-		totalReceived?: number;
 		/** For lightning addresses, contains the hash to look up the invoice */
 		invoiceId?: string;
+		/** For card transactions */
+		checkoutId?: string;
 		/** For bitcoin transactions */
 		wallet?: string;
-		transactions?: Array<{ txid: string; amount: number }>;
+		/**
+		 * There are also additional fields for sumup, they are stored but not documented here.
+		 */
+		transactions?: Array<{ id: string; amount: number; currency: Currency }>;
 	};
 
 	notifications: {
@@ -86,10 +164,6 @@ export interface Order extends Timestamps {
 		justification: string;
 		type: DiscountType;
 		price: {
-			amount: number;
-			currency: Currency;
-		};
-		referencePrice: {
 			amount: number;
 			currency: Currency;
 		};
