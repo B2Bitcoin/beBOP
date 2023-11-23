@@ -314,7 +314,7 @@
 								{/if}
 							</a>
 							<div class="flex flex-col">
-								<div class="flex flex-row gap-2">
+								<div class="flex flex-wrap mb-1 gap-3">
 									<ProductType
 										product={item.product}
 										class="text-sm"
