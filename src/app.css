@@ -60,7 +60,7 @@
 
 @layer components {
 	.page-title {
-		@apply font-bold text-5xl text-gray-850;
+		@apply font-bold text-5xl;
 	}
 
 	.btn {
@@ -116,7 +116,7 @@
 	}
 
 	.form-input {
-		@apply border-gray-300 border-[1px] bg-white w-full border-solid rounded pl-2 block text-gray-850 placeholder-gray-450;
+		@apply border-gray-300 border-[1px] bg-white w-full border-solid rounded pl-2 block placeholder-gray-450;
 	}
 
 	.form-input[disabled] {
@@ -140,7 +140,7 @@
 	} */
 
 	.text-label {
-		@apply text-base font-light text-gray-800;
+		@apply text-base font-light;
 	}
 
 	.form-label {
