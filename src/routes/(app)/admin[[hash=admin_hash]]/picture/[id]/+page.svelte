@@ -22,6 +22,10 @@
 	<div class="flex gap-4">
 		<input type="submit" value="Update" class="btn btn-black" />
 		<input type="hidden" name="darkPicture" bind:value={darkPicture} />
+		<label class="checkbox-label">
+			<input type="checkbox" name="isWide" class="form-checkbox" checked={data.logo.isWide} />
+			Image will be a wide logo
+		</label>
 		{#if !data.picture.productId}
 			{#if data.logo.pictureId === data.picture._id}
 				<input
@@ -31,10 +35,6 @@
 					class="btn btn-gray"
 				/>
 			{:else}
-				<label class="checkbox-label">
-					<input type="checkbox" name="isWide" class="form-checkbox" checked={data.logo.isWide} />
-					Image will be a wide logo
-				</label>
 				<input type="submit" value="Set as logo" formaction="?/setAsLogo" class="btn btn-gray" />
 			{/if}
 			{#if data.logo.darkModePictureId === data.picture._id}

@@ -85,7 +85,9 @@ export const actions: Actions = {
 	},
 
 	removeLogo: async function ({ params, request }) {
-		const logoMode = String((await request.formData()).get('darkPicture'));
+		const formData = await request.formData();
+		const logoMode = String(formData.get('darkPicture'));
+		const logoIsWide = Boolean(formData.get('isWide'));
 		if (runtimeConfig.logo.pictureId === params.id) {
 			await collections.runtimeConfig.updateOne(
 				{
@@ -93,6 +95,7 @@ export const actions: Actions = {
 				},
 				{
 					$set: {
+						'data.isWide': logoIsWide,
 						...(logoMode === 'light' && { 'data.pictureId': '' }),
 						...(logoMode === 'dark' && { 'data.darkModePictureId': '' }),
 						updatedAt: new Date()
