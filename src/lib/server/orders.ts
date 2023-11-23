@@ -9,7 +9,7 @@ import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
 import { lndCreateInvoice } from './lightning';
-import { ORIGIN, SUMUP_API_KEY, SUMUP_CURRENCY, SUMUP_MERCHANT_CODE } from '$env/static/private';
+import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
@@ -385,8 +385,8 @@ export async function createOrder(
 				totalPrice:
 					paymentMethod === 'card'
 						? {
-								amount: toCurrency(SUMUP_CURRENCY as Currency, totalSatoshis, 'SAT'),
-								currency: SUMUP_CURRENCY as Currency
+								amount: toCurrency(runtimeConfig.sumUp.currency, totalSatoshis, 'SAT'),
+								currency: runtimeConfig.sumUp.currency
 						  }
 						: {
 								amount: totalSatoshis,
@@ -427,14 +427,14 @@ export async function createOrder(
 								const resp = await fetch('https://api.sumup.com/v0.1/checkouts', {
 									method: 'POST',
 									headers: {
-										Authorization: `Bearer ${SUMUP_API_KEY}`,
+										Authorization: `Bearer ${runtimeConfig.sumUp.apiKey}`,
 										'Content-Type': 'application/json'
 									},
 									body: JSON.stringify({
-										amount: toCurrency(SUMUP_CURRENCY as Currency, totalSatoshis, 'SAT'),
-										currency: SUMUP_CURRENCY,
+										amount: toCurrency(runtimeConfig.sumUp.currency, totalSatoshis, 'SAT'),
+										currency: runtimeConfig.sumUp.currency,
 										checkout_reference: orderId,
-										merchant_code: SUMUP_MERCHANT_CODE,
+										merchant_code: runtimeConfig.sumUp.merchantCode,
 										redirect_url: `${ORIGIN}/order/${orderId}?status=success`,
 										description: 'Order ' + orderNumber,
 										valid_until: expiresAt.toISOString()

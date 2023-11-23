@@ -134,6 +134,6 @@
 	</nav>
 {/if}
 
-<main class="p-4 flex flex-col gap-4">
+<main class="p-4 flex flex-col gap-4 {$page.data.bodyClass || ''}">
 	<slot />
 </main>

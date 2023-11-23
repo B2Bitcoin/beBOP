@@ -79,6 +79,19 @@ export const adminLinks = [
 		]
 	},
 	{
+		section: 'Payment Partners',
+		links: [
+			{
+				href: '/admin/sumup',
+				label: 'SumUp'
+			},
+			{
+				href: '/admin/bity',
+				label: 'Stripe'
+			}
+		]
+	},
+	{
 		section: 'Transaction',
 		links: [
 			{
