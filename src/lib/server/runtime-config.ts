@@ -103,6 +103,9 @@ const defaultConfig = {
 		apiKey: '',
 		merchantCode: '',
 		currency: 'EUR' as Currency
+	},
+	bity: {
+		clientId: ''
 	}
 };
 

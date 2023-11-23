@@ -194,5 +194,5 @@
 
 <div class="flex justify-between">
 	<button class="btn btn-orange" on:click={authorize}>Request cashout</button>
-	<a href="{data.adminPrefix}/bitcoin" class="btn btn-gray">Cancel</a>
+	<a href="{data.adminPrefix}/bity" class="btn btn-gray">Cancel</a>
 </div>

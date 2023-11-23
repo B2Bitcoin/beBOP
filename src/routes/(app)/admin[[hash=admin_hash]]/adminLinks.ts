@@ -87,7 +87,7 @@ export const adminLinks = [
 			},
 			{
 				href: '/admin/bity',
-				label: 'Stripe'
+				label: 'Bity'
 			}
 		]
 	},
