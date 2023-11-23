@@ -29,10 +29,10 @@ export async function load(params) {
 	depends(UrlDependency.Cart);
 
 	const cart = await getCartFromDb({ user: userIdentifier(locals) });
-	const logoPicture = runtimeConfig.logo
+	const logoPicture = runtimeConfig.logo.pictureId
 		? await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })
 		: null;
-	const logoPictureDark = runtimeConfig.logo
+	const logoPictureDark = runtimeConfig.logo.darkModePictureId
 		? (await collections.pictures.findOne({ _id: runtimeConfig.logo.darkModePictureId })) ||
 		  logoPicture
 		: null;
