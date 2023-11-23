@@ -321,14 +321,14 @@
 						<button
 							type="button"
 							on:click={() => {
-								theme.set('light');
+								$theme = 'light';
 								document.querySelector('html')?.classList.remove('dark');
 							}}><IconModeLight class="ml-4 hidden dark:inline" /></button
 						>
 						<button
 							type="button"
 							on:click={() => {
-								theme.set('dark');
+								$theme = 'dark';
 								document.querySelector('html')?.classList.add('dark');
 							}}
 							><IconModeDark class="ml-4 dark:hidden" />
