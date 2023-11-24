@@ -96,7 +96,8 @@ export async function load({ params, depends }) {
 			shippingAddress: order.shippingAddress,
 			notifications: order.notifications,
 			vatFree: order.vatFree,
-			discount: order.discount
+			discount: order.discount,
+			amountsInOtherCurrencies: order.amountsInOtherCurrencies
 		},
 
 		digitalFiles: await Promise.all(
