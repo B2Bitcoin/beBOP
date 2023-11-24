@@ -135,6 +135,8 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						}`;
 					} else if (order.payment.method === 'lightning') {
 						content += `\n\nPlease pay this invoice: ${order.payment.address}`;
+					} else if (order.payment.method === 'card') {
+						content += `\n\nPlease pay using this link: ${order.payment.address}`;
 					}
 				}
 				if (!(order.payment.method === 'cash' && order.payment.status !== 'paid')) {
@@ -167,6 +169,8 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						}</p>`;
 					} else if (order.payment.method === 'lightning') {
 						htmlContent += `<p>Please pay this invoice: ${order.payment.address}</p>`;
+					} else if (order.payment.method === 'card') {
+						htmlContent += `<p>Please pay using this link: <a href="${order.payment.address}">${order.payment.address}</a></p>`;
 					}
 				}
 				if (!(order.payment.method === 'cash' && order.payment.status !== 'paid')) {

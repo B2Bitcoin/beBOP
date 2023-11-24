@@ -66,10 +66,17 @@
 				{#if data.order.payment.method !== 'cash'}
 					<ul>
 						<li>
-							{t('order.paymentAddress')}:
-							<code class="break-words body-secondaryText break-all"
-								>{data.order.payment.address}</code
-							>
+							{t('order.paymentAddress')}: {#if data.order.payment.method === 'card'}
+								<a
+									href="/order/{data.order._id}/pay"
+									class="body-hyperlink underline break-all break-words"
+									>{$page.url.origin}/{data.order._id}/pay</a
+								>
+							{:else}
+								<code class="break-words body-secondaryText break-all"
+									>{data.order.payment.address}</code
+								>
+							{/if}
 						</li>
 						<li>
 							{t('order.paymentAmount')}:
@@ -246,18 +253,21 @@
 						<h3 class="text-base">{t('checkout.deliveryFees')}</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
-							<PriceTag
-								class="text-2xl truncate"
-								amount={data.order.shippingPrice.amount}
-								currency={data.order.shippingPrice.currency}
-								main
-							/>
-							<PriceTag
-								amount={data.order.shippingPrice.amount}
-								currency={data.order.shippingPrice.currency}
-								class="text-base truncate"
-								secondary
-							/>
+							{#if data.order.amountsInOtherCurrencies.main.shippingPrice}
+								<PriceTag
+									class="text-2xl truncate"
+									amount={data.order.amountsInOtherCurrencies.main.shippingPrice.amount}
+									currency={data.order.amountsInOtherCurrencies.main.shippingPrice.currency}
+								/>
+							{/if}
+							{#if data.order.amountsInOtherCurrencies.secondary?.shippingPrice}
+								<PriceTag
+									amount={data.order.amountsInOtherCurrencies.secondary.shippingPrice.amount}
+									currency={data.order.amountsInOtherCurrencies.secondary.shippingPrice.currency}
+									class="text-base truncate"
+									secondary
+								/>
+							{/if}
 						</div>
 					</div>
 					<div class="border-b border-gray-300 col-span-4" />
@@ -273,18 +283,20 @@
 						</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
-							<PriceTag
-								class="text-2xl truncate"
-								amount={data.order.vat.price.amount}
-								currency={data.order.vat.price.currency}
-								main
-							/>
-							<PriceTag
-								amount={data.order.vat.price.amount}
-								currency={data.order.vat.price.currency}
-								class="text-base truncate"
-								secondary
-							/>
+							{#if data.order.amountsInOtherCurrencies.main.vat}
+								<PriceTag
+									class="text-2xl truncate"
+									amount={data.order.amountsInOtherCurrencies.main.vat.amount}
+									currency={data.order.amountsInOtherCurrencies.main.vat.currency}
+								/>
+							{/if}
+							{#if data.order.amountsInOtherCurrencies.secondary?.vat}
+								<PriceTag
+									amount={data.order.amountsInOtherCurrencies.secondary.vat.amount}
+									currency={data.order.amountsInOtherCurrencies.secondary.vat.currency}
+									class="text-base truncate"
+								/>
+							{/if}
 						</div>
 					</div>
 					<div class="border-b border-gray-300 col-span-4" />
@@ -297,18 +309,20 @@
 						</h3>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
-							<PriceTag
-								class="text-2xl truncate"
-								amount={data.order.discount.price.amount}
-								currency={data.order.discount.price.currency}
-								main
-							/>
-							<PriceTag
-								amount={data.order.discount.price.amount}
-								currency={data.order.discount.price.currency}
-								class="text-base truncate"
-								secondary
-							/>
+							{#if data.order.amountsInOtherCurrencies.main.discount}
+								<PriceTag
+									class="text-2xl truncate"
+									amount={data.order.amountsInOtherCurrencies.main.discount.amount}
+									currency={data.order.amountsInOtherCurrencies.main.discount.currency}
+								/>
+							{/if}
+							{#if data.order.amountsInOtherCurrencies.secondary?.discount}
+								<PriceTag
+									amount={data.order.amountsInOtherCurrencies.secondary.discount.amount}
+									currency={data.order.amountsInOtherCurrencies.secondary.discount.currency}
+									class="text-base truncate"
+								/>
+							{/if}
 						</div>
 					</div>
 					<div class="border-b border-gray-300 col-span-4" />
@@ -321,17 +335,17 @@
 						<span class="text-xl">{t('cart.total')}</span>
 						<PriceTag
 							class="text-2xl"
-							amount={data.order.totalPrice.amount}
-							currency={data.order.totalPrice.currency}
-							main
+							amount={data.order.amountsInOtherCurrencies.main.totalPrice.amount}
+							currency={data.order.amountsInOtherCurrencies.main.totalPrice.currency}
 						/>
 					</div>
-					<PriceTag
-						class="self-end"
-						amount={data.order.totalPrice.amount}
-						currency={data.order.totalPrice.currency}
-						secondary
-					/>
+					{#if data.order.amountsInOtherCurrencies.secondary?.totalPrice}
+						<PriceTag
+							class="self-end"
+							amount={data.order.amountsInOtherCurrencies.secondary.totalPrice.amount}
+							currency={data.order.amountsInOtherCurrencies.secondary	.totalPrice.currency}
+						/>
+					{/if}
 				</div>
 			</article>
 		</div>

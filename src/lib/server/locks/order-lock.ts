@@ -13,7 +13,6 @@ import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { getConfirmationBlocks } from '$lib/utils/getConfirmationBlocks';
 import type { StrictUpdateFilter } from 'mongodb';
 import { toCurrency } from '$lib/utils/toCurrency';
-import { SUMUP_API_KEY } from '$env/static/private';
 import { addMinutes } from 'date-fns';
 
 const lock = new Lock('orders');
@@ -168,7 +167,7 @@ async function maintainOrders() {
 			}
 		}
 
-		if (SUMUP_API_KEY) {
+		if (runtimeConfig.sumUp.apiKey) {
 			const cardOrders = await collections.orders
 				.find({ 'payment.status': 'pending', 'payment.method': 'card' })
 				.project<Pick<Order, 'payment' | 'totalPrice' | '_id'>>({ payment: 1, totalPrice: 1 })
@@ -188,7 +187,7 @@ async function maintainOrders() {
 
 					const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + checkoutId, {
 						headers: {
-							Authorization: 'Bearer ' + SUMUP_API_KEY
+							Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
 						}
 					});
 

@@ -98,7 +98,15 @@ const defaultConfig = {
 		}
 	} satisfies ProductActionSettings as ProductActionSettings,
 	mainThemeId: '',
-	sellerIdentity: null as SellerIdentity | null
+	sellerIdentity: null as SellerIdentity | null,
+	sumUp: {
+		apiKey: '',
+		merchantCode: '',
+		currency: 'EUR' as Currency
+	},
+	bity: {
+		clientId: ''
+	}
 };
 
 exchangeRate.set({
