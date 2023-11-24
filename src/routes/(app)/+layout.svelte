@@ -28,6 +28,7 @@
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
+	import { browser } from '$app/environment';
 
 	export let data;
 
@@ -80,6 +81,12 @@
 
 	$: if (items.length === 0) {
 		cartOpen = false;
+	}
+	$: {
+		if (browser && data.usersDarkDefaultTheme && !localStorage.getItem('theme')) {
+			$theme = 'dark';
+			document.querySelector('html')?.classList.add('dark');
+		}
 	}
 
 	$: logoPicture = $theme === 'dark' ? data.logoPictureDark : data.logoPicture;
