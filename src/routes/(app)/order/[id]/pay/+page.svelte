@@ -119,7 +119,7 @@
 </script>
 
 <script lang="ts">
-	import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 
 	import { page } from '$app/stores';
 
@@ -127,19 +127,12 @@
 
 	export let data;
 
-	let navigationTriggered = false;
-
-	beforeNavigate(() => {
-		navigationTriggered = true;
-	});
-
 	function mountSumUpCard() {
 		window.SumUpCard.mount({
 			id: 'sumup-card',
 			checkoutId: data.checkoutId,
-			onResponse: function (type, body) {
+			onResponse: function (type) {
 				if (type === 'success') {
-					navigationTriggered = false;
 					goto('/order/' + $page.params.id);
 				}
 			}
