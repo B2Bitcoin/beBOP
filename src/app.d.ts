@@ -27,6 +27,7 @@ declare global {
 			}>;
 			clientIp?: string;
 			language: string;
+			theme: string;
 		}
 		// interface PageData {}
 		// interface Platform {}

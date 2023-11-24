@@ -25,6 +25,9 @@
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { useI18n } from '$lib/i18n';
+	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
+	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
+	import theme from '$lib/stores/theme';
 
 	export let data;
 
@@ -79,6 +82,7 @@
 		cartOpen = false;
 	}
 
+	$: logoPicture = $theme === 'dark' ? data.logoPictureDark : data.logoPicture;
 	const { t } = useI18n();
 </script>
 
@@ -93,16 +97,16 @@
 		<header class="header items-center flex h-[100px]">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
 				<a class="flex items-center gap-4" href="/">
-					{#if data.logoPicture}
-						{#if data.logoWide}
-							<Picture class="h-[60px] w-auto" picture={data.logoPicture} />
+					{#if logoPicture}
+						{#if data.logo.isWide}
+							<Picture class="h-[60px] w-auto" picture={logoPicture} />
 						{:else}
-							<Picture class="h-[60px] w-[60px] rounded-full" picture={data.logoPicture} />
+							<Picture class="h-[60px] w-[60px] rounded-full" picture={logoPicture} />
 						{/if}
 					{:else}
 						<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="Main logo" />
 					{/if}
-					{#if !data.logoWide}
+					{#if !data.logo.isWide}
 						<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
 					{/if}
 				</a>
@@ -177,7 +181,7 @@
 						</div>
 						<div class="border-r-[1px] mx-1 border-gray-800 h-10 border-solid" />
 					{/if}
-					<div class="relative">
+					<div class="flex flex-row relative">
 						<a
 							href="/cart"
 							on:click={(ev) => {
@@ -228,7 +232,10 @@
 													if (actionCount === currentCount) {
 														if (result.type === 'redirect') {
 															// Invalidate all to remove 0-quantity items
-															await goto(result.location, { noScroll: true, invalidateAll: true });
+															await goto(result.location, {
+																noScroll: true,
+																invalidateAll: true
+															});
 															return;
 														}
 														if (result.type === 'error' && result.error?.message) {
@@ -311,6 +318,21 @@
 								</div>
 							</Popup>
 						{/if}
+						<button
+							type="button"
+							on:click={() => {
+								$theme = 'light';
+								document.querySelector('html')?.classList.remove('dark');
+							}}><IconModeLight class="ml-4 hidden dark:inline" /></button
+						>
+						<button
+							type="button"
+							on:click={() => {
+								$theme = 'dark';
+								document.querySelector('html')?.classList.add('dark');
+							}}
+							><IconModeDark class="ml-4 dark:hidden" />
+						</button>
 					</div>
 				</div>
 			</div>

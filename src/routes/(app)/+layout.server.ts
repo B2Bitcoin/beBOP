@@ -29,11 +29,13 @@ export async function load(params) {
 	depends(UrlDependency.Cart);
 
 	const cart = await getCartFromDb({ user: userIdentifier(locals) });
-
-	const logoPicture = runtimeConfig.logo
+	const logoPicture = runtimeConfig.logo.pictureId
 		? await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })
 		: null;
-
+	const logoPictureDark = runtimeConfig.logo.darkModePictureId
+		? (await collections.pictures.findOne({ _id: runtimeConfig.logo.darkModePictureId })) ||
+		  logoPicture
+		: logoPicture;
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
 		vatExempted: runtimeConfig.vatExempted,
@@ -69,13 +71,13 @@ export async function load(params) {
 		},
 		brandName: runtimeConfig.brandName,
 		logoPicture,
-		logoWide: runtimeConfig.logo.isWide,
+		logoPictureDark,
+		logo: runtimeConfig.logo,
 		links: {
 			footer: runtimeConfig.footerLinks,
 			navbar: runtimeConfig.navbarLinks,
 			topbar: runtimeConfig.topbarLinks
 		},
-		logo: runtimeConfig.logo,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
