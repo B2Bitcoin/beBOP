@@ -24,7 +24,9 @@ export const actions = {
 					.optional(),
 				navbarLinks: z
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional()
+					.optional(),
+				usersDarkDefaultTheme: z.boolean({ coerce: true }),
+				employeesDarkDefaultTheme: z.boolean({ coerce: true })
 			})
 			.parse(json);
 
@@ -66,6 +68,48 @@ export const actions = {
 					}
 				);
 			}
+		}
+
+		if (
+			res.usersDarkDefaultTheme &&
+			res.usersDarkDefaultTheme !== runtimeConfig.usersDarkDefaultTheme
+		) {
+			runtimeConfig.usersDarkDefaultTheme = res.usersDarkDefaultTheme;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'usersDarkDefaultTheme'
+				},
+				{
+					$set: {
+						data: res.usersDarkDefaultTheme,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+
+		if (
+			res.employeesDarkDefaultTheme &&
+			res.employeesDarkDefaultTheme !== runtimeConfig.employeesDarkDefaultTheme
+		) {
+			runtimeConfig.employeesDarkDefaultTheme = res.employeesDarkDefaultTheme;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'employeesDarkDefaultTheme'
+				},
+				{
+					$set: {
+						data: res.employeesDarkDefaultTheme,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
 		}
 	}
 };

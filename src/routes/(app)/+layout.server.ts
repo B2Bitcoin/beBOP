@@ -73,6 +73,8 @@ export async function load(params) {
 		logoPicture,
 		logoPictureDark,
 		logo: runtimeConfig.logo,
+		usersDarkDefaultTheme: runtimeConfig.usersDarkDefaultTheme,
+		employeesDarkefaulTheme: runtimeConfig.employeesDarkDefaultTheme,
 		links: {
 			footer: runtimeConfig.footerLinks,
 			navbar: runtimeConfig.navbarLinks,

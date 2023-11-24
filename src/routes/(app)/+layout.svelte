@@ -28,6 +28,7 @@
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
+	import { browser } from '$app/environment';
 
 	export let data;
 
@@ -80,6 +81,11 @@
 
 	$: if (items.length === 0) {
 		cartOpen = false;
+	}
+	$: {
+		if (browser && data.usersDarkDefaultTheme && !window.localStorage.getItem('theme')) {
+			$theme = 'dark';
+		}
 	}
 
 	$: logoPicture = $theme === 'dark' ? data.logoPictureDark : data.logoPicture;
@@ -322,14 +328,12 @@
 							type="button"
 							on:click={() => {
 								$theme = 'light';
-								document.querySelector('html')?.classList.remove('dark');
 							}}><IconModeLight class="ml-4 hidden dark:inline" /></button
 						>
 						<button
 							type="button"
 							on:click={() => {
 								$theme = 'dark';
-								document.querySelector('html')?.classList.add('dark');
 							}}
 							><IconModeDark class="ml-4 dark:hidden" />
 						</button>
