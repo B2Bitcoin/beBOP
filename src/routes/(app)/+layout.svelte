@@ -85,7 +85,6 @@
 	$: {
 		if (browser && data.usersDarkDefaultTheme && !window.localStorage.getItem('theme')) {
 			$theme = 'dark';
-			document.querySelector('html')?.classList.add('dark');
 		}
 	}
 
@@ -329,14 +328,12 @@
 							type="button"
 							on:click={() => {
 								$theme = 'light';
-								document.querySelector('html')?.classList.remove('dark');
 							}}><IconModeLight class="ml-4 hidden dark:inline" /></button
 						>
 						<button
 							type="button"
 							on:click={() => {
 								$theme = 'dark';
-								document.querySelector('html')?.classList.add('dark');
 							}}
 							><IconModeDark class="ml-4 dark:hidden" />
 						</button>
