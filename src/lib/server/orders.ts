@@ -435,7 +435,7 @@ export async function createOrder(
 										currency: runtimeConfig.sumUp.currency,
 										checkout_reference: orderId,
 										merchant_code: runtimeConfig.sumUp.merchantCode,
-										redirect_url: `${ORIGIN}/order/${orderId}?status=success`,
+										redirect_url: `${ORIGIN}/order/${orderId}`,
 										description: 'Order ' + orderNumber,
 										valid_until: expiresAt.toISOString()
 									})
