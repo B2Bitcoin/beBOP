@@ -133,7 +133,7 @@ export interface Order extends Timestamps {
 		method: 'bitcoin' | 'lightning' | 'cash' | 'card';
 		status: OrderPaymentStatus;
 		expiresAt: Date;
-		/** Bitcoin / LN address */
+		/** Bitcoin / LN address, payment link */
 		address?: string;
 		paidAt?: Date;
 		/** For lightning addresses, contains the hash to look up the invoice */

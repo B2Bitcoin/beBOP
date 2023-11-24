@@ -197,7 +197,7 @@
 				</div>
 			</div>
 			<div class="flex justify-end">
-				<a href="/checkout" class="btn btn-black w-80">{t('cart.cta.checkout')}</a>
+				<a href="/checkout" class="btn body-cta body-mainCTA">{t('cart.cta.checkout')}</a>
 			</div>
 		{:else}
 			<p>{t('cart.empty')}</p>

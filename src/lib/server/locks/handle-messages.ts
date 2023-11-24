@@ -13,6 +13,7 @@ import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
 import { building } from '$app/environment';
+import { paymentMethods } from '../payment-methods';
 
 const lock = new Lock('received-messages');
 
@@ -123,13 +124,16 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 							continue;
 						}
 
-						if (arg.enum && !arg.enum.includes(rawArg)) {
-							await send(
-								`Invalid syntax. Usage: "${usage(commandName)}", ${
-									arg.name
-								} must be one of: ${arg.enum.join(', ')}.`
-							);
-							break out;
+						if (arg.enum) {
+							const enumVal = typeof arg.enum === 'function' ? arg.enum() : arg.enum;
+							if (!enumVal.includes(rawArg)) {
+								await send(
+									`Invalid syntax. Usage: "${usage(commandName)}", ${
+										arg.name
+									} must be one of: ${enumVal.join(', ')}.`
+								);
+								break out;
+							}
 						}
 
 						args[arg.name] = rawArgs[i];
@@ -192,7 +196,7 @@ const commands: Record<
 		description: string;
 		args?: Array<{
 			name: string;
-			enum?: Array<string>;
+			enum?: Array<string> | (() => Readonly<Array<string>>);
 			default?: string;
 		}>;
 		execute: (
@@ -416,7 +420,7 @@ const commands: Record<
 	checkout: {
 		description: 'Checkout your cart',
 		maintenanceBlocked: true,
-		args: [{ name: 'paymentMethod', enum: ['bitcoin', 'lightning'] }],
+		args: [{ name: 'paymentMethod', enum: () => paymentMethods() }],
 		execute: async (send, { senderNpub, args }) => {
 			const paymentMethod = args.paymentMethod;
 
@@ -448,11 +452,12 @@ const commands: Record<
 				}));
 
 			// Should not happen
-			if (!typedInclude(['bitcoin', 'lightning'], paymentMethod)) {
+			if (!typedInclude(paymentMethods(), paymentMethod)) {
 				await send(
 					'Invalid payment method: ' +
 						paymentMethod +
-						'. Available payment methods: bitcoin, lightning'
+						'. Available payment methods: ' +
+						paymentMethods().join(', ')
 				);
 				return;
 			}
@@ -599,7 +604,9 @@ function usage(commandName: string) {
 	return `${commandName} ${(command.args || [])
 		.map(
 			(arg) =>
-				` [${arg.enum ? arg.enum.join('|') : arg.name}${arg.default ? `=${arg.default}` : ''}]`
+				` [${
+					arg.enum ? (typeof arg.enum === 'function' ? arg.enum() : arg.enum).join('|') : arg.name
+				}${arg.default ? `=${arg.default}` : ''}]`
 		)
 		.join('')}`.trim();
 }
