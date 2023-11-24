@@ -67,7 +67,9 @@
 					<ul>
 						<li>
 							{t('order.paymentAddress')}: {#if data.order.payment.method === 'card'}
-								<a href="/order/{data.order._id}/pay" class="body-hyperlink break-all break-words"
+								<a
+									href="/order/{data.order._id}/pay"
+									class="body-hyperlink underline break-all break-words"
 									>{$page.url.origin}/{data.order._id}/pay</a
 								>
 							{:else}

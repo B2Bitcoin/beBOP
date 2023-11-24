@@ -1,6 +1,8 @@
 import { collections } from '$lib/server/database';
 import { picturesForProducts } from '$lib/server/picture';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { getS3DownloadLink } from '$lib/server/s3';
+import { isSumupEnabled } from '$lib/server/sumup.js';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { getConfirmationBlocks } from '$lib/utils/getConfirmationBlocks.js';
 import { error, redirect } from '@sveltejs/kit';
@@ -21,6 +23,29 @@ export async function load({ params, depends }) {
 	const digitalFiles = await collections.digitalFiles
 		.find({ productId: { $in: order.items.map((item) => item.product._id) } })
 		.toArray();
+
+	if (order.payment.method === 'card' && order.payment.status === 'pending' && isSumupEnabled()) {
+		const response = await fetch(
+			'https://api.sumup.com/v0.1/checkouts/' + order.payment.checkoutId,
+			{
+				headers: {
+					Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
+				}
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error('Failed to fetch checkout status');
+		}
+
+		const checkout = await response.json();
+
+		if (checkout.status === 'PAID') {
+			order.payment.status = 'paid';
+
+			// order-lock will take care of updating in background
+		}
+	}
 
 	return {
 		confirmationBlocksRequired: getConfirmationBlocks(order.totalPrice.amount),
