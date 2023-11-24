@@ -5,6 +5,24 @@
 <h1 class="text-3xl">Layout</h1>
 
 <form method="post" class="flex flex-col gap-4">
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="usersDarkDefaultTheme"
+			class="form-checkbox"
+			checked={data.usersDarkDefaultTheme}
+		/>
+		Use dark theme as default theme for users
+	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="employeesDarkDefaultTheme"
+			class="form-checkbox"
+			checked={data.employeesDarkefaulTheme}
+		/>
+		Use dark theme as default theme for employees
+	</label>
 	<h2 class="text-2xl">Top bar</h2>
 
 	<label class="form-label">

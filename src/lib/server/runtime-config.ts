@@ -106,7 +106,9 @@ const defaultConfig = {
 	},
 	bity: {
 		clientId: ''
-	}
+	},
+	usersDarkDefaultTheme: false,
+	employeesDarkDefaultTheme: false
 };
 
 exchangeRate.set({
