@@ -83,7 +83,7 @@
 		cartOpen = false;
 	}
 	$: {
-		if (browser && data.usersDarkDefaultTheme && !localStorage.getItem('theme')) {
+		if (browser && data.usersDarkDefaultTheme && !window.localStorage.getItem('theme')) {
 			$theme = 'dark';
 			document.querySelector('html')?.classList.add('dark');
 		}
