@@ -20,6 +20,7 @@ const defaultConfig = {
 	BTC_EUR: 30_000,
 	BTC_CHF: 30_000,
 	BTC_USD: 30_000,
+	BTC_ZAR: 700_000,
 	BTC_SAT: SATOSHIS_PER_BTC,
 	mainCurrency: 'BTC' as Currency,
 	secondaryCurrency: 'EUR' as Currency | null,

@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-export const CURRENCIES = ['BTC', 'CHF', 'EUR', 'USD', 'SAT'] as const;
+export const CURRENCIES = ['BTC', 'CHF', 'EUR', 'USD', 'ZAR', 'SAT'] as const;
 export type Currency = (typeof CURRENCIES)[number];
 
 export const SATOSHIS_PER_BTC = 100_000_000;
@@ -10,6 +10,7 @@ export const MININUM_PER_CURRENCY = {
 	CHF: 0.01,
 	EUR: 0.01,
 	USD: 0.01,
+	ZAR: 0.01,
 	SAT: 1
 } as const;
 
@@ -18,6 +19,7 @@ export const FRACTION_DIGITS_PER_CURRENCY = {
 	CHF: 2,
 	EUR: 2,
 	USD: 2,
+	ZAR: 2,
 	SAT: 0
 } as const;
 

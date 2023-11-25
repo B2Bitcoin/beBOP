@@ -13,7 +13,7 @@ async function maintainExchangeRate() {
 			continue;
 		}
 
-		for (const currencyPair of ['BTC_EUR', 'BTC_CHF', 'BTC_USD'] as const) {
+		for (const currencyPair of ['BTC_EUR', 'BTC_CHF', 'BTC_USD', 'BTC_ZAR'] as const) {
 			try {
 				const doc = await collections.runtimeConfig.findOne({ _id: currencyPair });
 
