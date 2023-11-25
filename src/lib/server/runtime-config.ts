@@ -1,7 +1,7 @@
 import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
-import { exchangeRate } from '$lib/stores/exchangeRate';
-import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
+import { defaultExchangeRate, exchangeRate } from '$lib/stores/exchangeRate';
+import type { Currency } from '$lib/types/Currency';
 import type { DeliveryFees } from '$lib/types/DeliveryFees';
 import { currencies } from '$lib/stores/currencies';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
@@ -18,16 +18,7 @@ import { typedKeys } from '$lib/utils/typedKeys';
 const defaultConfig = {
 	adminHash: '',
 	isAdminCreated: false,
-	exchangeRate: {
-		EUR: 30_000,
-		CHF: 30_000,
-		USD: 30_000,
-		ZAR: 700_000,
-		CDF: 96_755_481,
-		XOF: 22_621_258,
-		XAF: 22_621_258,
-		SAT: SATOSHIS_PER_BTC
-	},
+	exchangeRate: defaultExchangeRate,
 	mainCurrency: 'BTC' as Currency,
 	secondaryCurrency: 'EUR' as Currency | null,
 	/**

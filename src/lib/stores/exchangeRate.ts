@@ -2,7 +2,7 @@ import { writable } from 'svelte/store';
 import type { RuntimeConfig } from '$lib/server/runtime-config';
 import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
 
-export const exchangeRate = writable<RuntimeConfig['exchangeRate']>({
+export const defaultExchangeRate = {
 	EUR: 30_000,
 	CHF: 30_000,
 	USD: 30_000,
@@ -11,4 +11,8 @@ export const exchangeRate = writable<RuntimeConfig['exchangeRate']>({
 	XOF: 22_621_258,
 	XAF: 22_621_258,
 	SAT: SATOSHIS_PER_BTC
-});
+};
+
+export type ExchangeRate = typeof defaultExchangeRate;
+
+export const exchangeRate = writable<RuntimeConfig['exchangeRate']>(defaultExchangeRate);
