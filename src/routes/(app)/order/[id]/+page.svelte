@@ -215,31 +215,22 @@
 						</div>
 
 						<div class="flex flex-col ml-auto items-end justify-center">
-							{#if item.customPrice}
+							<PriceTag
+								class="text-2xl truncate"
+								amount={item.quantity *
+									(item.amountsInOtherCurrencies.main.customPrice?.amount ??
+										item.amountsInOtherCurrencies.main.price.amount)}
+								currency={item.amountsInOtherCurrencies.main.customPrice?.currency ??
+									item.amountsInOtherCurrencies.main.price.currency}
+							/>
+							{#if item.amountsInOtherCurrencies.secondary}
 								<PriceTag
 									class="text-2xl truncate"
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									main
-								/>
-								<PriceTag
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									class="text-base truncate"
-									secondary
-								/>
-							{:else}
-								<PriceTag
-									class="text-2xl truncate"
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									main
-								/>
-								<PriceTag
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									class="text-base truncate"
-									secondary
+									amount={item.quantity *
+										(item.amountsInOtherCurrencies.secondary.customPrice?.amount ??
+											item.amountsInOtherCurrencies.secondary.price.amount)}
+									currency={item.amountsInOtherCurrencies.secondary.customPrice?.currency ??
+										item.amountsInOtherCurrencies.secondary.price.currency}
 								/>
 							{/if}
 						</div>
@@ -343,7 +334,7 @@
 						<PriceTag
 							class="self-end"
 							amount={data.order.amountsInOtherCurrencies.secondary.totalPrice.amount}
-							currency={data.order.amountsInOtherCurrencies.secondary	.totalPrice.currency}
+							currency={data.order.amountsInOtherCurrencies.secondary.totalPrice.currency}
 						/>
 					{/if}
 				</div>
