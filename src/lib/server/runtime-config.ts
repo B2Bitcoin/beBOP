@@ -13,15 +13,21 @@ import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import { building } from '$app/environment';
 import type { SellerIdentity } from '$lib/types/SellerIdentity';
 import { isUniqueConstraintError } from './utils/isUniqueConstraintError';
+import { typedKeys } from '$lib/utils/typedKeys';
 
 const defaultConfig = {
 	adminHash: '',
 	isAdminCreated: false,
-	BTC_EUR: 30_000,
-	BTC_CHF: 30_000,
-	BTC_USD: 30_000,
-	BTC_ZAR: 700_000,
-	BTC_SAT: SATOSHIS_PER_BTC,
+	exchangeRate: {
+		EUR: 30_000,
+		CHF: 30_000,
+		USD: 30_000,
+		ZAR: 700_000,
+		CDF: 96_755_481,
+		XOF: 22_621_258,
+		XAF: 22_621_258,
+		SAT: SATOSHIS_PER_BTC
+	},
 	mainCurrency: 'BTC' as Currency,
 	secondaryCurrency: 'EUR' as Currency | null,
 	/**
@@ -112,12 +118,7 @@ const defaultConfig = {
 	employeesDarkDefaultTheme: false
 };
 
-exchangeRate.set({
-	BTC_EUR: defaultConfig.BTC_EUR,
-	BTC_CHF: defaultConfig.BTC_CHF,
-	BTC_USD: defaultConfig.BTC_USD,
-	BTC_SAT: defaultConfig.BTC_SAT
-});
+exchangeRate.set(defaultConfig.exchangeRate);
 
 currencies.set({
 	main: defaultConfig.mainCurrency,
@@ -154,12 +155,13 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 		}
 	}
 
-	exchangeRate.set({
-		BTC_EUR: runtimeConfig.BTC_EUR,
-		BTC_CHF: runtimeConfig.BTC_CHF,
-		BTC_USD: runtimeConfig.BTC_USD,
-		BTC_SAT: runtimeConfig.BTC_SAT
-	});
+	for (const currency of typedKeys(defaultConfig.exchangeRate)) {
+		if (!(currency in runtimeConfig.exchangeRate)) {
+			runtimeConfig.exchangeRate[currency] = defaultConfig.exchangeRate[currency];
+		}
+	}
+
+	exchangeRate.set(runtimeConfig.exchangeRate);
 
 	currencies.set({
 		main: runtimeConfig.mainCurrency,

@@ -131,11 +131,10 @@
 
 <h2 class="text-2xl">Current exchange rate</h2>
 
-<pre>{JSON.stringify(
-		pick(data.exchangeRate, ['BTC_CHF', 'BTC_EUR', 'BTC_USD']),
-		null,
-		'\t'
-	).replaceAll(/[\t{}]/g, '')}</pre>
+<pre>{JSON.stringify(pick(data.exchangeRate, ['CHF', 'EUR', 'USD']), null, '\t').replaceAll(
+		/[\t{}]/g,
+		''
+	)}</pre>
 
 <h2 class="text-2xl">Cash-out amount (BTC)</h2>
 
