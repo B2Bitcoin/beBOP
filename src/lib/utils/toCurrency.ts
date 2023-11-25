@@ -15,13 +15,10 @@ export function toCurrency(
 		);
 	}
 
-	const bitcoinAmount =
-		fromCurrency === 'BTC' ? amount : amount / get(exchangeRate)[`BTC_${fromCurrency}` as const];
+	const bitcoinAmount = fromCurrency === 'BTC' ? amount : amount / get(exchangeRate)[fromCurrency];
 
 	const ret =
-		targetCurrency === 'BTC'
-			? bitcoinAmount
-			: bitcoinAmount * get(exchangeRate)[`BTC_${targetCurrency}` as const];
+		targetCurrency === 'BTC' ? bitcoinAmount : bitcoinAmount * get(exchangeRate)[targetCurrency];
 
 	return (
 		Math.round(ret * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[targetCurrency])) /

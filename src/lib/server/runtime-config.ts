@@ -1,7 +1,7 @@
 import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { collections } from './database';
-import { exchangeRate } from '$lib/stores/exchangeRate';
-import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
+import { defaultExchangeRate, exchangeRate } from '$lib/stores/exchangeRate';
+import type { Currency } from '$lib/types/Currency';
 import type { DeliveryFees } from '$lib/types/DeliveryFees';
 import { currencies } from '$lib/stores/currencies';
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from '$env/static/private';
@@ -13,14 +13,12 @@ import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import { building } from '$app/environment';
 import type { SellerIdentity } from '$lib/types/SellerIdentity';
 import { isUniqueConstraintError } from './utils/isUniqueConstraintError';
+import { typedKeys } from '$lib/utils/typedKeys';
 
 const defaultConfig = {
 	adminHash: '',
 	isAdminCreated: false,
-	BTC_EUR: 30_000,
-	BTC_CHF: 30_000,
-	BTC_USD: 30_000,
-	BTC_SAT: SATOSHIS_PER_BTC,
+	exchangeRate: defaultExchangeRate,
 	mainCurrency: 'BTC' as Currency,
 	secondaryCurrency: 'EUR' as Currency | null,
 	/**
@@ -111,12 +109,7 @@ const defaultConfig = {
 	employeesDarkDefaultTheme: false
 };
 
-exchangeRate.set({
-	BTC_EUR: defaultConfig.BTC_EUR,
-	BTC_CHF: defaultConfig.BTC_CHF,
-	BTC_USD: defaultConfig.BTC_USD,
-	BTC_SAT: defaultConfig.BTC_SAT
-});
+exchangeRate.set(defaultConfig.exchangeRate);
 
 currencies.set({
 	main: defaultConfig.mainCurrency,
@@ -153,12 +146,13 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 		}
 	}
 
-	exchangeRate.set({
-		BTC_EUR: runtimeConfig.BTC_EUR,
-		BTC_CHF: runtimeConfig.BTC_CHF,
-		BTC_USD: runtimeConfig.BTC_USD,
-		BTC_SAT: runtimeConfig.BTC_SAT
-	});
+	for (const currency of typedKeys(defaultConfig.exchangeRate)) {
+		if (!(currency in runtimeConfig.exchangeRate)) {
+			runtimeConfig.exchangeRate[currency] = defaultConfig.exchangeRate[currency];
+		}
+	}
+
+	exchangeRate.set(runtimeConfig.exchangeRate);
 
 	currencies.set({
 		main: runtimeConfig.mainCurrency,

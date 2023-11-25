@@ -3,6 +3,7 @@
 	import IconRefresh from '$lib/components/icons/IconRefresh.svelte';
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
+	import { exchangeRate } from '$lib/stores/exchangeRate';
 
 	export let data;
 	export let form;
@@ -29,7 +30,7 @@
 <p>Configured URL: {data.origin}</p>
 
 <div>
-	Exchange Rate: <pre>{JSON.stringify(data.exchangeRate, null, 2)}</pre>
+	Exchange Rate: <pre>{JSON.stringify($exchangeRate, null, 2)}</pre>
 </div>
 
 <form method="post" id="overwrite" action="?/overwriteCurrency" on:submit={onOverwrite} use:enhance>
