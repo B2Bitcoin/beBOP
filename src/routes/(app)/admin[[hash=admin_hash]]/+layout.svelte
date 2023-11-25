@@ -31,9 +31,12 @@
 		}
 	}
 	$: isLoginPage = /^\/admin(-[0-9a-zA-Z]+)?\/login/.test($page.url.pathname);
-	$: sectionName =
-		decodeURIComponent($page.url.hash.replace('#', '')) ||
-		findSectionByHref(decodeURIComponent($page.url.pathname));
+
+	let sectionName = '';
+	function updateSectionNameFromUrl() {
+		sectionName = findSectionByHref(decodeURIComponent($page.url.pathname)) || '';
+	}
+	$: updateSectionNameFromUrl(), $page.url.pathname;
 </script>
 
 {#if !isLoginPage}
@@ -60,6 +63,8 @@
 					<span class="text-xl hidden sm:inline">
 						<a
 							class={sectionName === adminLink.section ? 'underline' : ''}
+							on:mouseenter={() => (sectionName = adminLink.section)}
+							on:click|preventDefault={() => (sectionName = adminLink.section)}
 							href="#{adminLink.section}">{adminLink.section}</a
 						>
 					</span>
