@@ -23,7 +23,7 @@ async function maintainExchangeRate() {
 		try {
 			const doc = await collections.runtimeConfig.findOne({ _id: 'exchangeRate' });
 
-			if (doc && differenceInMinutes(new Date(), doc.updatedAt) < 10) {
+			if (doc && differenceInMinutes(new Date(), doc.updatedAt) < 5) {
 				continue;
 			}
 
@@ -33,14 +33,17 @@ async function maintainExchangeRate() {
 				throw new Error(`Coinbase API returned ${resp.status}`);
 			}
 
-			const json: { data: { rates: Record<string, number> }; currency: string } = await resp.json();
+			const json: { data: { rates: Record<string, string> }; currency: string } = await resp.json();
 			const rates = json.data.rates;
 
 			const currentExchangeRates = runtimeConfig.exchangeRate;
 
 			for (const currency of typedKeys(currentExchangeRates)) {
 				if (currency in rates) {
-					currentExchangeRates[currency] = rates[currency];
+					const number = Math.floor(+rates[currency]);
+					if (!isNaN(number)) {
+						currentExchangeRates[currency] = number;
+					}
 				}
 			}
 
