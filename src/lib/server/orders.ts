@@ -379,7 +379,75 @@ export async function createOrder(
 				number: orderNumber,
 				createdAt: new Date(),
 				updatedAt: new Date(),
-				items,
+				items: items.map((item) => ({
+					quantity: item.quantity,
+					product: item.product,
+					customPrice: item.customPrice,
+					amountsInOtherCurrencies: {
+						main: {
+							price: {
+								amount: toCurrency(
+									runtimeConfig.mainCurrency,
+									item.product.price.amount,
+									item.product.price.currency
+								),
+								currency: runtimeConfig.mainCurrency
+							},
+							...(item.customPrice && {
+								customPrice: {
+									amount: toCurrency(
+										runtimeConfig.mainCurrency,
+										item.customPrice.amount,
+										item.customPrice.currency
+									),
+									currency: runtimeConfig.mainCurrency
+								}
+							})
+						},
+						...(runtimeConfig.secondaryCurrency && {
+							secondary: {
+								price: {
+									amount: toCurrency(
+										runtimeConfig.secondaryCurrency,
+										item.product.price.amount,
+										item.product.price.currency
+									),
+									currency: runtimeConfig.secondaryCurrency
+								},
+								...(item.customPrice && {
+									customPrice: {
+										amount: toCurrency(
+											runtimeConfig.secondaryCurrency,
+											item.customPrice.amount,
+											item.customPrice.currency
+										),
+										currency: runtimeConfig.secondaryCurrency
+									}
+								})
+							}
+						}),
+						priceReference: {
+							price: {
+								amount: toCurrency(
+									runtimeConfig.priceReferenceCurrency,
+									item.product.price.amount,
+									item.product.price.currency
+								),
+								currency: runtimeConfig.priceReferenceCurrency
+							},
+							...(item.customPrice && {
+								customPrice: {
+									amount: toCurrency(
+										runtimeConfig.priceReferenceCurrency,
+										item.customPrice.amount,
+										item.customPrice.currency
+									),
+									currency: runtimeConfig.priceReferenceCurrency
+								}
+							})
+						}
+					}
+				})),
 				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
 				...(vat && { vat }),
 				totalPrice:

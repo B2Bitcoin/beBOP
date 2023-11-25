@@ -20,6 +20,38 @@ export interface Order extends Timestamps {
 		product: Product;
 		quantity: number;
 		customPrice?: { amount: number; currency: Currency };
+		amountsInOtherCurrencies: {
+			main: {
+				price: {
+					amount: number;
+					currency: Currency;
+				};
+				customPrice?: {
+					amount: number;
+					currency: Currency;
+				};
+			};
+			priceReference: {
+				price: {
+					amount: number;
+					currency: Currency;
+				};
+				customPrice?: {
+					amount: number;
+					currency: Currency;
+				};
+			};
+			secondary?: {
+				price: {
+					amount: number;
+					currency: Currency;
+				};
+				customPrice?: {
+					amount: number;
+					currency: Currency;
+				};
+			};
+		};
 	}>;
 
 	shippingAddress?: {

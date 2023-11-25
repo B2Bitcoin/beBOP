@@ -75,7 +75,8 @@ export async function load({ params, depends }) {
 				picture: pictures.find((picture) => picture.productId === item.product._id),
 				digitalFiles: digitalFiles.filter(
 					(digitalFile) => digitalFile.productId === item.product._id
-				)
+				),
+				amountsInOtherCurrencies: item.amountsInOtherCurrencies
 			})),
 			totalPrice: {
 				amount: order.totalPrice.amount,
