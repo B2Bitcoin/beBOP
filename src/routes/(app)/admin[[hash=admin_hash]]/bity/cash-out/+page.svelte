@@ -9,6 +9,7 @@
 	import { browser } from '$app/environment';
 	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 	import { useI18n } from '$lib/i18n.js';
+	import { exchangeRate } from '$lib/stores/exchangeRate';
 
 	export let data;
 
@@ -131,7 +132,7 @@
 
 <h2 class="text-2xl">Current exchange rate</h2>
 
-<pre>{JSON.stringify(pick(data.exchangeRate, ['CHF', 'EUR', 'USD']), null, '\t').replaceAll(
+<pre>{JSON.stringify(pick($exchangeRate, ['CHF', 'EUR', 'USD']), null, '\t').replaceAll(
 		/[\t{}]/g,
 		''
 	)}</pre>

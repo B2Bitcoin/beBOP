@@ -25,7 +25,6 @@ export async function load(params) {
 
 	const { depends, locals } = params;
 
-	depends(UrlDependency.ExchangeRate);
 	depends(UrlDependency.Cart);
 
 	const cart = await getCartFromDb({ user: userIdentifier(locals) });

@@ -59,8 +59,25 @@
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
-		// Update exchange rate every 5 minutes
-		const interval = setInterval(() => invalidate(UrlDependency.ExchangeRate), 1000 * 5 * 60);
+		// Refresh exchange rate every 5 minutes
+		const interval = setInterval(
+			() =>
+				fetch('/exchange-rate', {
+					headers: {
+						Accept: 'application/json'
+					}
+				})
+					.then((r) => {
+						if (!r.ok) {
+							throw new Error('Error when fetching exchange rate: ' + r.status);
+						}
+						return r.json();
+					})
+					.then((val) => {
+						$exchangeRate = val;
+					}),
+			5 * 60_000
+		);
 
 		return () => clearInterval(interval);
 	});

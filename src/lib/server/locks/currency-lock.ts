@@ -23,7 +23,8 @@ async function maintainExchangeRate() {
 		try {
 			const doc = await collections.runtimeConfig.findOne({ _id: 'exchangeRate' });
 
-			if (doc && differenceInMinutes(new Date(), doc.updatedAt) < 5) {
+			if (doc && differenceInMinutes(new Date(), doc.updatedAt) < 10) {
+				await setTimeout(5_000);
 				continue;
 			}
 
