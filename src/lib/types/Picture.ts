@@ -31,6 +31,4 @@ export interface Picture extends Timestamps {
 	};
 }
 
-export const DEFAULT_LOGO = 'https://coyo.dev/icons/logo.png';
-
 export const DEFAULT_BEBOP_LOGO = 'https://i.imgur.com/2uPXGzo.png';

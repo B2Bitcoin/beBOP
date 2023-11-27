@@ -127,7 +127,7 @@
 							<Picture class="h-[60px] w-[60px] rounded-full" picture={logoPicture} />
 						{/if}
 					{:else}
-						<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="Main logo" />
+						<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_BEBOP_LOGO} alt="Main logo" />
 					{/if}
 					{#if !data.logo.isWide}
 						<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
