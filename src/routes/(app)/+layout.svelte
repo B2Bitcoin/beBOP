@@ -82,11 +82,6 @@
 	$: if (items.length === 0) {
 		cartOpen = false;
 	}
-	$: {
-		if (browser && data.usersDarkDefaultTheme && !window.localStorage.getItem('theme')) {
-			$theme = 'dark';
-		}
-	}
 
 	$: logoPicture = $theme === 'dark' ? data.logoPictureDark : data.logoPicture;
 	const { t } = useI18n();
