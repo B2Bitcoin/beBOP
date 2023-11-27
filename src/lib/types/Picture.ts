@@ -30,5 +30,3 @@ export interface Picture extends Timestamps {
 		formats: ImageData[];
 	};
 }
-
-export const DEFAULT_BEBOP_LOGO = 'https://i.imgur.com/2uPXGzo.png';
