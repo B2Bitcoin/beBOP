@@ -25,7 +25,6 @@ export async function load(params) {
 
 	const { depends, locals } = params;
 
-	depends(UrlDependency.ExchangeRate);
 	depends(UrlDependency.Cart);
 
 	const cart = await getCartFromDb({ user: userIdentifier(locals) });
@@ -39,12 +38,7 @@ export async function load(params) {
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
 		vatExempted: runtimeConfig.vatExempted,
-		exchangeRate: {
-			BTC_EUR: runtimeConfig.BTC_EUR,
-			BTC_USD: runtimeConfig.BTC_USD,
-			BTC_CHF: runtimeConfig.BTC_CHF,
-			BTC_SAT: runtimeConfig.BTC_SAT
-		},
+		exchangeRate: runtimeConfig.exchangeRate,
 		countryCode: locals.countryCode,
 		email: locals.email || locals.sso?.find((sso) => sso.email)?.email,
 		roleId: locals.user?.roleId,
