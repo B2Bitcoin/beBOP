@@ -16,7 +16,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import IconTrash from '$lib/components/icons/IconTrash.svelte';
-	import { DEFAULT_BEBOP_LOGO, DEFAULT_LOGO } from '$lib/types/Picture';
+	import { DEFAULT_BEBOP_LOGO } from '$lib/types/Picture';
 	//import IconMenu from '~icons/ant-design/holder-outlined';
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import { slide } from 'svelte/transition';
