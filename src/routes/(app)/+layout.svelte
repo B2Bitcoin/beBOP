@@ -16,7 +16,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import IconTrash from '$lib/components/icons/IconTrash.svelte';
-	import { DEFAULT_LOGO } from '$lib/types/Picture';
+	import { DEFAULT_BEBOP_LOGO, DEFAULT_LOGO } from '$lib/types/Picture';
 	//import IconMenu from '~icons/ant-design/holder-outlined';
 	import IconMenu from '~icons/ant-design/menu-outlined';
 	import { slide } from 'svelte/transition';
@@ -390,11 +390,7 @@
 					class="font-display text-xl text-white"
 				>
 					<a class="flex items-center gap-4" href="/">
-						{#if logoPicture}
-							<Picture class="h-[60px] w-auto" picture={logoPicture} />
-						{:else}
-							<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="Main logo" />
-						{/if}
+						<img class="h-[50px] w-auto rounded-full" src={DEFAULT_BEBOP_LOGO} alt="Main logo" />
 					</a>
 				</span>
 				<div class="ml-auto flex gap-4 items-center">
