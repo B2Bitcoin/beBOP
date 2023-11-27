@@ -389,13 +389,7 @@
 				<span class="font-light">{t('footer.poweredBy')}</span><span
 					class="font-display text-xl text-white"
 				>
-					<a class="flex items-center gap-4" href="/">
-						{#if logoPicture}
-							<Picture class="h-[60px] w-auto" picture={logoPicture} />
-						{:else}
-							<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="Main logo" />
-						{/if}
-					</a>
+					LaBookinerie.
 				</span>
 				<div class="ml-auto flex gap-4 items-center">
 					{#each data.links.footer as link}
