@@ -30,6 +30,8 @@
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { browser } from '$app/environment';
+	import IconBebopBlue from '$lib/components/icons/IconBebopBlue.svelte';
+	import IconBebopWhite from '$lib/components/icons/IconBebopWhite.svelte';
 
 	export let data;
 
@@ -389,7 +391,12 @@
 			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 grow">
 				<a class="flex items-center gap-4" href="https://github.com/B2Bitcoin/beBOP"
 					><span class="font-light">{t('footer.poweredBy')} </span>
-					<img class="h-[40px] w-auto rounded-full" src={DEFAULT_LOGO} alt="" />
+					{#if $theme === 'dark'}
+						<span><IconBebopBlue /></span>
+					{/if}
+					{#if $theme === 'light'}
+						<span><IconBebopWhite /></span>
+					{/if}
 				</a>
 
 				<div class="ml-auto flex gap-4 items-center">
