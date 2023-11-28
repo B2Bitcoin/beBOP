@@ -16,7 +16,8 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import IconTrash from '$lib/components/icons/IconTrash.svelte';
-	import DEFAULT_LOGO from '$lib/assets/logo_bebop.png';
+	import DEFAULT_LOGO from '$lib/assets/bebop-light.svg';
+	import DEFAULT_LOGO_DARK from '$lib/assets/bebop-dark.svg';
 
 	//import IconMenu from '~icons/ant-design/holder-outlined';
 	import IconMenu from '~icons/ant-design/menu-outlined';
@@ -101,7 +102,7 @@
 		cartOpen = false;
 	}
 	$: {
-		if (browser && data.usersDarkDefaultTheme && !window.localStorage.getItem('theme')) {
+		if (browser && data.usersDarkDefaultTheme) {
 			$theme = 'dark';
 		}
 	}
@@ -128,7 +129,16 @@
 							<Picture class="h-[60px] w-[60px] rounded-full" picture={logoPicture} />
 						{/if}
 					{:else}
-						<img class="h-[60px] w-[60px] rounded-full" src={DEFAULT_LOGO} alt="" />
+						<img
+							class="hidden dark:inline h-[60px] w-[60px] rounded-full"
+							src={DEFAULT_LOGO}
+							alt=""
+						/>
+						<img
+							class="dark:hidden h-[60px] w-[60px] rounded-full"
+							src={DEFAULT_LOGO_DARK}
+							alt=""
+						/>
 					{/if}
 					{#if !data.logo.isWide}
 						<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
@@ -389,7 +399,8 @@
 			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 grow">
 				<a class="flex items-center gap-4" href="https://github.com/B2Bitcoin/beBOP"
 					><span class="font-light">{t('footer.poweredBy')} </span>
-					<img class="h-[40px] w-auto rounded-full" src={DEFAULT_LOGO} alt="" />
+					<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
+					<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
 				</a>
 
 				<div class="ml-auto flex gap-4 items-center">
