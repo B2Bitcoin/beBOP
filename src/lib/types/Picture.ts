@@ -30,5 +30,3 @@ export interface Picture extends Timestamps {
 		formats: ImageData[];
 	};
 }
-
-export const DEFAULT_LOGO = 'https://coyo.dev/icons/logo.png';
