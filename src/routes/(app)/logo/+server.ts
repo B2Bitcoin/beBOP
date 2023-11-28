@@ -2,7 +2,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { redirect } from '@sveltejs/kit';
 import { GET as GET_picture } from '../picture/raw/[id]/format/[width]/+server';
 import { collections } from '$lib/server/database';
-import DEFAULT_LOGO from '$lib/assets/Bebop_fond_blanc.svg';
+import DEFAULT_LOGO from '$lib/assets/bebop-light.svg';
 export const GET = async () => {
 	if (runtimeConfig.logo) {
 		const picture = await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId });
