@@ -79,11 +79,11 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const admin = adminPrefix();
 
-	const isAdminUrl =
-		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
-		!(
-			/^\/admin(-[a-zA-Z0-9]+)?\/(login|logout)(\/|$)/.test(event.url.pathname) // Allow login/logout
-		);
+	const isAdminLoginLogoutUrl = /^\/admin(-[a-zA-Z0-9]+)?\/(login|logout)(\/|$)/.test(
+		event.url.pathname
+	);
+
+	const isAdminUrl = /^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname);
 
 	const cmsPageMaintenanceAvailable = await collections.cmsPages
 		.find({
@@ -198,7 +198,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		});
 	}
 	// Protect any routes under /admin
-	if (isAdminUrl) {
+	if (isAdminUrl && !isAdminLoginLogoutUrl) {
 		if (!event.locals.user) {
 			throw redirect(303, `${admin}/login`);
 		}
