@@ -101,7 +101,7 @@
 		cartOpen = false;
 	}
 	$: {
-		if (browser && data.usersDarkDefaultTheme && !window.localStorage.getItem('theme')) {
+		if (browser && data.usersDarkDefaultTheme) {
 			$theme = 'dark';
 		}
 	}
