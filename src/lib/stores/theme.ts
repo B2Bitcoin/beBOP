@@ -1,7 +1,9 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 
-const theme = writable<'light' | 'dark'>();
+const initialValue = 'light' as const;
+
+const theme = writable<'light' | 'dark'>(initialValue);
 
 theme.subscribe((value: string) => {
 	if (browser) {
