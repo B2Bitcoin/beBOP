@@ -1,4 +1,5 @@
 <svg
+	{...$$restProps}
 	id="ooa"
 	width="auto"
 	height="50"

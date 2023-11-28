@@ -29,7 +29,7 @@
 <div class="flex flex-col mx-auto rounded p-4 sm:flex-row sm:gap-2 {className}">
 	<div class="ml-0 sm:ml-4 w-full sm:w-1/6 flex-col hidden sm:inline">
 		{#if pictures.length > 1}
-			{#each pictures as picture, i}
+			{#each pictures.slice(0, 3) as picture, i}
 				<button type="button" on:click={() => (pictureId = i)}>
 					<PictureComponent
 						{picture}
