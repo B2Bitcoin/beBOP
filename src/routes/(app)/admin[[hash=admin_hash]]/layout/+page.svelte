@@ -85,7 +85,7 @@
 			class="form-checkbox"
 			checked={data.displayCompanyInfo}
 		/>
-		display company identity && company contact
+		Display company identity && company contact
 	</label>
 
 	<h3 class="text-xl">Links</h3>
