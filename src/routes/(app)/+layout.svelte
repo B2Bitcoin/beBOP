@@ -99,10 +99,11 @@
 	$: if (items.length === 0) {
 		cartOpen = false;
 	}
-	$: {
-		if (browser && data.usersDarkDefaultTheme && !window.localStorage.getItem('theme')) {
-			$theme = 'dark';
-		}
+	$: if (browser && !$theme && data.usersDarkDefaultTheme) {
+		$theme = 'dark';
+	}
+	$: if (browser && $theme && !data.usersDarkDefaultTheme) {
+		$theme = 'light';
 	}
 
 	$: logoPicture = $theme === 'dark' ? data.logoPictureDark : data.logoPicture;
