@@ -19,6 +19,7 @@
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
+	import { MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
 
 	export let data;
 
@@ -284,20 +285,19 @@
 					>
 						{#if canBuy}
 							{#if data.product.payWhatYouWant}
+								{@const currency =
+									data.currencies.main === 'BTC' &&
+									toCurrency('BTC', data.product.price.amount, data.product.price.currency) < 0.01
+										? 'SAT'
+										: data.currencies.main}
 								<hr class="border-gray-300 md:hidden mt-4 pb-2" />
 								<div class="flex flex-col gap-2 justify-between">
 									<label class="w-full form-label">
-										{t('product.nameYourPrice', { currency: data.currencies.main })}
+										{t('product.nameYourPrice', { currency })}
 										<input
 											class="form-input"
 											type="number"
-											min={customAmount < 0.01 && data.product.price.amount !== 0
-												? '0.01'
-												: toCurrency(
-														data.currencies.main,
-														data.product.price.amount,
-														data.product.price.currency
-												  )}
+											min={data.product.price.amount !== 0 ? MININUM_PER_CURRENCY[currency] : 0}
 											name="customPrice"
 											bind:value={customAmount}
 											placeholder={t('product.pricePlaceholder')}
