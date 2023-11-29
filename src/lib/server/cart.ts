@@ -11,6 +11,8 @@ import { userQuery } from './user';
 import { removeEmpty } from '$lib/utils/removeEmpty';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { addMinutes } from 'date-fns';
+import type { Currency } from '$lib/types/Currency';
+import { toCurrency } from '$lib/utils/toCurrency';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	if (!params.user.sessionId && !params.user.npub) {
@@ -54,7 +56,11 @@ export async function getCartFromDb(params: { user: UserIdentifier }): Promise<C
 export async function addToCartInDb(
 	product: Product,
 	quantity: number,
-	params: { user: UserIdentifier; totalQuantity?: boolean; customAmount?: number }
+	params: {
+		user: UserIdentifier;
+		totalQuantity?: boolean;
+		customPrice?: { amount: number; currency: Currency };
+	}
 ) {
 	if (
 		params.user.userRoleId === POS_ROLE_ID
@@ -62,6 +68,14 @@ export async function addToCartInDb(
 			: !product.actionSettings?.eShop?.canBeAddedToBasket
 	) {
 		throw error(400, "Product can't be added to basket");
+	}
+
+	if (params.customPrice && !product.payWhatYouWant) {
+		throw error(400, 'Product is not pay what you want');
+	}
+
+	if (params.customPrice && product.type === 'subscription') {
+		throw error(400, 'Product is a subscription, cannot set custom price');
 	}
 
 	if (quantity < 0) {
@@ -86,16 +100,16 @@ export async function addToCartInDb(
 		if (quantity !== 1) {
 			throw error(400, 'You can only order one of this product');
 		}
-		cart.items.push({
-			productId: product._id,
-			quantity: 1,
-			...(params.customAmount &&
-				product.type !== 'subscription' && {
-					customPrice: { amount: params.customAmount, currency: runtimeConfig.mainCurrency }
-				}),
-			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes)
-		});
-	} else if (existingItem) {
+	}
+
+	if (params.customPrice) {
+		params.customPrice.amount = Math.max(
+			params.customPrice.amount,
+			toCurrency(params.customPrice.currency, product.price.amount, product.price.currency)
+		);
+	}
+
+	if (existingItem && !product.standalone) {
 		existingItem.quantity = params.totalQuantity ? quantity : existingItem.quantity + quantity;
 
 		const max = Math.min(
@@ -118,10 +132,9 @@ export async function addToCartInDb(
 		cart.items.push({
 			productId: product._id,
 			quantity: product.type === 'subscription' ? 1 : quantity,
-			...(params.customAmount &&
-				product.type !== 'subscription' && {
-					customPrice: { amount: params.customAmount, currency: runtimeConfig.mainCurrency }
-				}),
+			...(params.customPrice && {
+				customPrice: params.customPrice
+			}),
 			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes)
 		});
 	}

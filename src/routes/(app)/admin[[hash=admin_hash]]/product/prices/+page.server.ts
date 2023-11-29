@@ -29,7 +29,7 @@ export const actions = {
 				})
 				.parse(value);
 
-			const priceAmount = parsePriceAmount(price, currency, true);
+			const priceAmount = parsePriceAmount(price, currency);
 
 			await collections.products.updateOne(
 				{ _id: key },

@@ -29,19 +29,16 @@ export const FRACTION_DIGITS_PER_CURRENCY = Object.freeze({
 	SAT: 0
 }) satisfies Record<Currency, number>;
 
-export function parsePriceAmount(
-	amount: string,
-	currency: Currency,
-	payWhatYouWant: boolean
-): number {
+export function parsePriceAmount(amount: string, currency: Currency): number {
 	//deleted Math.round()
 	const priceAmount =
 		(parseFloat(amount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency])) /
 		Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency]);
-	if (!payWhatYouWant) {
-		if (priceAmount <= MININUM_PER_CURRENCY[currency]) {
-			throw error(400, `Price must be greater than ${MININUM_PER_CURRENCY[currency]} ${currency}`);
-		}
+	if (priceAmount > 0 && priceAmount < MININUM_PER_CURRENCY[currency]) {
+		throw error(
+			400,
+			`Price must be zero or greater than ${MININUM_PER_CURRENCY[currency]} ${currency}`
+		);
 	}
 
 	return priceAmount;

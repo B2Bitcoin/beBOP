@@ -155,6 +155,10 @@
 		@apply cursor-pointer rounded-sm;
 	}
 
+	.form-checkbox:disabled {
+		@apply cursor-not-allowed opacity-50;
+	}
+
 	.form-radio {
 		@apply cursor-pointer;
 	}

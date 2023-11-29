@@ -64,6 +64,10 @@
 		availableDate = undefined;
 	}
 
+	$: if (payWhatYouWant) {
+		standalone = true;
+	}
+
 	async function checkForm(event: SubmitEvent) {
 		submitting = true;
 
@@ -246,6 +250,7 @@
 			class="form-checkbox"
 			type="checkbox"
 			bind:checked={standalone}
+			disabled={payWhatYouWant}
 			name="standalone"
 			on:input={() => priceAmountElement?.setCustomValidity('')}
 		/>

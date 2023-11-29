@@ -19,6 +19,7 @@
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
+	import { FRACTION_DIGITS_PER_CURRENCY, MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
 
 	export let data;
 
@@ -28,11 +29,18 @@
 	const endsAt = data.discount ? new Date(data.discount.endsAt).getTime() : Date.now(); // Convert to timestamp
 	const currentTime = Date.now();
 	const hoursDifference = differenceInHours(endsAt, currentTime);
-	let customAmount =
-		data.product.price.amount !== 0 &&
-		toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency) < 0.01
-			? 0.01
-			: toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency);
+
+	const PWYWCurrency =
+		data.currencies.main === 'BTC' &&
+		toCurrency('BTC', data.product.price.amount, data.product.price.currency) < 0.01
+			? 'SAT'
+			: data.currencies.main;
+	const PWYWMinimum = toCurrency(
+		PWYWCurrency,
+		data.product.price.amount,
+		data.product.price.currency
+	);
+	let customAmount = PWYWMinimum;
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
@@ -62,6 +70,28 @@
 			}),
 			picture: currentPicture
 		};
+	}
+
+	let PWYWInput: HTMLInputElement;
+
+	function checkPWYW() {
+		if (customAmount > 0 && customAmount < MININUM_PER_CURRENCY[PWYWCurrency]) {
+			PWYWInput.setCustomValidity(
+				t('product.minimumForCurrency', {
+					currency: PWYWCurrency,
+					minimum: MININUM_PER_CURRENCY[PWYWCurrency].toLocaleString($locale, {
+						maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[PWYWCurrency]
+					})
+				})
+			);
+			PWYWInput.reportValidity();
+
+			return false;
+		}
+
+		PWYWInput.setCustomValidity('');
+
+		return true;
 	}
 
 	const { t, locale } = useI18n();
@@ -260,7 +290,11 @@
 					<form
 						action="?/buy"
 						method="post"
-						use:enhance={({ action }) => {
+						use:enhance={({ action, cancel }) => {
+							if (!checkPWYW()) {
+								cancel();
+								return;
+							}
 							loading = true;
 							errorMessage = '';
 							return async ({ result }) => {
@@ -285,21 +319,18 @@
 						{#if canBuy}
 							{#if data.product.payWhatYouWant}
 								<hr class="border-gray-300 md:hidden mt-4 pb-2" />
+								<input type="hidden" name="customPriceCurrency" value={PWYWCurrency} />
 								<div class="flex flex-col gap-2 justify-between">
 									<label class="w-full form-label">
-										{t('product.nameYourPrice', { currency: data.currencies.main })}
+										{t('product.nameYourPrice', { currency: PWYWCurrency })}
 										<input
 											class="form-input"
 											type="number"
-											min={customAmount < 0.01 && data.product.price.amount !== 0
-												? '0.01'
-												: toCurrency(
-														data.currencies.main,
-														data.product.price.amount,
-														data.product.price.currency
-												  )}
-											name="customPrice"
+											min={PWYWMinimum}
+											name="customPriceAmount"
 											bind:value={customAmount}
+											bind:this={PWYWInput}
+											on:input={checkPWYW}
 											placeholder={t('product.pricePlaceholder')}
 											required
 											step="any"
