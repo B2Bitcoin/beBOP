@@ -120,7 +120,7 @@
 	</label>
 	<p>
 		Create a fullScreen CMS page with "maintenance" slug, to show maintenance page, by following
-		this link <a href="/admin/cms/new" class="text-link underline">create maintenance page</a>.
+		<a href="/admin/cms/new" class="text-link underline">this link</a>.
 	</p>
 	<label class="form-label">
 		Maintenance IPs, comma-separated
