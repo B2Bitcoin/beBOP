@@ -19,7 +19,7 @@
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
-	import { MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
+	import { FRACTION_DIGITS_PER_CURRENCY, MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
 
 	export let data;
 
@@ -29,11 +29,18 @@
 	const endsAt = data.discount ? new Date(data.discount.endsAt).getTime() : Date.now(); // Convert to timestamp
 	const currentTime = Date.now();
 	const hoursDifference = differenceInHours(endsAt, currentTime);
-	let customAmount =
-		data.product.price.amount !== 0 &&
-		toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency) < 0.01
-			? 0.01
-			: toCurrency(data.currencies.main, data.product.price.amount, data.product.price.currency);
+
+	const PWYWCurrency =
+		data.currencies.main === 'BTC' &&
+		toCurrency('BTC', data.product.price.amount, data.product.price.currency) < 0.01
+			? 'SAT'
+			: data.currencies.main;
+	const PWYWMinimum = toCurrency(
+		PWYWCurrency,
+		data.product.price.amount,
+		data.product.price.currency
+	);
+	let customAmount = PWYWMinimum;
 
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
@@ -285,28 +292,24 @@
 					>
 						{#if canBuy}
 							{#if data.product.payWhatYouWant}
-								{@const currency =
-									data.currencies.main === 'BTC' &&
-									toCurrency('BTC', data.product.price.amount, data.product.price.currency) < 0.01
-										? 'SAT'
-										: data.currencies.main}
 								<hr class="border-gray-300 md:hidden mt-4 pb-2" />
+								<input type="hidden" name="customPriceCurrency" value={PWYWCurrency} />
 								<div class="flex flex-col gap-2 justify-between">
 									<label class="w-full form-label">
-										{t('product.nameYourPrice', { currency })}
+										{t('product.nameYourPrice', { currency: PWYWCurrency })}
 										<input
 											class="form-input"
 											type="number"
-											min={toCurrency(
-												currency,
-												data.product.price.amount,
-												data.product.price.currency
-											)}
-											name="customPrice"
+											min={PWYWMinimum > 0
+												? PWYWMinimum
+												: customAmount > 0
+												? MININUM_PER_CURRENCY[PWYWCurrency]
+												: 0}
+											name="customPriceAmount"
 											bind:value={customAmount}
 											placeholder={t('product.pricePlaceholder')}
 											required
-											step={MININUM_PER_CURRENCY[currency]}
+											step={FRACTION_DIGITS_PER_CURRENCY[PWYWCurrency]}
 										/>
 									</label>
 								</div>
