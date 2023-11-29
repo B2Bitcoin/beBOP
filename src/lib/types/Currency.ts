@@ -34,7 +34,7 @@ export function parsePriceAmount(amount: string, currency: Currency): number {
 	const priceAmount =
 		(parseFloat(amount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency])) /
 		Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency]);
-	if (priceAmount > 0 && priceAmount <= MININUM_PER_CURRENCY[currency]) {
+	if (priceAmount > 0 && priceAmount < MININUM_PER_CURRENCY[currency]) {
 		throw error(
 			400,
 			`Price must be zero or greater than ${MININUM_PER_CURRENCY[currency]} ${currency}`
