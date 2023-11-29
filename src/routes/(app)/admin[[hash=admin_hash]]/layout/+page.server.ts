@@ -26,7 +26,9 @@ export const actions = {
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional(),
 				usersDarkDefaultTheme: z.boolean({ coerce: true }),
-				employeesDarkDefaultTheme: z.boolean({ coerce: true })
+				employeesDarkDefaultTheme: z.boolean({ coerce: true }),
+				displayPoweredBy: z.boolean({ coerce: true }),
+				displayCompanyInfo: z.boolean({ coerce: true })
 			})
 			.parse(json);
 
@@ -103,6 +105,41 @@ export const actions = {
 				{
 					$set: {
 						data: res.employeesDarkDefaultTheme,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+		if (res.displayPoweredBy !== runtimeConfig.displayPoweredBy) {
+			runtimeConfig.displayPoweredBy = res.displayPoweredBy;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'displayPoweredBy'
+				},
+				{
+					$set: {
+						data: res.displayPoweredBy,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+
+		if (res.displayCompanyInfo !== runtimeConfig.displayCompanyInfo) {
+			runtimeConfig.displayCompanyInfo = res.displayCompanyInfo;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'displayCompanyInfo'
+				},
+				{
+					$set: {
+						data: res.displayCompanyInfo,
 						updatedAt: new Date()
 					}
 				},
