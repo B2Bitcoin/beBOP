@@ -1,8 +1,13 @@
 import { collections } from '$lib/server/database';
 
-export async function load(event) {
+export async function load({ locals }) {
 	const orders = await collections.orders
-		.find({ 'user.sessionId': event.locals.sessionId })
+		.find({
+			$or: [
+				{ 'notifications.paymentStatus.npub': { $exists: true, $eq: locals.npub } },
+				{ 'notifications.paymentStatus.email': { $exists: true, $eq: locals.email } }
+			]
+		})
 		.limit(100)
 		.sort({ createdAt: -1 })
 		.toArray();
