@@ -85,16 +85,6 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.carts, { 'items.productId': 1 }],
 	[collections.orders, { 'user.**': 1 }],
 	[collections.orders, { 'items.product._id': 1, paymentStatus: 1 }],
-	[
-		collections.orders,
-		{ 'notifications.paymentStatus.npub': 1, createdAt: -1 },
-		{ partialFilterExpression: { 'notifications.paymentStatus.npub': { $exists: true } } }
-	],
-	[
-		collections.orders,
-		{ 'notifications.paymentStatus.email': 1, createdAt: -1 },
-		{ partialFilterExpression: { 'notifications.paymentStatus.email': { $exists: true } } }
-	],
 	[collections.orders, { number: 1 }, { unique: true }],
 	[collections.digitalFiles, { productId: 1 }],
 	[collections.nostrReceivedMessages, { processedAt: 1 }],

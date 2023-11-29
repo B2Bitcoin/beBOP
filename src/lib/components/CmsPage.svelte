@@ -31,7 +31,17 @@
 </svelte:head>
 
 {#if cmsPage.fullScreen}
-	<CmsDesign {products} {pictures} {challenges} {tokens} {digitalFiles} {sliders} {tags} {roleId} />
+	<CmsDesign
+		{products}
+		{pictures}
+		{challenges}
+		{tokens}
+		{digitalFiles}
+		{sliders}
+		{tags}
+		{roleId}
+		class="body body-mainPlan"
+	/>
 {:else}
 	<main class="mx-auto max-w-7xl py-10 px-6">
 		<CmsDesign
