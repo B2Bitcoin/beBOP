@@ -1,12 +1,10 @@
 import { collections } from '$lib/server/database';
+import { userIdentifier, userQuery } from '$lib/server/user';
 
 export async function load({ locals }) {
 	const orders = await collections.orders
 		.find({
-			$or: [
-				{ 'notifications.paymentStatus.npub': { $exists: true, $eq: locals.npub } },
-				{ 'notifications.paymentStatus.email': { $exists: true, $eq: locals.email } }
-			]
+			...userQuery(userIdentifier(locals))
 		})
 		.limit(100)
 		.sort({ createdAt: -1 })
