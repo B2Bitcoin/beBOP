@@ -15,6 +15,8 @@ export const actions = {
 
 		const res = z
 			.object({
+				usersDarkDefaultTheme: z.boolean({ coerce: true }),
+				employeesDarkDefaultTheme: z.boolean({ coerce: true }),
 				brandName: z.string().min(1).trim().optional(),
 				topbarLinks: z
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
@@ -25,8 +27,6 @@ export const actions = {
 				navbarLinks: z
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional(),
-				usersDarkDefaultTheme: z.boolean({ coerce: true }),
-				employeesDarkDefaultTheme: z.boolean({ coerce: true }),
 				displayPoweredBy: z.boolean({ coerce: true }),
 				displayCompanyInfo: z.boolean({ coerce: true })
 			})
@@ -72,10 +72,7 @@ export const actions = {
 			}
 		}
 
-		if (
-			res.usersDarkDefaultTheme &&
-			res.usersDarkDefaultTheme !== runtimeConfig.usersDarkDefaultTheme
-		) {
+		if (res.usersDarkDefaultTheme !== runtimeConfig.usersDarkDefaultTheme) {
 			runtimeConfig.usersDarkDefaultTheme = res.usersDarkDefaultTheme;
 			await collections.runtimeConfig.updateOne(
 				{
@@ -93,10 +90,7 @@ export const actions = {
 			);
 		}
 
-		if (
-			res.employeesDarkDefaultTheme &&
-			res.employeesDarkDefaultTheme !== runtimeConfig.employeesDarkDefaultTheme
-		) {
+		if (res.employeesDarkDefaultTheme !== runtimeConfig.employeesDarkDefaultTheme) {
 			runtimeConfig.employeesDarkDefaultTheme = res.employeesDarkDefaultTheme;
 			await collections.runtimeConfig.updateOne(
 				{
