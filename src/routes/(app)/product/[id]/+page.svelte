@@ -72,6 +72,28 @@
 		};
 	}
 
+	let PWYWInput: HTMLInputElement;
+
+	function checkPWYW() {
+		if (customAmount > 0 && customAmount < MININUM_PER_CURRENCY[PWYWCurrency]) {
+			PWYWInput.setCustomValidity(
+				t('product.minimumForCurrency', {
+					currency: PWYWCurrency,
+					minimum: MININUM_PER_CURRENCY[PWYWCurrency].toLocaleString($locale, {
+						maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[PWYWCurrency]
+					})
+				})
+			);
+			PWYWInput.reportValidity();
+
+			return false;
+		}
+
+		PWYWInput.setCustomValidity('');
+
+		return true;
+	}
+
 	const { t, locale } = useI18n();
 </script>
 
@@ -268,7 +290,11 @@
 					<form
 						action="?/buy"
 						method="post"
-						use:enhance={({ action }) => {
+						use:enhance={({ action, cancel }) => {
+							if (!checkPWYW()) {
+								cancel();
+								return;
+							}
 							loading = true;
 							errorMessage = '';
 							return async ({ result }) => {
@@ -300,16 +326,14 @@
 										<input
 											class="form-input"
 											type="number"
-											min={PWYWMinimum > 0
-												? PWYWMinimum
-												: customAmount > 0
-												? MININUM_PER_CURRENCY[PWYWCurrency]
-												: 0}
+											min={PWYWMinimum}
 											name="customPriceAmount"
 											bind:value={customAmount}
+											bind:this={PWYWInput}
+											on:input={checkPWYW}
 											placeholder={t('product.pricePlaceholder')}
 											required
-											step={FRACTION_DIGITS_PER_CURRENCY[PWYWCurrency]}
+											step="any"
 										/>
 									</label>
 								</div>
