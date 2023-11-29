@@ -14,6 +14,7 @@ import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
 import { building } from '$app/environment';
 import { paymentMethods } from '../payment-methods';
+import { userQuery } from '../user';
 
 const lock = new Lock('received-messages');
 
@@ -484,7 +485,7 @@ const commands: Record<
 		description: 'Show your orders',
 		execute: async (send, { senderNpub }) => {
 			const orders = await collections.orders
-				.find({ 'notifications.paymentStatus.npub': senderNpub })
+				.find(userQuery({ npub: senderNpub }))
 				.sort({ createdAt: -1 })
 				.limit(100)
 				.toArray();

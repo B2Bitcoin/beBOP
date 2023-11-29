@@ -11,7 +11,6 @@ import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
 import { lndCreateInvoice } from './lightning';
 import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
-import { filterUndef } from '$lib/utils/filterUndef';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
 import { vatRates } from './vat-rates';
@@ -42,22 +41,12 @@ async function generateOrderNumber(): Promise<number> {
 
 export async function onOrderPaid(order: Order, session: ClientSession) {
 	// #region subscriptions
-	const orConditions = filterUndef([
-		order.notifications.paymentStatus.npub
-			? { 'notifications.paymentStatus.npub': order.notifications.paymentStatus.npub }
-			: undefined,
-		order.notifications.paymentStatus.email
-			? { 'notifications.paymentStatus.email': order.notifications.paymentStatus.email }
-			: undefined
-	]);
-	const subscriptions = orConditions.length
-		? await collections.paidSubscriptions
-				.find({
-					$or: orConditions,
-					productId: { $in: order.items.map((item) => item.product._id) }
-				})
-				.toArray()
-		: [];
+	const subscriptions = await collections.paidSubscriptions
+		.find({
+			...userQuery(order.user),
+			productId: { $in: order.items.map((item) => item.product._id) }
+		})
+		.toArray();
 	for (const subscription of order.items.filter((item) => item.product.type === 'subscription')) {
 		const existingSubscription = subscriptions.find(
 			(sub) => sub.productId === subscription.product._id
@@ -349,10 +338,7 @@ export async function createOrder(
 		if (
 			await collections.orders.countDocuments(
 				{
-					$or: filterUndef([
-						npubAddress ? { 'notifications.paymentStatus.npub': npubAddress } : undefined,
-						email ? { 'notifications.paymentStatus.email': email } : undefined
-					]),
+					...userQuery(params.user),
 					'items.product._id': product._id,
 					'payment.status': 'pending'
 				},
@@ -543,9 +529,11 @@ export async function createOrder(
 				},
 				user: {
 					...params.user,
-					// In case the user didn't authenticate with an email but still wants to be notified,
-					// we also associate the email to the order
-					...(email && { email })
+					// In case the user didn't authenticate with an email/npub but only added them as notification address
+					// We still add them add orders for the specified email/npub
+					// Mini-downside: if the user put a dummy npub / email, the owner of the npub / email will be able to see the order
+					...(!params.user.email && email && { email }),
+					...(!params.user.npub && npubAddress && { npub: npubAddress })
 				},
 				...(params.reasonFreeVat && {
 					vatFree: {
