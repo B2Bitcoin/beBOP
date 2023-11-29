@@ -122,21 +122,25 @@
 	import { afterNavigate, goto } from '$app/navigation';
 
 	import { page } from '$app/stores';
+	import OrderSummary from '$lib/components/OrderSummary.svelte';
 
 	import { onMount } from 'svelte';
 
 	export let data;
 
 	function mountSumUpCard() {
-		window.SumUpCard.mount({
-			id: 'sumup-card',
-			checkoutId: data.checkoutId,
-			onResponse: function (type) {
-				if (type === 'success') {
-					goto('/order/' + $page.params.id);
+		// Should always be true due to backend validation, doing this for TS
+		if (data.order.payment.checkoutId) {
+			window.SumUpCard.mount({
+				id: 'sumup-card',
+				checkoutId: data.order.payment.checkoutId,
+				onResponse: function (type) {
+					if (type === 'success') {
+						goto('/order/' + $page.params.id);
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	onMount(() => {
@@ -164,8 +168,13 @@
 	});
 </script>
 
-<main class="mx-auto max-w-7xl py-10 px-6">
-	<div id="sumup-card" class="max-w-lg mx-auto bg-white text-gray-700 rounded shadow"></div>
+<main class="mx-auto max-w-7xl py-10 px-6 flex flex-col md:flex-row gap-4 justify-around">
+	<div class="grow">
+		<div id="sumup-card" class="max-w-lg mx-auto bg-white text-gray-700 rounded shadow"></div>
+	</div>
+	<div class="self-center md:self-stretch">
+		<OrderSummary order={data.order} class="sticky top-4 -mt-1" />
+	</div>
 </main>
 <!-- 
 <style>

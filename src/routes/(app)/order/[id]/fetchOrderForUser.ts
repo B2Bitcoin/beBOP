@@ -50,7 +50,8 @@ export async function fetchOrderForUser(orderId: string) {
 			method: order.payment.method,
 			status: order.payment.status,
 			address: order.payment.address,
-			expiresAt: order.payment.expiresAt
+			expiresAt: order.payment.expiresAt,
+			checkoutId: order.payment.checkoutId
 		},
 		items: order.items.map((item) => ({
 			quantity: item.quantity,

@@ -1,15 +1,9 @@
-import { collections } from '$lib/server/database.js';
 import { UrlDependency } from '$lib/types/UrlDependency.js';
 import { error, redirect } from '@sveltejs/kit';
+import { fetchOrderForUser } from '../fetchOrderForUser.js';
 
 export async function load({ params, depends }) {
-	const order = await collections.orders.findOne({
-		_id: params.id
-	});
-
-	if (!order) {
-		throw error(404, 'Order not found');
-	}
+	const order = await fetchOrderForUser(params.id);
 
 	depends(UrlDependency.Order);
 
@@ -26,6 +20,6 @@ export async function load({ params, depends }) {
 	}
 
 	return {
-		checkoutId: order.payment.checkoutId
+		order
 	};
 }
