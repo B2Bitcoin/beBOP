@@ -297,12 +297,16 @@
 										<input
 											class="form-input"
 											type="number"
-											min={data.product.price.amount !== 0 ? MININUM_PER_CURRENCY[currency] : 0}
+											min={toCurrency(
+												currency,
+												data.product.price.amount,
+												data.product.price.currency
+											)}
 											name="customPrice"
 											bind:value={customAmount}
 											placeholder={t('product.pricePlaceholder')}
 											required
-											step="any"
+											step={MININUM_PER_CURRENCY[currency]}
 										/>
 									</label>
 								</div>
