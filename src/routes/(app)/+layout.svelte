@@ -31,6 +31,7 @@
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { browser } from '$app/environment';
+	import { upperCase } from 'lodash-es';
 
 	export let data;
 
@@ -395,19 +396,50 @@
 				<slot />
 			</div>
 		{/if}
-		<footer class="footer h-[90px] items-center flex">
-			<div class="mx-auto max-w-7xl px-6 flex items-center gap-2 grow">
-				<a class="flex items-center gap-4" href="https://github.com/B2Bitcoin/beBOP"
-					><span class="font-light">{t('footer.poweredBy')} </span>
-					<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO_DARK} alt="" />
-					<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO} alt="" />
-				</a>
 
-				<div class="ml-auto flex gap-4 items-center">
-					{#each data.links.footer as link}
-						<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
-					{/each}
+		<footer class="footer h-auto items-center flex">
+			<div class="mx-auto max-w-7xl px-6 items-center gap-2 grow">
+				<div class="flex justify-between mb-4 mt-4">
+					{#if data.displayCompanyInfo}
+						<div class="flex w-3/5">
+							<!-- First column -->
+							<div class="w-1/2">
+								<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-identity'))}</h3>
+								<p>{data.sellerIdentity?.businessName}</p>
+								<p>{data.sellerIdentity?.address.state}</p>
+								<p>
+									{data.sellerIdentity?.address.city}, {data.sellerIdentity?.address.street}, {data
+										.sellerIdentity?.address.zip}
+								</p>
+							</div>
+
+							<!-- Second column -->
+							<div class="w-1/2 pl-4">
+								<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-contact'))}</h3>
+								<p>{data.sellerIdentity?.contact.email}</p>
+								<p>{data.sellerIdentity?.contact.phone}</p>
+							</div>
+						</div>
+					{/if}
+
+					<div class="w-2/5">
+						<div class="ml-auto flex gap-4 items-center">
+							{#each data.links.footer as link}
+								<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
+							{/each}
+						</div>
+					</div>
 				</div>
+
+				{#if data.displayPoweredBy}
+					<div class="flex justify-between mb-4 mt-4">
+						<a class="flex items-center gap-4" href="https://github.com/B2Bitcoin/beBOP"
+							><span class="font-light">{t('footer.poweredBy')} </span>
+							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO_DARK} alt="" />
+							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
+						</a>
+					</div>
+				{/if}
 			</div>
 		</footer>
 	{/if}

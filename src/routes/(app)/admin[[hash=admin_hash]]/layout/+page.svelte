@@ -69,6 +69,24 @@
 	{/each}
 
 	<h2 class="text-2xl">Footer</h2>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="displayPoweredBy"
+			class="form-checkbox"
+			checked={data.displayPoweredBy}
+		/>
+		Display "Powered by beBOP"
+	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="displayCompanyInfo"
+			class="form-checkbox"
+			checked={data.displayCompanyInfo}
+		/>
+		Display company identity && company contact
+	</label>
 
 	<h3 class="text-xl">Links</h3>
 

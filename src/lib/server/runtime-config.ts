@@ -106,7 +106,9 @@ const defaultConfig = {
 		clientId: ''
 	},
 	usersDarkDefaultTheme: false,
-	employeesDarkDefaultTheme: false
+	employeesDarkDefaultTheme: false,
+	displayPoweredBy: false,
+	displayCompanyInfo: false
 };
 
 exchangeRate.set(defaultConfig.exchangeRate);

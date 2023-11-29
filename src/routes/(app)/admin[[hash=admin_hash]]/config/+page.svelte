@@ -21,12 +21,6 @@
 
 <h1 class="text-3xl">Config</h1>
 
-<p>
-	Create a CMS page with "maintenance" slug, to show maintenance page, by following this link <a
-		href="/admin/cms/new"
-		class="text-link underline">create maintenance page</a
-	>.
-</p>
 {#if form?.success}
 	<div class="alert alert-success">{form.success}</div>
 {/if}
@@ -124,6 +118,10 @@
 		/>
 		isMaintenance
 	</label>
+	<p>
+		Create a fullScreen CMS page with "maintenance" slug, to show maintenance page, by following
+		this link <a href="/admin/cms/new" class="text-link underline">create maintenance page</a>.
+	</p>
 	<label class="form-label">
 		Maintenance IPs, comma-separated
 		<input
