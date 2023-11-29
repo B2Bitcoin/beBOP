@@ -5,7 +5,7 @@ import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product
 import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
-import { parsePriceAmount } from '$lib/types/Currency';
+import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
@@ -110,24 +110,35 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	}
 
 	const formData = await request.formData();
-	const { quantity, customPrice } = z
+	const { quantity, customPriceAmount, customPriceCurrency } = z
 		.object({
 			quantity: z
 				.number({ coerce: true })
 				.int()
 				.min(1)
-				.max(product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER),
-			customPrice: z.string().regex(/^\d+(\.\d+)?$/)
+				.max(product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER)
+				.default(1),
+			customPriceAmount: z
+				.string()
+				.regex(/^\d+(\.\d+)?$/)
+				.optional(),
+			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional()
 		})
 		.parse({
-			quantity: formData.get('quantity') || '1',
-			customPrice: formData.get('customPrice') || '0'
+			quantity: formData.get('quantity') || undefined,
+			customPriceAmount: formData.get('customPriceAmount') || undefined,
+			customPriceCurrency: formData.get('customPriceCurrency') || undefined
 		});
-	const customPriceConverted = parsePriceAmount(customPrice, runtimeConfig.mainCurrency, true);
+	const customPrice =
+		customPriceAmount && customPriceCurrency
+			? {
+					amount: parsePriceAmount(customPriceAmount, customPriceCurrency),
+					currency: customPriceCurrency
+			  }
+			: undefined;
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
-		...(product.payWhatYouWant &&
-			product.type !== 'subscription' && { customAmount: customPriceConverted })
+		...(product.payWhatYouWant && { customPrice })
 	});
 }
 

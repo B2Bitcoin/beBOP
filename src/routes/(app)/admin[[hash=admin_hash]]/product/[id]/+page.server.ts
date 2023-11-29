@@ -103,11 +103,7 @@ export const actions: Actions = {
 			parsed.shipping = false;
 		}
 
-		const priceAmount = parsed.free
-			? 0
-			: !parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0'
-			? 0
-			: parsePriceAmount(parsed.priceAmount, priceCurrency, parsed.payWhatYouWant);
+		const priceAmount = parsed.free ? 0 : parsePriceAmount(parsed.priceAmount, priceCurrency);
 
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;

@@ -70,6 +70,14 @@ export async function addToCartInDb(
 		throw error(400, "Product can't be added to basket");
 	}
 
+	if (params.customPrice && !product.payWhatYouWant) {
+		throw error(400, 'Product is not pay what you want');
+	}
+
+	if (params.customPrice && product.type === 'subscription') {
+		throw error(400, 'Product is a subscription, cannot set custom price');
+	}
+
 	if (quantity < 0) {
 		throw new TypeError('Quantity cannot be negative');
 	}
@@ -124,10 +132,9 @@ export async function addToCartInDb(
 		cart.items.push({
 			productId: product._id,
 			quantity: product.type === 'subscription' ? 1 : quantity,
-			...(params.customPrice &&
-				product.type !== 'subscription' && {
-					customPrice: params.customPrice
-				}),
+			...(params.customPrice && {
+				customPrice: params.customPrice
+			}),
 			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes)
 		});
 	}

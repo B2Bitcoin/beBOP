@@ -84,9 +84,7 @@ export const actions: Actions = {
 
 		const priceAmount = parsed.free
 			? 0
-			: !parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0'
-			? 0
-			: parsePriceAmount(parsed.priceAmount, parsed.priceCurrency, parsed.payWhatYouWant);
+			: parsePriceAmount(parsed.priceAmount, parsed.priceCurrency);
 
 		if (parsed.type !== 'resource') {
 			delete parsed.availableDate;
