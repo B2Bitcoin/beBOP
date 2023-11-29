@@ -85,15 +85,6 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			/^\/admin(-[a-zA-Z0-9]+)?\/(login|logout)(\/|$)/.test(event.url.pathname) // Allow login/logout
 		);
 
-	const cmsPageMaintenanceAvailable = await collections.cmsPages
-		.find({
-			maintenanceDisplay: true
-		})
-		.project<Pick<CMSPage, '_id'>>({
-			_id: 1
-		})
-		.toArray();
-
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
 	event.locals.clientIp = event.getClientAddress();
@@ -109,20 +100,32 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	]);
 	event.locals.language = acceptLanguages.find((l) => l in languages) || 'en';
 
-	if (
-		runtimeConfig.isMaintenance &&
-		!isAdminUrl &&
-		event.url.pathname !== '/logo' &&
-		!event.url.pathname.startsWith('/.well-known/') &&
-		!event.url.pathname.startsWith('/picture/raw/') &&
-		event.url.pathname !== '/lightning/pay' &&
-		!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
-		!runtimeConfig.maintenanceIps.split(',').includes(event.locals.clientIp)
-	) {
-		if (event.request.method !== 'GET') {
-			throw error(405, 'Site is in maintenance mode. Please try again later.');
+	if (runtimeConfig.isMaintenance) {
+		const cmsPageMaintenanceAvailable = await collections.cmsPages
+			.find({
+				maintenanceDisplay: true
+			})
+			.project<Pick<CMSPage, '_id'>>({
+				_id: 1
+			})
+			.toArray();
+		if (
+			!isAdminUrl &&
+			event.url.pathname !== '/logo' &&
+			!event.url.pathname.startsWith('/.well-known/') &&
+			!event.url.pathname.startsWith('/picture/raw/') &&
+			event.url.pathname !== '/lightning/pay' &&
+			event.url.pathname !== '/maintenance' &&
+			event.url.pathname !== '/style/variables.css' &&
+			!event.url.pathname.startsWith('/script/language/') &&
+			!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
+			!runtimeConfig.maintenanceIps.split(',').includes(event.locals.clientIp)
+		) {
+			if (event.request.method !== 'GET') {
+				throw error(405, 'Site is in maintenance mode. Please try again later.');
+			}
+			throw redirect(303, '/maintenance');
 		}
-		throw error(503, 'Site is in maintenance mode. Please try again later.');
 	}
 
 	const token = event.cookies.get('bootik-session');
