@@ -27,7 +27,7 @@
 
 	<label class="form-label">
 		Brand name
-		<input type="text" name="brandName" class="form-input" value={data.brandName} />
+		<input type="text" name="brandName" class="form-input max-w-[25rem]" value={data.brandName} />
 	</label>
 
 	<p>

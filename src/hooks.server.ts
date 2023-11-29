@@ -250,7 +250,14 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		transformPageChunk: ({ html }) => {
 			if (!transformed) {
 				transformed = true;
-				return html.replace('<html', `<html lang="${event.locals.language}"`);
+				const darkDefaultTheme =
+					isAdminUrl && !isAdminLoginLogoutUrl
+						? runtimeConfig.employeesDarkDefaultTheme
+						: runtimeConfig.usersDarkDefaultTheme;
+				return html.replace(
+					'<html',
+					`<html lang="${event.locals.language}" class="${darkDefaultTheme ? 'dark' : ''}"`
+				);
 			}
 			return html;
 		}

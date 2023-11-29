@@ -30,7 +30,6 @@
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
-	import { browser } from '$app/environment';
 	import { upperCase } from 'lodash-es';
 
 	export let data;
@@ -102,13 +101,8 @@
 	$: if (items.length === 0) {
 		cartOpen = false;
 	}
-	$: {
-		if (browser && data.usersDarkDefaultTheme) {
-			$theme = 'dark';
-		}
-	}
 
-	$: logoPicture = $theme === 'dark' ? data.logoPictureDark : data.logoPicture;
+	$: logoClass = data.logo.isWide ? 'h-[60px] w-auto' : 'h-[60px] w-[60px] rounded-full';
 	const { t } = useI18n();
 </script>
 
@@ -123,23 +117,15 @@
 		<header class="header items-center flex h-[100px]">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
 				<a class="flex items-center gap-4" href="/">
-					{#if logoPicture}
-						{#if data.logo.isWide}
-							<Picture class="h-[60px] w-auto" picture={logoPicture} />
-						{:else}
-							<Picture class="h-[60px] w-[60px] rounded-full" picture={logoPicture} />
-						{/if}
+					{#if data.logoPicture}
+						<Picture class="dark:hidden {logoClass}" picture={data.logoPicture} />
+						<Picture
+							class="hidden dark:inline {logoClass}"
+							picture={data.logoPictureDark || data.logoPicture}
+						/>
 					{:else}
-						<img
-							class="hidden dark:inline h-[60px] w-[60px] rounded-full"
-							src={DEFAULT_LOGO}
-							alt=""
-						/>
-						<img
-							class="dark:hidden h-[60px] w-[60px] rounded-full"
-							src={DEFAULT_LOGO_DARK}
-							alt=""
-						/>
+						<img class="hidden dark:inline {logoClass}" src={DEFAULT_LOGO} alt="" />
+						<img class="dark:hidden {logoClass}" src={DEFAULT_LOGO_DARK} alt="" />
 					{/if}
 					{#if !data.logo.isWide}
 						<span class="header-shopName font-bold text-[32px]">{data.brandName}</span>
@@ -148,9 +134,9 @@
 				<span class="grow body-mainPlan" />
 				<nav class="flex gap-10 text-[22px] font-semibold header-tab">
 					{#each data.links.topbar as link}
-						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off"
-							>{link.label}</a
-						>
+						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off">
+							{link.label}
+						</a>
 					{/each}
 				</nav>
 				{#if 0}
@@ -357,12 +343,14 @@
 							type="button"
 							on:click={() => {
 								$theme = 'light';
+								window.localStorage.setItem('theme', 'light');
 							}}><IconModeLight class="ml-4 hidden dark:inline" /></button
 						>
 						<button
 							type="button"
 							on:click={() => {
 								$theme = 'dark';
+								window.localStorage.setItem('theme', 'dark');
 							}}
 							><IconModeDark class="ml-4 dark:hidden" />
 						</button>
