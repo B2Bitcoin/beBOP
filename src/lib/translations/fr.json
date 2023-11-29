@@ -79,6 +79,8 @@
 		"tosAgree": "J'accepte les <0>conditions d'utilisation</0>",
 		"vatShippingAddress": "Le pays est déterminé par l'adresse de livraison"
 	},
+	"company-contact": "Contact entreprise",
+	"company-identity": "Identité entreprise",
 	"error": {
 		"title": "Erreur {status}"
 	},

@@ -79,6 +79,8 @@
 		"tosAgree": "I agree to the <0>terms of service</0>",
 		"vatShippingAddress": "The country is determined by the shipping address"
 	},
+	"company-contact": "Company contact",
+	"company-identity": "Company identity",
 	"error": {
 		"title": "Error {status}"
 	},

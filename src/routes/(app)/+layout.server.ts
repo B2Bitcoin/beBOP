@@ -69,11 +69,14 @@ export async function load(params) {
 		logo: runtimeConfig.logo,
 		usersDarkDefaultTheme: runtimeConfig.usersDarkDefaultTheme,
 		employeesDarkefaulTheme: runtimeConfig.employeesDarkDefaultTheme,
+		displayPoweredBy: runtimeConfig.displayPoweredBy,
+		displayCompanyInfo: runtimeConfig.displayCompanyInfo,
 		links: {
 			footer: runtimeConfig.footerLinks,
 			navbar: runtimeConfig.navbarLinks,
 			topbar: runtimeConfig.topbarLinks
 		},
+		sellerIdentity: runtimeConfig.sellerIdentity,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
