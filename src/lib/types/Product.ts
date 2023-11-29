@@ -27,6 +27,9 @@ export interface Product extends Timestamps {
 	availableDate?: Date;
 	preorder: boolean;
 	displayShortDescription: boolean;
+	/**
+	 * Setting this to true will also set standalone to true
+	 */
 	payWhatYouWant: boolean;
 	/**
 	 * One line per item in a cart, eg for large products
