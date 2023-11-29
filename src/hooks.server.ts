@@ -115,13 +115,14 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			!event.url.pathname.startsWith('/.well-known/') &&
 			!event.url.pathname.startsWith('/picture/raw/') &&
 			event.url.pathname !== '/lightning/pay' &&
+			event.url.pathname !== '/maintenance' &&
 			event.url.pathname !== '/style/variables.css' &&
 			!event.url.pathname.startsWith('/script/language/') &&
 			!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
 			!runtimeConfig.maintenanceIps.split(',').includes(event.locals.clientIp)
 		) {
 			if (event.request.method !== 'GET') {
-				throw redirect(303, '/maintenance');
+				throw error(405, 'Site is in maintenance mode. Please try again later.');
 			}
 			throw redirect(303, '/maintenance');
 		}

@@ -21,6 +21,12 @@
 
 <h1 class="text-3xl">Config</h1>
 
+<p>
+	Create a CMS page with "maintenance" slug, to show maintenance page, by following this link <a
+		href="/admin/cms/new"
+		class="text-link underline">create maintenance page</a
+	>.
+</p>
 {#if form?.success}
 	<div class="alert alert-success">{form.success}</div>
 {/if}
