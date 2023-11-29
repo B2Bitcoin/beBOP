@@ -48,6 +48,10 @@
 		availableDate = undefined;
 	}
 
+	$: if (payWhatYouWant) {
+		standalone = true;
+	}
+
 	function checkForm(event: SubmitEvent) {
 		if (
 			priceAmountElement.value &&
@@ -174,6 +178,7 @@
 				bind:checked={standalone}
 				on:input={() => priceAmountElement?.setCustomValidity('')}
 				name="standalone"
+				disabled={payWhatYouWant}
 			/>
 			This is a standalone product
 		</label>
