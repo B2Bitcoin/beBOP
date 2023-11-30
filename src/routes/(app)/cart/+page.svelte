@@ -8,19 +8,17 @@
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
 	import { computeDeliveryFees } from '$lib/types/Cart.js';
-	import { COUNTRIES, type CountryAlpha2 } from '$lib/types/Country.js';
+	import type { CountryAlpha2 } from '$lib/types/Country.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
-	import { typedKeys } from '$lib/utils/typedKeys.js';
 
 	export let data;
 
 	let actionCount = 0;
-	let country = typedKeys(COUNTRIES)[0];
-	country = data.deliveryCountry as CountryAlpha2;
+	let country = data.deliveryCountry as CountryAlpha2;
 
 	let errorMessage = data.errorMessage;
 	let errorProductId = '';
