@@ -1,9 +1,8 @@
 import { collections } from '$lib/server/database';
-import { error, fail, redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
-import { CUSTOMER_ROLE_ID, type User } from '$lib/types/User';
-import { ObjectId } from 'mongodb';
+import { CUSTOMER_ROLE_ID, MIN_PASSWORD_LENGTH, type User } from '$lib/types/User';
 import type { SetRequired } from 'type-fest';
 import { BCRYPT_SALT_ROUNDS } from '$lib/server/user.js';
 import { adminPrefix } from '$lib/server/admin.js';
@@ -15,41 +14,46 @@ export async function load({ params }) {
 	});
 
 	if (!user) {
-		throw error(404, 'token password reset not found');
+		throw error(404, 'Password reset token not found');
 	}
 
 	if (user.passwordReset?.expiresAt < new Date()) {
-		throw error(404, 'token password reset has expired');
+		throw error(400, 'Password reset token has expired');
 	}
 	return { user: { _id: user._id.toString(), login: user.login } };
 }
 
 export const actions = {
 	default: async function ({ request, params }) {
+		const user = await collections.users.findOne<SetRequired<User, 'passwordReset'>>({
+			'passwordReset.token': params.token,
+			roleId: { $ne: CUSTOMER_ROLE_ID }
+		});
+
+		if (!user) {
+			throw error(404, 'Password reset token not found');
+		}
+
+		if (user.passwordReset?.expiresAt < new Date()) {
+			throw error(400, 'Password reset token has expired');
+		}
+
 		const data = await request.formData();
-		const { user, pwd1 } = z
+		const { password } = z
 			.object({
-				user: z.string(),
-				pwd1: z.string()
+				password: z.string().min(MIN_PASSWORD_LENGTH)
 			})
 			.parse({
-				user: data.get('idUser'),
-				pwd1: data.get('pwd1')
+				password: data.get('password')
 			});
 
-		const passwordBcrypt = await bcryptjs.hash(pwd1, BCRYPT_SALT_ROUNDS);
-		const updateResult = await collections.users.updateOne(
+		const passwordBcrypt = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
+		await collections.users.updateOne(
 			{
-				_id: new ObjectId(user),
-				'passwordReset.token': params.token,
-				roleId: { $ne: CUSTOMER_ROLE_ID }
+				_id: user._id
 			},
 			{ $set: { password: passwordBcrypt }, $unset: { passwordReset: '' } }
 		);
-		if (updateResult.matchedCount) {
-			throw redirect(303, `${adminPrefix()}/login`);
-		} else {
-			return fail(400, { failed: true });
-		}
+		throw redirect(303, `${adminPrefix()}/login`);
 	}
 };

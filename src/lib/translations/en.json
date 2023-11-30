@@ -98,6 +98,9 @@
 			"logout": "Log out",
 			"signInWith": "Sign In With {provider}"
 		},
+		"password": {
+			"pwned": "Your password is unsafe, it has been found in {count} data breaches. Please reset your password."
+		},
 		"session": {
 			"email": "Email: {email}",
 			"npub": "Npub: {npub}",

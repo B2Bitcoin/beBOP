@@ -98,6 +98,9 @@
 			"logout": "Se déconnecter",
 			"signInWith": "Connectez-vous avec {provider}"
 		},
+		"password": {
+			"pwned": "Votre mot de passe n'est pas sécurisé, il a été trouvé dans {count} brèches de données. Veuillez réinitialiser votre mot de passe."
+		},
 		"session": {
 			"email": "E-mail : {e-mail}",
 			"npub": "Npub : {npub}",
