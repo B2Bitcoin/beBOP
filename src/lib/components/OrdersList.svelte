@@ -1,22 +1,12 @@
 <script lang="ts">
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { formatDistance } from 'date-fns';
-	import type { Order } from '$lib/types/Order';
 	import PriceTag from './PriceTag.svelte';
 	import IconBitcoin from './icons/IconBitcoin.svelte';
 	import type { Currency } from '$lib/types/Currency';
 
 	export let orders:
-		| Pick<
-				Order,
-				| '_id'
-				| 'payment'
-				| 'totalPrice'
-				| 'number'
-				| 'createdAt'
-				| 'totalReceived'
-				| 'amountsInOtherCurrencies'
-		  >[]
+		| Pick<any, '_id' | 'payment' | 'totalPrice' | 'number' | 'createdAt' | 'totalReceived'>[]
 		| [];
 	export let priceReference: Currency | undefined = undefined;
 	export let showForms: boolean;

@@ -10,8 +10,7 @@ export async function load() {
 			totalPrice: order.totalPrice,
 			number: order.number,
 			createdAt: order.createdAt,
-			totalReceived: order.totalReceived,
-			amountsInOtherCurrencies: order.amountsInOtherCurrencies
+			totalReceived: order.totalReceived
 		}))
 	};
 }

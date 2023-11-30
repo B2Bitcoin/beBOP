@@ -12,12 +12,11 @@ export async function load({ locals }) {
 	return {
 		orders: orders.map((order) => ({
 			_id: order._id,
-			payment: order.payment,
+			payment: { status: order.payment.status, method: order.payment.method },
 			totalPrice: order.totalPrice,
 			number: order.number,
 			createdAt: order.createdAt,
-			totalReceived: order.totalReceived,
-			amountsInOtherCurrencies: order.amountsInOtherCurrencies
+			totalReceived: order.totalReceived
 		})),
 		adminPrefix: adminPrefix()
 	};

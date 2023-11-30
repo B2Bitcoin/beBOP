@@ -1,5 +1,5 @@
 <script>
-	import ListOrder from '$lib/components/ListOrder.svelte';
+	import OrdersList from '$lib/components/OrdersList.svelte';
 	import { useI18n } from '$lib/i18n';
 
 	const { t } = useI18n();
@@ -16,7 +16,7 @@
 
 	<h2 class="text-2xl">{t('pos.lastOrders.title')}</h2>
 
-	<ListOrder
+	<OrdersList
 		orders={data.orders}
 		priceReference={data.currencies.priceReference}
 		showForms={true}
