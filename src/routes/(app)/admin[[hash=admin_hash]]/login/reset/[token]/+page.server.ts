@@ -14,11 +14,11 @@ export async function load({ params }) {
 	});
 
 	if (!user) {
-		throw error(404, 'token password reset not found');
+		throw error(404, 'Password reset token not found');
 	}
 
 	if (user.passwordReset?.expiresAt < new Date()) {
-		throw error(400, 'token password reset has expired');
+		throw error(400, 'Password reset token has expired');
 	}
 	return { user: { _id: user._id.toString(), login: user.login } };
 }
@@ -31,11 +31,11 @@ export const actions = {
 		});
 
 		if (!user) {
-			throw error(404, 'token password reset not found');
+			throw error(404, 'Password reset token not found');
 		}
 
 		if (user.passwordReset?.expiresAt < new Date()) {
-			throw error(400, 'token password reset has expired');
+			throw error(400, 'Password reset token has expired');
 		}
 
 		const data = await request.formData();
