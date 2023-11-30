@@ -1,11 +1,16 @@
 import { collections } from '$lib/server/database';
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createSuperAdminUserInDb } from '$lib/server/user.js';
-import { CUSTOMER_ROLE_ID, MIN_PASSWORD_LENGTH, POS_ROLE_ID } from '$lib/types/User.js';
+import {
+	CUSTOMER_ROLE_ID,
+	MIN_PASSWORD_LENGTH,
+	POS_ROLE_ID,
+	checkPasswordPwnedTimes
+} from '$lib/types/User.js';
 import { adminPrefix } from '$lib/server/admin.js';
 
 export const load = async ({ locals }) => {
@@ -45,6 +50,10 @@ export const actions = {
 
 		if (!user) {
 			return fail(400, { login, incorrect: 'login' });
+		}
+
+		if (await checkPasswordPwnedTimes(password)) {
+			throw error(400, 'Password has been pwned');
 		}
 
 		if (!user.password || !(await bcryptjs.compare(password, user.password))) {
