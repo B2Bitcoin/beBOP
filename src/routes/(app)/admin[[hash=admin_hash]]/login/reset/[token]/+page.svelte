@@ -1,76 +1,84 @@
 <script lang="ts">
 	import IconStandBy from '$lib/components/icons/IconStandBy.svelte';
-	import type { ActionData } from './$types';
+	import { useI18n } from '$lib/i18n';
 
-	export let form: ActionData;
 	export let data;
 
-	let pwd1: string;
-	let pwd2: string;
-	let formPass: HTMLFormElement;
+	let password: string;
+	let formElement: HTMLFormElement;
+	let errorMessage = '';
 
-	let failedMatch = false;
-	function handleSubmit(event: Event) {
+	const { t, locale } = useI18n();
+
+	async function handleSubmit(event: Event) {
 		event.preventDefault();
-		if (pwd1 !== pwd2) {
-			failedMatch = true;
+		errorMessage = '';
+
+		const sha1 = crypto.subtle.digest('SHA-1', new TextEncoder().encode(password));
+		const sha1Hex = Array.from(new Uint8Array(await sha1))
+			.map((b) => b.toString(16).padStart(2, '0'))
+			.join('')
+			.toUpperCase();
+
+		const pwnedPasswordResp = await fetch(
+			`https://api.pwnedpasswords.com/range/${sha1Hex.slice(0, 5)}`
+		);
+		let pwnedTimes = 0;
+		if (pwnedPasswordResp.ok) {
+			const pwnedPasswords = await pwnedPasswordResp.text().then((r) => r.split('\n'));
+			const pwnedPassword = pwnedPasswords.find((line) => line.startsWith(sha1Hex.slice(5)));
+
+			if (pwnedPassword) {
+				pwnedTimes = parseInt(pwnedPassword.split(':')[1]);
+			}
+		}
+		if (pwnedTimes) {
+			errorMessage = t('login.password.pwned', {
+				count: pwnedTimes.toLocaleString($locale)
+			});
 		} else {
-			failedMatch = false;
-			formPass.submit();
+			formElement?.submit();
 		}
 	}
 </script>
 
-<h1 class="text-2xl">Password reset</h1>
-<div class="flex justify-center items-center">
-	<form
-		method="post"
-		class="flex-col gap-2 space-between p-6 w-[30em]"
-		on:submit={handleSubmit}
-		bind:this={formPass}
-	>
-		<div class="flex justify-center mb-2">
-			<IconStandBy class="text-green-500" />
-		</div>
-		<label class="form-label mb-1">
-			<input
-				class="form-input"
-				type="text"
-				name="login"
-				placeholder="Enter other admin login"
-				value={data.user?.login}
-				disabled
-			/>
-			<input class="form-input" type="hidden" name="idUser" value={data.user?._id} />
-		</label>
-		<label class="form-label mb-1">
-			<input
-				class="form-input {failedMatch ? 'bg-red-500' : ''}"
-				type="password"
-				name="pwd1"
-				placeholder="Enter new password"
-				bind:value={pwd1}
-			/>
-		</label>
-		<label class="form-label">
-			<input
-				class="form-input {failedMatch ? 'bg-red-500' : ''}"
-				type="password"
-				name="pwd2"
-				placeholder="Enter confirmation password"
-				bind:value={pwd2}
-			/>
-		</label>
-		<div class="flex-wrap text-center">
-			{#if form?.failed}
-				<p class="text-red-500">Invalid credentials, please try again</p>
-			{/if}
-			{#if failedMatch}
-				<p class="text-red-500">Passwords do not match</p>
-			{/if}
-		</div>
-		<div class="flex justify-center gap-4 mt-2">
-			<input type="submit" class="btn btn-blue text-white" value="Update" />
-		</div>
-	</form>
+<h1 class="text-2xl text-center">Password reset</h1>
+
+<div class="flex justify-center">
+	<IconStandBy class="text-green-500" />
 </div>
+
+<form
+	method="post"
+	class="flex flex-col mx-auto gap-4 max-w-xl"
+	on:submit={handleSubmit}
+	bind:this={formElement}
+>
+	<label class="form-label mb-1 max-w-sm mx-auto">
+		<input
+			class="form-input"
+			type="text"
+			name="login"
+			placeholder="Enter other admin login"
+			value={data.user?.login}
+			disabled
+		/>
+		<input class="form-input" type="hidden" name="userId" value={data.user?._id} />
+	</label>
+	<label class="form-label mb-1 max-w-sm mx-auto">
+		<input
+			class="form-input"
+			type="password"
+			name="password"
+			placeholder="Enter new password"
+			minlength="8"
+			bind:value={password}
+		/>
+	</label>
+	<div class="flex-wrap text-center">
+		{#if errorMessage}
+			<p class="text-red-500">{errorMessage}</p>
+		{/if}
+	</div>
+	<input type="submit" class="btn btn-blue text-white self-center" value="Update" />
+</form>

@@ -5,7 +5,7 @@ import bcryptjs from 'bcryptjs';
 import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { createSuperAdminUserInDb } from '$lib/server/user.js';
-import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
+import { CUSTOMER_ROLE_ID, MIN_PASSWORD_LENGTH, POS_ROLE_ID } from '$lib/types/User.js';
 import { adminPrefix } from '$lib/server/admin.js';
 
 export const load = async ({ locals }) => {
@@ -25,7 +25,7 @@ export const actions = {
 		const { login, password, remember, memorize } = z
 			.object({
 				login: z.string(),
-				password: z.string(),
+				password: z.string().min(MIN_PASSWORD_LENGTH),
 				remember: z.boolean({ coerce: true }).default(false),
 				memorize: z.number({ coerce: true }).int()
 			})

@@ -2,15 +2,20 @@ import { ObjectId } from 'mongodb';
 import { runtimeConfig } from './runtime-config';
 
 import bcryptjs from 'bcryptjs';
-import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { MIN_PASSWORD_LENGTH, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import { collections, withTransaction } from './database';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
+import { error } from '@sveltejs/kit';
 
 export const BCRYPT_SALT_ROUNDS = 10;
 
 export async function createSuperAdminUserInDb(login: string, password: string) {
 	if (runtimeConfig.isAdminCreated) {
 		return;
+	}
+
+	if (password.length < MIN_PASSWORD_LENGTH) {
+		throw error(400, 'Password too short');
 	}
 
 	const passwordBcrypt = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
