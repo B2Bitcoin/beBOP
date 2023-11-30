@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
-	import { MIN_PASSWORD_LENGTH } from '$lib/types/User.js';
+	import { MIN_PASSWORD_LENGTH, checkPasswordPwnedTimes } from '$lib/types/User.js';
 
 	export let form;
 	export let data;
@@ -40,24 +40,7 @@
 		const password = passwordInput?.value;
 		if (!password) return;
 
-		const sha1 = crypto.subtle.digest('SHA-1', new TextEncoder().encode(password));
-		const sha1Hex = Array.from(new Uint8Array(await sha1))
-			.map((b) => b.toString(16).padStart(2, '0'))
-			.join('')
-			.toUpperCase();
-
-		const pwnedPasswordResp = await fetch(
-			`https://api.pwnedpasswords.com/range/${sha1Hex.slice(0, 5)}`
-		);
-		let pwnedTimes = 0;
-		if (pwnedPasswordResp.ok) {
-			const pwnedPasswords = await pwnedPasswordResp.text().then((r) => r.split('\n'));
-			const pwnedPassword = pwnedPasswords.find((line) => line.startsWith(sha1Hex.slice(5)));
-
-			if (pwnedPassword) {
-				pwnedTimes = parseInt(pwnedPassword.split(':')[1]);
-			}
-		}
+		const pwnedTimes = await checkPasswordPwnedTimes(password);
 		if (pwnedTimes) {
 			errorMessage = t('login.password.pwned', {
 				count: pwnedTimes.toLocaleString($locale)
