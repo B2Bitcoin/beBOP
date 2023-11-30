@@ -203,3 +203,10 @@ export interface Order extends Timestamps {
 
 	clientIp?: string;
 }
+interface SimplifiedOrderPayment {
+	payment: {
+		method: 'bitcoin' | 'lightning' | 'cash' | 'card';
+		status: OrderPaymentStatus;
+	};
+}
+export type SimplifiedOrder = Omit<Order, 'payment'> & SimplifiedOrderPayment;
