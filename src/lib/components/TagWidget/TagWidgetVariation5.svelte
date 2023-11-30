@@ -19,7 +19,7 @@
 			<h2 class="text-sm uppercase md:text-2xl lg:text-5xl body-title">{tag.title}</h2>
 		</div>
 		<div class="flex justify-evenly py-4 items-center">
-			<div class="tagWidget-cta font-semibold text-xl text-center w-auto p-1">
+			<div class="tagWidget-cta font-semibold text-xl text-center w-auto p-1 m-2">
 				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
 			</div>
 			<h2 class="text-lg pb-2">
