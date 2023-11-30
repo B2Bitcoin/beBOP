@@ -7,6 +7,8 @@
 	import ProductType from '$lib/components/ProductType.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
+	import { computeDeliveryFees } from '$lib/types/Cart.js';
+	import type { CountryAlpha2 } from '$lib/types/Country.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
@@ -16,18 +18,22 @@
 	export let data;
 
 	let actionCount = 0;
+	let country = data.countryCode as CountryAlpha2;
 
 	let errorMessage = data.errorMessage;
 	let errorProductId = '';
+	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
 	$: items = data.cart || [];
-	$: totalPrice = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount: (item.customPrice || item.product.price).amount * item.quantity
-		}))
-	);
+	$: totalPrice =
+		sumCurrency(
+			UNDERLYING_CURRENCY,
+			items.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount: (item.customPrice || item.product.price).amount * item.quantity
+			}))
+		) + (deliveryFees || 0);
+
 	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 
@@ -158,6 +164,31 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
+			{#if deliveryFees}
+				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
+					<div class="flex flex-col">
+						<h3 class="text-base">{t('checkout.deliveryFees')}</h3>
+					</div>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							class="text-2xl truncate"
+							amount={deliveryFees}
+							currency={UNDERLYING_CURRENCY}
+							main
+						/>
+						<PriceTag
+							amount={deliveryFees}
+							currency={UNDERLYING_CURRENCY}
+							class="text-base truncate"
+							secondary
+						/>
+					</div>
+				</div>
+			{:else if isNaN(deliveryFees)}
+				<div class="alert-error mt-3">
+					{t('checkout.noDeliveryInCountry')}
+				</div>
+			{/if}
 			{#if data.vatCountry && !data.vatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">

@@ -90,7 +90,7 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: deliveryFees = computeDeliveryFees('SAT', country, items, data.deliveryFees);
+	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
