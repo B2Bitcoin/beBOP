@@ -6,7 +6,7 @@ export async function load() {
 	return {
 		orders: orders.map((order) => ({
 			_id: order._id,
-			payment: order.payment,
+			payment: { status: order.payment.status, method: order.payment.method },
 			totalPrice: order.totalPrice,
 			number: order.number,
 			createdAt: order.createdAt,
