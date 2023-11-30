@@ -72,9 +72,12 @@
 		};
 	}
 
-	let PWYWInput: HTMLInputElement;
+	let PWYWInput: HTMLInputElement | null = null;
 
 	function checkPWYW() {
+		if (!PWYWInput) {
+			return true;
+		}
 		if (customAmount > 0 && customAmount < MININUM_PER_CURRENCY[PWYWCurrency]) {
 			PWYWInput.setCustomValidity(
 				t('product.minimumForCurrency', {
