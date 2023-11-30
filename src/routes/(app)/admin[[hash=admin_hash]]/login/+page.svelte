@@ -38,7 +38,9 @@
 	async function checkPassword() {
 		errorMessage = '';
 		const password = passwordInput?.value;
-		if (!password) return;
+		if (!password) {
+			return;
+		}
 
 		const pwnedTimes = await checkPasswordPwnedTimes(password);
 		if (pwnedTimes) {
