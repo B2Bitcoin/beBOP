@@ -25,7 +25,6 @@ export async function load({ parent, locals }) {
 	return {
 		paymentMethods: paymentMethods(locals.user?.roleId),
 		emailsEnabled,
-		deliveryFees: runtimeConfig.deliveryFees,
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
 	};

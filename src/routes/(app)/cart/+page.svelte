@@ -18,7 +18,7 @@
 	export let data;
 
 	let actionCount = 0;
-	let country = data.deliveryCountry as CountryAlpha2;
+	let country = data.countryCode as CountryAlpha2;
 
 	let errorMessage = data.errorMessage;
 	let errorProductId = '';

@@ -78,7 +78,6 @@ export async function load(params) {
 		},
 		sellerIdentity: runtimeConfig.sellerIdentity,
 		deliveryFees: runtimeConfig.deliveryFees,
-		deliveryCountry: locals.countryCode,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
