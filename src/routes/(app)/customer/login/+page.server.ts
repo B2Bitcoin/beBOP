@@ -16,6 +16,7 @@ import {
 	TWITTER_SECRET
 } from '$env/static/private';
 import { zodNpub } from '$lib/server/nostr.js';
+import { renewSessionId } from '$lib/server/user.js';
 
 export const load = async ({ url }) => {
 	const token = url.searchParams.get('token');
@@ -73,7 +74,7 @@ export const actions = {
 		await sendAuthentificationlink(address.includes('@') ? { email: address } : { npub: address });
 		return { address, successUser: true };
 	},
-	validate: async function ({ url, locals }) {
+	validate: async function ({ url, locals, cookies }) {
 		const token = url.searchParams.get('token');
 		let dontCatch = false;
 
@@ -109,6 +110,7 @@ export const actions = {
 					upsert: true
 				}
 			);
+			await renewSessionId(locals, cookies);
 
 			dontCatch = true;
 			throw redirect(303, '/customer/login');

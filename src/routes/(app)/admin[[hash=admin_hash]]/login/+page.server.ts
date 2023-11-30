@@ -4,7 +4,7 @@ import { z } from 'zod';
 import bcryptjs from 'bcryptjs';
 import { addSeconds, addYears } from 'date-fns';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { createSuperAdminUserInDb } from '$lib/server/user.js';
+import { createSuperAdminUserInDb, renewSessionId } from '$lib/server/user.js';
 import {
 	CUSTOMER_ROLE_ID,
 	MIN_PASSWORD_LENGTH,
@@ -24,7 +24,7 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async function ({ locals, request }) {
+	default: async function ({ locals, request, cookies }) {
 		const data = await request.formData();
 
 		const { login, password, remember, memorize } = z
@@ -80,6 +80,8 @@ export const actions = {
 				upsert: true
 			}
 		);
+
+		await renewSessionId(locals, cookies);
 
 		if (user.roleId === POS_ROLE_ID) {
 			throw redirect(303, `/pos`);

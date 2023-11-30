@@ -32,6 +32,8 @@ import { isAllowedOnPage } from '$lib/types/Role';
 import { languages } from '$lib/translations';
 import { addTranslations } from '$lib/i18n';
 import { filterNullish } from '$lib/utils/fillterNullish';
+import { refreshSessionCookie } from '$lib/server/cookies';
+import { renewSessionId } from '$lib/server/user';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -132,15 +134,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const secretSessionId = token || crypto.randomUUID();
 	event.locals.sessionId = await sha256(secretSessionId);
-	// Refresh cookie expiration date
-	event.cookies.set('bootik-session', secretSessionId, {
-		path: '/',
-		sameSite: 'lax',
-		secure: true,
-		httpOnly: true,
-		expires: addYears(new Date(), 1)
-	});
-
+	refreshSessionCookie(event.cookies, secretSessionId);
 	const session = (
 		await collections.sessions.findOneAndUpdate(
 			{
@@ -339,6 +333,7 @@ const handleSsoCookie: Handle = async ({ event, resolve }) => {
 				}
 			);
 		}
+		await renewSessionId(event.locals, event.cookies);
 		event.locals.sso = [
 			...(session?.sso || []).filter((s) => s.provider !== ssoInfo.provider),
 			ssoInfo

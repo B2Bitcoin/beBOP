@@ -5,7 +5,9 @@ import bcryptjs from 'bcryptjs';
 import { MIN_PASSWORD_LENGTH, SUPER_ADMIN_ROLE_ID, checkPasswordPwnedTimes } from '$lib/types/User';
 import { collections, withTransaction } from './database';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
-import { error } from '@sveltejs/kit';
+import { error, type Cookies } from '@sveltejs/kit';
+import { sha256 } from '$lib/utils/sha256';
+import { refreshSessionCookie } from './cookies';
 
 export const BCRYPT_SALT_ROUNDS = 10;
 
@@ -82,4 +84,45 @@ export function userQuery(user: UserIdentifier) {
 	}
 
 	return ret;
+}
+
+/**
+ * To prevent session fixation attacks
+ */
+export async function renewSessionId(locals: App.Locals, cookies: Cookies) {
+	const newSecretSessionId = crypto.randomUUID();
+	const newSessionId = await sha256(newSecretSessionId);
+
+	await withTransaction(async (session) => {
+		await collections.sessions.updateOne(
+			{
+				sessionId: locals.sessionId
+			},
+			{
+				$set: {
+					sessionId: newSessionId,
+					updatedAt: new Date()
+				}
+			},
+			{ session }
+		);
+		await collections.carts.updateMany(
+			{ 'user.sessionId': locals.sessionId },
+			{ $set: { 'user.sessionId': newSessionId } },
+			{ session }
+		);
+		await collections.orders.updateMany(
+			{ 'user.sessionId': locals.sessionId },
+			{ $set: { 'user.sessionId': newSessionId } },
+			{ session }
+		);
+		await collections.paidSubscriptions.updateMany(
+			{ 'user.sessionId': locals.sessionId },
+			{ $set: { 'user.sessionId': newSessionId } },
+			{ session }
+		);
+	});
+
+	locals.sessionId = newSessionId;
+	refreshSessionCookie(cookies, newSecretSessionId);
 }
