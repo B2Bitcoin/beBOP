@@ -77,6 +77,8 @@ export async function load(params) {
 			topbar: runtimeConfig.topbarLinks
 		},
 		sellerIdentity: runtimeConfig.sellerIdentity,
+		deliveryFees: runtimeConfig.deliveryFees,
+		deliveryCountry: locals.countryCode,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
