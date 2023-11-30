@@ -22,7 +22,7 @@
 
 	let errorMessage = data.errorMessage;
 	let errorProductId = '';
-	$: deliveryFees = computeDeliveryFees('SAT', country, items, data.deliveryFees);
+	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
 	$: items = data.cart || [];
 	$: totalPrice =
