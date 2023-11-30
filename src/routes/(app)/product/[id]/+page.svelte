@@ -66,7 +66,7 @@
 			product: data.product,
 			quantity,
 			...(data.product.type !== 'subscription' && {
-				customPrice: { amount: customAmount, currency: data.currencies.main }
+				customPrice: { amount: customAmount, currency: PWYWCurrency }
 			}),
 			picture: currentPicture
 		};
