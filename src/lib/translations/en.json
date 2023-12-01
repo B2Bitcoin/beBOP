@@ -118,6 +118,9 @@
 			"title": "Discount"
 		},
 		"linkReminder": "Keep this link: <0></0> to access the order later.",
+		"list": {
+			"title": "List of your orders"
+		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
 			"one": "Order will be marked as paid after 1 confirmation.",
@@ -127,9 +130,13 @@
 		"paymentAddress": "Payment address",
 		"paymentAmount": "Payment amount",
 		"paymentStatus": {
+			"canceled": "canceled",
 			"canceledTemplate": "Order canceled!",
+			"expired": "expired",
 			"expiredTemplate": "Order expired!",
-			"paidTemplate": "Order <0>paid</0>!"
+			"paid": "paid",
+			"paidTemplate": "Order <0>paid</0>!",
+			"pending": "pending"
 		},
 		"paymentStatusNpub": "NostR public address for payment status",
 		"shippingAddress": {

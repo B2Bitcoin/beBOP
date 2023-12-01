@@ -1,7 +1,12 @@
 import { collections } from '$lib/server/database';
+import { userIdentifier, userQuery } from '$lib/server/user';
 
-export async function load() {
-	const orders = await collections.orders.find().limit(100).sort({ createdAt: -1 }).toArray();
+export async function load({ locals }) {
+	const orders = await collections.orders
+		.find(userQuery(userIdentifier(locals)))
+		.limit(100)
+		.sort({ createdAt: -1 })
+		.toArray();
 
 	return {
 		orders: orders.map((order) => ({

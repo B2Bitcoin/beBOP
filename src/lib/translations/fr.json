@@ -118,6 +118,9 @@
 			"title": "Rabais"
 		},
 		"linkReminder": "Conservez ce lien : <0></0> pour accéder à la commande ultérieurement.",
+		"list": {
+			"title": "Liste de vos commandes"
+		},
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
 			"one": "La commande sera marquée comme payée après 1 confirmation.",
@@ -127,9 +130,13 @@
 		"paymentAddress": "Adresse de paiement ",
 		"paymentAmount": "Montant de la transaction (hors frais)",
 		"paymentStatus": {
+			"canceled": "annulée",
 			"canceledTemplate": "Votre commande a été annulée manuellement en back-office.",
+			"expired": "expirée",
 			"expiredTemplate": "Votre commande est expirée car le délai de paiement était trop élevé.\nSi vous avez payé cette commande, merci de vous rapprocher de notre service client.",
-			"paidTemplate": "Votre commande est <0>validée</0> !"
+			"paid": "payée",
+			"paidTemplate": "Votre commande est <0>validée</0> !",
+			"pending": "en attente"
 		},
 		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
 		"shippingAddress": {
