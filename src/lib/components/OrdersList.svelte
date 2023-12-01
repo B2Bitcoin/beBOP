@@ -12,8 +12,7 @@
 				'_id' | 'payment' | 'totalPrice' | 'number' | 'createdAt' | 'totalReceived'
 		  >[]
 		| [];
-	export let showForms: boolean;
-	export let adminPrefix: string;
+	export let adminPrefix: string | undefined = undefined;
 </script>
 
 <ul class="flex flex-col gap-4">
@@ -56,7 +55,7 @@
 					amount={order.totalReceived.amount}
 				/>
 			{/if}
-			{#if showForms}
+			{#if adminPrefix}
 				{#if order.payment.status === 'pending' && order.payment.method === 'cash'}
 					<form action="{adminPrefix}/order/{order._id}?/confirm" method="post">
 						<button type="submit" class="btn btn-black">Mark paid</button>

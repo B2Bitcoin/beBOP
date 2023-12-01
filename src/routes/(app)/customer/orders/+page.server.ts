@@ -1,4 +1,3 @@
-import { adminPrefix } from '$lib/server/admin';
 import { collections } from '$lib/server/database';
 import { userIdentifier, userQuery } from '$lib/server/user';
 
@@ -17,7 +16,6 @@ export async function load({ locals }) {
 			number: order.number,
 			createdAt: order.createdAt,
 			totalReceived: order.totalReceived
-		})),
-		adminPrefix: adminPrefix()
+		}))
 	};
 }
