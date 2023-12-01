@@ -5,3 +5,5 @@ export const languages = {
 	en,
 	fr
 };
+
+export const locales = Object.keys(languages);

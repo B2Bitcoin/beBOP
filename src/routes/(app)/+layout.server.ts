@@ -5,6 +5,7 @@ import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier } from '$lib/server/user.js';
 import { vatRates } from '$lib/server/vat-rates';
+import { locales } from '$lib/translations/index.js';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef';
@@ -64,6 +65,7 @@ export async function load(params) {
 			priceReference: runtimeConfig.priceReferenceCurrency
 		},
 		brandName: runtimeConfig.brandName,
+		locales,
 		logoPicture,
 		logoPictureDark,
 		logo: runtimeConfig.logo,
