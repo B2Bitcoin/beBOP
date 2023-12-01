@@ -93,6 +93,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	// Prioritize lang in URL, then in accept-language header, then default to en
 	const acceptLanguages = filterNullish([
+		event.cookies.get('lang'),
 		event.url.searchParams.get('lang'),
 		...(event.request.headers
 			.get('accept-language')

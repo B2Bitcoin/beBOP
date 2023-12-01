@@ -103,7 +103,7 @@
 	}
 
 	$: logoClass = data.logo.isWide ? 'h-[60px] w-auto' : 'h-[60px] w-[60px] rounded-full';
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 </script>
 
 <!--
@@ -340,20 +340,38 @@
 							</Popup>
 						{/if}
 						<button
+							class="ml-4 hidden dark:inline"
 							type="button"
 							on:click={() => {
 								$theme = 'light';
 								window.localStorage.setItem('theme', 'light');
-							}}><IconModeLight class="ml-4 hidden dark:inline" /></button
+							}}
 						>
+							<IconModeLight />
+						</button>
 						<button
 							type="button"
+							class="ml-4 dark:hidden"
 							on:click={() => {
 								$theme = 'dark';
 								window.localStorage.setItem('theme', 'dark');
 							}}
-							><IconModeDark class="ml-4 dark:hidden" />
+						>
+							<IconModeDark />
 						</button>
+						<select
+							class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none text-xl"
+							size="0"
+							bind:value={$locale}
+							on:change={() => {
+								document.cookie = `lang=${$locale};path=/;max-age=31536000`;
+								window.location.reload();
+							}}
+						>
+							{#each data.locales as locale}
+								<option value={locale}>{locale}</option>
+							{/each}
+						</select>
 					</div>
 				</div>
 			</div>
