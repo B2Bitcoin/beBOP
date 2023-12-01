@@ -362,7 +362,11 @@
 						<select
 							class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none text-xl"
 							size="0"
-							value={$locale}
+							bind:value={$locale}
+							on:change={() => {
+								document.cookie = `lang=${$locale};path=/;max-age=31536000`;
+								window.location.reload();
+							}}
 						>
 							{#each data.locales as locale}
 								<option value={locale}>{locale}</option>
