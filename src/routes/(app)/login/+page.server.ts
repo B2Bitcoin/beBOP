@@ -113,7 +113,7 @@ export const actions = {
 			await renewSessionId(locals, cookies);
 
 			dontCatch = true;
-			throw redirect(303, '/customer/login');
+			throw redirect(303, '/login');
 		} catch (err) {
 			if (dontCatch) {
 				throw err;

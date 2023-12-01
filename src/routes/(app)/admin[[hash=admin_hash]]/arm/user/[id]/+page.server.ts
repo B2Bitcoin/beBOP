@@ -81,7 +81,7 @@ export const actions = {
 		if (user.roleId === CUSTOMER_ROLE_ID) {
 			throw error(
 				403,
-				'You cannot reset the password of a customer from here. If you are the customer, go to /customer/login/recovery'
+				'You cannot reset the password of a customer from here. If you are the customer, go to /login/recovery'
 			);
 		}
 
