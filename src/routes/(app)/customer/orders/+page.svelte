@@ -6,9 +6,4 @@
 
 <h1 class="text-3xl">List of your orders</h1>
 
-<OrdersList
-	orders={data.orders}
-	priceReference={data.currencies.priceReference}
-	showForms={false}
-	adminPrefix={data.adminPrefix}
-/>
+<OrdersList orders={data.orders} showForms={false} adminPrefix={data.adminPrefix} />

@@ -205,7 +205,7 @@ export interface Order extends Timestamps {
 }
 interface SimplifiedOrderPayment {
 	payment: {
-		method: 'bitcoin' | 'lightning' | 'cash' | 'card';
+		method: Order['payment']['method'];
 		status: OrderPaymentStatus;
 	};
 }

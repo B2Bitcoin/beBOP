@@ -4,7 +4,7 @@
 	import type { SimplifiedOrder } from '$lib/types/Order';
 	import PriceTag from './PriceTag.svelte';
 	import IconBitcoin from './icons/IconBitcoin.svelte';
-	import type { Currency } from '$lib/types/Currency';
+	import { currencies } from '$lib/stores/currencies';
 
 	export let orders:
 		| Pick<
@@ -12,7 +12,6 @@
 				'_id' | 'payment' | 'totalPrice' | 'number' | 'createdAt' | 'totalReceived'
 		  >[]
 		| [];
-	export let priceReference: Currency | undefined = undefined;
 	export let showForms: boolean;
 	export let adminPrefix: string;
 </script>
@@ -36,10 +35,10 @@
 				})}</time
 			>
 			- Total: {toSatoshis(order.totalPrice.amount, order.totalPrice.currency).toLocaleString('en')}
-			SAT {#if priceReference !== 'SAT'}(<PriceTag
+			SAT {#if $currencies.priceReference !== 'SAT'}(<PriceTag
 					currency={order.totalPrice.currency}
 					amount={order.totalPrice.amount}
-					convertedTo={priceReference}
+					convertedTo={$currencies.priceReference}
 				/>){/if}-
 			<span
 				class={order.payment.status === 'expired' || order.payment.status === 'canceled'

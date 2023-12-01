@@ -16,10 +16,5 @@
 
 	<h2 class="text-2xl">{t('pos.lastOrders.title')}</h2>
 
-	<OrdersList
-		orders={data.orders}
-		priceReference={data.currencies.priceReference}
-		showForms={true}
-		adminPrefix="/pos"
-	/>
+	<OrdersList orders={data.orders} showForms={true} adminPrefix="/pos" />
 </main>
