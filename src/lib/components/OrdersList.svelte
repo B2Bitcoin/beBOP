@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { formatDistance } from 'date-fns';
 	import type { SimplifiedOrder } from '$lib/types/Order';
 	import PriceTag from './PriceTag.svelte';
 	import IconBitcoin from './icons/IconBitcoin.svelte';
