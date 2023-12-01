@@ -97,9 +97,7 @@ export async function sendAuthentificationlink(session: { email?: string; npub?:
 		
 This message was sent to you because you have requested a temporary session link.
 
-Follow this link to create your temporary session: ${ORIGIN}/customer/login?token=${encodeURIComponent(
-			jwt
-		)}
+Follow this link to create your temporary session: ${ORIGIN}/login?token=${encodeURIComponent(jwt)}
 		
 If you didn't ask for this temporary session procedure, please ignore this message and do nothing.
 
@@ -126,7 +124,7 @@ ${runtimeConfig.brandName} team`;
 			subject: `Temporary session request`,
 			htmlContent: `<p>Dear user,</p>
 <p>This message was sent to you because you have requested a temporary session link.</p>
-<p>Follow <a href="${ORIGIN}/customer/login?token=${encodeURIComponent(
+<p>Follow <a href="${ORIGIN}/login?token=${encodeURIComponent(
 				jwt
 			)}">this link</a> to create your temporary session.</p>
 <p>If you didn't ask for this temporary session procedure, please ignore this message and do nothing.</p>
