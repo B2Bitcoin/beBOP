@@ -183,7 +183,10 @@ export interface Order extends Timestamps {
 	/**
 	 * The invoice number, set when the order is paid.
 	 */
-	invoiceNumber?: number;
+	invoice?: {
+		number: number;
+		createdAt: Date;
+	};
 
 	notifications: {
 		paymentStatus: {

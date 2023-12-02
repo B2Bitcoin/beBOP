@@ -46,7 +46,7 @@
 </div>
 
 <div class="mt-4">
-	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {data.order.invoiceNumber}</h2>
+	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {data.order.invoice?.number}</h2>
 	<Trans key="order.createdAt">
 		{t('order.createdAt')}:
 		<time datetime={data.order.createdAt.toJSON()} slot="0">

@@ -3,19 +3,15 @@ import { cleanDb } from './test-utils';
 import { collections } from './database';
 import { TEST_PRODUCT, TEST_PRODUCT_UNLIMITED } from './seed/product';
 import { createOrder, onOrderPaid } from './orders';
-import { resetConfig, runtimeConfig } from './runtime-config';
 
 describe('order', () => {
 	beforeEach(async () => {
 		await cleanDb();
-		resetConfig();
 		await collections.products.insertMany([TEST_PRODUCT, TEST_PRODUCT_UNLIMITED]);
 	});
 
 	describe('onOrderPaid', () => {
-		it('should increase the invoice number each time, even if an order disappears', async () => {
-			expect(runtimeConfig.invoiceNumber).toBe(0);
-
+		it('should increase the invoice number each time', async () => {
 			const order1Id = await createOrder(
 				[
 					{
@@ -60,7 +56,8 @@ describe('order', () => {
 				throw new Error('Order 2 not found');
 			}
 
-			expect(runtimeConfig.invoiceNumber).toBe(0);
+			expect(order1.invoice?.number).toBeUndefined();
+			expect(order2.invoice?.number).toBeUndefined();
 
 			await onOrderPaid(order2, undefined);
 			await onOrderPaid(order1, undefined);
@@ -69,8 +66,6 @@ describe('order', () => {
 			expect(order1?.number).toBe(2);
 			order2 = await collections.orders.findOne({ _id: order2Id });
 			expect(order2?.number).toBe(1);
-
-			await collections.orders.deleteMany({});
 
 			const order3Id = await createOrder(
 				[
@@ -100,8 +95,6 @@ describe('order', () => {
 			order3 = await collections.orders.findOne({ _id: order3Id });
 
 			expect(order3?.number).toBe(3);
-
-			expect(runtimeConfig.invoiceNumber).toBe(3);
 		});
 	});
 });

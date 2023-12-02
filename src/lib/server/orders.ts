@@ -135,19 +135,20 @@ export async function onOrderPaid(order: Order, session: ClientSession | undefin
 	}
 
 	const lastOrder = (await collections.orders.findOne(
-		{ invoiceNumber: { $exists: true } },
-		{ sort: { invoiceNumber: -1 }, projection: { invoiceNumber: 1 } }
-	)) as SetRequired<Pick<Order, 'invoiceNumber'>, 'invoiceNumber'> | null;
+		{ 'invoice.number': { $exists: true } },
+		{ sort: { 'invoice.number': -1 }, projection: { invoice: 1 } }
+	)) as SetRequired<Pick<Order, 'invoice'>, 'invoice'> | null;
 
-	const invoiceNumber = lastOrder
-		? Math.max(lastOrder.invoiceNumber, runtimeConfig.invoiceNumber) + 1
-		: runtimeConfig.invoiceNumber + 1;
+	const invoiceNumber = lastOrder ? lastOrder.invoice.number + 1 : 1;
 
 	await collections.orders.updateOne(
 		{ _id: order._id },
 		{
 			$set: {
-				invoiceNumber
+				invoice: {
+					number: invoiceNumber,
+					createdAt: new Date()
+				}
 			}
 		},
 		{ session }
