@@ -1,9 +1,7 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections, withTransaction } from '$lib/server/database';
 import { onOrderPaid } from '$lib/server/orders';
-import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Order } from '$lib/types/Order.js';
-import { toCurrency } from '$lib/utils/toCurrency';
 import { error, redirect } from '@sveltejs/kit';
 import type { StrictFilter } from 'mongodb';
 
@@ -28,40 +26,13 @@ export const actions = {
 					$set: {
 						updatedAt: new Date(),
 						'payment.status': 'paid',
-						'payment.paidAt': new Date(),
-						totalReceived: order.totalPrice,
-						'amountsInOtherCurrencies.main.totalReceived': {
-							amount: toCurrency(
-								runtimeConfig.mainCurrency,
-								order.totalPrice.amount,
-								order.totalPrice.currency
-							),
-							currency: runtimeConfig.mainCurrency
-						},
-						...(runtimeConfig.secondaryCurrency && {
-							'amountsInOtherCurrencies.secondary.totalReceived': {
-								amount: toCurrency(
-									runtimeConfig.secondaryCurrency,
-									order.totalPrice.amount,
-									order.totalPrice.currency
-								),
-								currency: runtimeConfig.secondaryCurrency
-							}
-						}),
-						'amountsInOtherCurrencies.priceReference.totalReceived': {
-							amount: toCurrency(
-								runtimeConfig.priceReferenceCurrency,
-								order.totalPrice.amount,
-								order.totalPrice.currency
-							),
-							currency: runtimeConfig.priceReferenceCurrency
-						}
+						'payment.paidAt': new Date()
 					} satisfies StrictFilter<Order>
 				},
 				{ session }
 			);
 
-			await onOrderPaid(order, session);
+			await onOrderPaid(order, order.totalPrice, session);
 		});
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
