@@ -31,6 +31,9 @@
 	});
 
 	const { t, locale } = useI18n();
+
+	let receiptIFrame: HTMLIFrameElement | null = null;
+	let receiptReady = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -169,6 +172,21 @@
 				<form method="post" action="?/cancel">
 					<button type="submit" class="btn btn-red">Cancel</button>
 				</form>
+			{/if}
+			{#if data.order.payment.status === 'paid'}
+				<button
+					class="btn btn-black self-start"
+					type="button"
+					disabled={!receiptReady}
+					on:click={() => receiptIFrame?.contentWindow?.print()}>{t('order.receipt.create')}</button
+				>
+				<iframe
+					src="/order/{data.order._id}/receipt"
+					style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+					title=""
+					on:load={() => (receiptReady = true)}
+					bind:this={receiptIFrame}
+				/>
 			{/if}
 		</div>
 		<div class="">
