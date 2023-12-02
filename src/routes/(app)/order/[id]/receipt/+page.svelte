@@ -6,7 +6,7 @@
 
 	export let data;
 
-	const identity = data.sellerIdentity!;
+	const identity = data.sellerIdentity;
 
 	/**
 	 * Todo: generate a proper invoice number

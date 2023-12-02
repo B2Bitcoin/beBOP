@@ -15,6 +15,7 @@ export async function load({ params }) {
 	}
 	return {
 		order,
-		layoutReset: true
+		layoutReset: true,
+		sellerIdentity: runtimeConfig.sellerIdentity
 	};
 }
