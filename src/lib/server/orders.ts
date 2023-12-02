@@ -40,7 +40,11 @@ async function generateOrderNumber(): Promise<number> {
 	return res.value.data as number;
 }
 
-export async function onOrderPaid(order: Order, session: ClientSession | undefined) {
+export async function onOrderPaid(
+	order: Order,
+	received: { currency: Currency; amount: number },
+	session: ClientSession | undefined
+) {
 	// #region subscriptions
 	const subscriptions = await collections.paidSubscriptions
 		.find({
@@ -148,6 +152,28 @@ export async function onOrderPaid(order: Order, session: ClientSession | undefin
 				invoice: {
 					number: invoiceNumber,
 					createdAt: new Date()
+				},
+				totalReceived: {
+					amount: received.amount,
+					currency: received.currency
+				},
+				'amountsInOtherCurrencies.main.totalReceived': {
+					amount: toCurrency(runtimeConfig.mainCurrency, received.amount, received.currency),
+					currency: runtimeConfig.mainCurrency
+				},
+				...(runtimeConfig.secondaryCurrency && {
+					'amountsInOtherCurrencies.secondary.totalReceived': {
+						amount: toCurrency(runtimeConfig.secondaryCurrency, received.amount, received.currency),
+						currency: runtimeConfig.secondaryCurrency
+					}
+				}),
+				'amountsInOtherCurrencies.priceReference.totalReceived': {
+					amount: toCurrency(
+						runtimeConfig.priceReferenceCurrency,
+						received.amount,
+						received.currency
+					),
+					currency: runtimeConfig.priceReferenceCurrency
 				}
 			}
 		},

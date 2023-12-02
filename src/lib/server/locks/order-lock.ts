@@ -12,7 +12,6 @@ import { onOrderPaid } from '../orders';
 import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { getConfirmationBlocks } from '$lib/utils/getConfirmationBlocks';
 import type { StrictUpdateFilter } from 'mongodb';
-import { toCurrency } from '$lib/utils/toCurrency';
 import { addMinutes } from 'date-fns';
 
 const lock = new Lock('orders');
@@ -60,31 +59,13 @@ async function maintainOrders() {
 										id: transaction.txid,
 										amount: transaction.amount,
 										currency: 'BTC' as const
-									})),
-									totalReceived: {
-										amount: satReceived,
-										currency: 'SAT' as const
-									},
-									'amountsInOtherCurrencies.main.totalReceived': {
-										amount: toCurrency(runtimeConfig.mainCurrency, satReceived, 'SAT'),
-										currency: runtimeConfig.mainCurrency
-									},
-									...(runtimeConfig.secondaryCurrency && {
-										'amountsInOtherCurrencies.secondary.totalReceived': {
-											amount: toCurrency(runtimeConfig.secondaryCurrency, satReceived, 'SAT'),
-											currency: runtimeConfig.secondaryCurrency
-										}
-									}),
-									'amountsInOtherCurrencies.priceReference.totalReceived': {
-										amount: toCurrency(runtimeConfig.priceReferenceCurrency, satReceived, 'SAT'),
-										currency: runtimeConfig.priceReferenceCurrency
-									}
+									}))
 								} satisfies StrictUpdateFilter<Order>
 							},
 							{ session }
 						);
 
-						await onOrderPaid(order, session);
+						await onOrderPaid(order, { amount: satReceived, currency: 'SAT' }, session);
 					});
 				} else if (order.payment.expiresAt < new Date()) {
 					await collections.orders.updateOne(
@@ -120,33 +101,7 @@ async function maintainOrders() {
 							{
 								$set: {
 									'payment.status': 'paid',
-									'payment.paidAt': invoice.settled_at,
-									totalReceived: {
-										amount: invoice.amt_paid_sat,
-										currency: 'SAT' as const
-									},
-									'amountsInOtherCurrencies.main.totalReceived': {
-										amount: toCurrency(runtimeConfig.mainCurrency, invoice.amt_paid_sat, 'SAT'),
-										currency: runtimeConfig.mainCurrency
-									},
-									...(runtimeConfig.secondaryCurrency && {
-										'amountsInOtherCurrencies.secondary.totalReceived': {
-											amount: toCurrency(
-												runtimeConfig.secondaryCurrency,
-												invoice.amt_paid_sat,
-												'SAT'
-											),
-											currency: runtimeConfig.secondaryCurrency
-										}
-									}),
-									'amountsInOtherCurrencies.priceReference.totalReceived': {
-										amount: toCurrency(
-											runtimeConfig.priceReferenceCurrency,
-											invoice.amt_paid_sat,
-											'SAT'
-										),
-										currency: runtimeConfig.priceReferenceCurrency
-									}
+									'payment.paidAt': invoice.settled_at
 								} satisfies StrictUpdateFilter<Order>
 							},
 							{ returnDocument: 'after' }
@@ -154,7 +109,11 @@ async function maintainOrders() {
 						if (!result.value) {
 							throw new Error('Failed to update order');
 						}
-						await onOrderPaid(result.value, session);
+						await onOrderPaid(
+							result.value,
+							{ amount: invoice.amt_paid_sat, currency: 'SAT' },
+							session
+						);
 					});
 				} else if (invoice.state === 'CANCELED') {
 					await collections.orders.updateOne(
@@ -205,37 +164,7 @@ async function maintainOrders() {
 									$set: {
 										'payment.status': 'paid',
 										'payment.paidAt': new Date(),
-										'payment.transactions': checkout.transactions,
-										totalReceived: {
-											amount: checkout.amount,
-											currency: checkout.currency
-										},
-										'amountsInOtherCurrencies.main.totalReceived': {
-											amount: toCurrency(
-												runtimeConfig.mainCurrency,
-												checkout.amount,
-												checkout.currency
-											),
-											currency: runtimeConfig.mainCurrency
-										},
-										...(runtimeConfig.secondaryCurrency && {
-											'amountsInOtherCurrencies.secondary.totalReceived': {
-												amount: toCurrency(
-													runtimeConfig.secondaryCurrency,
-													checkout.amount,
-													checkout.currency
-												),
-												currency: runtimeConfig.secondaryCurrency
-											}
-										}),
-										'amountsInOtherCurrencies.priceReference.totalReceived': {
-											amount: toCurrency(
-												runtimeConfig.priceReferenceCurrency,
-												checkout.amount,
-												checkout.currency
-											),
-											currency: runtimeConfig.priceReferenceCurrency
-										}
+										'payment.transactions': checkout.transactions
 									} satisfies StrictUpdateFilter<Order>
 								},
 								{ returnDocument: 'after' }
@@ -243,7 +172,11 @@ async function maintainOrders() {
 							if (!result.value) {
 								throw new Error('Failed to update order');
 							}
-							await onOrderPaid(result.value, session);
+							await onOrderPaid(
+								result.value,
+								{ amount: checkout.amount, currency: checkout.currency },
+								session
+							);
 						});
 					} else if (checkout.status === 'FAILED') {
 						await collections.orders.updateOne(
