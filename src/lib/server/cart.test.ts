@@ -2,20 +2,18 @@ import { describe, beforeEach, it, expect, assert } from 'vitest';
 import { collections } from './database';
 import { cleanDb } from './test-utils';
 import { addToCartInDb } from './cart';
-import type { Product } from '$lib/types/Product';
 import { createOrder } from './orders';
 import { HttpError_1 } from '@sveltejs/kit';
-
-const LIMITED_STOCK = 5;
+import { TEST_PRODUCT, TEST_PRODUCT_STOCK, TEST_PRODUCT_UNLIMITED } from './seed/product';
 
 describe('cart', () => {
 	beforeEach(async () => {
 		await cleanDb();
-		await collections.products.insertMany([testProduct, testProductUnlimited]);
+		await collections.products.insertMany([TEST_PRODUCT, TEST_PRODUCT_UNLIMITED]);
 	});
 
 	it('should add a product to the cart', async () => {
-		await addToCartInDb(testProduct, 1, {
+		await addToCartInDb(TEST_PRODUCT, 1, {
 			user: {
 				sessionId: 'test-session-id'
 			}
@@ -26,7 +24,7 @@ describe('cart', () => {
 
 	it('should fail to add a product to the cart when no stock', async () => {
 		await expect(
-			addToCartInDb(testProduct, 10, {
+			addToCartInDb(TEST_PRODUCT, 10, {
 				user: {
 					sessionId: 'test-session-id'
 				}
@@ -35,13 +33,13 @@ describe('cart', () => {
 	});
 
 	it('should prevent adding a product when reserved by another user', async () => {
-		await addToCartInDb(testProduct, LIMITED_STOCK, {
+		await addToCartInDb(TEST_PRODUCT, TEST_PRODUCT_STOCK, {
 			user: {
 				sessionId: 'test-session-id'
 			}
 		});
 		await expect(
-			addToCartInDb(testProduct, LIMITED_STOCK, {
+			addToCartInDb(TEST_PRODUCT, TEST_PRODUCT_STOCK, {
 				user: {
 					sessionId: 'test-session-id2'
 				}
@@ -50,7 +48,7 @@ describe('cart', () => {
 	});
 
 	it('should allow checking out a product when the reservation is expired', async () => {
-		await addToCartInDb(testProduct, LIMITED_STOCK, {
+		await addToCartInDb(TEST_PRODUCT, TEST_PRODUCT_STOCK, {
 			user: {
 				sessionId: 'test-session-id'
 			}
@@ -59,13 +57,13 @@ describe('cart', () => {
 		assert(cart, 'Cart should exist');
 		cart.items[0].reservedUntil = new Date(0);
 		await collections.carts.updateOne({ _id: cart._id }, { $set: { items: cart.items } });
-		await addToCartInDb(testProduct, LIMITED_STOCK, {
+		await addToCartInDb(TEST_PRODUCT, TEST_PRODUCT_STOCK, {
 			user: {
 				sessionId: 'test-session-id2'
 			}
 		});
 		// Refresh first cart
-		await addToCartInDb(testProductUnlimited, 1, {
+		await addToCartInDb(TEST_PRODUCT_UNLIMITED, 1, {
 			user: {
 				sessionId: 'test-session-id'
 			}
@@ -77,8 +75,8 @@ describe('cart', () => {
 			createOrder(
 				[
 					{
-						quantity: LIMITED_STOCK,
-						product: testProduct
+						quantity: TEST_PRODUCT_STOCK,
+						product: TEST_PRODUCT
 					}
 				],
 				'cash',
@@ -94,74 +92,3 @@ describe('cart', () => {
 		).resolves.toBeDefined();
 	});
 });
-
-const testProduct = {
-	_id: 'test-product',
-	name: 'Test product',
-	description: 'Test product description',
-	shortDescription: 'Test product short description',
-	type: 'resource',
-	price: {
-		amount: 100,
-		currency: 'EUR'
-	},
-	shipping: false,
-	preorder: false,
-	free: false,
-	standalone: false,
-	stock: {
-		available: LIMITED_STOCK,
-		total: LIMITED_STOCK,
-		reserved: 0
-	},
-	displayShortDescription: true,
-	payWhatYouWant: false,
-	createdAt: new Date(),
-	updatedAt: new Date(),
-	actionSettings: {
-		eShop: {
-			visible: true,
-			canBeAddedToBasket: true
-		},
-		googleShopping: {
-			visible: true
-		},
-		retail: {
-			visible: true,
-			canBeAddedToBasket: true
-		}
-	}
-} satisfies Product;
-
-const testProductUnlimited = {
-	_id: 'test-product-unlimited',
-	name: 'Test product',
-	description: 'Test product description',
-	shortDescription: 'Test product short description',
-	type: 'resource',
-	price: {
-		amount: 100,
-		currency: 'EUR'
-	},
-	shipping: false,
-	preorder: false,
-	free: false,
-	standalone: false,
-	displayShortDescription: true,
-	payWhatYouWant: false,
-	createdAt: new Date(),
-	updatedAt: new Date(),
-	actionSettings: {
-		eShop: {
-			visible: true,
-			canBeAddedToBasket: true
-		},
-		googleShopping: {
-			visible: true
-		},
-		retail: {
-			visible: true,
-			canBeAddedToBasket: true
-		}
-	}
-} satisfies Product;

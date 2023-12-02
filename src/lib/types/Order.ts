@@ -180,6 +180,14 @@ export interface Order extends Timestamps {
 		transactions?: Array<{ id: string; amount: number; currency: Currency }>;
 	};
 
+	/**
+	 * The invoice number, set when the order is paid.
+	 */
+	invoice?: {
+		number: number;
+		createdAt: Date;
+	};
+
 	notifications: {
 		paymentStatus: {
 			// One of these two must be set
