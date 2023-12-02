@@ -15,10 +15,6 @@ import type { Currency } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
-	if (!params.user.sessionId && !params.user.npub) {
-		throw new TypeError('No session ID or NPUB provided');
-	}
-
 	let res = await collections.carts.findOne(userQuery(params.user), { sort: { _id: -1 } });
 
 	if (!res) {
@@ -86,7 +82,7 @@ export async function addToCartInDb(
 		throw error(400, 'Product is not available for preorder');
 	}
 
-	let cart = await getCartFromDb(params);
+	let cart = await getCartFromDb({ user: params.user });
 
 	const existingItem = cart.items.find((item) => item.productId === product._id);
 
