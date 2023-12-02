@@ -46,6 +46,7 @@ const defaultConfig = {
 	logo: { isWide: false, pictureId: '', darkModePictureId: '' },
 	lnurlPayMetadataJwtSigningKey: '',
 	authLinkJwtSigningKey: '',
+	invoiceNumber: 0,
 	ssoSecret: '',
 	topbarLinks: [
 		{ label: 'Blog', href: '/blog' },

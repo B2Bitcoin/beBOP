@@ -24,6 +24,7 @@ import { SMTP_USER } from '$env/static/private';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { POS_ROLE_ID } from '$lib/types/User';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
+import type { SetRequired } from 'type-fest';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -132,6 +133,25 @@ export async function onOrderPaid(order: Order, session: ClientSession) {
 			{ session }
 		);
 	}
+
+	const lastOrder = (await collections.orders.findOne(
+		{ invoiceNumber: { $exists: true } },
+		{ sort: { invoiceNumber: -1 }, projection: { invoiceNumber: 1 } }
+	)) as SetRequired<Pick<Order, 'invoiceNumber'>, 'invoiceNumber'> | null;
+
+	const invoiceNumber = lastOrder
+		? Math.max(lastOrder.invoiceNumber, runtimeConfig.invoiceNumber) + 1
+		: runtimeConfig.invoiceNumber + 1;
+
+	await collections.orders.updateOne(
+		{ _id: order._id },
+		{
+			$set: {
+				invoiceNumber
+			}
+		},
+		{ session }
+	);
 }
 
 export async function createOrder(

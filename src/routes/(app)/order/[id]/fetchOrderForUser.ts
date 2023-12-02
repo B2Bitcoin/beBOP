@@ -80,6 +80,7 @@ export async function fetchOrderForUser(orderId: string) {
 			amount: order.shippingPrice.amount,
 			currency: order.shippingPrice.currency
 		},
+		invoiceNumber: order.invoiceNumber,
 		vat: order.vat && {
 			country: order.vat.country,
 			price: {

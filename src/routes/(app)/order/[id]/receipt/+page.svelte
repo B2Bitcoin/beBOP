@@ -8,11 +8,6 @@
 
 	const identity = data.sellerIdentity;
 
-	/**
-	 * Todo: generate a proper invoice number
-	 */
-	const invoiceNumber = data.order.number;
-
 	const { t, locale } = useI18n();
 </script>
 
@@ -51,7 +46,7 @@
 </div>
 
 <div class="mt-4">
-	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {invoiceNumber}</h2>
+	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {data.order.invoiceNumber}</h2>
 	<Trans key="order.createdAt">
 		{t('order.createdAt')}:
 		<time datetime={data.order.createdAt.toJSON()} slot="0">

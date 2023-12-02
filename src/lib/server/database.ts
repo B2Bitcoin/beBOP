@@ -86,6 +86,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.orders, { 'user.**': 1 }],
 	[collections.orders, { 'items.product._id': 1, paymentStatus: 1 }],
 	[collections.orders, { number: 1 }, { unique: true }],
+	[collections.orders, { invoiceNumber: 1 }, { unique: true, sparse: true }],
 	[collections.digitalFiles, { productId: 1 }],
 	[collections.nostrReceivedMessages, { processedAt: 1 }],
 	[collections.nostrReceivedMessages, { createdAt: -1 }],
