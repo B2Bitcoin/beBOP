@@ -141,6 +141,7 @@
 		"paymentStatusNpub": "NostR public address for payment status",
 		"receipt": {
 			"bankInfo": "Bank details",
+			"create": "Create invoice",
 			"endMessage": "We stay at your disposal for any further information. <0></0> Best regards, <1></1> {businessName}",
 			"invoice": "Invoice",
 			"itemName": "Nature",
