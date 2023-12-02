@@ -360,7 +360,7 @@
 							<IconModeDark />
 						</button>
 						<select
-							class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none text-xl"
+							class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none bg-transparent text-xl"
 							size="0"
 							bind:value={$locale}
 							on:change={() => {
