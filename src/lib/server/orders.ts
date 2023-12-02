@@ -40,7 +40,7 @@ async function generateOrderNumber(): Promise<number> {
 	return res.value.data as number;
 }
 
-export async function onOrderPaid(order: Order, session: ClientSession) {
+export async function onOrderPaid(order: Order, session: ClientSession | undefined) {
 	// #region subscriptions
 	const subscriptions = await collections.paidSubscriptions
 		.find({

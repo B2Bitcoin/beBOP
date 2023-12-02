@@ -244,4 +244,11 @@ export function stop(): void {
 
 export const runtimeConfig = { ...defaultConfig };
 
+export function resetConfig() {
+	if (!import.meta.env.VITEST) {
+		throw new Error('resetConfig should only be used in tests');
+	}
+	Object.assign(runtimeConfig, defaultConfig);
+}
+
 export const refreshPromise = building ? Promise.resolve() : refresh();
