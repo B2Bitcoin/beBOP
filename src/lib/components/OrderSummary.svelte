@@ -118,7 +118,7 @@
 	{#if order.vat}
 		<div class="flex justify-between items-center">
 			<h3 class="text-base flex items-center gap-2">
-				Vat ({order.vat.rate}%)
+				{t('cart.vat')} ({order.vat.rate}%)
 				<div title="VAT rate for {order.vat.country}">
 					<IconInfo class="cursor-pointer" />
 				</div>

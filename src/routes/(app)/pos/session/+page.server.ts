@@ -21,6 +21,7 @@ export const load = async ({ locals }) => {
 
 	return {
 		cart: formattedCart,
-		order: order && formatOrder(order)
+		order: order && formatOrder(order),
+		layoutReset: true
 	};
 };

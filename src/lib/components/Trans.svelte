@@ -24,6 +24,8 @@
 			index = (match.index ?? 0) + match[0].length;
 		}
 
+		ret.push(translation.slice(index));
+
 		return ret;
 	}
 </script>

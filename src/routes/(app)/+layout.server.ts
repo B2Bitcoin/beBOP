@@ -30,8 +30,8 @@ export async function load(params) {
 
 	const cart = await getCartFromDb({ user: userIdentifier(locals) });
 	const logoPicture = runtimeConfig.logo.pictureId
-		? await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })
-		: null;
+		? (await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })) || undefined
+		: undefined;
 	const logoPictureDark = runtimeConfig.logo.darkModePictureId
 		? (await collections.pictures.findOne({ _id: runtimeConfig.logo.darkModePictureId })) ||
 		  logoPicture

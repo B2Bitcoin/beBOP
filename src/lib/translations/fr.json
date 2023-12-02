@@ -139,6 +139,18 @@
 			"pending": "en attente"
 		},
 		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
+		"receipt": {
+			"bankInfo": "Coordonnées bancaires",
+			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
+			"invoice": "Facture",
+			"itemName": "Nature",
+			"quantity": "Qté",
+			"thanks": "La société {businessName} vous remercie d'avoir choisi ses services.",
+			"totalExcVat": "Total HT",
+			"totalInclVat": "Total TTC",
+			"totalVat": "TVA totale",
+			"unitPrice": "Prix ​​unit. HT"
+		},
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},
