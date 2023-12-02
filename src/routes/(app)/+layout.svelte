@@ -423,19 +423,21 @@
 					</div>
 
 					<!-- Second column -->
-					<div>
-						<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-contact'))}</h3>
-						{#if data.sellerIdentity.contact.email}
-							<a href="mailto:{data.sellerIdentity.contact.email}">
-								{data.sellerIdentity.contact.email}
-							</a>
-						{/if}
-						{#if data.sellerIdentity.contact.phone}
-							<a href="tel:{data.sellerIdentity.contact.phone}">
-								{data.sellerIdentity.contact.phone}
-							</a>
-						{/if}
-					</div>
+					{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
+						<div>
+							<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-contact'))}</h3>
+							{#if data.sellerIdentity.contact.email}
+								<a href="mailto:{data.sellerIdentity.contact.email}">
+									{data.sellerIdentity.contact.email}
+								</a>
+							{/if}
+							{#if data.sellerIdentity.contact.phone}
+								<a href="tel:{data.sellerIdentity.contact.phone}">
+									{data.sellerIdentity.contact.phone}
+								</a>
+							{/if}
+						</div>
+					{/if}
 				{/if}
 
 				<div class="flex gap-4 items-center">
