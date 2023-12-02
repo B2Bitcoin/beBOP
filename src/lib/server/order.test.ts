@@ -63,9 +63,9 @@ describe('order', () => {
 			await onOrderPaid(order1, undefined);
 
 			order1 = await collections.orders.findOne({ _id: order1Id });
-			expect(order1?.number).toBe(2);
+			expect(order1?.invoice?.number).toBe(2);
 			order2 = await collections.orders.findOne({ _id: order2Id });
-			expect(order2?.number).toBe(1);
+			expect(order2?.invoice?.number).toBe(1);
 
 			const order3Id = await createOrder(
 				[
@@ -94,7 +94,7 @@ describe('order', () => {
 
 			order3 = await collections.orders.findOne({ _id: order3Id });
 
-			expect(order3?.number).toBe(3);
+			expect(order3?.invoice?.number).toBe(3);
 		});
 	});
 });

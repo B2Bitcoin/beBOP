@@ -10,7 +10,7 @@
 		"test": "playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test:unit": "vitest",
+		"test:unit": "vitest --no-threads",
 		"lint": "prettier --check . && eslint .",
 		"lint:ci": "(prettier  --check . || (git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .) && false)) && eslint .",
 		"format": "prettier --write .",
