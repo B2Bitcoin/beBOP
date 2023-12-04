@@ -406,24 +406,43 @@
 		<footer class="footer h-auto items-center flex">
 			<div class="mx-auto max-w-7xl px-6 items-center gap-2 grow">
 				<div class="flex justify-between mb-4 mt-4">
-					{#if data.displayCompanyInfo}
+					{#if data.displayCompanyInfo && data.sellerIdentity}
 						<div class="flex w-3/5">
 							<!-- First column -->
 							<div class="w-1/2">
 								<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-identity'))}</h3>
-								<p>{data.sellerIdentity?.businessName}</p>
-								<p>{data.sellerIdentity?.address.state}</p>
+								{#if data.sellerIdentity.businessName}
+									<p>{data.sellerIdentity.businessName}</p>
+								{/if}
+								{#if data.sellerIdentity.address.state}
+									<p>{data.sellerIdentity.address.state}</p>
+								{/if}
 								<p>
-									{data.sellerIdentity?.address.city}, {data.sellerIdentity?.address.street}, {data
-										.sellerIdentity?.address.zip}
+									{#if data.sellerIdentity.address.city}{data.sellerIdentity.address.city},
+									{/if}{#if data.sellerIdentity.address.street}{data.sellerIdentity.address.street},
+									{/if}{data.sellerIdentity.address.zip || ''}
 								</p>
 							</div>
-							<!-- Second column -->
-							<div class="w-1/2 pl-4">
-								<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-contact'))}</h3>
-								<p>{data.sellerIdentity?.contact.email}</p>
-								<p>{data.sellerIdentity?.contact.phone}</p>
-							</div>
+							{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
+								<!-- Second column -->
+								<div class="w-1/2 pl-4">
+									<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-contact'))}</h3>
+									{#if data.sellerIdentity.contact.email}
+										<p>
+											<a href="mailto:{data.sellerIdentity.contact.email}">
+												{data.sellerIdentity.contact.email}
+											</a>
+										</p>
+									{/if}
+									{#if data.sellerIdentity.contact.phone}
+										<p>
+											<a href="tel:{data.sellerIdentity.contact.phone}">
+												{data.sellerIdentity.contact.phone}
+											</a>
+										</p>
+									{/if}
+								</div>
+							{/if}
 						</div>
 					{/if}
 					<div class="w-2/5">
