@@ -404,7 +404,9 @@
 		{/if}
 
 		<footer class="footer h-auto items-center flex">
-			<div class="mx-auto max-w-7xl px-6 py-6 flex items-start justify-evenly gap-2 w-full">
+			<div
+				class="mx-auto max-w-7xl px-6 py-6 flex items-start justify-between gap-2 gap-y-8 w-full flex-wrap"
+			>
 				{#if data.displayCompanyInfo && data.sellerIdentity}
 					<!-- First column -->
 					<div>
@@ -447,7 +449,7 @@
 				</div>
 
 				{#if data.displayPoweredBy}
-					<div class="flex justify-between mb-4 mt-4">
+					<div class="flex w-full">
 						<a class="flex items-center gap-4" href="https://github.com/B2Bitcoin/beBOP"
 							><span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO_DARK} alt="" />
