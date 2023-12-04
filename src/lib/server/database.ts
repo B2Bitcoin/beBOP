@@ -33,6 +33,7 @@ import type { Slider } from '$lib/types/slider';
 import { building } from '$app/environment';
 import type { Theme } from '$lib/types/Theme';
 import { env } from '$env/dynamic/private';
+import type { PersonalInfo } from '$lib/types/PersonalInfo';
 
 const client = building
 	? (null as unknown as MongoClient)
@@ -69,6 +70,7 @@ const genCollection = () => ({
 	tags: db.collection<Tag>('tags'),
 	sliders: db.collection<Slider>('sliders'),
 	themes: db.collection<Theme>('themes'),
+	personalInfo: db.collection<PersonalInfo>('personalInfos'),
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
 
