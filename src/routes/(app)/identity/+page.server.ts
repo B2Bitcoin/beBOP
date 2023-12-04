@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database.js';
+import { userIdentifier, userQuery } from '$lib/server/user';
 import { COUNTRY_ALPHA2S } from '$lib/types/Country.js';
 import { set } from 'lodash-es';
 import type { JsonObject } from 'type-fest';
@@ -6,9 +7,7 @@ import { z } from 'zod';
 
 export async function load({ locals }) {
 	const personalInfoConnected = await collections.personalInfo.findOne(
-		{
-			user: locals.user
-		},
+		userQuery(userIdentifier(locals)),
 		{
 			sort: { _id: -1 }
 		}
@@ -48,7 +47,7 @@ export const actions = {
 
 		await collections.personalInfo.updateOne(
 			{
-				user: locals.user
+				user: userIdentifier(locals)
 			},
 			{
 				$set: {
