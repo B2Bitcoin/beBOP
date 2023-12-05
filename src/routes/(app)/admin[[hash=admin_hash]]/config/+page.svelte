@@ -151,9 +151,9 @@
 		<label class="checkbox-label">
 			<input
 				type="checkbox"
-				name="isMandatoryBillingAddress"
+				name="isBillingAddressMandatory"
 				class="form-checkbox"
-				checked={data.isMandatoryBillingAddress}
+				checked={data.isBillingAddressMandatory}
 			/>
 			Mandatory billing address
 		</label>
