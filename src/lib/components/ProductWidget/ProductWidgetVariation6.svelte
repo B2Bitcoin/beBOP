@@ -19,6 +19,8 @@
 		| 'shipping'
 		| 'type'
 		| 'actionSettings'
+		| 'stock'
+		| 'maxQuantityPerOrder'
 	>;
 	export let pictures: Picture[] | [];
 	export let canAddToCart: boolean;

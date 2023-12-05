@@ -23,6 +23,8 @@
 		| 'shipping'
 		| 'type'
 		| 'actionSettings'
+		| 'stock'
+		| 'maxQuantityPerOrder'
 	>;
 	export let hasDigitalFiles: boolean;
 	export let canBuy: boolean;
@@ -32,7 +34,6 @@
 	export let displayOption = 'img-0';
 	$: canAddToCart =
 		canBuy && (!product.availableDate || product.availableDate <= new Date() || !!product.preorder);
-
 	const widgets = {
 		'img-0': {
 			component: ProductWidgetVariation0

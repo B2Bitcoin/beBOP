@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Product } from '$lib/types/Product';
+	import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 	import type { Picture } from '$lib/types/Picture';
 	import Popup from './Popup.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
@@ -21,6 +21,8 @@
 		| 'availableDate'
 		| 'shipping'
 		| 'type'
+		| 'stock'
+		| 'maxQuantityPerOrder'
 	>;
 	const widget = {};
 
@@ -37,6 +39,13 @@
 	export let detailBtn = false;
 	export let btnTranslationKey = 'product.cta.add';
 	const { t } = useI18n();
+	$: amountAvailable = Math.max(
+		Math.min(
+			product.stock?.available ?? Infinity,
+			product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
+		),
+		0
+	);
 </script>
 
 <form
@@ -57,14 +66,16 @@
 		};
 	}}
 >
-	<button
-		type="submit"
-		disabled={loading}
-		formaction="/product/{product._id}?/addToCart"
-		class={className}
-	>
-		{t(btnTranslationKey)}
-	</button>
+	{#if amountAvailable > 0}
+		<button
+			type="submit"
+			disabled={loading}
+			formaction="/product/{product._id}?/addToCart"
+			class={className}
+		>
+			{t(btnTranslationKey)}
+		</button>
+	{/if}
 	{#if detailBtn}
 		<a
 			href="/product/{product._id}"
