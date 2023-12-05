@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
+	import type { Product } from '$lib/types/Product';
 	import type { Picture } from '$lib/types/Picture';
 	import Popup from './Popup.svelte';
 	import { productAddedToCart } from '$lib/stores/productAddedToCart';
@@ -39,13 +39,6 @@
 	export let detailBtn = false;
 	export let btnTranslationKey = 'product.cta.add';
 	const { t } = useI18n();
-	$: amountAvailable = Math.max(
-		Math.min(
-			product.stock?.available ?? Infinity,
-			product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
-		),
-		0
-	);
 </script>
 
 <form
@@ -66,7 +59,7 @@
 		};
 	}}
 >
-	{#if amountAvailable > 0}
+	{#if product.stock && product.stock.available > 0}
 		<button
 			type="submit"
 			disabled={loading}
