@@ -21,7 +21,7 @@
 						name="firstName"
 						autocomplete="given-name"
 						required
-						value={data.personalInfoConnected?.firstName}
+						value={data.personalInfoConnected?.firstName ?? ''}
 					/>
 				</label>
 
@@ -33,7 +33,7 @@
 						name="lastName"
 						autocomplete="family-name"
 						required
-						value={data.personalInfoConnected?.lastname}
+						value={data.personalInfoConnected?.lastname ?? ''}
 					/>
 				</label>
 
@@ -45,7 +45,7 @@
 						autocomplete="street-address"
 						name="address.street"
 						required
-						value={data.personalInfoConnected?.address?.street}
+						value={data.personalInfoConnected?.address?.street ?? ''}
 					/>
 				</label>
 
@@ -69,7 +69,7 @@
 						type="text"
 						name="address.state"
 						class="form-input"
-						value={data.personalInfoConnected?.address?.state}
+						value={data.personalInfoConnected?.address?.state ?? ''}
 					/>
 				</label>
 				<label class="form-label col-span-2">
@@ -80,7 +80,7 @@
 						name="address.city"
 						class="form-input"
 						required
-						value={data.personalInfoConnected?.address?.city}
+						value={data.personalInfoConnected?.address?.city ?? ''}
 					/>
 				</label>
 				<label class="form-label col-span-2">
@@ -92,7 +92,7 @@
 						class="form-input"
 						required
 						autocomplete="postal-code"
-						value={data.personalInfoConnected?.address?.zip}
+						value={data.personalInfoConnected?.address?.zip ?? ''}
 					/>
 				</label>
 				<button type="submit" class="btn btn-black self-start">Update</button>
