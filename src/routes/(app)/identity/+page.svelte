@@ -13,7 +13,7 @@
 	<div class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid gap-4 md:gap-2 flex">
 		<form method="post" class="col-span-2 flex gap-4 flex-col">
 			<section class="gap-4 grid grid-cols-6 w-4/5">
-				<h1 class="font-light text-2xl col-span-6">Personal Information</h1>
+				<h1 class="font-light text-2xl col-span-6">{t('identity.personalInformation')}</h1>
 
 				<label class="form-label col-span-3">
 					{t('address.firstName')}

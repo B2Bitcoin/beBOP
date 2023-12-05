@@ -87,6 +87,9 @@
 	"footer": {
 		"poweredBy": "Powered by"
 	},
+	"identity": {
+		"personalInformation": "Personal Information"
+	},
 	"login": {
 		"authenticate": {
 			"inputLabel": "Email or npub",

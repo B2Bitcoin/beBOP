@@ -8,7 +8,7 @@ import { emailsEnabled } from '$lib/server/email';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { vatRates } from '$lib/server/vat-rates';
 import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
-import { userIdentifier } from '$lib/server/user.js';
+import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { zodNpub } from '$lib/server/nostr.js';
 
@@ -22,11 +22,21 @@ export async function load({ parent, locals }) {
 			throw redirect(303, '/cart');
 		}
 	}
+	const personalInfoConnected = await collections.personalInfo.findOne(
+		userQuery(userIdentifier(locals)),
+		{
+			sort: { _id: -1 }
+		}
+	);
 	return {
 		paymentMethods: paymentMethods(locals.user?.roleId),
 		emailsEnabled,
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
-		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
+		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
+		personalInfoConnected: {
+			...personalInfoConnected,
+			_id: personalInfoConnected?._id.toString()
+		}
 	};
 }
 
