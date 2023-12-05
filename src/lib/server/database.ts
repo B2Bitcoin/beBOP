@@ -113,7 +113,8 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.users, { 'recovery.npub': 1 }, { sparse: true, unique: true }],
 	[collections.sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
 	[collections.sessions, { sessionId: 1 }, { unique: true }],
-	[collections.discounts, { endAt: 1 }]
+	[collections.discounts, { endAt: 1 }],
+	[collections.personalInfo, { 'user.**': 1 }]
 ];
 
 export async function createIndexes() {
