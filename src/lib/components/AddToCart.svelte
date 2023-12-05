@@ -39,6 +39,7 @@
 	export let detailBtn = false;
 	export let btnTranslationKey = 'product.cta.add';
 	const { t } = useI18n();
+	let amountAvailable = product.stock?.available ?? Infinity;
 </script>
 
 <form
@@ -59,7 +60,7 @@
 		};
 	}}
 >
-	{#if product.stock && product.stock.available > 0}
+	{#if amountAvailable > 0}
 		<button
 			type="submit"
 			disabled={loading}
