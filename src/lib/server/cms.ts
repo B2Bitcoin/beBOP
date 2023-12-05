@@ -142,6 +142,7 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 				| 'type'
 				| 'shipping'
 				| 'actionSettings'
+				| 'stock'
 			>
 		>({
 			price: 1,
@@ -151,7 +152,8 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 			availableDate: 1,
 			type: 1,
 			shipping: 1,
-			actionSettings: 1
+			actionSettings: 1,
+			stock: 1
 		})
 		.toArray();
 	const challenges = await collections.challenges

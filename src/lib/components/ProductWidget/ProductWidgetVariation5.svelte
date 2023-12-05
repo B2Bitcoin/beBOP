@@ -19,6 +19,7 @@
 		| 'shipping'
 		| 'type'
 		| 'actionSettings'
+		| 'stock'
 	>;
 	export let pictures: Picture[] | [];
 	export let canAddToCart: boolean;

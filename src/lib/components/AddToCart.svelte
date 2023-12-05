@@ -21,6 +21,7 @@
 		| 'availableDate'
 		| 'shipping'
 		| 'type'
+		| 'stock'
 	>;
 	const widget = {};
 
@@ -37,6 +38,7 @@
 	export let detailBtn = false;
 	export let btnTranslationKey = 'product.cta.add';
 	const { t } = useI18n();
+	let hasStock = !!(product.stock?.available ?? Infinity);
 </script>
 
 <form
@@ -57,14 +59,16 @@
 		};
 	}}
 >
-	<button
-		type="submit"
-		disabled={loading}
-		formaction="/product/{product._id}?/addToCart"
-		class={className}
-	>
-		{t(btnTranslationKey)}
-	</button>
+	{#if hasStock}
+		<button
+			type="submit"
+			disabled={loading}
+			formaction="/product/{product._id}?/addToCart"
+			class={className}
+		>
+			{t(btnTranslationKey)}
+		</button>
+	{/if}
 	{#if detailBtn}
 		<a
 			href="/product/{product._id}"

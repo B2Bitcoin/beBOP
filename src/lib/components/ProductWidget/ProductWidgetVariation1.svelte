@@ -18,6 +18,7 @@
 		| 'shipping'
 		| 'type'
 		| 'actionSettings'
+		| 'stock'
 	>;
 	export let hasDigitalFiles: boolean;
 	export let canAddToCart: boolean;
