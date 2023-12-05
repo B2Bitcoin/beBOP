@@ -22,10 +22,10 @@
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
 
-	let actionCount = 0;
-	let country = typedKeys(COUNTRIES)[0];
-
 	export let data;
+
+	let actionCount = 0;
+	let country = data.personalInfoConnected?.address?.country ?? typedKeys(COUNTRIES)[0];
 
 	let isFreeVat = false;
 	let addDiscount = false;
@@ -138,7 +138,7 @@
 							name="firstName"
 							autocomplete="given-name"
 							required
-							value={data.personalInfoConnected?.firstName}
+							value={data.personalInfoConnected?.firstName ?? ''}
 						/>
 					</label>
 
@@ -150,7 +150,7 @@
 							name="lastName"
 							autocomplete="family-name"
 							required
-							value={data.personalInfoConnected?.lastname}
+							value={data.personalInfoConnected?.lastname ?? ''}
 						/>
 					</label>
 
@@ -162,7 +162,7 @@
 							autocomplete="street-address"
 							name="address"
 							required
-							value={data.personalInfoConnected?.address?.street}
+							value={data.personalInfoConnected?.address?.street ?? ''}
 						/>
 					</label>
 
@@ -188,7 +188,7 @@
 							type="text"
 							name="state"
 							class="form-input"
-							value={data.personalInfoConnected?.address?.state}
+							value={data.personalInfoConnected?.address?.state ?? ''}
 						/>
 					</label>
 					<label class="form-label col-span-2">
@@ -198,7 +198,7 @@
 							type="text"
 							name="city"
 							class="form-input"
-							value={data.personalInfoConnected?.address?.city}
+							value={data.personalInfoConnected?.address?.city ?? ''}
 							required
 						/>
 					</label>
@@ -209,7 +209,7 @@
 							type="text"
 							name="zip"
 							class="form-input"
-							value={data.personalInfoConnected?.address?.zip}
+							value={data.personalInfoConnected?.address?.zip ?? ''}
 							required
 							autocomplete="postal-code"
 						/>
