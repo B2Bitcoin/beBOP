@@ -22,10 +22,10 @@
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
 
-	let actionCount = 0;
-	let country = typedKeys(COUNTRIES)[0];
-
 	export let data;
+
+	let actionCount = 0;
+	let country = data.personalInfoConnected?.address?.country ?? typedKeys(COUNTRIES)[0];
 
 	let isFreeVat = false;
 	let addDiscount = false;
@@ -138,6 +138,7 @@
 							name="firstName"
 							autocomplete="given-name"
 							required
+							value={data.personalInfoConnected?.firstName ?? ''}
 						/>
 					</label>
 
@@ -149,6 +150,7 @@
 							name="lastName"
 							autocomplete="family-name"
 							required
+							value={data.personalInfoConnected?.lastname ?? ''}
 						/>
 					</label>
 
@@ -160,6 +162,7 @@
 							autocomplete="street-address"
 							name="address"
 							required
+							value={data.personalInfoConnected?.address?.street ?? ''}
 						/>
 					</label>
 
@@ -167,7 +170,11 @@
 						{t('address.country')}
 						<select name="country" class="form-input" required bind:value={country}>
 							{#each Object.entries(COUNTRIES) as [code, countryTxt]}
-								<option value={code} selected={code === country}>{countryTxt}</option>
+								<option
+									value={code}
+									selected={code === data.personalInfoConnected?.address?.country}
+									>{countryTxt}</option
+								>
 							{/each}
 						</select>
 					</label>
@@ -177,17 +184,35 @@
 					<label class="form-label col-span-2">
 						{t('address.state')}
 
-						<input type="text" name="state" class="form-input" />
+						<input
+							type="text"
+							name="state"
+							class="form-input"
+							value={data.personalInfoConnected?.address?.state ?? ''}
+						/>
 					</label>
 					<label class="form-label col-span-2">
 						{t('address.city')}
 
-						<input type="text" name="city" class="form-input" required />
+						<input
+							type="text"
+							name="city"
+							class="form-input"
+							value={data.personalInfoConnected?.address?.city ?? ''}
+							required
+						/>
 					</label>
 					<label class="form-label col-span-2">
 						{t('address.zipCode')}
 
-						<input type="text" name="zip" class="form-input" required autocomplete="postal-code" />
+						<input
+							type="text"
+							name="zip"
+							class="form-input"
+							value={data.personalInfoConnected?.address?.zip ?? ''}
+							required
+							autocomplete="postal-code"
+						/>
 					</label>
 				{/if}
 			</section>

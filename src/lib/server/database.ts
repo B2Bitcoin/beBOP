@@ -33,6 +33,7 @@ import type { Slider } from '$lib/types/slider';
 import { building } from '$app/environment';
 import type { Theme } from '$lib/types/Theme';
 import { env } from '$env/dynamic/private';
+import type { PersonalInfo } from '$lib/types/PersonalInfo';
 
 const client = building
 	? (null as unknown as MongoClient)
@@ -69,6 +70,7 @@ const genCollection = () => ({
 	tags: db.collection<Tag>('tags'),
 	sliders: db.collection<Slider>('sliders'),
 	themes: db.collection<Theme>('themes'),
+	personalInfo: db.collection<PersonalInfo>('personalInfo'),
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
 
@@ -111,7 +113,8 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.users, { 'recovery.npub': 1 }, { sparse: true, unique: true }],
 	[collections.sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
 	[collections.sessions, { sessionId: 1 }, { unique: true }],
-	[collections.discounts, { endAt: 1 }]
+	[collections.discounts, { endAt: 1 }],
+	[collections.personalInfo, { 'user.**': 1 }]
 ];
 
 export async function createIndexes() {
