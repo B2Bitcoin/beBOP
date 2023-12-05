@@ -149,6 +149,15 @@
 			Request IP collection on deliveryless order
 		</label>
 		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="isMandatoryBillingAddress"
+				class="form-checkbox"
+				checked={data.isMandatoryBillingAddress}
+			/>
+			Mandatory billing address
+		</label>
+		<label class="checkbox-label">
 			<input type="checkbox" name="vatExempted" class="form-checkbox" bind:checked={vatExempted} />
 			Disable VAT for my bootik
 		</label>

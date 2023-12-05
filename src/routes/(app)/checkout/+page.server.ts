@@ -36,7 +36,8 @@ export async function load({ parent, locals }) {
 		personalInfoConnected: {
 			...personalInfoConnected,
 			_id: personalInfoConnected?._id.toString()
-		}
+		},
+		isMandatoryBillingAddress: runtimeConfig.isMandatoryBillingAddress
 	};
 }
 

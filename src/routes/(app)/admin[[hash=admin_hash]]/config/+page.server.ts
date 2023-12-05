@@ -27,7 +27,8 @@ export async function load(event) {
 		origin: ORIGIN,
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		adminHash: runtimeConfig.adminHash,
-		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders
+		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
+		isMandatoryBillingAddress: runtimeConfig.isMandatoryBillingAddress
 	};
 }
 
@@ -63,7 +64,8 @@ export const actions = {
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
 				plausibleScriptUrl: z.string(),
 				collectIPOnDeliverylessOrders: z.boolean({ coerce: true }),
-				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)])
+				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)]),
+				isMandatoryBillingAddress: z.boolean({ coerce: true })
 			})
 			.parse(Object.fromEntries(formData));
 

@@ -125,7 +125,7 @@
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
 
-				{#if isDigital}
+				{#if isDigital && !data.isMandatoryBillingAddress}
 					<p class="col-span-6">
 						{t('checkout.digitalNoShippingNeeded')}
 					</p>
