@@ -53,7 +53,7 @@
 
 				<label class="form-label col-span-3">
 					{t('address.country')}
-					<select name="address.country" class="form-input" required bind:value={country}>
+					<select name="address.country" class="form-input" required>
 						{#each Object.entries(COUNTRIES) as [code, countryTxt]}
 							<option value={code} selected={code === data.personalInfoConnected?.address?.country}
 								>{countryTxt}</option
