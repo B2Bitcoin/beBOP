@@ -6,7 +6,6 @@
 	export let data;
 
 	const { t } = useI18n();
-	let country = typedKeys(COUNTRIES)[0];
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
