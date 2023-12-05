@@ -24,7 +24,6 @@
 		| 'type'
 		| 'actionSettings'
 		| 'stock'
-		| 'maxQuantityPerOrder'
 	>;
 	export let hasDigitalFiles: boolean;
 	export let canBuy: boolean;

@@ -22,7 +22,6 @@
 		| 'shipping'
 		| 'type'
 		| 'stock'
-		| 'maxQuantityPerOrder'
 	>;
 	const widget = {};
 

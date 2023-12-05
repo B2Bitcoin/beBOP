@@ -143,7 +143,6 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 				| 'shipping'
 				| 'actionSettings'
 				| 'stock'
-				| 'maxQuantityPerOrder'
 			>
 		>({
 			price: 1,
@@ -154,8 +153,7 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 			type: 1,
 			shipping: 1,
 			actionSettings: 1,
-			stock: 1,
-			maxQuantityPerOrder: 1
+			stock: 1
 		})
 		.toArray();
 	const challenges = await collections.challenges
