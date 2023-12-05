@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
 	import { COUNTRIES } from '$lib/types/Country';
-	import { typedKeys } from '$lib/utils/typedKeys.js';
 
 	export let data;
 
