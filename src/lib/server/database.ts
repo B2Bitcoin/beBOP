@@ -70,7 +70,7 @@ const genCollection = () => ({
 	tags: db.collection<Tag>('tags'),
 	sliders: db.collection<Slider>('sliders'),
 	themes: db.collection<Theme>('themes'),
-	personalInfo: db.collection<PersonalInfo>('personalInfos'),
+	personalInfo: db.collection<PersonalInfo>('personalInfo'),
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
 
