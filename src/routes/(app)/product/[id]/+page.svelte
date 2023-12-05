@@ -146,7 +146,7 @@
 					>
 						<Picture
 							{picture}
-							class="h-12 w-12 rounded-sm m-2 {picture === currentPicture
+							class="h-full w-12 rounded-sm m-2 object-cover {picture === currentPicture
 								? 'ring-2 ring-link ring-offset-2'
 								: ''} cursor-pointer"
 						/>
@@ -173,7 +173,7 @@
 							<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
 								<Picture
 									{picture}
-									class="h-12 w-12 rounded-sm {picture === currentPicture
+									class="h-full w-12 rounded-sm object-cover {picture === currentPicture
 										? 'ring-2 ring-link ring-offset-2'
 										: ''} cursor-pointer"
 								/>
