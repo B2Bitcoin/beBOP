@@ -52,7 +52,7 @@
 			{#if order.totalReceived && adminPrefix}
 				- {t('pos.order.satReceived')}
 				<PriceTag
-					class="inline-flex"
+					inline
 					currency={order.totalReceived.currency}
 					amount={order.totalReceived.amount}
 				/>

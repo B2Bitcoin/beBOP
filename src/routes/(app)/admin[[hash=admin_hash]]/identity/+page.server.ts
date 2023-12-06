@@ -55,7 +55,10 @@ export const actions = {
 						iban: z.string().min(1).max(100).trim(),
 						bic: z.string().min(1).max(100).trim()
 					})
-					.optional()
+					.optional(),
+				invoice: z.object({
+					issuerInfo: z.string().min(1).max(500).trim().optional()
+				})
 			})
 			.parse(json);
 

@@ -13,12 +13,13 @@
 
 <div class="flex justify-between">
 	<Picture picture={data.logoPicture} class="h-16" />
-	<h2 class="text-xl">
-		{identity.businessName}
+	<h2 class="text-xl whitespace-pre-wrap text-right">
+		{identity.invoice?.issuerInfo || ''}
 	</h2>
 </div>
 
 <div class="mt-4">
+	<p>{identity.businessName}</p>
 	{#if identity.vatNumber}
 		<p>VAT Number: {identity.vatNumber}</p>
 	{/if}
@@ -55,8 +56,6 @@
 	</Trans>
 </div>
 
-<p class="mt-4">{t('order.receipt.thanks', { businessName: identity.businessName })}</p>
-
 <table class="mt-4 border-collapse">
 	<thead style:background-color="#aeaaaa" class="text-white">
 		<tr>
@@ -80,19 +79,24 @@
 				item.amountsInOtherCurrencies.main.price.currency}
 			<tr style:background-color={i % 2 === 0 ? '#fef2cc' : '#e7e6e6'}>
 				<td class="text-center border border-white px-2">{i + 1}</td>
-				<td class="text-left border border-white px-2">{item.product.name}</td>
-				<td class="text-left border border-white px-2">{item.quantity}</td>
-				<td class="text-left border border-white px-2">
-					<PriceTag amount={unitPrice} currency={priceCurrency} />
+				<td class="text-center border border-white px-2">{item.product.name}</td>
+				<td class="text-center border border-white px-2">{item.quantity}</td>
+				<td class="text-center border border-white px-2">
+					<PriceTag amount={unitPrice} currency={priceCurrency} inline />
 				</td>
-				<td class="text-left border border-white px-2">{data.order.vat?.rate ?? 0}%</td>
-				<td class="text-left border border-white px-2">
-					<PriceTag amount={(price * (data.order.vat?.rate ?? 0)) / 100} currency={priceCurrency} />
+				<td class="text-center border border-white px-2">{data.order.vat?.rate ?? 0}%</td>
+				<td class="text-center border border-white px-2">
+					<PriceTag
+						amount={(price * (data.order.vat?.rate ?? 0)) / 100}
+						currency={priceCurrency}
+						inline
+					/>
 				</td>
-				<td class="text-left border border-white px-2">
+				<td class="text-right border border-white px-2">
 					<PriceTag
 						amount={price + (price * (data.order.vat?.rate ?? 0)) / 100}
 						currency={priceCurrency}
+						inline
 					/>
 				</td>
 			</tr>
@@ -116,7 +120,7 @@
 					: data.order.amountsInOtherCurrencies.main.totalPrice.amount /
 					  (1 + (data.order.vat?.rate ?? 0) / 100)}
 				currency={data.order.amountsInOtherCurrencies.main.totalPrice.currency}
-				class="inline-flex"
+				inline
 			/>
 		</td>
 	</tr>
@@ -127,7 +131,7 @@
 				amount={data.order.amountsInOtherCurrencies.main.vat?.amount ?? 0}
 				currency={data.order.amountsInOtherCurrencies.main.vat?.currency ??
 					data.order.amountsInOtherCurrencies.main.totalPrice.currency}
-				class="inline-flex"
+				inline
 			/>
 		</td>
 	</tr>
@@ -137,7 +141,7 @@
 			<PriceTag
 				amount={data.order.amountsInOtherCurrencies.main.totalPrice.amount}
 				currency={data.order.amountsInOtherCurrencies.main.totalPrice.currency}
-				class="inline-flex"
+				inline
 			/>
 		</td>
 	</tr>
@@ -166,5 +170,11 @@
 	}
 	:global(html) {
 		print-color-adjust: exact;
+		/** 
+			Margin for pdf generation. Some printers automatically add margin, some not. We add margin
+			just in case, but later we should print the pdfs ourselves for standardized margins. 
+		*/
+		padding: 0.5cm;
+		width: 21cm;
 	}
 </style>

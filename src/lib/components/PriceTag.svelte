@@ -18,6 +18,7 @@
 	 */
 	export let secondary = false;
 	export let short = true;
+	export let inline = false;
 	export let gap = 'gap-2';
 
 	let className = '';
@@ -66,7 +67,7 @@
 </script>
 
 {#if actualCurrency}
-	<div class="{className} flex {gap} items-center" title={displayed}>
+	<div class="{className} {inline ? 'inline-flex' : 'flex'} {gap} items-center" title={displayed}>
 		{#if displayedCurrency === 'SAT'}
 			<IconSatoshi class="min-w-[1em]" />
 		{:else if displayedCurrency === 'BTC'}

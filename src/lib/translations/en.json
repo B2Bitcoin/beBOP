@@ -149,7 +149,6 @@
 			"invoice": "Invoice",
 			"itemName": "Nature",
 			"quantity": "Qty",
-			"thanks": "We thank you on behalf of {businessName} for shopping with us.",
 			"totalExcVat": "Total Excl. VAT",
 			"totalInclVat": "Total Incl. VAT",
 			"totalVat": "Total VAT",

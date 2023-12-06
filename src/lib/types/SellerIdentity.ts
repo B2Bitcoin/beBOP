@@ -21,4 +21,8 @@ export interface SellerIdentity {
 		iban: string;
 		bic: string;
 	};
+
+	invoice?: {
+		issuerInfo?: string;
+	};
 }
