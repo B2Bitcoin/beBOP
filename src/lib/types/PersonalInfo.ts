@@ -6,7 +6,7 @@ export interface PersonalInfo {
 	_id: ObjectId;
 	user: UserIdentifier;
 	firstName: string;
-	lastname: string;
+	lastName: string;
 	address: {
 		street: string;
 		zip: string;
