@@ -21,10 +21,10 @@
 	let cart = data.cart;
 	let order = data.order;
 
-	$: view = cart && cart.length > 0 ? 'updateCart' : order ? order.payment.status : 'welcome';
+	$: view = cart && cart.length > 0 ? 'updateCart' : order ? order.status : 'welcome';
 
 	setTimeout(() => {
-		if (order === data.order && order?.payment.status !== 'pending') {
+		if (order === data.order && order?.status !== 'pending') {
 			order = null;
 		}
 	}, 5_000);
@@ -40,7 +40,7 @@
 						} else if (eventType === 'order') {
 							order = sseOrder;
 							setTimeout(() => {
-								if (order === sseOrder && order?.payment.status !== 'pending') {
+								if (order === sseOrder && order?.status !== 'pending') {
 									order = null;
 								}
 							}, 5_000);
@@ -143,7 +143,7 @@
 			</div>
 		{/if}
 	{:else if view === 'pending'}
-		{#if order?.payment?.method === 'cash'}
+		{#if order?.payments[0]?.method === 'cash'}
 			<div class="text-2xl text-center">{t('pos.session.waitingPaymentConfirmation')}</div>
 		{:else}
 			<div class="flex flex-col items-center gap-3">

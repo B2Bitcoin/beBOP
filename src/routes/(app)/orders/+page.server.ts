@@ -11,11 +11,16 @@ export async function load({ locals }) {
 	return {
 		orders: orders.map((order) => ({
 			_id: order._id,
-			payment: { status: order.payment.status, method: order.payment.method },
+			payments: order.payments.map((payment) => ({
+				id: payment._id.toString(),
+				status: payment.status,
+				method: payment.method
+			})),
 			totalPrice: order.totalPrice,
 			number: order.number,
 			createdAt: order.createdAt,
-			totalReceived: order.totalReceived
+			status: order.status,
+			currencySnapshot: order.currencySnapshot
 		}))
 	};
 }

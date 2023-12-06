@@ -72,7 +72,7 @@ export async function amountOfProductReserved(
 						{
 							$match: {
 								'items.product._id': productId,
-								'payment.status': 'pending'
+								status: 'pending'
 							}
 						},
 						{
@@ -102,7 +102,7 @@ export async function amountOfProductReserved(
 }
 
 export async function refreshAvailableStockInDb(productId: string, session?: ClientSession) {
-	const amountInCarts = await amountOfProductReserved(productId, { session });
+	const amountReserved = await amountOfProductReserved(productId, { session });
 
 	await collections.products.updateOne(
 		{
@@ -112,8 +112,8 @@ export async function refreshAvailableStockInDb(productId: string, session?: Cli
 		[
 			{
 				$set: {
-					'stock.reserved': amountInCarts,
-					'stock.available': { $subtract: ['$stock.total', amountInCarts] }
+					'stock.reserved': amountReserved,
+					'stock.available': { $subtract: ['$stock.total', amountReserved] }
 				}
 			}
 		],
@@ -131,7 +131,7 @@ export async function amountOfProductSold(productId: string): Promise<number> {
 					{
 						$match: {
 							'items.product._id': productId,
-							'payment.status': 'paid'
+							status: 'paid'
 						}
 					},
 					{

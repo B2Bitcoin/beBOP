@@ -86,9 +86,13 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.carts, { 'user.**': 1 }],
 	[collections.carts, { 'items.productId': 1 }],
 	[collections.orders, { 'user.**': 1 }],
-	[collections.orders, { 'items.product._id': 1, paymentStatus: 1 }],
+	/**
+	 * To check amount reserved for a product (with pending orders)
+	 */
+	[collections.orders, { 'items.product._id': 1, status: 1 }],
 	[collections.orders, { number: 1 }, { unique: true }],
-	[collections.orders, { 'invoice.number': 1 }, { unique: true, sparse: true }],
+	[collections.orders, { 'payments.invoice.number': 1 }, { unique: true, sparse: true }],
+	[collections.orders, { 'payments.status': 1 }],
 	[collections.digitalFiles, { productId: 1 }],
 	[collections.nostrReceivedMessages, { processedAt: 1 }],
 	[collections.nostrReceivedMessages, { createdAt: -1 }],
@@ -158,6 +162,23 @@ if (!building) {
 	});
 }
 
-export async function withTransaction(cb: WithSessionCallback) {
-	await client.withSession((session) => session.withTransaction(cb));
+export async function withTransaction<T extends WithSessionCallback>(
+	cb: T
+): Promise<Awaited<ReturnType<T>>> {
+	let ret: Awaited<ReturnType<T>>;
+	let done = false;
+
+	await client.withSession((session) =>
+		session.withTransaction(async () => {
+			ret = await cb(session);
+			done = true;
+		})
+	);
+
+	if (!done) {
+		throw new Error('Transaction not executed');
+	}
+
+	// @ts-expect-error ret is set
+	return ret;
 }

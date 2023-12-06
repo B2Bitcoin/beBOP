@@ -23,8 +23,7 @@ export async function load({ params, depends }) {
 			digitalFiles.map(async (file) => ({
 				name: file.name,
 				size: file.storage.size,
-				link:
-					order.payment.status === 'paid' ? await getS3DownloadLink(file.storage.key) : undefined
+				link: order.status === 'paid' ? await getS3DownloadLink(file.storage.key) : undefined
 			}))
 		)
 	};

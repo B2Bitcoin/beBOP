@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { runtimeConfig } from './runtime-config';
 import { socksDispatcher } from 'fetch-socks';
 import { filterUndef } from '$lib/utils/filterUndef';
+import type { ObjectId } from 'mongodb';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
@@ -255,6 +256,6 @@ export async function dumpWalletInfo(wallet: string): Promise<{
 
 export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[number];
 
-export function orderAddressLabel(orderId: string) {
-	return `order:${orderId}`;
+export function orderAddressLabel(orderId: string, paymentId: ObjectId) {
+	return `order:${orderId}:${paymentId}`;
 }

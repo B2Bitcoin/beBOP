@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { fetchOrderForUser } from '../fetchOrderForUser.js';
+import { fetchOrderForUser } from '../../fetchOrderForUser.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export async function load({ params }) {
@@ -7,7 +7,11 @@ export async function load({ params }) {
 	if (!order) {
 		throw error(404, 'Order not found');
 	}
-	if (order.payment.status !== 'paid') {
+	const payment = order.payments.find((payment) => payment.id === params.paymentId);
+	if (!payment) {
+		throw error(404, 'Payment not found');
+	}
+	if (payment.status !== 'paid') {
 		throw error(400, 'Order is not paid');
 	}
 	if (!runtimeConfig.sellerIdentity && !order.sellerIdentity) {
@@ -15,6 +19,7 @@ export async function load({ params }) {
 	}
 	return {
 		order,
+		payment,
 		layoutReset: true,
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		sellerIdentity: (order.sellerIdentity || runtimeConfig.sellerIdentity)!

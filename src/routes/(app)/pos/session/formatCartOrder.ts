@@ -119,16 +119,18 @@ export async function formatCart(cart: WithId<Cart> | null): Promise<FormattedCa
 }
 
 export function formatOrder(order: Order) {
-	if (order.payment.status !== 'pending' && differenceInSeconds(new Date(), order.updatedAt) > 5) {
+	if (order.status !== 'pending' && differenceInSeconds(new Date(), order.updatedAt) > 5) {
 		return null;
 	}
 	return {
 		_id: order._id,
 		number: order.number,
-		payment: {
-			status: order.payment.status,
-			method: order.payment.method
-		},
+		payments: order.payments.map((payment) => ({
+			price: payment.price,
+			status: payment.status,
+			method: payment.method
+		})),
+		status: order.status,
 		vat: order.vat,
 		totalPrice: order.totalPrice
 	};

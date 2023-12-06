@@ -19,26 +19,37 @@ export async function fetchOrderForUser(orderId: string) {
 		.find({ productId: { $in: order.items.map((item) => item.product._id) } })
 		.toArray();
 
-	if (order.payment.method === 'card' && order.payment.status === 'pending' && isSumupEnabled()) {
-		const response = await fetch(
-			'https://api.sumup.com/v0.1/checkouts/' + order.payment.checkoutId,
-			{
+	for (const payment of order.payments) {
+		if (
+			payment.method === 'card' &&
+			payment.status === 'pending' &&
+			isSumupEnabled() &&
+			payment.checkoutId
+		) {
+			const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + payment.checkoutId, {
 				headers: {
 					Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
 				}
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch checkout status');
 			}
-		);
 
-		if (!response.ok) {
-			throw new Error('Failed to fetch checkout status');
-		}
+			const checkout = await response.json();
 
-		const checkout = await response.json();
+			if (checkout.status === 'PAID') {
+				payment.status = 'paid';
 
-		if (checkout.status === 'PAID') {
-			order.payment.status = 'paid';
+				if (
+					order.payments.every((payment) => payment.status === 'paid') &&
+					order.status === 'pending'
+				) {
+					order.status = 'paid';
+				}
 
-			// order-lock will take care of updating in background
+				// order-lock will take care of updating in background
+			}
 		}
 	}
 
@@ -46,13 +57,17 @@ export async function fetchOrderForUser(orderId: string) {
 		_id: order._id,
 		number: order.number,
 		createdAt: order.createdAt,
-		payment: {
-			method: order.payment.method,
-			status: order.payment.status,
-			address: order.payment.address,
-			expiresAt: order.payment.expiresAt,
-			checkoutId: order.payment.checkoutId
-		},
+		payments: order.payments.map((payment) => ({
+			id: payment._id.toString(),
+			method: payment.method,
+			status: payment.status,
+			address: payment.address,
+			expiresAt: payment.expiresAt,
+			checkoutId: payment.checkoutId,
+			invoice: payment.invoice,
+			price: payment.price,
+			currencySnapshot: payment.currencySnapshot
+		})),
 		items: order.items.map((item) => ({
 			quantity: item.quantity,
 			product: {
@@ -70,7 +85,7 @@ export async function fetchOrderForUser(orderId: string) {
 			digitalFiles: digitalFiles.filter(
 				(digitalFile) => digitalFile.productId === item.product._id
 			),
-			amountsInOtherCurrencies: item.amountsInOtherCurrencies
+			currencySnapshot: item.currencySnapshot
 		})),
 		totalPrice: {
 			amount: order.totalPrice.amount,
@@ -81,7 +96,6 @@ export async function fetchOrderForUser(orderId: string) {
 			currency: order.shippingPrice.currency
 		},
 		sellerIdentity: order.sellerIdentity,
-		invoice: order.invoice,
 		vat: order.vat && {
 			country: order.vat.country,
 			price: {
@@ -94,6 +108,7 @@ export async function fetchOrderForUser(orderId: string) {
 		notifications: order.notifications,
 		vatFree: order.vatFree,
 		discount: order.discount,
-		amountsInOtherCurrencies: order.amountsInOtherCurrencies
+		currencySnapshot: order.currencySnapshot,
+		status: order.status
 	};
 }

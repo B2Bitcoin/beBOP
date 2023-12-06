@@ -20,7 +20,7 @@
 		const interval = setInterval(() => {
 			currentDate = new Date();
 
-			if (data.order.payment.status === 'pending') {
+			if (data.order.status === 'pending') {
 				count++;
 				if (count % 4 === 0) {
 					invalidate(UrlDependency.Order);
@@ -50,7 +50,7 @@
 					>
 				</p>
 			{/if}
-			{#if data.order.payment.status !== 'expired' && data.order.payment.status !== 'canceled'}
+			{#if data.order.status !== 'expired' && data.order.status !== 'canceled'}
 				<div>
 					<Trans key="order.linkReminder"
 						><a
@@ -62,55 +62,69 @@
 				</div>
 			{/if}
 
-			{#if data.order.payment.status === 'pending'}
-				{#if data.order.payment.method !== 'cash'}
+			{#each data.order.payments.filter((p) => p.status === 'pending') as payment}
+				{#if payment.method !== 'cash'}
 					<ul>
 						<li>
-							{t('order.paymentAddress')}: {#if data.order.payment.method === 'card'}
-								<a
-									href="/order/{data.order._id}/pay"
-									class="body-hyperlink underline break-all break-words"
-									>{$page.url.origin}/{data.order._id}/pay</a
-								>
+							{t('order.paymentAddress')}: {#if payment.method === 'card'}
+								<a href={payment.address} class="body-hyperlink underline break-all break-words">
+									{payment.address}
+								</a>
 							{:else}
-								<code class="break-words body-secondaryText break-all"
-									>{data.order.payment.address}</code
-								>
+								<code class="break-words body-secondaryText break-all">{payment.address}</code>
 							{/if}
 						</li>
 						<li>
 							{t('order.paymentAmount')}:
 							<code class="break-words body-secondaryText">
-								{(data.order.payment.method === 'bitcoin'
+								{(payment.method === 'bitcoin'
 									? toBitcoins(data.order.totalPrice.amount, data.order.totalPrice.currency)
 									: toSatoshis(data.order.totalPrice.amount, data.order.totalPrice.currency)
 								).toLocaleString('en-US', { maximumFractionDigits: 8 })}
-								{data.order.payment.method === 'bitcoin' ? 'BTC' : 'sats'}
+								{payment.method === 'bitcoin' ? 'BTC' : 'sats'}
 							</code>
 						</li>
 						<li>
 							{t('order.timeRemaining', {
-								minutes: differenceInMinutes(data.order.payment.expiresAt, currentDate)
+								minutes: differenceInMinutes(payment.expiresAt, currentDate)
 							})}
 						</li>
 					</ul>
 					<img src="{$page.url.pathname}/qrcode" class="w-96 h-96" alt="QR code" />
 					<div class="text-xl">
 						{t('order.payToComplete')}
-						{#if data.order.payment.method === 'bitcoin'}
+						{#if payment.method === 'bitcoin'}
 							{t('order.payToCompleteBitcoin', { count: data.confirmationBlocksRequired })}
 						{/if}
 					</div>
 				{/if}
-			{:else if data.order.payment.status === 'paid'}
+				{#if payment.method === 'cash' && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+					<form
+						action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+							._id}/payment/${payment.id}?/confirm"
+						method="post"
+					>
+						<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
+					</form>
+					<form
+						action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+							._id}/${payment.id}?/cancel"
+						method="post"
+					>
+						<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
+					</form>
+				{/if}
+			{/each}
+
+			{#if data.order.status === 'paid'}
 				<p>
 					<Trans key="order.paymentStatus.paidTemplate"
 						><span class="text-green-500" let:translation slot="0">{translation}</span></Trans
 					>
 				</p>
-			{:else if data.order.payment.status === 'expired'}
+			{:else if data.order.status === 'expired'}
 				<p>{t('order.paymentStatus.expiredTemplate')}</p>
-			{:else if data.order.payment.status === 'canceled'}
+			{:else if data.order.status === 'canceled'}
 				<p class="font-bold">{t('order.paymentStatus.canceledTemplate')}</p>
 			{/if}
 
@@ -154,26 +168,8 @@
 						)}</pre>
 				</div>
 			{/if}
-			{#if data.order.payment.status === 'pending' && data.order.payment.method === 'cash' && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
-				<form
-					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/confirm"
-					method="post"
-				>
-					<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
-				</form>
-				<form
-					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/cancel"
-					method="post"
-				>
-					<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
-				</form>
-			{/if}
-			{#if data.order.payment.status === 'pending' && 0}
-				<form method="post" action="?/cancel">
-					<button type="submit" class="btn btn-red">Cancel</button>
-				</form>
-			{/if}
-			{#if data.order.payment.status === 'paid'}
+
+			{#if data.order.payments[0].status === 'paid'}
 				<button
 					class="btn btn-black self-start"
 					type="button"
@@ -181,7 +177,7 @@
 					on:click={() => receiptIFrame?.contentWindow?.print()}>{t('order.receipt.create')}</button
 				>
 				<iframe
-					src="/order/{data.order._id}/receipt"
+					src="/order/{data.order._id}/receipt/{data.order.payments[0].id}"
 					style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
 					title=""
 					on:load={() => (receiptReady = true)}

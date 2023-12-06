@@ -13,12 +13,16 @@ export const load = async (event) => {
 	return {
 		orders: lastOrders.map((order) => ({
 			_id: order._id,
-			payment: { status: order.payment.status, method: order.payment.method },
-			totalReceived: order.totalReceived,
-			amountsInOtherCurrencies: order.amountsInOtherCurrencies,
+			payments: order.payments.map((payment) => ({
+				status: payment.status,
+				method: payment.method,
+				id: payment._id.toString()
+			})),
+			currencySnapshot: order.currencySnapshot,
 			totalPrice: order.totalPrice,
 			number: order.number,
-			createdAt: order.createdAt
+			createdAt: order.createdAt,
+			status: order.status
 		}))
 	};
 };
