@@ -166,5 +166,11 @@
 	}
 	:global(html) {
 		print-color-adjust: exact;
+		/** 
+			Margin for pdf generation. Some printers automatically add margin, some not. We add margin
+			just in case, but later we should print the pdfs ourselves for standardized margins. 
+		*/
+		padding: 1cm;
+		width: 21cm;
 	}
 </style>
