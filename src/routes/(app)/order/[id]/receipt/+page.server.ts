@@ -10,12 +10,12 @@ export async function load({ params }) {
 	if (order.payment.status !== 'paid') {
 		throw error(400, 'Order is not paid');
 	}
-	if (!runtimeConfig.sellerIdentity) {
+	if (!runtimeConfig.sellerIdentity || !order.sellerIdentity) {
 		throw error(400, 'Seller identity is not set');
 	}
 	return {
 		order,
 		layoutReset: true,
-		sellerIdentity: runtimeConfig.sellerIdentity
+		sellerIdentity: order.sellerIdentity || runtimeConfig.sellerIdentity
 	};
 }

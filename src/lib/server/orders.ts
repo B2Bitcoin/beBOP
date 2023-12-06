@@ -412,6 +412,7 @@ export async function createOrder(
 				number: orderNumber,
 				createdAt: new Date(),
 				updatedAt: new Date(),
+				sellerIdentity: runtimeConfig.sellerIdentity,
 				items: items.map((item) => ({
 					quantity: item.quantity,
 					product: item.product,
