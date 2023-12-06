@@ -13,10 +13,8 @@
 
 <div class="flex justify-between">
 	<Picture picture={data.logoPicture} class="h-16" />
-	<h2 class="text-xl">
-		{#if identity.invoice?.issuerInfo}
-			{@html identity.invoice.issuerInfo.replace(/</g, '&lt;').replace(/\n/g, '<br />')}
-		{/if}
+	<h2 class="text-xl whitespace-pre-wrap text-right">
+		{identity.invoice?.issuerInfo || ''}
 	</h2>
 </div>
 
