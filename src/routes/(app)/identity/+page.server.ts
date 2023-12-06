@@ -14,7 +14,9 @@ export async function load({ locals }) {
 	);
 	return {
 		personalInfoConnected: {
-			...personalInfoConnected,
+			firstName: personalInfoConnected?.firstName,
+			lastName: personalInfoConnected?.lastName,
+			address: personalInfoConnected?.address,
 			_id: personalInfoConnected?._id.toString()
 		}
 	};
@@ -53,7 +55,7 @@ export const actions = {
 				$set: {
 					address: personalInfo.address,
 					firstName: personalInfo.firstName,
-					lastname: personalInfo.lastName,
+					lastName: personalInfo.lastName,
 					updatedAt: new Date()
 				}
 			},

@@ -33,7 +33,7 @@
 						name="lastName"
 						autocomplete="family-name"
 						required
-						value={data.personalInfoConnected?.lastname ?? ''}
+						value={data.personalInfoConnected?.lastName ?? ''}
 					/>
 				</label>
 

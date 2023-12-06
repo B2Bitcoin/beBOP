@@ -34,7 +34,9 @@ export async function load({ parent, locals }) {
 		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		personalInfoConnected: {
-			...personalInfoConnected,
+			firstName: personalInfoConnected?.firstName,
+			lastName: personalInfoConnected?.lastName,
+			address: personalInfoConnected?.address,
 			_id: personalInfoConnected?._id.toString()
 		}
 	};
