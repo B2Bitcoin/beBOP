@@ -39,7 +39,7 @@
 
 <ul>
 	<li class="flex items-center gap-2">
-		<PriceTag amount={data.walletBalance} currency="SAT" convertedTo="SAT" class="inline-flex" />
+		<PriceTag amount={data.walletBalance} currency="SAT" convertedTo="SAT" inline />
 		{#if data.currencies.priceReference !== 'SAT'}(<PriceTag
 				currency="SAT"
 				amount={data.walletBalance}
@@ -47,7 +47,7 @@
 			/>){/if} in the wallet
 	</li>
 	<li class="flex items-center gap-2">
-		<PriceTag amount={data.channelsBalance} currency="SAT" convertedTo="SAT" class="inline-flex" />
+		<PriceTag amount={data.channelsBalance} currency="SAT" convertedTo="SAT" inline />
 		{#if data.currencies.priceReference !== 'SAT'}(<PriceTag
 				currency="SAT"
 				amount={data.channelsBalance}

@@ -412,6 +412,7 @@ export async function createOrder(
 				number: orderNumber,
 				createdAt: new Date(),
 				updatedAt: new Date(),
+				sellerIdentity: runtimeConfig.sellerIdentity,
 				items: items.map((item) => ({
 					quantity: item.quantity,
 					product: item.product,
@@ -709,7 +710,8 @@ export async function createOrder(
 		);
 
 		if (params.cart) {
-			await collections.carts.deleteOne({ _id: params.cart._id }, { session });
+			/** Also delete "old" carts with partial user info */
+			await collections.carts.deleteMany(userQuery(params.cart.user), { session });
 		}
 
 		for (const product of products) {

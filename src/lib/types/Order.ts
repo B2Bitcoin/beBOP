@@ -3,6 +3,7 @@ import type { Currency } from './Currency';
 import type { CountryAlpha2 } from './Country';
 import type { Timestamps } from './Timestamps';
 import type { UserIdentifier } from './UserIdentifier';
+import type { SellerIdentity } from './SellerIdentity';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -187,6 +188,8 @@ export interface Order extends Timestamps {
 		number: number;
 		createdAt: Date;
 	};
+
+	sellerIdentity: SellerIdentity | null;
 
 	notifications: {
 		paymentStatus: {

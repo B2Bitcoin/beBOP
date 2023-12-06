@@ -151,8 +151,9 @@
 	Selected amount: <PriceTag
 		amount={cashoutAmount}
 		currency="BTC"
-		class="inline-flex font-bold"
+		class="font-bold"
 		convertedTo={currency}
+		inline
 	/>
 </p>
 
@@ -169,7 +170,8 @@
 			amount={estimatedFees}
 			currency="BTC"
 			convertedTo={$currencies.priceReference}
-			class="inline-flex font-bold"
+			class="font-bold"
+			inline
 		/> ({((estimatedFees / +estimate.input.amount) * 100).toLocaleString($locale, {
 			maximumFractionDigits: 2
 		})}%)
@@ -180,7 +182,8 @@
 			amount={+estimate.output.amount}
 			currency={estimate.output.currency}
 			convertedTo={$currencies.priceReference}
-			class="inline-flex font-bold"
+			class="font-bold"
+			inline
 		/>
 	</p>
 {/if}

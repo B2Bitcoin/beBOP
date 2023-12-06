@@ -140,5 +140,20 @@
 		/>
 	</label>
 
+	<h2 class="text-2xl">Invoice Information</h2>
+
+	<label class="form-label">
+		Very-top-right issuer information
+		<textarea
+			name="invoice.issuerInfo"
+			class="form-input max-w-[25rem]"
+			rows="5"
+			value={id?.invoice?.issuerInfo ?? ''}
+		/>
+		<p class="text-sm">
+			This is completely optional. It will be printed on the top-right corner of the invoice.
+		</p>
+	</label>
+
 	<button type="submit" class="btn btn-black self-start">Update</button>
 </form>
