@@ -14,25 +14,22 @@
 <div class="flex justify-between">
 	<Picture picture={data.logoPicture} class="h-16" />
 	<h2 class="text-xl">
-		{identity.businessName}
+		{#if identity.invoice?.issuerInfo}
+			{@html identity.invoice.issuerInfo.replace(/</g, '&lt;').replace(/\n/g, '<br />')}
+		{/if}
 	</h2>
 </div>
 
 <div class="mt-4">
-	{#if identity.invoice?.issuerInfo}
-		<p>
-			{@html identity.invoice.issuerInfo.replace(/</g, '&lt;').replace(/\n/g, '<br />')}
-		</p>
-	{:else}
-		{#if identity.vatNumber}
-			<p>VAT Number: {identity.vatNumber}</p>
-		{/if}
-		{#if identity.address.street}
-			<p>{identity.address.street}</p>
-		{/if}
-		{#if identity.address.city || identity.address.zip}
-			<p>{identity.address.zip} {identity.address.city}</p>
-		{/if}
+	<p>{identity.businessName}</p>
+	{#if identity.vatNumber}
+		<p>VAT Number: {identity.vatNumber}</p>
+	{/if}
+	{#if identity.address.street}
+		<p>{identity.address.street}</p>
+	{/if}
+	{#if identity.address.city || identity.address.zip}
+		<p>{identity.address.zip} {identity.address.city}</p>
 	{/if}
 </div>
 
@@ -176,7 +173,7 @@
 			Margin for pdf generation. Some printers automatically add margin, some not. We add margin
 			just in case, but later we should print the pdfs ourselves for standardized margins. 
 		*/
-		padding: 1cm;
+		padding: 0.5cm;
 		width: 21cm;
 	}
 </style>

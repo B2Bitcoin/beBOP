@@ -143,14 +143,16 @@
 	<h2 class="text-2xl">Invoice Information</h2>
 
 	<label class="form-label">
-		Top-left issuer information
+		Very-top-right issuer information
 		<textarea
 			name="invoice.issuerInfo"
 			class="form-input max-w-[25rem]"
 			rows="5"
 			value={id?.invoice?.issuerInfo ?? ''}
-		></textarea>
-		<p class="text-sm">This replaces info like VAT number, email etc from the company</p>
+		/>
+		<p class="text-sm">
+			This is completely optional. It will be printed on the top-right corner of the invoice.
+		</p>
 	</label>
 
 	<button type="submit" class="btn btn-black self-start">Update</button>
