@@ -369,7 +369,9 @@
 							}}
 						>
 							{#each data.locales as locale}
-								<option value={locale}>{locale}</option>
+								<option style="background-color: var(--navbar-backgroundColor);" value={locale}>
+									{locale}
+								</option>
 							{/each}
 						</select>
 					</div>
