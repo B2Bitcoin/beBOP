@@ -64,6 +64,15 @@ export interface Order extends Timestamps {
 		zip: string;
 		country: CountryAlpha2;
 	};
+	billingAddress?: {
+		firstName: string;
+		lastName: string;
+		address: string;
+		city: string;
+		state?: string;
+		zip: string;
+		country: CountryAlpha2;
+	};
 
 	shippingPrice?: {
 		amount: number;

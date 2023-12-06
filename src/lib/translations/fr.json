@@ -45,6 +45,7 @@
 	"checkout": {
 		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (<0>pourquoi?</0>)",
 		"backToCart": "Retour au panier",
+		"billingInfo": "Information Payment",
 		"cta": {
 			"submit": "Payer"
 		},

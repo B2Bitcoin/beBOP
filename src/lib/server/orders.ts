@@ -204,6 +204,7 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
+		billingAddress: Order['billingAddress'] | null;
 		reasonFreeVat?: string;
 		discount?: {
 			amount: number;
@@ -483,6 +484,7 @@ export async function createOrder(
 					}
 				})),
 				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
+				...(params.billingAddress && { billingAddress: params.billingAddress }),
 				...(vat && { vat }),
 				totalPrice:
 					paymentMethod === 'card'

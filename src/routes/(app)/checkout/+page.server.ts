@@ -39,7 +39,9 @@ export async function load({ parent, locals }) {
 			address: personalInfoConnected?.address,
 			_id: personalInfoConnected?._id.toString()
 		},
-		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory
+		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
+		collectBillingAddressOnDeliverylessOrders:
+			runtimeConfig.collectBillingAddressOnDeliverylessOrders
 	};
 }
 
@@ -72,6 +74,11 @@ export const actions = {
 		const formData = await request.formData();
 
 		const isDigital = products.every((product) => !product.shipping);
+		const isDifferentShippingAndBilling = z
+			.object({
+				showBillingInfo: z.boolean({ coerce: true }).default(false)
+			})
+			.parse(Object.fromEntries(formData));
 
 		const shipping = isDigital
 			? null
@@ -86,6 +93,20 @@ export const actions = {
 						country: z.enum(COUNTRY_ALPHA2S)
 					})
 					.parse(Object.fromEntries(formData));
+
+		const billingInfo = isDifferentShippingAndBilling.showBillingInfo
+			? z
+					.object({
+						firstNameBilling: z.string().min(1),
+						lastNameBilling: z.string().min(1),
+						addressBilling: z.string().min(1),
+						cityBilling: z.string().min(1),
+						stateBilling: z.string().optional(),
+						zipBilling: z.string().min(1),
+						countryBilling: z.enum(COUNTRY_ALPHA2S)
+					})
+					.parse(Object.fromEntries(formData))
+			: null;
 
 		const notifications = z
 			.object({
@@ -169,6 +190,17 @@ export const actions = {
 				},
 				cart,
 				shippingAddress: shipping,
+				billingAddress:
+					isDifferentShippingAndBilling.showBillingInfo && billingInfo
+						? {
+								firstName: billingInfo.firstNameBilling,
+								lastName: billingInfo.lastNameBilling,
+								country: billingInfo.countryBilling,
+								address: billingInfo.addressBilling,
+								city: billingInfo.cityBilling,
+								zip: billingInfo.zipBilling
+						  }
+						: shipping,
 				vatCountry: shipping?.country ?? locals.countryCode,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
