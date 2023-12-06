@@ -146,7 +146,6 @@
 			"invoice": "Facture",
 			"itemName": "Nature",
 			"quantity": "Qté",
-			"thanks": "La société {businessName} vous remercie d'avoir choisi ses services.",
 			"totalExcVat": "Total HT",
 			"totalInclVat": "Total TTC",
 			"totalVat": "TVA totale",

@@ -58,8 +58,6 @@
 	</Trans>
 </div>
 
-<p class="mt-4">{t('order.receipt.thanks', { businessName: identity.businessName })}</p>
-
 <table class="mt-4 border-collapse">
 	<thead style:background-color="#aeaaaa" class="text-white">
 		<tr>
