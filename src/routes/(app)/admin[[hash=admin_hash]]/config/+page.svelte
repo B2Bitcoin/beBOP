@@ -151,6 +151,16 @@
 		<label class="checkbox-label">
 			<input
 				type="checkbox"
+				name="collectBillingAddressOnDeliverylessOrders"
+				class="form-checkbox"
+				checked={data.collectBillingAddressOnDeliverylessOrders}
+			/>
+			Request billing address on deliveryless order
+		</label>
+
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
 				name="isBillingAddressMandatory"
 				class="form-checkbox"
 				checked={data.isBillingAddressMandatory}
