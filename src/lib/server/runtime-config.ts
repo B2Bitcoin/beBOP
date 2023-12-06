@@ -66,6 +66,7 @@ const defaultConfig = {
 	vatSingleCountry: false,
 	vatCountry: '',
 	collectIPOnDeliverylessOrders: false,
+	isBillingAddressMandatory: false,
 
 	checkoutButtonOnProductPage: true,
 	discovery: true,
