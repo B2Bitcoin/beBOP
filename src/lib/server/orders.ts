@@ -204,7 +204,7 @@ export async function createOrder(
 		cart?: WithId<Cart>;
 		vatCountry: string;
 		shippingAddress: Order['shippingAddress'] | null;
-		billingAddress: Order['billingAddress'] | null;
+		billingAddress?: Order['billingAddress'] | null;
 		reasonFreeVat?: string;
 		discount?: {
 			amount: number;
