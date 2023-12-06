@@ -19,14 +19,20 @@
 </div>
 
 <div class="mt-4">
-	{#if identity.vatNumber}
-		<p>VAT Number: {identity.vatNumber}</p>
-	{/if}
-	{#if identity.address.street}
-		<p>{identity.address.street}</p>
-	{/if}
-	{#if identity.address.city || identity.address.zip}
-		<p>{identity.address.zip} {identity.address.city}</p>
+	{#if identity.invoice?.issuerInfo}
+		<p>
+			{@html identity.invoice.issuerInfo.replace(/</g, '&lt;').replace(/\n/g, '<br />')}
+		</p>
+	{:else}
+		{#if identity.vatNumber}
+			<p>VAT Number: {identity.vatNumber}</p>
+		{/if}
+		{#if identity.address.street}
+			<p>{identity.address.street}</p>
+		{/if}
+		{#if identity.address.city || identity.address.zip}
+			<p>{identity.address.zip} {identity.address.city}</p>
+		{/if}
 	{/if}
 </div>
 
