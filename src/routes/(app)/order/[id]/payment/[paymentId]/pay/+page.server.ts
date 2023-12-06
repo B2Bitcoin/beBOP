@@ -1,6 +1,6 @@
 import { UrlDependency } from '$lib/types/UrlDependency.js';
 import { error, redirect } from '@sveltejs/kit';
-import { fetchOrderForUser } from '../../fetchOrderForUser.js';
+import { fetchOrderForUser } from '../../../fetchOrderForUser.js';
 
 export async function load({ params, depends }) {
 	const order = await fetchOrderForUser(params.id);

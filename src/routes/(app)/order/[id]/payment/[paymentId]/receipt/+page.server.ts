@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { fetchOrderForUser } from '../../fetchOrderForUser.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { fetchOrderForUser } from '../../../fetchOrderForUser.js';
 
 export async function load({ params }) {
 	const order = await fetchOrderForUser(params.id);

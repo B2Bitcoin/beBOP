@@ -177,7 +177,7 @@
 					on:click={() => receiptIFrame?.contentWindow?.print()}>{t('order.receipt.create')}</button
 				>
 				<iframe
-					src="/order/{data.order._id}/receipt/{data.order.payments[0].id}"
+					src="/order/{data.order._id}/payment/{data.order.payments[0].id}/receipt"
 					style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
 					title=""
 					on:load={() => (receiptReady = true)}
