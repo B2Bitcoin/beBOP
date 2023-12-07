@@ -234,5 +234,6 @@
 		"status": {
 			"expired": "expired"
 		}
-	}
+	},
+	"vatExcluded": "VAT excluded"
 }

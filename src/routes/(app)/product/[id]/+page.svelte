@@ -239,6 +239,7 @@
 						secondary
 						class="text-xl"
 					/>
+					<span class="font-semibold">{t('vatExcluded')}</span>
 				</div>
 
 				{#if data.discount}
