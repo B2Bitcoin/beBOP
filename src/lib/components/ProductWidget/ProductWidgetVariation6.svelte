@@ -27,9 +27,9 @@
 	let pictureId = 0;
 </script>
 
-<div class="flex flex-col rounded py-4 sm:flex-row sm:gap-2 {className}">
+<div class="flex rounded py-4 flex-row gap-4 {className}">
 	{#if pictures.length > 1}
-		<div class="w-1/6 flex-col hidden sm:inline">
+		<div class="grow-[1] flex-col hidden sm:inline">
 			<div class="flex flex-col items-start">
 				{#each pictures.slice(0, 3) as picture, i}
 					<button type="button" on:click={() => (pictureId = i)}>
@@ -46,8 +46,8 @@
 		</div>
 	{/if}
 
-	<div class="flex flex-wrap tagWidget tagWidget-main mb-4">
-		<div class="justify-center sm:w-1/3 mt-4 sm:mt-0">
+	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4 grow">
+		<div class="justify-center mt-4">
 			<a href="/product/{product._id}">
 				<PictureComponent
 					picture={pictures[pictureId]}
@@ -55,7 +55,7 @@
 				/>
 			</a>
 		</div>
-		<div class="p-4 sm:w-2/3">
+		<div class="p-4 grow-[2]">
 			<a href="/product/{product._id}">
 				<h2 class="text-2xl font-bold body-title mb-2">{product.name}</h2>
 			</a>

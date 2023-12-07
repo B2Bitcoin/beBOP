@@ -26,9 +26,9 @@
 	let pictureId = 0;
 </script>
 
-<div class="flex flex-col sm:flex-row sm:gap-2 {className}">
-	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4 sm:mb-0">
-		<div class="p-4 sm:w-2/3">
+<div class="flex flex-row gap-4 {className}">
+	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4 grow">
+		<div class="p-4 grow-[2]">
 			<a href="/product/{product._id}">
 				<h2 class="text-2xl font-bold mb-2 body-title">{product.name}</h2>
 			</a>
@@ -50,7 +50,7 @@
 			{/if}
 		</div>
 
-		<div class="justify-end sm:w-1/3 sm:mt-0">
+		<div class="justify-end grow">
 			<a href="/product/{product._id}">
 				<PictureComponent
 					picture={pictures[pictureId]}
@@ -60,13 +60,13 @@
 		</div>
 	</div>
 	{#if pictures.length > 1}
-		<div class="w-1/6 flex-col hidden sm:inline">
+		<div class="grow-[1] flex-col hidden sm:inline">
 			<div class="flex flex-col items-end">
 				{#each pictures.slice(0, 3) as picture, i}
 					<button type="button" on:click={() => (pictureId = i)}>
 						<PictureComponent
 							{picture}
-							class="w-[100px] h-[100px] border-gray-300 border rounded object-cover mb-2 {pictureId ===
+							class="w-[95px] h-[95px] border-gray-300 border rounded object-cover mb-2 {pictureId ===
 							i
 								? 'ring-2 ring-link ring-offset-2'
 								: ''} "
