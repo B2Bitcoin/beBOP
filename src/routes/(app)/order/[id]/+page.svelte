@@ -6,7 +6,6 @@
 	import { useI18n } from '$lib/i18n';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
-	import { textAddress } from '$lib/utils/textAddress.js';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
@@ -32,7 +31,7 @@
 		return () => clearInterval(interval);
 	});
 
-	const { t, locale } = useI18n();
+	const { t, locale, textAddress } = useI18n();
 
 	let receiptIFrame: HTMLIFrameElement | null = null;
 	let receiptReady = false;

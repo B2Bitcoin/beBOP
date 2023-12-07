@@ -4,13 +4,11 @@
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { COUNTRIES } from '$lib/types/Country';
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import { computeDeliveryFees } from '$lib/types/Cart';
-	import { typedKeys } from '$lib/utils/typedKeys';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
@@ -21,18 +19,19 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
+	import { vatRate } from '$lib/types/Country.js';
 
 	export let data;
 
 	let actionCount = 0;
-	let country = data.personalInfoConnected?.address?.country ?? typedKeys(COUNTRIES)[0];
+	let country = data.personalInfoConnected?.address?.country ?? 'CH';
 
 	let isFreeVat = false;
 	let addDiscount = false;
 	let discountAmount: number;
 	let discountType: DiscountType;
 
-	const { t } = useI18n();
+	const { t, countryName, sortedCountryCodes } = useI18n();
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: t('checkout.paymentStatus') }
@@ -94,8 +93,7 @@
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
-	$: actualVatRate =
-		isDigital || data.vatSingleCountry ? data.vatRate : data.vatRates[actualCountry] ?? 0;
+	$: actualVatRate = isDigital || data.vatSingleCountry ? data.vatRate : vatRate(actualCountry);
 
 	$: totalPrice =
 		sumCurrency(
@@ -169,11 +167,11 @@
 					<label class="form-label col-span-3">
 						{t('address.country')}
 						<select name="country" class="form-input" required bind:value={country}>
-							{#each Object.entries(COUNTRIES) as [code, countryTxt]}
+							{#each sortedCountryCodes() as code}
 								<option
 									value={code}
 									selected={code === data.personalInfoConnected?.address?.country}
-									>{countryTxt}</option
+									>{countryName(code)}</option
 								>
 							{/each}
 						</select>
@@ -422,7 +420,9 @@
 							<h3 class="text-base flex flex-row gap-2 items-center">
 								{t('cart.vat')} ({actualVatRate}%)
 								<div
-									title="{t('cart.vatRate', { country: actualCountry })}. {data.vatSingleCountry
+									title="{t('cart.vatRate', {
+										country: countryName(actualCountry)
+									})}. {data.vatSingleCountry
 										? t('cart.vatSellerCountry')
 										: isDigital
 										? `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`
