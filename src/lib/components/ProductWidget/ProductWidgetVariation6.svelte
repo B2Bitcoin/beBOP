@@ -27,24 +27,27 @@
 	let pictureId = 0;
 </script>
 
-<div class="flex flex-col rounded p-4 sm:flex-row sm:gap-2 {className}">
-	<div class="ml-0 sm:ml-4 w-full sm:w-1/6 flex-col hidden sm:inline">
-		{#if pictures.length > 1}
-			{#each pictures.slice(0, 3) as picture, i}
-				<button type="button" on:click={() => (pictureId = i)}>
-					<PictureComponent
-						{picture}
-						class="w-[100px] h-[100px] border-gray-300 border rounded object-cover mb-2 {pictureId ===
-						i
-							? 'ring-2 ring-link ring-offset-2'
-							: ''} "
-					/>
-				</button>
-			{/each}
-		{/if}
-	</div>
-	<div class="flex flex-wrap tagWidget tagWidget-main w-full sm:w-5/6 mb-4 sm:mb-0">
-		<div class="justify-center w-full sm:w-1/3 mt-4 sm:mt-0">
+<div class="flex flex-col rounded py-4 sm:flex-row sm:gap-2 {className}">
+	{#if pictures.length > 1}
+		<div class="w-1/6 flex-col hidden sm:inline">
+			<div class="flex flex-col items-start">
+				{#each pictures.slice(0, 3) as picture, i}
+					<button type="button" on:click={() => (pictureId = i)}>
+						<PictureComponent
+							{picture}
+							class="w-[100px] h-[100px] border-gray-300 border rounded object-cover mb-2 {pictureId ===
+							i
+								? 'ring-2 ring-link ring-offset-2'
+								: ''} "
+						/>
+					</button>
+				{/each}
+			</div>
+		</div>
+	{/if}
+
+	<div class="flex flex-wrap tagWidget tagWidget-main mb-4">
+		<div class="justify-center sm:w-1/3 mt-4 sm:mt-0">
 			<a href="/product/{product._id}">
 				<PictureComponent
 					picture={pictures[pictureId]}
@@ -52,7 +55,7 @@
 				/>
 			</a>
 		</div>
-		<div class="p-4 w-full sm:w-2/3">
+		<div class="p-4 sm:w-2/3">
 			<a href="/product/{product._id}">
 				<h2 class="text-2xl font-bold body-title mb-2">{product.name}</h2>
 			</a>
