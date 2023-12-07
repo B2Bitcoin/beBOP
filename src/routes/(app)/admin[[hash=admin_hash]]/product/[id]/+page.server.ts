@@ -125,6 +125,7 @@ export const actions: Actions = {
 					shipping: parsed.shipping,
 					displayShortDescription: parsed.displayShortDescription,
 					preorder: parsed.preorder,
+					...(parsed.customPreorderText && { customPreorderText: parsed.customPreorderText }),
 					payWhatYouWant: parsed.payWhatYouWant,
 					standalone: parsed.payWhatYouWant || parsed.standalone,
 					free: parsed.free,
@@ -158,6 +159,7 @@ export const actions: Actions = {
 					updatedAt: new Date()
 				},
 				$unset: {
+					...(!parsed.customPreorderText && { customPreorderText: '' }),
 					...(!parsed.availableDate && { availableDate: '' }),
 					...(!parsed.deliveryFees && { deliveryFees: '' }),
 					...(parsed.stock === undefined && { stock: '' }),
