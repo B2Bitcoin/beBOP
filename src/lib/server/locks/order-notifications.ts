@@ -16,27 +16,29 @@ const processingIds = new Set<string>();
 
 const watch = [
 	{
-		// Watch on updateDescription.updatedFields['payment.status'] change, or when
-		// document inserted
 		$match: {
 			$or: [
-				{
-					$expr: {
-						$not: {
-							$not: [
-								{
-									$getField: {
-										// TODO: check
-										input: '$updateDescription.updatedFields',
-										field: 'payments.status'
-									}
-								}
-							]
-						}
-					}
-				},
+				// Not practical when there can be an arbitrary number of payments
+				// {
+				// 	$expr: {
+				// 		$not: {
+				// 			$not: [
+				// 				{
+				// 					$getField: {
+				// 						// TODO: check
+				// 						input: '$updateDescription.updatedFields',
+				// 						field: 'payments.0.status'
+				// 					}
+				// 				}
+				// 			]
+				// 		}
+				// 	}
+				// },
 				{
 					operationType: 'insert'
+				},
+				{
+					operationType: 'update'
 				}
 			]
 		}
@@ -89,6 +91,13 @@ if (!building) {
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
 	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
 		return;
+	}
+
+	if (change.operationType === 'update') {
+		const updatedFields = Object.keys(change.updateDescription.updatedFields ?? {});
+		if (!updatedFields.some((field) => /^payments\.\d+\.status$/.test(field))) {
+			return;
+		}
 	}
 
 	await handleOrderNotification(change.fullDocument);
