@@ -15,7 +15,7 @@
 	}));
 </script>
 
-<div class="mx-auto">
+<div class="mx-auto mb-5">
 	<Carousel {images} duration={autoplay} transition={null} let:Indicators>
 		<a
 			slot="slide"
