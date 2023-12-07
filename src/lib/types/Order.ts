@@ -16,6 +16,42 @@ export type Price = {
 	currency: Currency;
 };
 
+export interface OrderPayment {
+	_id: ObjectId;
+	status: OrderPaymentStatus;
+	price: Price;
+	currencySnapshot: {
+		main: Price;
+		priceReference: Price;
+		secondary?: Price;
+	};
+	method: PaymentMethod;
+	expiresAt: Date;
+	/** Bitcoin / LN address, payment link */
+	address?: string;
+	paidAt?: Date;
+	/** For lightning addresses, contains the hash to look up the invoice */
+	invoiceId?: string;
+	/** For card transactions */
+	checkoutId?: string;
+	/** For bitcoin transactions */
+	wallet?: string;
+	/**
+	 * There are also additional fields for sumup, they are stored but not documented here.
+	 */
+	transactions?: Array<{ id: string; amount: number; currency: Currency }>;
+
+	/**
+	 * The invoice number, set when the order is paid.
+	 */
+	invoice?: {
+		number: number;
+		createdAt: Date;
+	};
+
+	lastStatusNotified?: OrderPaymentStatus;
+}
+
 export interface Order extends Timestamps {
 	/**
 	 * A string - a crypto UUID. Anyone having access to the _id can access the order.
@@ -69,8 +105,6 @@ export interface Order extends Timestamps {
 		reason: string;
 	};
 
-	totalPrice: Price;
-
 	currencySnapshot: {
 		main: {
 			totalPrice: Price;
@@ -100,41 +134,7 @@ export interface Order extends Timestamps {
 	 */
 	status: OrderPaymentStatus;
 
-	payments: Array<{
-		_id: ObjectId;
-		status: OrderPaymentStatus;
-		price: Price;
-		currencySnapshot: {
-			main: Price;
-			priceReference: Price;
-			secondary?: Price;
-		};
-		method: PaymentMethod;
-		expiresAt: Date;
-		/** Bitcoin / LN address, payment link */
-		address?: string;
-		paidAt?: Date;
-		/** For lightning addresses, contains the hash to look up the invoice */
-		invoiceId?: string;
-		/** For card transactions */
-		checkoutId?: string;
-		/** For bitcoin transactions */
-		wallet?: string;
-		/**
-		 * There are also additional fields for sumup, they are stored but not documented here.
-		 */
-		transactions?: Array<{ id: string; amount: number; currency: Currency }>;
-
-		/**
-		 * The invoice number, set when the order is paid.
-		 */
-		invoice?: {
-			number: number;
-			createdAt: Date;
-		};
-
-		lastStatusNotified?: OrderPaymentStatus;
-	}>;
+	payments: OrderPayment[];
 
 	sellerIdentity: SellerIdentity | null;
 

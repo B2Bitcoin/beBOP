@@ -19,7 +19,6 @@ export const load = async (event) => {
 				id: payment._id.toString()
 			})),
 			currencySnapshot: order.currencySnapshot,
-			totalPrice: order.totalPrice,
 			number: order.number,
 			createdAt: order.createdAt,
 			status: order.status

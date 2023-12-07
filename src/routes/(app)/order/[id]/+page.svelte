@@ -82,8 +82,8 @@
 							{t('order.paymentAmount')}:
 							<code class="break-words body-secondaryText">
 								{(payment.method === 'bitcoin'
-									? toBitcoins(data.order.totalPrice.amount, data.order.totalPrice.currency)
-									: toSatoshis(data.order.totalPrice.amount, data.order.totalPrice.currency)
+									? toBitcoins(payment.price.amount, payment.price.currency)
+									: toSatoshis(payment.price.amount, payment.price.currency)
 								).toLocaleString('en-US', { maximumFractionDigits: 8 })}
 								{payment.method === 'bitcoin' ? 'BTC' : 'sats'}
 							</code>
@@ -102,7 +102,7 @@
 					<div class="text-xl">
 						{t('order.payToComplete')}
 						{#if payment.method === 'bitcoin'}
-							{t('order.payToCompleteBitcoin', { count: data.confirmationBlocksRequired })}
+							{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
 						{/if}
 					</div>
 				{/if}

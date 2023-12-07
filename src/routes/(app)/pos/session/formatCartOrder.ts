@@ -133,6 +133,6 @@ export function formatOrder(order: Order) {
 		})),
 		status: order.status,
 		vat: order.vat,
-		totalPrice: order.totalPrice
+		totalPrice: order.currencySnapshot.main.totalPrice
 	};
 }

@@ -8,7 +8,7 @@
 	export let orders:
 		| Pick<
 				SimplifiedOrder,
-				'_id' | 'payments' | 'totalPrice' | 'number' | 'createdAt' | 'currencySnapshot' | 'status'
+				'_id' | 'payments' | 'number' | 'createdAt' | 'currencySnapshot' | 'status'
 		  >[]
 		| [];
 	export let adminPrefix: string | undefined = undefined;
@@ -34,10 +34,13 @@
 			<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString($locale)}
 				>{order.createdAt.toLocaleDateString($locale)}</time
 			>
-			- <PriceTag currency={order.totalPrice.currency} amount={order.totalPrice.amount} />
+			- <PriceTag
+				currency={order.currencySnapshot.main.totalPrice.currency}
+				amount={order.currencySnapshot.main.totalPrice.amount}
+			/>
 			{#if adminPrefix}(<PriceTag
-					currency={order.totalPrice.currency}
-					amount={order.totalPrice.amount}
+					currency={order.currencySnapshot.priceReference.totalPrice.currency}
+					amount={order.currencySnapshot.priceReference.totalPrice.amount}
 					convertedTo={$currencies.priceReference}
 				/>){/if} -
 			<span

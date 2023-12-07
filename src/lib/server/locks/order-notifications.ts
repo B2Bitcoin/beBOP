@@ -147,8 +147,8 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					if (payment.status === 'pending') {
 						if (payment.method === 'bitcoin') {
 							content += `\n\nPlease send ${toBitcoins(
-								order.totalPrice.amount,
-								order.totalPrice.currency
+								payment.price.amount,
+								payment.price.currency
 							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${payment.address}`;
 						} else if (payment.method === 'lightning') {
 							content += `\n\nPlease pay this invoice: ${payment.address}`;
@@ -179,8 +179,8 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					if (payment.status === 'pending') {
 						if (payment.method === 'bitcoin') {
 							htmlContent += `<p>Please send ${toBitcoins(
-								order.totalPrice.amount,
-								order.totalPrice.currency
+								payment.price.amount,
+								payment.price.currency
 							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
 								payment.address
 							}</p>`;

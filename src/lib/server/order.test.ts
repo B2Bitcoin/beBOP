@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { cleanDb } from './test-utils';
 import { collections } from './database';
 import { TEST_PRODUCT, TEST_PRODUCT_UNLIMITED } from './seed/product';
-import { createOrder, onOrderPayment } from './orders';
+import { addOrderPayment, createOrder, lastInvoiceNumber, onOrderPayment } from './orders';
 
 describe('order', () => {
 	beforeEach(async () => {
@@ -35,9 +35,7 @@ describe('order', () => {
 				throw new Error('Order not found');
 			}
 
-			const totalPrice = order.totalPrice;
-
-			await onOrderPayment(order, order.payments[0], totalPrice);
+			await onOrderPayment(order, order.payments[0], order.payments[0].price);
 
 			order = await collections.orders.findOne({ _id: orderId });
 
@@ -95,8 +93,8 @@ describe('order', () => {
 			expect(order1.payments[0].invoice?.number).toBeUndefined();
 			expect(order2.payments[0].invoice?.number).toBeUndefined();
 
-			await onOrderPayment(order2, order2.payments[0], order2.totalPrice);
-			await onOrderPayment(order1, order1.payments[0], order1.totalPrice);
+			await onOrderPayment(order2, order2.payments[0], order2.payments[0].price);
+			await onOrderPayment(order1, order1.payments[0], order1.payments[0].price);
 
 			order1 = await collections.orders.findOne({ _id: order1Id });
 			expect(order1?.payments[0].invoice?.number).toBe(2);
@@ -126,11 +124,82 @@ describe('order', () => {
 				throw new Error('Order 3 not found');
 			}
 
-			await onOrderPayment(order3, order3.payments[0], order3.totalPrice);
+			await onOrderPayment(order3, order3.payments[0], order3.payments[0].price);
 
 			order3 = await collections.orders.findOne({ _id: order3Id });
 
 			expect(order3?.payments[0].invoice?.number).toBe(3);
 		});
+	});
+
+	it('should show correct last invoice number when multiple payments', async () => {
+		const order1Id = await createOrder(
+			[
+				{
+					product: TEST_PRODUCT,
+					quantity: 1
+				}
+			],
+			'cash',
+			{
+				user: {
+					sessionId: 'test-session-id'
+				},
+				shippingAddress: null,
+				vatCountry: 'FR',
+				paymentPercentage: 50
+			}
+		);
+
+		const order2Id = await createOrder(
+			[
+				{
+					product: TEST_PRODUCT,
+					quantity: 1
+				}
+			],
+			'cash',
+			{
+				user: {
+					sessionId: 'test-session-id'
+				},
+				shippingAddress: null,
+				vatCountry: 'FR'
+			}
+		);
+
+		let order1 = await collections.orders.findOne({ _id: order1Id });
+		if (!order1) {
+			throw new Error('Order 1 not found');
+		}
+
+		await addOrderPayment(order1, 'cash');
+
+		let order2 = await collections.orders.findOne({ _id: order2Id });
+		if (!order2) {
+			throw new Error('Order 2 not found');
+		}
+
+		expect(order1.payments[0].invoice?.number).toBeUndefined();
+		expect(order2.payments[0].invoice?.number).toBeUndefined();
+
+		await onOrderPayment(order1, order1.payments[0], order1.payments[0].price);
+		await onOrderPayment(order2, order2.payments[0], order2.payments[0].price);
+
+		order1 = await collections.orders.findOne({ _id: order1Id });
+		expect(order1?.payments[0].invoice?.number).toBe(1);
+		order2 = await collections.orders.findOne({ _id: order2Id });
+		expect(order2?.payments[0].invoice?.number).toBe(2);
+
+		expect(await lastInvoiceNumber()).toBe(2);
+
+		if (!order1) {
+			throw new Error('Order 1 not found');
+		}
+
+		await onOrderPayment(order1, order1.payments[1], order1.payments[1].price);
+
+		expect(await lastInvoiceNumber()).toBe(3);
+		expect(order1.payments[1].invoice?.number).toBe(3);
 	});
 });

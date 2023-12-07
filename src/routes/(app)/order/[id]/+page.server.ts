@@ -1,6 +1,5 @@
 import { collections } from '$lib/server/database';
 import { UrlDependency } from '$lib/types/UrlDependency';
-import { getConfirmationBlocks } from '$lib/utils/getConfirmationBlocks.js';
 import { redirect } from '@sveltejs/kit';
 import { fetchOrderForUser } from './fetchOrderForUser.js';
 import { getS3DownloadLink } from '$lib/server/s3.js';
@@ -17,7 +16,6 @@ export async function load({ params, depends }) {
 	);
 
 	return {
-		confirmationBlocksRequired: getConfirmationBlocks(order.totalPrice.amount),
 		order,
 		digitalFiles: Promise.all(
 			digitalFiles.map(async (file) => ({

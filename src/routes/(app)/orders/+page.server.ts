@@ -16,7 +16,6 @@ export async function load({ locals }) {
 				status: payment.status,
 				method: payment.method
 			})),
-			totalPrice: order.totalPrice,
 			number: order.number,
 			createdAt: order.createdAt,
 			status: order.status,

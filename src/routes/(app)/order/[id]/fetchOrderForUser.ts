@@ -1,7 +1,9 @@
 import { collections } from '$lib/server/database';
+import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 import { picturesForProducts } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { isSumupEnabled } from '$lib/server/sumup';
+import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
 
 export async function fetchOrderForUser(orderId: string) {
@@ -66,7 +68,11 @@ export async function fetchOrderForUser(orderId: string) {
 			checkoutId: payment.checkoutId,
 			invoice: payment.invoice,
 			price: payment.price,
-			currencySnapshot: payment.currencySnapshot
+			currencySnapshot: payment.currencySnapshot,
+			confirmationBlocksRequired:
+				payment.method === 'bitcoin'
+					? getConfirmationBlocks(toSatoshis(payment.price.amount, payment.price.currency))
+					: 0
 		})),
 		items: order.items.map((item) => ({
 			quantity: item.quantity,
@@ -87,10 +93,6 @@ export async function fetchOrderForUser(orderId: string) {
 			),
 			currencySnapshot: item.currencySnapshot
 		})),
-		totalPrice: {
-			amount: order.totalPrice.amount,
-			currency: order.totalPrice.currency
-		},
 		shippingPrice: order.shippingPrice && {
 			amount: order.shippingPrice.amount,
 			currency: order.shippingPrice.currency

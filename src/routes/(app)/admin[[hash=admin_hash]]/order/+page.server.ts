@@ -11,7 +11,6 @@ export async function load() {
 				status: payment.status,
 				method: payment.method
 			})),
-			totalPrice: order.totalPrice,
 			number: order.number,
 			createdAt: order.createdAt,
 			currencySnapshot: order.currencySnapshot,

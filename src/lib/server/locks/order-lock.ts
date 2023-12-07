@@ -9,7 +9,7 @@ import { lndLookupInvoice } from '../lightning';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { onOrderPayment, onOrderPaymentFailed } from '../orders';
 import { refreshPromise, runtimeConfig } from '../runtime-config';
-import { getConfirmationBlocks } from '$lib/utils/getConfirmationBlocks';
+import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 
 const lock = new Lock('orders');
 
@@ -45,7 +45,7 @@ async function maintainOrders() {
 								orderAddressLabel(order._id, payment._id)
 							);
 
-							const confirmationBlocks = getConfirmationBlocks(order.totalPrice.amount);
+							const confirmationBlocks = getConfirmationBlocks(payment.price.amount);
 
 							const received = sum(
 								transactions
@@ -55,7 +55,7 @@ async function maintainOrders() {
 
 							const satReceived = toSatoshis(received, 'BTC');
 
-							if (satReceived >= toSatoshis(order.totalPrice.amount, order.totalPrice.currency)) {
+							if (satReceived >= toSatoshis(payment.price.amount, payment.price.currency)) {
 								payment.transactions = transactions.map((transaction) => ({
 									id: transaction.txid,
 									amount: transaction.amount,

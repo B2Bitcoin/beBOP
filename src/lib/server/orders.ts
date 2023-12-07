@@ -1,4 +1,10 @@
-import type { DiscountType, Order, OrderPaymentStatus, Price } from '$lib/types/Order';
+import type {
+	DiscountType,
+	Order,
+	OrderPayment,
+	OrderPaymentStatus,
+	Price
+} from '$lib/types/Order';
 import { ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
@@ -14,7 +20,7 @@ import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
 import { vatRates } from './vat-rates';
-import type { Currency } from '$lib/types/Currency';
+import { MININUM_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
@@ -40,13 +46,20 @@ async function generateOrderNumber(): Promise<number> {
 	return res.value.data as number;
 }
 
-export function isOrderFullyPaid(order: Order): boolean {
+export function isOrderFullyPaid(order: Order, opts?: { includePendingOrders?: boolean }): boolean {
 	return (
-		order.payments.every((payment) => payment.status === 'paid') &&
 		sumCurrency(
-			order.totalPrice.currency,
-			order.payments.map((payment) => payment.price)
-		) >= order.totalPrice.amount
+			order.currencySnapshot.main.totalPrice.currency,
+			order.payments
+				.filter(
+					(payment) =>
+						payment.status === 'paid' ||
+						(opts?.includePendingOrders && payment.status === 'pending')
+				)
+				.map((payment) => payment.currencySnapshot.main)
+		) >=
+		order.currencySnapshot.main.totalPrice.amount -
+			MININUM_PER_CURRENCY[order.currencySnapshot.main.totalPrice.currency]
 	);
 }
 
@@ -340,6 +353,10 @@ export async function createOrder(
 			justification: string;
 		};
 		clientIp?: string;
+		/**
+		 * 0-100
+		 */
+		paymentPercentage?: number;
 	}
 ): Promise<Order['_id']> {
 	const npubAddress = params.notifications?.paymentStatus?.npub;
@@ -349,6 +366,13 @@ export async function createOrder(
 
 	if (!canBeNotified && paymentMethod !== 'cash') {
 		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
+	}
+
+	if (
+		params.paymentPercentage &&
+		(params.paymentPercentage < 10 || params.paymentPercentage > 100)
+	) {
+		throw error(400, 'Invalid payment percentage');
 	}
 
 	const products = items.map((item) => item.product);
@@ -529,18 +553,23 @@ export async function createOrder(
 		throw error(400, 'Missing IP address for deliveryless order');
 	}
 
-	const totalPrice: Price =
-		paymentMethod === 'card'
-			? {
-					amount: toCurrency(runtimeConfig.sumUp.currency, totalSatoshis, 'SAT'),
-					currency: runtimeConfig.sumUp.currency
-			  }
-			: {
-					amount: totalSatoshis,
-					currency: 'SAT'
-			  };
+	const satoshisToPay = params.paymentPercentage
+		? Math.floor((totalSatoshis * params.paymentPercentage) / 100)
+		: totalSatoshis;
 
 	const paymentId = new ObjectId();
+	const paymentPrice: Price =
+		paymentMethod === 'cash'
+			? {
+					amount: toCurrency(runtimeConfig.mainCurrency, satoshisToPay, 'SAT'),
+					currency: runtimeConfig.mainCurrency
+			  }
+			: paymentMethod === 'card'
+			? {
+					amount: toCurrency(runtimeConfig.sumUp.currency, satoshisToPay, 'SAT'),
+					currency: runtimeConfig.sumUp.currency
+			  }
+			: { amount: satoshisToPay, currency: 'SAT' };
 	await withTransaction(async (session) => {
 		const expiresAt =
 			paymentMethod === 'cash'
@@ -626,7 +655,6 @@ export async function createOrder(
 				})),
 				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
 				...(vat && { vat }),
-				totalPrice,
 				...(shippingPrice
 					? {
 							shippingPrice
@@ -636,89 +664,43 @@ export async function createOrder(
 					{
 						_id: paymentId,
 						method: paymentMethod,
-						price: totalPrice,
+						price:
+							paymentMethod === 'cash'
+								? {
+										amount: toCurrency(runtimeConfig.mainCurrency, satoshisToPay, 'SAT'),
+										currency: runtimeConfig.mainCurrency
+								  }
+								: paymentMethod === 'card'
+								? {
+										amount: toCurrency(runtimeConfig.sumUp.currency, satoshisToPay, 'SAT'),
+										currency: runtimeConfig.sumUp.currency
+								  }
+								: { amount: satoshisToPay, currency: 'SAT' },
 						currencySnapshot: {
 							main: {
-								amount: toCurrency(runtimeConfig.mainCurrency, totalSatoshis, 'SAT'),
+								amount: toCurrency(runtimeConfig.mainCurrency, satoshisToPay, 'SAT'),
 								currency: runtimeConfig.mainCurrency
 							},
 							...(runtimeConfig.secondaryCurrency && {
 								secondary: {
-									amount: toCurrency(runtimeConfig.secondaryCurrency, totalSatoshis, 'SAT'),
+									amount: toCurrency(runtimeConfig.secondaryCurrency, satoshisToPay, 'SAT'),
 									currency: runtimeConfig.secondaryCurrency
 								}
 							}),
 							priceReference: {
-								amount: toCurrency(runtimeConfig.priceReferenceCurrency, totalSatoshis, 'SAT'),
+								amount: toCurrency(runtimeConfig.priceReferenceCurrency, satoshisToPay, 'SAT'),
 								currency: runtimeConfig.priceReferenceCurrency
 							}
 						},
 						status: 'pending',
-						...(await (async () => {
-							switch (paymentMethod) {
-								case 'bitcoin':
-									return {
-										address: await getNewAddress(orderAddressLabel(orderId, paymentId)),
-										wallet: await currentWallet()
-									};
-								case 'lightning': {
-									const invoice = await lndCreateInvoice(totalSatoshis, {
-										expireAfterSeconds: differenceInSeconds(expiresAt, new Date()),
-										label: runtimeConfig.includeOrderUrlInQRCode
-											? `${ORIGIN}/order/${orderId}`
-											: undefined
-									});
-
-									return {
-										address: invoice.payment_request,
-										invoiceId: invoice.r_hash
-									};
-								}
-								case 'cash': {
-									return {};
-								}
-								case 'card': {
-									const resp = await fetch('https://api.sumup.com/v0.1/checkouts', {
-										method: 'POST',
-										headers: {
-											Authorization: `Bearer ${runtimeConfig.sumUp.apiKey}`,
-											'Content-Type': 'application/json'
-										},
-										body: JSON.stringify({
-											amount: toCurrency(runtimeConfig.sumUp.currency, totalSatoshis, 'SAT'),
-											currency: runtimeConfig.sumUp.currency,
-											checkout_reference: orderId,
-											merchant_code: runtimeConfig.sumUp.merchantCode,
-											redirect_url: `${ORIGIN}/order/${orderId}`,
-											description: 'Order ' + orderNumber,
-											valid_until: expiresAt.toISOString()
-										})
-									});
-
-									if (!resp.ok) {
-										console.error(await resp.text());
-										throw error(402, 'Sumup checkout creation failed');
-									}
-
-									const json = await resp.json();
-
-									const checkoutId = json.id;
-
-									if (!checkoutId || typeof checkoutId !== 'string') {
-										console.error('no checkout id', json);
-										throw error(402, 'Sumup checkout creation failed');
-									}
-
-									return {
-										checkoutId: json.id,
-										meta: json,
-										address: `${ORIGIN}/order/${orderId}/payment/${paymentId}/pay`
-									};
-								}
-								default:
-									throw error(400, 'Invalid payment method: ' + paymentMethod);
-							}
-						})()),
+						...(await generatePaymentInfo({
+							method: paymentMethod,
+							orderId,
+							orderNumber,
+							toPay: paymentPrice,
+							paymentId,
+							expiresAt
+						})),
 						expiresAt
 					}
 				],
@@ -875,4 +857,215 @@ export async function createOrder(
 	});
 
 	return orderId;
+}
+
+async function generatePaymentInfo(params: {
+	method: PaymentMethod;
+	orderId: string;
+	orderNumber: number;
+	toPay: Price;
+	paymentId: ObjectId;
+	expiresAt: Date;
+}): Promise<{
+	address?: string;
+	wallet?: string;
+	invoiceId?: string;
+	checkoutId?: string;
+	meta?: unknown;
+}> {
+	switch (params.method) {
+		case 'bitcoin':
+			return {
+				address: await getNewAddress(orderAddressLabel(params.orderId, params.paymentId)),
+				wallet: await currentWallet()
+			};
+		case 'lightning': {
+			const invoice = await lndCreateInvoice(
+				toSatoshis(params.toPay.amount, params.toPay.currency),
+				{
+					expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date()),
+					label: runtimeConfig.includeOrderUrlInQRCode
+						? `${ORIGIN}/order/${params.orderId}`
+						: undefined
+				}
+			);
+
+			return {
+				address: invoice.payment_request,
+				invoiceId: invoice.r_hash
+			};
+		}
+		case 'cash': {
+			return {};
+		}
+		case 'card':
+			return await generateCardPaymentInfo(params);
+	}
+}
+
+async function generateCardPaymentInfo(params: {
+	orderId: string;
+	orderNumber: number;
+	toPay: Price;
+	paymentId: ObjectId;
+	expiresAt: Date;
+}): Promise<{
+	checkoutId: string;
+	meta: unknown;
+	address: string;
+}> {
+	{
+		const resp = await fetch('https://api.sumup.com/v0.1/checkouts', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${runtimeConfig.sumUp.apiKey}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				amount: toCurrency(
+					runtimeConfig.sumUp.currency,
+					params.toPay.amount,
+					params.toPay.currency
+				),
+				currency: runtimeConfig.sumUp.currency,
+				checkout_reference: params.orderId,
+				merchant_code: runtimeConfig.sumUp.merchantCode,
+				redirect_url: `${ORIGIN}/order/${params.orderId}`,
+				description: 'Order ' + params.orderNumber,
+				valid_until: params.expiresAt.toISOString()
+			})
+		});
+
+		if (!resp.ok) {
+			console.error(await resp.text());
+			throw error(402, 'Sumup checkout creation failed');
+		}
+
+		const json = await resp.json();
+
+		const checkoutId = json.id;
+
+		if (!checkoutId || typeof checkoutId !== 'string') {
+			console.error('no checkout id', json);
+			throw error(402, 'Sumup checkout creation failed');
+		}
+
+		return {
+			checkoutId,
+			meta: json,
+			address: `${ORIGIN}/order/${params.orderId}/payment/${params.paymentId}/pay`
+		};
+	}
+}
+
+export async function addOrderPayment(
+	order: Order,
+	paymentMethod: PaymentMethod,
+	params?: { paymentPercentage?: number }
+) {
+	if (order.status !== 'pending') {
+		throw error(400, 'Order is not pending');
+	}
+
+	if (
+		params?.paymentPercentage &&
+		(params.paymentPercentage < 10 || params.paymentPercentage > 100)
+	) {
+		throw error(400, 'Invalid payment percentage');
+	}
+
+	if (isOrderFullyPaid(order, { includePendingOrders: true })) {
+		throw error(400, 'Order already fully paid with pending payments');
+	}
+
+	// We reuse the same currencies as previous payments
+	const mainCurrency = order.currencySnapshot.main.totalPrice.currency;
+	const secondaryCurrency = order.currencySnapshot.secondary?.totalPrice.currency;
+	const priceReferenceCurrency = order.currencySnapshot.priceReference.totalPrice.currency;
+
+	const alreadyProcessedAmount = sumCurrency(
+		mainCurrency,
+		order.payments.map((payment) => payment.currencySnapshot.main)
+	);
+
+	const maxAmountToPay = params?.paymentPercentage
+		? order.currencySnapshot.main.totalPrice.amount * params.paymentPercentage
+		: order.currencySnapshot.main.totalPrice.amount;
+
+	const priceToPay = {
+		amount: fixCurrencyRounding(
+			Math.min(
+				maxAmountToPay,
+				order.currencySnapshot.main.totalPrice.amount - alreadyProcessedAmount
+			),
+			mainCurrency
+		),
+		currency: mainCurrency
+	};
+
+	if (priceToPay.amount < MININUM_PER_CURRENCY[priceToPay.currency]) {
+		throw error(400, 'Order already fully paid with pending payments');
+	}
+
+	const paymentId = new ObjectId();
+	const expiresAt =
+		paymentMethod === 'cash'
+			? addMonths(new Date(), 1)
+			: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
+
+	const payment: OrderPayment = {
+		_id: paymentId,
+		status: 'pending',
+		method: paymentMethod,
+		price:
+			paymentMethod === 'cash'
+				? {
+						amount: toCurrency(runtimeConfig.mainCurrency, priceToPay.amount, priceToPay.currency),
+						currency: runtimeConfig.mainCurrency
+				  }
+				: paymentMethod === 'card'
+				? {
+						amount: toCurrency(
+							runtimeConfig.sumUp.currency,
+							priceToPay.amount,
+							priceToPay.currency
+						),
+						currency: runtimeConfig.sumUp.currency
+				  }
+				: { amount: toCurrency('SAT', priceToPay.amount, priceToPay.currency), currency: 'SAT' },
+		currencySnapshot: {
+			main: {
+				amount: toCurrency(mainCurrency, priceToPay.amount, priceToPay.currency),
+				currency: mainCurrency
+			},
+			...(secondaryCurrency && {
+				secondary: {
+					amount: toCurrency(secondaryCurrency, priceToPay.amount, priceToPay.currency),
+					currency: secondaryCurrency
+				}
+			}),
+			priceReference: {
+				amount: toCurrency(priceReferenceCurrency, priceToPay.amount, priceToPay.currency),
+				currency: priceReferenceCurrency
+			}
+		},
+		expiresAt,
+		...(await generatePaymentInfo({
+			method: paymentMethod,
+			orderId: order._id,
+			orderNumber: order.number,
+			toPay: priceToPay,
+			paymentId,
+			expiresAt
+		}))
+	};
+
+	await collections.orders.updateOne(
+		{ _id: order._id },
+		{
+			$push: {
+				payments: payment
+			}
+		}
+	);
 }

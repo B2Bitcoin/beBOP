@@ -26,8 +26,8 @@ export async function GET({ params }) {
 	const address =
 		payment.method === 'bitcoin'
 			? `bitcoin:${payment.address}?amount=${toBitcoins(
-					order.totalPrice.amount,
-					order.totalPrice.currency
+					payment.price.amount,
+					payment.price.currency
 			  )
 					.toLocaleString('en-US', { maximumFractionDigits: 8 })
 					.replaceAll(',', '')}`
