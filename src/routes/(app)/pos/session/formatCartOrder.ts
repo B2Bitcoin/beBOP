@@ -126,6 +126,7 @@ export function formatOrder(order: Order) {
 		_id: order._id,
 		number: order.number,
 		payments: order.payments.map((payment) => ({
+			id: payment._id.toString(),
 			price: payment.price,
 			status: payment.status,
 			method: payment.method

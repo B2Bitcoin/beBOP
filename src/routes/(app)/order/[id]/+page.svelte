@@ -90,7 +90,11 @@
 							})}
 						</li>
 					</ul>
-					<img src="{$page.url.pathname}/qrcode" class="w-96 h-96" alt="QR code" />
+					<img
+						src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+						class="w-96 h-96"
+						alt="QR code"
+					/>
 					<div class="text-xl">
 						{t('order.payToComplete')}
 						{#if payment.method === 'bitcoin'}
@@ -101,14 +105,14 @@
 				{#if payment.method === 'cash' && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
 					<form
 						action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-							._id}/payment/${payment.id}?/confirm"
+							._id}/payment/{payment.id}?/confirm"
 						method="post"
 					>
 						<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
 					</form>
 					<form
 						action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-							._id}/${payment.id}?/cancel"
+							._id}/{payment.id}?/cancel"
 						method="post"
 					>
 						<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
