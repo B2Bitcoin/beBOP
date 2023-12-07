@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { COUNTRIES } from '$lib/types/Country';
+	import { countryNameByAlpha2 } from '$lib/types/Country';
 
 	export let data;
 
@@ -51,7 +51,7 @@
 	<label class="form-label">
 		Country
 		<select name="address.country" class="form-input max-w-[25rem]">
-			{#each Object.entries(COUNTRIES) as [countryCode, countryName]}
+			{#each Object.entries(countryNameByAlpha2) as [countryCode, countryName]}
 				<option value={countryCode} selected={countryCode === id?.address?.country}
 					>{countryName}</option
 				>

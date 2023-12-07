@@ -4,7 +4,7 @@
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
-	import { countryNameByAlpha2 } from '$lib/utils/country-codes.js';
+	import { countryName, countryNameByAlpha2 } from '$lib/types/Country';
 
 	export let data;
 	export let form;
@@ -136,7 +136,7 @@
 			Your IP is <code class="font-mono bg-link px-[2px] py-[1px] rounded text-white"
 				>{data.ip}</code
 			>
-			({countryNameByAlpha2[data.countryCode]})
+			({countryName(data.countryCode)})
 		</p>
 	</label>
 	<div class="flex flex-col gap-2">

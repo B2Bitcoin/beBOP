@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { COUNTRIES, COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
+	import { COUNTRY_ALPHA2S, countryNameByAlpha2, type CountryAlpha2 } from '$lib/types/Country';
 	import { CURRENCIES, type Currency } from '$lib/types/Currency';
 	import { typedEntries } from '$lib/utils/typedEntries';
 	import type { DeliveryFees } from '$lib/types/DeliveryFees';
@@ -23,7 +23,7 @@
 		<select class="form-input max-w-[25rem]" {disabled} bind:value={feeCountryToAdd}>
 			{#each countriesWithNoFee as country}
 				<option value={country}>
-					{country === 'default' ? 'Other countries' : COUNTRIES[country]}
+					{country === 'default' ? 'Other countries' : countryNameByAlpha2[country]}
 				</option>
 			{/each}
 		</select>
@@ -44,7 +44,9 @@
 
 {#each typedEntries(deliveryFees) as [country, deliveryFee]}
 	<div class="flex flex-col gap-2">
-		<h3 class="text-xl">{country === 'default' ? 'Other countries' : COUNTRIES[country]}</h3>
+		<h3 class="text-xl">
+			{country === 'default' ? 'Other countries' : countryNameByAlpha2[country]}
+		</h3>
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Amount

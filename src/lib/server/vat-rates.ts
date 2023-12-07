@@ -1,5 +1,6 @@
 // Gotten from the https://www.vatcalc.com/wp-admin/admin-ajax.php?action=get_wdtable&table_id=4 ajax call from https://www.vatcalc.com/vat-rates/
-// country codes from ./country-codes.ts
+
+import type { CountryAlpha2 } from '$lib/types/Country';
 
 export const vatRates = {
 	AG: 15,
@@ -228,4 +229,4 @@ export const vatRates = {
 	MS: 0,
 	MP: 0,
 	PS: 16
-};
+} as Record<CountryAlpha2, number>;

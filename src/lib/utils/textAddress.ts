@@ -1,5 +1,5 @@
 import type { OrderAddress } from '$lib/types/Order';
-import { countryNameByAlpha2 } from './country-codes';
+import { countryNameByAlpha2 } from '$lib/types/Country';
 
 export function textAddress(address: OrderAddress) {
 	return `${address.firstName || ''} ${address.lastName || ''}\n${address.address || ''}\n${
