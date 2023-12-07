@@ -136,7 +136,7 @@
 						<input
 							type="text"
 							class="form-input"
-							name="firstName"
+							name="shipping.firstName"
 							autocomplete="given-name"
 							required
 							value={data.personalInfoConnected?.firstName ?? ''}
@@ -148,7 +148,7 @@
 						<input
 							type="text"
 							class="form-input"
-							name="lastName"
+							name="shipping.lastName"
 							autocomplete="family-name"
 							required
 							value={data.personalInfoConnected?.lastName ?? ''}
@@ -161,7 +161,7 @@
 							type="text"
 							class="form-input"
 							autocomplete="street-address"
-							name="address"
+							name="shipping.address"
 							required
 							value={data.personalInfoConnected?.address?.street ?? ''}
 						/>
@@ -169,7 +169,7 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="country" class="form-input" required bind:value={country}>
+						<select name="shipping.country" class="form-input" required bind:value={country}>
 							{#each Object.entries(COUNTRIES) as [code, countryTxt]}
 								<option
 									value={code}
@@ -187,7 +187,7 @@
 
 						<input
 							type="text"
-							name="state"
+							name="shipping.state"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.state ?? ''}
 						/>
@@ -197,7 +197,7 @@
 
 						<input
 							type="text"
-							name="city"
+							name="shipping.city"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.city ?? ''}
 							required
@@ -208,7 +208,7 @@
 
 						<input
 							type="text"
-							name="zip"
+							name="shipping.zip"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.zip ?? ''}
 							required
@@ -224,7 +224,7 @@
 								form="checkout"
 								bind:checked={showBillingInfo}
 							/>
-							My delivery address and my physical address are differents
+							My delivery address and my billing address are differents
 						</label>
 					{/if}
 				{/if}
@@ -239,7 +239,7 @@
 						<input
 							type="text"
 							class="form-input"
-							name="firstNameBilling"
+							name="billing.firstName"
 							autocomplete="given-name"
 							required
 						/>
@@ -250,7 +250,7 @@
 						<input
 							type="text"
 							class="form-input"
-							name="lastNameBilling"
+							name="billing.lastName"
 							autocomplete="family-name"
 							required
 						/>
@@ -262,14 +262,14 @@
 							type="text"
 							class="form-input"
 							autocomplete="street-address"
-							name="addressBilling"
+							name="billing.address"
 							required
 						/>
 					</label>
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="countryBilling" class="form-input" required bind:value={country}>
+						<select name="billing.country" class="form-input" required bind:value={country}>
 							{#each Object.entries(COUNTRIES) as [code, countryTxt]}
 								<option value={code}>{countryTxt}</option>
 							{/each}
@@ -281,19 +281,19 @@
 					<label class="form-label col-span-2">
 						{t('address.state')}
 
-						<input type="text" name="stateBilling" class="form-input" />
+						<input type="text" name="billing.state" class="form-input" />
 					</label>
 					<label class="form-label col-span-2">
 						{t('address.city')}
 
-						<input type="text" name="cityBilling" class="form-input" required />
+						<input type="text" name="billing.city" class="form-input" required />
 					</label>
 					<label class="form-label col-span-2">
 						{t('address.zipCode')}
 
 						<input
 							type="text"
-							name="zipBilling"
+							name="billing.zip"
 							class="form-input"
 							required
 							autocomplete="postal-code"

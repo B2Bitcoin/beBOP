@@ -55,25 +55,8 @@ export interface Order extends Timestamps {
 		};
 	}>;
 
-	shippingAddress?: {
-		firstName: string;
-		lastName: string;
-		address: string;
-		city: string;
-		state?: string;
-		zip: string;
-		country: CountryAlpha2;
-	};
-	billingAddress?: {
-		firstName: string;
-		lastName: string;
-		address: string;
-		city: string;
-		state?: string;
-		zip: string;
-		country: CountryAlpha2;
-	};
-
+	shippingAddress?: OrderAddress;
+	billingAddress?: OrderAddress;
 	shippingPrice?: {
 		amount: number;
 		currency: Currency;
@@ -230,3 +213,13 @@ interface SimplifiedOrderPayment {
 	};
 }
 export type SimplifiedOrder = Omit<Order, 'payment'> & SimplifiedOrderPayment;
+
+export interface OrderAddress {
+	firstName: string;
+	lastName: string;
+	address: string;
+	city: string;
+	state?: string;
+	zip: string;
+	country: CountryAlpha2;
+}
