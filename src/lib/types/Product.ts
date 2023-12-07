@@ -26,7 +26,6 @@ export interface Product extends Timestamps {
 	applyDeliveryFeesOnlyOnce?: boolean;
 	availableDate?: Date;
 	preorder: boolean;
-	displayCustomPreorderText?: boolean;
 	customPreorderText?: string;
 	displayShortDescription: boolean;
 	/**

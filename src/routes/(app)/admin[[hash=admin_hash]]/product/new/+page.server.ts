@@ -137,7 +137,6 @@ export const actions: Actions = {
 						type: parsed.type,
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
-						displayCustomPreorderText: parsed.displayCustomPreorderText,
 						...(parsed.customPreorderText && { customPreorderText: parsed.customPreorderText }),
 						shipping: parsed.shipping,
 						payWhatYouWant: parsed.payWhatYouWant,

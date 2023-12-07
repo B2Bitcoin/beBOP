@@ -383,6 +383,7 @@
 			Preorder custom text
 			<textarea
 				name="customPreorderText"
+				required
 				cols="30"
 				rows="2"
 				maxlength="1000"

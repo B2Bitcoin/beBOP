@@ -272,7 +272,7 @@
 				<hr class="border-gray-300 my-2" />
 
 				{#if isPreorder && data.product.availableDate}
-					{#if data.product.displayCustomPreorderText}
+					{#if data.product.customPreorderText}
 						<p>
 							{data.product.customPreorderText}
 						</p>
@@ -398,7 +398,7 @@
 							<p>{t('product.notForSale')}</p>
 						{/if}
 					</form>
-				{:else if data.product.displayCustomPreorderText}
+				{:else if data.product.customPreorderText}
 					<p>
 						{data.product.customPreorderText}
 					</p>

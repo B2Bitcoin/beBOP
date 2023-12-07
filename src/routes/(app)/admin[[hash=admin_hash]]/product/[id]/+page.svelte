@@ -20,7 +20,7 @@
 	let availableDate = data.product.availableDate;
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
-	let displayPreorderCustomText = data.product.displayCustomPreorderText;
+	let displayPreorderCustomText = data.product.customPreorderText ? true : false;
 	let shipping = data.product.shipping;
 	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
@@ -295,6 +295,7 @@
 				Preorder custom text
 				<textarea
 					name="customPreorderText"
+					required
 					cols="30"
 					rows="2"
 					maxlength="1000"
