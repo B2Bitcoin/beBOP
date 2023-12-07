@@ -68,6 +68,7 @@
 			<CarouselWidget
 				autoplay={token.autoplay ? token.autoplay : 3000}
 				pictures={picturesBySlider[token.slug]}
+				class="mx-auto mb-5"
 			/>
 		{:else if token.type === 'tagWidget' && tagById[token.slug]}
 			<TagWidget
