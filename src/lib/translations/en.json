@@ -126,9 +126,9 @@
 		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
-			"one": "Order will be marked as paid after 1 confirmation.",
-			"other": "Order will be marked as paid after {count} confirmations.",
-			"zero": "Order will be marked as paid without waiting for confirmations."
+			"one": "Payment will be confirmed after 1 confirmation.",
+			"other": "Payment will be confirmed after {count} confirmations.",
+			"zero": "Payment will be confirmed without waiting for confirmations."
 		},
 		"paymentAddress": "Payment address",
 		"paymentAmount": "Payment amount",
@@ -148,6 +148,7 @@
 			"endMessage": "We stay at your disposal for any further information. <0></0> Best regards, <1></1> {businessName}",
 			"invoice": "Invoice",
 			"itemName": "Nature",
+			"partialAmount": "Amount to pay (partial payment)",
 			"quantity": "Qty",
 			"totalExcVat": "Total Excl. VAT",
 			"totalInclVat": "Total Incl. VAT",

@@ -2,6 +2,7 @@ import { ClientSession, ObjectId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { marked } from 'marked';
 import { env } from '$env/dynamic/private';
+import type { OrderPayment } from '$lib/types/Order';
 
 const migrations = [
 	{
@@ -95,17 +96,23 @@ const migrations = [
 				{ amountsInOtherCurrencies: { $exists: false } },
 				{ session }
 			)) {
+				// @ts-expect-error migration stuff
 				order.amountsInOtherCurrencies = {
 					main: {
+						// @ts-expect-error migration stuff
 						...('totalReceived' in order.payment &&
+							// @ts-expect-error migration stuff
 							typeof order.payment.totalReceived === 'number' && {
 								totalReceived: {
 									currency: 'SAT',
+									// @ts-expect-error migration stuff
 									amount: order.payment.totalReceived
 								}
 							}),
 						totalPrice: {
+							// @ts-expect-error migration stuff
 							currency: order.totalPrice.currency,
+							// @ts-expect-error migration stuff
 							amount: order.totalPrice.amount
 						},
 						...(order.vat && {
@@ -116,15 +123,20 @@ const migrations = [
 						})
 					},
 					priceReference: {
+						// @ts-expect-error migration stuff
 						...('totalReceived' in order.payment &&
+							// @ts-expect-error migration stuff
 							typeof order.payment.totalReceived === 'number' && {
 								totalReceived: {
 									currency: 'SAT',
+									// @ts-expect-error migration stuff
 									amount: order.payment.totalReceived
 								}
 							}),
 						totalPrice: {
+							// @ts-expect-error migration stuff
 							currency: order.totalPrice.currency,
+							// @ts-expect-error migration stuff
 							amount: order.totalPrice.amount
 						},
 						...(order.vat && {
@@ -136,6 +148,7 @@ const migrations = [
 					}
 				};
 				for (const item of order.items) {
+					// @ts-expect-error migration stuff
 					item.amountsInOtherCurrencies = {
 						main: {
 							price: {
@@ -156,8 +169,61 @@ const migrations = [
 					{ _id: order._id },
 					{
 						$set: {
+							// @ts-expect-error migration stuff
 							amountsInOtherCurrencies: order.amountsInOtherCurrencies,
 							items: order.items
+						}
+					},
+					{ session }
+				);
+			}
+		}
+	},
+	{
+		name: 'Convert to multiple payments',
+		_id: new ObjectId('65713a19c783f535de973957'),
+		run: async (session: ClientSession) => {
+			for await (const order of collections.orders.find(
+				{ payments: { $exists: false }, payment: { $exists: true } },
+				{ session }
+			)) {
+				for (const item of order.items) {
+					// @ts-expect-error migration stuff
+					item.currencySnapshot = item.amountsInOtherCurrencies ?? item.currencySnapshot;
+				}
+				// @ts-expect-error migration stuff
+				order.currencySnapshot = order.amountsInOtherCurrencies ?? order.currencySnapshot;
+				// @ts-expect-error migration stuff
+				const legacyPayment: OrderPayment = order.payment;
+				const payment: OrderPayment = {
+					...legacyPayment,
+					_id: new ObjectId(),
+					// @ts-expect-error migration stuff
+					price: order.totalPrice,
+					currencySnapshot: {
+						main: order.currencySnapshot.main.totalPrice,
+						priceReference: order.currencySnapshot.priceReference.totalPrice,
+						secondary: order.currencySnapshot.secondary?.totalPrice
+					},
+					// @ts-expect-error migration stuff
+					lastStatusNotified: order.lastPaymentStatusNotified,
+					// @ts-expect-error migration stuff
+					invoice: order.invoice
+				};
+				await collections.orders.updateOne(
+					{ _id: order._id },
+					{
+						$set: {
+							payments: [payment],
+							items: order.items,
+							status: payment.status,
+							currencySnapshot: order.currencySnapshot
+						},
+						$unset: {
+							payment: '',
+							amountsInOtherCurrencies: '',
+							lastPaymentStatusNotified: '',
+							invoice: ''
 						}
 					},
 					{ session }

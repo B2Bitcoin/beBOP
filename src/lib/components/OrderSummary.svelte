@@ -12,12 +12,9 @@
 
 	let classNames = '';
 	export { classNames as class };
-	export let order: Pick<
-		Order,
-		'shippingPrice' | 'vat' | 'discount' | 'amountsInOtherCurrencies'
-	> & {
+	export let order: Pick<Order, 'shippingPrice' | 'vat' | 'discount' | 'currencySnapshot'> & {
 		items: Array<
-			Pick<Order['items'][0], 'amountsInOtherCurrencies' | 'quantity'> & {
+			Pick<Order['items'][0], 'currencySnapshot' | 'quantity'> & {
 				digitalFiles: Array<{ _id: string }>;
 				picture?: Picture;
 				product: Pick<Product, '_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping'>;
@@ -69,19 +66,19 @@
 				<PriceTag
 					class="text-2xl truncate"
 					amount={item.quantity *
-						(item.amountsInOtherCurrencies.main.customPrice?.amount ??
-							item.amountsInOtherCurrencies.main.price.amount)}
-					currency={item.amountsInOtherCurrencies.main.customPrice?.currency ??
-						item.amountsInOtherCurrencies.main.price.currency}
+						(item.currencySnapshot.main.customPrice?.amount ??
+							item.currencySnapshot.main.price.amount)}
+					currency={item.currencySnapshot.main.customPrice?.currency ??
+						item.currencySnapshot.main.price.currency}
 				/>
-				{#if item.amountsInOtherCurrencies.secondary}
+				{#if item.currencySnapshot.secondary}
 					<PriceTag
 						class="text-2xl truncate"
 						amount={item.quantity *
-							(item.amountsInOtherCurrencies.secondary.customPrice?.amount ??
-								item.amountsInOtherCurrencies.secondary.price.amount)}
-						currency={item.amountsInOtherCurrencies.secondary.customPrice?.currency ??
-							item.amountsInOtherCurrencies.secondary.price.currency}
+							(item.currencySnapshot.secondary.customPrice?.amount ??
+								item.currencySnapshot.secondary.price.amount)}
+						currency={item.currencySnapshot.secondary.customPrice?.currency ??
+							item.currencySnapshot.secondary.price.currency}
 					/>
 				{/if}
 			</div>
@@ -95,17 +92,17 @@
 			<h3 class="text-base">{t('checkout.deliveryFees')}</h3>
 
 			<div class="flex flex-col ml-auto items-end justify-center">
-				{#if order.amountsInOtherCurrencies.main.shippingPrice}
+				{#if order.currencySnapshot.main.shippingPrice}
 					<PriceTag
 						class="text-2xl truncate"
-						amount={order.amountsInOtherCurrencies.main.shippingPrice.amount}
-						currency={order.amountsInOtherCurrencies.main.shippingPrice.currency}
+						amount={order.currencySnapshot.main.shippingPrice.amount}
+						currency={order.currencySnapshot.main.shippingPrice.currency}
 					/>
 				{/if}
-				{#if order.amountsInOtherCurrencies.secondary?.shippingPrice}
+				{#if order.currencySnapshot.secondary?.shippingPrice}
 					<PriceTag
-						amount={order.amountsInOtherCurrencies.secondary.shippingPrice.amount}
-						currency={order.amountsInOtherCurrencies.secondary.shippingPrice.currency}
+						amount={order.currencySnapshot.secondary.shippingPrice.amount}
+						currency={order.currencySnapshot.secondary.shippingPrice.currency}
 						class="text-base truncate"
 						secondary
 					/>
@@ -125,17 +122,17 @@
 			</h3>
 
 			<div class="flex flex-col ml-auto items-end justify-center">
-				{#if order.amountsInOtherCurrencies.main.vat}
+				{#if order.currencySnapshot.main.vat}
 					<PriceTag
 						class="text-2xl truncate"
-						amount={order.amountsInOtherCurrencies.main.vat.amount}
-						currency={order.amountsInOtherCurrencies.main.vat.currency}
+						amount={order.currencySnapshot.main.vat.amount}
+						currency={order.currencySnapshot.main.vat.currency}
 					/>
 				{/if}
-				{#if order.amountsInOtherCurrencies.secondary?.vat}
+				{#if order.currencySnapshot.secondary?.vat}
 					<PriceTag
-						amount={order.amountsInOtherCurrencies.secondary.vat.amount}
-						currency={order.amountsInOtherCurrencies.secondary.vat.currency}
+						amount={order.currencySnapshot.secondary.vat.amount}
+						currency={order.currencySnapshot.secondary.vat.currency}
 						class="text-base truncate"
 					/>
 				{/if}
@@ -151,17 +148,17 @@
 			</h3>
 
 			<div class="flex flex-col ml-auto items-end justify-center">
-				{#if order.amountsInOtherCurrencies.main.discount}
+				{#if order.currencySnapshot.main.discount}
 					<PriceTag
 						class="text-2xl truncate"
-						amount={order.amountsInOtherCurrencies.main.discount.amount}
-						currency={order.amountsInOtherCurrencies.main.discount.currency}
+						amount={order.currencySnapshot.main.discount.amount}
+						currency={order.currencySnapshot.main.discount.currency}
 					/>
 				{/if}
-				{#if order.amountsInOtherCurrencies.secondary?.discount}
+				{#if order.currencySnapshot.secondary?.discount}
 					<PriceTag
-						amount={order.amountsInOtherCurrencies.secondary.discount.amount}
-						currency={order.amountsInOtherCurrencies.secondary.discount.currency}
+						amount={order.currencySnapshot.secondary.discount.amount}
+						currency={order.currencySnapshot.secondary.discount.currency}
 						class="text-base truncate"
 					/>
 				{/if}
@@ -177,15 +174,15 @@
 			<span class="text-xl">{t('cart.total')}</span>
 			<PriceTag
 				class="text-2xl"
-				amount={order.amountsInOtherCurrencies.main.totalPrice.amount}
-				currency={order.amountsInOtherCurrencies.main.totalPrice.currency}
+				amount={order.currencySnapshot.main.totalPrice.amount}
+				currency={order.currencySnapshot.main.totalPrice.currency}
 			/>
 		</div>
-		{#if order.amountsInOtherCurrencies.secondary?.totalPrice}
+		{#if order.currencySnapshot.secondary?.totalPrice}
 			<PriceTag
 				class="self-end"
-				amount={order.amountsInOtherCurrencies.secondary.totalPrice.amount}
-				currency={order.amountsInOtherCurrencies.secondary.totalPrice.currency}
+				amount={order.currencySnapshot.secondary.totalPrice.amount}
+				currency={order.currencySnapshot.secondary.totalPrice.currency}
 			/>
 		{/if}
 	</div>

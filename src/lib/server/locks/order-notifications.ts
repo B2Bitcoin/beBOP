@@ -16,26 +16,29 @@ const processingIds = new Set<string>();
 
 const watch = [
 	{
-		// Watch on updateDescription.updatedFields['payment.status'] change, or when
-		// document inserted
 		$match: {
 			$or: [
-				{
-					$expr: {
-						$not: {
-							$not: [
-								{
-									$getField: {
-										input: '$updateDescription.updatedFields',
-										field: 'payment.status'
-									}
-								}
-							]
-						}
-					}
-				},
+				// Not practical when there can be an arbitrary number of payments
+				// {
+				// 	$expr: {
+				// 		$not: {
+				// 			$not: [
+				// 				{
+				// 					$getField: {
+				// 						// TODO: check
+				// 						input: '$updateDescription.updatedFields',
+				// 						field: 'payments.0.status'
+				// 					}
+				// 				}
+				// 			]
+				// 		}
+				// 	}
+				// },
 				{
 					operationType: 'insert'
+				},
+				{
+					operationType: 'update'
 				}
 			]
 		}
@@ -90,6 +93,13 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 		return;
 	}
 
+	if (change.operationType === 'update') {
+		const updatedFields = Object.keys(change.updateDescription.updatedFields ?? {});
+		if (!updatedFields.some((field) => /^payments\.\d+\.status$/.test(field))) {
+			return;
+		}
+	}
+
 	await handleOrderNotification(change.fullDocument);
 	await collections.runtimeConfig.updateOne(
 		{ _id: 'orderNotificationsResumeToken' },
@@ -101,10 +111,13 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 async function handleOrderNotification(order: Order): Promise<void> {
 	await refreshPromise;
 
-	if (
-		processingIds.has(order._id.toString()) ||
-		order.lastPaymentStatusNotified === order.payment.status
-	) {
+	if (processingIds.has(order._id.toString())) {
+		return;
+	}
+
+	let payments = order.payments.filter((p) => p.status !== p.lastStatusNotified);
+
+	if (payments.length === 0) {
 		return;
 	}
 
@@ -114,96 +127,102 @@ async function handleOrderNotification(order: Order): Promise<void> {
 		const updatedOrder = await collections.orders.findOne({
 			_id: order._id
 		});
-		if (!updatedOrder || updatedOrder.lastPaymentStatusNotified === updatedOrder.payment.status) {
+		if (!updatedOrder) {
 			return;
 		}
 		order = updatedOrder;
 
+		payments = order.payments.filter((p) => p.status !== p.lastStatusNotified);
+		if (payments.length === 0) {
+			return;
+		}
+
 		const { npub, email } = order.notifications.paymentStatus;
 
-		await withTransaction(async (session) => {
-			if (npub) {
-				let content = `Order #${order.number} ${order.payment.status}, see ${ORIGIN}/order/${order._id}`;
+		for (const payment of payments) {
+			await withTransaction(async (session) => {
+				if (npub) {
+					let content = `Order #${order.number} has payment ${payment.status}, see ${ORIGIN}/order/${order._id}`;
 
-				if (order.payment.status === 'pending') {
-					if (order.payment.method === 'bitcoin') {
-						content += `\n\nPlease send ${toBitcoins(
-							order.totalPrice.amount,
-							order.totalPrice.currency
-						).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
-							order.payment.address
-						}`;
-					} else if (order.payment.method === 'lightning') {
-						content += `\n\nPlease pay this invoice: ${order.payment.address}`;
-					} else if (order.payment.method === 'card') {
-						content += `\n\nPlease pay using this link: ${order.payment.address}`;
-					}
-				}
-				if (!(order.payment.method === 'cash' && order.payment.status !== 'paid')) {
-					await collections.nostrNotifications.insertOne(
-						{
-							_id: new ObjectId(),
-							createdAt: new Date(),
-							kind: Kind.EncryptedDirectMessage,
-							updatedAt: new Date(),
-							content,
-							dest: npub
-						},
-						{
-							session
+					if (payment.status === 'pending') {
+						if (payment.method === 'bitcoin') {
+							content += `\n\nPlease send ${toBitcoins(
+								payment.price.amount,
+								payment.price.currency
+							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${payment.address}`;
+						} else if (payment.method === 'lightning') {
+							content += `\n\nPlease pay this invoice: ${payment.address}`;
+						} else if (payment.method === 'card') {
+							content += `\n\nPlease pay using this link: ${payment.address}`;
 						}
-					);
-				}
-			}
-
-			if (email) {
-				let htmlContent = `<p>Order #${order.number} status changed to ${order.payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a></p>`;
-
-				if (order.payment.status === 'pending') {
-					if (order.payment.method === 'bitcoin') {
-						htmlContent += `<p>Please send ${toBitcoins(
-							order.totalPrice.amount,
-							order.totalPrice.currency
-						).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
-							order.payment.address
-						}</p>`;
-					} else if (order.payment.method === 'lightning') {
-						htmlContent += `<p>Please pay this invoice: ${order.payment.address}</p>`;
-					} else if (order.payment.method === 'card') {
-						htmlContent += `<p>Please pay using this link: <a href="${order.payment.address}">${order.payment.address}</a></p>`;
+					}
+					if (!(payment.method === 'cash' && payment.status !== 'paid')) {
+						await collections.nostrNotifications.insertOne(
+							{
+								_id: new ObjectId(),
+								createdAt: new Date(),
+								kind: Kind.EncryptedDirectMessage,
+								updatedAt: new Date(),
+								content,
+								dest: npub
+							},
+							{
+								session
+							}
+						);
 					}
 				}
-				if (!(order.payment.method === 'cash' && order.payment.status !== 'paid')) {
-					await collections.emailNotifications.insertOne(
-						{
-							_id: new ObjectId(),
-							createdAt: new Date(),
-							updatedAt: new Date(),
-							subject: `Order #${order.number}`,
-							htmlContent,
-							dest: email
-						},
-						{
-							session
+
+				if (email) {
+					let htmlContent = `<p>Order #${order.number}'s payment status changed to ${payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a></p>`;
+
+					if (payment.status === 'pending') {
+						if (payment.method === 'bitcoin') {
+							htmlContent += `<p>Please send ${toBitcoins(
+								payment.price.amount,
+								payment.price.currency
+							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
+								payment.address
+							}</p>`;
+						} else if (payment.method === 'lightning') {
+							htmlContent += `<p>Please pay this invoice: ${payment.address}</p>`;
+						} else if (payment.method === 'card') {
+							htmlContent += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
 						}
-					);
-				}
-			}
-
-			await collections.orders.updateOne(
-				{
-					_id: order._id
-				},
-				{
-					$set: {
-						lastPaymentStatusNotified: order.payment.status
 					}
-				},
-				{
-					session
+					if (!(payment.method === 'cash' && payment.status !== 'paid')) {
+						await collections.emailNotifications.insertOne(
+							{
+								_id: new ObjectId(),
+								createdAt: new Date(),
+								updatedAt: new Date(),
+								subject: `Order #${order.number}`,
+								htmlContent,
+								dest: email
+							},
+							{
+								session
+							}
+						);
+					}
 				}
-			);
-		});
+
+				await collections.orders.updateOne(
+					{
+						_id: order._id,
+						'payments._id': payment._id
+					},
+					{
+						$set: {
+							'payments.$.lastStatusNotified': payment.status
+						}
+					},
+					{
+						session
+					}
+				);
+			});
+		}
 
 		// Maybe not needed when order.payment.status === "paid"
 		await Promise.all(order.items.map((item) => refreshAvailableStockInDb(item.product._id)));
