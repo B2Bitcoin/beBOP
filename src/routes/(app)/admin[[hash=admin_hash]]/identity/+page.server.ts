@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
-import { COUNTRY_ALPHA2S } from '$lib/types/Country.js';
+import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country.js';
 import type { SellerIdentity } from '$lib/types/SellerIdentity.js';
 import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 import { error } from '@sveltejs/kit';
@@ -43,7 +43,7 @@ export const actions = {
 					street: z.string().min(1).max(100).trim(),
 					zip: z.string().min(1).max(100).trim(),
 					city: z.string().min(1).max(100).trim(),
-					country: z.enum([COUNTRY_ALPHA2S[0], ...COUNTRY_ALPHA2S.slice(1)]),
+					country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
 					state: z.string().min(1).max(100).trim().optional()
 				}),
 				contact: z.object({

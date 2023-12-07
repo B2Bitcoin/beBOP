@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
-	import { countryNameByAlpha2 } from '$lib/types/Country.js';
 
 	export let data;
 
-	const { t } = useI18n();
+	const { t, sortedCountryCodes, countryName } = useI18n();
 
 	let country = data.personalInfoConnected?.address?.country ?? 'CH';
 </script>
@@ -54,8 +53,8 @@
 				<label class="form-label col-span-3">
 					{t('address.country')}
 					<select name="address.country" class="form-input" required>
-						{#each Object.entries(countryNameByAlpha2) as [code, countryTxt]}
-							<option value={code} selected={code === country}>{countryTxt}</option>
+						{#each sortedCountryCodes() as code}
+							<option value={code} selected={code === country}>{countryName(code)}</option>
 						{/each}
 					</select>
 				</label>

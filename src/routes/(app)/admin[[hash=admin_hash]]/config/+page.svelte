@@ -4,7 +4,7 @@
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
-	import { countryName, countryNameByAlpha2 } from '$lib/types/Country';
+	import { useI18n } from '$lib/i18n.js';
 
 	export let data;
 	export let form;
@@ -18,6 +18,8 @@
 			event.preventDefault();
 		}
 	}
+
+	const { countryName, sortedCountryCodes } = useI18n();
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -187,9 +189,9 @@
 				<label class="form-label">
 					Seller's country for VAT purposes
 					<select name="vatCountry" class="form-input">
-						{#each Object.entries(countryNameByAlpha2) as [countryCode, countryName]}
+						{#each sortedCountryCodes() as countryCode}
 							<option value={countryCode} selected={data.vatCountry === countryCode}>
-								{countryName}
+								{countryName(countryCode)}
 							</option>
 						{/each}
 					</select>

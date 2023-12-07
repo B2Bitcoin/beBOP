@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { COUNTRY_ALPHA2S, countryNameByAlpha2, type CountryAlpha2 } from '$lib/types/Country';
+	import type { CountryAlpha2 } from '$lib/types/Country';
 	import { CURRENCIES, type Currency } from '$lib/types/Currency';
 	import { typedEntries } from '$lib/utils/typedEntries';
 	import type { DeliveryFees } from '$lib/types/DeliveryFees';
+	import { useI18n } from '$lib/i18n';
 
 	export let deliveryFees: DeliveryFees = {};
 	export let defaultCurrency: Currency;
@@ -10,7 +11,9 @@
 
 	let feeCountryToAdd: CountryAlpha2 | 'default' = 'default';
 
-	$: countriesWithNoFee = ['default' as const, ...COUNTRY_ALPHA2S].filter(
+	const { countryName, sortedCountryCodes } = useI18n();
+
+	$: countriesWithNoFee = ['default' as const, ...sortedCountryCodes()].filter(
 		(country) => !deliveryFees[country]
 	);
 	$: feeCountryToAdd = countriesWithNoFee.includes(feeCountryToAdd)
@@ -23,7 +26,7 @@
 		<select class="form-input max-w-[25rem]" {disabled} bind:value={feeCountryToAdd}>
 			{#each countriesWithNoFee as country}
 				<option value={country}>
-					{country === 'default' ? 'Other countries' : countryNameByAlpha2[country]}
+					{country === 'default' ? 'Other countries' : countryName(country)}
 				</option>
 			{/each}
 		</select>
@@ -45,7 +48,7 @@
 {#each typedEntries(deliveryFees) as [country, deliveryFee]}
 	<div class="flex flex-col gap-2">
 		<h3 class="text-xl">
-			{country === 'default' ? 'Other countries' : countryNameByAlpha2[country]}
+			{country === 'default' ? 'Other countries' : countryName(country)}
 		</h3>
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">

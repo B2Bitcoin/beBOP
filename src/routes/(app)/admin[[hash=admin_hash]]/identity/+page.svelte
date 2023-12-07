@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { countryNameByAlpha2 } from '$lib/types/Country';
+	import { useI18n } from '$lib/i18n.js';
 
 	export let data;
 
@@ -7,6 +7,8 @@
 
 	let iban = id?.bank?.iban ?? '';
 	let bic = id?.bank?.bic ?? '';
+
+	const { sortedCountryCodes, countryName } = useI18n();
 </script>
 
 <h1 class="text-3xl">Seller identity</h1>
@@ -51,10 +53,10 @@
 	<label class="form-label">
 		Country
 		<select name="address.country" class="form-input max-w-[25rem]">
-			{#each Object.entries(countryNameByAlpha2) as [countryCode, countryName]}
-				<option value={countryCode} selected={countryCode === id?.address?.country}
-					>{countryName}</option
-				>
+			{#each sortedCountryCodes() as countryCode}
+				<option value={countryCode} selected={countryCode === id?.address?.country}>
+					{countryName(countryCode)}
+				</option>
 			{/each}
 		</select>
 	</label>

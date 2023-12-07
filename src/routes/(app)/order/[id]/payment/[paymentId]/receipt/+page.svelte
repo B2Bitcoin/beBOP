@@ -3,13 +3,12 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
-	import { textAddress } from '$lib/utils/textAddress.js';
 
 	export let data;
 
 	const identity = data.sellerIdentity;
 
-	const { t, locale } = useI18n();
+	const { t, locale, textAddress } = useI18n();
 </script>
 
 <div class="flex justify-between">

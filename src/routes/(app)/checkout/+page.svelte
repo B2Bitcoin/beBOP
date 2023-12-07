@@ -19,7 +19,7 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
-	import { countryName, countryNameByAlpha2 } from '$lib/types/Country.js';
+	import { vatRate } from '$lib/types/Country.js';
 
 	export let data;
 
@@ -31,7 +31,7 @@
 	let discountAmount: number;
 	let discountType: DiscountType;
 
-	const { t } = useI18n();
+	const { t, countryName, sortedCountryCodes } = useI18n();
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: t('checkout.paymentStatus') }
@@ -93,8 +93,7 @@
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
-	$: actualVatRate =
-		isDigital || data.vatSingleCountry ? data.vatRate : data.vatRates[actualCountry] ?? 0;
+	$: actualVatRate = isDigital || data.vatSingleCountry ? data.vatRate : vatRate(actualCountry);
 
 	$: totalPrice =
 		sumCurrency(
@@ -168,11 +167,11 @@
 					<label class="form-label col-span-3">
 						{t('address.country')}
 						<select name="country" class="form-input" required bind:value={country}>
-							{#each Object.entries(countryNameByAlpha2) as [code, countryTxt]}
+							{#each sortedCountryCodes() as code}
 								<option
 									value={code}
 									selected={code === data.personalInfoConnected?.address?.country}
-									>{countryTxt}</option
+									>{countryName(code)}</option
 								>
 							{/each}
 						</select>
