@@ -124,7 +124,6 @@
 <main class="mx-auto max-w-7xl py-10 px-6">
 	{#if data.productCMSBefore}
 		<CmsDesign
-			class="px-6"
 			challenges={data.productCMSBefore.challenges}
 			tokens={data.productCMSBefore.tokens}
 			sliders={data.productCMSBefore.sliders}
@@ -408,7 +407,6 @@
 	</div>
 	{#if data.productCMSAfter}
 		<CmsDesign
-			class="px-6"
 			challenges={data.productCMSAfter.challenges}
 			tokens={data.productCMSAfter.tokens}
 			sliders={data.productCMSAfter.sliders}
