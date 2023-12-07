@@ -135,7 +135,7 @@
 		/>
 	{/if}
 
-	<div class="flex flex-row">
+	<div class="flex flex-row my-12">
 		<div class="w-14 min-w-[48px] py-12 hidden md:block">
 			{#if data.pictures.length > 1}
 				{#each data.pictures as picture, i}
