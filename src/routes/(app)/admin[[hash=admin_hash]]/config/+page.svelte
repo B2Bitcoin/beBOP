@@ -4,6 +4,7 @@
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
+	import { countryNameByAlpha2 } from '$lib/utils/country-codes.js';
 
 	export let data;
 	export let form;
@@ -135,7 +136,7 @@
 			Your IP is <code class="font-mono bg-link px-[2px] py-[1px] rounded text-white"
 				>{data.ip}</code
 			>
-			({data.countryName})
+			({countryNameByAlpha2[data.countryCode]})
 		</p>
 	</label>
 	<div class="flex flex-col gap-2">
@@ -196,7 +197,7 @@
 				<label class="form-label">
 					Seller's country for VAT purposes
 					<select name="vatCountry" class="form-input">
-						{#each Object.entries(data.countryCodes) as [countryCode, countryName]}
+						{#each Object.entries(countryNameByAlpha2) as [countryCode, countryName]}
 							<option value={countryCode} selected={data.vatCountry === countryCode}>
 								{countryName}
 							</option>

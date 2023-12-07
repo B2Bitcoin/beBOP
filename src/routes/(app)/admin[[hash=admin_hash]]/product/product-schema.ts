@@ -14,6 +14,7 @@ export const productBaseSchema = {
 	priceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
 	availableDate: z.date({ coerce: true }).optional(),
 	preorder: z.boolean({ coerce: true }).default(false),
+	customPreorderText: z.string().trim().max(1_000).min(1).optional(),
 	shipping: z.boolean({ coerce: true }).default(false),
 	displayShortDescription: z.boolean({ coerce: true }).default(false),
 	deliveryFees: deliveryFeesSchema.optional(),

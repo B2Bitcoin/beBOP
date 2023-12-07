@@ -3,6 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
+	import { textAddress } from '$lib/utils/textAddress.js';
 
 	export let data;
 
@@ -36,13 +37,7 @@
 		<p>{data.order.notifications.paymentStatus.email}</p>
 	{/if}
 	{#if data.order.shippingAddress}
-		<p>{data.order.shippingAddress.firstName} {data.order.shippingAddress.lastName}</p>
-		{#if data.order.shippingAddress.address}
-			<p>{data.order.shippingAddress.address}</p>
-		{/if}
-		{#if data.order.shippingAddress.city || data.order.shippingAddress.zip}
-			<p>{data.order.shippingAddress.zip} {data.order.shippingAddress.city}</p>
-		{/if}
+		<p class="whitespace-pre-wrap">{textAddress(data.order.shippingAddress)}</p>
 	{/if}
 </div>
 

@@ -124,7 +124,6 @@
 <main class="mx-auto max-w-7xl py-10 px-6">
 	{#if data.productCMSBefore}
 		<CmsDesign
-			class="px-6"
 			challenges={data.productCMSBefore.challenges}
 			tokens={data.productCMSBefore.tokens}
 			sliders={data.productCMSBefore.sliders}
@@ -272,15 +271,21 @@
 				<hr class="border-gray-300 my-2" />
 
 				{#if isPreorder && data.product.availableDate}
-					<p>
-						{t('product.preorderText', {
-							date: new Date(data.product.availableDate).toLocaleDateString($locale, {
-								year: 'numeric',
-								month: 'long',
-								day: 'numeric'
-							})
-						})}
-					</p>
+					{#if data.product.customPreorderText}
+						<p>
+							{data.product.customPreorderText}
+						</p>
+					{:else}
+						<p>
+							{t('product.preorderText', {
+								date: new Date(data.product.availableDate).toLocaleDateString($locale, {
+									year: 'numeric',
+									month: 'long',
+									day: 'numeric'
+								})
+							})}
+						</p>
+					{/if}
 				{/if}
 				{#if !data.product.availableDate || data.product.availableDate <= new Date() || isPreorder}
 					{@const verb = isPreorder
@@ -392,6 +397,10 @@
 							<p>{t('product.notForSale')}</p>
 						{/if}
 					</form>
+				{:else if data.product.customPreorderText}
+					<p>
+						{data.product.customPreorderText}
+					</p>
 				{:else}
 					<p>
 						{t('product.availableOn', {
@@ -408,7 +417,6 @@
 	</div>
 	{#if data.productCMSAfter}
 		<CmsDesign
-			class="px-6"
 			challenges={data.productCMSAfter.challenges}
 			tokens={data.productCMSAfter.tokens}
 			sliders={data.productCMSAfter.sliders}

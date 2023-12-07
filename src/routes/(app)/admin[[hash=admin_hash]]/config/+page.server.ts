@@ -1,5 +1,4 @@
 import { ORIGIN } from '$env/static/private';
-import { countryNameByAlpha2 } from '$lib/server/country-codes';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { CURRENCIES } from '$lib/types/Currency';
@@ -23,7 +22,6 @@ export async function load(event) {
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
 		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
-		countryCodes: countryNameByAlpha2,
 		origin: ORIGIN,
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		adminHash: runtimeConfig.adminHash,

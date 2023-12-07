@@ -52,6 +52,16 @@ export interface OrderPayment {
 	lastStatusNotified?: OrderPaymentStatus;
 }
 
+export interface OrderAddress {
+	firstName: string;
+	lastName: string;
+	address: string;
+	city: string;
+	state?: string;
+	zip: string;
+	country: CountryAlpha2;
+}
+
 export interface Order extends Timestamps {
 	/**
 	 * A string - a crypto UUID. Anyone having access to the _id can access the order.
@@ -82,6 +92,7 @@ export interface Order extends Timestamps {
 
 	shippingAddress?: OrderAddress;
 	billingAddress?: OrderAddress;
+
 	shippingPrice?: {
 		amount: number;
 		currency: Currency;
