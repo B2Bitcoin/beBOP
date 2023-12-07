@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import { paymentMethods } from '$lib/server/payment-methods';
 import { COUNTRY_ALPHA2S } from '$lib/types/Country';
-import { error, json, redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { createOrder } from '$lib/server/orders';
 import { emailsEnabled } from '$lib/server/email';
