@@ -145,7 +145,7 @@
 					>
 						<Picture
 							{picture}
-							class="h-12 w-12 rounded-sm mb-2 object-cover {picture === currentPicture
+							class="h-12 w-12 rounded-sm mb-2 mt-2 object-cover {picture === currentPicture
 								? 'ring-2 ring-link ring-offset-2'
 								: ''} cursor-pointer"
 						/>
