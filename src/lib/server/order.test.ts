@@ -199,7 +199,8 @@ describe('order', () => {
 
 		await onOrderPayment(order1, order1.payments[1], order1.payments[1].price);
 
+		order1 = await collections.orders.findOne({ _id: order1Id });
 		expect(await lastInvoiceNumber()).toBe(3);
-		expect(order1.payments[1].invoice?.number).toBe(3);
+		expect(order1?.payments[1].invoice?.number).toBe(3);
 	});
 });
