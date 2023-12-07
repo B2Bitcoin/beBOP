@@ -125,6 +125,8 @@ export const actions: Actions = {
 					shipping: parsed.shipping,
 					displayShortDescription: parsed.displayShortDescription,
 					preorder: parsed.preorder,
+					displayCustomPreorderText: parsed.displayCustomPreorderText,
+					...(parsed.customPreorderText && { customPreorderText: parsed.customPreorderText }),
 					payWhatYouWant: parsed.payWhatYouWant,
 					standalone: parsed.payWhatYouWant || parsed.standalone,
 					free: parsed.free,

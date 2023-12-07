@@ -25,6 +25,7 @@
 	let payWhatYouWant = false;
 	let standalone = false;
 	let typeElement: HTMLSelectElement;
+	let displayCustomPreorderText = false;
 
 	let preorder = product?.preorder ?? false;
 	let name = product?.name ? product.name + ' (duplicate)' : '';
@@ -365,9 +366,31 @@
 				/>
 				Enable preorders before available date
 			</label>
+			<label class="checkbox-label {enablePreorder ? '' : 'cursor-not-allowed text-gray-450'}">
+				<input
+					class="form-checkbox {enablePreorder ? '' : 'cursor-not-allowed border-gray-450'}"
+					type="checkbox"
+					bind:checked={displayCustomPreorderText}
+					name="displayCustomPreorderText"
+					disabled={!enablePreorder}
+				/>
+				Display custom text instead of date for preorder
+			</label>
 		</div>
 	{/if}
-
+	{#if displayCustomPreorderText}
+		<label class="form-label">
+			Preorder custom text
+			<textarea
+				name="customPreorderText"
+				cols="30"
+				rows="2"
+				maxlength="1000"
+				value={product?.customPreorderText ?? ''}
+				class="form-input"
+			/>
+		</label>
+	{/if}
 	{#if type !== 'subscription'}
 		<label class="form-label">
 			Max quantity per order

@@ -21,6 +21,8 @@ export const load = async ({ params, locals }) => {
 			| 'description'
 			| 'availableDate'
 			| 'preorder'
+			| 'displayCustomPreorderText'
+			| 'customPreorderText'
 			| 'type'
 			| 'shipping'
 			| 'displayShortDescription'
@@ -43,6 +45,8 @@ export const load = async ({ params, locals }) => {
 				description: 1,
 				availableDate: 1,
 				preorder: 1,
+				displayCustomPreorderText: 1,
+				customPreorderText: 1,
 				type: 1,
 				displayShortDescription: 1,
 				payWhatYouWant: 1,

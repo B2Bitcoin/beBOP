@@ -20,6 +20,7 @@
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
+	import el from 'date-fns/locale/el';
 
 	export let data;
 
@@ -272,15 +273,21 @@
 				<hr class="border-gray-300 my-2" />
 
 				{#if isPreorder && data.product.availableDate}
-					<p>
-						{t('product.preorderText', {
-							date: new Date(data.product.availableDate).toLocaleDateString($locale, {
-								year: 'numeric',
-								month: 'long',
-								day: 'numeric'
-							})
-						})}
-					</p>
+					{#if data.product.displayCustomPreorderText}
+						<p>
+							{data.product.customPreorderText}
+						</p>
+					{:else}
+						<p>
+							{t('product.preorderText', {
+								date: new Date(data.product.availableDate).toLocaleDateString($locale, {
+									year: 'numeric',
+									month: 'long',
+									day: 'numeric'
+								})
+							})}
+						</p>
+					{/if}
 				{/if}
 				{#if !data.product.availableDate || data.product.availableDate <= new Date() || isPreorder}
 					{@const verb = isPreorder
@@ -392,6 +399,10 @@
 							<p>{t('product.notForSale')}</p>
 						{/if}
 					</form>
+				{:else if data.product.displayCustomPreorderText}
+					<p>
+						{data.product.customPreorderText}
+					</p>
 				{:else}
 					<p>
 						{t('product.availableOn', {
