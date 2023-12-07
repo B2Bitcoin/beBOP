@@ -1,6 +1,5 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { getCartFromDb } from '$lib/server/cart.js';
-import { countryNameByAlpha2 } from '$lib/server/country-codes';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier } from '$lib/server/user.js';
@@ -47,7 +46,6 @@ export async function load(params) {
 		npub: locals.npub,
 		sso: locals.sso,
 		userId: locals.user?._id.toString(),
-		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0
 			: runtimeConfig.vatSingleCountry
