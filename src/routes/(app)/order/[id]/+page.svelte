@@ -8,6 +8,7 @@
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
+	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
 
@@ -67,8 +68,11 @@
 					<ul>
 						<li>
 							{t('order.paymentAddress')}: {#if payment.method === 'card'}
-								<a href={payment.address} class="body-hyperlink underline break-all break-words">
-									{payment.address}
+								<a
+									href={trimOrigin(payment.address ?? '')}
+									class="body-hyperlink underline break-all break-words"
+								>
+									{$page.url.origin}{trimOrigin(payment.address ?? '')}
 								</a>
 							{:else}
 								<code class="break-words body-secondaryText break-all">{payment.address}</code>
