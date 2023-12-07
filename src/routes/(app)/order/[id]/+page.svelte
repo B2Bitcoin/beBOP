@@ -6,6 +6,7 @@
 	import { useI18n } from '$lib/i18n';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
+	import { textAddress } from '$lib/utils/textAddress.js';
 	import { toBitcoins } from '$lib/utils/toBitcoins';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
@@ -169,11 +170,9 @@
 			{#if data.order.shippingAddress}
 				<div>
 					{t('order.shippingAddress.title')}:
-					<pre class="break-words body-secondaryText">{JSON.stringify(
-							data.order.shippingAddress,
-							null,
-							2
-						)}</pre>
+					<p class="body-secondaryText whitespace-pre-wrap">
+						{textAddress(data.order.shippingAddress)}
+					</p>
 				</div>
 			{/if}
 
