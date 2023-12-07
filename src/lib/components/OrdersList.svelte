@@ -8,7 +8,7 @@
 	export let orders:
 		| Pick<
 				SimplifiedOrder,
-				'_id' | 'payment' | 'totalPrice' | 'number' | 'createdAt' | 'totalReceived'
+				'_id' | 'payments' | 'number' | 'createdAt' | 'currencySnapshot' | 'status'
 		  >[]
 		| [];
 	export let adminPrefix: string | undefined = undefined;
@@ -22,50 +22,61 @@
 			<a href="/order/{order._id}" class="text-link hover:underline">
 				#{order.number.toLocaleString($locale)}
 			</a>
-			- {#if order.payment.method === 'bitcoin'}
+			- {#if order.payments[0].method === 'bitcoin'}
 				<IconBitcoin />
-			{:else if order.payment.method === 'lightning'}
+			{:else if order.payments[0].method === 'lightning'}
 				⚡
-			{:else if order.payment.method === 'cash'}
+			{:else if order.payments[0].method === 'cash'}
 				💶
-			{:else if order.payment.method === 'card'}
+			{:else if order.payments[0].method === 'card'}
 				💳
 			{/if} -
 			<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString($locale)}
 				>{order.createdAt.toLocaleDateString($locale)}</time
 			>
-			- <PriceTag currency={order.totalPrice.currency} amount={order.totalPrice.amount} />
+			- <PriceTag
+				currency={order.currencySnapshot.main.totalPrice.currency}
+				amount={order.currencySnapshot.main.totalPrice.amount}
+			/>
 			{#if adminPrefix}(<PriceTag
-					currency={order.totalPrice.currency}
-					amount={order.totalPrice.amount}
+					currency={order.currencySnapshot.priceReference.totalPrice.currency}
+					amount={order.currencySnapshot.priceReference.totalPrice.amount}
 					convertedTo={$currencies.priceReference}
 				/>){/if} -
 			<span
-				class={order.payment.status === 'expired' || order.payment.status === 'canceled'
+				class={order.status === 'expired' || order.status === 'canceled'
 					? 'text-gray-550'
-					: order.payment.status === 'paid'
+					: order.status === 'paid'
 					? 'text-green-500'
 					: ''}
 			>
-				{t('order.paymentStatus.' + order.payment.status)}</span
+				{t('order.paymentStatus.' + order.status)}</span
 			>
-			{#if order.totalReceived && adminPrefix}
+			{#if order.currencySnapshot.main.totalReceived && adminPrefix}
 				- {t('pos.order.satReceived')}
 				<PriceTag
 					inline
-					currency={order.totalReceived.currency}
-					amount={order.totalReceived.amount}
+					currency={order.currencySnapshot.main.totalReceived.currency}
+					amount={order.currencySnapshot.main.totalReceived.amount}
 				/>
 			{/if}
 			{#if adminPrefix}
-				{#if order.payment.status === 'pending' && order.payment.method === 'cash'}
-					<form action="{adminPrefix}/order/{order._id}?/confirm" method="post">
-						<button type="submit" class="btn btn-black">Mark paid</button>
-					</form>
-					<form action="{adminPrefix}/order/{order._id}?/cancel" method="post">
-						<button type="submit" class="btn btn-red">Cancel</button>
-					</form>
-				{/if}
+				{#each order.payments as payment}
+					{#if payment.status === 'pending' && payment.method === 'cash'}
+						<form
+							action="{adminPrefix}/order/{order._id}/payment/{payment.id}?/confirm"
+							method="post"
+						>
+							<button type="submit" class="btn btn-black">Mark paid</button>
+						</form>
+						<form
+							action="{adminPrefix}/order/{order._id}/payment/{payment.id}?/cancel"
+							method="post"
+						>
+							<button type="submit" class="btn btn-red">Cancel</button>
+						</form>
+					{/if}
+				{/each}
 			{/if}
 		</li>
 	{:else}

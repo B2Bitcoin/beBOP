@@ -130,10 +130,10 @@
 
 	function mountSumUpCard() {
 		// Should always be true due to backend validation, doing this for TS
-		if (data.order.payment.checkoutId) {
+		if (data.payment.checkoutId) {
 			window.SumUpCard.mount({
 				id: 'sumup-card',
-				checkoutId: data.order.payment.checkoutId,
+				checkoutId: data.payment.checkoutId,
 				onResponse: function (type) {
 					if (type === 'success') {
 						goto('/order/' + $page.params.id);

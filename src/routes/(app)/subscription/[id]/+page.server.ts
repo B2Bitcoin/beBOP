@@ -88,6 +88,15 @@ export const actions = {
 			);
 		}
 
+		const paidPayment = lastOrder.payments.find((payment) => payment.status === 'paid');
+
+		if (!paidPayment) {
+			throw error(
+				500,
+				'No payment method found for this subscription, please purchase it directly instead of renewing.'
+			);
+		}
+
 		const orderId = await createOrder(
 			[
 				{
@@ -95,7 +104,7 @@ export const actions = {
 					product
 				}
 			],
-			lastOrder.payment.method,
+			paidPayment.method,
 			{
 				user: userIdentifier(locals),
 				shippingAddress: lastOrder.shippingAddress,

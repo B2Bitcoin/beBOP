@@ -47,7 +47,7 @@
 </div>
 
 <div class="mt-4">
-	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {data.order.invoice?.number}</h2>
+	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {data.payment.invoice?.number}</h2>
 	<Trans key="order.createdAt">
 		{t('order.createdAt')}:
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
@@ -71,12 +71,11 @@
 	<tbody>
 		{#each data.order.items as item, i}
 			{@const price =
-				item.amountsInOtherCurrencies.main.customPrice?.amount ??
-				item.amountsInOtherCurrencies.main.price.amount}
+				item.currencySnapshot.main.customPrice?.amount ?? item.currencySnapshot.main.price.amount}
 			{@const unitPrice = price / item.quantity}
 			{@const priceCurrency =
-				item.amountsInOtherCurrencies.main.customPrice?.currency ??
-				item.amountsInOtherCurrencies.main.price.currency}
+				item.currencySnapshot.main.customPrice?.currency ??
+				item.currencySnapshot.main.price.currency}
 			<tr style:background-color={i % 2 === 0 ? '#fef2cc' : '#e7e6e6'}>
 				<td class="text-center border border-white px-2">{i + 1}</td>
 				<td class="text-center border border-white px-2">{item.product.name}</td>
@@ -112,14 +111,14 @@
 		<td class="border border-white px-2 text-right whitespace-nowrap">
 			<PriceTag
 				amount={data.order.vat?.price.amount === 0
-					? data.order.amountsInOtherCurrencies.main.totalPrice.amount
-					: data.order.amountsInOtherCurrencies.main.totalPrice.currency ===
-					  data.order.amountsInOtherCurrencies.main.vat?.currency
-					? data.order.amountsInOtherCurrencies.main.totalPrice.amount -
-					  data.order.amountsInOtherCurrencies.main.vat.amount
-					: data.order.amountsInOtherCurrencies.main.totalPrice.amount /
+					? data.order.currencySnapshot.main.totalPrice.amount
+					: data.order.currencySnapshot.main.totalPrice.currency ===
+					  data.order.currencySnapshot.main.vat?.currency
+					? data.order.currencySnapshot.main.totalPrice.amount -
+					  data.order.currencySnapshot.main.vat.amount
+					: data.order.currencySnapshot.main.totalPrice.amount /
 					  (1 + (data.order.vat?.rate ?? 0) / 100)}
-				currency={data.order.amountsInOtherCurrencies.main.totalPrice.currency}
+				currency={data.order.currencySnapshot.main.totalPrice.currency}
 				inline
 			/>
 		</td>
@@ -128,9 +127,9 @@
 		<td class="border border-white px-2 text-right">{t('order.receipt.totalVat')}</td>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
 			<PriceTag
-				amount={data.order.amountsInOtherCurrencies.main.vat?.amount ?? 0}
-				currency={data.order.amountsInOtherCurrencies.main.vat?.currency ??
-					data.order.amountsInOtherCurrencies.main.totalPrice.currency}
+				amount={data.order.currencySnapshot.main.vat?.amount ?? 0}
+				currency={data.order.currencySnapshot.main.vat?.currency ??
+					data.order.currencySnapshot.main.totalPrice.currency}
 				inline
 			/>
 		</td>
@@ -139,12 +138,24 @@
 		<td class="border border-white px-2 text-right">{t('order.receipt.totalInclVat')}</td>
 		<td class="border border-white px-2 whitespace-nowrap text-right">
 			<PriceTag
-				amount={data.order.amountsInOtherCurrencies.main.totalPrice.amount}
-				currency={data.order.amountsInOtherCurrencies.main.totalPrice.currency}
+				amount={data.order.currencySnapshot.main.totalPrice.amount}
+				currency={data.order.currencySnapshot.main.totalPrice.currency}
 				inline
 			/>
 		</td>
 	</tr>
+	{#if data.payment.currencySnapshot.main.amount !== data.order.currencySnapshot.main.totalPrice.amount}
+		<tr style:background-color="#aeaaaa" class="text-white font-bold">
+			<td class="border border-white px-2 text-right">{t('order.receipt.partialAmount')}</td>
+			<td class="border border-white px-2 whitespace-nowrap text-right">
+				<PriceTag
+					amount={data.payment.currencySnapshot.main.amount}
+					currency={data.payment.currencySnapshot.main.currency}
+					inline
+				/>
+			</td>
+		</tr>
+	{/if}
 </table>
 
 <div class="mt-4">

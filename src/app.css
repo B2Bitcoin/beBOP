@@ -116,7 +116,7 @@
 	}
 
 	.form-input {
-		@apply border-gray-300 border-[1px] bg-white w-full border-solid rounded pl-2 block placeholder-gray-450;
+		@apply border-gray-300 border-[1px] bg-white text-black w-full border-solid rounded pl-2 block placeholder-gray-450;
 	}
 
 	.form-input[disabled] {

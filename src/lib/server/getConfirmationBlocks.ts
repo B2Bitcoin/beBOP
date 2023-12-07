@@ -1,7 +1,7 @@
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { toSatoshis } from './toSatoshis';
+import { toSatoshis } from '../utils/toSatoshis';
 
-export function getConfirmationBlocks(orderAmount: number) {
+export function getConfirmationBlocks(orderAmountSats: number) {
 	let confirmationBlocks = runtimeConfig.confirmationBlocksThresholds.defaultBlocks;
 
 	for (const threshold of runtimeConfig.confirmationBlocksThresholds.thresholds) {
@@ -14,7 +14,7 @@ export function getConfirmationBlocks(orderAmount: number) {
 			runtimeConfig.confirmationBlocksThresholds.currency
 		);
 
-		if (orderAmount >= minAmountInSat && orderAmount <= maxAmountInSat) {
+		if (orderAmountSats >= minAmountInSat && orderAmountSats <= maxAmountInSat) {
 			confirmationBlocks = threshold.confirmationBlocks;
 			break;
 		}

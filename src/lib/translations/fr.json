@@ -127,9 +127,9 @@
 		},
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
-			"one": "La commande sera marquée comme payée après 1 confirmation.",
-			"other": "La commande sera marquée comme payée après {count} confirmations.",
-			"zero": "La commande sera marquée comme payée sans attendre les confirmations."
+			"one": "Le paiement sera validé après 1 confirmation.",
+			"other": "Le paiement sera validé après {count} confirmations.",
+			"zero": "Le paiement sera validé sans attendre les confirmations."
 		},
 		"paymentAddress": "Adresse de paiement ",
 		"paymentAmount": "Montant de la transaction (hors frais)",
@@ -149,6 +149,7 @@
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
 			"invoice": "Facture",
 			"itemName": "Nature",
+			"partialAmount": "Montant à payer (paiement partiel)",
 			"quantity": "Qté",
 			"totalExcVat": "Total HT",
 			"totalInclVat": "Total TTC",
@@ -159,7 +160,7 @@
 			"title": "Adresse de livraison"
 		},
 		"singleTitle": "Commande #{number}",
-		"timeRemaining": "Temps restant avant expiration de la commande dans nos systèmes : {minutes} minutes",
+		"timeRemaining": "Temps restant avant expiration du paiement dans nos systèmes : {minutes} minutes",
 		"vatFree": "Cette commande n'est pas assujettie TVA. \nMotif : {reason}"
 	},
 	"pos": {
