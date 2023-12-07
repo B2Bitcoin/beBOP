@@ -37,7 +37,7 @@
 			</a>
 			{#if canAddToCart}
 				<div class="relative">
-					<div class="flex flex-wrap gap-6 items-end">
+					<div class="flex flex-wrap gap-6">
 						<AddToCart
 							{product}
 							picture={pictures[0]}
@@ -50,7 +50,7 @@
 			{/if}
 		</div>
 
-		<div class="justify-end grow">
+		<div class="grow">
 			<a href="/product/{product._id}">
 				<PictureComponent
 					picture={pictures[pictureId]}
