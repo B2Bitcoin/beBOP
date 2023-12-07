@@ -19,7 +19,6 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
-import { vatRates } from './vat-rates';
 import { MININUM_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
@@ -31,6 +30,7 @@ import { toCurrency } from '$lib/utils/toCurrency';
 import { POS_ROLE_ID } from '$lib/types/User';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import type { PaymentMethod } from './payment-methods';
+import { vatRate } from '$lib/types/Country';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -444,13 +444,10 @@ export async function createOrder(
 			: {
 					country: vatCountry,
 					price: {
-						amount: fixCurrencyRounding(
-							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
-							'SAT'
-						),
+						amount: fixCurrencyRounding(totalSatoshis * (vatRate(vatCountry) / 100), 'SAT'),
 						currency: 'SAT'
 					},
-					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
+					rate: vatRate(vatCountry)
 			  };
 
 	if (vat) {

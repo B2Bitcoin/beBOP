@@ -48,7 +48,7 @@ function textAddress(address: OrderAddress) {
 }
 
 function countryName(alpha2: string) {
-	const key = `country.name.${alpha2}`;
+	const key = `country.alpha2.${alpha2}`;
 	if (!te(key)) {
 		return alpha2;
 	}
