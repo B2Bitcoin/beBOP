@@ -412,7 +412,7 @@
 				{#if data.displayCompanyInfo && data.sellerIdentity}
 					<!-- First column -->
 					<div>
-						<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-identity'))}</h3>
+						<h3 class="text-lg font-semibold mb-2">{upperCase(t('footer.company.identity'))}</h3>
 						{#if data.sellerIdentity.businessName}
 							<p>{data.sellerIdentity.businessName}</p>
 						{/if}
@@ -429,7 +429,7 @@
 					<!-- Second column -->
 					{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
 						<div>
-							<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-contact'))}</h3>
+							<h3 class="text-lg font-semibold mb-2">{upperCase(t('footer.company.contact'))}</h3>
 							{#if data.sellerIdentity.contact.email}
 								<a href="mailto:{data.sellerIdentity.contact.email}">
 									{data.sellerIdentity.contact.email}
