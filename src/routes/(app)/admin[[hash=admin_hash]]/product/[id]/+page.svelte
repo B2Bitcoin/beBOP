@@ -20,7 +20,7 @@
 	let availableDate = data.product.availableDate;
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
-	let displayPreorderCustomText = data.product.customPreorderText ? true : false;
+	let displayPreorderCustomText = !!data.product.customPreorderText;
 	let shipping = data.product.shipping;
 	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
