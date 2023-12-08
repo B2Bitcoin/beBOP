@@ -198,7 +198,8 @@ export const actions = {
 				cart,
 				shippingAddress: shippingInfo?.shipping,
 				billingAddress: billingInfo?.billing || shippingInfo?.shipping,
-				vatCountry: shippingInfo?.shipping?.country ?? locals.countryCode,
+				vatCountry:
+					shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&

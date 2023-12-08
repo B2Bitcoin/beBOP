@@ -19,12 +19,15 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
-	import { vatRate } from '$lib/types/Country.js';
+	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
 
 	export let data;
 
 	let actionCount = 0;
-	let country = data.personalInfoConnected?.address?.country ?? 'CH';
+	const defaultCountry =
+		(data.personalInfoConnected?.address?.country ?? (data.countryCode as CountryAlpha2)) ||
+		(data.vatCountry as CountryAlpha2);
+	let country = defaultCountry;
 
 	let isFreeVat = false;
 	let addDiscount = false;
@@ -168,13 +171,9 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="country" class="form-input" required bind:value={country}>
+						<select name="shipping.country" class="form-input" required bind:value={country}>
 							{#each sortedCountryCodes() as code}
-								<option
-									value={code}
-									selected={code === data.personalInfoConnected?.address?.country}
-									>{countryName(code)}</option
-								>
+								<option value={code}>{countryName(code)}</option>
 							{/each}
 						</select>
 					</label>
@@ -269,11 +268,9 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required bind:value={country}>
+						<select name="billing.country" class="form-input" required value={defaultCountry}>
 							{#each sortedCountryCodes() as code}
-								<option value={code} selected={code === data.personalInfoConnected.address?.country}
-									>{countryName(code)}</option
-								>
+								<option value={code}>{countryName(code)}</option>
 							{/each}
 						</select>
 					</label>
