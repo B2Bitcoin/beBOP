@@ -132,7 +132,7 @@
 				{/if}
 				{#if payment.method === 'bankTransfer'}
 					{#if data.sellerIdentity?.contact.email}
-						<a href="mailto:{data.sellerIdentity.contact.email}" class="btn btn-black">
+						<a href="mailto:{data.sellerIdentity.contact.email}" class="btn btn-black self-start">
 							{t('order.informSeller')}
 						</a>
 					{/if}

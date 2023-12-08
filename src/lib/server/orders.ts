@@ -567,23 +567,8 @@ export async function createOrder(
 		: totalSatoshis;
 
 	const paymentId = new ObjectId();
-	const paymentPrice: Price =
-		paymentMethod === 'cash'
-			? {
-					amount: toCurrency(runtimeConfig.mainCurrency, satoshisToPay, 'SAT'),
-					currency: runtimeConfig.mainCurrency
-			  }
-			: paymentMethod === 'card'
-			? {
-					amount: toCurrency(runtimeConfig.sumUp.currency, satoshisToPay, 'SAT'),
-					currency: runtimeConfig.sumUp.currency
-			  }
-			: { amount: satoshisToPay, currency: 'SAT' };
 	await withTransaction(async (session) => {
-		const expiresAt =
-			paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
-				? undefined
-				: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
+		const expiresAt = paymentMethodExpiration(paymentMethod);
 
 		await collections.orders.insertOne(
 			{
@@ -674,18 +659,7 @@ export async function createOrder(
 					{
 						_id: paymentId,
 						method: paymentMethod,
-						price:
-							paymentMethod === 'cash'
-								? {
-										amount: toCurrency(runtimeConfig.mainCurrency, satoshisToPay, 'SAT'),
-										currency: runtimeConfig.mainCurrency
-								  }
-								: paymentMethod === 'card'
-								? {
-										amount: toCurrency(runtimeConfig.sumUp.currency, satoshisToPay, 'SAT'),
-										currency: runtimeConfig.sumUp.currency
-								  }
-								: { amount: satoshisToPay, currency: 'SAT' },
+						price: paymentPrice(paymentMethod, { currency: 'SAT', amount: satoshisToPay }),
 						currencySnapshot: {
 							main: {
 								amount: toCurrency(runtimeConfig.mainCurrency, satoshisToPay, 'SAT'),
@@ -707,7 +681,7 @@ export async function createOrder(
 							method: paymentMethod,
 							orderId,
 							orderNumber,
-							toPay: paymentPrice,
+							toPay: paymentPrice(paymentMethod, { currency: 'SAT', amount: satoshisToPay }),
 							paymentId,
 							expiresAt
 						})),
@@ -975,6 +949,26 @@ async function generateCardPaymentInfo(params: {
 	}
 }
 
+function paymentMethodExpiration(paymentMethod: PaymentMethod) {
+	return paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
+		? undefined
+		: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
+}
+
+function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
+	return paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
+		? {
+				amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
+				currency: runtimeConfig.mainCurrency
+		  }
+		: paymentMethod === 'card'
+		? {
+				amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
+				currency: runtimeConfig.sumUp.currency
+		  }
+		: { amount: toCurrency('SAT', price.amount, price.currency), currency: 'SAT' };
+}
+
 export async function addOrderPayment(
 	order: Order,
 	paymentMethod: PaymentMethod,
@@ -1025,31 +1019,13 @@ export async function addOrderPayment(
 	}
 
 	const paymentId = new ObjectId();
-	const expiresAt =
-		paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
-			? undefined
-			: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
+	const expiresAt = paymentMethodExpiration(paymentMethod);
 
 	const payment: OrderPayment = {
 		_id: paymentId,
 		status: 'pending',
 		method: paymentMethod,
-		price:
-			paymentMethod === 'cash'
-				? {
-						amount: toCurrency(runtimeConfig.mainCurrency, priceToPay.amount, priceToPay.currency),
-						currency: runtimeConfig.mainCurrency
-				  }
-				: paymentMethod === 'card'
-				? {
-						amount: toCurrency(
-							runtimeConfig.sumUp.currency,
-							priceToPay.amount,
-							priceToPay.currency
-						),
-						currency: runtimeConfig.sumUp.currency
-				  }
-				: { amount: toCurrency('SAT', priceToPay.amount, priceToPay.currency), currency: 'SAT' },
+		price: paymentPrice(paymentMethod, priceToPay),
 		currencySnapshot: {
 			main: {
 				amount: toCurrency(mainCurrency, priceToPay.amount, priceToPay.currency),

@@ -82,8 +82,8 @@ const addSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
 	response.headers.set('X-Content-Type-Options', 'nosniff');
-	// Possible to switch to SAMEORIGIN
-	response.headers.set('X-Frame-Options', 'DENY');
+	// SAMEORIGIN for invoice generation
+	response.headers.set('X-Frame-Options', 'SAMEORIGIN');
 
 	// Possible to enable CSP / XSS Protection directly in SvelteKit config
 
