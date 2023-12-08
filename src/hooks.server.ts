@@ -76,6 +76,23 @@ export const handleError = (({ error, event }) => {
 	}
 }) satisfies HandleServerError;
 
+const addSecurityHeaders: Handle = async ({ event, resolve }) => {
+	const response = await resolve(event);
+
+	response.headers.set('X-Content-Type-Options', 'nosniff');
+	// Possible to switch to SAMEORIGIN
+	response.headers.set('X-Frame-Options', 'DENY');
+
+	// Possible to enable CSP / XSS Protection directly in SvelteKit config
+
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+	response.headers.set('Feature-Policy', 'camera none; microphone none; geolocation none');
+	response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+
+	return response;
+};
+
 const handleGlobal: Handle = async ({ event, resolve }) => {
 	event.locals.countryCode = countryFromIp(event.getClientAddress());
 
@@ -450,4 +467,6 @@ const handleSSO = authProviders
 	  })
 	: null;
 
-export const handle = handleSSO ? sequence(handleGlobal, handleSSO, handleSsoCookie) : handleGlobal;
+export const handle = handleSSO
+	? sequence(addSecurityHeaders, handleGlobal, handleSSO, handleSsoCookie)
+	: sequence(addSecurityHeaders, handleGlobal);
