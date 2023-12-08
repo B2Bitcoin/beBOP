@@ -69,7 +69,7 @@
 			"title": "Paiement"
 		},
 		"paymentMethod": {
-			"bankTransfer": "Transfert bancaire",
+			"bankTransfer": "Virement bancaire",
 			"bitcoin": "BTC on-chain",
 			"card": "Carte bancaire",
 			"cash": "Espèces",

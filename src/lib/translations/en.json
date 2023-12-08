@@ -69,7 +69,7 @@
 			"title": "Payment"
 		},
 		"paymentMethod": {
-			"bankTransfer": "Bank transfert",
+			"bankTransfer": "Bank transfer",
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",

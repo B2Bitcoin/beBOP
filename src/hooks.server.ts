@@ -4,6 +4,7 @@ import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 import { SvelteKitAuth } from '@auth/sveltekit';
+import { flatten } from 'flat';
 import { adminPrefix } from '$lib/server/admin';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
@@ -60,19 +61,18 @@ export const handleError = (({ error, event }) => {
 		event.locals.status = 422;
 		const formattedError = error.format();
 
-		if (formattedError._errors.length) {
-			return { message: formattedError._errors[0], status: 422 };
-		}
+		const message = Object.entries(
+			flatten(formattedError, { safe: true }) as Record<string, string[]>
+		)
+			.filter(
+				(entry: [string, unknown]): entry is [string, string[]] =>
+					!!(entry[0].endsWith('._errors') && Array.isArray(entry[1]) && entry[1].length)
+			)
+			.map(([key, val]) => `${key.slice(0, -'._errors'.length)}: ${val[0]}`)
+			.join(', ');
 
 		return {
-			message: Object.entries(formattedError)
-				.map(([key, val]) => {
-					if (typeof val === 'object' && val && '_errors' in val && Array.isArray(val._errors)) {
-						return `${key}: ${val._errors[0]}`;
-					}
-				})
-				.filter(Boolean)
-				.join(', '),
+			message,
 			status: 422
 		};
 	}
