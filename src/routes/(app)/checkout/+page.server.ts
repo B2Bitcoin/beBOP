@@ -80,11 +80,6 @@ export const actions = {
 		}
 
 		const isDigital = products.every((product) => !product.shipping);
-		const isDifferentShippingAndBilling = z
-			.object({
-				showBillingInfo: z.boolean({ coerce: true }).default(false)
-			})
-			.parse(Object.fromEntries(formData));
 
 		const shippingInfo = isDigital
 			? null
@@ -102,7 +97,7 @@ export const actions = {
 					})
 					.parse(json);
 
-		const billingInfo = isDifferentShippingAndBilling.showBillingInfo
+		const billingInfo = json.billing
 			? z
 					.object({
 						billing: z.object({
@@ -202,10 +197,7 @@ export const actions = {
 				},
 				cart,
 				shippingAddress: shippingInfo?.shipping,
-				billingAddress:
-					isDifferentShippingAndBilling.showBillingInfo && billingInfo
-						? billingInfo?.billing
-						: shippingInfo?.shipping,
+				billingAddress: billingInfo?.billing || shippingInfo?.shipping,
 				vatCountry: shippingInfo?.shipping?.country ?? locals.countryCode,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&

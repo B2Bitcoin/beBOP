@@ -219,7 +219,6 @@
 						<input
 							type="checkbox"
 							class="form-checkbox"
-							name="showBillingInfo"
 							form="checkout"
 							bind:checked={showBillingInfo}
 						/>
