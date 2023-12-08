@@ -50,6 +50,7 @@
 			"submit": "Proceed"
 		},
 		"deliveryFees": "Delivery fees",
+		"differentBillingAddress": "My shipping address and my billing address are different",
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
 		"invalidNpub": "Invalid NostR public address",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",

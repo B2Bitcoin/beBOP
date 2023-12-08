@@ -222,7 +222,7 @@
 							form="checkout"
 							bind:checked={showBillingInfo}
 						/>
-						My delivery address and my billing address are differents
+						{t('checkout.differentBillingAddress')}
 					</label>
 				{/if}
 			</section>
