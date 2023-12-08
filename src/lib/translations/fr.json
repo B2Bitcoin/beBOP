@@ -50,7 +50,7 @@
 			"submit": "Payer"
 		},
 		"deliveryFees": "Participation forfaitaire aux frais de port",
-		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir votre adresse postale.",
+		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"notifications": {

@@ -40,9 +40,7 @@ export async function load({ parent, locals }) {
 			address: personalInfoConnected?.address,
 			_id: personalInfoConnected?._id.toString()
 		},
-		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
-		collectBillingAddressOnDeliverylessOrders:
-			runtimeConfig.collectBillingAddressOnDeliverylessOrders
+		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory
 	};
 }
 

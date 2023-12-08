@@ -125,118 +125,110 @@
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
 
-				{#if isDigital && !data.isBillingAddressMandatory && !data.collectBillingAddressOnDeliverylessOrders}
+				{#if isDigital}
 					<p class="col-span-6">
 						{t('checkout.digitalNoShippingNeeded')}
 					</p>
 				{:else}
-					{#if !isDigital}
-						<label class="form-label col-span-3">
-							{t('address.firstName')}
-							<input
-								type="text"
-								class="form-input"
-								name="shipping.firstName"
-								autocomplete="given-name"
-								required
-								value={data.personalInfoConnected?.firstName ?? ''}
-							/>
-						</label>
+					<label class="form-label col-span-3">
+						{t('address.firstName')}
+						<input
+							type="text"
+							class="form-input"
+							name="shipping.firstName"
+							autocomplete="given-name"
+							required
+							value={data.personalInfoConnected?.firstName ?? ''}
+						/>
+					</label>
 
-						<label class="form-label col-span-3">
-							{t('address.lastName')}
-							<input
-								type="text"
-								class="form-input"
-								name="shipping.lastName"
-								autocomplete="family-name"
-								required
-								value={data.personalInfoConnected?.lastName ?? ''}
-							/>
-						</label>
+					<label class="form-label col-span-3">
+						{t('address.lastName')}
+						<input
+							type="text"
+							class="form-input"
+							name="shipping.lastName"
+							autocomplete="family-name"
+							required
+							value={data.personalInfoConnected?.lastName ?? ''}
+						/>
+					</label>
 
-						<label class="form-label col-span-6">
-							{t('address.address')}
-							<input
-								type="text"
-								class="form-input"
-								autocomplete="street-address"
-								name="shipping.address"
-								required
-								value={data.personalInfoConnected?.address?.street ?? ''}
-							/>
-						</label>
+					<label class="form-label col-span-6">
+						{t('address.address')}
+						<input
+							type="text"
+							class="form-input"
+							autocomplete="street-address"
+							name="shipping.address"
+							required
+							value={data.personalInfoConnected?.address?.street ?? ''}
+						/>
+					</label>
 
-						<label class="form-label col-span-3">
-							{t('address.country')}
-							<select name="country" class="form-input" required bind:value={country}>
-								{#each sortedCountryCodes() as code}
-									<option
-										value={code}
-										selected={code === data.personalInfoConnected?.address?.country}
-										>{countryName(code)}</option
-									>
-								{/each}
-							</select>
-						</label>
+					<label class="form-label col-span-3">
+						{t('address.country')}
+						<select name="country" class="form-input" required bind:value={country}>
+							{#each sortedCountryCodes() as code}
+								<option
+									value={code}
+									selected={code === data.personalInfoConnected?.address?.country}
+									>{countryName(code)}</option
+								>
+							{/each}
+						</select>
+					</label>
 
-						<span class="col-span-3" />
+					<span class="col-span-3" />
 
-						<label class="form-label col-span-2">
-							{t('address.state')}
+					<label class="form-label col-span-2">
+						{t('address.state')}
 
-							<input
-								type="text"
-								name="shipping.state"
-								class="form-input"
-								value={data.personalInfoConnected?.address?.state ?? ''}
-							/>
-						</label>
-						<label class="form-label col-span-2">
-							{t('address.city')}
+						<input
+							type="text"
+							name="shipping.state"
+							class="form-input"
+							value={data.personalInfoConnected?.address?.state ?? ''}
+						/>
+					</label>
+					<label class="form-label col-span-2">
+						{t('address.city')}
 
-							<input
-								type="text"
-								name="shipping.city"
-								class="form-input"
-								value={data.personalInfoConnected?.address?.city ?? ''}
-								required
-							/>
-						</label>
-						<label class="form-label col-span-2">
-							{t('address.zipCode')}
+						<input
+							type="text"
+							name="shipping.city"
+							class="form-input"
+							value={data.personalInfoConnected?.address?.city ?? ''}
+							required
+						/>
+					</label>
+					<label class="form-label col-span-2">
+						{t('address.zipCode')}
 
-							<input
-								type="text"
-								name="shipping.zip"
-								class="form-input"
-								value={data.personalInfoConnected?.address?.zip ?? ''}
-								required
-								autocomplete="postal-code"
-							/>
-						</label>
-					{:else}
-						<p class="col-span-6">
-							{t('checkout.digitalNoShippingNeeded')}
-						</p>
-					{/if}
+						<input
+							type="text"
+							name="shipping.zip"
+							class="form-input"
+							value={data.personalInfoConnected?.address?.zip ?? ''}
+							required
+							autocomplete="postal-code"
+						/>
+					</label>
 
-					{#if data.isBillingAddressMandatory}
-						<label class="col-span-6 checkbox-label">
-							<input
-								type="checkbox"
-								class="form-checkbox"
-								name="showBillingInfo"
-								form="checkout"
-								bind:checked={showBillingInfo}
-							/>
-							My delivery address and my billing address are differents
-						</label>
-					{/if}
+					<label class="col-span-6 checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							name="showBillingInfo"
+							form="checkout"
+							bind:checked={showBillingInfo}
+						/>
+						My delivery address and my billing address are differents
+					</label>
 				{/if}
 			</section>
 
-			{#if showBillingInfo || (isDigital && data.collectBillingAddressOnDeliverylessOrders)}
+			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory)}
 				<section class="gap-4 grid grid-cols-6 w-4/5">
 					<h2 class="font-light text-2xl col-span-6">{t('checkout.billingInfo')}</h2>
 
