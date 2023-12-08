@@ -1,11 +1,10 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { getCartFromDb } from '$lib/server/cart.js';
-import { countryNameByAlpha2 } from '$lib/server/country-codes';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier } from '$lib/server/user.js';
-import { vatRates } from '$lib/server/vat-rates';
 import { locales } from '$lib/translations/index.js';
+import { vatRate } from '$lib/types/Country.js';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef';
@@ -47,16 +46,11 @@ export async function load(params) {
 		npub: locals.npub,
 		sso: locals.sso,
 		userId: locals.user?._id.toString(),
-		countryName: countryNameByAlpha2[locals.countryCode] || '-',
 		vatRate: runtimeConfig.vatExempted
 			? 0
 			: runtimeConfig.vatSingleCountry
-			? runtimeConfig.vatCountry in vatRates
-				? vatRates[runtimeConfig.vatCountry as keyof typeof vatRates]
-				: 0
-			: locals.countryCode in vatRates
-			? vatRates[locals.countryCode as keyof typeof vatRates]
-			: 0,
+			? vatRate(runtimeConfig.vatCountry)
+			: vatRate(locals.countryCode),
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
 		vatCountry: runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : locals.countryCode,
 		currencies: {

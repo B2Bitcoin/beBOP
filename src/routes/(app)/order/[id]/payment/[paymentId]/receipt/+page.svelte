@@ -8,7 +8,7 @@
 
 	const identity = data.sellerIdentity;
 
-	const { t, locale } = useI18n();
+	const { t, locale, textAddress } = useI18n();
 </script>
 
 <div class="flex justify-between">
@@ -36,13 +36,7 @@
 		<p>{data.order.notifications.paymentStatus.email}</p>
 	{/if}
 	{#if data.order.shippingAddress}
-		<p>{data.order.shippingAddress.firstName} {data.order.shippingAddress.lastName}</p>
-		{#if data.order.shippingAddress.address}
-			<p>{data.order.shippingAddress.address}</p>
-		{/if}
-		{#if data.order.shippingAddress.city || data.order.shippingAddress.zip}
-			<p>{data.order.shippingAddress.zip} {data.order.shippingAddress.city}</p>
-		{/if}
+		<p class="whitespace-pre-wrap">{textAddress(data.order.shippingAddress)}</p>
 	{/if}
 </div>
 

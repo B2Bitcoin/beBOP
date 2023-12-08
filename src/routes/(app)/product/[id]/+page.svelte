@@ -124,7 +124,6 @@
 <main class="mx-auto max-w-7xl py-10 px-6">
 	{#if data.productCMSBefore}
 		<CmsDesign
-			class="px-6"
 			challenges={data.productCMSBefore.challenges}
 			tokens={data.productCMSBefore.tokens}
 			sliders={data.productCMSBefore.sliders}
@@ -136,7 +135,7 @@
 		/>
 	{/if}
 
-	<div class="flex flex-row">
+	<div class="flex flex-row my-12">
 		<div class="w-14 min-w-[48px] py-12 hidden md:block">
 			{#if data.pictures.length > 1}
 				{#each data.pictures as picture, i}
@@ -146,7 +145,7 @@
 					>
 						<Picture
 							{picture}
-							class="h-12 w-12 rounded-sm m-2 object-cover {picture === currentPicture
+							class="h-12 w-12 rounded-sm my-2 object-cover {picture === currentPicture
 								? 'ring-2 ring-link ring-offset-2'
 								: ''} cursor-pointer"
 						/>
@@ -272,15 +271,21 @@
 				<hr class="border-gray-300 my-2" />
 
 				{#if isPreorder && data.product.availableDate}
-					<p>
-						{t('product.preorderText', {
-							date: new Date(data.product.availableDate).toLocaleDateString($locale, {
-								year: 'numeric',
-								month: 'long',
-								day: 'numeric'
-							})
-						})}
-					</p>
+					{#if data.product.customPreorderText}
+						<p>
+							{data.product.customPreorderText}
+						</p>
+					{:else}
+						<p>
+							{t('product.preorderText', {
+								date: new Date(data.product.availableDate).toLocaleDateString($locale, {
+									year: 'numeric',
+									month: 'long',
+									day: 'numeric'
+								})
+							})}
+						</p>
+					{/if}
 				{/if}
 				{#if !data.product.availableDate || data.product.availableDate <= new Date() || isPreorder}
 					{@const verb = isPreorder
@@ -392,6 +397,10 @@
 							<p>{t('product.notForSale')}</p>
 						{/if}
 					</form>
+				{:else if data.product.customPreorderText}
+					<p>
+						{data.product.customPreorderText}
+					</p>
 				{:else}
 					<p>
 						{t('product.availableOn', {
@@ -408,7 +417,6 @@
 	</div>
 	{#if data.productCMSAfter}
 		<CmsDesign
-			class="px-6"
 			challenges={data.productCMSAfter.challenges}
 			tokens={data.productCMSAfter.tokens}
 			sliders={data.productCMSAfter.sliders}

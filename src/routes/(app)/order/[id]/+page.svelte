@@ -31,7 +31,7 @@
 		return () => clearInterval(interval);
 	});
 
-	const { t, locale } = useI18n();
+	const { t, locale, textAddress } = useI18n();
 
 	let receiptIFrame: HTMLIFrameElement | null = null;
 	let receiptReady = false;
@@ -88,11 +88,13 @@
 								{payment.method === 'bitcoin' ? 'BTC' : 'sats'}
 							</code>
 						</li>
-						<li>
-							{t('order.timeRemaining', {
-								minutes: differenceInMinutes(payment.expiresAt, currentDate)
-							})}
-						</li>
+						{#if payment.expiresAt}
+							<li>
+								{t('order.timeRemaining', {
+									minutes: differenceInMinutes(payment.expiresAt, currentDate)
+								})}
+							</li>
+						{/if}
 					</ul>
 					<img
 						src="{$page.url.pathname}/payment/{payment.id}/qrcode"
@@ -169,11 +171,9 @@
 			{#if data.order.shippingAddress}
 				<div>
 					{t('order.shippingAddress.title')}:
-					<pre class="break-words body-secondaryText">{JSON.stringify(
-							data.order.shippingAddress,
-							null,
-							2
-						)}</pre>
+					<p class="body-secondaryText whitespace-pre-wrap">
+						{textAddress(data.order.shippingAddress)}
+					</p>
 				</div>
 			{/if}
 

@@ -19,7 +19,6 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
-import { vatRates } from './vat-rates';
 import { MININUM_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
@@ -31,6 +30,7 @@ import { toCurrency } from '$lib/utils/toCurrency';
 import { POS_ROLE_ID } from '$lib/types/User';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import type { PaymentMethod } from './payment-methods';
+import { vatRate } from '$lib/types/Country';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -445,13 +445,10 @@ export async function createOrder(
 			: {
 					country: vatCountry,
 					price: {
-						amount: fixCurrencyRounding(
-							totalSatoshis * ((vatRates[vatCountry as keyof typeof vatRates] || 0) / 100),
-							'SAT'
-						),
+						amount: fixCurrencyRounding(totalSatoshis * (vatRate(vatCountry) / 100), 'SAT'),
 						currency: 'SAT'
 					},
-					rate: vatRates[vatCountry as keyof typeof vatRates] || 0
+					rate: vatRate(vatCountry)
 			  };
 
 	if (vat) {
@@ -867,7 +864,7 @@ async function generatePaymentInfo(params: {
 	orderNumber: number;
 	toPay: Price;
 	paymentId: ObjectId;
-	expiresAt: Date;
+	expiresAt?: Date;
 }): Promise<{
 	address?: string;
 	wallet?: string;
@@ -885,7 +882,9 @@ async function generatePaymentInfo(params: {
 			const invoice = await lndCreateInvoice(
 				toSatoshis(params.toPay.amount, params.toPay.currency),
 				{
-					expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date()),
+					...(params.expiresAt && {
+						expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date())
+					}),
 					label: runtimeConfig.includeOrderUrlInQRCode
 						? `${ORIGIN}/order/${params.orderId}`
 						: undefined
@@ -910,7 +909,7 @@ async function generateCardPaymentInfo(params: {
 	orderNumber: number;
 	toPay: Price;
 	paymentId: ObjectId;
-	expiresAt: Date;
+	expiresAt?: Date;
 }): Promise<{
 	checkoutId: string;
 	meta: unknown;
@@ -934,7 +933,9 @@ async function generateCardPaymentInfo(params: {
 				merchant_code: runtimeConfig.sumUp.merchantCode,
 				redirect_url: `${ORIGIN}/order/${params.orderId}`,
 				description: 'Order ' + params.orderNumber,
-				valid_until: params.expiresAt.toISOString()
+				...(params.expiresAt && {
+					valid_until: params.expiresAt.toISOString()
+				})
 			})
 		});
 
@@ -1012,7 +1013,7 @@ export async function addOrderPayment(
 	const paymentId = new ObjectId();
 	const expiresAt =
 		paymentMethod === 'cash'
-			? addMonths(new Date(), 1)
+			? undefined
 			: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 
 	const payment: OrderPayment = {
@@ -1051,7 +1052,7 @@ export async function addOrderPayment(
 				currency: priceReferenceCurrency
 			}
 		},
-		expiresAt,
+		...(expiresAt && { expiresAt }),
 		...(await generatePaymentInfo({
 			method: paymentMethod,
 			orderId: order._id,

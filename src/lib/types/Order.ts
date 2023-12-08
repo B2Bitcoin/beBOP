@@ -26,7 +26,10 @@ export interface OrderPayment {
 		secondary?: Price;
 	};
 	method: PaymentMethod;
-	expiresAt: Date;
+	/**
+	 * Can be unset for cash or bank transfer payments for example.
+	 */
+	expiresAt?: Date;
 	/** Bitcoin / LN address, payment link */
 	address?: string;
 	paidAt?: Date;
@@ -50,6 +53,16 @@ export interface OrderPayment {
 	};
 
 	lastStatusNotified?: OrderPaymentStatus;
+}
+
+export interface OrderAddress {
+	firstName: string;
+	lastName: string;
+	address: string;
+	city: string;
+	state?: string;
+	zip: string;
+	country: CountryAlpha2;
 }
 
 export interface Order extends Timestamps {

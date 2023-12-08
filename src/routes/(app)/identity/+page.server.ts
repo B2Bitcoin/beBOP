@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database.js';
 import { userIdentifier, userQuery } from '$lib/server/user';
-import { COUNTRY_ALPHA2S } from '$lib/types/Country.js';
+import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country.js';
 import { set } from 'lodash-es';
 import type { JsonObject } from 'type-fest';
 import { z } from 'zod';
@@ -39,7 +39,7 @@ export const actions = {
 					street: z.string().min(1).max(100).trim(),
 					zip: z.string().min(1).max(100).trim(),
 					city: z.string().min(1).max(100).trim(),
-					country: z.enum([COUNTRY_ALPHA2S[0], ...COUNTRY_ALPHA2S.slice(1)]),
+					country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
 					state: z.string().min(1).max(100).trim().optional()
 				}),
 				firstName: z.string().min(1).max(100).trim(),

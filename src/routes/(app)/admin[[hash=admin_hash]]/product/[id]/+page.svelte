@@ -20,6 +20,7 @@
 	let availableDate = data.product.availableDate;
 	let availableDateStr = availableDate?.toJSON().slice(0, 10);
 	let preorder = data.product.preorder;
+	let displayPreorderCustomText = !!data.product.customPreorderText;
 	let shipping = data.product.shipping;
 	let payWhatYouWant = data.product.payWhatYouWant;
 	let priceAmountElement: HTMLInputElement;
@@ -277,10 +278,32 @@
 					Enable preorders before available date
 				</label>
 			</div>
-
+			<label class="checkbox-label {enablePreorder ? '' : 'cursor-not-allowed text-gray-450'}">
+				<input
+					class="form-checkbox {enablePreorder ? '' : 'cursor-not-allowed border-gray-450'}"
+					type="checkbox"
+					bind:checked={displayPreorderCustomText}
+					name="displayCustomPreorderText"
+					disabled={!enablePreorder}
+				/>
+				Display custom text instead of date for preorder
+			</label>
 			<input type="hidden" name="changedDate" value={changedDate} />
 		{/if}
-
+		{#if displayPreorderCustomText}
+			<label class="form-label">
+				Preorder custom text
+				<textarea
+					name="customPreorderText"
+					required
+					cols="30"
+					rows="2"
+					maxlength="1000"
+					value={data.product?.customPreorderText ?? ''}
+					class="form-input"
+				/>
+			</label>
+		{/if}
 		{#if data.product.type !== 'subscription'}
 			<label class="form-label">
 				Max quantity per order

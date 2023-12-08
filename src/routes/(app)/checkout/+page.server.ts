@@ -1,12 +1,11 @@
 import { collections } from '$lib/server/database';
 import { paymentMethods } from '$lib/server/payment-methods';
-import { COUNTRY_ALPHA2S } from '$lib/types/Country';
+import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { createOrder } from '$lib/server/orders';
 import { emailsEnabled } from '$lib/server/email';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { vatRates } from '$lib/server/vat-rates';
 import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
@@ -33,7 +32,6 @@ export async function load({ parent, locals }) {
 	return {
 		paymentMethods: paymentMethods(locals.user?.roleId),
 		emailsEnabled,
-		vatRates: Object.fromEntries(COUNTRY_ALPHA2S.map((country) => [country, vatRates[country]])),
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		personalInfoConnected: {
 			firstName: personalInfoConnected?.firstName,
@@ -100,7 +98,7 @@ export const actions = {
 							city: z.string().min(1),
 							state: z.string().optional(),
 							zip: z.string().min(1),
-							country: z.enum(COUNTRY_ALPHA2S)
+							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
 						})
 					})
 					.parse(json);
@@ -115,7 +113,7 @@ export const actions = {
 							city: z.string().min(1),
 							state: z.string().optional(),
 							zip: z.string().min(1),
-							country: z.enum(COUNTRY_ALPHA2S)
+							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
 						})
 					})
 					.parse(json)
