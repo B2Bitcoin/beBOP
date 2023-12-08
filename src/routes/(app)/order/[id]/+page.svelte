@@ -88,11 +88,13 @@
 								{payment.method === 'bitcoin' ? 'BTC' : 'sats'}
 							</code>
 						</li>
-						<li>
-							{t('order.timeRemaining', {
-								minutes: differenceInMinutes(payment.expiresAt, currentDate)
-							})}
-						</li>
+						{#if payment.expiresAt}
+							<li>
+								{t('order.timeRemaining', {
+									minutes: differenceInMinutes(payment.expiresAt, currentDate)
+								})}
+							</li>
+						{/if}
 					</ul>
 					<img
 						src="{$page.url.pathname}/payment/{payment.id}/qrcode"
