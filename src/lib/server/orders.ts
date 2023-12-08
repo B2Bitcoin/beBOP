@@ -550,7 +550,13 @@ export async function createOrder(
 	if (runtimeConfig.collectIPOnDeliverylessOrders && !params.shippingAddress && !params.clientIp) {
 		throw error(400, 'Missing IP address for deliveryless order');
 	}
-
+	if (
+		isDigital &&
+		runtimeConfig.collectBillingAddressOnDeliverylessOrders &&
+		!params.billingAddress
+	) {
+		throw error(400, 'Missing billing address for deliveryless order');
+	}
 	const satoshisToPay = params.paymentPercentage
 		? Math.floor((totalSatoshis * params.paymentPercentage) / 100)
 		: totalSatoshis;

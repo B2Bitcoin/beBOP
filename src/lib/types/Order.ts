@@ -167,13 +167,3 @@ interface SimplifiedOrderPayment {
 	status: OrderPaymentStatus;
 }
 export type SimplifiedOrder = Omit<Order, 'payments'> & { payments: SimplifiedOrderPayment[] };
-
-export interface OrderAddress {
-	firstName: string;
-	lastName: string;
-	address: string;
-	city: string;
-	state?: string;
-	zip: string;
-	country: CountryAlpha2;
-}

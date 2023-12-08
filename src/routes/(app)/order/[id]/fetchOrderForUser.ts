@@ -107,6 +107,7 @@ export async function fetchOrderForUser(orderId: string) {
 			rate: order.vat.rate
 		},
 		shippingAddress: order.shippingAddress,
+		billingAddress: order.billingAddress,
 		notifications: order.notifications,
 		vatFree: order.vatFree,
 		discount: order.discount,
