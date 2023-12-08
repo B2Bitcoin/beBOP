@@ -45,7 +45,7 @@
 	"checkout": {
 		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (<0>pourquoi?</0>)",
 		"backToCart": "Retour au panier",
-		"billingInfo": "Informations de facturation",
+		"billingInfo": "Adresse de facturation",
 		"cta": {
 			"submit": "Payer"
 		},
@@ -425,7 +425,7 @@
 		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique une <0>remise cadeau</0>",
 		"cta": {
 			"cancelOrder": "Annuler",
-			"markOrderPaid": "Marquer comme payé"
+			"markOrderPaid": "Marquer comme payée"
 		},
 		"discountJustification": "Justification",
 		"invalidDiscount": "La réduction n'est pas valable !",

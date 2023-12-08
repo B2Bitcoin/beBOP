@@ -114,21 +114,34 @@
 						{/if}
 					</div>
 				{/if}
-				{#if payment.method === 'cash' && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
-					<form
-						action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-							._id}/payment/{payment.id}?/confirm"
-						method="post"
-					>
-						<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
-					</form>
-					<form
-						action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-							._id}/{payment.id}?/cancel"
-						method="post"
-					>
-						<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
-					</form>
+				{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+					<div class="flex flex-wrap gap-2">
+						<form
+							action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+								._id}/payment/{payment.id}?/confirm"
+							method="post"
+							class="contents"
+						>
+							{#if payment.method === 'bankTransfer'}
+								<input
+									class="form-input w-auto"
+									type="text"
+									name="bankTransferNumber"
+									required
+									placeholder="bank transfer number"
+								/>
+							{/if}
+							<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
+						</form>
+						<form
+							action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+								._id}/{payment.id}?/cancel"
+							method="post"
+							class="contents"
+						>
+							<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
+						</form>
+					</div>
 				{/if}
 				{#if payment.method === 'bankTransfer'}
 					{#if data.sellerIdentity?.contact.email}
