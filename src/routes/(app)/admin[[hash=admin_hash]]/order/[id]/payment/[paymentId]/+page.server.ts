@@ -24,16 +24,19 @@ export const actions = {
 			throw error(400, 'Payment is not pending');
 		}
 		const formData = await request.formData();
-		const parsed = z
-			.object({
-				bankTransferNumber: z.string().trim().min(1).max(100).optional()
-			})
-			.parse({
-				bankTransferNumber: formData.get('bankTransferNumber')
-			});
+		const parsed =
+			payment.method === 'bankTransfer'
+				? z
+						.object({
+							bankTransferNumber: z.string().trim().min(1).max(100)
+						})
+						.parse({
+							bankTransferNumber: formData.get('bankTransferNumber')
+						})
+				: null;
 
 		await onOrderPayment(order, payment, payment.price, {
-			...(parsed.bankTransferNumber && { bankTransferNumber: parsed.bankTransferNumber })
+			...(parsed && parsed.bankTransferNumber && { bankTransferNumber: parsed.bankTransferNumber })
 		});
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);

@@ -90,7 +90,7 @@ export async function onOrderPayment(
 					},
 					'payments.$.status': 'paid',
 					...(params?.bankTransferNumber && {
-						'payments.$.bankTransferNumber': params?.bankTransferNumber
+						'payments.$.bankTransferNumber': params.bankTransferNumber
 					}),
 					'payments.$.paidAt': new Date(),
 					...(isOrderFullyPaid(order) && {

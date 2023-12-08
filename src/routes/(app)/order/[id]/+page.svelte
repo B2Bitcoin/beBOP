@@ -64,7 +64,7 @@
 			{/if}
 
 			{#each data.order.payments.filter((p) => p.status === 'pending') as payment}
-				{#if payment.method !== 'cash' && payment.method !== 'bankTransfer'}
+				{#if payment.method !== 'cash'}
 					<ul>
 						<li>
 							{t('order.paymentAddress')}: {#if payment.method === 'card'}
@@ -74,6 +74,10 @@
 								>
 									{$page.url.origin}{trimOrigin(payment.address ?? '')}
 								</a>
+							{:else if payment.method === 'bankTransfer'}
+								<code class="break-words body-secondaryText break-all"
+									>{data.sellerIdentity?.bank?.iban}</code
+								>
 							{:else}
 								<code class="break-words body-secondaryText break-all">{payment.address}</code>
 							{/if}
@@ -88,7 +92,7 @@
 								{payment.method === 'bitcoin' ? 'BTC' : 'sats'}
 							</code>
 						</li>
-						{#if payment.expiresAt}
+						{#if payment.expiresAt && payment.method !== 'bankTransfer'}
 							<li>
 								{t('order.timeRemaining', {
 									minutes: differenceInMinutes(payment.expiresAt, currentDate)
@@ -96,11 +100,13 @@
 							</li>
 						{/if}
 					</ul>
-					<img
-						src="{$page.url.pathname}/payment/{payment.id}/qrcode"
-						class="w-96 h-96"
-						alt="QR code"
-					/>
+					{#if payment.method === 'bitcoin'}
+						<img
+							src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+							class="w-96 h-96"
+							alt="QR code"
+						/>
+					{/if}
 					<div class="text-xl">
 						{t('order.payToComplete')}
 						{#if payment.method === 'bitcoin'}
@@ -127,7 +133,7 @@
 				{#if payment.method === 'bankTransfer'}
 					{#if data.sellerIdentity?.contact.email}
 						<a href="mailto:{data.sellerIdentity.contact.email}" class="btn btn-black">
-							Inform seller
+							{t('order.informSeller')}
 						</a>
 					{/if}
 				{/if}
