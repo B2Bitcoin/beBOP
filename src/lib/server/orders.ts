@@ -66,7 +66,10 @@ export function isOrderFullyPaid(order: Order, opts?: { includePendingOrders?: b
 export async function onOrderPayment(
 	order: Order,
 	payment: Order['payments'][0],
-	received: { currency: Currency; amount: number }
+	received: { currency: Currency; amount: number },
+	params: {
+		bankTransfertNumber?: string;
+	}
 ): Promise<Order> {
 	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
 
@@ -86,6 +89,9 @@ export async function onOrderPayment(
 						createdAt: new Date()
 					},
 					'payments.$.status': 'paid',
+					...(params.bankTransfertNumber && {
+						'payments.$.bankTransfertNumber': params.bankTransfertNumber
+					}),
 					'payments.$.paidAt': new Date(),
 					...(isOrderFullyPaid(order) && {
 						status: 'paid'

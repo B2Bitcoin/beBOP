@@ -80,7 +80,8 @@
 		bitcoin: t('checkout.paymentMethod.bitcoin'),
 		lightning: t('checkout.paymentMethod.lighthing'),
 		cash: t('checkout.paymentMethod.cash'),
-		card: t('checkout.paymentMethod.card')
+		card: t('checkout.paymentMethod.card'),
+		bankTransfert: t('checkout.paymentMethod.bankTransfert')
 	};
 
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;

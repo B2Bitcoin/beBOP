@@ -64,7 +64,7 @@
 			{/if}
 
 			{#each data.order.payments.filter((p) => p.status === 'pending') as payment}
-				{#if payment.method !== 'cash'}
+				{#if payment.method !== 'cash' && payment.method !== 'bankTransfert'}
 					<ul>
 						<li>
 							{t('order.paymentAddress')}: {#if payment.method === 'card'}
@@ -123,6 +123,13 @@
 					>
 						<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
 					</form>
+				{/if}
+				{#if payment.method === 'bankTransfert'}
+					{#if data.sellerIdentity?.contact.email}
+						<a href="mailto:{data.sellerIdentity.contact.email}" class="btn btn-black">
+							Inform seller
+						</a>
+					{/if}
 				{/if}
 			{/each}
 
