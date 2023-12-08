@@ -37,5 +37,5 @@ jobs:
       - name: Deploy
         run: |
           zip -r build.zip build
-          scp -p ${{ vars.SSH_PORT }} build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:beBOP/build.zip
+          scp -P ${{ vars.SSH_PORT }} build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:beBOP/build.zip
           ssh -p ${{ vars.SSH_PORT }} ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && git lfs install && cd beBOP && git remote prune origin && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bebop"

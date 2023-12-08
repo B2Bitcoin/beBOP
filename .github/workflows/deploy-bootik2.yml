@@ -32,5 +32,5 @@ jobs:
       - name: Deploy
         run: |
           zip -r build.zip build
-          scp -r build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik2/build.zip
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && git lfs install && cd B2BitcoinBootik2 && git remote prune origin && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik2"
+          scp -P ${{ vars.SSH_PORT }} -r build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik2/build.zip
+          ssh -p ${{ vars.SSH_PORT }} ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && git lfs install && cd B2BitcoinBootik2 && git remote prune origin && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik2"
