@@ -8,7 +8,7 @@
 
 import { error } from '@sveltejs/kit';
 import { sub } from 'date-fns';
-import { mask } from 'ip';
+import ipModule from 'ip';
 import { isIPv6 } from 'node:net';
 import { processClosed } from './process';
 
@@ -23,7 +23,7 @@ export function rateLimit(ip: string | undefined, key: string, max: number, dura
 	}
 	const maskedIp = isIPv6(ip)
 		? // Mask the last 64 bits of the IPv6 address
-		  mask(ip, 'ffff:ffff:ffff:ffff:0000:0000:0000:0000')
+		  ipModule.mask(ip, 'ffff:ffff:ffff:ffff:0000:0000:0000:0000')
 		: ip;
 
 	const minDate = sub(new Date(), duration);
