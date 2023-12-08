@@ -26,7 +26,10 @@ export interface OrderPayment {
 		secondary?: Price;
 	};
 	method: PaymentMethod;
-	expiresAt: Date;
+	/**
+	 * Can be unset for cash or bank transfer payments for example.
+	 */
+	expiresAt?: Date;
 	/** Bitcoin / LN address, payment link */
 	address?: string;
 	paidAt?: Date;
