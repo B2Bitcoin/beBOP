@@ -81,7 +81,7 @@
 		lightning: t('checkout.paymentMethod.lighthing'),
 		cash: t('checkout.paymentMethod.cash'),
 		card: t('checkout.paymentMethod.card'),
-		bankTransfert: t('checkout.paymentMethod.bankTransfert')
+		bankTransfer: t('checkout.paymentMethod.bankTransfer')
 	};
 
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;

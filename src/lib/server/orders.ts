@@ -68,7 +68,7 @@ export async function onOrderPayment(
 	payment: Order['payments'][0],
 	received: { currency: Currency; amount: number },
 	params: {
-		bankTransfertNumber?: string;
+		bankTransferNumber?: string;
 	}
 ): Promise<Order> {
 	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
@@ -89,8 +89,8 @@ export async function onOrderPayment(
 						createdAt: new Date()
 					},
 					'payments.$.status': 'paid',
-					...(params.bankTransfertNumber && {
-						'payments.$.bankTransfertNumber': params.bankTransfertNumber
+					...(params.bankTransferNumber && {
+						'payments.$.bankTransferNumber': params.bankTransferNumber
 					}),
 					'payments.$.paidAt': new Date(),
 					...(isOrderFullyPaid(order) && {
@@ -575,7 +575,7 @@ export async function createOrder(
 			: { amount: satoshisToPay, currency: 'SAT' };
 	await withTransaction(async (session) => {
 		const expiresAt =
-			paymentMethod === 'cash'
+			paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
 				? addMonths(new Date(), 1)
 				: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 
@@ -901,6 +901,9 @@ async function generatePaymentInfo(params: {
 			};
 		}
 		case 'cash': {
+			return {};
+		}
+		case 'bankTransfer': {
 			return {};
 		}
 		case 'card':

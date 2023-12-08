@@ -30,8 +30,8 @@
 				💶
 			{:else if order.payments[0].method === 'card'}
 				💳
-			{:else if order.payments[0].method === 'bankTransfert'}
-				💳
+			{:else if order.payments[0].method === 'bankTransfer'}
+				🏦
 			{/if} -
 			<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString($locale)}
 				>{order.createdAt.toLocaleDateString($locale)}</time
@@ -64,17 +64,17 @@
 			{/if}
 			{#if adminPrefix}
 				{#each order.payments as payment}
-					{#if payment.status === 'pending' && (payment.method === 'cash' || payment.method === 'bankTransfert')}
+					{#if payment.status === 'pending' && (payment.method === 'cash' || payment.method === 'bankTransfer')}
 						<form
 							action="{adminPrefix}/order/{order._id}/payment/{payment.id}?/confirm"
 							method="post"
 							class="flex flex-row"
 						>
-							{#if payment.method === 'bankTransfert'}
+							{#if payment.method === 'bankTransfer'}
 								<input
 									class="form-input grow mx-2"
 									type="text"
-									name="bankTransfertNumber"
+									name="bankTransferNumber"
 									required
 									placeholder="bank transfer number"
 								/>

@@ -26,14 +26,14 @@ export const actions = {
 		const formData = await request.formData();
 		const parsed = z
 			.object({
-				bankTransfertNumber: z.string().trim().min(1).max(100).optional()
+				bankTransferNumber: z.string().trim().min(1).max(100).optional()
 			})
 			.parse({
-				bankTransfertNumber: formData.get('bankTransfertNumber')
+				bankTransferNumber: formData.get('bankTransferNumber')
 			});
 
 		await onOrderPayment(order, payment, payment.price, {
-			...(parsed.bankTransfertNumber && { bankTransfertNumber: parsed.bankTransfertNumber })
+			...(parsed.bankTransferNumber && { bankTransferNumber: parsed.bankTransferNumber })
 		});
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
