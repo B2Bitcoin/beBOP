@@ -67,7 +67,7 @@ export async function onOrderPayment(
 	order: Order,
 	payment: Order['payments'][0],
 	received: { currency: Currency; amount: number },
-	params: {
+	params?: {
 		bankTransferNumber?: string;
 	}
 ): Promise<Order> {
@@ -89,8 +89,8 @@ export async function onOrderPayment(
 						createdAt: new Date()
 					},
 					'payments.$.status': 'paid',
-					...(params.bankTransferNumber && {
-						'payments.$.bankTransferNumber': params.bankTransferNumber
+					...(params?.bankTransferNumber && {
+						'payments.$.bankTransferNumber': params?.bankTransferNumber
 					}),
 					'payments.$.paidAt': new Date(),
 					...(isOrderFullyPaid(order) && {
