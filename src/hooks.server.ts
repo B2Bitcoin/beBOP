@@ -34,6 +34,8 @@ import { addTranslations } from '$lib/i18n';
 import { filterNullish } from '$lib/utils/fillterNullish';
 import { refreshSessionCookie } from '$lib/server/cookies';
 import { renewSessionId } from '$lib/server/user';
+import { typedInclude } from '$lib/utils/typedIncludes';
+import { rateLimit } from '$lib/server/rateLimit';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -94,7 +96,10 @@ const addSecurityHeaders: Handle = async ({ event, resolve }) => {
 };
 
 const handleGlobal: Handle = async ({ event, resolve }) => {
-	event.locals.countryCode = countryFromIp(event.getClientAddress());
+	try {
+		event.locals.clientIp = event.getClientAddress();
+	} catch {}
+	event.locals.countryCode = event.locals.clientIp ? countryFromIp(event.locals.clientIp) : '-';
 
 	const admin = adminPrefix();
 
@@ -102,11 +107,15 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		event.url.pathname
 	);
 
+	const method = event.request.method.toLowerCase();
+
+	if (method === 'post' || method === 'put' || method === 'patch' || method === 'delete') {
+		rateLimit(event.locals.clientIp, 'method.' + method, 30, { minutes: 1 });
+	}
+
 	const isAdminUrl = /^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname);
 
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
-
-	event.locals.clientIp = event.getClientAddress();
 
 	// Prioritize lang in URL, then in cookie, then in accept-language header, then default to en
 	const acceptLanguages = filterNullish([
@@ -139,7 +148,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			event.url.pathname !== '/style/variables.css' &&
 			!event.url.pathname.startsWith('/script/language/') &&
 			!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
-			!runtimeConfig.maintenanceIps.split(',').includes(event.locals.clientIp)
+			!typedInclude(runtimeConfig.maintenanceIps.split(','), event.locals.clientIp)
 		) {
 			if (event.request.method !== 'GET') {
 				throw error(405, 'Site is in maintenance mode. Please try again later.');
@@ -229,8 +238,6 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		if (!role) {
 			throw error(403, 'Your role does not exist in DB.');
 		}
-
-		const method = event.request.method.toLowerCase();
 
 		if (
 			!isAllowedOnPage(
