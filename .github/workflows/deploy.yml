@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: bootik
-      url: https://dev-bootik.pvh-labs.ch
+      url: ${{ vars.DEPLOY_URL }}
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
@@ -34,5 +34,5 @@ jobs:
       - name: Deploy
         run: |
           zip -r build.zip build
-          scp build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik/build.zip
-          ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && git lfs install && cd B2BitcoinBootik && git remote prune origin && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-instance"
+          scp -p ${{ vars.SSH_PORT }} build.zip ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:B2BitcoinBootik/build.zip
+          ssh -p ${{ vars.SSH_PORT }} ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "hostnamectl && git lfs install && cd B2BitcoinBootik && git remote prune origin && git fetch && git checkout $GITHUB_SHA && pnpm install && unzip -o build.zip && pm2 reload bootik-instance"
