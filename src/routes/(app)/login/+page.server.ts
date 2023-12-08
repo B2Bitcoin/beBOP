@@ -17,6 +17,7 @@ import {
 } from '$env/static/private';
 import { zodNpub } from '$lib/server/nostr.js';
 import { renewSessionId } from '$lib/server/user.js';
+import { rateLimit } from '$lib/server/rateLimit.js';
 
 export const load = async ({ url }) => {
 	const token = url.searchParams.get('token');
@@ -61,7 +62,7 @@ export const load = async ({ url }) => {
 };
 
 export const actions = {
-	sendLink: async function ({ request }) {
+	sendLink: async function ({ request, locals }) {
 		const data = await request.formData();
 		const { address } = z
 			.object({
@@ -70,6 +71,8 @@ export const actions = {
 			.parse({
 				address: data.get('address')
 			});
+
+		rateLimit(locals.clientIp, 'email', 5, { minutes: 5 });
 
 		await sendAuthentificationlink(address.includes('@') ? { email: address } : { npub: address });
 		return { address, successUser: true };
