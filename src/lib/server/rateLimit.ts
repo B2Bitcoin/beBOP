@@ -38,7 +38,7 @@ export function rateLimit(ip: string | undefined, key: string, max: number, dura
 	}
 
 	if (ipCache[key].length >= max) {
-		throw error(429, 'Too many requests, wait a few minutes.');
+		throw error(429, 'Too many requests, wait a few minutes before trying again.');
 	}
 
 	ipCache[key].push(new Date());

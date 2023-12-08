@@ -96,6 +96,9 @@ const addSecurityHeaders: Handle = async ({ event, resolve }) => {
 };
 
 const handleGlobal: Handle = async ({ event, resolve }) => {
+	try {
+		event.locals.clientIp = event.getClientAddress();
+	} catch {}
 	event.locals.countryCode = event.locals.clientIp ? countryFromIp(event.locals.clientIp) : '-';
 
 	const admin = adminPrefix();
