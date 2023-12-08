@@ -376,7 +376,7 @@
 		"discount": {
 			"title": "Rabais"
 		},
-		"informSeller": "Notifier vendeur",
+		"informSeller": "Notifier le vendeur",
 		"linkReminder": "Conservez ce lien : <0></0> pour accéder à la commande ultérieurement.",
 		"list": {
 			"title": "Liste de vos commandes"

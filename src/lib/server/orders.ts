@@ -904,7 +904,7 @@ async function generatePaymentInfo(params: {
 			return {};
 		}
 		case 'bankTransfer': {
-			return {};
+			return { address: runtimeConfig.sellerIdentity?.bank?.iban };
 		}
 		case 'card':
 			return await generateCardPaymentInfo(params);

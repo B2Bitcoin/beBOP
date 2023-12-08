@@ -100,7 +100,7 @@
 							</li>
 						{/if}
 					</ul>
-					{#if payment.method === 'bitcoin'}
+					{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
 						<img
 							src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 							class="w-96 h-96"
