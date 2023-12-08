@@ -12,6 +12,7 @@ import { POS_ROLE_ID } from '$lib/types/User.js';
 import { zodNpub } from '$lib/server/nostr.js';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
+import { rateLimit } from '$lib/server/rateLimit.js';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -176,6 +177,8 @@ export const actions = {
 			.parse({
 				allowCollectIP: formData.get('allowCollectIP')
 			});
+
+		rateLimit(locals.clientIp, 'email', 10, { minutes: 1 });
 
 		const orderId = await createOrder(
 			cart.items.map((item) => ({

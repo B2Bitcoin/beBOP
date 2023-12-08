@@ -12,6 +12,7 @@ import {
 	checkPasswordPwnedTimes
 } from '$lib/types/User.js';
 import { adminPrefix } from '$lib/server/admin.js';
+import { rateLimit } from '$lib/server/rateLimit.js';
 
 export const load = async ({ locals }) => {
 	if (locals.user) {
@@ -25,6 +26,8 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	default: async function ({ locals, request, cookies }) {
+		rateLimit(locals.clientIp, 'login', 10, { minutes: 5 });
+
 		const data = await request.formData();
 
 		const { login, password, remember, memorize } = z
