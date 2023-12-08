@@ -563,6 +563,8 @@ export async function createOrder(
 	) {
 		throw error(400, 'Missing billing address for deliveryless order');
 	}
+	const billingAddress = params.billingAddress || params.shippingAddress;
+
 	const satoshisToPay = params.paymentPercentage
 		? Math.floor((totalSatoshis * params.paymentPercentage) / 100)
 		: totalSatoshis;
@@ -664,7 +666,7 @@ export async function createOrder(
 					}
 				})),
 				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
-				...(params.billingAddress && { billingAddress: params.billingAddress }),
+				...(billingAddress && { billingAddress: billingAddress }),
 				...(vat && { vat }),
 				...(shippingPrice
 					? {

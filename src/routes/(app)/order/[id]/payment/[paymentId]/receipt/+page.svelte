@@ -35,11 +35,12 @@
 	{#if data.order.notifications.paymentStatus.email}
 		<p>{data.order.notifications.paymentStatus.email}</p>
 	{/if}
-	{#if data.order.shippingAddress}
-		<p class="whitespace-pre-wrap">{textAddress(data.order.shippingAddress)}</p>
-	{/if}
-	{#if data.order.shippingAddress && data.order.billingAddress && data.order.shippingAddress !== data.order.billingAddress}
+	{#if data.order.billingAddress}
 		<p class="whitespace-pre-wrap">{textAddress(data.order.billingAddress)}</p>
+		<br />
+		{#if data.order.shippingAddress && textAddress(data.order.shippingAddress) !== textAddress(data.order.billingAddress)}
+			<p class="whitespace-pre-wrap">{textAddress(data.order.shippingAddress)}</p>
+		{/if}
 	{/if}
 </div>
 
