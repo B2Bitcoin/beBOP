@@ -7,7 +7,7 @@ import type {
 } from '$lib/types/Order';
 import { ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
-import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
+import { add, addMinutes, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
@@ -66,7 +66,10 @@ export function isOrderFullyPaid(order: Order, opts?: { includePendingOrders?: b
 export async function onOrderPayment(
 	order: Order,
 	payment: Order['payments'][0],
-	received: { currency: Currency; amount: number }
+	received: { currency: Currency; amount: number },
+	params?: {
+		bankTransferNumber?: string;
+	}
 ): Promise<Order> {
 	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
 
@@ -86,6 +89,9 @@ export async function onOrderPayment(
 						createdAt: new Date()
 					},
 					'payments.$.status': 'paid',
+					...(params?.bankTransferNumber && {
+						'payments.$.bankTransferNumber': params.bankTransferNumber
+					}),
 					'payments.$.paidAt': new Date(),
 					...(isOrderFullyPaid(order) && {
 						status: 'paid'
@@ -569,8 +575,8 @@ export async function createOrder(
 			: { amount: satoshisToPay, currency: 'SAT' };
 	await withTransaction(async (session) => {
 		const expiresAt =
-			paymentMethod === 'cash'
-				? addMonths(new Date(), 1)
+			paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
+				? undefined
 				: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 
 		await collections.orders.insertOne(
@@ -897,6 +903,9 @@ async function generatePaymentInfo(params: {
 		case 'cash': {
 			return {};
 		}
+		case 'bankTransfer': {
+			return { address: runtimeConfig.sellerIdentity?.bank?.iban };
+		}
 		case 'card':
 			return await generateCardPaymentInfo(params);
 	}
@@ -1010,7 +1019,7 @@ export async function addOrderPayment(
 
 	const paymentId = new ObjectId();
 	const expiresAt =
-		paymentMethod === 'cash'
+		paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
 			? undefined
 			: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 
