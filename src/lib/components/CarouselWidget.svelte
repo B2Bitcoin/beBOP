@@ -4,7 +4,8 @@
 
 	export let pictures: Picture[];
 	export let autoplay: number;
-
+	let className = '';
+	export { className as class };
 	let images = pictures.map((picture) => ({
 		alt: picture.name,
 		srcset: picture.storage.formats
@@ -15,7 +16,7 @@
 	}));
 </script>
 
-<div class="mx-auto">
+<div class={className}>
 	<Carousel {images} duration={autoplay} transition={null} let:Indicators>
 		<a
 			slot="slide"

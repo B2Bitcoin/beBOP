@@ -135,7 +135,7 @@
 		/>
 	{/if}
 
-	<div class="flex flex-row">
+	<div class="flex flex-row my-12">
 		<div class="w-14 min-w-[48px] py-12 hidden md:block">
 			{#if data.pictures.length > 1}
 				{#each data.pictures as picture, i}
@@ -145,7 +145,7 @@
 					>
 						<Picture
 							{picture}
-							class="h-12 w-12 rounded-sm m-2 object-cover {picture === currentPicture
+							class="h-12 w-12 rounded-sm my-2 object-cover {picture === currentPicture
 								? 'ring-2 ring-link ring-offset-2'
 								: ''} cursor-pointer"
 						/>
