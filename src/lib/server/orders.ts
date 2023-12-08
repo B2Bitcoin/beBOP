@@ -862,7 +862,7 @@ async function generatePaymentInfo(params: {
 	orderNumber: number;
 	toPay: Price;
 	paymentId: ObjectId;
-	expiresAt: Date;
+	expiresAt?: Date;
 }): Promise<{
 	address?: string;
 	wallet?: string;
@@ -880,7 +880,9 @@ async function generatePaymentInfo(params: {
 			const invoice = await lndCreateInvoice(
 				toSatoshis(params.toPay.amount, params.toPay.currency),
 				{
-					expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date()),
+					...(params.expiresAt && {
+						expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date())
+					}),
 					label: runtimeConfig.includeOrderUrlInQRCode
 						? `${ORIGIN}/order/${params.orderId}`
 						: undefined
@@ -905,7 +907,7 @@ async function generateCardPaymentInfo(params: {
 	orderNumber: number;
 	toPay: Price;
 	paymentId: ObjectId;
-	expiresAt: Date;
+	expiresAt?: Date;
 }): Promise<{
 	checkoutId: string;
 	meta: unknown;
@@ -929,7 +931,9 @@ async function generateCardPaymentInfo(params: {
 				merchant_code: runtimeConfig.sumUp.merchantCode,
 				redirect_url: `${ORIGIN}/order/${params.orderId}`,
 				description: 'Order ' + params.orderNumber,
-				valid_until: params.expiresAt.toISOString()
+				...(params.expiresAt && {
+					valid_until: params.expiresAt.toISOString()
+				})
 			})
 		});
 
@@ -1007,7 +1011,7 @@ export async function addOrderPayment(
 	const paymentId = new ObjectId();
 	const expiresAt =
 		paymentMethod === 'cash'
-			? addMonths(new Date(), 1)
+			? undefined
 			: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 
 	const payment: OrderPayment = {
@@ -1046,7 +1050,7 @@ export async function addOrderPayment(
 				currency: priceReferenceCurrency
 			}
 		},
-		expiresAt,
+		...(expiresAt && { expiresAt }),
 		...(await generatePaymentInfo({
 			method: paymentMethod,
 			orderId: order._id,
