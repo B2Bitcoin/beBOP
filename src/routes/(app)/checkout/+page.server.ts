@@ -10,6 +10,8 @@ import { checkCartItems, getCartFromDb } from '$lib/server/cart.js';
 import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { zodNpub } from '$lib/server/nostr.js';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
 import { rateLimit } from '$lib/server/rateLimit.js';
 
 export async function load({ parent, locals }) {
@@ -69,22 +71,47 @@ export const actions = {
 		}
 
 		const formData = await request.formData();
+		const json: JsonObject = {};
+
+		for (const [key, value] of formData) {
+			if (value) {
+				set(json, key, value);
+			}
+		}
 
 		const isDigital = products.every((product) => !product.shipping);
 
-		const shipping = isDigital
+		const shippingInfo = isDigital
 			? null
 			: z
 					.object({
-						firstName: z.string().min(1),
-						lastName: z.string().min(1),
-						address: z.string().min(1),
-						city: z.string().min(1),
-						state: z.string().optional(),
-						zip: z.string().min(1),
-						country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+						shipping: z.object({
+							firstName: z.string().min(1),
+							lastName: z.string().min(1),
+							address: z.string().min(1),
+							city: z.string().min(1),
+							state: z.string().optional(),
+							zip: z.string().min(1),
+							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+						})
 					})
-					.parse(Object.fromEntries(formData));
+					.parse(json);
+
+		const billingInfo = json.billing
+			? z
+					.object({
+						billing: z.object({
+							firstName: z.string().min(1),
+							lastName: z.string().min(1),
+							address: z.string().min(1),
+							city: z.string().min(1),
+							state: z.string().optional(),
+							zip: z.string().min(1),
+							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+						})
+					})
+					.parse(json)
+			: null;
 
 		const notifications = z
 			.object({
@@ -100,8 +127,8 @@ export const actions = {
 		const email = notifications?.paymentStatusEmail;
 
 		// Remove empty string
-		if (shipping && !shipping.state) {
-			delete shipping.state;
+		if (shippingInfo && !shippingInfo.shipping.state) {
+			delete shippingInfo.shipping.state;
 		}
 
 		const { paymentMethod, discountAmount, discountType, discountJustification } = z
@@ -169,8 +196,10 @@ export const actions = {
 					}
 				},
 				cart,
-				shippingAddress: shipping,
-				vatCountry: shipping?.country ?? locals.countryCode,
+				shippingAddress: shippingInfo?.shipping,
+				billingAddress: billingInfo?.billing || shippingInfo?.shipping,
+				vatCountry:
+					shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&

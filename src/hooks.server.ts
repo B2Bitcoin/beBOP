@@ -4,6 +4,7 @@ import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 import { SvelteKitAuth } from '@auth/sveltekit';
+import { flatten } from 'flat';
 import { adminPrefix } from '$lib/server/admin';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
@@ -60,19 +61,18 @@ export const handleError = (({ error, event }) => {
 		event.locals.status = 422;
 		const formattedError = error.format();
 
-		if (formattedError._errors.length) {
-			return { message: formattedError._errors[0], status: 422 };
-		}
+		const message = Object.entries(
+			flatten(formattedError, { safe: true }) as Record<string, string[]>
+		)
+			.filter(
+				(entry: [string, unknown]): entry is [string, string[]] =>
+					!!(entry[0].endsWith('._errors') && Array.isArray(entry[1]) && entry[1].length)
+			)
+			.map(([key, val]) => `${key.slice(0, -'._errors'.length)}: ${val[0]}`)
+			.join(', ');
 
 		return {
-			message: Object.entries(formattedError)
-				.map(([key, val]) => {
-					if (typeof val === 'object' && val && '_errors' in val && Array.isArray(val._errors)) {
-						return `${key}: ${val._errors[0]}`;
-					}
-				})
-				.filter(Boolean)
-				.join(', '),
+			message,
 			status: 422
 		};
 	}
@@ -82,8 +82,8 @@ const addSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
 	response.headers.set('X-Content-Type-Options', 'nosniff');
-	// Possible to switch to SAMEORIGIN
-	response.headers.set('X-Frame-Options', 'DENY');
+	// SAMEORIGIN for invoice generation
+	response.headers.set('X-Frame-Options', 'SAMEORIGIN');
 
 	// Possible to enable CSP / XSS Protection directly in SvelteKit config
 
@@ -99,7 +99,9 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	try {
 		event.locals.clientIp = event.getClientAddress();
 	} catch {}
-	event.locals.countryCode = event.locals.clientIp ? countryFromIp(event.locals.clientIp) : '-';
+	event.locals.countryCode = event.locals.clientIp
+		? countryFromIp(event.locals.clientIp)
+		: undefined;
 
 	const admin = adminPrefix();
 

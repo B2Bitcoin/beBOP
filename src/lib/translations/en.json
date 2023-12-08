@@ -45,10 +45,12 @@
 	"checkout": {
 		"agreeIpCollect": "I agree to the collection of my IP address (<0>why?</0>)",
 		"backToCart": "Back to cart",
+		"billingInfo": "Billing address",
 		"cta": {
 			"submit": "Proceed"
 		},
 		"deliveryFees": "Delivery fees",
+		"differentBillingAddress": "My shipping address and my billing address are different",
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
 		"invalidNpub": "Invalid NostR public address",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
@@ -67,7 +69,7 @@
 			"title": "Payment"
 		},
 		"paymentMethod": {
-			"bankTransfer": "Bank transfert",
+			"bankTransfer": "Bank transfer",
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",

@@ -95,7 +95,7 @@ export interface Order extends Timestamps {
 	}>;
 
 	shippingAddress?: OrderAddress;
-
+	billingAddress?: OrderAddress;
 	shippingPrice?: {
 		amount: number;
 		currency: Currency;

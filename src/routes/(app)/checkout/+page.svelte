@@ -19,12 +19,15 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
-	import { vatRate } from '$lib/types/Country.js';
+	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
 
 	export let data;
 
 	let actionCount = 0;
-	let country = data.personalInfoConnected?.address?.country ?? 'CH';
+	const defaultCountry =
+		(data.personalInfoConnected?.address?.country ?? (data.countryCode as CountryAlpha2)) ||
+		(data.vatCountry as CountryAlpha2);
+	let country = defaultCountry;
 
 	let isFreeVat = false;
 	let addDiscount = false;
@@ -112,6 +115,7 @@
 		(discountType === 'fiat' &&
 			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
 		(discountType === 'percentage' && discountAmount < 100);
+	let showBillingInfo = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -124,7 +128,7 @@
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
 
-				{#if isDigital && !data.isBillingAddressMandatory}
+				{#if isDigital}
 					<p class="col-span-6">
 						{t('checkout.digitalNoShippingNeeded')}
 					</p>
@@ -134,7 +138,7 @@
 						<input
 							type="text"
 							class="form-input"
-							name="firstName"
+							name="shipping.firstName"
 							autocomplete="given-name"
 							required
 							value={data.personalInfoConnected?.firstName ?? ''}
@@ -146,7 +150,7 @@
 						<input
 							type="text"
 							class="form-input"
-							name="lastName"
+							name="shipping.lastName"
 							autocomplete="family-name"
 							required
 							value={data.personalInfoConnected?.lastName ?? ''}
@@ -159,7 +163,7 @@
 							type="text"
 							class="form-input"
 							autocomplete="street-address"
-							name="address"
+							name="shipping.address"
 							required
 							value={data.personalInfoConnected?.address?.street ?? ''}
 						/>
@@ -167,13 +171,9 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="country" class="form-input" required bind:value={country}>
+						<select name="shipping.country" class="form-input" required bind:value={country}>
 							{#each sortedCountryCodes() as code}
-								<option
-									value={code}
-									selected={code === data.personalInfoConnected?.address?.country}
-									>{countryName(code)}</option
-								>
+								<option value={code}>{countryName(code)}</option>
 							{/each}
 						</select>
 					</label>
@@ -185,7 +185,7 @@
 
 						<input
 							type="text"
-							name="state"
+							name="shipping.state"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.state ?? ''}
 						/>
@@ -195,7 +195,7 @@
 
 						<input
 							type="text"
-							name="city"
+							name="shipping.city"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.city ?? ''}
 							required
@@ -206,15 +206,112 @@
 
 						<input
 							type="text"
-							name="zip"
+							name="shipping.zip"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.zip ?? ''}
 							required
 							autocomplete="postal-code"
 						/>
 					</label>
+
+					<label class="col-span-6 checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							form="checkout"
+							bind:checked={showBillingInfo}
+						/>
+						{t('checkout.differentBillingAddress')}
+					</label>
 				{/if}
 			</section>
+
+			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory)}
+				<section class="gap-4 grid grid-cols-6 w-4/5">
+					<h2 class="font-light text-2xl col-span-6">{t('checkout.billingInfo')}</h2>
+
+					<label class="form-label col-span-3">
+						{t('address.firstName')}
+						<input
+							type="text"
+							class="form-input"
+							name="billing.firstName"
+							autocomplete="given-name"
+							value={data.personalInfoConnected?.firstName ?? ''}
+							required
+						/>
+					</label>
+
+					<label class="form-label col-span-3">
+						{t('address.lastName')}
+						<input
+							type="text"
+							class="form-input"
+							name="billing.lastName"
+							autocomplete="family-name"
+							value={data.personalInfoConnected?.lastName ?? ''}
+							required
+						/>
+					</label>
+
+					<label class="form-label col-span-6">
+						{t('address.address')}
+						<input
+							type="text"
+							class="form-input"
+							autocomplete="street-address"
+							name="billing.address"
+							value={data.personalInfoConnected.address?.street ?? ''}
+							required
+						/>
+					</label>
+
+					<label class="form-label col-span-3">
+						{t('address.country')}
+						<select name="billing.country" class="form-input" required value={defaultCountry}>
+							{#each sortedCountryCodes() as code}
+								<option value={code}>{countryName(code)}</option>
+							{/each}
+						</select>
+					</label>
+
+					<span class="col-span-3" />
+
+					<label class="form-label col-span-2">
+						{t('address.state')}
+
+						<input
+							type="text"
+							name="billing.state"
+							class="form-input"
+							value={data.personalInfoConnected.address?.state ?? ''}
+						/>
+					</label>
+					<label class="form-label col-span-2">
+						{t('address.city')}
+
+						<input
+							type="text"
+							name="billing.city"
+							class="form-input"
+							value={data.personalInfoConnected.address?.city ?? ''}
+							required
+						/>
+					</label>
+					<label class="form-label col-span-2">
+						{t('address.zipCode')}
+
+						<input
+							type="text"
+							name="billing.zip"
+							class="form-input"
+							value={data.personalInfoConnected.address?.zip ?? ''}
+							required
+							autocomplete="postal-code"
+						/>
+					</label>
+				</section>
+			{/if}
 
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.payment.title')}</h2>

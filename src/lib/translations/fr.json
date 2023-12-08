@@ -45,11 +45,13 @@
 	"checkout": {
 		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (<0>pourquoi?</0>)",
 		"backToCart": "Retour au panier",
+		"billingInfo": "Adresse de facturation",
 		"cta": {
 			"submit": "Payer"
 		},
 		"deliveryFees": "Participation forfaitaire aux frais de port",
-		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir votre adresse postale.",
+		"differentBillingAddress": "Mon adresse de livraison et mon adresse de facturation sont différentes",
+		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"notifications": {
@@ -67,7 +69,7 @@
 			"title": "Paiement"
 		},
 		"paymentMethod": {
-			"bankTransfer": "Transfert bancaire",
+			"bankTransfer": "Virement bancaire",
 			"bitcoin": "BTC on-chain",
 			"card": "Carte bancaire",
 			"cash": "Espèces",
@@ -423,7 +425,7 @@
 		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique une <0>remise cadeau</0>",
 		"cta": {
 			"cancelOrder": "Annuler",
-			"markOrderPaid": "Marquer comme payé"
+			"markOrderPaid": "Marquer comme payée"
 		},
 		"discountJustification": "Justification",
 		"invalidDiscount": "La réduction n'est pas valable !",

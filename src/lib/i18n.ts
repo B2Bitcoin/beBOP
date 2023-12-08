@@ -41,7 +41,9 @@ export function useI18n() {
 function textAddress(address: OrderAddress) {
 	return `${address.firstName || ''} ${address.lastName || ''}\n${address.address || ''}\n${
 		address.zip || ''
-	} ${address.city || ''}\n${address.country ? countryName(address.country) : ''}`
+	} ${address.city || ''}\n${address.state || ''}${address.state && address.country ? ',' : ''} ${
+		address.country ? countryName(address.country) : ''
+	}`
 		.trim()
 		.replace(/\n+/g, '\n')
 		.replace(/ +/g, ' ');
