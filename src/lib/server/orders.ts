@@ -576,7 +576,7 @@ export async function createOrder(
 	await withTransaction(async (session) => {
 		const expiresAt =
 			paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
-				? addMonths(new Date(), 1)
+				? undefined
 				: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 
 		await collections.orders.insertOne(
