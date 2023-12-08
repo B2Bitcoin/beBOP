@@ -74,6 +74,10 @@
 								>
 									{$page.url.origin}{trimOrigin(payment.address ?? '')}
 								</a>
+							{:else if payment.method === 'bankTransfer'}
+								<code class="break-words body-secondaryText break-all"
+									>{data.sellerIdentity?.bank?.iban}</code
+								>
 							{:else}
 								<code class="break-words body-secondaryText break-all">{payment.address}</code>
 							{/if}
@@ -88,7 +92,7 @@
 								{payment.method === 'bitcoin' ? 'BTC' : 'sats'}
 							</code>
 						</li>
-						{#if payment.expiresAt}
+						{#if payment.expiresAt && payment.method !== 'bankTransfer'}
 							<li>
 								{t('order.timeRemaining', {
 									minutes: differenceInMinutes(payment.expiresAt, currentDate)
@@ -96,11 +100,13 @@
 							</li>
 						{/if}
 					</ul>
-					<img
-						src="{$page.url.pathname}/payment/{payment.id}/qrcode"
-						class="w-96 h-96"
-						alt="QR code"
-					/>
+					{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
+						<img
+							src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+							class="w-96 h-96"
+							alt="QR code"
+						/>
+					{/if}
 					<div class="text-xl">
 						{t('order.payToComplete')}
 						{#if payment.method === 'bitcoin'}
@@ -123,6 +129,13 @@
 					>
 						<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
 					</form>
+				{/if}
+				{#if payment.method === 'bankTransfer'}
+					{#if data.sellerIdentity?.contact.email}
+						<a href="mailto:{data.sellerIdentity.contact.email}" class="btn btn-black">
+							{t('order.informSeller')}
+						</a>
+					{/if}
 				{/if}
 			{/each}
 

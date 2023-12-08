@@ -2,6 +2,7 @@ import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
 import { onOrderPayment, onOrderPaymentFailed } from '$lib/server/orders';
 import { error, redirect } from '@sveltejs/kit';
+import { z } from 'zod';
 
 export const actions = {
 	confirm: async ({ params, request }) => {
@@ -22,8 +23,21 @@ export const actions = {
 		if (payment.status !== 'pending') {
 			throw error(400, 'Payment is not pending');
 		}
+		const formData = await request.formData();
+		const parsed =
+			payment.method === 'bankTransfer'
+				? z
+						.object({
+							bankTransferNumber: z.string().trim().min(1).max(100)
+						})
+						.parse({
+							bankTransferNumber: formData.get('bankTransferNumber')
+						})
+				: null;
 
-		await onOrderPayment(order, payment, payment.price);
+		await onOrderPayment(order, payment, payment.price, {
+			...(parsed && parsed.bankTransferNumber && { bankTransferNumber: parsed.bankTransferNumber })
+		});
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
 	},

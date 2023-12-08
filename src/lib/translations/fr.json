@@ -68,6 +68,7 @@
 			"title": "Paiement"
 		},
 		"paymentMethod": {
+			"bankTransfer": "Transfert bancaire",
 			"bitcoin": "BTC on-chain",
 			"card": "Carte bancaire",
 			"cash": "Espèces",
@@ -376,6 +377,7 @@
 		"discount": {
 			"title": "Rabais"
 		},
+		"informSeller": "Notifier le vendeur",
 		"linkReminder": "Conservez ce lien : <0></0> pour accéder à la commande ultérieurement.",
 		"list": {
 			"title": "Liste de vos commandes"

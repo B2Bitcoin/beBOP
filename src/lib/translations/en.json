@@ -68,6 +68,7 @@
 			"title": "Payment"
 		},
 		"paymentMethod": {
+			"bankTransfer": "Bank transfert",
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",
@@ -376,6 +377,7 @@
 		"discount": {
 			"title": "Discount"
 		},
+		"informSeller": "Inform seller",
 		"linkReminder": "Keep this link: <0></0> to access the order later.",
 		"list": {
 			"title": "List of your orders"

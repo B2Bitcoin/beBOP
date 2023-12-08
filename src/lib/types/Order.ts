@@ -53,6 +53,7 @@ export interface OrderPayment {
 	};
 
 	lastStatusNotified?: OrderPaymentStatus;
+	bankTransferNumber?: string;
 }
 
 export interface OrderAddress {
