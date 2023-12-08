@@ -138,7 +138,7 @@
 			Your IP is <code class="font-mono bg-link px-[2px] py-[1px] rounded text-white"
 				>{data.ip}</code
 			>
-			({countryName(data.countryCode)})
+			({countryName(data.countryCode || '-')})
 		</p>
 	</label>
 	<div class="flex flex-col gap-2">
