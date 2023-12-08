@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: bootik2
-      url: https://dev-bootik2.pvh-labs.ch
+      url: ${{ vars.DEPLOY_URL }}
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
@@ -23,7 +23,7 @@ jobs:
           echo $DOT_ENV > .env.local
           pnpm build
         env:
-          DOT_ENV: ${{ vars.DOT_ENV_BOOTIK_2 }}
+          DOT_ENV: ${{ vars.DOT_ENV }}
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
