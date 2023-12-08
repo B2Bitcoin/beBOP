@@ -7,7 +7,7 @@ import type {
 } from '$lib/types/Order';
 import { ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
-import { add, addMinutes, addMonths, differenceInSeconds, max, subSeconds } from 'date-fns';
+import { add, addMinutes, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
