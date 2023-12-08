@@ -111,7 +111,7 @@
 		(discountType === 'fiat' &&
 			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
 		(discountType === 'percentage' && discountAmount < 100);
-	$: showBillingInfo = false;
+	let showBillingInfo = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -220,7 +220,7 @@
 						</p>
 					{/if}
 
-					{#if !isDigital && data.isBillingAddressMandatory}
+					{#if data.isBillingAddressMandatory}
 						<label class="col-span-6 checkbox-label">
 							<input
 								type="checkbox"
@@ -246,6 +246,7 @@
 							class="form-input"
 							name="billing.firstName"
 							autocomplete="given-name"
+							value={data.personalInfoConnected?.firstName ?? ''}
 							required
 						/>
 					</label>
@@ -257,6 +258,7 @@
 							class="form-input"
 							name="billing.lastName"
 							autocomplete="family-name"
+							value={data.personalInfoConnected?.lastName ?? ''}
 							required
 						/>
 					</label>
@@ -268,6 +270,7 @@
 							class="form-input"
 							autocomplete="street-address"
 							name="billing.address"
+							value={data.personalInfoConnected.address?.street ?? ''}
 							required
 						/>
 					</label>
@@ -276,7 +279,9 @@
 						{t('address.country')}
 						<select name="billing.country" class="form-input" required bind:value={country}>
 							{#each sortedCountryCodes() as code}
-								<option value={code}>{countryName(code)}}</option>
+								<option value={code} selected={code === data.personalInfoConnected.address?.country}
+									>{countryName(code)}</option
+								>
 							{/each}
 						</select>
 					</label>
@@ -286,12 +291,23 @@
 					<label class="form-label col-span-2">
 						{t('address.state')}
 
-						<input type="text" name="billing.state" class="form-input" />
+						<input
+							type="text"
+							name="billing.state"
+							class="form-input"
+							value={data.personalInfoConnected.address?.state ?? ''}
+						/>
 					</label>
 					<label class="form-label col-span-2">
 						{t('address.city')}
 
-						<input type="text" name="billing.city" class="form-input" required />
+						<input
+							type="text"
+							name="billing.city"
+							class="form-input"
+							value={data.personalInfoConnected.address?.city ?? ''}
+							required
+						/>
 					</label>
 					<label class="form-label col-span-2">
 						{t('address.zipCode')}
@@ -300,6 +316,7 @@
 							type="text"
 							name="billing.zip"
 							class="form-input"
+							value={data.personalInfoConnected.address?.zip ?? ''}
 							required
 							autocomplete="postal-code"
 						/>
