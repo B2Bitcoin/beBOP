@@ -47,7 +47,7 @@ export const actions = {
 				lastName: z.string().min(1).max(100).trim(),
 				newsletter: z.object({
 					seller: z.boolean({ coerce: true }).default(false),
-					partener: z.boolean({ coerce: true }).default(false)
+					partner: z.boolean({ coerce: true }).default(false)
 				})
 			})
 			.parse(json);

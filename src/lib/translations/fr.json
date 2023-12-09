@@ -373,6 +373,10 @@
 		},
 		"willReceiveSessionLink": "Vous recevrez un lien de session sur votre adresse"
 	},
+	"newsletter": {
+		"allowPartnerContact": "Autoriser le contact avec le partenaire pour les sollicitations commerciales",
+		"allowSellerContact": "Autoriser le contact avec le vendeur pour des sollicitations commerciales"
+	},
 	"order": {
 		"createdAt": "Date de la commande : <0></0>",
 		"discount": {

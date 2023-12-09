@@ -101,16 +101,16 @@
 						checked={data.personalInfoConnected?.newsletter?.seller ?? false}
 						name="newsletter.seller"
 					/>
-					Allow seller contact for commercial sollicitations
+					{t('newsletter.allowSellerContact')}
 				</label>
 				<label class="checkbox-label col-span-3">
 					<input
 						class="form-checkbox"
 						type="checkbox"
-						checked={data.personalInfoConnected?.newsletter?.partener ?? false}
-						name="newsletter.partener"
+						checked={data.personalInfoConnected?.newsletter?.partner ?? false}
+						name="newsletter.partner"
 					/>
-					Allow partener contact for commercial sollicitations
+					{t('newsletter.allowPartnerContact')}
 				</label>
 				<button type="submit" class="btn btn-black self-start">Update</button>
 			</section>

@@ -373,6 +373,10 @@
 		},
 		"willReceiveSessionLink": "You will receive a session link on your address"
 	},
+	"newsletter": {
+		"allowPartnerContact": "Allow partner contact for commercial sollicitations",
+		"allowSellerContact": "Allow seller contact for commercial sollicitations"
+	},
 	"order": {
 		"createdAt": "Created at <0></0>",
 		"discount": {

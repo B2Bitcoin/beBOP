@@ -4,10 +4,10 @@ import type { UserIdentifier } from './UserIdentifier';
 
 export interface PersonalInfo {
 	_id: ObjectId;
-	user: UserIdentifier;
-	firstName: string;
-	lastName: string;
-	address: {
+	user?: UserIdentifier;
+	firstName?: string;
+	lastName?: string;
+	address?: {
 		street: string;
 		zip: string;
 		city: string;
@@ -16,6 +16,8 @@ export interface PersonalInfo {
 	};
 	newsletter?: {
 		seller: boolean;
-		partener: boolean;
+		partner: boolean;
 	};
+	npub?: string;
+	email?: string;
 }
