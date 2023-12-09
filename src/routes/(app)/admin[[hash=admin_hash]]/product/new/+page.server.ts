@@ -255,6 +255,9 @@ export const actions: Actions = {
 					payWhatYouWant: duplicate.payWhatYouWant,
 					standalone: duplicate.standalone,
 					free: duplicate.free,
+					...(duplicate.stock !== undefined && {
+						stock: { total: duplicate.stock, available: duplicate.stock, reserved: 0 }
+					}),
 					displayShortDescription: duplicate.displayShortDescription,
 					actionSettings: {
 						eShop: {
