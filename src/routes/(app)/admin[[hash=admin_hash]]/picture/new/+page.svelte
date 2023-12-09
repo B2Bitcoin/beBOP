@@ -51,57 +51,59 @@
 	bind:this={formElement}
 	on:submit|preventDefault={checkForm}
 >
-	<label>
-		JPEG or PNG file
-		<input
-			type="file"
-			bind:files
-			on:change={() => {
-				if (files && files.length > 0) {
-					fileName = files[0].name;
-				} else {
-					fileName = '';
-				}
-			}}
-			accept="image/jpeg,image/png,image/webp"
-			class="block"
-			required
-		/>
-	</label>
+	<fieldset class="contents" disabled={submitting}>
+		<label class="form-label">
+			JPEG or PNG file
+			<input
+				type="file"
+				bind:files
+				on:change={() => {
+					if (files && files.length > 0) {
+						fileName = files[0].name;
+					} else {
+						fileName = '';
+					}
+				}}
+				accept="image/jpeg,image/png,image/webp"
+				class="block"
+				required
+			/>
+		</label>
 
-	<label>
-		Name of the picture
-		<input
-			class="form-input block"
-			type="text"
-			name="name"
-			placeholder="Final name"
-			required
-			bind:value={fileName}
-		/>
-	</label>
+		<label class="form-label">
+			Name of the picture
+			<input
+				class="form-input"
+				type="text"
+				name="name"
+				placeholder="Final name"
+				required
+				bind:value={fileName}
+			/>
+		</label>
 
-	{#if productId}
-		<p>
-			Associated product: <a href="{data.adminPrefix}/product/{productId}" class="hover:underline"
-				>{productId}</a
-			>
-		</p>
-	{/if}
+		{#if productId}
+			<p>
+				Associated product: <a href="{data.adminPrefix}/product/{productId}" class="hover:underline"
+					>{productId}</a
+				>
+			</p>
+		{/if}
 
-	{#if productId}
-		<input type="hidden" name="productId" value={productId} />
-	{/if}
+		{#if productId}
+			<input type="hidden" name="productId" value={productId} />
+		{/if}
 
-	{#if sliderId}
-		<p>
-			Associated slider: <a href="/admin/slider/{sliderId}" class="hover:underline">{sliderId}</a>
-		</p>
-	{/if}
+		{#if sliderId}
+			<p>
+				Associated slider: <a href="/admin/slider/{sliderId}" class="hover:underline">{sliderId}</a>
+			</p>
+		{/if}
 
-	{#if sliderId}
-		<input type="hidden" name="sliderId" value={sliderId} />
-	{/if}
+		{#if sliderId}
+			<input type="hidden" name="sliderId" value={sliderId} />
+		{/if}
 
-	<input type="submit" class="btn btn-gray self-start" value="Add" />
+		<input type="submit" class="btn btn-gray self-start" value="Add" />
+	</fieldset>
 </form>
