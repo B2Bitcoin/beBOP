@@ -3,19 +3,16 @@ interface CategorySpecification {
 }
 
 export function specificationGroupBy(content: string): CategorySpecification {
-	const groupedData: CategorySpecification = content
-		.split('\n')
-		.reduce((result: CategorySpecification, line) => {
-			const [category, attribute, value] = line.split(';').map((entry) => entry.replace(/"/g, ''));
+	const groupedData: CategorySpecification = {};
+	for (const line of content.split('\n')) {
+		const [category, attribute, value] = line.split(';').map((entry) => entry.replace(/"/g, ''));
 
-			if (!result[category]) {
-				result[category] = [];
-			}
+		if (!groupedData[category]) {
+			groupedData[category] = [];
+		}
 
-			result[category].push({ attribute, value });
-
-			return result;
-		}, {});
+		groupedData[category].push({ attribute, value });
+	}
 
 	return groupedData;
 }
