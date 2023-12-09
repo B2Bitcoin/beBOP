@@ -25,7 +25,7 @@
 
 <h1 class="text-3xl">Add a discount</h1>
 
-<form method="post" enctype="multipart/form-data" class="flex flex-col gap-4" on:submit={checkForm}>
+<form method="post" class="flex flex-col gap-4" on:submit={checkForm}>
 	<label class="form-label">
 		Discount name
 		<input
