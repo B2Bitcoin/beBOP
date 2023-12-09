@@ -60,8 +60,13 @@
 	let disableDateChange = !isNew;
 	let displayPreorderCustomText = !!product.customPreorderText;
 	let hasStock = !!product.stock;
+	let allowDeposit = !!product.deposit;
 	let submitting = false;
 	let files: FileList;
+	let deposit = product.deposit || {
+		percentage: 50,
+		enforce: false
+	};
 
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
@@ -172,6 +177,17 @@
 
 	$: if (product.payWhatYouWant) {
 		product.standalone = true;
+	}
+
+	$: if (product.free) {
+		allowDeposit = false;
+	}
+
+	$: if (allowDeposit && !deposit) {
+		deposit = {
+			percentage: 50,
+			enforce: false
+		};
 	}
 
 	function confirmDelete(event: Event) {
@@ -287,7 +303,37 @@
 			/>
 			This is a free product
 		</label>
-		<label>
+		<label class="checkbox-label">
+			<input class="form-checkbox" type="checkbox" bind:checked={allowDeposit} />
+			Allow partial deposit
+		</label>
+		{#if allowDeposit}
+			<label class="form-label">
+				Deposit percentage of total price
+				<input
+					class="form-input"
+					type="number"
+					name="depositPercentage"
+					placeholder="Deposit"
+					step="1"
+					min="0"
+					max="100"
+					bind:value={deposit.percentage}
+					required
+				/>
+			</label>
+
+			<label class="checkbox-label">
+				<input
+					class="form-checkbox"
+					type="checkbox"
+					bind:checked={deposit.enforce}
+					name="enforceDeposit"
+				/>
+				Enforce deposit - prevent customer from paying the full price immediately
+			</label>
+		{/if}
+		<label class="form-label">
 			Short description
 			<textarea
 				name="shortDescription"
@@ -295,7 +341,7 @@
 				rows="2"
 				maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
 				value={product.shortDescription}
-				class="block form-input"
+				class="form-input"
 			/>
 		</label>
 
@@ -342,8 +388,11 @@
 				class:text-gray-450={!isNew}
 				disabled={!isNew}
 				value={product.type}
+				name="type"
 			>
-				<option value={product.type}>{upperFirst(product.type)}</option>
+				{#each ['resource', 'subscription', 'donation'] as type}
+					<option value={type}>{upperFirst(type)}</option>
+				{/each}
 			</select>
 		</label>
 
