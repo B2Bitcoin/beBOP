@@ -50,12 +50,9 @@
 			{/if}
 		</div>
 
-		<div class="grow">
+		<div class="grow mr-5">
 			<a href="/product/{product._id}">
-				<PictureComponent
-					picture={pictures[pictureId]}
-					class="h-[280px] mt-5 ml-auto object-contain"
-				/>
+				<PictureComponent picture={pictures[pictureId]} class="h-[280px] ml-auto object-contain" />
 			</a>
 		</div>
 	</div>

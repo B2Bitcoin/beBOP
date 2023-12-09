@@ -47,12 +47,9 @@
 	{/if}
 
 	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4">
-		<div class="grow">
+		<div class="grow ml-5">
 			<a href="/product/{product._id}">
-				<PictureComponent
-					picture={pictures[pictureId]}
-					class="h-[280px] mt-5 mr-auto object-contain"
-				/>
+				<PictureComponent picture={pictures[pictureId]} class="h-[280px] mr-auto object-contain" />
 			</a>
 		</div>
 		<div class="p-4 grow-[2]">
