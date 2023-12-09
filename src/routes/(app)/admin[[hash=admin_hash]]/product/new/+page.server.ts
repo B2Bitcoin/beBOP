@@ -194,12 +194,12 @@ export const actions: Actions = {
 			set(json, key, value);
 		}
 
-		const { productId: duplicatedProductId } = z
-			.object({ productId: z.string() })
+		const { duplicateFromId } = z
+			.object({ duplicateFromId: z.string() })
 			.parse(Object.fromEntries(formData));
 
-		const product = duplicatedProductId
-			? await collections.products.findOne({ _id: duplicatedProductId })
+		const product = duplicateFromId
+			? await collections.products.findOne({ _id: duplicateFromId })
 			: undefined;
 
 		if (!product) {
@@ -275,16 +275,16 @@ export const actions: Actions = {
 			);
 
 			const picturesToDuplicate = await collections.pictures
-				.find({ productId: duplicatedProductId })
+				.find({ productId: duplicateFromId })
 				.sort({ createdAt: 1 })
 				.toArray();
 
 			const digitalFilesToDuplicate = await collections.digitalFiles
-				.find({ productId: duplicatedProductId })
+				.find({ productId: duplicateFromId })
 				.sort({ createdAt: 1 })
 				.toArray();
 
-			const oldS3Prefix = s3ProductPrefix(duplicatedProductId);
+			const oldS3Prefix = s3ProductPrefix(duplicateFromId);
 			const newS3Prefix = s3ProductPrefix(duplicate.slug);
 
 			for (const picture of picturesToDuplicate) {

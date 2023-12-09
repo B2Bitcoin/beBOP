@@ -39,6 +39,7 @@
 	tags={data.tags}
 	adminPrefix={data.adminPrefix}
 	reserved={data.reserved}
+	defaultActionSettings={data.productActionSettings}
 	sold={data.sold}
 />
 
