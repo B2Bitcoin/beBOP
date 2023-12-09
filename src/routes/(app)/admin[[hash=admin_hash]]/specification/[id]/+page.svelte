@@ -2,7 +2,6 @@
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId';
-	import { specificationGroupBy } from '$lib/utils/specification.js';
 
 	export let data;
 	let title = data.specification.title;
