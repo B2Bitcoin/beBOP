@@ -34,6 +34,7 @@ import { building } from '$app/environment';
 import type { Theme } from '$lib/types/Theme';
 import { env } from '$env/dynamic/private';
 import type { PersonalInfo } from '$lib/types/PersonalInfo';
+import type { Specification } from '$lib/types/Specification';
 
 const client = building
 	? (null as unknown as MongoClient)
@@ -71,6 +72,7 @@ const genCollection = () => ({
 	sliders: db.collection<Slider>('sliders'),
 	themes: db.collection<Theme>('themes'),
 	personalInfo: db.collection<PersonalInfo>('personalInfo'),
+	specifications: db.collection<Specification>('specifications'),
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
 

@@ -132,6 +132,7 @@
 			tags={data.productCMSBefore.tags}
 			digitalFiles={data.productCMSBefore.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.productCMSBefore.specifications}
 		/>
 	{/if}
 
@@ -425,6 +426,7 @@
 			pictures={data.productCMSAfter.pictures}
 			digitalFiles={data.productCMSAfter.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.productCMSAfter.specifications}
 		/>
 	{/if}
 </main>

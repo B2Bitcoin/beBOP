@@ -6,7 +6,8 @@
 		CmsProduct,
 		CmsSlider,
 		CmsTag,
-		CmsToken
+		CmsToken,
+		CmsSpecification
 	} from '$lib/server/cms';
 	import CmsDesign from './CmsDesign.svelte';
 
@@ -23,6 +24,7 @@
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
 	export let tags: CmsTag[];
+	export let specifications: CmsSpecification[];
 </script>
 
 <svelte:head>
@@ -40,6 +42,7 @@
 		{sliders}
 		{tags}
 		{roleId}
+		{specifications}
 		class="body body-mainPlan"
 	/>
 {:else}
@@ -53,6 +56,7 @@
 			{sliders}
 			{tags}
 			{roleId}
+			{specifications}
 			class="body"
 		/>
 	</main>
