@@ -75,14 +75,14 @@
 			<CarouselWidget
 				autoplay={token.autoplay ? token.autoplay : 3000}
 				pictures={picturesBySlider[token.slug]}
-				class="mx-auto mb-5"
+				class="not-prose mx-auto my-5"
 			/>
 		{:else if token.type === 'tagWidget' && tagById[token.slug]}
 			<TagWidget
 				tag={tagById[token.slug]}
 				pictures={picturesByTag[token.slug]}
 				displayOption={token.display}
-				class="not-prose mb-12"
+				class="not-prose my-5"
 			/>
 		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
 			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
