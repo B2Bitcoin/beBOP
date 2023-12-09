@@ -22,6 +22,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
+	import { uploadPicture } from '$lib/types/Picture';
 
 	export let tags: Pick<Tag, '_id' | 'name'>[];
 	export let isNew = false;
@@ -105,36 +106,7 @@
 			}
 
 			if (!duplicateFromId && isNew) {
-				const fileSize = files[0].size;
-				const fileName = files[0].name;
-
-				const response = await fetch(`${adminPrefix}/picture/prepare`, {
-					method: 'POST',
-					body: JSON.stringify({
-						fileName,
-						fileSize
-					}),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
-
-				if (!response.ok) {
-					throw new Error(await response.text());
-				}
-
-				const body = await response.json();
-
-				const { uploadUrl, pictureId } = body;
-
-				const uploadResponse = await fetch(uploadUrl, {
-					method: 'PUT',
-					body: files[0]
-				});
-
-				if (!uploadResponse.ok) {
-					throw new Error(await uploadResponse.text());
-				}
+				const pictureId = await uploadPicture(adminPrefix, files[0]);
 
 				formData.set('pictureId', pictureId);
 			}
