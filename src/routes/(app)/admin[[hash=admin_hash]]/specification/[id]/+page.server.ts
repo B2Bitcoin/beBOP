@@ -19,7 +19,7 @@ export const load = async ({ params }) => {
 export const actions = {
 	update: async function ({ request, params }) {
 		const specification = await collections.specifications.findOne({
-			_id: params.slug
+			_id: params.id
 		});
 
 		if (!specification) {
@@ -50,8 +50,8 @@ export const actions = {
 	},
 
 	delete: async function ({ params }) {
-		await collections.cmsPages.deleteOne({
-			_id: params.slug
+		await collections.specifications.deleteOne({
+			_id: params.id
 		});
 
 		throw redirect(303, `${adminPrefix()}/specification`);
