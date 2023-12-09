@@ -27,7 +27,7 @@
 </script>
 
 <div class="flex flex-row gap-4 {className}">
-	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4 grow">
+	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4 grow pr-5">
 		<div class="p-4 grow-[2]">
 			<a href="/product/{product._id}">
 				<h2 class="text-2xl font-bold mb-2 body-title">{product.name}</h2>
@@ -52,10 +52,7 @@
 
 		<div class="grow">
 			<a href="/product/{product._id}">
-				<PictureComponent
-					picture={pictures[pictureId]}
-					class="h-[280px] mt-5 ml-auto object-contain"
-				/>
+				<PictureComponent picture={pictures[pictureId]} class="h-[280px] ml-auto object-contain" />
 			</a>
 		</div>
 	</div>
