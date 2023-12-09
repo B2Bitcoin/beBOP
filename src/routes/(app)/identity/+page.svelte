@@ -94,6 +94,24 @@
 						value={data.personalInfoConnected?.address?.zip ?? ''}
 					/>
 				</label>
+				<label class="checkbox-label col-span-3">
+					<input
+						class="form-checkbox"
+						type="checkbox"
+						checked={data.personalInfoConnected?.newsletter?.seller ?? false}
+						name="newsletter.seller"
+					/>
+					Allow seller contact for commercial sollicitations
+				</label>
+				<label class="checkbox-label col-span-3">
+					<input
+						class="form-checkbox"
+						type="checkbox"
+						checked={data.personalInfoConnected?.newsletter?.partener ?? false}
+						name="newsletter.partener"
+					/>
+					Allow partener contact for commercial sollicitations
+				</label>
 				<button type="submit" class="btn btn-black self-start">Update</button>
 			</section>
 		</form>

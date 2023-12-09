@@ -17,7 +17,8 @@ export async function load({ locals }) {
 			firstName: personalInfoConnected?.firstName,
 			lastName: personalInfoConnected?.lastName,
 			address: personalInfoConnected?.address,
-			_id: personalInfoConnected?._id.toString()
+			_id: personalInfoConnected?._id.toString(),
+			newsletter: personalInfoConnected?.newsletter
 		}
 	};
 }
@@ -43,7 +44,11 @@ export const actions = {
 					state: z.string().min(1).max(100).trim().optional()
 				}),
 				firstName: z.string().min(1).max(100).trim(),
-				lastName: z.string().min(1).max(100).trim()
+				lastName: z.string().min(1).max(100).trim(),
+				newsletter: z.object({
+					seller: z.boolean({ coerce: true }).default(false),
+					partener: z.boolean({ coerce: true }).default(false)
+				})
 			})
 			.parse(json);
 
@@ -56,6 +61,7 @@ export const actions = {
 					address: personalInfo.address,
 					firstName: personalInfo.firstName,
 					lastName: personalInfo.lastName,
+					newsletter: personalInfo.newsletter,
 					updatedAt: new Date()
 				}
 			},

@@ -38,7 +38,8 @@ export async function load({ parent, locals }) {
 			firstName: personalInfoConnected?.firstName,
 			lastName: personalInfoConnected?.lastName,
 			address: personalInfoConnected?.address,
-			_id: personalInfoConnected?._id.toString()
+			_id: personalInfoConnected?._id.toString(),
+			newsletter: personalInfoConnected?.newsletter
 		},
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory
 	};

@@ -14,4 +14,8 @@ export interface PersonalInfo {
 		country: CountryAlpha2;
 		state?: string;
 	};
+	newsletter?: {
+		seller: boolean;
+		partener: boolean;
+	};
 }
