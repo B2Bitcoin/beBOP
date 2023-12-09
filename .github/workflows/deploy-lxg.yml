@@ -1,6 +1,5 @@
 name: deploy
 
-# push is not triggered by the sync-lxg job, so we need to trigger this manually
 # on:
 #   push:
 #     branches:
