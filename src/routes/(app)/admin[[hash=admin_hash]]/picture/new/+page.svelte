@@ -1,23 +1,60 @@
 <script lang="ts">
+	import { applyAction, deserialize } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { uploadPicture } from '$lib/types/Picture.js';
 
 	export let data;
 
 	const productId = $page.url.searchParams.get('productId');
 	const sliderId = $page.url.searchParams.get('sliderId');
 
-	let files: FileList | null = null;
+	let files: FileList;
 	let fileName = '';
+
+	let submitting = false;
+	let formElement: HTMLFormElement;
+
+	async function checkForm() {
+		submitting = true;
+		// Need to load here, or for some reason, some inputs disappear afterwards
+		const formData = new FormData(formElement);
+		try {
+			const pictureId = await uploadPicture(data.adminPrefix, files[0]);
+
+			formData.set('pictureId', pictureId);
+
+			const finalResponse = await fetch(formElement.action, {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = deserialize(await finalResponse.text());
+
+			if (result.type === 'success') {
+				// rerun all `load` functions, following the successful update
+				await invalidateAll();
+			}
+
+			applyAction(result);
+		} finally {
+			submitting = false;
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Add a picture</h1>
 
-<form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+<form
+	method="post"
+	class="flex flex-col gap-4"
+	bind:this={formElement}
+	on:submit|preventDefault={checkForm}
+>
 	<label>
 		JPEG or PNG file
 		<input
 			type="file"
-			name="picture"
 			bind:files
 			on:change={() => {
 				if (files && files.length > 0) {
