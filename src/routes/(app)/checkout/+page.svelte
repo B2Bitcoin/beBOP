@@ -80,11 +80,11 @@
 	);
 
 	const paymentMethodDesc = {
+		card: t('checkout.paymentMethod.card'),
+		bankTransfer: t('checkout.paymentMethod.bankTransfer'),
 		bitcoin: t('checkout.paymentMethod.bitcoin'),
 		lightning: t('checkout.paymentMethod.lighthing'),
-		cash: t('checkout.paymentMethod.cash'),
-		card: t('checkout.paymentMethod.card'),
-		bankTransfer: t('checkout.paymentMethod.bankTransfer')
+		cash: t('checkout.paymentMethod.cash')
 	};
 
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
