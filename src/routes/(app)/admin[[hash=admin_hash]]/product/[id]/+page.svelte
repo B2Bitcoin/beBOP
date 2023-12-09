@@ -17,8 +17,9 @@
 			class="{$page.url.pathname === `${data.adminPrefix}/product/${data.product._id}`
 				? 'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500'
 				: 'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300'} "
-			>Edit a product</a
 		>
+			Edit a product
+		</a>
 	</li>
 	{#if data.product.type === 'subscription'}
 		<li class="mr-2">
@@ -27,8 +28,9 @@
 				class="{$page.url.pathname === `${data.adminPrefix}/product/${data.product._id}/subscribers`
 					? 'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500'
 					: 'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300'} "
-				>Subscribers</a
 			>
+				Subscribers
+			</a>
 		</li>
 	{/if}
 </ul>
@@ -45,9 +47,9 @@
 
 <h2 class="text-2xl my-4">Photos</h2>
 
-<a href="{data.adminPrefix}/picture/new?productId={data.product._id}" class="underline"
-	>Add picture</a
->
+<a href="{data.adminPrefix}/picture/new?productId={data.product._id}" class="underline">
+	Add picture
+</a>
 
 <div class="flex flex-row flex-wrap gap-6 mt-6">
 	{#each data.pictures as picture}

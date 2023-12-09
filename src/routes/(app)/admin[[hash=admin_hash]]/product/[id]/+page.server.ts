@@ -140,6 +140,12 @@ export const actions: Actions = {
 							available: parsed.stock - amountInCarts
 						}
 					}),
+					...(parsed.depositPercentage !== undefined && {
+						deposit: {
+							percentage: parsed.depositPercentage,
+							enforce: parsed.enforceDeposit
+						}
+					}),
 					actionSettings: {
 						eShop: {
 							visible: parsed.eshopVisible,
@@ -163,7 +169,8 @@ export const actions: Actions = {
 					...(!parsed.availableDate && { availableDate: '' }),
 					...(!parsed.deliveryFees && { deliveryFees: '' }),
 					...(parsed.stock === undefined && { stock: '' }),
-					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' })
+					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' }),
+					...(!parsed.depositPercentage && { deposit: '' })
 				}
 			}
 		);
