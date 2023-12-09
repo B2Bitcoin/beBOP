@@ -19,11 +19,13 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 	const SLIDER_WIDGET_REGEX =
 		/\[Slider=(?<slug>[a-z0-9-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/gi;
 	const TAG_WIDGET_REGEX = /\[Tag=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
+	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[a-z0-9-]+)\]/gi;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
 	const sliderSlugs = new Set<string>();
 	const tagSlugs = new Set<string>();
+	const specificationSlugs = new Set<string>();
 
 	const tokens: Array<
 		| {
@@ -53,12 +55,18 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 				display: string | undefined;
 				raw: string;
 		  }
+		| {
+				type: 'specificationWidget';
+				slug: string;
+				raw: string;
+		  }
 	> = [];
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
 	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
 	const sliderMatches = content.matchAll(SLIDER_WIDGET_REGEX);
 	const tagMatches = content.matchAll(TAG_WIDGET_REGEX);
+	const specificationMatches = content.matchAll(SPECIFICATION_WIDGET_REGEX);
 
 	let index = 0;
 
@@ -72,7 +80,10 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 		...[...sliderMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
 		),
-		...[...tagMatches].map((m) => Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' }))
+		...[...tagMatches].map((m) => Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' })),
+		...[...specificationMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
+		)
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	for (const match of orderedMatches) {
@@ -110,6 +121,13 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 				type: 'tagWidget',
 				slug: match.groups.slug,
 				display: match.groups?.display,
+				raw: match[0]
+			});
+		} else if (match.type === 'specificationWidget' && match.groups?.slug) {
+			specificationSlugs.add(match.groups.slug);
+			tokens.push({
+				type: 'specificationWidget',
+				slug: match.groups.slug,
 				raw: match[0]
 			});
 		}
@@ -186,6 +204,11 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 			_id: { $in: [...tagSlugs] }
 		})
 		.toArray();
+	const specifications = await collections.specifications
+		.find({
+			_id: { $in: [...specificationSlugs] }
+		})
+		.toArray();
 
 	return {
 		tokens,
@@ -193,6 +216,7 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 		sliders,
 		products,
 		tags,
+		specifications,
 		pictures: await collections.pictures
 			.find({
 				$or: [
@@ -221,3 +245,4 @@ export type CmsSlider = Awaited<ReturnType<typeof cmsFromContent>>['sliders'][nu
 export type CmsTag = Awaited<ReturnType<typeof cmsFromContent>>['tags'][number];
 export type CmsPicture = Awaited<ReturnType<typeof cmsFromContent>>['pictures'][number];
 export type CmsDigitalFile = Awaited<ReturnType<typeof cmsFromContent>>['digitalFiles'][number];
+export type CmsSpecification = Awaited<ReturnType<typeof cmsFromContent>>['specifications'][number];
