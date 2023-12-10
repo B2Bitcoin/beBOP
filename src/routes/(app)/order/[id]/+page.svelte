@@ -65,91 +65,100 @@
 				</div>
 			{/if}
 
-			{#each data.order.payments.filter((p) => p.status === 'pending') as payment}
-				{#if payment.method !== 'cash'}
-					<ul>
-						<li>
-							{t('order.paymentAddress')}: {#if payment.method === 'card'}
-								<a
-									href={trimOrigin(payment.address ?? '')}
-									class="body-hyperlink underline break-all break-words"
-								>
-									{$page.url.origin}{trimOrigin(payment.address ?? '')}
-								</a>
-							{:else if payment.method === 'bankTransfer'}
-								<code class="break-words body-secondaryText break-all"
-									>{data.sellerIdentity?.bank?.iban}</code
-								>
-							{:else}
-								<code class="break-words body-secondaryText break-all">{payment.address}</code>
-							{/if}
-						</li>
-						<li class="flex items-center gap-2">
-							{t('order.paymentAmount')}: <PriceTag
+			{#each data.order.payments as payment}
+				<details class="border border-gray-300 rounded-xl p-4" open={payment.status === 'pending'}>
+					<summary class="text-xl cursor-pointer">
+						<!-- Extra span to keep the "arrow" for the details -->
+						<span class="items-center inline-flex gap-2"
+							>{t(`checkout.paymentMethod.${payment.method}`)} - <PriceTag
 								inline
 								class="break-words body-secondaryText"
 								amount={payment.price.amount}
 								currency={payment.price.currency}
-							/>
-						</li>
-						{#if payment.expiresAt && payment.method !== 'bankTransfer'}
-							<li>
-								{t('order.timeRemaining', {
-									minutes: differenceInMinutes(payment.expiresAt, currentDate)
-								})}
-							</li>
-						{/if}
-					</ul>
-					{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
-						<img
-							src="{$page.url.pathname}/payment/{payment.id}/qrcode"
-							class="w-96 h-96"
-							alt="QR code"
-						/>
-					{/if}
-					<div class="text-xl">
-						{t('order.payToComplete')}
-						{#if payment.method === 'bitcoin'}
-							{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
-						{/if}
-					</div>
-				{/if}
-				{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
-					<div class="flex flex-wrap gap-2">
-						<form
-							action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-								._id}/payment/{payment.id}?/confirm"
-							method="post"
-							class="contents"
+							/> - {t('order.paymentStatus.pending')}</span
 						>
-							{#if payment.method === 'bankTransfer'}
-								<input
-									class="form-input w-auto"
-									type="text"
-									name="bankTransferNumber"
-									required
-									placeholder="bank transfer number"
+					</summary>
+					<div class="flex flex-col gap-2 mt-2">
+						{#if payment.method !== 'cash'}
+							<ul>
+								<li>
+									{t('order.paymentAddress')}: {#if payment.method === 'card'}
+										<a
+											href={trimOrigin(payment.address ?? '')}
+											class="body-hyperlink underline break-all break-words"
+										>
+											{$page.url.origin}{trimOrigin(payment.address ?? '')}
+										</a>
+									{:else if payment.method === 'bankTransfer'}
+										<code class="break-words body-secondaryText break-all"
+											>{data.sellerIdentity?.bank?.iban}</code
+										>
+									{:else}
+										<code class="break-words body-secondaryText break-all">{payment.address}</code>
+									{/if}
+								</li>
+								{#if payment.expiresAt}
+									<li>
+										{t('order.timeRemaining', {
+											minutes: differenceInMinutes(payment.expiresAt, currentDate)
+										})}
+									</li>
+								{/if}
+							</ul>
+							{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
+								<img
+									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+									class="w-96 h-96"
+									alt="QR code"
 								/>
 							{/if}
-							<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
-						</form>
-						<form
-							action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-								._id}/{payment.id}?/cancel"
-							method="post"
-							class="contents"
-						>
-							<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
-						</form>
+							{t('order.payToComplete')}
+							{#if payment.method === 'bitcoin'}
+								{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
+							{/if}
+
+							{#if payment.method === 'bankTransfer'}
+								{#if data.sellerIdentity?.contact.email}
+									<a
+										href="mailto:{data.sellerIdentity.contact.email}"
+										class="btn btn-black self-start"
+									>
+										{t('order.informSeller')}
+									</a>
+								{/if}
+							{/if}
+						{/if}
+						{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+							<div class="flex flex-wrap gap-2">
+								<form
+									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+										._id}/payment/{payment.id}?/confirm"
+									method="post"
+									class="contents"
+								>
+									{#if payment.method === 'bankTransfer'}
+										<input
+											class="form-input w-auto"
+											type="text"
+											name="bankTransferNumber"
+											required
+											placeholder="bank transfer number"
+										/>
+									{/if}
+									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
+								</form>
+								<form
+									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+										._id}/{payment.id}?/cancel"
+									method="post"
+									class="contents"
+								>
+									<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
+								</form>
+							</div>
+						{/if}
 					</div>
-				{/if}
-				{#if payment.method === 'bankTransfer'}
-					{#if data.sellerIdentity?.contact.email}
-						<a href="mailto:{data.sellerIdentity.contact.email}" class="btn btn-black self-start">
-							{t('order.informSeller')}
-						</a>
-					{/if}
-				{/if}
+				</details>
 			{/each}
 
 			{#if data.order.status === 'paid'}
