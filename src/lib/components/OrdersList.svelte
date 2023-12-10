@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { PAYMENT_METHOD_EMOJI, type SimplifiedOrder } from '$lib/types/Order';
 	import PriceTag from './PriceTag.svelte';
-	import IconBitcoin from './icons/IconBitcoin.svelte';
 	import { currencies } from '$lib/stores/currencies';
 	import { useI18n } from '$lib/i18n';
 
@@ -28,7 +27,7 @@
 			<a href="/order/{order._id}" class="text-link hover:underline">
 				#{order.number.toLocaleString($locale)}
 			</a>
-			- {#each order.payments as payment, i}
+			- {#each order.payments as payment}
 				<span title={t('checkout.paymentMethod.' + payment.method)}
 					>{PAYMENT_METHOD_EMOJI[payment.method]}</span
 				>
