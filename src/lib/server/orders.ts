@@ -994,17 +994,14 @@ function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 export async function addOrderPayment(
 	order: Order,
 	paymentMethod: PaymentMethod,
-	params?: { paymentPercentage?: number }
+	amount: number,
+	/**
+	 * `null` expiresAt means the payment method has no expiration
+	 */
+	opts?: { expiresAt?: Date | null }
 ) {
 	if (order.status !== 'pending') {
 		throw error(400, 'Order is not pending');
-	}
-
-	if (
-		params?.paymentPercentage &&
-		(params.paymentPercentage < 10 || params.paymentPercentage > 100)
-	) {
-		throw error(400, 'Invalid payment percentage');
 	}
 
 	if (isOrderFullyPaid(order, { includePendingOrders: true })) {
@@ -1016,16 +1013,9 @@ export async function addOrderPayment(
 	const secondaryCurrency = order.currencySnapshot.secondary?.totalPrice.currency;
 	const priceReferenceCurrency = order.currencySnapshot.priceReference.totalPrice.currency;
 
-	const maxAmountToPay = params?.paymentPercentage
-		? order.currencySnapshot.main.totalPrice.amount * params.paymentPercentage
-		: order.currencySnapshot.main.totalPrice.amount;
-
 	const priceToPay = {
 		amount: fixCurrencyRounding(
-			Math.min(
-				maxAmountToPay,
-				order.currencySnapshot.main.totalPrice.amount - orderAmountWithNoPaymentsCreated(order)
-			),
+			Math.min(amount, orderAmountWithNoPaymentsCreated(order)),
 			mainCurrency
 		),
 		currency: mainCurrency
@@ -1036,7 +1026,8 @@ export async function addOrderPayment(
 	}
 
 	const paymentId = new ObjectId();
-	const expiresAt = paymentMethodExpiration(paymentMethod);
+	const expiresAt =
+		opts?.expiresAt !== undefined ? opts.expiresAt : paymentMethodExpiration(paymentMethod);
 
 	const payment: OrderPayment = {
 		_id: paymentId,
@@ -1066,7 +1057,7 @@ export async function addOrderPayment(
 			orderNumber: order.number,
 			toPay: priceToPay,
 			paymentId,
-			expiresAt
+			expiresAt: expiresAt ?? undefined
 		}))
 	};
 

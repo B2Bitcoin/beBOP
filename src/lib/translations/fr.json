@@ -374,6 +374,11 @@
 		"willReceiveSessionLink": "Vous recevrez un lien de session sur votre adresse"
 	},
 	"order": {
+		"addPayment": {
+			"amount": "Montant du paiement",
+			"cta": "Envoyer un appel à paiement",
+			"currency": "Monnaie de paiement"
+		},
 		"createdAt": "Date de la commande : <0></0>",
 		"depositPaid": "Acompte payé",
 		"depositToPay": "Acompte à payer",
@@ -400,10 +405,10 @@
 			"canceled": "annulé",
 			"canceledTemplate": "Votre commande a été annulée manuellement en back-office.",
 			"expired": "expiré",
-			"partiallyPaid": "partiellement payé",
 			"expiredTemplate": "Votre commande est expirée car le délai de paiement était trop élevé.\nSi vous avez payé cette commande, merci de vous rapprocher de notre service client.",
 			"paid": "payé",
 			"paidTemplate": "Votre commande est <0>validée</0> !",
+			"partiallyPaid": "partiellement payé",
 			"pending": "en attente"
 		},
 		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",

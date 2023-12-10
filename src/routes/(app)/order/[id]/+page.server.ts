@@ -4,8 +4,9 @@ import { redirect } from '@sveltejs/kit';
 import { fetchOrderForUser } from './fetchOrderForUser.js';
 import { getS3DownloadLink } from '$lib/server/s3.js';
 import { uniqBy } from '$lib/utils/uniqBy.js';
+import { paymentMethods } from '$lib/server/payment-methods.js';
 
-export async function load({ params, depends }) {
+export async function load({ params, depends, locals }) {
 	depends(UrlDependency.Order);
 
 	const order = await fetchOrderForUser(params.id);
@@ -17,6 +18,7 @@ export async function load({ params, depends }) {
 
 	return {
 		order,
+		paymentMethods: paymentMethods(locals.user?.roleId),
 		digitalFiles: Promise.all(
 			digitalFiles.map(async (file) => ({
 				name: file.name,

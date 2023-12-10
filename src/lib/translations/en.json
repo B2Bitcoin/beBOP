@@ -374,6 +374,11 @@
 		"willReceiveSessionLink": "You will receive a session link on your address"
 	},
 	"order": {
+		"addPayment": {
+			"amount": "Payment amount",
+			"cta": "Send a call for payment",
+			"currency": "Payment currency"
+		},
 		"createdAt": "Created at <0></0>",
 		"depositPaid": "Deposit paid",
 		"depositToPay": "Deposit  to pay",

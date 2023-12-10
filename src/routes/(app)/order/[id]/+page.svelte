@@ -5,6 +5,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
+	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
@@ -34,6 +35,8 @@
 
 	let receiptIFrame: HTMLIFrameElement | null = null;
 	let receiptReady = false;
+
+	$: remainingAmount = orderAmountWithNoPaymentsCreated(data.order);
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -236,6 +239,50 @@
 						{textAddress(data.order.shippingAddress)}
 					</p>
 				</div>
+			{/if}
+
+			{#if data.order.status === 'pending' && remainingAmount && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+				<form
+					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+						._id}?/addPayment"
+					method="post"
+					class="contents"
+				>
+					<div class="flex flex-wrap gap-2">
+						<label class="form-label">
+							{t('order.addPayment.amount')}
+							<input
+								class="form-input"
+								type="number"
+								name="amount"
+								min="0"
+								step="any"
+								max={remainingAmount}
+								value={remainingAmount}
+								required
+							/>
+						</label>
+						<label class="form-label">
+							{t('order.addPayment.currency')}
+							<select name="currency" class="form-input" disabled>
+								<option value={data.order.currencySnapshot.main.totalPrice.currency}
+									>{data.order.currencySnapshot.main.totalPrice.currency}</option
+								>
+							</select>
+						</label>
+						<label class="form-label">
+							<span>{t('checkout.payment.method')}</span>
+							<select name="method" class="form-input">
+								{#each data.paymentMethods as paymentMethod}
+									<option value={paymentMethod}
+										>{t(`checkout.paymentMethod.${paymentMethod}`)}</option
+									>
+								{/each}
+							</select>
+						</label><br />
+						<button type="submit" class="btn btn-blue self-end">{t('order.addPayment.cta')}</button>
+					</div>
+				</form>
 			{/if}
 		</div>
 		<div class="">
