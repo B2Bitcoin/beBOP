@@ -23,6 +23,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 	import { uploadPicture } from '$lib/types/Picture';
+	import { currencies } from '$lib/stores/currencies';
 
 	export let tags: Pick<Tag, '_id' | 'name'>[];
 	export let isNew = false;
@@ -42,7 +43,7 @@
 		shipping: false,
 		price: {
 			amount: 0,
-			currency: 'EUR'
+			currency: $currencies.priceReference
 		},
 		availableDate: undefined,
 		displayShortDescription: false,
