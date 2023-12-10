@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimplifiedOrder } from '$lib/types/Order';
+	import { PAYMENT_METHOD_EMOJI, type SimplifiedOrder } from '$lib/types/Order';
 	import PriceTag from './PriceTag.svelte';
 	import IconBitcoin from './icons/IconBitcoin.svelte';
 	import { currencies } from '$lib/stores/currencies';
@@ -28,17 +28,11 @@
 			<a href="/order/{order._id}" class="text-link hover:underline">
 				#{order.number.toLocaleString($locale)}
 			</a>
-			- {#if order.payments[0].method === 'bitcoin'}
-				<IconBitcoin />
-			{:else if order.payments[0].method === 'lightning'}
-				⚡
-			{:else if order.payments[0].method === 'cash'}
-				💶
-			{:else if order.payments[0].method === 'card'}
-				💳
-			{:else if order.payments[0].method === 'bankTransfer'}
-				🏦
-			{/if} -
+			- {#each order.payments as payment, i}
+				<span title={t('checkout.paymentMethod.' + payment.method)}
+					>{PAYMENT_METHOD_EMOJI[payment.method]}</span
+				>
+			{/each} -
 			<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString($locale)}
 				>{order.createdAt.toLocaleDateString($locale)}</time
 			>

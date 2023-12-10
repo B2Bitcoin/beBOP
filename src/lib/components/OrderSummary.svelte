@@ -3,7 +3,8 @@
 	import {
 		orderAmountWithNoPaymentsCreated,
 		type Order,
-		type OrderPayment
+		type OrderPayment,
+		PAYMENT_METHOD_EMOJI
 	} from '$lib/types/Order';
 	import type { Picture } from '$lib/types/Picture';
 	import type { Product } from '$lib/types/Product';
@@ -24,7 +25,7 @@
 				product: Pick<Product, '_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping'>;
 			}
 		>;
-		payments: Array<Pick<OrderPayment, 'currencySnapshot' | 'status'>>;
+		payments: Array<Pick<OrderPayment, 'currencySnapshot' | 'status' | 'method'>>;
 	};
 </script>
 
@@ -197,8 +198,11 @@
 		<div class="-mx-3 p-3 flex flex-col">
 			<div class="flex justify-between">
 				<span class="text-xl"
-					>{payment.status === 'paid' ? t('order.depositPaid') : t('order.depositToPay')}</span
-				>
+					><span title={t('checkout.paymentMethod.' + payment.method)}
+						>{PAYMENT_METHOD_EMOJI[payment.method]}</span
+					>
+					- {payment.status === 'paid' ? t('order.depositPaid') : t('order.depositToPay')}
+				</span>
 				<PriceTag
 					class="text-2xl"
 					amount={payment.currencySnapshot.main.amount}

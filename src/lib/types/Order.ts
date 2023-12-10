@@ -182,3 +182,11 @@ export function orderAmountWithNoPaymentsCreated(
 		)
 	);
 }
+
+export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
+	bankTransfer: '🏦',
+	card: '💳',
+	cash: '💵',
+	lightning: '⚡',
+	bitcoin: '₿'
+};
