@@ -236,3 +236,7 @@ maintainLock().catch(console.error);
 process.on('unhandledRejection', () => {
 	// Happens because nostr-relaypool doesn't handle websocket upgrade errors for example
 });
+
+process.on('uncaughtException', () => {
+	// Happens because of mongodb driver sometimes, "MongoServerError: PlanExecutor error during aggregation :: caused by :: operation exceeded time limit"
+});
