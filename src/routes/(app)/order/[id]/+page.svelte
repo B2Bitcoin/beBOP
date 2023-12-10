@@ -7,11 +7,8 @@
 	import { useI18n } from '$lib/i18n';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
-	import { toBitcoins } from '$lib/utils/toBitcoins';
-	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
-	import { method } from 'lodash-es';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();
