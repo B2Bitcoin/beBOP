@@ -18,7 +18,7 @@
 	export { classNames as class };
 	export let order: Pick<Order, 'shippingPrice' | 'vat' | 'discount' | 'currencySnapshot'> & {
 		items: Array<
-			Pick<Order['items'][0], 'currencySnapshot' | 'quantity'> & {
+			Pick<Order['items'][0], 'currencySnapshot' | 'quantity' | 'depositPercentage'> & {
 				digitalFiles: Array<{ _id: string }>;
 				picture?: Picture;
 				product: Pick<Product, '_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping'>;
@@ -58,6 +58,7 @@
 						product={item.product}
 						class="text-sm"
 						hasDigitalFiles={item.digitalFiles.length >= 1}
+						depositPercentage={item.depositPercentage}
 					/>
 				</div>
 				<div>

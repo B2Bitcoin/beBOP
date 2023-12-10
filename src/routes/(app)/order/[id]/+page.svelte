@@ -72,14 +72,15 @@
 								class="break-words body-secondaryText"
 								amount={payment.price.amount}
 								currency={payment.price.currency}
-							/> - {t('order.paymentStatus.pending')}</span
+							/> - {t(`order.paymentStatus.${payment.status}`)}</span
 						>
 					</summary>
 					<div class="flex flex-col gap-2 mt-2">
 						{#if payment.method !== 'cash'}
 							<ul>
 								<li>
-									{t('order.paymentAddress')}: {#if payment.method === 'card'}
+									{#if payment.method === 'card'}
+										{t('order.paymentLink')}:
 										<a
 											href={trimOrigin(payment.address ?? '')}
 											class="body-hyperlink underline break-all break-words"
@@ -87,17 +88,26 @@
 											{$page.url.origin}{trimOrigin(payment.address ?? '')}
 										</a>
 									{:else if payment.method === 'bankTransfer'}
+										{t('order.paymentIban')}:
 										<code class="break-words body-secondaryText break-all"
-											>{data.sellerIdentity?.bank?.iban}</code
+											>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
 										>
 									{:else}
+										{t('order.paymentAddress')}:
 										<code class="break-words body-secondaryText break-all">{payment.address}</code>
 									{/if}
 								</li>
-								{#if payment.expiresAt}
+								{#if payment.expiresAt && payment.status === 'pending'}
 									<li>
 										{t('order.timeRemaining', {
 											minutes: differenceInMinutes(payment.expiresAt, currentDate)
+										})}
+									</li>
+								{/if}
+								{#if payment.status === 'paid' && payment.paidAt}
+									<li>
+										{t('order.paymentPaidAt', {
+											date: payment.paidAt.toLocaleDateString($locale)
 										})}
 									</li>
 								{/if}
@@ -109,23 +119,25 @@
 									alt="QR code"
 								/>
 							{/if}
-							{t('order.payToComplete')}
-							{#if payment.method === 'bitcoin'}
-								{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
-							{/if}
+							{#if payment.status === 'pending'}
+								{t('order.payToComplete')}
+								{#if payment.method === 'bitcoin'}
+									{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
+								{/if}
 
-							{#if payment.method === 'bankTransfer'}
-								{#if data.sellerIdentity?.contact.email}
-									<a
-										href="mailto:{data.sellerIdentity.contact.email}"
-										class="btn btn-black self-start"
-									>
-										{t('order.informSeller')}
-									</a>
+								{#if payment.method === 'bankTransfer'}
+									{#if data.sellerIdentity?.contact.email}
+										<a
+											href="mailto:{data.sellerIdentity.contact.email}"
+											class="btn btn-black self-start"
+										>
+											{t('order.informSeller')}
+										</a>
+									{/if}
 								{/if}
 							{/if}
 						{/if}
-						{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+						{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
 							<div class="flex flex-wrap gap-2">
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
@@ -146,7 +158,7 @@
 								</form>
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-										._id}/{payment.id}?/cancel"
+										._id}/payment/{payment.id}?/cancel"
 									method="post"
 									class="contents"
 								>
