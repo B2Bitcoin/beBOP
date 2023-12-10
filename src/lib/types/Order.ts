@@ -6,6 +6,7 @@ import type { UserIdentifier } from './UserIdentifier';
 import type { SellerIdentity } from './SellerIdentity';
 import type { PaymentMethod } from '$lib/server/payment-methods';
 import type { ObjectId } from 'mongodb';
+import { sumCurrency } from '$lib/utils/sumCurrency';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -169,3 +170,15 @@ interface SimplifiedOrderPayment {
 	status: OrderPaymentStatus;
 }
 export type SimplifiedOrder = Omit<Order, 'payments'> & { payments: SimplifiedOrderPayment[] };
+
+export function orderAmountWithNoPaymentsCreated(
+	order: Pick<Order, 'currencySnapshot'> & { payments: Pick<OrderPayment, 'currencySnapshot'>[] }
+): number {
+	return (
+		order.currencySnapshot.main.totalPrice.amount -
+		sumCurrency(
+			order.currencySnapshot.main.totalPrice.currency,
+			order.payments.map((payment) => payment.currencySnapshot.main)
+		)
+	);
+}

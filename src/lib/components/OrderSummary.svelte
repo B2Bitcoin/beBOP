@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n';
-	import type { Order } from '$lib/types/Order';
+	import {
+		orderAmountWithNoPaymentsCreated,
+		type Order,
+		type OrderPayment
+	} from '$lib/types/Order';
 	import type { Picture } from '$lib/types/Picture';
 	import type { Product } from '$lib/types/Product';
 	import PictureComponent from './Picture.svelte';
@@ -20,6 +24,7 @@
 				product: Pick<Product, '_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping'>;
 			}
 		>;
+		payments: Array<Pick<OrderPayment, 'currencySnapshot' | 'status'>>;
 	};
 </script>
 
@@ -186,4 +191,48 @@
 			/>
 		{/if}
 	</div>
+
+	{#each order.payments.filter((p) => p.currencySnapshot.main.amount < order.currencySnapshot.main.totalPrice.amount) as payment}
+		<div class="-mx-3 p-3 flex flex-col">
+			<div class="flex justify-between">
+				<span class="text-xl"
+					>{payment.status === 'paid' ? t('order.depositPaid') : t('order.depositToPay')}</span
+				>
+				<PriceTag
+					class="text-2xl"
+					amount={payment.currencySnapshot.main.amount}
+					currency={payment.currencySnapshot.main.currency}
+				/>
+			</div>
+			{#if payment.currencySnapshot.secondary}
+				<PriceTag
+					class="self-end"
+					amount={payment.currencySnapshot.secondary.amount}
+					currency={payment.currencySnapshot.secondary.currency}
+				/>
+			{/if}
+		</div>
+	{/each}
+
+	{#if orderAmountWithNoPaymentsCreated(order)}
+		{@const remaining = orderAmountWithNoPaymentsCreated(order)}
+		<div class="-mx-3 p-3 flex flex-col">
+			<div class="flex justify-between">
+				<span class="text-xl">{t('order.restToPay')}</span>
+				<PriceTag
+					class="text-2xl"
+					amount={remaining}
+					currency={order.currencySnapshot.main.totalPrice.currency}
+				/>
+			</div>
+			{#if order.currencySnapshot.secondary?.totalPrice}
+				<PriceTag
+					class="self-end"
+					amount={remaining}
+					currency={order.currencySnapshot.main.totalPrice.currency}
+					convertedTo={order.currencySnapshot.secondary.totalPrice.currency}
+				/>
+			{/if}
+		</div>
+	{/if}
 </article>

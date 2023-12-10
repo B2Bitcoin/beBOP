@@ -1,9 +1,10 @@
-import type {
-	DiscountType,
-	Order,
-	OrderPayment,
-	OrderPaymentStatus,
-	Price
+import {
+	orderAmountWithNoPaymentsCreated,
+	type DiscountType,
+	type Order,
+	type OrderPayment,
+	type OrderPaymentStatus,
+	type Price
 } from '$lib/types/Order';
 import { ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
@@ -1015,11 +1016,6 @@ export async function addOrderPayment(
 	const secondaryCurrency = order.currencySnapshot.secondary?.totalPrice.currency;
 	const priceReferenceCurrency = order.currencySnapshot.priceReference.totalPrice.currency;
 
-	const alreadyProcessedAmount = sumCurrency(
-		mainCurrency,
-		order.payments.map((payment) => payment.currencySnapshot.main)
-	);
-
 	const maxAmountToPay = params?.paymentPercentage
 		? order.currencySnapshot.main.totalPrice.amount * params.paymentPercentage
 		: order.currencySnapshot.main.totalPrice.amount;
@@ -1028,7 +1024,7 @@ export async function addOrderPayment(
 		amount: fixCurrencyRounding(
 			Math.min(
 				maxAmountToPay,
-				order.currencySnapshot.main.totalPrice.amount - alreadyProcessedAmount
+				order.currencySnapshot.main.totalPrice.amount - orderAmountWithNoPaymentsCreated(order)
 			),
 			mainCurrency
 		),

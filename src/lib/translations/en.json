@@ -375,6 +375,8 @@
 	},
 	"order": {
 		"createdAt": "Created at <0></0>",
+		"depositPaid": "Deposit paid",
+		"depositToPay": "Deposit  to pay",
 		"discount": {
 			"title": "Discount"
 		},
@@ -414,6 +416,7 @@
 			"totalVat": "Total VAT",
 			"unitPrice": "Unit price"
 		},
+		"restToPay": "Remaining to pay",
 		"shippingAddress": {
 			"title": "Shipping address"
 		},
