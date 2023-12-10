@@ -474,6 +474,7 @@
 		"pricePlaceholder": "Prix",
 		"seeInCabinet": "Voir dans MonCabinet",
 		"type": {
+			"deposit": "Sur acompte",
 			"digitalResource": "Ressource numérique",
 			"donation": "Don",
 			"phisical": "Physique",

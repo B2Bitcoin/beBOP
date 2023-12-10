@@ -114,7 +114,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	}
 
 	const formData = await request.formData();
-	const { quantity, customPriceAmount, customPriceCurrency } = z
+	const { quantity, customPriceAmount, customPriceCurrency, deposit } = z
 		.object({
 			quantity: z
 				.number({ coerce: true })
@@ -126,12 +126,14 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 				.string()
 				.regex(/^\d+(\.\d+)?$/)
 				.optional(),
-			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional()
+			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
+			deposit: z.enum(['partial', 'full']).optional()
 		})
 		.parse({
 			quantity: formData.get('quantity') || undefined,
 			customPriceAmount: formData.get('customPriceAmount') || undefined,
-			customPriceCurrency: formData.get('customPriceCurrency') || undefined
+			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
+			deposit: formData.get('deposit') || undefined
 		});
 	const customPrice =
 		customPriceAmount && customPriceCurrency
@@ -142,7 +144,8 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			: undefined;
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
-		...(product.payWhatYouWant && { customPrice })
+		...(product.payWhatYouWant && { customPrice }),
+		deposit: deposit === 'partial'
 	});
 }
 

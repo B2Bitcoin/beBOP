@@ -474,6 +474,7 @@
 		"pricePlaceholder": "Price",
 		"seeInCabinet": "See in MyCabinet",
 		"type": {
+			"deposit": "On deposit",
 			"digitalResource": "Digital Resource",
 			"donation": "Donation",
 			"phisical": "Physical",
