@@ -73,7 +73,7 @@
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",
-			"lighthing": "Lightning",
+			"lightning": "Lightning",
 			"unavailable": "No payment methods available."
 		},
 		"paymentStatus": "Payment status",

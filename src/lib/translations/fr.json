@@ -73,7 +73,7 @@
 			"bitcoin": "BTC on-chain",
 			"card": "Carte bancaire",
 			"cash": "Espèces",
-			"lighthing": "Lightning",
+			"lightning": "Lightning",
 			"unavailable": "Aucun mode de paiement disponible."
 		},
 		"paymentStatus": "Statut de paiement",

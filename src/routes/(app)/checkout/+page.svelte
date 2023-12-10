@@ -79,14 +79,6 @@
 		method === 'bitcoin' ? totalSatoshi >= 10_000 : true
 	);
 
-	const paymentMethodDesc = {
-		bitcoin: t('checkout.paymentMethod.bitcoin'),
-		lightning: t('checkout.paymentMethod.lighthing'),
-		cash: t('checkout.paymentMethod.cash'),
-		card: t('checkout.paymentMethod.card'),
-		bankTransfer: t('checkout.paymentMethod.bankTransfer')
-	};
-
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
 	$: paymentMethod = typedInclude(paymentMethods, paymentMethod)
 		? paymentMethod
@@ -332,7 +324,8 @@
 							required
 						>
 							{#each paymentMethods as paymentMethod}
-								<option value={paymentMethod}>{paymentMethodDesc[paymentMethod]}</option>
+								<option value={paymentMethod}>{t('checkout.paymentMethod.' + paymentMethod)}</option
+								>
 							{/each}
 						</select>
 						{#if paymentMethods.length === 0}
