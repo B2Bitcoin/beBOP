@@ -92,6 +92,9 @@ const addSecurityHeaders: Handle = async ({ event, resolve }) => {
 	response.headers.set('Feature-Policy', 'camera none; microphone none; geolocation none');
 	response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
 
+	// Sveltekit sends huge link headers, which can break w/ nginx
+	response.headers.delete('Link');
+
 	return response;
 };
 
