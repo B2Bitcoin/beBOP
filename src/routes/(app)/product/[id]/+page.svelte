@@ -20,7 +20,6 @@
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 
 	export let data;
 
