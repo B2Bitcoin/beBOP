@@ -3,6 +3,7 @@ import { cleanDb } from './test-utils';
 import { collections } from './database';
 import { TEST_PRODUCT, TEST_PRODUCT_UNLIMITED } from './seed/product';
 import { addOrderPayment, createOrder, lastInvoiceNumber, onOrderPayment } from './orders';
+import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 
 describe('order', () => {
 	beforeEach(async () => {
@@ -173,7 +174,7 @@ describe('order', () => {
 			throw new Error('Order 1 not found');
 		}
 
-		await addOrderPayment(order1, 'cash');
+		await addOrderPayment(order1, 'cash', orderAmountWithNoPaymentsCreated(order1));
 
 		let order2 = await collections.orders.findOne({ _id: order2Id });
 		if (!order2) {
