@@ -41,6 +41,7 @@ async function handleEmailNotification(email: EmailNotification): Promise<void> 
 				html: email.htmlContent
 			});
 		} catch (err) {
+			console.error('Send mail error', err);
 			collections.emailNotifications
 				.updateOne({ _id: email._id }, { $set: { error: err as Error } })
 				.catch(console.error);

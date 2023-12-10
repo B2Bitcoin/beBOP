@@ -260,15 +260,19 @@ export async function onOrderPaymentFailed(
 		const ret = await collections.orders.findOneAndUpdate(
 			{
 				_id: order._id,
-				'payments._id': payment._id,
-				...(order.payments.every(
-					(payment) => payment.status === 'canceled' || payment.status === 'expired'
-				) &&
-					order.status === 'pending' && {
-						status: 'expired'
-					})
+				'payments._id': payment._id
 			},
-			{ $set: { 'payments.$.status': 'expired' } },
+			{
+				$set: {
+					'payments.$.status': 'expired',
+					...(order.payments.every(
+						(payment) => payment.status === 'canceled' || payment.status === 'expired'
+					) &&
+						order.status === 'pending' && {
+							status: 'expired'
+						})
+				}
+			},
 			{ returnDocument: 'after', session }
 		);
 		if (!ret.value) {

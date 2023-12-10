@@ -13,6 +13,10 @@
 
 	const { countryName, sortedCountryCodes } = useI18n();
 
+	$: if (!deliveryFees) {
+		deliveryFees = {};
+	}
+
 	$: countriesWithNoFee = ['default' as const, ...sortedCountryCodes()].filter(
 		(country) => !deliveryFees[country]
 	);
