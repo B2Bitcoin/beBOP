@@ -397,9 +397,10 @@
 		"paymentLink": "Lien de paiement",
 		"paymentPaidAt": "Paiement effectué le {date}",
 		"paymentStatus": {
-			"canceled": "annulée",
+			"canceled": "annulé",
 			"canceledTemplate": "Votre commande a été annulée manuellement en back-office.",
-			"expired": "expirée",
+			"expired": "expiré",
+			"partiallyPaid": "partiellement payé",
 			"expiredTemplate": "Votre commande est expirée car le délai de paiement était trop élevé.\nSi vous avez payé cette commande, merci de vous rapprocher de notre service client.",
 			"paid": "payé",
 			"paidTemplate": "Votre commande est <0>validée</0> !",

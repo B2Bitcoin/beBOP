@@ -403,6 +403,7 @@
 			"expiredTemplate": "Order expired!",
 			"paid": "paid",
 			"paidTemplate": "Order <0>paid</0>!",
+			"partiallyPaid": "partially paid",
 			"pending": "pending"
 		},
 		"paymentStatusNpub": "NostR public address for payment status",

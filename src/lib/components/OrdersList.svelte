@@ -18,6 +18,12 @@
 
 <ul class="flex flex-col gap-4">
 	{#each orders as order}
+		{@const status =
+			order.status === 'pending'
+				? order.payments.some((payment) => payment.status === 'paid')
+					? 'partiallyPaid'
+					: order.status
+				: order.status}
 		<li class="text-lg flex flex-wrap items-center gap-1">
 			<a href="/order/{order._id}" class="text-link hover:underline">
 				#{order.number.toLocaleString($locale)}
@@ -46,13 +52,13 @@
 					convertedTo={$currencies.priceReference}
 				/>){/if} -
 			<span
-				class={order.status === 'expired' || order.status === 'canceled'
+				class={status === 'expired' || status === 'canceled'
 					? 'text-gray-550'
-					: order.status === 'paid'
+					: status === 'paid' || status === 'partiallyPaid'
 					? 'text-green-500'
 					: ''}
 			>
-				{t('order.paymentStatus.' + order.status)}</span
+				{t('order.paymentStatus.' + status)}</span
 			>
 			{#if order.currencySnapshot.main.totalReceived && adminPrefix}
 				- {t('pos.order.satReceived')}
