@@ -1,4 +1,4 @@
-import type { ChangeStreamDocument } from 'mongodb';
+import type { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { Lock } from '../lock';
 import { processClosed } from '../process';
 import type { NostRNotification } from '$lib/types/NostRNotifications';
@@ -23,6 +23,7 @@ import {
 } from 'nostr-tools';
 import { NOSTR_PROTOCOL_VERSION } from './handle-messages';
 import { building } from '$app/environment';
+import { rateLimit } from '../rateLimit';
 
 const lock = nostrPrivateKeyHex ? new Lock('notifications.nostr') : null;
 const processingIds = new Set<string>();
@@ -46,6 +47,26 @@ async function maintainLock() {
 	}
 }
 
+let changeStream: ChangeStream<NostRNotification>;
+
+function watch() {
+	try {
+		rateLimit('0.0.0.0', 'changeStream.nostr-notifications', 10, { minutes: 5 });
+	} catch {
+		console.error("Too many change streams errors for 'nostr-notifications', exiting");
+		process.exit(1);
+	}
+	changeStream = collections.nostrNotifications.watch([{ $match: { operationType: 'insert' } }], {
+		fullDocument: 'updateLookup'
+	});
+	changeStream.on('change', (ev) => handleChanges(ev).catch(console.error));
+	changeStream.on('error', (err) => {
+		console.error(err);
+		changeStream.close().catch(console.error);
+		watch();
+	});
+}
+
 if (nostrPrivateKeyHex && !building) {
 	if (lock) {
 		lock.onAcquire = async () => {
@@ -59,11 +80,7 @@ if (nostrPrivateKeyHex && !building) {
 		};
 	}
 
-	collections.nostrNotifications
-		.watch([{ $match: { operationType: 'insert' } }], {
-			fullDocument: 'updateLookup'
-		})
-		.on('change', (ev) => handleChanges(ev).catch(console.error));
+	watch();
 }
 
 function initRelayPool() {
@@ -235,8 +252,4 @@ maintainLock().catch(console.error);
 
 process.on('unhandledRejection', () => {
 	// Happens because nostr-relaypool doesn't handle websocket upgrade errors for example
-});
-
-process.on('uncaughtException', () => {
-	// Happens because of mongodb driver sometimes, "MongoServerError: PlanExecutor error during aggregation :: caused by :: operation exceeded time limit"
 });

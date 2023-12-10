@@ -1,4 +1,4 @@
-import { ObjectId, type ChangeStreamDocument } from 'mongodb';
+import { ObjectId, type ChangeStreamDocument, type ChangeStream } from 'mongodb';
 import { collections } from '../database';
 import { Lock } from '../lock';
 import type { NostRReceivedMessage } from '$lib/types/NostRReceivedMessage';
@@ -15,6 +15,7 @@ import { typedEntries } from '$lib/utils/typedEntries';
 import { building } from '$app/environment';
 import { paymentMethods } from '../payment-methods';
 import { userQuery } from '../user';
+import { rateLimit } from '../rateLimit';
 
 const lock = new Lock('received-messages');
 
@@ -22,12 +23,31 @@ const processingIds = new Set<string>();
 
 export const NOSTR_PROTOCOL_VERSION = 1;
 
-if (!building) {
-	collections.nostrReceivedMessages
-		.watch([{ $match: { operationType: 'insert' } }], {
+let changeStream: ChangeStream<NostRReceivedMessage>;
+
+function watch() {
+	try {
+		rateLimit('0.0.0.0', 'changeStream.handle-messages', 10, { minutes: 5 });
+	} catch {
+		console.error("Too many change streams errors for 'handle-messages', exiting");
+		process.exit(1);
+	}
+	changeStream = collections.nostrReceivedMessages.watch(
+		[{ $match: { operationType: 'insert' } }],
+		{
 			fullDocument: 'updateLookup'
-		})
-		.on('change', (ev) => handleChanges(ev).catch(console.error));
+		}
+	);
+	changeStream.on('change', (ev) => handleChanges(ev).catch(console.error));
+	changeStream.on('error', (err) => {
+		console.error(err);
+		changeStream.close().catch(console.error);
+		watch();
+	});
+}
+
+if (!building) {
+	watch();
 }
 
 async function handleChanges(change: ChangeStreamDocument<NostRReceivedMessage>): Promise<void> {
