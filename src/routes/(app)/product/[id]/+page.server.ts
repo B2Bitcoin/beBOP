@@ -32,6 +32,7 @@ export const load = async ({ params, locals }) => {
 			| 'actionSettings'
 			| 'contentBefore'
 			| 'contentAfter'
+			| 'deposit'
 		>
 	>(
 		{ _id: params.id },
@@ -53,7 +54,8 @@ export const load = async ({ params, locals }) => {
 				stock: 1,
 				actionSettings: 1,
 				contentBefore: 1,
-				contentAfter: 1
+				contentAfter: 1,
+				deposit: 1
 			}
 		}
 	);

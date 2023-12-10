@@ -456,6 +456,10 @@
 			"preorder": "Pre-order now",
 			"subscribe": "Subscribe now"
 		},
+		"deposit": {
+			"payFullPrice": "Pay full price now",
+			"payPercentage": "Pay {percentage} now"
+		},
 		"digitalFiles": {
 			"title": "Digital Files"
 		},

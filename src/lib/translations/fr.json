@@ -456,6 +456,10 @@
 			"preorder": "Précommander",
 			"subscribe": "S'abonner"
 		},
+		"deposit": {
+			"payFullPrice": "Payez la totalité maintenant",
+			"payPercentage": "Payez {percentage} maintenant"
+		},
 		"digitalFiles": {
 			"title": "Fichiers téléchargeables"
 		},
