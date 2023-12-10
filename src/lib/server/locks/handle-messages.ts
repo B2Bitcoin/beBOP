@@ -469,7 +469,8 @@ const commands: Record<
 				.filter((i) => productById[i.productId])
 				.map((i) => ({
 					quantity: i.quantity,
-					product: productById[i.productId]
+					product: productById[i.productId],
+					depositPercentage: i.depositPercentage
 				}));
 
 			// Should not happen

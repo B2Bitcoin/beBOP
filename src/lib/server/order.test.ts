@@ -137,7 +137,8 @@ describe('order', () => {
 			[
 				{
 					product: TEST_PRODUCT,
-					quantity: 1
+					quantity: 1,
+					depositPercentage: 50
 				}
 			],
 			'cash',
@@ -146,8 +147,7 @@ describe('order', () => {
 					sessionId: 'test-session-id'
 				},
 				shippingAddress: null,
-				vatCountry: 'FR',
-				paymentPercentage: 50
+				vatCountry: 'FR'
 			}
 		);
 
