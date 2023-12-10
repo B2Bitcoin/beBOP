@@ -28,6 +28,7 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `LND_REST_URL` - The LND Rest interface URL. Set to http://127.0.0.1:8080 if you run a lnd node locally with default configuration
 - `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
 - `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`. Example command: `cat .lnd/data/chain/bitcoin/mainnet/admin.macaroon | hexdump -e '16/1 "%02X"'`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
+- `LINK_PRELOAD_HEADERS` - Set to `true` to enable the `Link rel=preload` header, see [explanation](https://nitropack.io/blog/post/link-rel-preload-explained). If you do so, you may need to configure nginx to allow bigger header with `proxy_buffer_size   16k`, see [explanation](https://www.getpagespeed.com/server-setup/nginx/tuning-proxy_buffer_size-in-nginx).
 - `MONGODB_URL` - The connection URL to the MongoDB replicaset
 - `MONGODB_DB` - The DB name, defaulting to "bootik"
 - `NOSTR_PRIVATE_KEY` - To send notifications

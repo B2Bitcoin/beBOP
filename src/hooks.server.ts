@@ -21,6 +21,7 @@ import {
 	GITHUB_SECRET,
 	GOOGLE_ID,
 	GOOGLE_SECRET,
+	LINK_PRELOAD_HEADERS,
 	ORIGIN,
 	TWITTER_ID,
 	TWITTER_SECRET
@@ -92,8 +93,10 @@ const addSecurityHeaders: Handle = async ({ event, resolve }) => {
 	response.headers.set('Feature-Policy', 'camera none; microphone none; geolocation none');
 	response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
 
-	// Sveltekit sends huge link headers, which can break w/ nginx
-	response.headers.delete('Link');
+	// Sveltekit sends huge link headers, which can break w/ nginx unless setting "proxy_buffer_size   16k;"
+	if (LINK_PRELOAD_HEADERS !== 'true' && LINK_PRELOAD_HEADERS !== '1') {
+		response.headers.delete('Link');
+	}
 
 	return response;
 };
