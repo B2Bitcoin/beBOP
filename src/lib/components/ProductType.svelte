@@ -9,6 +9,7 @@
 
 	export let product: Pick<Product, 'preorder' | 'availableDate' | 'type' | 'shipping'>;
 	export let hasDigitalFiles: boolean;
+	export let depositPercentage: number | undefined = undefined;
 
 	let className = '';
 	export { className as class };
@@ -24,6 +25,12 @@
 	<span class="{baseClasses} {className} text-blue-500 bg-blue-200 whitespace-nowrap">
 		<IconDollar />
 		{t('product.type.preorder')}
+	</span>
+{/if}
+{#if depositPercentage !== undefined && depositPercentage !== null && depositPercentage < 100}
+	<span class="{baseClasses} {className} text-blue-500 bg-blue-200 whitespace-nowrap">
+		<IconDollar />
+		{t('product.type.deposit')}
 	</span>
 {/if}
 {#if !product.preorder && product.availableDate && product.availableDate > new Date()}

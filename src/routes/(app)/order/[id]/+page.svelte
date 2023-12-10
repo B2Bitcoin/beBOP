@@ -2,12 +2,12 @@
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import OrderSummary from '$lib/components/OrderSummary.svelte';
+	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
+	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
-	import { toBitcoins } from '$lib/utils/toBitcoins';
-	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
@@ -35,6 +35,8 @@
 
 	let receiptIFrame: HTMLIFrameElement | null = null;
 	let receiptReady = false;
+
+	$: remainingAmount = orderAmountWithNoPaymentsCreated(data.order);
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -63,93 +65,129 @@
 				</div>
 			{/if}
 
-			{#each data.order.payments.filter((p) => p.status === 'pending') as payment}
-				{#if payment.method !== 'cash'}
-					<ul>
-						<li>
-							{t('order.paymentAddress')}: {#if payment.method === 'card'}
-								<a
-									href={trimOrigin(payment.address ?? '')}
-									class="body-hyperlink underline break-all break-words"
-								>
-									{$page.url.origin}{trimOrigin(payment.address ?? '')}
-								</a>
-							{:else if payment.method === 'bankTransfer'}
-								<code class="break-words body-secondaryText break-all"
-									>{data.sellerIdentity?.bank?.iban}</code
-								>
-							{:else}
-								<code class="break-words body-secondaryText break-all">{payment.address}</code>
-							{/if}
-						</li>
-						<li>
-							{t('order.paymentAmount')}:
-							<code class="break-words body-secondaryText">
-								{(payment.method === 'bitcoin'
-									? toBitcoins(payment.price.amount, payment.price.currency)
-									: toSatoshis(payment.price.amount, payment.price.currency)
-								).toLocaleString('en-US', { maximumFractionDigits: 8 })}
-								{payment.method === 'bitcoin' ? 'BTC' : 'sats'}
-							</code>
-						</li>
-						{#if payment.expiresAt && payment.method !== 'bankTransfer'}
-							<li>
-								{t('order.timeRemaining', {
-									minutes: differenceInMinutes(payment.expiresAt, currentDate)
-								})}
-							</li>
-						{/if}
-					</ul>
-					{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
-						<img
-							src="{$page.url.pathname}/payment/{payment.id}/qrcode"
-							class="w-96 h-96"
-							alt="QR code"
-						/>
-					{/if}
-					<div class="text-xl">
-						{t('order.payToComplete')}
-						{#if payment.method === 'bitcoin'}
-							{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
-						{/if}
-					</div>
-				{/if}
-				{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
-					<div class="flex flex-wrap gap-2">
-						<form
-							action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-								._id}/payment/{payment.id}?/confirm"
-							method="post"
-							class="contents"
+			{#each data.order.payments as payment}
+				<details class="border border-gray-300 rounded-xl p-4" open={payment.status === 'pending'}>
+					<summary class="text-xl cursor-pointer">
+						<!-- Extra span to keep the "arrow" for the details -->
+						<span class="items-center inline-flex gap-2"
+							>{t(`checkout.paymentMethod.${payment.method}`)} - <PriceTag
+								inline
+								class="break-words body-secondaryText"
+								amount={payment.price.amount}
+								currency={payment.price.currency}
+							/> - {t(`order.paymentStatus.${payment.status}`)}</span
 						>
-							{#if payment.method === 'bankTransfer'}
-								<input
-									class="form-input w-auto"
-									type="text"
-									name="bankTransferNumber"
-									required
-									placeholder="bank transfer number"
+					</summary>
+					<div class="flex flex-col gap-2 mt-2">
+						{#if payment.method !== 'cash'}
+							<ul>
+								<li>
+									{#if payment.method === 'card'}
+										{t('order.paymentLink')}:
+										<a
+											href={trimOrigin(payment.address ?? '')}
+											class="body-hyperlink underline break-all break-words"
+										>
+											{$page.url.origin}{trimOrigin(payment.address ?? '')}
+										</a>
+									{:else if payment.method === 'bankTransfer'}
+										{t('order.paymentIban')}:
+										<code class="break-words body-secondaryText break-all"
+											>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
+										>
+									{:else}
+										{t('order.paymentAddress')}:
+										<code class="break-words body-secondaryText break-all">{payment.address}</code>
+									{/if}
+								</li>
+								{#if payment.expiresAt && payment.status === 'pending'}
+									<li>
+										{t('order.timeRemaining', {
+											minutes: differenceInMinutes(payment.expiresAt, currentDate)
+										})}
+									</li>
+								{/if}
+								{#if payment.status === 'paid' && payment.paidAt}
+									<li>
+										{t('order.paymentPaidAt', {
+											date: payment.paidAt.toLocaleDateString($locale)
+										})}
+									</li>
+								{/if}
+							</ul>
+
+							{#if payment.status === 'paid'}
+								<button
+									class="btn btn-black self-start"
+									type="button"
+									disabled={!receiptReady}
+									on:click={() => receiptIFrame?.contentWindow?.print()}
+									>{t('order.receipt.create')}</button
+								>
+								<iframe
+									src="/order/{data.order._id}/payment/{payment.id}/receipt"
+									style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+									title=""
+									on:load={() => (receiptReady = true)}
+									bind:this={receiptIFrame}
 								/>
 							{/if}
-							<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
-						</form>
-						<form
-							action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-								._id}/{payment.id}?/cancel"
-							method="post"
-							class="contents"
-						>
-							<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
-						</form>
+							{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
+								<img
+									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+									class="w-96 h-96"
+									alt="QR code"
+								/>
+							{/if}
+							{#if payment.status === 'pending'}
+								{t('order.payToComplete')}
+								{#if payment.method === 'bitcoin'}
+									{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
+								{/if}
+
+								{#if payment.method === 'bankTransfer'}
+									{#if data.sellerIdentity?.contact.email}
+										<a
+											href="mailto:{data.sellerIdentity.contact.email}"
+											class="btn btn-black self-start"
+										>
+											{t('order.informSeller')}
+										</a>
+									{/if}
+								{/if}
+							{/if}
+						{/if}
+						{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
+							<div class="flex flex-wrap gap-2">
+								<form
+									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+										._id}/payment/{payment.id}?/confirm"
+									method="post"
+									class="contents"
+								>
+									{#if payment.method === 'bankTransfer'}
+										<input
+											class="form-input w-auto"
+											type="text"
+											name="bankTransferNumber"
+											required
+											placeholder="bank transfer number"
+										/>
+									{/if}
+									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
+								</form>
+								<form
+									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+										._id}/payment/{payment.id}?/cancel"
+									method="post"
+									class="contents"
+								>
+									<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
+								</form>
+							</div>
+						{/if}
 					</div>
-				{/if}
-				{#if payment.method === 'bankTransfer'}
-					{#if data.sellerIdentity?.contact.email}
-						<a href="mailto:{data.sellerIdentity.contact.email}" class="btn btn-black self-start">
-							{t('order.informSeller')}
-						</a>
-					{/if}
-				{/if}
+				</details>
 			{/each}
 
 			{#if data.order.status === 'paid'}
@@ -203,20 +241,48 @@
 				</div>
 			{/if}
 
-			{#if data.order.payments[0].status === 'paid'}
-				<button
-					class="btn btn-black self-start"
-					type="button"
-					disabled={!receiptReady}
-					on:click={() => receiptIFrame?.contentWindow?.print()}>{t('order.receipt.create')}</button
+			{#if data.order.status === 'pending' && remainingAmount && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+				<form
+					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+						._id}?/addPayment"
+					method="post"
+					class="contents"
 				>
-				<iframe
-					src="/order/{data.order._id}/payment/{data.order.payments[0].id}/receipt"
-					style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
-					title=""
-					on:load={() => (receiptReady = true)}
-					bind:this={receiptIFrame}
-				/>
+					<div class="flex flex-wrap gap-2">
+						<label class="form-label">
+							{t('order.addPayment.amount')}
+							<input
+								class="form-input"
+								type="number"
+								name="amount"
+								min="0"
+								step="any"
+								max={remainingAmount}
+								value={remainingAmount}
+								required
+							/>
+						</label>
+						<label class="form-label">
+							{t('order.addPayment.currency')}
+							<select name="currency" class="form-input" disabled>
+								<option value={data.order.currencySnapshot.main.totalPrice.currency}
+									>{data.order.currencySnapshot.main.totalPrice.currency}</option
+								>
+							</select>
+						</label>
+						<label class="form-label">
+							<span>{t('checkout.payment.method')}</span>
+							<select name="method" class="form-input">
+								{#each data.paymentMethods as paymentMethod}
+									<option value={paymentMethod}
+										>{t(`checkout.paymentMethod.${paymentMethod}`)}</option
+									>
+								{/each}
+							</select>
+						</label><br />
+						<button type="submit" class="btn btn-blue self-end">{t('order.addPayment.cta')}</button>
+					</div>
+				</form>
 			{/if}
 		</div>
 		<div class="">

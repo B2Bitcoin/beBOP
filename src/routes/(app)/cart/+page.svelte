@@ -30,14 +30,18 @@
 			UNDERLYING_CURRENCY,
 			items.map((item) => ({
 				currency: (item.customPrice || item.product.price).currency,
-				amount: (item.customPrice || item.product.price).amount * item.quantity
+				amount:
+					((item.customPrice || item.product.price).amount *
+						item.quantity *
+						(item.depositPercentage ?? 100)) /
+					100
 			}))
 		) + (deliveryFees || 0);
 
 	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10 body-mainPlan">
@@ -54,6 +58,7 @@
 				style="grid-template-columns: auto 1fr auto auto"
 			>
 				{#each items as item}
+					{@const price = item.customPrice || item.product.price}
 					<form
 						method="POST"
 						class="contents"
@@ -109,6 +114,7 @@
 							<div class="flex flex-row gap-2">
 								<ProductType
 									product={item.product}
+									depositPercentage={item.depositPercentage}
 									hasDigitalFiles={item.digitalFiles.length >= 1}
 								/>
 							</div>
@@ -127,33 +133,23 @@
 						</div>
 
 						<div class="flex flex-col items-end justify-center">
-							{#if item.product.type !== 'subscription' && item.customPrice}
-								<PriceTag
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									main
-									class="text-2xl truncate"
-								/>
-								<PriceTag
-									class="text-base truncate"
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									secondary
-								/>
-							{:else}
-								<PriceTag
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									main
-									class="text-2xl truncate"
-								/>
-								<PriceTag
-									class="text-base truncate"
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									secondary
-								/>
-							{/if}
+							<PriceTag
+								amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
+								currency={price.currency}
+								main
+								class="text-2xl truncate"
+								>{item.depositPercentage
+									? `(${(item.depositPercentage / 100).toLocaleString($locale, {
+											style: 'percent'
+									  })})`
+									: ''}</PriceTag
+							>
+							<PriceTag
+								class="text-base truncate"
+								amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
+								currency={price.currency}
+								secondary
+							/>
 						</div>
 					</form>
 

@@ -73,7 +73,7 @@
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",
-			"lighthing": "Lightning",
+			"lightning": "Lightning",
 			"unavailable": "No payment methods available."
 		},
 		"paymentStatus": "Payment status",
@@ -374,7 +374,14 @@
 		"willReceiveSessionLink": "You will receive a session link on your address"
 	},
 	"order": {
+		"addPayment": {
+			"amount": "Payment amount",
+			"cta": "Send a call for payment",
+			"currency": "Payment currency"
+		},
 		"createdAt": "Created at <0></0>",
+		"depositPaid": "Deposit paid",
+		"depositToPay": "Deposit  to pay",
 		"discount": {
 			"title": "Discount"
 		},
@@ -391,6 +398,9 @@
 		},
 		"paymentAddress": "Payment address",
 		"paymentAmount": "Payment amount",
+		"paymentIban": "IBAN to send the wire transfer to",
+		"paymentLink": "Payment link",
+		"paymentPaidAt": "Payment done on {date}",
 		"paymentStatus": {
 			"canceled": "canceled",
 			"canceledTemplate": "Order canceled!",
@@ -398,6 +408,7 @@
 			"expiredTemplate": "Order expired!",
 			"paid": "paid",
 			"paidTemplate": "Order <0>paid</0>!",
+			"partiallyPaid": "partially paid",
 			"pending": "pending"
 		},
 		"paymentStatusNpub": "NostR public address for payment status",
@@ -414,6 +425,7 @@
 			"totalVat": "Total VAT",
 			"unitPrice": "Unit price"
 		},
+		"restToPay": "Remaining to pay",
 		"shippingAddress": {
 			"title": "Shipping address"
 		},
@@ -456,6 +468,10 @@
 			"preorder": "Pre-order now",
 			"subscribe": "Subscribe now"
 		},
+		"deposit": {
+			"payFullPrice": "Pay full price now",
+			"payPercentage": "Pay {percentage} now"
+		},
 		"digitalFiles": {
 			"title": "Digital Files"
 		},
@@ -470,6 +486,7 @@
 		"pricePlaceholder": "Price",
 		"seeInCabinet": "See in MyCabinet",
 		"type": {
+			"deposit": "On deposit",
 			"digitalResource": "Digital Resource",
 			"donation": "Donation",
 			"phisical": "Physical",

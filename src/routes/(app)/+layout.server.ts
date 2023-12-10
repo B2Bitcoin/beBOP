@@ -135,7 +135,8 @@ export async function load(params) {
 									.sort({ createdAt: 1 })
 									.toArray(),
 								quantity: item.quantity,
-								...(item.customPrice && { customPrice: item.customPrice })
+								...(item.customPrice && { customPrice: item.customPrice }),
+								depositPercentage: item.depositPercentage
 							};
 						}
 					})

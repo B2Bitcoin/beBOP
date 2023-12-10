@@ -112,7 +112,11 @@
 				formData.set('pictureId', pictureId);
 			}
 
-			const finalResponse = await fetch(formElement.action, {
+			const action = (event.submitter as HTMLButtonElement | null)?.formAction.includes('?/')
+				? (event.submitter as HTMLButtonElement).formAction
+				: formElement.action;
+
+			const finalResponse = await fetch(action, {
 				method: 'POST',
 				body: formData
 			});

@@ -34,7 +34,7 @@
 	let discountAmount: number;
 	let discountType: DiscountType;
 
-	const { t, countryName, sortedCountryCodes } = useI18n();
+	const { t, locale, countryName, sortedCountryCodes } = useI18n();
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: t('checkout.paymentStatus') }
@@ -79,14 +79,6 @@
 		method === 'bitcoin' ? totalSatoshi >= 10_000 : true
 	);
 
-	const paymentMethodDesc = {
-		bitcoin: t('checkout.paymentMethod.bitcoin'),
-		lightning: t('checkout.paymentMethod.lighthing'),
-		cash: t('checkout.paymentMethod.cash'),
-		card: t('checkout.paymentMethod.card'),
-		bankTransfer: t('checkout.paymentMethod.bankTransfer')
-	};
-
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
 	$: paymentMethod = typedInclude(paymentMethods, paymentMethod)
 		? paymentMethod
@@ -104,7 +96,11 @@
 			UNDERLYING_CURRENCY,
 			items.map((item) => ({
 				currency: (item.customPrice || item.product.price).currency,
-				amount: (item.customPrice || item.product.price).amount * item.quantity
+				amount:
+					((item.customPrice || item.product.price).amount *
+						item.quantity *
+						(item.depositPercentage ?? 100)) /
+					100
 			}))
 		) + (deliveryFees || 0);
 
@@ -328,7 +324,8 @@
 							required
 						>
 							{#each paymentMethods as paymentMethod}
-								<option value={paymentMethod}>{paymentMethodDesc[paymentMethod]}</option>
+								<option value={paymentMethod}>{t('checkout.paymentMethod.' + paymentMethod)}</option
+								>
 							{/each}
 						</select>
 						{#if paymentMethods.length === 0}
@@ -391,6 +388,7 @@
 					<p>{t('checkout.numProducts', { count: data.cart?.length ?? 0 })}</p>
 				</div>
 				{#each items as item}
+					{@const price = item.customPrice || item.product.price}
 					<form
 						method="POST"
 						class="flex flex-col mt-2"
@@ -440,6 +438,7 @@
 										product={item.product}
 										class="text-sm"
 										hasDigitalFiles={item.digitalFiles.length >= 1}
+										depositPercentage={item.depositPercentage}
 									/>
 								</div>
 								<div>
@@ -452,33 +451,23 @@
 							</div>
 
 							<div class="flex flex-col ml-auto items-end justify-center">
-								{#if item.product.type !== 'subscription' && item.customPrice}
-									<PriceTag
-										class="text-2xl truncate"
-										amount={item.quantity * item.customPrice.amount}
-										currency={item.customPrice.currency}
-										main
-									/>
-									<PriceTag
-										amount={item.quantity * item.customPrice.amount}
-										currency={item.customPrice.currency}
-										class="text-base truncate"
-										secondary
-									/>
-								{:else}
-									<PriceTag
-										class="text-2xl truncate"
-										amount={item.quantity * item.product.price.amount}
-										currency={item.product.price.currency}
-										main
-									/>
-									<PriceTag
-										amount={item.quantity * item.product.price.amount}
-										currency={item.product.price.currency}
-										class="text-base truncate"
-										secondary
-									/>
-								{/if}
+								<PriceTag
+									class="text-2xl truncate"
+									amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
+									currency={price.currency}
+									main
+									>{item.depositPercentage
+										? `(${(item.depositPercentage / 100).toLocaleString($locale, {
+												style: 'percent'
+										  })})`
+										: ''}</PriceTag
+								>
+								<PriceTag
+									amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
+									currency={price.currency}
+									class="text-base truncate"
+									secondary
+								/>
 							</div>
 						</div>
 					</form>

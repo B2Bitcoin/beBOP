@@ -179,7 +179,8 @@ export const actions = {
 				product: byId[item.productId],
 				...(item.customPrice && {
 					customPrice: { amount: item.customPrice.amount, currency: item.customPrice.currency }
-				})
+				}),
+				depositPercentage: item.depositPercentage
 			})),
 			paymentMethod,
 			{

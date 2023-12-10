@@ -73,7 +73,7 @@
 			"bitcoin": "BTC on-chain",
 			"card": "Carte bancaire",
 			"cash": "Espèces",
-			"lighthing": "Lightning",
+			"lightning": "Lightning",
 			"unavailable": "Aucun mode de paiement disponible."
 		},
 		"paymentStatus": "Statut de paiement",
@@ -374,7 +374,14 @@
 		"willReceiveSessionLink": "Vous recevrez un lien de session sur votre adresse"
 	},
 	"order": {
+		"addPayment": {
+			"amount": "Montant du paiement",
+			"cta": "Envoyer un appel à paiement",
+			"currency": "Monnaie de paiement"
+		},
 		"createdAt": "Date de la commande : <0></0>",
+		"depositPaid": "Acompte payé",
+		"depositToPay": "Acompte à payer",
 		"discount": {
 			"title": "Rabais"
 		},
@@ -391,13 +398,17 @@
 		},
 		"paymentAddress": "Adresse de paiement ",
 		"paymentAmount": "Montant de la transaction (hors frais)",
+		"paymentIban": "IBAN de paiement",
+		"paymentLink": "Lien de paiement",
+		"paymentPaidAt": "Paiement effectué le {date}",
 		"paymentStatus": {
-			"canceled": "annulée",
+			"canceled": "annulé",
 			"canceledTemplate": "Votre commande a été annulée manuellement en back-office.",
-			"expired": "expirée",
+			"expired": "expiré",
 			"expiredTemplate": "Votre commande est expirée car le délai de paiement était trop élevé.\nSi vous avez payé cette commande, merci de vous rapprocher de notre service client.",
-			"paid": "payée",
+			"paid": "payé",
 			"paidTemplate": "Votre commande est <0>validée</0> !",
+			"partiallyPaid": "partiellement payé",
 			"pending": "en attente"
 		},
 		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
@@ -414,6 +425,7 @@
 			"totalVat": "TVA totale",
 			"unitPrice": "Prix ​​unit. HT"
 		},
+		"restToPay": "Reste à payer",
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},
@@ -456,6 +468,10 @@
 			"preorder": "Précommander",
 			"subscribe": "S'abonner"
 		},
+		"deposit": {
+			"payFullPrice": "Payez la totalité maintenant",
+			"payPercentage": "Payez {percentage} maintenant"
+		},
 		"digitalFiles": {
 			"title": "Fichiers téléchargeables"
 		},
@@ -470,6 +486,7 @@
 		"pricePlaceholder": "Prix",
 		"seeInCabinet": "Voir dans MonCabinet",
 		"type": {
+			"deposit": "Sur acompte",
 			"digitalResource": "Ressource numérique",
 			"donation": "Don",
 			"phisical": "Physique",
