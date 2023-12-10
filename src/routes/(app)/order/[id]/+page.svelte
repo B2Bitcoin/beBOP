@@ -112,6 +112,23 @@
 									</li>
 								{/if}
 							</ul>
+
+							{#if payment.status === 'paid'}
+								<button
+									class="btn btn-black self-start"
+									type="button"
+									disabled={!receiptReady}
+									on:click={() => receiptIFrame?.contentWindow?.print()}
+									>{t('order.receipt.create')}</button
+								>
+								<iframe
+									src="/order/{data.order._id}/payment/{payment.id}/receipt"
+									style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+									title=""
+									on:load={() => (receiptReady = true)}
+									bind:this={receiptIFrame}
+								/>
+							{/if}
 							{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
 								<img
 									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
@@ -219,22 +236,6 @@
 						{textAddress(data.order.shippingAddress)}
 					</p>
 				</div>
-			{/if}
-
-			{#if data.order.payments[0].status === 'paid'}
-				<button
-					class="btn btn-black self-start"
-					type="button"
-					disabled={!receiptReady}
-					on:click={() => receiptIFrame?.contentWindow?.print()}>{t('order.receipt.create')}</button
-				>
-				<iframe
-					src="/order/{data.order._id}/payment/{data.order.payments[0].id}/receipt"
-					style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
-					title=""
-					on:load={() => (receiptReady = true)}
-					bind:this={receiptIFrame}
-				/>
 			{/if}
 		</div>
 		<div class="">
