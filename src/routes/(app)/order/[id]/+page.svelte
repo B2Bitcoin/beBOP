@@ -2,6 +2,7 @@
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import OrderSummary from '$lib/components/OrderSummary.svelte';
+	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
 	import { UrlDependency } from '$lib/types/UrlDependency';
@@ -10,6 +11,7 @@
 	import { toSatoshis } from '$lib/utils/toSatoshis';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
+	import { method } from 'lodash-es';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();
@@ -82,15 +84,13 @@
 								<code class="break-words body-secondaryText break-all">{payment.address}</code>
 							{/if}
 						</li>
-						<li>
-							{t('order.paymentAmount')}:
-							<code class="break-words body-secondaryText">
-								{(payment.method === 'bitcoin'
-									? toBitcoins(payment.price.amount, payment.price.currency)
-									: toSatoshis(payment.price.amount, payment.price.currency)
-								).toLocaleString('en-US', { maximumFractionDigits: 8 })}
-								{payment.method === 'bitcoin' ? 'BTC' : 'sats'}
-							</code>
+						<li class="flex items-center gap-2">
+							{t('order.paymentAmount')}: <PriceTag
+								inline
+								class="break-words body-secondaryText"
+								amount={payment.price.amount}
+								currency={payment.price.currency}
+							/>
 						</li>
 						{#if payment.expiresAt && payment.method !== 'bankTransfer'}
 							<li>
