@@ -119,8 +119,7 @@ export async function onOrderPayment(
 								order.payments
 									.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
 									.map((p) => p.currencySnapshot.main.price)
-							) -
-							payment.currencySnapshot.main.price.amount
+							)
 					},
 					'payments.$.currencySnapshot.priceReference.previouslyPaid': {
 						currency: payment.currencySnapshot.priceReference.price.currency,
@@ -140,8 +139,7 @@ export async function onOrderPayment(
 								order.payments
 									.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
 									.map((p) => p.currencySnapshot.priceReference.price)
-							) -
-							payment.currencySnapshot.priceReference.price.amount
+							)
 					},
 					...(payment.currencySnapshot.secondary &&
 						order.currencySnapshot.secondary && {
@@ -167,8 +165,7 @@ export async function onOrderPayment(
 												.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
 												.map((p) => p.currencySnapshot.secondary?.price)
 										)
-									) -
-									payment.currencySnapshot.secondary.price.amount
+									)
 							}
 						}),
 					'payments.$.transactions': payment.transactions,
