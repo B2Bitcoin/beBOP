@@ -65,7 +65,7 @@
 					secondary
 				/>
 			</div>
-			<span class="font-semibold">{t('vatExcluded')}</span>
+			<span class="font-semibold">{t('product.vatExcludedd')}</span>
 		</div>
 
 		{#if canAddToCart}

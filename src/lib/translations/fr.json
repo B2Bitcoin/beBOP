@@ -494,7 +494,8 @@
 			"preview": "Aperçu",
 			"resource": "Ressource",
 			"subscription": "Abonnement"
-		}
+		},
+		"vatExcludedd": "Hors TVA"
 	},
 	"subscription": {
 		"associated": {
@@ -510,6 +511,5 @@
 		"status": {
 			"expired": "expiré"
 		}
-	},
-	"vatExcluded": "Hors TVA"
+	}
 }
