@@ -939,7 +939,7 @@ async function generateCardPaymentInfo(params: {
 					params.toPay.currency
 				),
 				currency: runtimeConfig.sumUp.currency,
-				checkout_reference: params.orderId,
+				checkout_reference: params.orderId + '-' + params.paymentId,
 				merchant_code: runtimeConfig.sumUp.merchantCode,
 				redirect_url: `${ORIGIN}/order/${params.orderId}`,
 				description: 'Order ' + params.orderNumber,
