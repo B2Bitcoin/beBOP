@@ -592,6 +592,36 @@
 				</tr>
 			</tbody>
 		</table>
+		{#if product.cta}
+			<h3 class="text-xl">Add custom CTA</h3>
+			{#each [...product.cta, ...Array(3 - product.cta.length).fill( { href: '', label: '' } )] as link, i}
+				<div class="flex gap-4">
+					<label class="form-label">
+						Text
+						<input type="text" name="ctaLinks[{i}].label" class="form-input" value={link.label} />
+					</label>
+					<label class="form-label">
+						Url
+						<input type="text" name="ctaLinks[{i}].href" class="form-input" value={link.href} />
+					</label>
+				</div>
+			{/each}
+		{:else}
+			<h3 class="text-xl">Add custom CTA</h3>
+			{#each [0, 1, 2] as i}
+				<div class="flex gap-4">
+					<label class="form-label">
+						Text
+						<input type="text" name="ctaLinks[{i}].label" class="form-input" />
+					</label>
+					<label class="form-label">
+						Url
+						<input type="text" name="ctaLinks[{i}].href" class="form-input" />
+					</label>
+				</div>
+			{/each}
+		{/if}
+
 		{#if !isNew}
 			<label class="block w-full mt-4">
 				Add CMS code and widgets before product page core

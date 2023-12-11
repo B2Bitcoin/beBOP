@@ -415,6 +415,13 @@
 									{verb}
 								</button>
 							{/if}
+							{#if data.product.cta}
+								{#each data.product.cta as cta}
+									<a href={cta.href} class="btn body-cta body-secondaryCTA">
+										{cta.label}
+									</a>
+								{/each}
+							{/if}
 						{:else}
 							<p>{t('product.notForSale')}</p>
 						{/if}

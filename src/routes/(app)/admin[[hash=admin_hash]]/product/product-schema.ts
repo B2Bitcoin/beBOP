@@ -31,5 +31,9 @@ export const productBaseSchema = {
 	eshopBasket: z.boolean({ coerce: true }).default(false),
 	retailBasket: z.boolean({ coerce: true }).default(false),
 	depositPercentage: z.number({ coerce: true }).int().min(0).max(100).optional(),
-	enforceDeposit: z.boolean({ coerce: true }).default(false)
+	enforceDeposit: z.boolean({ coerce: true }).default(false),
+	ctaLinks: z
+		.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
+		.optional()
+		.default([])
 };

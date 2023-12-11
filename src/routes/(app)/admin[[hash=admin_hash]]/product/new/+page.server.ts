@@ -171,7 +171,8 @@ export const actions: Actions = {
 								visible: parsed.googleShoppingVisible
 							}
 						},
-						tagIds: parsed.tagIds
+						tagIds: parsed.tagIds,
+						cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href)
 					},
 					{ session }
 				);
