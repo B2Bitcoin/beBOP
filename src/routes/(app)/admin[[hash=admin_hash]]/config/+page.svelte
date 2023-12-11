@@ -186,6 +186,15 @@
 				/>
 				Use VAT rate from seller's country
 			</label>
+			<label class="checkbox-label">
+				<input
+					type="checkbox"
+					name="vatOutsideCountry"
+					class="form-checkbox"
+					bind:checked={data.vatOutsideCountry}
+				/>
+				Make VAT = 0% for deliveries outside seller's country
+			</label>
 			{#if vatSingleCountry}
 				<label class="form-label">
 					Seller's country for VAT purposes
