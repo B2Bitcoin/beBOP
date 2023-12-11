@@ -14,7 +14,22 @@ export const actions = {
 			throw error(404, 'This product is not in the cart');
 		}
 
-		const item = cart.items.find((i) => i.productId === params.id);
+		const { depositPercentage } = z
+			.object({
+				depositPercentage: z.number({ coerce: true }).optional()
+			})
+			.parse(Object.fromEntries(await request.formData()));
+
+		let item = cart.items.find(
+			(i) =>
+				i.productId === params.id &&
+				(i.depositPercentage ?? undefined) === (depositPercentage ?? undefined)
+		);
+
+		// Like when calling from nostr handle message, we don't know which deposit percentage was used
+		if (!item) {
+			item = cart.items.find((i) => i.productId === params.id);
+		}
 
 		if (!item) {
 			throw error(404, 'This product is not in the cart');
@@ -81,17 +96,17 @@ export const actions = {
 		const formData = await request.formData();
 
 		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
-		const { quantity } = z
+		const { quantity, depositPercentage } = z
 			.object({
-				quantity: z.number({ coerce: true }).int().min(1).max(max)
+				quantity: z.number({ coerce: true }).int().min(1).max(max),
+				depositPercentage: z.number({ coerce: true }).optional()
 			})
-			.parse({
-				quantity: formData.get('quantity')
-			});
+			.parse(Object.fromEntries(formData));
 
 		await removeFromCartInDb(product, quantity - 1, {
 			user: userIdentifier(locals),
-			totalQuantity: true
+			totalQuantity: true,
+			depositPercentage
 		});
 
 		throw redirect(303, request.headers.get('referer') || '/cart');

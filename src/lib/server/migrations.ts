@@ -201,8 +201,11 @@ const migrations = [
 					// @ts-expect-error migration stuff
 					price: order.totalPrice,
 					currencySnapshot: {
+						// @ts-expect-error migration stuff
 						main: order.currencySnapshot.main.totalPrice,
+						// @ts-expect-error migration stuff
 						priceReference: order.currencySnapshot.priceReference.totalPrice,
+						// @ts-expect-error migration stuff
 						secondary: order.currencySnapshot.secondary?.totalPrice
 					},
 					// @ts-expect-error migration stuff
@@ -224,6 +227,48 @@ const migrations = [
 							amountsInOtherCurrencies: '',
 							lastPaymentStatusNotified: '',
 							invoice: ''
+						}
+					},
+					{ session }
+				);
+			}
+		}
+	},
+	{
+		name: 'Update payments currencySnapshot',
+		_id: new ObjectId('6577739b4feec6c5137a2202'),
+		run: async (session: ClientSession) => {
+			for await (const order of collections.orders.find(
+				{ payments: { $exists: true } },
+				{ session }
+			)) {
+				for (const payment of order.payments) {
+					if (!payment.currencySnapshot) {
+						continue;
+					}
+					if ('amount' in payment.currencySnapshot.main) {
+						payment.currencySnapshot = {
+							main: {
+								// @ts-expect-error migration stuff
+								price: payment.currencySnapshot.main
+							},
+							priceReference: {
+								// @ts-expect-error migration stuff
+								price: payment.currencySnapshot.priceReference
+							},
+							...(payment.currencySnapshot.secondary && {
+								secondary: {
+									price: payment.currencySnapshot.secondary
+								}
+							})
+						};
+					}
+				}
+				await collections.orders.updateOne(
+					{ _id: order._id },
+					{
+						$set: {
+							payments: order.payments
 						}
 					},
 					{ session }

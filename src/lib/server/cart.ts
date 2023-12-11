@@ -13,6 +13,7 @@ import { POS_ROLE_ID } from '$lib/types/User';
 import { addMinutes } from 'date-fns';
 import type { Currency } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
+import { sum } from '$lib/utils/sum';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	let res = await collections.carts.findOne(userQuery(params.user), { sort: { _id: -1 } });
@@ -91,7 +92,15 @@ export async function addToCartInDb(
 
 	let cart = await getCartFromDb({ user: params.user });
 
-	const existingItem = cart.items.find((item) => item.productId === product._id);
+	const existingItem = cart.items.find(
+		(item) =>
+			item.productId === product._id &&
+			// Just in case a null value is stored in the DB
+			(item.depositPercentage ?? undefined) === (depositPercentage ?? undefined)
+	);
+
+	const totalQuantityInCart = () =>
+		sum(cart.items.filter((item) => item.productId === product._id).map((item) => item.quantity));
 
 	const availableAmount = await computeAvailableAmount(product, cart);
 
@@ -120,7 +129,7 @@ export async function addToCartInDb(
 			availableAmount
 		);
 
-		if (existingItem.quantity > max) {
+		if (totalQuantityInCart() > max) {
 			throw error(400, `You can only order ${max} of this product`);
 		}
 
@@ -129,7 +138,7 @@ export async function addToCartInDb(
 		}
 		existingItem.reservedUntil = addMinutes(new Date(), runtimeConfig.reserveStockInMinutes);
 	} else {
-		if (quantity > availableAmount) {
+		if (totalQuantityInCart() + quantity > availableAmount) {
 			throw error(400, `You can only order ${availableAmount} of this product`);
 		}
 		cart.items.push({
@@ -174,7 +183,7 @@ export async function addToCartInDb(
 export async function removeFromCartInDb(
 	product: Product,
 	quantity: number,
-	params: { user: UserIdentifier; totalQuantity?: boolean }
+	params: { user: UserIdentifier; totalQuantity?: boolean; depositPercentage?: number }
 ) {
 	if (quantity < 0) {
 		throw new TypeError('Quantity cannot be negative');
@@ -182,7 +191,16 @@ export async function removeFromCartInDb(
 
 	const cart = await getCartFromDb(params);
 
-	const item = cart.items.find((i) => i.productId === product._id);
+	let item = cart.items.find(
+		(i) =>
+			i.productId === product._id &&
+			(i.depositPercentage ?? undefined) === (params.depositPercentage ?? undefined)
+	);
+
+	// Like when calling from nostr handle message, we don't know which deposit percentage was used
+	if (!item) {
+		item = cart.items.find((i) => i.productId === product._id);
+	}
 
 	if (!item) {
 		return cart;
