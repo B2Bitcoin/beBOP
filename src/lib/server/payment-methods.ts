@@ -12,7 +12,7 @@ export const paymentMethods = (role?: string) =>
 	env.VITEST
 		? ALL_PAYMENT_METHODS
 		: [
-				...(isSumupEnabled() && role !== POS_ROLE_ID ? (['card'] as const) : []),
+				...(isSumupEnabled() /* && role !== POS_ROLE_ID */ ? (['card'] as const) : []),
 				...(runtimeConfig.sellerIdentity?.bank ? (['bankTransfer'] as const) : []),
 				...(isBitcoinConfigured ? (['bitcoin'] as const) : []),
 				...(isLightningConfigured ? (['lightning'] as const) : []),

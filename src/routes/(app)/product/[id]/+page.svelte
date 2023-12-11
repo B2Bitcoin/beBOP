@@ -240,6 +240,7 @@
 						secondary
 						class="text-xl"
 					/>
+					<span class="font-semibold">{t('product.vatExcluded')}</span>
 				</div>
 
 				{#if data.discount}
@@ -433,6 +434,13 @@
 							})
 						})}
 					</p>
+				{/if}
+				{#if data.product.cta}
+					{#each data.product.cta as cta}
+						<a href={cta.href} class="btn body-cta body-secondaryCTA">
+							{cta.label}
+						</a>
+					{/each}
 				{/if}
 			</div>
 		</div>

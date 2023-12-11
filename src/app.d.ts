@@ -4,6 +4,7 @@
 /// <reference types="@sveltejs/kit" />
 /// <reference types="unplugin-icons/types/svelte" />
 
+import type { Role } from '$lib/types/Role';
 import type { ObjectId } from 'mongodb';
 
 declare global {
@@ -15,7 +16,7 @@ declare global {
 			status?: number;
 			sessionId: string;
 			countryCode?: string;
-			user?: { _id: ObjectId; login: string; roleId: string };
+			user?: { _id: ObjectId; login: string; roleId: string; role?: Role };
 			email?: string;
 			npub?: string;
 			sso?: Array<{

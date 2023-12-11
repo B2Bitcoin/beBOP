@@ -46,6 +46,10 @@ export interface Product extends Timestamps {
 	free: boolean;
 	actionSettings: ProductActionSettings;
 	tagIds?: Tag['_id'][];
+	cta?: {
+		label: string;
+		href: string;
+	}[];
 	contentBefore?: string;
 	contentAfter?: string;
 }
