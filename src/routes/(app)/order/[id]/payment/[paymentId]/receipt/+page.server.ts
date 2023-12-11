@@ -3,7 +3,7 @@ import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { fetchOrderForUser } from '../../../fetchOrderForUser.js';
 
 export async function load({ params }) {
-	const order = await fetchOrderForUser(params.id, { doNotMockPay: true });
+	const order = await fetchOrderForUser(params.id);
 	if (!order) {
 		throw error(404, 'Order not found');
 	}
@@ -13,6 +13,9 @@ export async function load({ params }) {
 	}
 	if (payment.status !== 'paid') {
 		throw error(400, 'Order is not paid');
+	}
+	if (!payment.invoice?.number) {
+		throw error(400, 'Invoice not found');
 	}
 	if (!runtimeConfig.sellerIdentity && !order.sellerIdentity) {
 		throw error(400, 'Seller identity is not set');
