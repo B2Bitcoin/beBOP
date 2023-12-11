@@ -1,5 +1,12 @@
 import { createTestAccount, createTransport, type Transporter } from 'nodemailer';
-import { SMTP_FAKE, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USER } from '$env/static/private';
+import {
+	SMTP_FAKE,
+	SMTP_HOST,
+	SMTP_PASSWORD,
+	SMTP_PORT,
+	SMTP_USER,
+	SMTP_FROM
+} from '$env/static/private';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { htmlToText } from 'html-to-text';
 import { runtimeConfig } from './runtime-config';
@@ -48,7 +55,7 @@ export async function sendEmail(params: { to: string; subject: string; html: str
 	const transporter = await getTransporter();
 
 	return transporter.sendMail({
-		from: SMTP_USER,
+		from: SMTP_FROM || SMTP_USER,
 		to: params.to,
 		subject: params.subject,
 		html: params.html,
