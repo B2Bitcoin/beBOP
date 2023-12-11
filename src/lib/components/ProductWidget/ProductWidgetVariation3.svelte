@@ -5,6 +5,7 @@
 	import PriceTag from '../PriceTag.svelte';
 	import ProductType from '../ProductType.svelte';
 	import AddToCart from '../AddToCart.svelte';
+	import { useI18n } from '$lib/i18n';
 
 	export let pictures: Picture[] | [];
 	export let product: Pick<
@@ -25,6 +26,7 @@
 
 	let className = '';
 	export { className as class };
+	const { t } = useI18n();
 </script>
 
 <div
@@ -50,6 +52,7 @@
 					secondary
 				/>
 			</div>
+			<span class="font-semibold">{t('vatExcluded')}</span>
 		</div>
 		<a href="/product/{product._id}" class="flex flex-col">
 			<p class="mt-2 text-gray-800 max-w-[500px]">

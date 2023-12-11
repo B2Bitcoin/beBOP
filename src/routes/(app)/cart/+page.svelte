@@ -150,6 +150,7 @@
 								currency={price.currency}
 								secondary
 							/>
+							<span class="font-semibold">{t('vatExcluded')}</span>
 						</div>
 					</form>
 
