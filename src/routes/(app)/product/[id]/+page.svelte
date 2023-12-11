@@ -240,6 +240,7 @@
 						secondary
 						class="text-xl"
 					/>
+					<span class="font-semibold">{t('product.vatExcluded')}</span>
 				</div>
 
 				{#if data.discount}
@@ -363,6 +364,27 @@
 									</select>
 								</label>
 							{/if}
+							{#if data.product.deposit}
+								<label class="checkbox-label">
+									<input type="radio" value="partial" name="deposit" checked />
+									{t('product.deposit.payPercentage', {
+										percentage: (data.product.deposit.percentage / 100).toLocaleString($locale, {
+											style: 'percent'
+										})
+									})}: <PriceTag
+										main
+										amount={(data.product.price.amount * data.product.deposit.percentage) / 100}
+										currency={data.product.price.currency}
+										inline
+									/>
+								</label>
+								{#if !data.product.deposit.enforce}
+									<label class="checkbox-label">
+										<input type="radio" value="full" name="deposit" />
+										{t('product.deposit.payFullPrice')}
+									</label>
+								{/if}
+							{/if}
 							{#if errorMessage}
 								<p class="text-red-500">{errorMessage}</p>
 							{/if}
@@ -377,7 +399,6 @@
 									>{t(`product.cta.${verb}`)}</button
 								>
 								<button
-									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
 									class="btn body-cta body-secondaryCTA"
@@ -386,10 +407,9 @@
 								</button>
 							{:else}
 								<button
-									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
-									class="btn body-cta body-secondaryCTA"
+									class="btn body-cta body-mainCTA"
 								>
 									{verb}
 								</button>
@@ -412,6 +432,13 @@
 							})
 						})}
 					</p>
+				{/if}
+				{#if data.product.cta}
+					{#each data.product.cta as cta}
+						<a href={cta.href} class="btn body-cta body-secondaryCTA">
+							{cta.label}
+						</a>
+					{/each}
 				{/if}
 			</div>
 		</div>

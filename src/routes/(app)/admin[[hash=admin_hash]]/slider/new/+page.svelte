@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { uploadPicture } from '$lib/types/Picture';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId';
+
+	export let data;
 
 	let submitting = false;
 	let files: FileList;
@@ -16,36 +19,7 @@
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
 		try {
-			const fileSize = files[0].size;
-			const fileName = files[0].name;
-
-			const response = await fetch('/admin/picture/prepare', {
-				method: 'POST',
-				body: JSON.stringify({
-					fileName,
-					fileSize
-				}),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-
-			if (!response.ok) {
-				throw new Error(await response.text());
-			}
-
-			const body = await response.json();
-
-			const { uploadUrl, pictureId } = body;
-
-			const uploadResponse = await fetch(uploadUrl, {
-				method: 'PUT',
-				body: files[0]
-			});
-
-			if (!uploadResponse.ok) {
-				throw new Error(await uploadResponse.text());
-			}
+			const pictureId = await uploadPicture(data.adminPrefix, files[0]);
 
 			formData.set('sliderPictureId', pictureId);
 

@@ -1,6 +1,5 @@
-name: deploy
+name: deploy-lxg
 
-# push is not triggered by the sync-lxg job, so we need to trigger this manually
 # on:
 #   push:
 #     branches:
@@ -33,6 +32,7 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # ssh-keygen -H -F [<host>]:<port>
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
       - name: Deploy
         run: |

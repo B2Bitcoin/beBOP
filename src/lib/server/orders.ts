@@ -1,9 +1,10 @@
-import type {
-	DiscountType,
-	Order,
-	OrderPayment,
-	OrderPaymentStatus,
-	Price
+import {
+	orderAmountWithNoPaymentsCreated,
+	type DiscountType,
+	type Order,
+	type OrderPayment,
+	type OrderPaymentStatus,
+	type Price
 } from '$lib/types/Order';
 import { ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
@@ -260,15 +261,19 @@ export async function onOrderPaymentFailed(
 		const ret = await collections.orders.findOneAndUpdate(
 			{
 				_id: order._id,
-				'payments._id': payment._id,
-				...(order.payments.every(
-					(payment) => payment.status === 'canceled' || payment.status === 'expired'
-				) &&
-					order.status === 'pending' && {
-						status: 'expired'
-					})
+				'payments._id': payment._id
 			},
-			{ $set: { 'payments.$.status': 'expired' } },
+			{
+				$set: {
+					'payments.$.status': 'expired',
+					...(order.payments.every(
+						(payment) => payment.status === 'canceled' || payment.status === 'expired'
+					) &&
+						order.status === 'pending' && {
+							status: 'expired'
+						})
+				}
+			},
 			{ returnDocument: 'after', session }
 		);
 		if (!ret.value) {
@@ -334,6 +339,7 @@ export async function createOrder(
 		quantity: number;
 		product: Product;
 		customPrice?: { amount: number; currency: Currency };
+		depositPercentage?: number;
 	}>,
 	paymentMethod: PaymentMethod,
 	params: {
@@ -360,10 +366,6 @@ export async function createOrder(
 			justification: string;
 		};
 		clientIp?: string;
-		/**
-		 * 0-100
-		 */
-		paymentPercentage?: number;
 	}
 ): Promise<Order['_id']> {
 	const npubAddress = params.notifications?.paymentStatus?.npub;
@@ -373,13 +375,6 @@ export async function createOrder(
 
 	if (!canBeNotified && paymentMethod !== 'cash') {
 		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
-	}
-
-	if (
-		params.paymentPercentage &&
-		(params.paymentPercentage < 10 || params.paymentPercentage > 100)
-	) {
-		throw error(400, 'Invalid payment percentage');
 	}
 
 	const products = items.map((item) => item.product);
@@ -428,21 +423,36 @@ export async function createOrder(
 		}
 	}
 
-	let totalSatoshis = toSatoshis(shippingPrice.amount, shippingPrice.currency);
+	const shippingSatoshis = toSatoshis(shippingPrice.amount, shippingPrice.currency);
+	let totalSatoshis = shippingSatoshis;
+	let partialSatoshis = shippingSatoshis;
 
 	const itemPrices = items.map((item) => {
-		const price = parseFloat(item.product.price.amount.toString());
-
 		const quantity = item.quantity;
-		if (item.product.type !== 'subscription' && item.customPrice) {
-			const customPrice = parseFloat(item.customPrice.amount.toString());
-			return { amount: customPrice * quantity, currency: item.customPrice.currency };
-		} else {
-			return { amount: price * quantity, currency: item.product.price.currency };
-		}
+		const price =
+			item.product.type !== 'subscription' && item.customPrice
+				? item.customPrice || item.product.price
+				: item.product.price;
+
+		return { amount: price.amount * quantity, currency: price.currency };
 	});
 
 	totalSatoshis += sumCurrency('SAT', itemPrices);
+
+	const partialItemPrices = items.map((item) => {
+		const quantity = item.quantity;
+		const price =
+			item.product.type !== 'subscription' && item.customPrice
+				? item.customPrice || item.product.price
+				: item.product.price;
+
+		return {
+			amount: (price.amount * quantity * (item.depositPercentage ?? 100)) / 100,
+			currency: price.currency
+		};
+	});
+
+	partialSatoshis += sumCurrency('SAT', partialItemPrices);
 
 	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
 	const vat: Order['vat'] =
@@ -456,9 +466,23 @@ export async function createOrder(
 					},
 					rate: vatRate(vatCountry)
 			  };
+	const partialVat: Order['vat'] =
+		!vatCountry || runtimeConfig.vatExempted || params.reasonFreeVat
+			? undefined
+			: {
+					country: vatCountry,
+					price: {
+						amount: fixCurrencyRounding(partialSatoshis * (vatRate(vatCountry) / 100), 'SAT'),
+						currency: 'SAT'
+					},
+					rate: vatRate(vatCountry)
+			  };
 
 	if (vat) {
 		totalSatoshis += vat.price.amount;
+	}
+	if (partialVat) {
+		partialSatoshis += partialVat.price.amount;
 	}
 
 	const orderNumber = await generateOrderNumber();
@@ -501,6 +525,7 @@ export async function createOrder(
 			currency: params.discount.type === 'fiat' ? runtimeConfig.mainCurrency : 'SAT',
 			amount: params.discount.type === 'fiat' ? params?.discount?.amount : amount
 		};
+		partialSatoshis -= (amount * partialSatoshis) / totalSatoshis;
 		totalSatoshis -= amount;
 	}
 
@@ -562,10 +587,6 @@ export async function createOrder(
 		throw error(400, 'Missing billing address for deliveryless order');
 	}
 
-	const satoshisToPay = params.paymentPercentage
-		? Math.floor((totalSatoshis * params.paymentPercentage) / 100)
-		: totalSatoshis;
-
 	const paymentId = new ObjectId();
 	await withTransaction(async (session) => {
 		const expiresAt = paymentMethodExpiration(paymentMethod);
@@ -582,6 +603,7 @@ export async function createOrder(
 					quantity: item.quantity,
 					product: item.product,
 					customPrice: item.customPrice,
+					depositPercentage: item.depositPercentage,
 					currencySnapshot: {
 						main: {
 							price: {
@@ -659,20 +681,20 @@ export async function createOrder(
 					{
 						_id: paymentId,
 						method: paymentMethod,
-						price: paymentPrice(paymentMethod, { currency: 'SAT', amount: satoshisToPay }),
+						price: paymentPrice(paymentMethod, { currency: 'SAT', amount: partialSatoshis }),
 						currencySnapshot: {
 							main: {
-								amount: toCurrency(runtimeConfig.mainCurrency, satoshisToPay, 'SAT'),
+								amount: toCurrency(runtimeConfig.mainCurrency, partialSatoshis, 'SAT'),
 								currency: runtimeConfig.mainCurrency
 							},
 							...(runtimeConfig.secondaryCurrency && {
 								secondary: {
-									amount: toCurrency(runtimeConfig.secondaryCurrency, satoshisToPay, 'SAT'),
+									amount: toCurrency(runtimeConfig.secondaryCurrency, partialSatoshis, 'SAT'),
 									currency: runtimeConfig.secondaryCurrency
 								}
 							}),
 							priceReference: {
-								amount: toCurrency(runtimeConfig.priceReferenceCurrency, satoshisToPay, 'SAT'),
+								amount: toCurrency(runtimeConfig.priceReferenceCurrency, partialSatoshis, 'SAT'),
 								currency: runtimeConfig.priceReferenceCurrency
 							}
 						},
@@ -681,7 +703,7 @@ export async function createOrder(
 							method: paymentMethod,
 							orderId,
 							orderNumber,
-							toPay: paymentPrice(paymentMethod, { currency: 'SAT', amount: satoshisToPay }),
+							toPay: paymentPrice(paymentMethod, { currency: 'SAT', amount: partialSatoshis }),
 							paymentId,
 							expiresAt
 						})),
@@ -917,7 +939,7 @@ async function generateCardPaymentInfo(params: {
 					params.toPay.currency
 				),
 				currency: runtimeConfig.sumUp.currency,
-				checkout_reference: params.orderId,
+				checkout_reference: params.orderId + '-' + params.paymentId,
 				merchant_code: runtimeConfig.sumUp.merchantCode,
 				redirect_url: `${ORIGIN}/order/${params.orderId}`,
 				description: 'Order ' + params.orderNumber,
@@ -972,17 +994,14 @@ function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 export async function addOrderPayment(
 	order: Order,
 	paymentMethod: PaymentMethod,
-	params?: { paymentPercentage?: number }
+	amount: number,
+	/**
+	 * `null` expiresAt means the payment method has no expiration
+	 */
+	opts?: { expiresAt?: Date | null }
 ) {
 	if (order.status !== 'pending') {
 		throw error(400, 'Order is not pending');
-	}
-
-	if (
-		params?.paymentPercentage &&
-		(params.paymentPercentage < 10 || params.paymentPercentage > 100)
-	) {
-		throw error(400, 'Invalid payment percentage');
 	}
 
 	if (isOrderFullyPaid(order, { includePendingOrders: true })) {
@@ -994,21 +1013,9 @@ export async function addOrderPayment(
 	const secondaryCurrency = order.currencySnapshot.secondary?.totalPrice.currency;
 	const priceReferenceCurrency = order.currencySnapshot.priceReference.totalPrice.currency;
 
-	const alreadyProcessedAmount = sumCurrency(
-		mainCurrency,
-		order.payments.map((payment) => payment.currencySnapshot.main)
-	);
-
-	const maxAmountToPay = params?.paymentPercentage
-		? order.currencySnapshot.main.totalPrice.amount * params.paymentPercentage
-		: order.currencySnapshot.main.totalPrice.amount;
-
 	const priceToPay = {
 		amount: fixCurrencyRounding(
-			Math.min(
-				maxAmountToPay,
-				order.currencySnapshot.main.totalPrice.amount - alreadyProcessedAmount
-			),
+			Math.min(amount, orderAmountWithNoPaymentsCreated(order)),
 			mainCurrency
 		),
 		currency: mainCurrency
@@ -1019,7 +1026,8 @@ export async function addOrderPayment(
 	}
 
 	const paymentId = new ObjectId();
-	const expiresAt = paymentMethodExpiration(paymentMethod);
+	const expiresAt =
+		opts?.expiresAt !== undefined ? opts.expiresAt : paymentMethodExpiration(paymentMethod);
 
 	const payment: OrderPayment = {
 		_id: paymentId,
@@ -1049,7 +1057,7 @@ export async function addOrderPayment(
 			orderNumber: order.number,
 			toPay: priceToPay,
 			paymentId,
-			expiresAt
+			expiresAt: expiresAt ?? undefined
 		}))
 	};
 

@@ -3,6 +3,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { uploadPicture } from '$lib/types/Picture.js';
 
 	export let data;
 
@@ -30,7 +31,7 @@
 			];
 			await Promise.all(
 				picturesToUpload.map(async (picture) => {
-					const pictureId = await filesUpload(picture.file);
+					const pictureId = await uploadPicture(data.adminPrefix, picture.file[0]);
 					formData.set(picture.id, pictureId);
 				})
 			);
@@ -51,39 +52,6 @@
 		} finally {
 			submitting = true;
 		}
-	}
-	async function filesUpload(files: FileList) {
-		const fileSize = files[0].size;
-		const fileName = files[0].name;
-
-		const response = await fetch(`${data.adminPrefix}/picture/prepare`, {
-			method: 'POST',
-			body: JSON.stringify({
-				fileName,
-				fileSize
-			}),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-
-		if (!response.ok) {
-			throw new Error(await response.text());
-		}
-
-		const body = await response.json();
-
-		const { uploadUrl, pictureId } = body;
-
-		const uploadResponse = await fetch(uploadUrl, {
-			method: 'PUT',
-			body: files[0]
-		});
-
-		if (!uploadResponse.ok) {
-			throw new Error(await uploadResponse.text());
-		}
-		return pictureId;
 	}
 </script>
 

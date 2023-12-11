@@ -41,6 +41,9 @@ async function getTransporter() {
 	return _transporter;
 }
 
+/**
+ * Do not call this function directly, instead insert the email in `collections.emailNotifications` and let the worker handle it.
+ */
 export async function sendEmail(params: { to: string; subject: string; html: string }) {
 	const transporter = await getTransporter();
 

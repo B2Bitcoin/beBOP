@@ -22,6 +22,8 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
+	import { uploadPicture } from '$lib/types/Picture';
+	import { currencies } from '$lib/stores/currencies';
 
 	export let tags: Pick<Tag, '_id' | 'name'>[];
 	export let isNew = false;
@@ -41,7 +43,7 @@
 		shipping: false,
 		price: {
 			amount: 0,
-			currency: 'EUR'
+			currency: $currencies.priceReference
 		},
 		availableDate: undefined,
 		displayShortDescription: false,
@@ -105,41 +107,16 @@
 			}
 
 			if (!duplicateFromId && isNew) {
-				const fileSize = files[0].size;
-				const fileName = files[0].name;
-
-				const response = await fetch(`${adminPrefix}/picture/prepare`, {
-					method: 'POST',
-					body: JSON.stringify({
-						fileName,
-						fileSize
-					}),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
-
-				if (!response.ok) {
-					throw new Error(await response.text());
-				}
-
-				const body = await response.json();
-
-				const { uploadUrl, pictureId } = body;
-
-				const uploadResponse = await fetch(uploadUrl, {
-					method: 'PUT',
-					body: files[0]
-				});
-
-				if (!uploadResponse.ok) {
-					throw new Error(await uploadResponse.text());
-				}
+				const pictureId = await uploadPicture(adminPrefix, files[0]);
 
 				formData.set('pictureId', pictureId);
 			}
 
-			const finalResponse = await fetch(formElement.action, {
+			const action = (event.submitter as HTMLButtonElement | null)?.formAction.includes('?/')
+				? (event.submitter as HTMLButtonElement).formAction
+				: formElement.action;
+
+			const finalResponse = await fetch(action, {
 				method: 'POST',
 				body: formData
 			});
@@ -615,6 +592,36 @@
 				</tr>
 			</tbody>
 		</table>
+		{#if product.cta}
+			<h3 class="text-xl">Add custom CTA</h3>
+			{#each [...product.cta, ...Array(3).fill({ href: '', label: '' })].slice(0, 3) as link, i}
+				<div class="flex gap-4">
+					<label class="form-label">
+						Text
+						<input type="text" name="ctaLinks[{i}].label" class="form-input" value={link.label} />
+					</label>
+					<label class="form-label">
+						Url
+						<input type="text" name="ctaLinks[{i}].href" class="form-input" value={link.href} />
+					</label>
+				</div>
+			{/each}
+		{:else}
+			<h3 class="text-xl">Add custom CTA</h3>
+			{#each [0, 1, 2] as i}
+				<div class="flex gap-4">
+					<label class="form-label">
+						Text
+						<input type="text" name="ctaLinks[{i}].label" class="form-input" />
+					</label>
+					<label class="form-label">
+						Url
+						<input type="text" name="ctaLinks[{i}].href" class="form-input" />
+					</label>
+				</div>
+			{/each}
+		{/if}
+
 		{#if !isNew}
 			<label class="block w-full mt-4">
 				Add CMS code and widgets before product page core

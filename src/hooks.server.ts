@@ -21,6 +21,7 @@ import {
 	GITHUB_SECRET,
 	GOOGLE_ID,
 	GOOGLE_SECRET,
+	LINK_PRELOAD_HEADERS,
 	ORIGIN,
 	TWITTER_ID,
 	TWITTER_SECRET
@@ -91,6 +92,11 @@ const addSecurityHeaders: Handle = async ({ event, resolve }) => {
 	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 	response.headers.set('Feature-Policy', 'camera none; microphone none; geolocation none');
 	response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+
+	// Sveltekit sends huge link headers, which can break w/ nginx unless setting "proxy_buffer_size   16k;"
+	if (LINK_PRELOAD_HEADERS !== 'true' && LINK_PRELOAD_HEADERS !== '1') {
+		response.headers.delete('Link');
+	}
 
 	return response;
 };
@@ -223,6 +229,17 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			}
 		});
 	}
+
+	if (event.locals.user) {
+		const role = await collections.roles.findOne({
+			_id: event.locals.user.roleId
+		});
+
+		if (role) {
+			event.locals.user.role = role;
+		}
+	}
+
 	// Protect any routes under /admin
 	if (isAdminUrl && !isAdminLoginLogoutUrl) {
 		if (!event.locals.user) {
@@ -233,17 +250,13 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 
-		const role = await collections.roles.findOne({
-			_id: event.locals.user.roleId
-		});
-
-		if (!role) {
+		if (!event.locals.user.role) {
 			throw error(403, 'Your role does not exist in DB.');
 		}
 
 		if (
 			!isAllowedOnPage(
-				role,
+				event.locals.user.role,
 				event.url.pathname,
 				['get', 'head', 'options'].includes(method) ? 'read' : 'write'
 			)

@@ -28,6 +28,7 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `LND_REST_URL` - The LND Rest interface URL. Set to http://127.0.0.1:8080 if you run a lnd node locally with default configuration
 - `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
 - `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`. Example command: `cat .lnd/data/chain/bitcoin/mainnet/admin.macaroon | hexdump -e '16/1 "%02X"'`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
+- `LINK_PRELOAD_HEADERS` - Set to `true` to enable the `Link rel=preload` header, see [explanation](https://nitropack.io/blog/post/link-rel-preload-explained). If you do so, you may need to configure nginx to allow bigger header with `proxy_buffer_size   16k`, see [explanation](https://www.getpagespeed.com/server-setup/nginx/tuning-proxy_buffer_size-in-nginx).
 - `MONGODB_URL` - The connection URL to the MongoDB replicaset
 - `MONGODB_DB` - The DB name, defaulting to "bootik"
 - `NOSTR_PRIVATE_KEY` - To send notifications
@@ -60,10 +61,10 @@ You can also set the following environment variables to allow SSO. Set your redi
 
 ```shell
 pnpm run build
-BODY_SIZE_LIMIT=20000000 node build/index.js
+node build/index.js
 
 # If behind a reverse proxy, you can use the following config:
-# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 BODY_SIZE_LIMIT=20000000 node build/index.js
+# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 node build/index.js
 ```
 
 You can set the `PORT` environment variable to change from the default 3000 port to another port.
@@ -71,19 +72,13 @@ You can set the `PORT` environment variable to change from the default 3000 port
 You can also use [pm2](https://pm2.keymetrics.io/docs/usage/quick-start/) to manage your node application, and run it on multiple cores.
 
 ```shell
-BODY_SIZE_LIMIT=20000000 pm2 start --name bootik --update-env build/index.js
+pm2 start --name bootik --update-env build/index.js
 
 # If behind a reverse proxy, you can use the following config:
-# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 BODY_SIZE_LIMIT=20000000 pm2 start --name bootik --update-env build/index.js
+# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 pm2 start --name bootik --update-env build/index.js
 ```
 
-Sometimes the app will respond with very long link headers, and nginx will show a 502 error. To fix this, you can add this to your nginx config:
-
-```nginx
-proxy_busy_buffers_size   512k;
-proxy_buffers   4 512k;
-proxy_buffer_size   256k;
-```
+Note: for uploading large payloads you may want to set the `BODY_SIZE_LIMIT=20000000` environment variable to allow 20MB payloads for example. It should not be needed for normal usage.
 
 ### Maintenance mode
 
