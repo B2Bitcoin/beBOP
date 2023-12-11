@@ -47,6 +47,7 @@
 	},
 	"checkout": {
 		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (<0>pourquoi?</0>)",
+		"agreeOnlyDeposit": "Je comprends que je dois m'acquitter du solde hors-acompte (<0>pourquoi ?</0>)",
 		"backToCart": "Retour au panier",
 		"billingInfo": "Adresse de facturation",
 		"cta": {

@@ -163,13 +163,35 @@ export const actions = {
 			throw error(400, 'Reason for free VAT is required');
 		}
 
-		const collectIP = z
+		const agreements = z
 			.object({
-				allowCollectIP: z.boolean({ coerce: true }).default(false)
+				allowCollectIP: z.boolean({ coerce: true }).default(false),
+				isOnlyDeposit: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
-				allowCollectIP: formData.get('allowCollectIP')
+				allowCollectIP: formData.get('allowCollectIP'),
+				isOnlyDeposit: formData.get('isOnlyDeposit')
 			});
+
+		if (!agreements.allowCollectIP && runtimeConfig.collectIPOnDeliverylessOrders && isDigital) {
+			throw error(400, 'You must allow the collection of your IP address');
+		}
+
+		if (
+			!agreements.isOnlyDeposit &&
+			cart.items.some(
+				(item) =>
+					item.depositPercentage !== undefined &&
+					item.depositPercentage !== null &&
+					(item.depositPercentage ?? 0) < 100 &&
+					(item.customPrice || byId[item.productId].price).amount > 0
+			)
+		) {
+			throw error(
+				400,
+				'You must acknowledge that you are only paying a deposit and will have to pay the rest later'
+			);
+		}
 
 		rateLimit(locals.clientIp, 'email', 10, { minutes: 1 });
 
@@ -212,7 +234,7 @@ export const actions = {
 							justification: discountJustification
 						}
 					}),
-				...(collectIP.allowCollectIP && { clientIp: locals.clientIp })
+				...(agreements.allowCollectIP && { clientIp: locals.clientIp })
 			}
 		);
 
