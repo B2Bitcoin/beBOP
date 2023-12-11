@@ -240,6 +240,7 @@
 						secondary
 						class="text-xl"
 					/>
+					<span class="font-semibold">{t('product.vatExcluded')}</span>
 				</div>
 
 				{#if data.discount}
@@ -398,7 +399,6 @@
 									>{t(`product.cta.${verb}`)}</button
 								>
 								<button
-									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
 									class="btn body-cta body-secondaryCTA"
@@ -407,10 +407,9 @@
 								</button>
 							{:else}
 								<button
-									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
-									class="btn body-cta body-secondaryCTA"
+									class="btn body-cta body-mainCTA"
 								>
 									{verb}
 								</button>
@@ -433,6 +432,13 @@
 							})
 						})}
 					</p>
+				{/if}
+				{#if data.product.cta}
+					{#each data.product.cta as cta}
+						<a href={cta.href} class="btn body-cta body-secondaryCTA">
+							{cta.label}
+						</a>
+					{/each}
 				{/if}
 			</div>
 		</div>
