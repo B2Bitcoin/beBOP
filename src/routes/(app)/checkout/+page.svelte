@@ -415,6 +415,9 @@
 							};
 						}}
 					>
+						{#if item.depositPercentage ?? undefined !== undefined}
+							<input type="hidden" name="depositPercentage" value={item.depositPercentage} />
+						{/if}
 						<a href="/product/{item.product._id}">
 							<h3 class="text-base">{item.product.name}</h3>
 						</a>

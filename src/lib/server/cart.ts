@@ -183,7 +183,7 @@ export async function addToCartInDb(
 export async function removeFromCartInDb(
 	product: Product,
 	quantity: number,
-	params: { user: UserIdentifier; totalQuantity?: boolean }
+	params: { user: UserIdentifier; totalQuantity?: boolean; depositPercentage?: number }
 ) {
 	if (quantity < 0) {
 		throw new TypeError('Quantity cannot be negative');
@@ -191,7 +191,16 @@ export async function removeFromCartInDb(
 
 	const cart = await getCartFromDb(params);
 
-	const item = cart.items.find((i) => i.productId === product._id);
+	let item = cart.items.find(
+		(i) =>
+			i.productId === product._id &&
+			(i.depositPercentage ?? undefined) === (params.depositPercentage ?? undefined)
+	);
+
+	// Like when calling from nostr handle message, we don't know which deposit percentage was used
+	if (!item) {
+		item = cart.items.find((i) => i.productId === product._id);
+	}
 
 	if (!item) {
 		return cart;

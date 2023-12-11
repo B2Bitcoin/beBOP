@@ -93,6 +93,9 @@
 							};
 						}}
 					>
+						{#if item.depositPercentage ?? undefined !== undefined}
+							<input type="hidden" name="depositPercentage" value={item.depositPercentage} />
+						{/if}
 						<a
 							href="/product/{item.product._id}"
 							class="w-[138px] h-[138px] min-w-[138px] min-h-[138px] rounded flex items-center"
