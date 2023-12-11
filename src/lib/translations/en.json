@@ -495,7 +495,7 @@
 			"resource": "Resource",
 			"subscription": "Subscription"
 		},
-		"vatExcludedd": "VAT excluded"
+		"vatExcluded": "VAT excluded"
 	},
 	"subscription": {
 		"associated": {

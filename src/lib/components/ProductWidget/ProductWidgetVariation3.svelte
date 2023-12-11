@@ -51,7 +51,7 @@
 					currency={product.price.currency}
 					secondary
 				/>
-				<span class="font-semibold">{t('product.vatExcludedd')}</span>
+				<span class="font-semibold">{t('product.vatExcluded')}</span>
 			</div>
 		</div>
 		<a href="/product/{product._id}" class="flex flex-col">
