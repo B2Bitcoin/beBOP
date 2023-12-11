@@ -230,6 +230,7 @@
 									product={$productAddedToCart.product}
 									picture={$productAddedToCart.picture}
 									customPrice={$productAddedToCart.customPrice}
+									depositPercentage={$productAddedToCart.depositPercentage}
 								/>
 							</Popup>
 						{:else if cartOpen}

@@ -11,13 +11,16 @@
 	export let product: BasicProductFrontend;
 	export let picture: PictureType | undefined;
 	export let customPrice: { amount: number; currency: Currency } | undefined;
+	export let depositPercentage: number | undefined;
 
 	let className = '';
 	export { className as class };
 
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 
 	const dispatch = createEventDispatcher<{ dismiss: void }>();
+
+	$: price = customPrice || product.price;
 </script>
 
 <div class="{className} cartPreview flex flex-wrap p-2 gap-4 relative">
@@ -25,21 +28,15 @@
 	<div class="flex flex-col grow gap-1">
 		<h2 class="body-title text-[22px] font-medium">{t('product.addedToCart')}</h2>
 		<h3 class="text-base font-light">{product.name}</h3>
-		{#if customPrice}
-			<PriceTag
-				currency={customPrice.currency}
-				class="text-xl"
-				amount={customPrice.amount}
-				main
-			/>
-		{:else}
-			<PriceTag
-				currency={product.price.currency}
-				class="text-xl body-secondaryText"
-				amount={product.price.amount}
-				main
-			/>
-		{/if}
+		<PriceTag
+			currency={price.currency}
+			class="text-xl body-secondaryText"
+			amount={(price.amount * (depositPercentage ?? 100)) / 100}
+			main
+			>{depositPercentage
+				? `(${(depositPercentage / 100).toLocaleString($locale, { style: 'percent' })})`
+				: ''}</PriceTag
+		>
 
 		<div class="flex gap-2">
 			<a href="/cart" class="grow basis-0 btn cartPreview-mainCTA"> {t('cart.cta.view')} </a>
