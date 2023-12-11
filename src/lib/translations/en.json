@@ -17,6 +17,9 @@
 		"empty": "Cart is empty",
 		"items": "Products",
 		"quantity": "Quantity",
+		"remaining": "Remaining after checkout",
+		"remainingHelpText": "For items with deposits, the current order is a partial payment.\nTo complete the purchase, you will need to make another payment with the following amount.\n(VAT is already included in the amount)",
+		"remainingShort": "Later",
 		"sr": {
 			"decrease": "Decrease quantity",
 			"increase": "Increase quantity",

@@ -17,6 +17,9 @@
 		"empty": "Le panier est vide",
 		"items": "Produits",
 		"quantity": "Quantité",
+		"remaining": "Reste après commande",
+		"remainingHelpText": "Pour les articles sur acompte, la commande actuelle est un dépôt partiel.\nPour finaliser l'achat, la somme suivante devra être payée ultérieurement.\n(La TVA est déjà incluse dans le montant)",
+		"remainingShort": "Plus tard",
 		"sr": {
 			"decrease": "Diminuer la quantité",
 			"increase": "Augmenter la quantité",

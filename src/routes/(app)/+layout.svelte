@@ -50,7 +50,7 @@
 	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
-	$: totalPrice = sumCurrency(
+	$: partialPrice = sumCurrency(
 		UNDERLYING_CURRENCY,
 		items.map((item) => ({
 			currency: (item.customPrice || item.product.price).currency,
@@ -61,8 +61,17 @@
 				100
 		}))
 	);
-	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: totalPriceWithVat = totalPrice + vat;
+	$: totalPrice = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount: (item.customPrice || item.product.price).amount * item.quantity
+		}))
+	);
+	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+	$: totalPriceWithVat =
+		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+	$: partialPriceWithVat = partialPrice + partialVat;
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
@@ -333,15 +342,25 @@
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.vat')} ({data.vatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={vat}
+												amount={partialVat}
 												main
 											/>
 										</div>
 									{/if}
 									<div class="flex gap-1 text-xl justify-end items-center">
 										{t('cart.total')}
-										<PriceTag currency={UNDERLYING_CURRENCY} amount={totalPriceWithVat} main />
+										<PriceTag currency={UNDERLYING_CURRENCY} amount={partialPriceWithVat} main />
 									</div>
+									{#if totalPriceWithVat !== partialPriceWithVat}
+										<div class="flex gap-1 text-lg justify-end items-center">
+											{t('cart.remainingShort')}
+											<PriceTag
+												currency={UNDERLYING_CURRENCY}
+												amount={totalPriceWithVat - partialPriceWithVat}
+												main
+											/>
+										</div>
+									{/if}
 									<a href="/cart" class="btn cartPreview-mainCTA mt-1 whitespace-nowrap">
 										{t('cart.cta.view')}
 									</a>

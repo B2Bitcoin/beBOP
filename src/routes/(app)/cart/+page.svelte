@@ -25,7 +25,7 @@
 	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
 	$: items = data.cart || [];
-	$: totalPrice =
+	$: partialPrice =
 		sumCurrency(
 			UNDERLYING_CURRENCY,
 			items.map((item) => ({
@@ -37,9 +37,19 @@
 					100
 			}))
 		) + (deliveryFees || 0);
+	$: totalPrice =
+		sumCurrency(
+			UNDERLYING_CURRENCY,
+			items.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount: (item.customPrice || item.product.price).amount * item.quantity
+			}))
+		) + (deliveryFees || 0);
 
-	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: totalPriceWithVat = totalPrice + vat;
+	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+	$: partialPriceWithVat = partialPrice + partialVat;
+	$: totalPriceWithVat =
+		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 
 	const { t, locale, countryName } = useI18n();
 </script>
@@ -205,8 +215,13 @@
 						</p>
 					</div>
 					<div class="flex flex-col items-end">
-						<PriceTag amount={vat} currency={UNDERLYING_CURRENCY} main class="text-[28px]" />
-						<PriceTag class="text-base" amount={vat} currency={UNDERLYING_CURRENCY} secondary />
+						<PriceTag amount={partialVat} currency={UNDERLYING_CURRENCY} main class="text-[28px]" />
+						<PriceTag
+							class="text-base"
+							amount={partialVat}
+							currency={UNDERLYING_CURRENCY}
+							secondary
+						/>
 					</div>
 				</div>
 			{/if}
@@ -214,19 +229,41 @@
 				<h2 class="text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={totalPriceWithVat}
+						amount={partialPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						main
 						class="text-[32px]"
 					/>
 					<PriceTag
 						class="text-base"
-						amount={totalPriceWithVat}
+						amount={partialPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
 			</div>
+			{#if totalPriceWithVat !== partialPriceWithVat}
+				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
+					<div class="flex flex-col">
+						<h2 class="text-[32px]">{t('cart.remaining')}:</h2>
+						<p class="text-sm whitespace-pre-wrap">{t('cart.remainingHelpText')}</p>
+					</div>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							amount={totalPriceWithVat - partialPriceWithVat}
+							currency={UNDERLYING_CURRENCY}
+							main
+							class="text-[32px]"
+						/>
+						<PriceTag
+							class="text-base"
+							amount={totalPriceWithVat - partialPriceWithVat}
+							currency={UNDERLYING_CURRENCY}
+							secondary
+						/>
+					</div>
+				</div>
+			{/if}
 			<div class="flex justify-end">
 				<a href="/checkout" class="btn body-cta body-mainCTA">{t('cart.cta.checkout')}</a>
 			</div>
