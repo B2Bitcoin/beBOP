@@ -91,9 +91,6 @@
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
 	$: actualVatRate = isDigital || data.vatSingleCountry ? data.vatRate : vatRate(actualCountry);
 
-	$: if (country !== data.sellerIdentity?.address.country && data.vatOutsideCountry) {
-		actualVatRate = 0;
-	}
 	$: totalPrice =
 		sumCurrency(
 			UNDERLYING_CURRENCY,
@@ -123,10 +120,8 @@
 	>
 		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
 			<h1 class="page-title body-title">{t('checkout.title')}</h1>
-
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
-
 				{#if isDigital}
 					<p class="col-span-6">
 						{t('checkout.digitalNoShippingNeeded')}
