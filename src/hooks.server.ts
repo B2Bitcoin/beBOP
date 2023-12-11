@@ -229,6 +229,17 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			}
 		});
 	}
+
+	if (event.locals.user) {
+		const role = await collections.roles.findOne({
+			_id: event.locals.user.roleId
+		});
+
+		if (role) {
+			event.locals.user.role = role;
+		}
+	}
+
 	// Protect any routes under /admin
 	if (isAdminUrl && !isAdminLoginLogoutUrl) {
 		if (!event.locals.user) {
@@ -239,17 +250,13 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw error(403, 'You are not allowed to access this page.');
 		}
 
-		const role = await collections.roles.findOne({
-			_id: event.locals.user.roleId
-		});
-
-		if (!role) {
+		if (!event.locals.user.role) {
 			throw error(403, 'Your role does not exist in DB.');
 		}
 
 		if (
 			!isAllowedOnPage(
-				role,
+				event.locals.user.role,
 				event.url.pathname,
 				['get', 'head', 'options'].includes(method) ? 'read' : 'write'
 			)
