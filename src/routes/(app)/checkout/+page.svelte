@@ -4,13 +4,11 @@
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { COUNTRIES } from '$lib/types/Country';
 	import { bech32 } from 'bech32';
 	import { typedValues } from '$lib/utils/typedValues';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import { computeDeliveryFees } from '$lib/types/Cart';
-	import { typedKeys } from '$lib/utils/typedKeys';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
@@ -21,18 +19,22 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
+	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
 
 	export let data;
 
 	let actionCount = 0;
-	let country = data.personalInfoConnected?.address?.country ?? typedKeys(COUNTRIES)[0];
+	const defaultCountry =
+		(data.personalInfoConnected?.address?.country ?? (data.countryCode as CountryAlpha2)) ||
+		(data.vatCountry as CountryAlpha2);
+	let country = defaultCountry;
 
 	let isFreeVat = false;
 	let addDiscount = false;
 	let discountAmount: number;
 	let discountType: DiscountType;
 
-	const { t } = useI18n();
+	const { t, locale, countryName, sortedCountryCodes } = useI18n();
 
 	const feedItems = [
 		{ key: 'paymentStatus', label: t('checkout.paymentStatus') }
@@ -77,13 +79,6 @@
 		method === 'bitcoin' ? totalSatoshi >= 10_000 : true
 	);
 
-	const paymentMethodDesc = {
-		bitcoin: t('checkout.paymentMethod.bitcoin'),
-		lightning: t('checkout.paymentMethod.lighthing'),
-		cash: t('checkout.paymentMethod.cash'),
-		card: t('checkout.paymentMethod.card')
-	};
-
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
 	$: paymentMethod = typedInclude(paymentMethods, paymentMethod)
 		? paymentMethod
@@ -94,15 +89,18 @@
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
-	$: actualVatRate =
-		isDigital || data.vatSingleCountry ? data.vatRate : data.vatRates[actualCountry] ?? 0;
+	$: actualVatRate = isDigital || data.vatSingleCountry ? data.vatRate : vatRate(actualCountry);
 
 	$: totalPrice =
 		sumCurrency(
 			UNDERLYING_CURRENCY,
 			items.map((item) => ({
 				currency: (item.customPrice || item.product.price).currency,
-				amount: (item.customPrice || item.product.price).amount * item.quantity
+				amount:
+					((item.customPrice || item.product.price).amount *
+						item.quantity *
+						(item.depositPercentage ?? 100)) /
+					100
 			}))
 		) + (deliveryFees || 0);
 
@@ -113,6 +111,7 @@
 		(discountType === 'fiat' &&
 			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
 		(discountType === 'percentage' && discountAmount < 100);
+	let showBillingInfo = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -125,7 +124,7 @@
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
 
-				{#if isDigital && !data.isBillingAddressMandatory}
+				{#if isDigital}
 					<p class="col-span-6">
 						{t('checkout.digitalNoShippingNeeded')}
 					</p>
@@ -135,7 +134,7 @@
 						<input
 							type="text"
 							class="form-input"
-							name="firstName"
+							name="shipping.firstName"
 							autocomplete="given-name"
 							required
 							value={data.personalInfoConnected?.firstName ?? ''}
@@ -147,7 +146,7 @@
 						<input
 							type="text"
 							class="form-input"
-							name="lastName"
+							name="shipping.lastName"
 							autocomplete="family-name"
 							required
 							value={data.personalInfoConnected?.lastName ?? ''}
@@ -160,7 +159,7 @@
 							type="text"
 							class="form-input"
 							autocomplete="street-address"
-							name="address"
+							name="shipping.address"
 							required
 							value={data.personalInfoConnected?.address?.street ?? ''}
 						/>
@@ -168,13 +167,9 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="country" class="form-input" required bind:value={country}>
-							{#each Object.entries(COUNTRIES) as [code, countryTxt]}
-								<option
-									value={code}
-									selected={code === data.personalInfoConnected?.address?.country}
-									>{countryTxt}</option
-								>
+						<select name="shipping.country" class="form-input" required bind:value={country}>
+							{#each sortedCountryCodes() as code}
+								<option value={code}>{countryName(code)}</option>
 							{/each}
 						</select>
 					</label>
@@ -186,7 +181,7 @@
 
 						<input
 							type="text"
-							name="state"
+							name="shipping.state"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.state ?? ''}
 						/>
@@ -196,7 +191,7 @@
 
 						<input
 							type="text"
-							name="city"
+							name="shipping.city"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.city ?? ''}
 							required
@@ -207,15 +202,112 @@
 
 						<input
 							type="text"
-							name="zip"
+							name="shipping.zip"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.zip ?? ''}
 							required
 							autocomplete="postal-code"
 						/>
 					</label>
+
+					<label class="col-span-6 checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							form="checkout"
+							bind:checked={showBillingInfo}
+						/>
+						{t('checkout.differentBillingAddress')}
+					</label>
 				{/if}
 			</section>
+
+			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory)}
+				<section class="gap-4 grid grid-cols-6 w-4/5">
+					<h2 class="font-light text-2xl col-span-6">{t('checkout.billingInfo')}</h2>
+
+					<label class="form-label col-span-3">
+						{t('address.firstName')}
+						<input
+							type="text"
+							class="form-input"
+							name="billing.firstName"
+							autocomplete="given-name"
+							value={data.personalInfoConnected?.firstName ?? ''}
+							required
+						/>
+					</label>
+
+					<label class="form-label col-span-3">
+						{t('address.lastName')}
+						<input
+							type="text"
+							class="form-input"
+							name="billing.lastName"
+							autocomplete="family-name"
+							value={data.personalInfoConnected?.lastName ?? ''}
+							required
+						/>
+					</label>
+
+					<label class="form-label col-span-6">
+						{t('address.address')}
+						<input
+							type="text"
+							class="form-input"
+							autocomplete="street-address"
+							name="billing.address"
+							value={data.personalInfoConnected.address?.street ?? ''}
+							required
+						/>
+					</label>
+
+					<label class="form-label col-span-3">
+						{t('address.country')}
+						<select name="billing.country" class="form-input" required value={defaultCountry}>
+							{#each sortedCountryCodes() as code}
+								<option value={code}>{countryName(code)}</option>
+							{/each}
+						</select>
+					</label>
+
+					<span class="col-span-3" />
+
+					<label class="form-label col-span-2">
+						{t('address.state')}
+
+						<input
+							type="text"
+							name="billing.state"
+							class="form-input"
+							value={data.personalInfoConnected.address?.state ?? ''}
+						/>
+					</label>
+					<label class="form-label col-span-2">
+						{t('address.city')}
+
+						<input
+							type="text"
+							name="billing.city"
+							class="form-input"
+							value={data.personalInfoConnected.address?.city ?? ''}
+							required
+						/>
+					</label>
+					<label class="form-label col-span-2">
+						{t('address.zipCode')}
+
+						<input
+							type="text"
+							name="billing.zip"
+							class="form-input"
+							value={data.personalInfoConnected.address?.zip ?? ''}
+							required
+							autocomplete="postal-code"
+						/>
+					</label>
+				</section>
+			{/if}
 
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.payment.title')}</h2>
@@ -232,7 +324,8 @@
 							required
 						>
 							{#each paymentMethods as paymentMethod}
-								<option value={paymentMethod}>{paymentMethodDesc[paymentMethod]}</option>
+								<option value={paymentMethod}>{t('checkout.paymentMethod.' + paymentMethod)}</option
+								>
 							{/each}
 						</select>
 						{#if paymentMethods.length === 0}
@@ -295,6 +388,7 @@
 					<p>{t('checkout.numProducts', { count: data.cart?.length ?? 0 })}</p>
 				</div>
 				{#each items as item}
+					{@const price = item.customPrice || item.product.price}
 					<form
 						method="POST"
 						class="flex flex-col mt-2"
@@ -344,6 +438,7 @@
 										product={item.product}
 										class="text-sm"
 										hasDigitalFiles={item.digitalFiles.length >= 1}
+										depositPercentage={item.depositPercentage}
 									/>
 								</div>
 								<div>
@@ -356,33 +451,23 @@
 							</div>
 
 							<div class="flex flex-col ml-auto items-end justify-center">
-								{#if item.product.type !== 'subscription' && item.customPrice}
-									<PriceTag
-										class="text-2xl truncate"
-										amount={item.quantity * item.customPrice.amount}
-										currency={item.customPrice.currency}
-										main
-									/>
-									<PriceTag
-										amount={item.quantity * item.customPrice.amount}
-										currency={item.customPrice.currency}
-										class="text-base truncate"
-										secondary
-									/>
-								{:else}
-									<PriceTag
-										class="text-2xl truncate"
-										amount={item.quantity * item.product.price.amount}
-										currency={item.product.price.currency}
-										main
-									/>
-									<PriceTag
-										amount={item.quantity * item.product.price.amount}
-										currency={item.product.price.currency}
-										class="text-base truncate"
-										secondary
-									/>
-								{/if}
+								<PriceTag
+									class="text-2xl truncate"
+									amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
+									currency={price.currency}
+									main
+									>{item.depositPercentage
+										? `(${(item.depositPercentage / 100).toLocaleString($locale, {
+												style: 'percent'
+										  })})`
+										: ''}</PriceTag
+								>
+								<PriceTag
+									amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
+									currency={price.currency}
+									class="text-base truncate"
+									secondary
+								/>
 							</div>
 						</div>
 					</form>
@@ -422,7 +507,9 @@
 							<h3 class="text-base flex flex-row gap-2 items-center">
 								{t('cart.vat')} ({actualVatRate}%)
 								<div
-									title="{t('cart.vatRate', { country: actualCountry })}. {data.vatSingleCountry
+									title="{t('cart.vatRate', {
+										country: countryName(actualCountry)
+									})}. {data.vatSingleCountry
 										? t('cart.vatSellerCountry')
 										: isDigital
 										? `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`

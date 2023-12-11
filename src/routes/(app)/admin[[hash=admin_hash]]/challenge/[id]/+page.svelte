@@ -29,7 +29,7 @@
 
 <h1 class="text-3xl">Edit a challenge</h1>
 
-<form method="post" enctype="multipart/form-data" class="flex flex-col gap-4" on:submit={checkForm}>
+<form method="post" class="flex flex-col gap-4" on:submit={checkForm}>
 	<label class="form-label">
 		Challenge slug for CMS integration
 		<input type="text" disabled class="form-input" value={data.challenge._id} />

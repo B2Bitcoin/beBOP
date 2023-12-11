@@ -6,6 +6,7 @@ import type { UserIdentifier } from './UserIdentifier';
 import type { SellerIdentity } from './SellerIdentity';
 import type { PaymentMethod } from '$lib/server/payment-methods';
 import type { ObjectId } from 'mongodb';
+import { sumCurrency } from '$lib/utils/sumCurrency';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -26,7 +27,10 @@ export interface OrderPayment {
 		secondary?: Price;
 	};
 	method: PaymentMethod;
-	expiresAt: Date;
+	/**
+	 * Can be unset for cash or bank transfer payments for example.
+	 */
+	expiresAt?: Date;
 	/** Bitcoin / LN address, payment link */
 	address?: string;
 	paidAt?: Date;
@@ -50,6 +54,17 @@ export interface OrderPayment {
 	};
 
 	lastStatusNotified?: OrderPaymentStatus;
+	bankTransferNumber?: string;
+}
+
+export interface OrderAddress {
+	firstName: string;
+	lastName: string;
+	address: string;
+	city: string;
+	state?: string;
+	zip: string;
+	country: CountryAlpha2;
 }
 
 export interface Order extends Timestamps {
@@ -64,6 +79,7 @@ export interface Order extends Timestamps {
 		product: Product;
 		quantity: number;
 		customPrice?: { amount: number; currency: Currency };
+		depositPercentage?: number;
 		currencySnapshot: {
 			main: {
 				price: Price;
@@ -80,16 +96,8 @@ export interface Order extends Timestamps {
 		};
 	}>;
 
-	shippingAddress?: {
-		firstName: string;
-		lastName: string;
-		address: string;
-		city: string;
-		state?: string;
-		zip: string;
-		country: CountryAlpha2;
-	};
-
+	shippingAddress?: OrderAddress;
+	billingAddress?: OrderAddress;
 	shippingPrice?: {
 		amount: number;
 		currency: Currency;
@@ -162,3 +170,23 @@ interface SimplifiedOrderPayment {
 	status: OrderPaymentStatus;
 }
 export type SimplifiedOrder = Omit<Order, 'payments'> & { payments: SimplifiedOrderPayment[] };
+
+export function orderAmountWithNoPaymentsCreated(
+	order: Pick<Order, 'currencySnapshot'> & { payments: Pick<OrderPayment, 'currencySnapshot'>[] }
+): number {
+	return (
+		order.currencySnapshot.main.totalPrice.amount -
+		sumCurrency(
+			order.currencySnapshot.main.totalPrice.currency,
+			order.payments.map((payment) => payment.currencySnapshot.main)
+		)
+	);
+}
+
+export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
+	bankTransfer: '🏦',
+	card: '💳',
+	cash: '💵',
+	lightning: '⚡',
+	bitcoin: '₿'
+};

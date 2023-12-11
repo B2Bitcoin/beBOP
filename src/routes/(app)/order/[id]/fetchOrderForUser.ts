@@ -65,6 +65,7 @@ export async function fetchOrderForUser(orderId: string) {
 			status: payment.status,
 			address: payment.address,
 			expiresAt: payment.expiresAt,
+			paidAt: payment.paidAt,
 			checkoutId: payment.checkoutId,
 			invoice: payment.invoice,
 			price: payment.price,
@@ -91,7 +92,8 @@ export async function fetchOrderForUser(orderId: string) {
 			digitalFiles: digitalFiles.filter(
 				(digitalFile) => digitalFile.productId === item.product._id
 			),
-			currencySnapshot: item.currencySnapshot
+			currencySnapshot: item.currencySnapshot,
+			depositPercentage: item.depositPercentage
 		})),
 		shippingPrice: order.shippingPrice && {
 			amount: order.shippingPrice.amount,
@@ -107,6 +109,7 @@ export async function fetchOrderForUser(orderId: string) {
 			rate: order.vat.rate
 		},
 		shippingAddress: order.shippingAddress,
+		billingAddress: order.billingAddress,
 		notifications: order.notifications,
 		vatFree: order.vatFree,
 		discount: order.discount,

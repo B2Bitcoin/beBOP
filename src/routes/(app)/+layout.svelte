@@ -31,6 +31,7 @@
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { upperCase } from 'lodash-es';
+	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
 
 	export let data;
 
@@ -50,13 +51,17 @@
 
 	$: items = data.cart || [];
 	$: totalPrice = sumCurrency(
-		data.currencies.main,
+		UNDERLYING_CURRENCY,
 		items.map((item) => ({
 			currency: (item.customPrice || item.product.price).currency,
-			amount: (item.customPrice || item.product.price).amount * item.quantity
+			amount:
+				((item.customPrice || item.product.price).amount *
+					item.quantity *
+					(item.depositPercentage ?? 100)) /
+				100
 		}))
 	);
-	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), data.currencies.main);
+	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
@@ -231,6 +236,8 @@
 							<Popup>
 								<div class="p-2 gap-2 flex flex-col cartPreview">
 									{#each items as item}
+										{@const price = item.customPrice ?? item.product.price}
+
 										{#if cartErrorMessage && cartErrorProductId === item.product._id}
 											<div class="text-red-600 text-sm">{cartErrorMessage}</div>
 										{/if}
@@ -294,21 +301,18 @@
 												{/if}
 											</div>
 											<div class="flex flex-col items-end gap-[6px] ml-auto">
-												{#if item.product.type !== 'subscription' && item.customPrice}
-													<PriceTag
-														class="text-base"
-														amount={item.quantity * item.customPrice.amount}
-														currency={item.customPrice.currency}
-														main
-													/>
-												{:else}
-													<PriceTag
-														class="text-base"
-														amount={item.quantity * item.product.price.amount}
-														currency={item.product.price.currency}
-														main
-													/>
-												{/if}
+												<PriceTag
+													class="text-base"
+													amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) /
+														100}
+													currency={price.currency}
+													main
+													>{item.depositPercentage
+														? `(${(item.depositPercentage / 100).toLocaleString($locale, {
+																style: 'percent'
+														  })})`
+														: ''}</PriceTag
+												>
 
 												<button formaction="/cart/{item.product._id}/?/remove">
 													<IconTrash class="body-secondaryText" />
@@ -320,7 +324,7 @@
 									{#if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.vat')} ({data.vatRate}%) <PriceTag
-												currency={data.currencies.main}
+												currency={UNDERLYING_CURRENCY}
 												amount={vat}
 												main
 											/>
@@ -328,7 +332,7 @@
 									{/if}
 									<div class="flex gap-1 text-xl justify-end items-center">
 										{t('cart.total')}
-										<PriceTag currency={data.currencies.main} amount={totalPriceWithVat} main />
+										<PriceTag currency={UNDERLYING_CURRENCY} amount={totalPriceWithVat} main />
 									</div>
 									<a href="/cart" class="btn cartPreview-mainCTA mt-1 whitespace-nowrap">
 										{t('cart.cta.view')}
@@ -412,7 +416,7 @@
 				{#if data.displayCompanyInfo && data.sellerIdentity}
 					<!-- First column -->
 					<div>
-						<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-identity'))}</h3>
+						<h3 class="text-lg font-semibold mb-2">{upperCase(t('footer.company.identity'))}</h3>
 						{#if data.sellerIdentity.businessName}
 							<p>{data.sellerIdentity.businessName}</p>
 						{/if}
@@ -429,7 +433,7 @@
 					<!-- Second column -->
 					{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
 						<div>
-							<h3 class="text-lg font-semibold mb-2">{upperCase(t('company-contact'))}</h3>
+							<h3 class="text-lg font-semibold mb-2">{upperCase(t('footer.company.contact'))}</h3>
 							{#if data.sellerIdentity.contact.email}
 								<a href="mailto:{data.sellerIdentity.contact.email}">
 									{data.sellerIdentity.contact.email}

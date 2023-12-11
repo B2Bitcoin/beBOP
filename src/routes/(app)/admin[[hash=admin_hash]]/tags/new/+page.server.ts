@@ -61,15 +61,15 @@ export const actions: Actions = {
 		];
 		await Promise.all(
 			tagPictures.map(async (tagPicture) => {
-				const pendingMainPicture = await collections.pendingPictures.findOne({
+				const pendingPicture = await collections.pendingPictures.findOne({
 					_id: tagPicture.id
 				});
 
-				if (!pendingMainPicture) {
+				if (!pendingPicture) {
 					throw error(400, 'Error when uploading picture');
 				}
 
-				const resp = await fetch(await getS3DownloadLink(pendingMainPicture.storage.original.key));
+				const resp = await fetch(await getS3DownloadLink(pendingPicture.storage.original.key));
 
 				if (!resp.ok) {
 					throw error(400, 'Error when uploading picture');
@@ -81,7 +81,7 @@ export const actions: Actions = {
 					cb: async (session) => {
 						await s3client
 							.deleteObject({
-								Key: pendingMainPicture.storage.original.key,
+								Key: pendingPicture.storage.original.key,
 								Bucket: S3_BUCKET
 							})
 							.catch();

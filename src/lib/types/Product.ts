@@ -28,6 +28,13 @@ export interface Product extends Timestamps {
 	preorder: boolean;
 	customPreorderText?: string;
 	displayShortDescription: boolean;
+	deposit?: {
+		percentage: number;
+		/**
+		 * If this is true, the product can not be paid in full immediately
+		 */
+		enforce: boolean;
+	};
 	/**
 	 * Setting this to true will also set standalone to true
 	 */

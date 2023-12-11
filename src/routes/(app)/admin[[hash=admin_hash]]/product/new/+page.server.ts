@@ -149,6 +149,12 @@ export const actions: Actions = {
 						...(parsed.stock !== undefined && {
 							stock: { total: parsed.stock, available: parsed.stock, reserved: 0 }
 						}),
+						...(parsed.depositPercentage !== undefined && {
+							deposit: {
+								percentage: parsed.depositPercentage,
+								enforce: parsed.enforceDeposit
+							}
+						}),
 						...(parsed.maxQuantityPerOrder && {
 							maxQuantityPerOrder: parsed.maxQuantityPerOrder
 						}),
@@ -194,19 +200,19 @@ export const actions: Actions = {
 			set(json, key, value);
 		}
 
-		const { productId: duplicatedProductId } = z
-			.object({ productId: z.string() })
+		const { duplicateFromId } = z
+			.object({ duplicateFromId: z.string() })
 			.parse(Object.fromEntries(formData));
 
-		const product = duplicatedProductId
-			? await collections.products.findOne({ _id: duplicatedProductId })
+		const product = duplicateFromId
+			? await collections.products.findOne({ _id: duplicateFromId })
 			: undefined;
 
 		if (!product) {
 			throw error(404, 'Duplicated product not found');
 		}
 
-		const duplicate = z
+		const parsed = z
 			.object({
 				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				...productBaseSchema
@@ -216,21 +222,21 @@ export const actions: Actions = {
 				availableDate: formData.get('availableDate') || undefined
 			});
 
-		if (await collections.products.countDocuments({ _id: duplicate.slug })) {
+		if (await collections.products.countDocuments({ _id: parsed.slug })) {
 			throw error(409, 'Product with same slug already exists');
 		}
 
-		if (!duplicate.availableDate) {
-			duplicate.preorder = false;
+		if (!parsed.availableDate) {
+			parsed.preorder = false;
 		}
 
 		if (product.type !== 'resource') {
-			delete duplicate.availableDate;
-			duplicate.preorder = false;
+			delete parsed.availableDate;
+			parsed.preorder = false;
 		}
 
 		if (product.type === 'donation') {
-			duplicate.shipping = false;
+			parsed.shipping = false;
 		}
 
 		const insertedS3Keys: string[] = [];
@@ -238,35 +244,47 @@ export const actions: Actions = {
 		await withTransaction(async (session) => {
 			await collections.products.insertOne(
 				{
-					_id: duplicate.slug,
+					_id: parsed.slug,
 					createdAt: new Date(),
 					updatedAt: new Date(),
-					description: duplicate.description.replaceAll('\r', ''),
-					shortDescription: duplicate.shortDescription.replaceAll('\r', ''),
-					name: duplicate.name,
+					description: parsed.description.replaceAll('\r', ''),
+					shortDescription: parsed.shortDescription.replaceAll('\r', ''),
+					name: parsed.name,
 					price: {
-						currency: duplicate.priceCurrency,
-						amount: parseFloat(duplicate.priceAmount)
+						currency: parsed.priceCurrency,
+						amount: parseFloat(parsed.priceAmount)
 					},
 					type: product.type,
-					availableDate: duplicate.availableDate || undefined,
-					preorder: duplicate.preorder,
-					shipping: duplicate.shipping,
-					payWhatYouWant: duplicate.payWhatYouWant,
-					standalone: duplicate.standalone,
-					free: duplicate.free,
-					displayShortDescription: duplicate.displayShortDescription,
+					availableDate: parsed.availableDate || undefined,
+					preorder: parsed.preorder,
+					shipping: parsed.shipping,
+					payWhatYouWant: parsed.payWhatYouWant,
+					standalone: parsed.standalone,
+					free: parsed.free,
+					...(parsed.stock !== undefined && {
+						stock: { total: parsed.stock, available: parsed.stock, reserved: 0 }
+					}),
+					...(parsed.depositPercentage !== undefined && {
+						deposit: {
+							percentage: parsed.depositPercentage,
+							enforce: parsed.enforceDeposit
+						}
+					}),
+					...(parsed.maxQuantityPerOrder && {
+						maxQuantityPerOrder: parsed.maxQuantityPerOrder
+					}),
+					displayShortDescription: parsed.displayShortDescription,
 					actionSettings: {
 						eShop: {
-							visible: duplicate.eshopVisible,
-							canBeAddedToBasket: duplicate.eshopBasket
+							visible: parsed.eshopVisible,
+							canBeAddedToBasket: parsed.eshopBasket
 						},
 						retail: {
-							visible: duplicate.retailVisible,
-							canBeAddedToBasket: duplicate.retailBasket
+							visible: parsed.retailVisible,
+							canBeAddedToBasket: parsed.retailBasket
 						},
 						googleShopping: {
-							visible: duplicate.googleShoppingVisible
+							visible: parsed.googleShoppingVisible
 						}
 					},
 					tagIds: product.tagIds
@@ -275,17 +293,17 @@ export const actions: Actions = {
 			);
 
 			const picturesToDuplicate = await collections.pictures
-				.find({ productId: duplicatedProductId })
+				.find({ productId: duplicateFromId })
 				.sort({ createdAt: 1 })
 				.toArray();
 
 			const digitalFilesToDuplicate = await collections.digitalFiles
-				.find({ productId: duplicatedProductId })
+				.find({ productId: duplicateFromId })
 				.sort({ createdAt: 1 })
 				.toArray();
 
-			const oldS3Prefix = s3ProductPrefix(duplicatedProductId);
-			const newS3Prefix = s3ProductPrefix(duplicate.slug);
+			const oldS3Prefix = s3ProductPrefix(duplicateFromId);
+			const newS3Prefix = s3ProductPrefix(parsed.slug);
 
 			for (const picture of picturesToDuplicate) {
 				const pictureToInsert = {
@@ -301,7 +319,7 @@ export const actions: Actions = {
 							key: format.key.replace(oldS3Prefix, newS3Prefix)
 						}))
 					},
-					productId: duplicate.slug,
+					productId: parsed.slug,
 					createdAt: new Date(),
 					updatedAt: new Date()
 				};
@@ -340,7 +358,7 @@ export const actions: Actions = {
 						...file.storage,
 						key: file.storage.key.replace(oldS3Prefix, newS3Prefix)
 					},
-					productId: duplicate.slug
+					productId: parsed.slug
 				};
 
 				insertedS3Keys.push(digitalFileToInsert.storage.key);
@@ -368,9 +386,9 @@ export const actions: Actions = {
 			return err;
 		});
 
-		onProductCreated({ _id: duplicate.slug, name: duplicate.name });
+		onProductCreated({ _id: parsed.slug, name: parsed.name });
 
-		throw redirect(303, `${adminPrefix()}/product/${duplicate.slug}`);
+		throw redirect(303, `${adminPrefix()}/product/${parsed.slug}`);
 	}
 };
 

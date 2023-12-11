@@ -13,9 +13,11 @@
 		CmsPicture,
 		CmsProduct,
 		CmsSlider,
+		CmsSpecification,
 		CmsTag,
 		CmsToken
 	} from '$lib/server/cms';
+	import SpecificationWidget from './SpecificationWidget.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -25,6 +27,8 @@
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
 	export let tags: CmsTag[];
+	export let specifications: CmsSpecification[];
+
 	let classNames = '';
 	export { classNames as class };
 
@@ -47,6 +51,9 @@
 		pictures.filter((picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId),
 		'productId'
 	);
+	$: specificationById = Object.fromEntries(
+		specifications.map((specification) => [specification._id, specification])
+	);
 </script>
 
 <div class="prose max-w-full {classNames}">
@@ -63,19 +70,22 @@
 				class="not-prose my-5"
 			/>
 		{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
-			<ChallengeWidget challenge={challengeById[token.slug]} class="my-5" />
+			<ChallengeWidget challenge={challengeById[token.slug]} class="not-prose my-5" />
 		{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
 			<CarouselWidget
 				autoplay={token.autoplay ? token.autoplay : 3000}
 				pictures={picturesBySlider[token.slug]}
+				class="not-prose mx-auto my-5"
 			/>
 		{:else if token.type === 'tagWidget' && tagById[token.slug]}
 			<TagWidget
 				tag={tagById[token.slug]}
 				pictures={picturesByTag[token.slug]}
 				displayOption={token.display}
-				class="not-prose mb-12"
+				class="not-prose my-5"
 			/>
+		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
+			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
 		{:else}
 			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html token.raw}

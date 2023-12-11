@@ -111,7 +111,8 @@
 		@apply hover:bg-gray-800;
 	}
 
-	.btn[disabled] {
+	.btn[disabled],
+	fieldset:disabled .btn {
 		@apply cursor-not-allowed opacity-75;
 	}
 
@@ -119,7 +120,8 @@
 		@apply border-gray-300 border-[1px] bg-white text-black w-full border-solid rounded pl-2 block placeholder-gray-450;
 	}
 
-	.form-input[disabled] {
+	.form-input[disabled],
+	fieldset:disabled .form-input {
 		@apply bg-gray-100 cursor-not-allowed;
 	}
 
@@ -155,7 +157,8 @@
 		@apply cursor-pointer rounded-sm;
 	}
 
-	.form-checkbox:disabled {
+	.form-checkbox:disabled,
+	fieldset:disabled .form-checkbox {
 		@apply cursor-not-allowed opacity-50;
 	}
 

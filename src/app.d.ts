@@ -14,7 +14,7 @@ declare global {
 		interface Locals {
 			status?: number;
 			sessionId: string;
-			countryCode: string;
+			countryCode?: string;
 			user?: { _id: ObjectId; login: string; roleId: string };
 			email?: string;
 			npub?: string;

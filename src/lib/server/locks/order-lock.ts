@@ -66,7 +66,7 @@ async function maintainOrders() {
 									amount: satReceived,
 									currency: 'SAT'
 								});
-							} else if (payment.expiresAt < new Date()) {
+							} else if (payment.expiresAt && payment.expiresAt < new Date()) {
 								order = await onOrderPaymentFailed(order, payment, 'expired');
 							}
 						} catch (err) {

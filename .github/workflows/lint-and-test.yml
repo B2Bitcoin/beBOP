@@ -19,11 +19,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.10.0
-        with:
-          mongodb-version: '6.0'
-          mongodb-replica-set: test-rs
       - run: |
           pnpm install --frozen-lockfile
       - name: 'Checking lint/format errors'
@@ -35,6 +30,11 @@ jobs:
       - name: 'Build'
         run: |
           pnpm run build
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: '6.0'
+          mongodb-replica-set: test-rs
       - name: 'Test'
         run: |
           pnpm run test:unit

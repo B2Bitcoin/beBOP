@@ -4,6 +4,7 @@ import { collections } from '$lib/server/database';
 import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 import { SvelteKitAuth } from '@auth/sveltekit';
+import { flatten } from 'flat';
 import { adminPrefix } from '$lib/server/admin';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
@@ -20,6 +21,7 @@ import {
 	GITHUB_SECRET,
 	GOOGLE_ID,
 	GOOGLE_SECRET,
+	LINK_PRELOAD_HEADERS,
 	ORIGIN,
 	TWITTER_ID,
 	TWITTER_SECRET
@@ -34,6 +36,8 @@ import { addTranslations } from '$lib/i18n';
 import { filterNullish } from '$lib/utils/fillterNullish';
 import { refreshSessionCookie } from '$lib/server/cookies';
 import { renewSessionId } from '$lib/server/user';
+import { typedInclude } from '$lib/utils/typedIncludes';
+import { rateLimit } from '$lib/server/rateLimit';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -58,26 +62,52 @@ export const handleError = (({ error, event }) => {
 		event.locals.status = 422;
 		const formattedError = error.format();
 
-		if (formattedError._errors.length) {
-			return { message: formattedError._errors[0], status: 422 };
-		}
+		const message = Object.entries(
+			flatten(formattedError, { safe: true }) as Record<string, string[]>
+		)
+			.filter(
+				(entry: [string, unknown]): entry is [string, string[]] =>
+					!!(entry[0].endsWith('._errors') && Array.isArray(entry[1]) && entry[1].length)
+			)
+			.map(([key, val]) => `${key.slice(0, -'._errors'.length)}: ${val[0]}`)
+			.join(', ');
 
 		return {
-			message: Object.entries(formattedError)
-				.map(([key, val]) => {
-					if (typeof val === 'object' && val && '_errors' in val && Array.isArray(val._errors)) {
-						return `${key}: ${val._errors[0]}`;
-					}
-				})
-				.filter(Boolean)
-				.join(', '),
+			message,
 			status: 422
 		};
 	}
 }) satisfies HandleServerError;
 
+const addSecurityHeaders: Handle = async ({ event, resolve }) => {
+	const response = await resolve(event);
+
+	response.headers.set('X-Content-Type-Options', 'nosniff');
+	// SAMEORIGIN for invoice generation
+	response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+
+	// Possible to enable CSP / XSS Protection directly in SvelteKit config
+
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+	response.headers.set('Feature-Policy', 'camera none; microphone none; geolocation none');
+	response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+
+	// Sveltekit sends huge link headers, which can break w/ nginx unless setting "proxy_buffer_size   16k;"
+	if (LINK_PRELOAD_HEADERS !== 'true' && LINK_PRELOAD_HEADERS !== '1') {
+		response.headers.delete('Link');
+	}
+
+	return response;
+};
+
 const handleGlobal: Handle = async ({ event, resolve }) => {
-	event.locals.countryCode = countryFromIp(event.getClientAddress());
+	try {
+		event.locals.clientIp = event.getClientAddress();
+	} catch {}
+	event.locals.countryCode = event.locals.clientIp
+		? countryFromIp(event.locals.clientIp)
+		: undefined;
 
 	const admin = adminPrefix();
 
@@ -85,11 +115,15 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		event.url.pathname
 	);
 
+	const method = event.request.method.toLowerCase();
+
+	if (method === 'post' || method === 'put' || method === 'patch' || method === 'delete') {
+		rateLimit(event.locals.clientIp, 'method.' + method, 30, { minutes: 1 });
+	}
+
 	const isAdminUrl = /^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname);
 
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
-
-	event.locals.clientIp = event.getClientAddress();
 
 	// Prioritize lang in URL, then in cookie, then in accept-language header, then default to en
 	const acceptLanguages = filterNullish([
@@ -122,7 +156,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			event.url.pathname !== '/style/variables.css' &&
 			!event.url.pathname.startsWith('/script/language/') &&
 			!cmsPageMaintenanceAvailable.find((cmsPage) => cmsPage._id === slug) &&
-			!runtimeConfig.maintenanceIps.split(',').includes(event.locals.clientIp)
+			!typedInclude(runtimeConfig.maintenanceIps.split(','), event.locals.clientIp)
 		) {
 			if (event.request.method !== 'GET') {
 				throw error(405, 'Site is in maintenance mode. Please try again later.');
@@ -212,8 +246,6 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		if (!role) {
 			throw error(403, 'Your role does not exist in DB.');
 		}
-
-		const method = event.request.method.toLowerCase();
 
 		if (
 			!isAllowedOnPage(
@@ -450,4 +482,6 @@ const handleSSO = authProviders
 	  })
 	: null;
 
-export const handle = handleSSO ? sequence(handleGlobal, handleSSO, handleSsoCookie) : handleGlobal;
+export const handle = handleSSO
+	? sequence(addSecurityHeaders, handleGlobal, handleSSO, handleSsoCookie)
+	: sequence(addSecurityHeaders, handleGlobal);

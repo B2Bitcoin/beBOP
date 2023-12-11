@@ -56,6 +56,7 @@ export async function addToCartInDb(
 		user: UserIdentifier;
 		totalQuantity?: boolean;
 		customPrice?: { amount: number; currency: Currency };
+		deposit?: boolean;
 	}
 ) {
 	if (
@@ -81,6 +82,12 @@ export async function addToCartInDb(
 	if (product.availableDate && !product.preorder && product.availableDate > new Date()) {
 		throw error(400, 'Product is not available for preorder');
 	}
+
+	const depositPercentage = product.deposit?.enforce
+		? product.deposit.percentage
+		: product.deposit && params.deposit
+		? product.deposit.percentage
+		: undefined;
 
 	let cart = await getCartFromDb({ user: params.user });
 
@@ -131,7 +138,8 @@ export async function addToCartInDb(
 			...(params.customPrice && {
 				customPrice: params.customPrice
 			}),
-			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes)
+			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes),
+			...(depositPercentage && { depositPercentage })
 		});
 	}
 

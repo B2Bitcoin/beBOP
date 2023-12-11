@@ -132,10 +132,11 @@
 			tags={data.productCMSBefore.tags}
 			digitalFiles={data.productCMSBefore.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.productCMSBefore.specifications}
 		/>
 	{/if}
 
-	<div class="flex flex-row">
+	<div class="flex flex-row my-12">
 		<div class="w-14 min-w-[48px] py-12 hidden md:block">
 			{#if data.pictures.length > 1}
 				{#each data.pictures as picture, i}
@@ -145,7 +146,7 @@
 					>
 						<Picture
 							{picture}
-							class="h-12 w-12 rounded-sm m-2 object-cover {picture === currentPicture
+							class="h-12 w-12 rounded-sm my-2 object-cover {picture === currentPicture
 								? 'ring-2 ring-link ring-offset-2'
 								: ''} cursor-pointer"
 						/>
@@ -363,6 +364,27 @@
 									</select>
 								</label>
 							{/if}
+							{#if data.product.deposit}
+								<label class="checkbox-label">
+									<input type="radio" value="partial" name="deposit" checked />
+									{t('product.deposit.payPercentage', {
+										percentage: (data.product.deposit.percentage / 100).toLocaleString($locale, {
+											style: 'percent'
+										})
+									})}: <PriceTag
+										main
+										amount={(data.product.price.amount * data.product.deposit.percentage) / 100}
+										currency={data.product.price.currency}
+										inline
+									/>
+								</label>
+								{#if !data.product.deposit.enforce}
+									<label class="checkbox-label">
+										<input type="radio" value="full" name="deposit" />
+										{t('product.deposit.payFullPrice')}
+									</label>
+								{/if}
+							{/if}
 							{#if errorMessage}
 								<p class="text-red-500">{errorMessage}</p>
 							{/if}
@@ -426,6 +448,7 @@
 			pictures={data.productCMSAfter.pictures}
 			digitalFiles={data.productCMSAfter.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.productCMSAfter.specifications}
 		/>
 	{/if}
 </main>

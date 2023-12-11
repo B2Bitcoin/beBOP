@@ -4,11 +4,12 @@ import { sendResetPasswordNotification } from '$lib/server/sendNotification';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 import { SMTP_USER } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { rateLimit } from '$lib/server/rateLimit.js';
 
 export const load = async () => {};
 
 export const actions = {
-	default: async function ({ request }) {
+	default: async function ({ request, locals }) {
 		const data = await request.formData();
 
 		const { login } = z
@@ -16,6 +17,8 @@ export const actions = {
 				login: z.string()
 			})
 			.parse(Object.fromEntries(data));
+
+		rateLimit(locals.clientIp, 'email', 5, { minutes: 5 });
 
 		const user = await collections.users.findOne({ login, roleId: { $ne: CUSTOMER_ROLE_ID } });
 		if (user) {

@@ -75,5 +75,7 @@
 		{/if}
 
 		{displayed}
+
+		<slot />
 	</div>
 {/if}

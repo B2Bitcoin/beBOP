@@ -39,7 +39,7 @@
 					>{/if}
 			</p>
 			{#if email.error}
-				<p class="text-red-600">{email.error.message}</p>
+				<p class="text-red-600">Error: {email.error.message}</p>
 			{/if}
 		</li>
 	{/each}

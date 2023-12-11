@@ -8,7 +8,11 @@
 
 	const identity = data.sellerIdentity;
 
-	const { t, locale } = useI18n();
+	const { t, locale, textAddress } = useI18n();
+	const differentAddress =
+		data.order.shippingAddress &&
+		data.order.billingAddress &&
+		textAddress(data.order.shippingAddress) !== textAddress(data.order.billingAddress);
 </script>
 
 <div class="flex justify-between">
@@ -35,13 +39,15 @@
 	{#if data.order.notifications.paymentStatus.email}
 		<p>{data.order.notifications.paymentStatus.email}</p>
 	{/if}
-	{#if data.order.shippingAddress}
-		<p>{data.order.shippingAddress.firstName} {data.order.shippingAddress.lastName}</p>
-		{#if data.order.shippingAddress.address}
-			<p>{data.order.shippingAddress.address}</p>
+	{#if data.order.billingAddress}
+		{#if differentAddress}
+			<p class="font-bold">{t('checkout.billingInfo')}</p>
 		{/if}
-		{#if data.order.shippingAddress.city || data.order.shippingAddress.zip}
-			<p>{data.order.shippingAddress.zip} {data.order.shippingAddress.city}</p>
+		<p class="whitespace-pre-wrap">{textAddress(data.order.billingAddress)}</p>
+		{#if data.order.shippingAddress && differentAddress}
+			<br />
+			<p class="font-bold">{t('order.shippingAddress.title')}</p>
+			<p class="whitespace-pre-wrap">{textAddress(data.order.shippingAddress)}</p>
 		{/if}
 	{/if}
 </div>

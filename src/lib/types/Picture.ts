@@ -30,3 +30,40 @@ export interface Picture extends Timestamps {
 		formats: ImageData[];
 	};
 }
+
+/**
+ * @returns the picture id
+ */
+export async function uploadPicture(adminPrefix: string, file: File): Promise<string> {
+	const fileSize = file.size;
+	const fileName = file.name;
+
+	const response = await fetch(`${adminPrefix}/picture/prepare`, {
+		method: 'POST',
+		body: JSON.stringify({
+			fileName,
+			fileSize
+		}),
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+
+	if (!response.ok) {
+		throw new Error(await response.text());
+	}
+
+	const body = await response.json();
+
+	const { uploadUrl, pictureId } = body;
+
+	const uploadResponse = await fetch(uploadUrl, {
+		method: 'PUT',
+		body: file
+	});
+
+	if (!uploadResponse.ok) {
+		throw new Error(await uploadResponse.text());
+	}
+	return pictureId;
+}
