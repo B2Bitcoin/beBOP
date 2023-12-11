@@ -91,6 +91,9 @@
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
 	$: actualVatRate = isDigital || data.vatSingleCountry ? data.vatRate : vatRate(actualCountry);
 
+	$: if (country !== data.sellerIdentity?.address.country && data.vatOutsideCountry) {
+		actualVatRate = 0;
+	}
 	$: totalPrice =
 		sumCurrency(
 			UNDERLYING_CURRENCY,
