@@ -1,5 +1,6 @@
 import { collections } from '$lib/server/database';
 import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
+import { isOrderFullyPaid } from '$lib/server/orders';
 import { picturesForProducts } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { isSumupEnabled } from '$lib/server/sumup';
@@ -43,10 +44,7 @@ export async function fetchOrderForUser(orderId: string) {
 			if (checkout.status === 'PAID') {
 				payment.status = 'paid';
 
-				if (
-					order.payments.every((payment) => payment.status === 'paid') &&
-					order.status === 'pending'
-				) {
+				if (isOrderFullyPaid(order) && order.status === 'pending') {
 					order.status = 'paid';
 				}
 
