@@ -7,7 +7,7 @@ import { isSumupEnabled } from '$lib/server/sumup';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
 
-export async function fetchOrderForUser(orderId: string) {
+export async function fetchOrderForUser(orderId: string, opts?: { doNotMockPay?: boolean }) {
 	const order = await collections.orders.findOne({
 		_id: orderId
 	});
@@ -24,6 +24,7 @@ export async function fetchOrderForUser(orderId: string) {
 
 	for (const payment of order.payments) {
 		if (
+			!opts?.doNotMockPay &&
 			payment.method === 'card' &&
 			payment.status === 'pending' &&
 			isSumupEnabled() &&

@@ -174,13 +174,13 @@
 			</td>
 		</tr>
 	{/if}
-	{#if data.payment.currencySnapshot.main.remaningToPay?.amount}
+	{#if data.payment.currencySnapshot.main.remainingToPay?.amount}
 		<tr style:background-color="#aeaaaa" class="text-white font-bold">
 			<td class="border border-white px-2 text-right">{t('order.receipt.remainingAmount')}</td>
 			<td class="border border-white px-2 whitespace-nowrap text-right">
 				<PriceTag
-					amount={data.payment.currencySnapshot.main.remaningToPay.amount}
-					currency={data.payment.currencySnapshot.main.remaningToPay.currency}
+					amount={data.payment.currencySnapshot.main.remainingToPay.amount}
+					currency={data.payment.currencySnapshot.main.remainingToPay.currency}
 					inline
 				/>
 			</td>

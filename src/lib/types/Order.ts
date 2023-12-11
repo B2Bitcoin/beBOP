@@ -25,17 +25,17 @@ export interface OrderPayment {
 		main: {
 			price: Price;
 			previouslyPaid?: Price;
-			remaningToPay?: Price;
+			remainingToPay?: Price;
 		};
 		priceReference: {
 			price: Price;
 			previouslyPaid?: Price;
-			remaningToPay?: Price;
+			remainingToPay?: Price;
 		};
 		secondary?: {
 			price: Price;
 			previouslyPaid?: Price;
-			remaningToPay?: Price;
+			remainingToPay?: Price;
 		};
 	};
 	method: PaymentMethod;

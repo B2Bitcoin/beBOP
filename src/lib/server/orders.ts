@@ -110,7 +110,7 @@ export async function onOrderPayment(
 								.map((p) => p.currencySnapshot.main.price)
 						)
 					},
-					'payments.$.currencySnapshot.main.remaningToPay': {
+					'payments.$.currencySnapshot.main.remainingToPay': {
 						currency: payment.currencySnapshot.main.price.currency,
 						amount:
 							order.currencySnapshot.main.totalPrice.amount -
@@ -131,7 +131,7 @@ export async function onOrderPayment(
 								.map((p) => p.currencySnapshot.priceReference.price)
 						)
 					},
-					'payments.$.currencySnapshot.priceReference.remaningToPay': {
+					'payments.$.currencySnapshot.priceReference.remainingToPay': {
 						currency: payment.currencySnapshot.priceReference.price.currency,
 						amount:
 							order.currencySnapshot.priceReference.totalPrice.amount -
@@ -156,7 +156,7 @@ export async function onOrderPayment(
 									)
 								)
 							},
-							'payments.$.currencySnapshot.secondary.remaningToPay': {
+							'payments.$.currencySnapshot.secondary.remainingToPay': {
 								currency: payment.currencySnapshot.secondary.price.currency,
 								amount:
 									order.currencySnapshot.secondary?.totalPrice.amount -

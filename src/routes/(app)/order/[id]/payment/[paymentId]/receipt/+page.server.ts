@@ -3,7 +3,7 @@ import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { fetchOrderForUser } from '../../../fetchOrderForUser.js';
 
 export async function load({ params }) {
-	const order = await fetchOrderForUser(params.id);
+	const order = await fetchOrderForUser(params.id, { doNotMockPay: true });
 	if (!order) {
 		throw error(404, 'Order not found');
 	}
