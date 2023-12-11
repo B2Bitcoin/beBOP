@@ -26,6 +26,7 @@
 		"vat": "TVA",
 		"vatIpCountry": "Déterminé par votre adresse IP et grâce aux données de <0></0>",
 		"vatIpCountryText": "Déterminé par votre adresse IP et grâce aux données de {link}",
+		"vatNullOutsideCountry": "Cette commande est exempt de TVA et devrai être acquité par le client aux services compétents lors de la livraison",
 		"vatRate": "Taux de TVA : {country}",
 		"vatSellerCountry": "La TVA est celle du pays du vendeur."
 	},

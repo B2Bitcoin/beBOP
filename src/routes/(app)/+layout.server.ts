@@ -55,6 +55,7 @@ export async function load(params) {
 		vatCountry: runtimeConfig.vatSingleCountry
 			? runtimeConfig.vatCountry
 			: locals.countryCode ?? runtimeConfig.vatCountry,
+		vatNullOutsideCountry: runtimeConfig.vatNullOutsideCountry,
 		currencies: {
 			main: runtimeConfig.mainCurrency,
 			secondary: runtimeConfig.secondaryCurrency,

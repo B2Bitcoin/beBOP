@@ -104,7 +104,10 @@
 			}))
 		) + (deliveryFees || 0);
 
-	$: vat = fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
+	$: vat =
+		data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry
+			? 0
+			: fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 	$: totalSatoshi = toCurrency('SAT', totalPriceWithVat, UNDERLYING_CURRENCY);
 	$: isDiscountValid =
@@ -499,7 +502,18 @@
 					</div>
 				{/if}
 
-				{#if data.vatCountry && !data.vatExempted}
+				{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry}
+					<div class="flex justify-between items-center">
+						<div class="flex flex-col">
+							<h3 class="text-base flex flex-row gap-2 items-center">
+								{t('product.vatExcluded')}
+								<div title={t('cart.vatNullOutsideCountry')}>
+									<IconInfo class="cursor-pointer" />
+								</div>
+							</h3>
+						</div>
+					</div>
+				{:else if data.vatCountry && !data.vatExempted}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">

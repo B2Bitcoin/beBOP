@@ -455,9 +455,9 @@ export async function createOrder(
 	partialSatoshis += sumCurrency('SAT', partialItemPrices);
 
 	const vatCountry =
-		runtimeConfig.vatOutsideCountry &&
-		params.shippingAddress &&
-		params.shippingAddress.country !== runtimeConfig.sellerIdentity?.address.country
+		runtimeConfig.vatNullOutsideCountry &&
+		runtimeConfig.vatSingleCountry &&
+		runtimeConfig.vatCountry !== params.vatCountry
 			? 0
 			: runtimeConfig.vatSingleCountry
 			? runtimeConfig.vatCountry

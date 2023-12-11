@@ -38,7 +38,10 @@
 			}))
 		) + (deliveryFees || 0);
 
-	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+	$: vat =
+		data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry
+			? 0
+			: fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 
 	const { t, locale } = useI18n();
@@ -186,7 +189,16 @@
 					{t('checkout.noDeliveryInCountry')}
 				</div>
 			{/if}
-			{#if data.vatCountry && !data.vatExempted}
+			{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry}
+				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
+					<div class="flex flex-col">
+						<span class="font-semibold">{t('product.vatExcluded')}</span>
+						<p class="text-sm">
+							{t('cart.vatNullOutsideCountry')}
+						</p>
+					</div>
+				</div>
+			{:else if data.vatCountry && !data.vatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<h2 class="text-[28px]">{t('cart.vat')} ({data.vatRate}%):</h2>
