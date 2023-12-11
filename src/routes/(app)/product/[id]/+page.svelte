@@ -399,7 +399,6 @@
 									>{t(`product.cta.${verb}`)}</button
 								>
 								<button
-									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
 									class="btn body-cta body-secondaryCTA"
@@ -408,10 +407,9 @@
 								</button>
 							{:else}
 								<button
-									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
-									class="btn body-cta body-secondaryCTA"
+									class="btn body-cta body-mainCTA"
 								>
 									{verb}
 								</button>
