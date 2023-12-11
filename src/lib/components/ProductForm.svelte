@@ -594,7 +594,7 @@
 		</table>
 		{#if product.cta}
 			<h3 class="text-xl">Add custom CTA</h3>
-			{#each [...product.cta, ...Array(3 - product.cta.length).fill( { href: '', label: '' } )] as link, i}
+			{#each [...product.cta, ...Array(3).fill({ href: '', label: '' })].slice(0, 3) as link, i}
 				<div class="flex gap-4">
 					<label class="form-label">
 						Text
