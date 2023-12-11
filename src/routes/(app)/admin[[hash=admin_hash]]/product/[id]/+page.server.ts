@@ -160,6 +160,7 @@ export const actions: Actions = {
 						}
 					},
 					tagIds: parsed.tagIds,
+					cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href),
 					contentBefore: parsed.contentBefore,
 					contentAfter: parsed.contentAfter,
 					updatedAt: new Date()
