@@ -184,13 +184,17 @@ interface SimplifiedOrderPayment {
 export type SimplifiedOrder = Omit<Order, 'payments'> & { payments: SimplifiedOrderPayment[] };
 
 export function orderAmountWithNoPaymentsCreated(
-	order: Pick<Order, 'currencySnapshot'> & { payments: Pick<OrderPayment, 'currencySnapshot'>[] }
+	order: Pick<Order, 'currencySnapshot'> & {
+		payments: Pick<OrderPayment, 'currencySnapshot' | 'status'>[];
+	}
 ): number {
 	return (
 		order.currencySnapshot.main.totalPrice.amount -
 		sumCurrency(
 			order.currencySnapshot.main.totalPrice.currency,
-			order.payments.map((payment) => payment.currencySnapshot.main.price)
+			order.payments
+				.filter((payment) => payment.status === 'pending' || payment.status === 'paid')
+				.map((payment) => payment.currencySnapshot.main.price)
 		)
 	);
 }
