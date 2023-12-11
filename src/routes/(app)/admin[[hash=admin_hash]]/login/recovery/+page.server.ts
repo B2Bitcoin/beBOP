@@ -29,7 +29,7 @@ export const actions = {
 				success: true,
 				npub: !!ret.npub,
 				email: !!ret.email,
-				isBackupEmail: ret.email === runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
+				isBackupEmail: ret.email === (runtimeConfig.sellerIdentity?.contact.email || SMTP_USER)
 			};
 		} else {
 			return { failedFindUser: true, login };

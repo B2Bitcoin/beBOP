@@ -42,6 +42,7 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `SMTP_PASSWORD` - Specify all the SMTP variables to enable email notifications
 - `SMTP_PORT` - Specify all the SMTP variables to enable email notifications
 - `SMTP_USER` - Specify all the SMTP variables to enable email notifications
+- `SMTP_FROM` - Optional, defaults to `SMTP_USER`. Sender email address for email notifications
 - `TOR_PROXY_URL` - Url of the SOCKS5 proxy used to access TOR. If set, and the hostname for `BITCOIN_RPC_URL` is a `.onion` address, the app will use the proxy to access the bitcoin node. In the same manner, if `LND_REST_URL` is a `.onion` address, TOR will be used to access the lightning node.
 
 You can also set the following environment variables to allow SSO. Set your redirect url to `https://<...>/api/callback/<provider>`, where `<provider>` is one of `github`, `google`, `facebook`, `twitter`, when you create your app on the provider's website:
