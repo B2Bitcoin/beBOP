@@ -410,7 +410,7 @@
 									value="Add to cart"
 									formaction="?/addToCart"
 									disabled={loading}
-									class="btn body-cta body-secondaryCTA"
+									class="btn body-cta body-mainCTA"
 								>
 									{verb}
 								</button>
