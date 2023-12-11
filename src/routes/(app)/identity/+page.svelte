@@ -94,24 +94,26 @@
 						value={data.personalInfoConnected?.address?.zip ?? ''}
 					/>
 				</label>
-				<label class="checkbox-label col-span-3">
-					<input
-						class="form-checkbox"
-						type="checkbox"
-						checked={data.personalInfoConnected?.newsletter?.seller ?? false}
-						name="newsletter.seller"
-					/>
-					{t('newsletter.allowSellerContact')}
-				</label>
-				<label class="checkbox-label col-span-3">
-					<input
-						class="form-checkbox"
-						type="checkbox"
-						checked={data.personalInfoConnected?.newsletter?.partner ?? false}
-						name="newsletter.partner"
-					/>
-					{t('newsletter.allowPartnerContact')}
-				</label>
+				{#if data.displayNewsletterCommercialProspection}
+					<label class="checkbox-label col-span-3">
+						<input
+							class="form-checkbox"
+							type="checkbox"
+							checked={data.personalInfoConnected?.newsletter?.seller ?? false}
+							name="newsletter.seller"
+						/>
+						{t('newsletter.allowSellerContact')}
+					</label>
+					<label class="checkbox-label col-span-3">
+						<input
+							class="form-checkbox"
+							type="checkbox"
+							checked={data.personalInfoConnected?.newsletter?.partner ?? false}
+							name="newsletter.partner"
+						/>
+						{t('newsletter.allowPartnerContact')}
+					</label>
+				{/if}
 				<button type="submit" class="btn btn-black self-start">Update</button>
 			</section>
 		</form>

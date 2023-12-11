@@ -109,7 +109,8 @@ const defaultConfig = {
 	usersDarkDefaultTheme: false,
 	employeesDarkDefaultTheme: false,
 	displayPoweredBy: false,
-	displayCompanyInfo: false
+	displayCompanyInfo: false,
+	displayNewsletterCommercialProspection: false
 };
 
 exchangeRate.set(defaultConfig.exchangeRate);

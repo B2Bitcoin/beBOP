@@ -41,7 +41,8 @@ export async function load({ parent, locals }) {
 			_id: personalInfoConnected?._id.toString(),
 			newsletter: personalInfoConnected?.newsletter
 		},
-		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory
+		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
+		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection
 	};
 }
 
@@ -131,6 +132,16 @@ export const actions = {
 		if (shippingInfo && !shippingInfo.shipping.state) {
 			delete shippingInfo.shipping.state;
 		}
+		const newsletterProspection = runtimeConfig.displayNewsletterCommercialProspection
+			? z
+					.object({
+						newsletter: z.object({
+							seller: z.boolean({ coerce: true }).default(false),
+							partner: z.boolean({ coerce: true }).default(false)
+						})
+					})
+					.parse(json)
+			: null;
 
 		const { paymentMethod, discountAmount, discountType, discountJustification } = z
 			.object({
@@ -162,6 +173,27 @@ export const actions = {
 
 		if (isFreeVat && !reasonFreeVat) {
 			throw error(400, 'Reason for free VAT is required');
+		}
+		if (
+			runtimeConfig.displayNewsletterCommercialProspection &&
+			(newsletterProspection?.newsletter.partner || newsletterProspection?.newsletter.seller)
+		) {
+			await collections.personalInfo.updateOne(
+				{
+					$or: [{ npub: npubAddress }, { email: email }]
+				},
+				{
+					$set: {
+						newsletter: newsletterProspection.newsletter,
+						...(npubAddress && { npub: npubAddress }),
+						...(email && { email: email }),
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
 		}
 
 		const collectIP = z

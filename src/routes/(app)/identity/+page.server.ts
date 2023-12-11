@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database.js';
+import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country.js';
 import { set } from 'lodash-es';
@@ -13,6 +14,7 @@ export async function load({ locals }) {
 		}
 	);
 	return {
+		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
 		personalInfoConnected: {
 			firstName: personalInfoConnected?.firstName,
 			lastName: personalInfoConnected?.lastName,
