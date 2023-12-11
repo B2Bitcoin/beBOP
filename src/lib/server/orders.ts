@@ -32,6 +32,7 @@ import { POS_ROLE_ID } from '$lib/types/User';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import type { PaymentMethod } from './payment-methods';
 import { vatRate } from '$lib/types/Country';
+import { filterUndef } from '$lib/utils/filterUndef';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -57,7 +58,7 @@ export function isOrderFullyPaid(order: Order, opts?: { includePendingOrders?: b
 						payment.status === 'paid' ||
 						(opts?.includePendingOrders && payment.status === 'pending')
 				)
-				.map((payment) => payment.currencySnapshot.main)
+				.map((payment) => payment.currencySnapshot.main.price)
 		) >=
 		order.currencySnapshot.main.totalPrice.amount -
 			MININUM_PER_CURRENCY[order.currencySnapshot.main.totalPrice.currency]
@@ -78,7 +79,10 @@ export async function onOrderPayment(
 		throw new Error('Sync broken between order and payment');
 	}
 
+	const paidAt = new Date();
+
 	payment.status = 'paid'; // for isOrderFullyPaid
+	payment.paidAt = paidAt;
 
 	return await withTransaction(async (session) => {
 		const ret = await collections.orders.findOneAndUpdate(
@@ -93,10 +97,80 @@ export async function onOrderPayment(
 					...(params?.bankTransferNumber && {
 						'payments.$.bankTransferNumber': params.bankTransferNumber
 					}),
-					'payments.$.paidAt': new Date(),
+					'payments.$.paidAt': paidAt,
 					...(isOrderFullyPaid(order) && {
 						status: 'paid'
 					}),
+					'payments.$.currencySnapshot.main.previouslyPaid': {
+						currency: payment.currencySnapshot.main.price.currency,
+						amount: sumCurrency(
+							payment.currencySnapshot.main.price.currency,
+							order.payments
+								.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt < paidAt)
+								.map((p) => p.currencySnapshot.main.price)
+						)
+					},
+					'payments.$.currencySnapshot.main.remaningToPay': {
+						currency: payment.currencySnapshot.main.price.currency,
+						amount:
+							order.currencySnapshot.main.totalPrice.amount -
+							sumCurrency(
+								payment.currencySnapshot.main.price.currency,
+								order.payments
+									.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+									.map((p) => p.currencySnapshot.main.price)
+							) -
+							payment.currencySnapshot.main.price.amount
+					},
+					'payments.$.currencySnapshot.priceReference.previouslyPaid': {
+						currency: payment.currencySnapshot.priceReference.price.currency,
+						amount: sumCurrency(
+							payment.currencySnapshot.priceReference.price.currency,
+							order.payments
+								.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt < paidAt)
+								.map((p) => p.currencySnapshot.priceReference.price)
+						)
+					},
+					'payments.$.currencySnapshot.priceReference.remaningToPay': {
+						currency: payment.currencySnapshot.priceReference.price.currency,
+						amount:
+							order.currencySnapshot.priceReference.totalPrice.amount -
+							sumCurrency(
+								payment.currencySnapshot.priceReference.price.currency,
+								order.payments
+									.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+									.map((p) => p.currencySnapshot.priceReference.price)
+							) -
+							payment.currencySnapshot.priceReference.price.amount
+					},
+					...(payment.currencySnapshot.secondary &&
+						order.currencySnapshot.secondary && {
+							'payments.$.currencySnapshot.secondary.previouslyPaid': {
+								currency: payment.currencySnapshot.secondary.price.currency,
+								amount: sumCurrency(
+									payment.currencySnapshot.secondary.price.currency,
+									filterUndef(
+										order.payments
+											.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt < paidAt)
+											.map((p) => p.currencySnapshot.secondary?.price)
+									)
+								)
+							},
+							'payments.$.currencySnapshot.secondary.remaningToPay': {
+								currency: payment.currencySnapshot.secondary.price.currency,
+								amount:
+									order.currencySnapshot.secondary?.totalPrice.amount -
+									sumCurrency(
+										payment.currencySnapshot.secondary.price.currency,
+										filterUndef(
+											order.payments
+												.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+												.map((p) => p.currencySnapshot.secondary?.price)
+										)
+									) -
+									payment.currencySnapshot.secondary.price.amount
+							}
+						}),
 					'payments.$.transactions': payment.transactions,
 					'currencySnapshot.main.totalReceived': {
 						amount:
@@ -684,18 +758,24 @@ export async function createOrder(
 						price: paymentPrice(paymentMethod, { currency: 'SAT', amount: partialSatoshis }),
 						currencySnapshot: {
 							main: {
-								amount: toCurrency(runtimeConfig.mainCurrency, partialSatoshis, 'SAT'),
-								currency: runtimeConfig.mainCurrency
+								price: {
+									amount: toCurrency(runtimeConfig.mainCurrency, partialSatoshis, 'SAT'),
+									currency: runtimeConfig.mainCurrency
+								}
 							},
 							...(runtimeConfig.secondaryCurrency && {
 								secondary: {
-									amount: toCurrency(runtimeConfig.secondaryCurrency, partialSatoshis, 'SAT'),
-									currency: runtimeConfig.secondaryCurrency
+									price: {
+										amount: toCurrency(runtimeConfig.secondaryCurrency, partialSatoshis, 'SAT'),
+										currency: runtimeConfig.secondaryCurrency
+									}
 								}
 							}),
 							priceReference: {
-								amount: toCurrency(runtimeConfig.priceReferenceCurrency, partialSatoshis, 'SAT'),
-								currency: runtimeConfig.priceReferenceCurrency
+								price: {
+									amount: toCurrency(runtimeConfig.priceReferenceCurrency, partialSatoshis, 'SAT'),
+									currency: runtimeConfig.priceReferenceCurrency
+								}
 							}
 						},
 						status: 'pending',
@@ -1036,18 +1116,24 @@ export async function addOrderPayment(
 		price: paymentPrice(paymentMethod, priceToPay),
 		currencySnapshot: {
 			main: {
-				amount: toCurrency(mainCurrency, priceToPay.amount, priceToPay.currency),
-				currency: mainCurrency
+				price: {
+					amount: toCurrency(mainCurrency, priceToPay.amount, priceToPay.currency),
+					currency: mainCurrency
+				}
 			},
 			...(secondaryCurrency && {
 				secondary: {
-					amount: toCurrency(secondaryCurrency, priceToPay.amount, priceToPay.currency),
-					currency: secondaryCurrency
+					price: {
+						amount: toCurrency(secondaryCurrency, priceToPay.amount, priceToPay.currency),
+						currency: secondaryCurrency
+					}
 				}
 			}),
 			priceReference: {
-				amount: toCurrency(priceReferenceCurrency, priceToPay.amount, priceToPay.currency),
-				currency: priceReferenceCurrency
+				price: {
+					amount: toCurrency(priceReferenceCurrency, priceToPay.amount, priceToPay.currency),
+					currency: priceReferenceCurrency
+				}
 			}
 		},
 		...(expiresAt && { expiresAt }),

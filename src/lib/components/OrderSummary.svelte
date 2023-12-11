@@ -194,7 +194,7 @@
 		{/if}
 	</div>
 
-	{#each order.payments.filter((p) => p.currencySnapshot.main.amount < order.currencySnapshot.main.totalPrice.amount) as payment}
+	{#each order.payments.filter((p) => p.currencySnapshot.main.price.amount < order.currencySnapshot.main.totalPrice.amount) as payment}
 		<div class="-mx-3 p-3 flex flex-col">
 			<div class="flex justify-between">
 				<span class="text-xl"
@@ -205,15 +205,15 @@
 				</span>
 				<PriceTag
 					class="text-2xl"
-					amount={payment.currencySnapshot.main.amount}
-					currency={payment.currencySnapshot.main.currency}
+					amount={payment.currencySnapshot.main.price.amount}
+					currency={payment.currencySnapshot.main.price.currency}
 				/>
 			</div>
 			{#if payment.currencySnapshot.secondary}
 				<PriceTag
 					class="self-end"
-					amount={payment.currencySnapshot.secondary.amount}
-					currency={payment.currencySnapshot.secondary.currency}
+					amount={payment.currencySnapshot.secondary.price.amount}
+					currency={payment.currencySnapshot.secondary.price.currency}
 				/>
 			{/if}
 		</div>

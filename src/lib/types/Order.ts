@@ -22,9 +22,21 @@ export interface OrderPayment {
 	status: OrderPaymentStatus;
 	price: Price;
 	currencySnapshot: {
-		main: Price;
-		priceReference: Price;
-		secondary?: Price;
+		main: {
+			price: Price;
+			previouslyPaid?: Price;
+			remaningToPay?: Price;
+		};
+		priceReference: {
+			price: Price;
+			previouslyPaid?: Price;
+			remaningToPay?: Price;
+		};
+		secondary?: {
+			price: Price;
+			previouslyPaid?: Price;
+			remaningToPay?: Price;
+		};
 	};
 	method: PaymentMethod;
 	/**
@@ -178,7 +190,7 @@ export function orderAmountWithNoPaymentsCreated(
 		order.currencySnapshot.main.totalPrice.amount -
 		sumCurrency(
 			order.currencySnapshot.main.totalPrice.currency,
-			order.payments.map((payment) => payment.currencySnapshot.main)
+			order.payments.map((payment) => payment.currencySnapshot.main.price)
 		)
 	);
 }

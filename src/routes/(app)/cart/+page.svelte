@@ -41,7 +41,7 @@
 	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 
-	const { t, locale } = useI18n();
+	const { t, locale, countryName } = useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10 body-mainPlan">
@@ -194,7 +194,7 @@
 					<div class="flex flex-col">
 						<h2 class="text-[28px]">{t('cart.vat')} ({data.vatRate}%):</h2>
 						<p class="text-sm">
-							{t('cart.vatRate', { country: data.vatCountry })}.
+							{t('cart.vatRate', { country: countryName(data.vatCountry) })}.
 							{#if data.vatSingleCountry}
 								{t('cart.vatSellerCountry')}
 							{:else}
