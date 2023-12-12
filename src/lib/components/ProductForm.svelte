@@ -387,10 +387,7 @@
 					/>
 					<span class="text-sm text-gray-600 mt-2 block"
 						>Leave empty if your product is immediately available. Press
-						<kbd
-							class="px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg"
-							>backspace</kbd
-						> to remove the date.</span
+						<kbd class="kbd">backspace</kbd> to remove the date.</span
 					>
 				</label>
 				{#if !isNew}

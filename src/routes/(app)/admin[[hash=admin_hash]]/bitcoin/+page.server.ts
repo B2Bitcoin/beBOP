@@ -26,7 +26,7 @@ export async function load() {
 					.map((item) => item.label.slice('order:'.length))
 			}
 		})
-		.project<Omit<Order, 'user'>>({ user: 0 });
+		.project<Omit<Order, 'user'>>({ user: 0, 'payments._id': 0 });
 
 	return {
 		currentWallet: runtimeConfig.bitcoinWallet,
