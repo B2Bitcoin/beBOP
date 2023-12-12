@@ -137,10 +137,12 @@ export const actions = {
 		const newsletterProspection = runtimeConfig.displayNewsletterCommercialProspection
 			? z
 					.object({
-						newsletter: z.object({
-							seller: z.boolean({ coerce: true }).default(false),
-							partner: z.boolean({ coerce: true }).default(false)
-						})
+						newsletter: z
+							.object({
+								seller: z.boolean({ coerce: true }).default(false),
+								partner: z.boolean({ coerce: true }).default(false)
+							})
+							.optional()
 					})
 					.parse(json)
 			: null;
@@ -178,12 +180,11 @@ export const actions = {
 		}
 		if (
 			runtimeConfig.displayNewsletterCommercialProspection &&
-			(newsletterProspection?.newsletter.partner || newsletterProspection?.newsletter.seller)
+			newsletterProspection &&
+			(newsletterProspection.newsletter?.partner || newsletterProspection.newsletter?.seller)
 		) {
 			await collections.personalInfo.updateOne(
-				{
-					user: userIdentifier(locals)
-				},
+				userQuery(userIdentifier(locals)),
 				{
 					$set: {
 						newsletter: newsletterProspection.newsletter,

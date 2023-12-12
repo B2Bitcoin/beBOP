@@ -94,6 +94,25 @@
 						value={data.personalInfoConnected?.address?.zip ?? ''}
 					/>
 				</label>
+				<label class="form-label col-span-3">
+					{t('checkout.notifications.npub')}
+
+					<input
+						type="text"
+						name="npub"
+						class="form-input"
+						value={data.npub || data.personalInfoConnected?.npub || ''}
+					/>
+				</label>
+				<label class="form-label col-span-3">
+					{t('checkout.notifications.email')}
+					<input
+						type="email"
+						name="email"
+						class="form-input"
+						value={data.email || data.personalInfoConnected?.email || ''}
+					/>
+				</label>
 				{#if data.displayNewsletterCommercialProspection}
 					<label class="checkbox-label col-span-3">
 						<input

@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database.js';
+import { zodNpub } from '$lib/server/nostr';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country.js';
@@ -20,7 +21,9 @@ export async function load({ locals }) {
 			lastName: personalInfoConnected?.lastName,
 			address: personalInfoConnected?.address,
 			_id: personalInfoConnected?._id.toString(),
-			newsletter: personalInfoConnected?.newsletter
+			newsletter: personalInfoConnected?.newsletter,
+			npub: personalInfoConnected?.npub,
+			email: personalInfoConnected?.email
 		}
 	};
 }
@@ -47,10 +50,14 @@ export const actions = {
 				}),
 				firstName: z.string().min(1).max(100).trim(),
 				lastName: z.string().min(1).max(100).trim(),
-				newsletter: z.object({
-					seller: z.boolean({ coerce: true }).default(false),
-					partner: z.boolean({ coerce: true }).default(false)
-				})
+				newsletter: z
+					.object({
+						seller: z.boolean({ coerce: true }).default(false),
+						partner: z.boolean({ coerce: true }).default(false)
+					})
+					.optional(),
+				npub: zodNpub().optional(),
+				email: z.string().email().optional()
 			})
 			.parse(json);
 
@@ -63,9 +70,12 @@ export const actions = {
 					address: personalInfo.address,
 					firstName: personalInfo.firstName,
 					lastName: personalInfo.lastName,
-					newsletter: personalInfo.newsletter,
+					...(personalInfo.newsletter && { newsletter: personalInfo.newsletter }),
+					...(personalInfo.npub && { npub: personalInfo.npub }),
+					...(personalInfo.email && { email: personalInfo.email }),
 					updatedAt: new Date()
-				}
+				},
+				$setOnInsert: { createdAt: new Date(), user: userIdentifier(locals) }
 			},
 			{
 				upsert: true
