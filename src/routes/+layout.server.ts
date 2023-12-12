@@ -5,6 +5,7 @@ export async function load(event) {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		language: event.locals.language,
 		themeChangeNumber: runtimeConfig.themeChangeNumber,
+		enUpdatedAt: runtimeConfigUpdatedAt[`translations.en`] ?? new Date(0),
 		languageUpdatedAt:
 			runtimeConfigUpdatedAt[`translations.${event.locals.language}`] ?? new Date(0)
 	};

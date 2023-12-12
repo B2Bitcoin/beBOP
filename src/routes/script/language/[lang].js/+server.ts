@@ -11,8 +11,11 @@ export const GET = async ({ params }) => {
 	}
 
 	const cacheTime = cachedAt[params.lang] ?? new Date(0).getTime();
+	const updatedAtTime = (
+		runtimeConfigUpdatedAt[`translations.${params.lang}`] ?? new Date(0)
+	).getTime();
 
-	let responseText = cacheTime === cachedAt[params.lang] ? cache[params.lang] : undefined;
+	let responseText = cacheTime === updatedAtTime ? cache[params.lang] : undefined;
 
 	if (!responseText) {
 		const messages = enhancedLanguages[params.lang];
@@ -20,9 +23,7 @@ export const GET = async ({ params }) => {
 			params.lang
 		}'] = ${JSON.stringify(messages)};`;
 		cache[params.lang] = responseText;
-		cachedAt[params.lang] = (
-			runtimeConfigUpdatedAt[`translations.${params.lang}`] ?? new Date(0)
-		).getTime();
+		cachedAt[params.lang] = updatedAtTime;
 	}
 
 	return new Response(responseText, {

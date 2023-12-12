@@ -20,7 +20,10 @@
 	<title>B2Bitcoin Bootik</title>
 	<meta name="description" content="B2Bitcoin's official bootik" />
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
-	<script lang="javascript" src="/script/language/en.js?v={PUBLIC_COMMIT_ID}"></script>
+	<script
+		lang="javascript"
+		src="/script/language/en.js?v={PUBLIC_COMMIT_ID}-{data.enUpdatedAt.getTime()}"
+	></script>
 	{#if data.language !== 'en'}
 		<script
 			lang="javascript"

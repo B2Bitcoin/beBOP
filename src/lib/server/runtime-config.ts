@@ -259,7 +259,7 @@ export function stop(): void {
 	changeStream?.close().catch(console.error);
 }
 
-export const runtimeConfig = { ...defaultConfig };
+export const runtimeConfig = { ...defaultConfig } as RuntimeConfig;
 
 export function resetConfig() {
 	if (!import.meta.env.VITEST) {
