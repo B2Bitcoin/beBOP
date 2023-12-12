@@ -20,7 +20,7 @@ describe('order', () => {
 						quantity: 1
 					}
 				],
-				'cash',
+				'point-of-sale',
 				{
 					user: {
 						sessionId: 'test-session-id'
@@ -54,7 +54,7 @@ describe('order', () => {
 						quantity: 1
 					}
 				],
-				'cash',
+				'point-of-sale',
 				{
 					user: {
 						sessionId: 'test-session-id'
@@ -71,7 +71,7 @@ describe('order', () => {
 						quantity: 1
 					}
 				],
-				'cash',
+				'point-of-sale',
 				{
 					user: {
 						sessionId: 'test-session-id'
@@ -109,7 +109,7 @@ describe('order', () => {
 						quantity: 1
 					}
 				],
-				'cash',
+				'point-of-sale',
 				{
 					user: {
 						sessionId: 'test-session-id'
@@ -142,7 +142,7 @@ describe('order', () => {
 					depositPercentage: 50
 				}
 			],
-			'cash',
+			'point-of-sale',
 			{
 				user: {
 					sessionId: 'test-session-id'
@@ -159,7 +159,7 @@ describe('order', () => {
 					quantity: 1
 				}
 			],
-			'cash',
+			'point-of-sale',
 			{
 				user: {
 					sessionId: 'test-session-id'
@@ -174,7 +174,7 @@ describe('order', () => {
 			throw new Error('Order 1 not found');
 		}
 
-		await addOrderPayment(order1, 'cash', orderAmountWithNoPaymentsCreated(order1));
+		await addOrderPayment(order1, 'point-of-sale', orderAmountWithNoPaymentsCreated(order1));
 
 		let order2 = await collections.orders.findOne({ _id: order2Id });
 		if (!order2) {

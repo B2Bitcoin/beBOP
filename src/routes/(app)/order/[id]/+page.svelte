@@ -85,7 +85,7 @@
 						>
 					</summary>
 					<div class="flex flex-col gap-2 mt-2">
-						{#if payment.method !== 'cash'}
+						{#if payment.method !== 'point-of-sale'}
 							<ul>
 								{#if payment.status !== 'paid'}
 									<li>
@@ -166,7 +166,7 @@
 								{/if}
 							{/if}
 						{/if}
-						{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
+						{#if (payment.method === 'point-of-sale' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
 							<div class="flex flex-wrap gap-2">
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order

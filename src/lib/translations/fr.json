@@ -79,6 +79,7 @@
 			"card": "Carte bancaire",
 			"cash": "Espèces",
 			"lightning": "Lightning",
+			"point-of-sale": "Point of sale",
 			"unavailable": "Aucun mode de paiement disponible."
 		},
 		"paymentStatus": "Statut de paiement",

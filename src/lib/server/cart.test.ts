@@ -79,7 +79,7 @@ describe('cart', () => {
 						product: TEST_PRODUCT
 					}
 				],
-				'cash',
+				'point-of-sale',
 				{
 					cart: cart2,
 					user: {

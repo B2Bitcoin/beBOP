@@ -369,7 +369,9 @@
 									name="{key}NPUB"
 									value={data.npub || data.personalInfoConnected?.npub || ''}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus' && !emails[key] && paymentMethod !== 'cash'}
+									required={key === 'paymentStatus' &&
+										!emails[key] &&
+										paymentMethod !== 'point-of-sale'}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
