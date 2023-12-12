@@ -121,6 +121,11 @@ export async function renewSessionId(locals: App.Locals, cookies: Cookies) {
 			{ $set: { 'user.sessionId': newSessionId } },
 			{ session }
 		);
+		await collections.personalInfo.updateMany(
+			{ 'user.sessionId': locals.sessionId },
+			{ $set: { 'user.sessionId': newSessionId } },
+			{ session }
+		);
 	});
 
 	locals.sessionId = newSessionId;
