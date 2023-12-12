@@ -50,6 +50,31 @@
 	<li>Chain: {data.blockchainInfo.chain}</li>
 </ul>
 
+<h2 class="text-2xl">BIP 84</h2>
+
+{#if !data.bip84}
+	<p>
+		BIP 84 is not enabled. Configure BIP84_ZPUB in the environment to enable it, as well as the
+		bitcoin node
+	</p>
+{:else}
+	<ul>
+		<li>BIP 84 Zpub: {data.bip84Zpub}</li>
+		<li>
+			Derivation path: <kbd
+				class="px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg"
+				>m/84'/0'/0'</kbd
+			>
+		</li>
+		<li>
+			BIP 84 derivation index: {data.bitcoinDerivationIndex}. Next address will use the
+			<kbd class="px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg"
+				>m/84'/0'/0'/0/{data.bitcoinDerivationIndex + 1}</kbd
+			> derivation path
+		</li>
+	</ul>
+{/if}
+
 <h2 class="text-2xl">Wallet</h2>
 
 {#if data.wallets.length}
