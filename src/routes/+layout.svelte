@@ -24,7 +24,7 @@
 	{#if data.language !== 'en'}
 		<script
 			lang="javascript"
-			src="/script/language/{data.language}.js?v={PUBLIC_COMMIT_ID}"
+			src="/script/language/{data.language}.js?v={PUBLIC_COMMIT_ID}-{data.languageUpdatedAt.getTime()}"
 		></script>
 	{/if}
 	{#if data.plausibleScriptUrl}
