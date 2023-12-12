@@ -46,10 +46,7 @@
 			}))
 		) + (deliveryFees || 0);
 
-	$: partialVat =
-		data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry
-			? 0
-			: fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: partialPriceWithVat = partialPrice + partialVat;
 	$: totalPriceWithVat =
 		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
@@ -202,12 +199,12 @@
 					{t('checkout.noDeliveryInCountry')}
 				</div>
 			{/if}
-			{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry}
+			{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<span class="font-semibold">{t('product.vatExcluded')}</span>
 						<p class="text-sm">
-							{t('cart.vatNullOutsideCountry')}
+							{t('cart.vatNullOutsideSellerCountry')}
 						</p>
 					</div>
 				</div>

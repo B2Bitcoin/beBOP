@@ -189,9 +189,9 @@
 			<label class="checkbox-label">
 				<input
 					type="checkbox"
-					name="vatNullOutsideCountry"
+					name="vatNullOutsideSellerCountry"
 					class="form-checkbox"
-					bind:checked={data.vatNullOutsideCountry}
+					bind:checked={data.vatNullOutsideSellerCountry}
 				/>
 				Make VAT = 0% for deliveries outside seller's country
 			</label>

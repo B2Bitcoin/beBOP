@@ -89,7 +89,12 @@
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
-	$: actualVatRate = isDigital || data.vatSingleCountry ? data.vatRate : vatRate(actualCountry);
+	$: actualVatRate =
+		data.vatCountry !== country && data.vatNullOutsideSellerCountry
+			? 0
+			: isDigital || data.vatSingleCountry
+			? data.vatRate
+			: vatRate(actualCountry);
 
 	$: partialPrice =
 		sumCurrency(
@@ -114,10 +119,7 @@
 	$: totalPriceWithVat =
 		totalPrice + fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 
-	$: partialVat =
-		data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry
-			? 0
-			: fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
+	$: partialVat = fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: partialPriceWithVat = partialPrice + partialVat;
 	$: partialSatoshi = toCurrency('SAT', partialPriceWithVat, UNDERLYING_CURRENCY);
 	$: isDiscountValid =
@@ -515,12 +517,12 @@
 					</div>
 				{/if}
 
-				{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry}
+				{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideSellerCountry}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
 								{t('product.vatExcluded')}
-								<div title={t('cart.vatNullOutsideCountry')}>
+								<div title={t('cart.vatNullOutsideSellerCountry')}>
 									<IconInfo class="cursor-pointer" />
 								</div>
 							</h3>

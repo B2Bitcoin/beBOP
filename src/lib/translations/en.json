@@ -29,7 +29,7 @@
 		"vat": "VAT",
 		"vatIpCountry": "The country is determined through data from <0></0>",
 		"vatIpCountryText": "The country is determined through data from {link}",
-		"vatNullOutsideCountry": "This order is exempt from VAT and must be paid by the customer to the competent services upon delivery.",
+		"vatNullOutsideSellerCountry": "Import taxes must be paid by the customer to customs upon delivery.",
 		"vatRate": "VAT rate for {country}",
 		"vatSellerCountry": "The country is the seller's country."
 	},

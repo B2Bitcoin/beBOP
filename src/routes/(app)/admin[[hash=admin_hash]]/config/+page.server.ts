@@ -27,7 +27,7 @@ export async function load(event) {
 		adminHash: runtimeConfig.adminHash,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
-		vatNullOutsideCountry: runtimeConfig.vatNullOutsideCountry
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry
 	};
 }
 
@@ -53,7 +53,7 @@ export const actions = {
 				vatExempted: z.boolean({ coerce: true }),
 				vatExemptionReason: z.string().default(runtimeConfig.vatExemptionReason),
 				vatSingleCountry: z.boolean({ coerce: true }),
-				vatNullOutsideCountry: z.boolean({ coerce: true }),
+				vatNullOutsideSellerCountry: z.boolean({ coerce: true }),
 				vatCountry: z.string().default(runtimeConfig.vatCountry),
 				subscriptionReminderSeconds: z
 					.number({ coerce: true })

@@ -338,7 +338,7 @@
 											</div>
 										</form>
 									{/each}
-									{#if data.vatSingleCountry && data.vatCountry !== data.countryCode && data.vatNullOutsideCountry}
+									{#if data.vatCountry !== data.countryCode && data.vatNullOutsideSellerCountry}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('product.vatExcluded')}
 										</div>

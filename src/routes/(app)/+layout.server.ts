@@ -46,16 +46,19 @@ export async function load(params) {
 		npub: locals.npub,
 		sso: locals.sso,
 		userId: locals.user?._id.toString(),
-		vatRate: runtimeConfig.vatExempted
-			? 0
-			: runtimeConfig.vatSingleCountry
-			? vatRate(runtimeConfig.vatCountry)
-			: vatRate(locals.countryCode ?? runtimeConfig.vatCountry),
+		vatRate:
+			runtimeConfig.vatCountry !== locals.countryCode && runtimeConfig.vatNullOutsideSellerCountry
+				? 0
+				: runtimeConfig.vatExempted
+				? 0
+				: runtimeConfig.vatSingleCountry
+				? vatRate(runtimeConfig.vatCountry)
+				: vatRate(locals.countryCode ?? runtimeConfig.vatCountry),
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
 		vatCountry: runtimeConfig.vatSingleCountry
 			? runtimeConfig.vatCountry
 			: locals.countryCode ?? runtimeConfig.vatCountry,
-		vatNullOutsideCountry: runtimeConfig.vatNullOutsideCountry,
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
 		currencies: {
 			main: runtimeConfig.mainCurrency,
 			secondary: runtimeConfig.secondaryCurrency,
