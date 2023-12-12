@@ -102,7 +102,7 @@
 						name="npub"
 						class="form-input"
 						placeholder={data.npub || ''}
-						value={data.npub || data.personalInfoConnected?.npub || ''}
+						value={data.personalInfoConnected?.npub || ''}
 					/>
 				</label>
 				<label class="form-label col-span-3">
@@ -112,7 +112,7 @@
 						name="email"
 						class="form-input"
 						placeholder={data.email || ''}
-						value={data.email || data.personalInfoConnected?.email || ''}
+						value={data.personalInfoConnected?.email || ''}
 					/>
 				</label>
 				{#if data.displayNewsletterCommercialProspection}

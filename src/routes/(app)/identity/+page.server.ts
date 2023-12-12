@@ -62,9 +62,7 @@ export const actions = {
 			.parse(json);
 
 		await collections.personalInfo.updateOne(
-			{
-				user: userIdentifier(locals)
-			},
+			userQuery(userIdentifier(locals)),
 			{
 				$set: {
 					address: personalInfo.address,
