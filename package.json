@@ -69,6 +69,7 @@
 		"@tinymce/tinymce-svelte": "^1.0.1",
 		"bcryptjs": "^2.4.3",
 		"bech32": "^2.0.0",
+		"bip84": "^0.2.7",
 		"date-fns": "^2.29.3",
 		"devalue": "^4.3.2",
 		"dompurify": "^3.0.6",

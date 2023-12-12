@@ -10,6 +10,8 @@ import { runtimeConfig } from './runtime-config';
 import { socksDispatcher } from 'fetch-socks';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { ObjectId } from 'mongodb';
+// @ts-expect-error no types
+import { fromZPub } from 'bip84';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
@@ -258,4 +260,8 @@ export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[nu
 
 export function orderAddressLabel(orderId: string, paymentId: ObjectId) {
 	return `order:${orderId}:${paymentId}`;
+}
+
+export function bip84Address(zpub: string, index: number): string {
+	return new fromZPub(zpub).getAddress(index);
 }
