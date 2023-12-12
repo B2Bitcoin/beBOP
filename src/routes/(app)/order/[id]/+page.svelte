@@ -124,7 +124,7 @@
 								<button
 									class="btn btn-black self-start"
 									type="button"
-									disabled={!receiptReady}
+									disabled={!receiptReady[payment.id]}
 									on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
 									>{t('order.receipt.create')}</button
 								>
