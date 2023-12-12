@@ -17,6 +17,9 @@
 		"empty": "Cart is empty",
 		"items": "Products",
 		"quantity": "Quantity",
+		"remaining": "Remaining after checkout",
+		"remainingHelpText": "For items with deposits, the current order is a partial payment.\nTo complete the purchase, you will need to make another payment with the following amount.\n(VAT is already included in the amount)",
+		"remainingShort": "Later",
 		"sr": {
 			"decrease": "Decrease quantity",
 			"increase": "Increase quantity",
@@ -44,6 +47,7 @@
 	},
 	"checkout": {
 		"agreeIpCollect": "I agree to the collection of my IP address (<0>why?</0>)",
+		"agreeOnlyDeposit": "I agree that I need to pay the remainder in the future (<0>why?</0>)",
 		"backToCart": "Back to cart",
 		"billingInfo": "Billing address",
 		"cta": {
@@ -417,13 +421,15 @@
 		},
 		"paymentStatusNpub": "NostR public address for payment status",
 		"receipt": {
+			"alreadyPaidAmount": "Amount previously paid",
 			"bankInfo": "Bank details",
 			"create": "Create invoice",
 			"endMessage": "We stay at your disposal for any further information. <0></0> Best regards, <1></1> {businessName}",
 			"invoice": "Invoice",
 			"itemName": "Nature",
-			"partialAmount": "Amount to pay (partial payment)",
+			"partialAmount": "Amount paid (partial payment)",
 			"quantity": "Qty",
+			"remainingAmount": "Remaining amount to pay",
 			"totalExcVat": "Total Excl. VAT",
 			"totalInclVat": "Total Incl. VAT",
 			"totalVat": "Total VAT",

@@ -29,6 +29,7 @@
 	const endsAt = data.discount ? new Date(data.discount.endsAt).getTime() : Date.now(); // Convert to timestamp
 	const currentTime = Date.now();
 	const hoursDifference = differenceInHours(endsAt, currentTime);
+	let deposit = 'partial';
 
 	const PWYWCurrency =
 		data.currencies.main === 'BTC' &&
@@ -68,7 +69,9 @@
 			...(data.product.type !== 'subscription' && {
 				customPrice: { amount: customAmount, currency: PWYWCurrency }
 			}),
-			picture: currentPicture
+			picture: currentPicture,
+			depositPercentage:
+				deposit === 'partial' && data.product.deposit ? data.product.deposit.percentage : undefined
 		};
 	}
 
@@ -366,7 +369,7 @@
 							{/if}
 							{#if data.product.deposit}
 								<label class="checkbox-label">
-									<input type="radio" value="partial" name="deposit" checked />
+									<input type="radio" value="partial" name="deposit" checked bind:group={deposit} />
 									{t('product.deposit.payPercentage', {
 										percentage: (data.product.deposit.percentage / 100).toLocaleString($locale, {
 											style: 'percent'
@@ -380,7 +383,7 @@
 								</label>
 								{#if !data.product.deposit.enforce}
 									<label class="checkbox-label">
-										<input type="radio" value="full" name="deposit" />
+										<input type="radio" value="full" name="deposit" bind:group={deposit} />
 										{t('product.deposit.payFullPrice')}
 									</label>
 								{/if}

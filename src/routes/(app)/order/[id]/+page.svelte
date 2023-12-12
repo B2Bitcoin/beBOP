@@ -116,7 +116,7 @@
 								{/if}
 							</ul>
 
-							{#if payment.status === 'paid'}
+							{#if payment.status === 'paid' && payment.invoice?.number}
 								<button
 									class="btn btn-black self-start"
 									type="button"

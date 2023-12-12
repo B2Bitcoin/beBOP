@@ -16,6 +16,7 @@ import { refreshPromise } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
 import { building } from '$app/environment';
 import { rateLimit } from '../rateLimit';
+import { isOrderFullyPaid } from '../orders';
 
 const lock = new Lock('order-notifications');
 
@@ -149,7 +150,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 		for (const payment of payments) {
 			await withTransaction(async (session) => {
 				if (npub) {
-					let content = `Order #${order.number} has payment ${payment.status}, see ${ORIGIN}/order/${order._id}`;
+					let content = `Payment for order #${order.number} is ${payment.status}, see ${ORIGIN}/order/${order._id}`;
 
 					if (payment.status === 'pending') {
 						if (payment.method === 'bitcoin') {
@@ -162,6 +163,9 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						} else if (payment.method === 'card') {
 							content += `\n\nPlease pay using this link: ${payment.address}`;
 						}
+					}
+					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
+						content += `Order #${order.number} is not fully paid yet`;
 					}
 					if (!(payment.method === 'cash' && payment.status !== 'paid')) {
 						await collections.nostrNotifications.insertOne(
@@ -181,7 +185,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 				}
 
 				if (email) {
-					let htmlContent = `<p>Order #${order.number}'s payment status changed to ${payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a></p>`;
+					let htmlContent = `<p>Payment for order #${order.number} is ${payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a></p>`;
 
 					if (payment.status === 'pending') {
 						if (payment.method === 'bitcoin') {
@@ -196,6 +200,9 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						} else if (payment.method === 'card') {
 							htmlContent += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
 						}
+					}
+					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
+						htmlContent += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> is not fully paid yet</p>`;
 					}
 					if (!(payment.method === 'cash' && payment.status !== 'paid')) {
 						await collections.emailNotifications.insertOne(
