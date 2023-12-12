@@ -89,7 +89,12 @@
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
-	$: actualVatRate = isDigital || data.vatSingleCountry ? data.vatRate : vatRate(actualCountry);
+	$: actualVatRate =
+		data.vatCountry !== country && data.vatNullOutsideSellerCountry
+			? 0
+			: isDigital || data.vatSingleCountry
+			? data.vatRate
+			: vatRate(actualCountry);
 
 	$: partialPrice =
 		sumCurrency(
@@ -130,10 +135,8 @@
 	>
 		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
 			<h1 class="page-title body-title">{t('checkout.title')}</h1>
-
 			<section class="gap-4 grid grid-cols-6 w-4/5">
 				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
-
 				{#if isDigital}
 					<p class="col-span-6">
 						{t('checkout.digitalNoShippingNeeded')}
@@ -536,7 +539,18 @@
 					</div>
 				{/if}
 
-				{#if data.vatCountry && !data.vatExempted}
+				{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+					<div class="flex justify-between items-center">
+						<div class="flex flex-col">
+							<h3 class="text-base flex flex-row gap-2 items-center">
+								{t('product.vatExcluded')}
+								<div title={t('cart.vatNullOutsideSellerCountry')}>
+									<IconInfo class="cursor-pointer" />
+								</div>
+							</h3>
+						</div>
+					</div>
+				{:else if data.vatCountry && !data.vatExempted}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">

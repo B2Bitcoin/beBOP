@@ -70,6 +70,7 @@ const defaultConfig = {
 	vatExemptionReason: '',
 	vatSingleCountry: false,
 	vatCountry: '',
+	vatNullOutsideSellerCountry: false,
 	collectIPOnDeliverylessOrders: false,
 	isBillingAddressMandatory: false,
 

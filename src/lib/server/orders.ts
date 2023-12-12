@@ -521,7 +521,13 @@ export async function createOrder(
 
 	partialSatoshis += sumCurrency('SAT', partialItemPrices);
 
-	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
+	const vatCountry =
+		runtimeConfig.vatNullOutsideSellerCountry && runtimeConfig.vatCountry !== params.vatCountry
+			? 0
+			: runtimeConfig.vatSingleCountry
+			? runtimeConfig.vatCountry
+			: params.vatCountry;
+
 	const vat: Order['vat'] =
 		!vatCountry || runtimeConfig.vatExempted || params.reasonFreeVat
 			? undefined

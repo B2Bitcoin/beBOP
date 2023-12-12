@@ -44,7 +44,8 @@ export async function load({ parent, locals }) {
 			email: personalInfoConnected?.email
 		},
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
-		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection
+		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry
 	};
 }
 
