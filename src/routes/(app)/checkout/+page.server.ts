@@ -191,9 +191,10 @@ export const actions = {
 						newsletter: newsletterProspection.newsletter,
 						...(npubAddress && { npub: npubAddress }),
 						...(email && { email: email }),
-						updatedAt: new Date()
+						updatedAt: new Date(),
+						user: userIdentifier(locals)
 					},
-					$setOnInsert: { createdAt: new Date(), user: userIdentifier(locals) }
+					$setOnInsert: { createdAt: new Date() }
 				},
 				{
 					upsert: true

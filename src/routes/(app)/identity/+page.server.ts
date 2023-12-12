@@ -71,9 +71,10 @@ export const actions = {
 					...(personalInfo.newsletter && { newsletter: personalInfo.newsletter }),
 					...(personalInfo.npub && { npub: personalInfo.npub }),
 					...(personalInfo.email && { email: personalInfo.email }),
-					updatedAt: new Date()
+					updatedAt: new Date(),
+					user: userIdentifier(locals)
 				},
-				$setOnInsert: { createdAt: new Date(), user: userIdentifier(locals) }
+				$setOnInsert: { createdAt: new Date() }
 			},
 			{
 				upsert: true
