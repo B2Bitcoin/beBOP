@@ -2,7 +2,8 @@ import {
 	BITCOIN_RPC_URL,
 	BITCOIN_RPC_PASSWORD,
 	BITCOIN_RPC_USER,
-	TOR_PROXY_URL
+	TOR_PROXY_URL,
+	BIP84_ZPUB
 } from '$env/static/private';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -12,9 +13,12 @@ import { filterUndef } from '$lib/utils/filterUndef';
 import type { ObjectId } from 'mongodb';
 // @ts-expect-error no types
 import { fromZPub } from 'bip84';
+import { collections } from './database';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
+
+export const isBIP84Configured = isBitcoinConfigured && BIP84_ZPUB && isZPubValid(BIP84_ZPUB);
 
 const dispatcher =
 	isBitcoinConfigured &&
@@ -35,6 +39,7 @@ type BitcoinCommand =
 	| 'listreceivedbyaddress'
 	| 'dumpprivkey'
 	| 'listdescriptors'
+	| 'importaddress'
 	| 'getnewaddress'
 	| 'getbalance'
 	| 'getblockchaininfo';
@@ -42,7 +47,7 @@ type BitcoinCommand =
 export async function bitcoinRpc(command: BitcoinCommand, params: unknown[], wallet?: string) {
 	let url = BITCOIN_RPC_URL;
 
-	if (!['listwallets', 'createwallet', 'getblockhaininfo'].includes(command)) {
+	if (!['listwallets', 'createwallet', 'getblockhaininfo', 'setlabel'].includes(command)) {
 		const wallets = await listWallets();
 
 		if (wallet && !wallets.includes(wallet)) {
@@ -111,6 +116,19 @@ export async function createWallet(name: string) {
 }
 
 export async function getNewAddress(label: string) {
+	if (isBIP84Configured) {
+		if (runtimeConfig.bitcoinDerivationIndex === 0 && (await listWallets()).length === 0) {
+			throw error(400, 'Create a wallet first to be able to watch BIP84 addresses');
+		}
+		const address = bip84Address(BIP84_ZPUB, await generateDerivationIndex());
+		const response = await bitcoinRpc('importaddress', [address, label, false, true]);
+
+		if (!response.ok) {
+			console.error(await response.text());
+			throw error(500, 'Could not import address');
+		}
+	}
+
 	const response = await bitcoinRpc('getnewaddress', [label, 'bech32']);
 
 	if (!response.ok) {
@@ -123,7 +141,7 @@ export async function getNewAddress(label: string) {
 }
 
 export async function listTransactions(label?: string) {
-	const response = await bitcoinRpc('listtransactions', [label || '*', 100]);
+	const response = await bitcoinRpc('listtransactions', [label || '*', 100, 0, true]);
 
 	if (!response.ok) {
 		console.error(await response.text());
@@ -264,4 +282,27 @@ export function orderAddressLabel(orderId: string, paymentId: ObjectId) {
 
 export function bip84Address(zpub: string, index: number): string {
 	return new fromZPub(zpub).getAddress(index);
+}
+
+export function isZPubValid(zpub: string): boolean {
+	try {
+		new fromZPub(zpub).getAddress(0);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+export async function generateDerivationIndex(): Promise<number> {
+	const res = await collections.runtimeConfig.findOneAndUpdate(
+		{ _id: 'bitcoinDerivationIndex' },
+		{ $inc: { data: 1 as never } },
+		{ upsert: true, returnDocument: 'after' }
+	);
+
+	if (!res.value) {
+		throw new Error('Failed to increment derivation index');
+	}
+
+	return res.value.data as number;
 }
