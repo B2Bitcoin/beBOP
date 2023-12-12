@@ -1,7 +1,7 @@
 import { addToCartInDb, removeFromCartInDb } from '$lib/server/cart';
 import { collections, withTransaction } from '$lib/server/database';
 import { refreshAvailableStockInDb } from '$lib/server/product.js';
-import { userIdentifier } from '$lib/server/user.js';
+import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER } from '$lib/types/Product.js';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -53,10 +53,10 @@ export const actions = {
 		const product = await collections.products.findOne({ _id: params.id });
 
 		if (!product) {
-			await collections.carts.updateOne(
-				{ sessionId: locals.sessionId },
-				{ $pull: { items: { productId: params.id } }, $set: { updatedAt: new Date() } }
-			);
+			await collections.carts.updateOne(userQuery(userIdentifier(locals)), {
+				$pull: { items: { productId: params.id } },
+				$set: { updatedAt: new Date() }
+			});
 			throw error(404, 'This product does not exist');
 		}
 
