@@ -79,6 +79,7 @@
 			"card": "Credit card",
 			"cash": "Cash",
 			"lightning": "Lightning",
+			"point-of-sale": "Point of sale",
 			"unavailable": "No payment methods available."
 		},
 		"paymentStatus": "Payment status",

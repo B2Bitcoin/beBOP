@@ -5,7 +5,13 @@ import { isLightningConfigured } from './lightning';
 import { runtimeConfig } from './runtime-config';
 import { isSumupEnabled } from './sumup';
 
-const ALL_PAYMENT_METHODS = ['lightning', 'bitcoin', 'cash', 'card', 'bankTransfer'] as const;
+const ALL_PAYMENT_METHODS = [
+	'lightning',
+	'bitcoin',
+	'point-of-sale',
+	'card',
+	'bankTransfer'
+] as const;
 export type PaymentMethod = (typeof ALL_PAYMENT_METHODS)[number];
 
 export const paymentMethods = (role?: string) =>
@@ -16,5 +22,7 @@ export const paymentMethods = (role?: string) =>
 				...(runtimeConfig.sellerIdentity?.bank ? (['bankTransfer'] as const) : []),
 				...(isBitcoinConfigured ? (['bitcoin'] as const) : []),
 				...(isLightningConfigured ? (['lightning'] as const) : []),
-				...(runtimeConfig.enableCashSales && role === POS_ROLE_ID ? (['cash'] as const) : [])
+				...(runtimeConfig.enableCashSales && role === POS_ROLE_ID
+					? (['point-of-sale'] as const)
+					: [])
 		  ];

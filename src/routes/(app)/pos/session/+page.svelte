@@ -143,7 +143,7 @@
 			</div>
 		{/if}
 	{:else if view === 'pending'}
-		{#if order?.payments[0]?.method === 'cash'}
+		{#if order?.payments[0]?.method === 'point-of-sale'}
 			<div class="text-2xl text-center">{t('pos.session.waitingPaymentConfirmation')}</div>
 		{:else}
 			<div class="flex flex-col items-center gap-3">
