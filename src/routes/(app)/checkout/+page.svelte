@@ -367,7 +367,7 @@
 									class="form-input"
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
-									value={data.npub || ''}
+									value={data.npub || data.personalInfoConnected?.npub || ''}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus' && !emails[key] && paymentMethod !== 'cash'}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
@@ -381,11 +381,33 @@
 										class="form-input"
 										autocomplete="email"
 										name="{key}Email"
-										bind:value={emails[key]}
+										value={emails[key] || data.personalInfoConnected?.email || ''}
 									/>
 								</label>
 							{/if}
 						</div>
+						{#if data.displayNewsletterCommercialProspection}
+							<div class="p-4 flex flex-col gap-3">
+								<label class="checkbox-label col-span-3">
+									<input
+										class="form-checkbox"
+										type="checkbox"
+										checked={data.personalInfoConnected?.newsletter?.seller ?? false}
+										name="newsletter.seller"
+									/>
+									{t('newsletter.allowSellerContact')}
+								</label>
+								<label class="checkbox-label col-span-3">
+									<input
+										class="form-checkbox"
+										type="checkbox"
+										checked={data.personalInfoConnected?.newsletter?.partner ?? false}
+										name="newsletter.partner"
+									/>
+									{t('newsletter.allowPartnerContact')}
+								</label>
+							</div>
+						{/if}
 					</article>
 				{/each}
 			</section>

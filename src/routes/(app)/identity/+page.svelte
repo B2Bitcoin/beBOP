@@ -94,6 +94,47 @@
 						value={data.personalInfoConnected?.address?.zip ?? ''}
 					/>
 				</label>
+				<label class="form-label col-span-3">
+					{t('checkout.notifications.npub')}
+
+					<input
+						type="text"
+						name="npub"
+						class="form-input"
+						placeholder={data.npub || ''}
+						value={data.personalInfoConnected?.npub || ''}
+					/>
+				</label>
+				<label class="form-label col-span-3">
+					{t('checkout.notifications.email')}
+					<input
+						type="email"
+						name="email"
+						class="form-input"
+						placeholder={data.email || ''}
+						value={data.personalInfoConnected?.email || ''}
+					/>
+				</label>
+				{#if data.displayNewsletterCommercialProspection}
+					<label class="checkbox-label col-span-3">
+						<input
+							class="form-checkbox"
+							type="checkbox"
+							checked={data.personalInfoConnected?.newsletter?.seller ?? false}
+							name="newsletter.seller"
+						/>
+						{t('newsletter.allowSellerContact')}
+					</label>
+					<label class="checkbox-label col-span-3">
+						<input
+							class="form-checkbox"
+							type="checkbox"
+							checked={data.personalInfoConnected?.newsletter?.partner ?? false}
+							name="newsletter.partner"
+						/>
+						{t('newsletter.allowPartnerContact')}
+					</label>
+				{/if}
 				<button type="submit" class="btn btn-black self-start">Update</button>
 			</section>
 		</form>

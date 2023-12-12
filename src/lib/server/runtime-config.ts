@@ -115,7 +115,8 @@ const defaultConfig = {
 	usersDarkDefaultTheme: false,
 	employeesDarkDefaultTheme: false,
 	displayPoweredBy: false,
-	displayCompanyInfo: false
+	displayCompanyInfo: false,
+	displayNewsletterCommercialProspection: false
 };
 
 export const runtimeConfigUpdatedAt: Partial<Record<ConfigKey, Date>> = {};

@@ -378,6 +378,10 @@
 		},
 		"willReceiveSessionLink": "Vous recevrez un lien de session sur votre adresse"
 	},
+	"newsletter": {
+		"allowPartnerContact": "Autoriser nos partenaires à vous envoyer des sollicitations commerciales",
+		"allowSellerContact": "Nous autoriser à vous envoyer des sollicitations commerciales"
+	},
 	"order": {
 		"addPayment": {
 			"amount": "Montant du paiement",

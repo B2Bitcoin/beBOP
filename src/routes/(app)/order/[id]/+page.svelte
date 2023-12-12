@@ -78,7 +78,7 @@
 								inline
 								class="break-words {payment.status === 'paid'
 									? 'text-green-500'
-									: 'body-secondaryText'}"
+									: 'body-secondaryText'} "
 								amount={payment.price.amount}
 								currency={payment.price.currency}
 							/> - {t(`order.paymentStatus.${payment.status}`)}</span

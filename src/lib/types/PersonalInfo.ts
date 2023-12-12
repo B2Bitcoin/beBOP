@@ -1,17 +1,23 @@
-import type { ObjectId } from 'mongodb';
+import type { ObjectId, Timestamp } from 'mongodb';
 import type { CountryAlpha2 } from './Country';
 import type { UserIdentifier } from './UserIdentifier';
 
-export interface PersonalInfo {
+export interface PersonalInfo extends Timestamp {
 	_id: ObjectId;
-	user: UserIdentifier;
-	firstName: string;
-	lastName: string;
-	address: {
+	user?: UserIdentifier;
+	firstName?: string;
+	lastName?: string;
+	address?: {
 		street: string;
 		zip: string;
 		city: string;
 		country: CountryAlpha2;
 		state?: string;
 	};
+	newsletter?: {
+		seller: boolean;
+		partner: boolean;
+	};
+	npub?: string;
+	email?: string;
 }
