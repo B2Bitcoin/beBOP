@@ -125,6 +125,15 @@
 		Create a fullScreen CMS page with "maintenance" slug, to show maintenance page, by following
 		<a href="/admin/cms/new" class="text-link underline">this link</a>.
 	</p>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="displayNewsletterCommercialProspection"
+			class="form-checkbox"
+			checked={data.displayNewsletterCommercialProspection}
+		/>
+		Display newsletter + commercial prospection option (disabled by default)
+	</label>
 	<label class="form-label">
 		Maintenance IPs, comma-separated
 		<input
@@ -185,6 +194,15 @@
 					bind:checked={vatSingleCountry}
 				/>
 				Use VAT rate from seller's country
+			</label>
+			<label class="checkbox-label">
+				<input
+					type="checkbox"
+					name="vatNullOutsideSellerCountry"
+					class="form-checkbox"
+					bind:checked={data.vatNullOutsideSellerCountry}
+				/>
+				Make VAT = 0% for deliveries outside seller's country
 			</label>
 			{#if vatSingleCountry}
 				<label class="form-label">

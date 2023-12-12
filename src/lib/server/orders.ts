@@ -440,7 +440,7 @@ export async function createOrder(
 
 	const canBeNotified = !!(npubAddress || (emailsEnabled && email));
 
-	if (!canBeNotified && paymentMethod !== 'cash') {
+	if (!canBeNotified && paymentMethod !== 'point-of-sale') {
 		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
 	}
 
@@ -521,7 +521,13 @@ export async function createOrder(
 
 	partialSatoshis += sumCurrency('SAT', partialItemPrices);
 
-	const vatCountry = runtimeConfig.vatSingleCountry ? runtimeConfig.vatCountry : params.vatCountry;
+	const vatCountry =
+		runtimeConfig.vatNullOutsideSellerCountry && runtimeConfig.vatCountry !== params.vatCountry
+			? 0
+			: runtimeConfig.vatSingleCountry
+			? runtimeConfig.vatCountry
+			: params.vatCountry;
+
 	const vat: Order['vat'] =
 		!vatCountry || runtimeConfig.vatExempted || params.reasonFreeVat
 			? undefined
@@ -976,7 +982,7 @@ async function generatePaymentInfo(params: {
 				invoiceId: invoice.r_hash
 			};
 		}
-		case 'cash': {
+		case 'point-of-sale': {
 			return {};
 		}
 		case 'bankTransfer': {
@@ -1045,13 +1051,13 @@ async function generateCardPaymentInfo(params: {
 }
 
 function paymentMethodExpiration(paymentMethod: PaymentMethod) {
-	return paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
+	return paymentMethod === 'point-of-sale' || paymentMethod === 'bankTransfer'
 		? undefined
 		: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 }
 
 function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
-	return paymentMethod === 'cash' || paymentMethod === 'bankTransfer'
+	return paymentMethod === 'point-of-sale' || paymentMethod === 'bankTransfer'
 		? {
 				amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
 				currency: runtimeConfig.mainCurrency

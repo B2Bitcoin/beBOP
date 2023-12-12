@@ -20,11 +20,14 @@
 	<title>B2Bitcoin beBOP</title>
 	<meta name="description" content="B2Bitcoin's official beBOP" />
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
-	<script lang="javascript" src="/script/language/en.js?v={PUBLIC_COMMIT_ID}"></script>
+	<script
+		lang="javascript"
+		src="/script/language/en.js?v={PUBLIC_COMMIT_ID}-{data.enUpdatedAt.getTime()}"
+	></script>
 	{#if data.language !== 'en'}
 		<script
 			lang="javascript"
-			src="/script/language/{data.language}.js?v={PUBLIC_COMMIT_ID}"
+			src="/script/language/{data.language}.js?v={PUBLIC_COMMIT_ID}-{data.languageUpdatedAt.getTime()}"
 		></script>
 	{/if}
 	{#if data.plausibleScriptUrl}

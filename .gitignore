@@ -8,6 +8,5 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 build.zip
-
 # Copied in vite.config.ts
 static/tinymce

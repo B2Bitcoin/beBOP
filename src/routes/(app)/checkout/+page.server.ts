@@ -38,9 +38,14 @@ export async function load({ parent, locals }) {
 			firstName: personalInfoConnected?.firstName,
 			lastName: personalInfoConnected?.lastName,
 			address: personalInfoConnected?.address,
-			_id: personalInfoConnected?._id.toString()
+			_id: personalInfoConnected?._id.toString(),
+			newsletter: personalInfoConnected?.newsletter,
+			npub: personalInfoConnected?.npub,
+			email: personalInfoConnected?.email
 		},
-		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory
+		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
+		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry
 	};
 }
 
@@ -130,6 +135,18 @@ export const actions = {
 		if (shippingInfo && !shippingInfo.shipping.state) {
 			delete shippingInfo.shipping.state;
 		}
+		const newsletterProspection = runtimeConfig.displayNewsletterCommercialProspection
+			? z
+					.object({
+						newsletter: z
+							.object({
+								seller: z.boolean({ coerce: true }).default(false),
+								partner: z.boolean({ coerce: true }).default(false)
+							})
+							.optional()
+					})
+					.parse(json)
+			: null;
 
 		const { paymentMethod, discountAmount, discountType, discountJustification } = z
 			.object({
@@ -161,6 +178,28 @@ export const actions = {
 
 		if (isFreeVat && !reasonFreeVat) {
 			throw error(400, 'Reason for free VAT is required');
+		}
+		if (
+			runtimeConfig.displayNewsletterCommercialProspection &&
+			newsletterProspection &&
+			(newsletterProspection.newsletter?.partner || newsletterProspection.newsletter?.seller)
+		) {
+			await collections.personalInfo.updateOne(
+				userQuery(userIdentifier(locals)),
+				{
+					$set: {
+						newsletter: newsletterProspection.newsletter,
+						...(npubAddress && { npub: npubAddress }),
+						...(email && { email: email }),
+						updatedAt: new Date(),
+						user: userIdentifier(locals)
+					},
+					$setOnInsert: { createdAt: new Date() }
+				},
+				{
+					upsert: true
+				}
+			);
 		}
 
 		const agreements = z

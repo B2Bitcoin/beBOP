@@ -167,7 +167,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
 						content += `Order #${order.number} is not fully paid yet`;
 					}
-					if (!(payment.method === 'cash' && payment.status !== 'paid')) {
+					if (!(payment.method === 'point-of-sale' && payment.status !== 'paid')) {
 						await collections.nostrNotifications.insertOne(
 							{
 								_id: new ObjectId(),
@@ -204,7 +204,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
 						htmlContent += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> is not fully paid yet</p>`;
 					}
-					if (!(payment.method === 'cash' && payment.status !== 'paid')) {
+					if (!(payment.method === 'point-of-sale' && payment.status !== 'paid')) {
 						await collections.emailNotifications.insertOne(
 							{
 								_id: new ObjectId(),

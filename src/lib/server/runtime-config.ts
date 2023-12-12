@@ -14,6 +14,11 @@ import { building } from '$app/environment';
 import type { SellerIdentity } from '$lib/types/SellerIdentity';
 import { isUniqueConstraintError } from './utils/isUniqueConstraintError';
 import { typedKeys } from '$lib/utils/typedKeys';
+import { addTranslations, type LocalesDictionary } from '$lib/i18n';
+import { trimPrefix } from '$lib/utils/trimPrefix';
+import { enhancedLanguages, languages, locales } from '$lib/translations';
+import { merge } from 'lodash-es';
+import { typedInclude } from '$lib/utils/typedIncludes';
 
 const defaultConfig = {
 	adminHash: '',
@@ -66,6 +71,7 @@ const defaultConfig = {
 	vatExemptionReason: '',
 	vatSingleCountry: false,
 	vatCountry: '',
+	vatNullOutsideSellerCountry: false,
 	collectIPOnDeliverylessOrders: false,
 	isBillingAddressMandatory: false,
 
@@ -110,8 +116,11 @@ const defaultConfig = {
 	usersDarkDefaultTheme: false,
 	employeesDarkDefaultTheme: false,
 	displayPoweredBy: false,
-	displayCompanyInfo: false
+	displayCompanyInfo: false,
+	displayNewsletterCommercialProspection: false
 };
+
+export const runtimeConfigUpdatedAt: Partial<Record<ConfigKey, Date>> = {};
 
 exchangeRate.set(defaultConfig.exchangeRate);
 
@@ -121,7 +130,8 @@ currencies.set({
 	priceReference: defaultConfig.priceReferenceCurrency
 });
 
-export type RuntimeConfig = typeof defaultConfig;
+export type RuntimeConfig = typeof defaultConfig &
+	Record<`translations.${string}`, LocalesDictionary>;
 type ConfigKey = keyof RuntimeConfig;
 export type RuntimeConfigItem = {
 	[key in ConfigKey]: { _id: key; data: RuntimeConfig[key]; updatedAt: Date };
@@ -145,8 +155,17 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 	const configs = collections.runtimeConfig.find(item ? { _id: item.documentKey._id } : {});
 
 	for await (const config of configs) {
-		if (config._id in defaultConfig) {
+		if (config._id in defaultConfig || config._id.startsWith('translations.')) {
 			Object.assign(runtimeConfig, { [config._id]: config.data });
+			runtimeConfigUpdatedAt[config._id] = config.updatedAt;
+
+			if (config._id.startsWith('translations.')) {
+				const locale = trimPrefix(config._id, 'translations.');
+				if (typedInclude(locales, locale)) {
+					enhancedLanguages[locale] = merge({}, languages[locale], config.data);
+					addTranslations(locale, enhancedLanguages[locale]);
+				}
+			}
 		}
 	}
 
@@ -243,7 +262,7 @@ export function stop(): void {
 	changeStream?.close().catch(console.error);
 }
 
-export const runtimeConfig = { ...defaultConfig };
+export const runtimeConfig = { ...defaultConfig } as RuntimeConfig;
 
 export function resetConfig() {
 	if (!import.meta.env.VITEST) {

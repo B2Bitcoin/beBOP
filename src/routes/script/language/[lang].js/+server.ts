@@ -1,22 +1,29 @@
-import { languages } from '$lib/translations';
+import { runtimeConfigUpdatedAt } from '$lib/server/runtime-config.js';
+import { enhancedLanguages, locales } from '$lib/translations';
 import { typedInclude } from '$lib/utils/typedIncludes.js';
-import { typedKeys } from '$lib/utils/typedKeys.js';
 
 const cache: Record<string, string> = {};
+const cachedAt: Record<string, number> = {};
 
 export const GET = async ({ params }) => {
-	if (!typedInclude(typedKeys(languages), params.lang)) {
+	if (!typedInclude(locales, params.lang)) {
 		return new Response('Not found', { status: 404 });
 	}
 
-	let responseText = cache[params.lang];
+	const cacheTime = cachedAt[params.lang] ?? new Date(0).getTime();
+	const updatedAtTime = (
+		runtimeConfigUpdatedAt[`translations.${params.lang}`] ?? new Date(0)
+	).getTime();
+
+	let responseText = cacheTime === updatedAtTime ? cache[params.lang] : undefined;
 
 	if (!responseText) {
-		const messages = languages[params.lang];
+		const messages = enhancedLanguages[params.lang];
 		responseText = `window.language = window.language || {}; window.language['${
 			params.lang
 		}'] = ${JSON.stringify(messages)};`;
 		cache[params.lang] = responseText;
+		cachedAt[params.lang] = updatedAtTime;
 	}
 
 	return new Response(responseText, {

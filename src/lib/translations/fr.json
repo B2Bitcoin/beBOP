@@ -29,6 +29,7 @@
 		"vat": "TVA",
 		"vatIpCountry": "Déterminé par votre adresse IP et grâce aux données de <0></0>",
 		"vatIpCountryText": "Déterminé par votre adresse IP et grâce aux données de {link}",
+		"vatNullOutsideSellerCountry": "La TVA devra être acquitée par le client aux douanes lors de la livraison",
 		"vatRate": "Taux de TVA : {country}",
 		"vatSellerCountry": "La TVA est celle du pays du vendeur."
 	},
@@ -78,6 +79,7 @@
 			"card": "Carte bancaire",
 			"cash": "Espèces",
 			"lightning": "Lightning",
+			"point-of-sale": "Point of sale",
 			"unavailable": "Aucun mode de paiement disponible."
 		},
 		"paymentStatus": "Statut de paiement",
@@ -376,6 +378,10 @@
 			"title": "Ou connectez-vous avec"
 		},
 		"willReceiveSessionLink": "Vous recevrez un lien de session sur votre adresse"
+	},
+	"newsletter": {
+		"allowPartnerContact": "Autoriser nos partenaires à vous envoyer des sollicitations commerciales",
+		"allowSellerContact": "Nous autoriser à vous envoyer des sollicitations commerciales"
 	},
 	"order": {
 		"addPayment": {

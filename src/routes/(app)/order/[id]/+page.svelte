@@ -76,34 +76,39 @@
 						<span class="items-center inline-flex gap-2"
 							>{t(`checkout.paymentMethod.${payment.method}`)} - <PriceTag
 								inline
-								class="break-words body-secondaryText"
+								class="break-words {payment.status === 'paid'
+									? 'text-green-500'
+									: 'body-secondaryText'} "
 								amount={payment.price.amount}
 								currency={payment.price.currency}
 							/> - {t(`order.paymentStatus.${payment.status}`)}</span
 						>
 					</summary>
 					<div class="flex flex-col gap-2 mt-2">
-						{#if payment.method !== 'cash'}
+						{#if payment.method !== 'point-of-sale'}
 							<ul>
-								<li>
-									{#if payment.method === 'card'}
-										{t('order.paymentLink')}:
-										<a
-											href={trimOrigin(payment.address ?? '')}
-											class="body-hyperlink underline break-all break-words"
-										>
-											{$page.url.origin}{trimOrigin(payment.address ?? '')}
-										</a>
-									{:else if payment.method === 'bankTransfer'}
-										{t('order.paymentIban')}:
-										<code class="break-words body-secondaryText break-all"
-											>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
-										>
-									{:else}
-										{t('order.paymentAddress')}:
-										<code class="break-words body-secondaryText break-all">{payment.address}</code>
-									{/if}
-								</li>
+								{#if payment.status !== 'paid'}
+									<li>
+										{#if payment.method === 'card'}
+											{t('order.paymentLink')}:
+											<a
+												href={trimOrigin(payment.address ?? '')}
+												class="body-hyperlink underline break-all break-words"
+											>
+												{$page.url.origin}{trimOrigin(payment.address ?? '')}
+											</a>
+										{:else if payment.method === 'bankTransfer'}
+											{t('order.paymentIban')}:
+											<code class="break-words body-secondaryText break-all"
+												>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
+											>
+										{:else}
+											{t('order.paymentAddress')}:
+											<code class="break-words body-secondaryText break-all">{payment.address}</code
+											>
+										{/if}
+									</li>
+								{/if}
 								{#if payment.expiresAt && payment.status === 'pending'}
 									<li>
 										{t('order.timeRemaining', {
@@ -136,7 +141,7 @@
 									bind:this={receiptIFrame[payment.id]}
 								/>
 							{/if}
-							{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
+							{#if payment.status === 'pending' && (payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card')}
 								<img
 									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 									class="w-96 h-96"
@@ -161,7 +166,7 @@
 								{/if}
 							{/if}
 						{/if}
-						{#if (payment.method === 'cash' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
+						{#if (payment.method === 'point-of-sale' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
 							<div class="flex flex-wrap gap-2">
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
