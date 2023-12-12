@@ -112,14 +112,13 @@ export async function onOrderPayment(
 					},
 					'payments.$.currencySnapshot.main.remainingToPay': {
 						currency: payment.currencySnapshot.main.price.currency,
-						amount:
-							order.currencySnapshot.main.totalPrice.amount -
-							sumCurrency(
-								payment.currencySnapshot.main.price.currency,
-								order.payments
-									.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
-									.map((p) => p.currencySnapshot.main.price)
-							)
+						amount: sumCurrency(payment.currencySnapshot.main.price.currency, [
+							order.currencySnapshot.main.totalPrice,
+							...order.payments
+								.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+								.map((p) => p.currencySnapshot.main.price)
+								.map((p) => ({ currency: p.currency, amount: -p.amount }))
+						])
 					},
 					'payments.$.currencySnapshot.priceReference.previouslyPaid': {
 						currency: payment.currencySnapshot.priceReference.price.currency,
@@ -132,14 +131,13 @@ export async function onOrderPayment(
 					},
 					'payments.$.currencySnapshot.priceReference.remainingToPay': {
 						currency: payment.currencySnapshot.priceReference.price.currency,
-						amount:
-							order.currencySnapshot.priceReference.totalPrice.amount -
-							sumCurrency(
-								payment.currencySnapshot.priceReference.price.currency,
-								order.payments
-									.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
-									.map((p) => p.currencySnapshot.priceReference.price)
-							)
+						amount: sumCurrency(payment.currencySnapshot.priceReference.price.currency, [
+							order.currencySnapshot.priceReference.totalPrice,
+							...order.payments
+								.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+								.map((p) => p.currencySnapshot.priceReference.price)
+								.map((p) => ({ currency: p.currency, amount: -p.amount }))
+						])
 					},
 					...(payment.currencySnapshot.secondary &&
 						order.currencySnapshot.secondary && {
@@ -156,16 +154,14 @@ export async function onOrderPayment(
 							},
 							'payments.$.currencySnapshot.secondary.remainingToPay': {
 								currency: payment.currencySnapshot.secondary.price.currency,
-								amount:
-									order.currencySnapshot.secondary?.totalPrice.amount -
-									sumCurrency(
-										payment.currencySnapshot.secondary.price.currency,
-										filterUndef(
-											order.payments
-												.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
-												.map((p) => p.currencySnapshot.secondary?.price)
-										)
-									)
+								amount: sumCurrency(payment.currencySnapshot.secondary.price.currency, [
+									order.currencySnapshot.secondary.totalPrice,
+									...filterUndef(
+										order.payments
+											.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+											.map((p) => p.currencySnapshot.secondary?.price)
+									).map((p) => ({ currency: p.currency, amount: -p.amount }))
+								])
 							}
 						}),
 					'payments.$.transactions': payment.transactions,
