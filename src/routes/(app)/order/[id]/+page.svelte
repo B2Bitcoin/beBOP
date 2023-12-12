@@ -76,7 +76,9 @@
 						<span class="items-center inline-flex gap-2"
 							>{t(`checkout.paymentMethod.${payment.method}`)} - <PriceTag
 								inline
-								class="break-words body-secondaryText"
+								class="break-words {payment.status === 'paid'
+									? 'text-green-500'
+									: 'body-secondaryText'}"
 								amount={payment.price.amount}
 								currency={payment.price.currency}
 							/> - {t(`order.paymentStatus.${payment.status}`)}</span
@@ -99,7 +101,7 @@
 										<code class="break-words body-secondaryText break-all"
 											>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
 										>
-									{:else}
+									{:else if payment.status !== 'paid'}
 										{t('order.paymentAddress')}:
 										<code class="break-words body-secondaryText break-all">{payment.address}</code>
 									{/if}
@@ -136,7 +138,7 @@
 									bind:this={receiptIFrame[payment.id]}
 								/>
 							{/if}
-							{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
+							{#if payment.status === 'pending' && (payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card')}
 								<img
 									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 									class="w-96 h-96"
