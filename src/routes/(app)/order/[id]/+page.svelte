@@ -33,8 +33,12 @@
 
 	const { t, locale, textAddress } = useI18n();
 
-	let receiptIFrame: HTMLIFrameElement | null = null;
-	let receiptReady = false;
+	let receiptIFrame: Record<string, HTMLIFrameElement | null> = Object.fromEntries(
+		data.order.payments.map((payment) => [payment.id, null])
+	);
+	let receiptReady: Record<string, boolean> = Object.fromEntries(
+		data.order.payments.map((payment) => [payment.id, false])
+	);
 
 	$: remainingAmount = orderAmountWithNoPaymentsCreated(data.order);
 </script>
@@ -120,16 +124,16 @@
 								<button
 									class="btn btn-black self-start"
 									type="button"
-									disabled={!receiptReady}
-									on:click={() => receiptIFrame?.contentWindow?.print()}
+									disabled={!receiptReady[payment.id]}
+									on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
 									>{t('order.receipt.create')}</button
 								>
 								<iframe
 									src="/order/{data.order._id}/payment/{payment.id}/receipt"
 									style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
 									title=""
-									on:load={() => (receiptReady = true)}
-									bind:this={receiptIFrame}
+									on:load={() => (receiptReady = { ...receiptReady, [payment.id]: true })}
+									bind:this={receiptIFrame[payment.id]}
 								/>
 							{/if}
 							{#if payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card'}
