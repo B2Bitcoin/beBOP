@@ -48,7 +48,7 @@ export const actions = {
 	default: async ({ request, locals }) => {
 		const methods = paymentMethods(locals.user?.roleId);
 		if (!methods.length) {
-			throw error(500, 'No payment methods configured for the bootik');
+			throw error(500, 'No payment methods configured for the beBOP');
 		}
 		const cart = await getCartFromDb({ user: userIdentifier(locals) });
 

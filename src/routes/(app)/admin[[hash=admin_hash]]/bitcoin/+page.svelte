@@ -91,9 +91,16 @@
 	</ul>
 
 	<p>
-		Changing wallet in an active bootik means that incoming transactions in the old wallet will not
-		be detected
+		Changing wallet in an active beBOP means that incoming transactions in the old wallet will not
+		be detected.
 	</p>
+
+	{#if data.bip84 || true}
+		<p class="font-bold">
+			Changing wallet will ignore incoming funds to already generated addresses from your BIP84
+			ZPub.
+		</p>
+	{/if}
 {/if}
 
 <form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>
