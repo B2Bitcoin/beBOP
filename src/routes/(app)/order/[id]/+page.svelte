@@ -11,6 +11,7 @@
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
+	import { i } from 'vitest/dist/index-5aad25c1';
 
 	let currentDate = new Date();
 	export let data;
@@ -87,25 +88,28 @@
 					<div class="flex flex-col gap-2 mt-2">
 						{#if payment.method !== 'cash'}
 							<ul>
-								<li>
-									{#if payment.method === 'card'}
-										{t('order.paymentLink')}:
-										<a
-											href={trimOrigin(payment.address ?? '')}
-											class="body-hyperlink underline break-all break-words"
-										>
-											{$page.url.origin}{trimOrigin(payment.address ?? '')}
-										</a>
-									{:else if payment.method === 'bankTransfer'}
-										{t('order.paymentIban')}:
-										<code class="break-words body-secondaryText break-all"
-											>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
-										>
-									{:else if payment.status !== 'paid'}
-										{t('order.paymentAddress')}:
-										<code class="break-words body-secondaryText break-all">{payment.address}</code>
-									{/if}
-								</li>
+								{#if payment.status !== 'paid'}
+									<li>
+										{#if payment.method === 'card'}
+											{t('order.paymentLink')}:
+											<a
+												href={trimOrigin(payment.address ?? '')}
+												class="body-hyperlink underline break-all break-words"
+											>
+												{$page.url.origin}{trimOrigin(payment.address ?? '')}
+											</a>
+										{:else if payment.method === 'bankTransfer'}
+											{t('order.paymentIban')}:
+											<code class="break-words body-secondaryText break-all"
+												>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
+											>
+										{:else}
+											{t('order.paymentAddress')}:
+											<code class="break-words body-secondaryText break-all">{payment.address}</code
+											>
+										{/if}
+									</li>
+								{/if}
 								{#if payment.expiresAt && payment.status === 'pending'}
 									<li>
 										{t('order.timeRemaining', {
