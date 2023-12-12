@@ -46,18 +46,13 @@
 			}))
 		) + (deliveryFees || 0);
 
-<<<<<<< HEAD
-	$: vat =
+	$: partialVat =
 		data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry
 			? 0
-			: fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: totalPriceWithVat = totalPrice + vat;
-=======
-	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+			: fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: partialPriceWithVat = partialPrice + partialVat;
 	$: totalPriceWithVat =
 		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
->>>>>>> ebc8f15a8216387bc992165a09fe6c1d0567e27b
 
 	const { t, locale, countryName } = useI18n();
 </script>

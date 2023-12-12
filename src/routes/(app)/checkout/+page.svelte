@@ -114,18 +114,12 @@
 	$: totalPriceWithVat =
 		totalPrice + fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 
-<<<<<<< HEAD
-	$: vat =
+	$: partialVat =
 		data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry
 			? 0
-			: fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
-	$: totalPriceWithVat = totalPrice + vat;
-	$: totalSatoshi = toCurrency('SAT', totalPriceWithVat, UNDERLYING_CURRENCY);
-=======
-	$: partialVat = fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
+			: fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: partialPriceWithVat = partialPrice + partialVat;
 	$: partialSatoshi = toCurrency('SAT', partialPriceWithVat, UNDERLYING_CURRENCY);
->>>>>>> ebc8f15a8216387bc992165a09fe6c1d0567e27b
 	$: isDiscountValid =
 		(discountType === 'fiat' &&
 			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
