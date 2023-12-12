@@ -377,9 +377,8 @@
 										type="email"
 										class="form-input"
 										autocomplete="email"
-										value={data.email || data.personalInfoConnected?.email || ''}
 										name="{key}Email"
-										bind:value={emails[key]}
+										value={emails[key] || data.personalInfoConnected?.email || ''}
 									/>
 								</label>
 							{/if}
