@@ -389,6 +389,7 @@
 			"currency": "Monnaie de paiement"
 		},
 		"createdAt": "Date de la commande : <0></0>",
+		"depositCancelled": "Demande d'acompte expirée ou annulée",
 		"depositPaid": "Acompte payé",
 		"depositToPay": "Acompte à payer",
 		"discount": {

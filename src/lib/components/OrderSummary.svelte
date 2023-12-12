@@ -201,7 +201,11 @@
 					><span title={t('checkout.paymentMethod.' + payment.method)}
 						>{PAYMENT_METHOD_EMOJI[payment.method]}</span
 					>
-					- {payment.status === 'paid' ? t('order.depositPaid') : t('order.depositToPay')}
+					- {payment.status === 'paid'
+						? t('order.depositPaid')
+						: payment.status === 'pending'
+						? t('order.depositToPay')
+						: t('order.depositCancelled')}
 				</span>
 				<PriceTag
 					class="text-2xl"
