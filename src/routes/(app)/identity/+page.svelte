@@ -101,6 +101,7 @@
 						type="text"
 						name="npub"
 						class="form-input"
+						placeholder={data.npub || ''}
 						value={data.npub || data.personalInfoConnected?.npub || ''}
 					/>
 				</label>
@@ -110,6 +111,7 @@
 						type="email"
 						name="email"
 						class="form-input"
+						placeholder={data.email || ''}
 						value={data.email || data.personalInfoConnected?.email || ''}
 					/>
 				</label>
