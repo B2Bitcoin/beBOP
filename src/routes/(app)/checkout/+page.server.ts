@@ -39,7 +39,9 @@ export async function load({ parent, locals }) {
 			lastName: personalInfoConnected?.lastName,
 			address: personalInfoConnected?.address,
 			_id: personalInfoConnected?._id.toString(),
-			newsletter: personalInfoConnected?.newsletter
+			newsletter: personalInfoConnected?.newsletter,
+			npub: personalInfoConnected?.npub,
+			email: personalInfoConnected?.email
 		},
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection
@@ -180,7 +182,7 @@ export const actions = {
 		) {
 			await collections.personalInfo.updateOne(
 				{
-					$or: [{ npub: npubAddress }, { email: email }]
+					user: userIdentifier(locals)
 				},
 				{
 					$set: {
@@ -188,7 +190,8 @@ export const actions = {
 						...(npubAddress && { npub: npubAddress }),
 						...(email && { email: email }),
 						updatedAt: new Date()
-					}
+					},
+					$setOnInsert: { createdAt: new Date(), user: userIdentifier(locals) }
 				},
 				{
 					upsert: true

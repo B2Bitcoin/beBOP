@@ -364,7 +364,7 @@
 									class="form-input"
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
-									value={data.npub || ''}
+									value={data.npub || data.personalInfoConnected?.npub || ''}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus' && !emails[key] && paymentMethod !== 'cash'}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
@@ -377,6 +377,7 @@
 										type="email"
 										class="form-input"
 										autocomplete="email"
+										value={data.email || data.personalInfoConnected?.email || ''}
 										name="{key}Email"
 										bind:value={emails[key]}
 									/>
