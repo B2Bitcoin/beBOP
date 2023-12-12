@@ -52,6 +52,10 @@ export const adminLinks = [
 				label: 'Config'
 			},
 			{
+				href: '/admin/language',
+				label: 'Languages'
+			},
+			{
 				href: '/admin/arm',
 				label: 'ARM'
 			},

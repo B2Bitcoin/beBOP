@@ -31,7 +31,7 @@ import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
 import { countryFromIp } from '$lib/server/geoip';
 import { isAllowedOnPage } from '$lib/types/Role';
-import { languages } from '$lib/translations';
+import { enhancedLanguages, languages, locales } from '$lib/translations';
 import { addTranslations } from '$lib/i18n';
 import { filterNullish } from '$lib/utils/fillterNullish';
 import { refreshSessionCookie } from '$lib/server/cookies';
@@ -41,8 +41,8 @@ import { rateLimit } from '$lib/server/rateLimit';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
-for (const entry of Object.entries(languages)) {
-	addTranslations(entry[0], entry[1]);
+for (const key of locales) {
+	addTranslations(key, enhancedLanguages[key]);
 }
 
 export const handleError = (({ error, event }) => {
