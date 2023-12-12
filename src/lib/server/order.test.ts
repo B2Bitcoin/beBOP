@@ -189,6 +189,10 @@ describe('order', () => {
 
 		order1 = await collections.orders.findOne({ _id: order1Id });
 		expect(order1?.payments[0].invoice?.number).toBe(1);
+		expect(order1?.payments[0].currencySnapshot.main.previouslyPaid?.amount).toBe(0);
+		expect(order1?.payments[0].currencySnapshot.main.remainingToPay?.amount).toBe(
+			(order1?.currencySnapshot.main.totalPrice.amount ?? 0) / 2
+		);
 		order2 = await collections.orders.findOne({ _id: order2Id });
 		expect(order2?.payments[0].invoice?.number).toBe(2);
 

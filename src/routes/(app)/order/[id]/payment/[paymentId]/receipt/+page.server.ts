@@ -14,6 +14,9 @@ export async function load({ params }) {
 	if (payment.status !== 'paid') {
 		throw error(400, 'Order is not paid');
 	}
+	if (!payment.invoice?.number) {
+		throw error(400, 'Invoice not found');
+	}
 	if (!runtimeConfig.sellerIdentity && !order.sellerIdentity) {
 		throw error(400, 'Seller identity is not set');
 	}

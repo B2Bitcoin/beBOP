@@ -8,5 +8,6 @@ export const productAddedToCart = writable<{
 	picture: Picture | undefined;
 	quantity: number;
 	customPrice?: { amount: number; currency: Currency };
+	depositPercentage?: number;
 	widget?: unknown;
 } | null>(null);

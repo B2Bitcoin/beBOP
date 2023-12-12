@@ -76,7 +76,7 @@
 	}
 
 	$: paymentMethods = data.paymentMethods.filter((method) =>
-		method === 'bitcoin' ? totalSatoshi >= 10_000 : true
+		method === 'bitcoin' ? partialSatoshi >= 10_000 : true
 	);
 
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
@@ -91,7 +91,7 @@
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
 	$: actualVatRate = isDigital || data.vatSingleCountry ? data.vatRate : vatRate(actualCountry);
 
-	$: totalPrice =
+	$: partialPrice =
 		sumCurrency(
 			UNDERLYING_CURRENCY,
 			items.map((item) => ({
@@ -103,13 +103,29 @@
 					100
 			}))
 		) + (deliveryFees || 0);
+	$: totalPrice =
+		sumCurrency(
+			UNDERLYING_CURRENCY,
+			items.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount: (item.customPrice || item.product.price).amount * item.quantity
+			}))
+		) + (deliveryFees || 0);
+	$: totalPriceWithVat =
+		totalPrice + fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 
+<<<<<<< HEAD
 	$: vat =
 		data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideCountry
 			? 0
 			: fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 	$: totalSatoshi = toCurrency('SAT', totalPriceWithVat, UNDERLYING_CURRENCY);
+=======
+	$: partialVat = fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
+	$: partialPriceWithVat = partialPrice + partialVat;
+	$: partialSatoshi = toCurrency('SAT', partialPriceWithVat, UNDERLYING_CURRENCY);
+>>>>>>> ebc8f15a8216387bc992165a09fe6c1d0567e27b
 	$: isDiscountValid =
 		(discountType === 'fiat' &&
 			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
@@ -416,6 +432,9 @@
 							};
 						}}
 					>
+						{#if item.depositPercentage ?? undefined !== undefined}
+							<input type="hidden" name="depositPercentage" value={item.depositPercentage} />
+						{/if}
 						<a href="/product/{item.product._id}">
 							<h3 class="text-base">{item.product.name}</h3>
 						</a>
@@ -535,12 +554,12 @@
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
 								class="text-2xl truncate"
-								amount={vat}
+								amount={partialVat}
 								currency={UNDERLYING_CURRENCY}
 								main
 							/>
 							<PriceTag
-								amount={vat}
+								amount={partialVat}
 								currency={UNDERLYING_CURRENCY}
 								class="text-base truncate"
 								secondary
@@ -557,18 +576,42 @@
 						<span class="text-xl">{t('cart.total')}</span>
 						<PriceTag
 							class="text-2xl"
-							amount={totalPriceWithVat}
+							amount={partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end"
-						amount={totalPriceWithVat}
+						amount={partialPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
+
+				{#if totalPriceWithVat !== partialPriceWithVat}
+					<div class="-mx-3 p-3 flex flex-col">
+						<div class="flex justify-between">
+							<span class="text-xl flex gap-1 items-center flex-wrap"
+								>{t('cart.remaining')}<span title={t('cart.remainingHelpText')}>
+									<IconInfo class="cursor-pointer" />
+								</span></span
+							>
+							<PriceTag
+								class="text-2xl"
+								amount={partialPriceWithVat}
+								currency={UNDERLYING_CURRENCY}
+								main
+							/>
+						</div>
+						<PriceTag
+							class="self-end"
+							amount={partialPriceWithVat}
+							currency={UNDERLYING_CURRENCY}
+							secondary
+						/>
+					</div>
+				{/if}
 
 				<label class="checkbox-label">
 					<input type="checkbox" class="form-checkbox" name="teecees" form="checkout" required />
@@ -687,6 +730,28 @@
 							<Trans key="checkout.agreeIpCollect"
 								><a
 									href="/why-collect-ip"
+									target="_blank"
+									class="body-hyperlink hover:underline"
+									slot="0"
+									let:translation>{translation}</a
+								></Trans
+							>
+						</span>
+					</label>
+				{/if}
+				{#if totalPriceWithVat !== partialPriceWithVat}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							name="isOnlyDeposit"
+							form="checkout"
+							required
+						/>
+						<span>
+							<Trans key="checkout.agreeOnlyDeposit"
+								><a
+									href="/why-pay-remainder"
 									target="_blank"
 									class="body-hyperlink hover:underline"
 									slot="0"

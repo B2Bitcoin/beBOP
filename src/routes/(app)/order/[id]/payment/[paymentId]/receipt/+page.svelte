@@ -150,13 +150,37 @@
 			/>
 		</td>
 	</tr>
-	{#if data.payment.currencySnapshot.main.amount !== data.order.currencySnapshot.main.totalPrice.amount}
+	{#if data.payment.currencySnapshot.main.previouslyPaid?.amount}
+		<tr style:background-color="#aeaaaa" class="text-white font-bold">
+			<td class="border border-white px-2 text-right">{t('order.receipt.alreadyPaidAmount')}</td>
+			<td class="border border-white px-2 whitespace-nowrap text-right">
+				<PriceTag
+					amount={data.payment.currencySnapshot.main.previouslyPaid.amount}
+					currency={data.payment.currencySnapshot.main.previouslyPaid.currency}
+					inline
+				/>
+			</td>
+		</tr>
+	{/if}
+	{#if data.payment.currencySnapshot.main.price.amount !== data.order.currencySnapshot.main.totalPrice.amount}
 		<tr style:background-color="#aeaaaa" class="text-white font-bold">
 			<td class="border border-white px-2 text-right">{t('order.receipt.partialAmount')}</td>
 			<td class="border border-white px-2 whitespace-nowrap text-right">
 				<PriceTag
-					amount={data.payment.currencySnapshot.main.amount}
-					currency={data.payment.currencySnapshot.main.currency}
+					amount={data.payment.currencySnapshot.main.price.amount}
+					currency={data.payment.currencySnapshot.main.price.currency}
+					inline
+				/>
+			</td>
+		</tr>
+	{/if}
+	{#if data.payment.currencySnapshot.main.remainingToPay?.amount}
+		<tr style:background-color="#aeaaaa" class="text-white font-bold">
+			<td class="border border-white px-2 text-right">{t('order.receipt.remainingAmount')}</td>
+			<td class="border border-white px-2 whitespace-nowrap text-right">
+				<PriceTag
+					amount={data.payment.currencySnapshot.main.remainingToPay.amount}
+					currency={data.payment.currencySnapshot.main.remainingToPay.currency}
 					inline
 				/>
 			</td>

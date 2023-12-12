@@ -17,6 +17,9 @@
 		"empty": "Le panier est vide",
 		"items": "Produits",
 		"quantity": "Quantité",
+		"remaining": "Reste après commande",
+		"remainingHelpText": "Pour les articles sur acompte, la commande actuelle est un dépôt partiel.\nPour finaliser l'achat, la somme suivante devra être payée ultérieurement.\n(La TVA est déjà incluse dans le montant)",
+		"remainingShort": "Plus tard",
 		"sr": {
 			"decrease": "Diminuer la quantité",
 			"increase": "Augmenter la quantité",
@@ -45,6 +48,7 @@
 	},
 	"checkout": {
 		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (<0>pourquoi?</0>)",
+		"agreeOnlyDeposit": "Je comprends que je dois m'acquitter du solde hors-acompte (<0>pourquoi ?</0>)",
 		"backToCart": "Retour au panier",
 		"billingInfo": "Adresse de facturation",
 		"cta": {
@@ -414,13 +418,15 @@
 		},
 		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
 		"receipt": {
+			"alreadyPaidAmount": "Montant déjà payé",
 			"bankInfo": "Coordonnées bancaires",
 			"create": "Générer la facture",
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
 			"invoice": "Facture",
 			"itemName": "Nature",
-			"partialAmount": "Montant à payer (paiement partiel)",
+			"partialAmount": "Montant payé (paiement partiel)",
 			"quantity": "Qté",
+			"remainingAmount": "Montant restant à payer",
 			"totalExcVat": "Total HT",
 			"totalInclVat": "Total TTC",
 			"totalVat": "TVA totale",

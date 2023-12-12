@@ -2,7 +2,7 @@ import { collections } from '$lib/server/database';
 import { addOrderPayment } from '$lib/server/orders';
 import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
 import { parsePriceAmount } from '$lib/types/Currency.js';
-import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order.js';
+import { orderAmountWithNoPaymentsCreated as orderAmountWithNoPayments } from '$lib/types/Order.js';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
@@ -20,7 +20,7 @@ export const actions = {
 			throw error(400, 'Order is not pending');
 		}
 
-		const remainingAmount = orderAmountWithNoPaymentsCreated(order);
+		const remainingAmount = orderAmountWithNoPayments(order);
 
 		if (remainingAmount <= 0) {
 			throw error(400, 'Order has no remaining amount to pay');
