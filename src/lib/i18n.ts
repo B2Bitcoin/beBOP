@@ -5,10 +5,10 @@ import { writable, get as storeGet } from 'svelte/store';
 import { COUNTRY_ALPHA2S, type CountryAlpha2 } from './types/Country';
 import type { OrderAddress } from './types/Order';
 
-interface LocaleDictionary {
+export interface LocaleDictionary {
 	[key: string]: LocaleDictionary | string;
 }
-type LocalesDictionary = {
+export type LocalesDictionary = {
 	[key: string]: LocaleDictionary;
 };
 
