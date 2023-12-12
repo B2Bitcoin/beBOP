@@ -11,7 +11,6 @@
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
-	import { i } from 'vitest/dist/index-5aad25c1';
 
 	let currentDate = new Date();
 	export let data;
