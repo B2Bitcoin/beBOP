@@ -50,6 +50,26 @@
 	<li>Chain: {data.blockchainInfo.chain}</li>
 </ul>
 
+<h2 class="text-2xl">BIP 84</h2>
+
+{#if !data.bip84}
+	<p>
+		BIP 84 is not enabled. Configure <kbd class="kbd">BIP84_ZPUB</kbd> in the environment to enable it,
+		as well as the bitcoin node
+	</p>
+{:else}
+	<ul>
+		<li>BIP 84 Zpub: {data.bip84Zpub}</li>
+		<li>
+			Derivation path: <kbd class="kbd">m/84'/0'/0'</kbd>
+		</li>
+		<li>
+			BIP 84 derivation index: {data.bitcoinDerivationIndex}. Next address will use the
+			<kbd class="kbd">m/84'/0'/0'/0/{data.bitcoinDerivationIndex + 1}</kbd> derivation path
+		</li>
+	</ul>
+{/if}
+
 <h2 class="text-2xl">Wallet</h2>
 
 {#if data.wallets.length}
@@ -71,9 +91,16 @@
 	</ul>
 
 	<p>
-		Changing wallet in an active bootik means that incoming transactions in the old wallet will not
-		be detected
+		Changing wallet in an active beBOP means that incoming transactions in the old wallet will not
+		be detected.
 	</p>
+
+	{#if data.bip84 || true}
+		<p class="font-bold">
+			Changing wallet will ignore incoming funds to already generated addresses from your BIP84
+			ZPub.
+		</p>
+	{/if}
 {/if}
 
 <form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>

@@ -1,9 +1,11 @@
+import { BIP84_ZPUB } from '$env/static/private';
 import {
 	createWallet,
 	listWallets,
 	listTransactions,
 	getBalance,
-	getBlockchainInfo
+	getBlockchainInfo,
+	isBIP84Configured
 } from '$lib/server/bitcoin';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
@@ -24,7 +26,7 @@ export async function load() {
 					.map((item) => item.label.slice('order:'.length))
 			}
 		})
-		.project<Omit<Order, 'user'>>({ user: 0 });
+		.project<Omit<Order, 'user'>>({ user: 0, 'payments._id': 0 });
 
 	return {
 		currentWallet: runtimeConfig.bitcoinWallet,
@@ -32,7 +34,10 @@ export async function load() {
 		transactions: transactions.reverse(),
 		balance: wallets.length ? getBalance() : 0,
 		orders: orders.toArray(),
-		blockchainInfo: getBlockchainInfo()
+		blockchainInfo: getBlockchainInfo(),
+		bip84: isBIP84Configured,
+		bip84Zpub: BIP84_ZPUB,
+		bitcoinDerivationIndex: runtimeConfig.bitcoinDerivationIndex
 	};
 }
 
