@@ -40,7 +40,8 @@ export async function load({ parent, locals }) {
 			address: personalInfoConnected?.address,
 			_id: personalInfoConnected?._id.toString()
 		},
-		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory
+		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry
 	};
 }
 

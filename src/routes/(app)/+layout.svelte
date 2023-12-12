@@ -338,7 +338,11 @@
 											</div>
 										</form>
 									{/each}
-									{#if data.countryCode && !data.vatExempted}
+									{#if data.vatCountry !== data.countryCode && data.vatNullOutsideSellerCountry}
+										<div class="flex gap-1 text-lg justify-end items-center">
+											{t('product.vatExcluded')}
+										</div>
+									{:else if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.vat')} ({data.vatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
