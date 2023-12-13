@@ -54,6 +54,23 @@
 					on:click={() => (darkPicture = 'dark')}
 				/>
 			{/if}
+			{#if data.footerLogoId === data.picture._id}
+				<input
+					type="submit"
+					value="Remove from footer logo"
+					formaction="?/removeFooterLogo"
+					class="btn btn-gray"
+					on:click={() => (darkPicture = 'dark')}
+				/>
+			{:else}
+				<input
+					type="submit"
+					value="Set as footer logo"
+					formaction="?/setAsFooterLogo"
+					class="btn btn-gray"
+					on:click={() => (darkPicture = 'dark')}
+				/>
+			{/if}
 		{/if}
 		<input type="submit" value="Delete" formaction="?/delete" class="btn btn-red ml-auto" />
 	</div>

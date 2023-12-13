@@ -49,6 +49,7 @@ const defaultConfig = {
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logo: { isWide: false, pictureId: '', darkModePictureId: '' },
+	footerLogoId: '',
 	lnurlPayMetadataJwtSigningKey: '',
 	authLinkJwtSigningKey: '',
 	ssoSecret: '',

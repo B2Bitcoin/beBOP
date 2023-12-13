@@ -485,7 +485,11 @@
 					{/each}
 				</div>
 
-				{#if data.displayPoweredBy}
+				{#if data.footerLogoId}
+					<div class="flex w-full">
+						<Picture class={logoClass} picture={data.footerPicture} />
+					</div>
+				{:else if data.displayPoweredBy}
 					<div class="flex w-full">
 						<a class="flex items-center gap-4" href="https://github.com/B2Bitcoin/beBOP"
 							><span class="font-light">{t('footer.poweredBy')} </span>

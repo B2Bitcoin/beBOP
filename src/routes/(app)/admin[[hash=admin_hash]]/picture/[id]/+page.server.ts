@@ -109,5 +109,45 @@ export const actions: Actions = {
 				? (runtimeConfig.logo.darkModePictureId = '')
 				: (runtimeConfig.logo.pictureId = '');
 		}
+	},
+
+	setAsFooterLogo: async function ({ params, request }) {
+		const picture = await collections.pictures.findOne({ _id: params.id });
+
+		if (!picture) {
+			throw error(404);
+		}
+
+		if (picture.productId) {
+			throw error(400, 'Picture is already associated to a product');
+		}
+
+		await collections.runtimeConfig.updateOne(
+			{
+				_id: 'footerLogoId'
+			},
+			{
+				$set: { data: picture._id, updatedAt: new Date() }
+			},
+			{
+				upsert: true
+			}
+		);
+		runtimeConfig.footerLogoId = picture._id;
+	},
+
+	removeFooterLogo: async function ({ params }) {
+		if (runtimeConfig.footerLogoId === params.id) {
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'footerLogoId'
+				},
+				{ $set: { data: '', updatedAt: new Date() } },
+				{
+					upsert: true
+				}
+			);
+			runtimeConfig.footerLogoId = '';
+		}
 	}
 };
