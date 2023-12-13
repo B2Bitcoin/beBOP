@@ -39,7 +39,7 @@ type BitcoinCommand =
 	| 'listreceivedbyaddress'
 	| 'dumpprivkey'
 	| 'listdescriptors'
-	| 'importaddress'
+	| 'importpubkey'
 	| 'getnewaddress'
 	| 'getbalance'
 	| 'getblockchaininfo';
@@ -115,18 +115,24 @@ export async function createWallet(name: string) {
 	return z.object({ result: z.object({ name: z.string() }) }).parse(json).result.name;
 }
 
-export async function getNewAddress(label: string) {
+export async function getNewAddress(label: string): Promise<string> {
 	if (isBIP84Configured) {
 		if (runtimeConfig.bitcoinDerivationIndex === 0 && (await listWallets()).length === 0) {
 			throw error(400, 'Create a wallet first to be able to watch BIP84 addresses');
 		}
-		const address = bip84Address(BIP84_ZPUB, await generateDerivationIndex());
-		const response = await bitcoinRpc('importaddress', [address, label, false, true]);
+		const derivationIndex = await generateDerivationIndex();
+
+		const address = bip84Address(BIP84_ZPUB, derivationIndex);
+		const publicKey = bip84PublicKey(BIP84_ZPUB, derivationIndex);
+		// We use importpubkey instead of importaddress because the latter does not support segwit addresses
+		const response = await bitcoinRpc('importpubkey', [publicKey, label, false]);
 
 		if (!response.ok) {
 			console.error(await response.text());
 			throw error(500, 'Could not import address');
 		}
+
+		return address;
 	}
 
 	const response = await bitcoinRpc('getnewaddress', [label, 'bech32']);
@@ -282,6 +288,10 @@ export function orderAddressLabel(orderId: string, paymentId: ObjectId) {
 
 export function bip84Address(zpub: string, index: number): string {
 	return new bip84.fromZPub(zpub).getAddress(index);
+}
+
+export function bip84PublicKey(zpub: string, index: number): string {
+	return new bip84.fromZPub(zpub).getPublicKey(index);
 }
 
 export function isZPubValid(zpub: string): boolean {
