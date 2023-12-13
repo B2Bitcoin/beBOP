@@ -527,6 +527,9 @@
 		"singleTitle": "Abonnement #{number}",
 		"status": {
 			"expired": "expiré"
+		},
+	"widget": {
+		"specification": "Caractéristiques techniques"
 		}
 	}
 }
