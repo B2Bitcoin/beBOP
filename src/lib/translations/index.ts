@@ -11,3 +11,5 @@ export const languages = {
 export const enhancedLanguages = merge({}, languages);
 
 export const locales = typedKeys(languages);
+
+export type LanguageKey = keyof typeof languages;
