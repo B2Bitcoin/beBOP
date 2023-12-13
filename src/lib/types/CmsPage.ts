@@ -1,12 +1,18 @@
+import type { LanguageKey } from '$lib/translations';
 import type { Timestamps } from './Timestamps';
 
-export interface CMSPage extends Timestamps {
-	_id: string;
+export interface CMSPageTranslatableFields {
 	title: string;
 	shortDescription: string;
 	content: string;
+}
+
+export interface CMSPage extends Timestamps, CMSPageTranslatableFields {
+	_id: string;
 	fullScreen: boolean;
 	maintenanceDisplay: boolean;
+
+	translations?: Partial<Record<LanguageKey, Partial<CMSPageTranslatableFields>>>;
 }
 
 export const MAX_CONTENT_LIMIT = 20000;

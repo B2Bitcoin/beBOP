@@ -15,8 +15,6 @@
 	}
 </script>
 
-<h1 class="text-3xl">Edit a CMS Page</h1>
-
 <form method="post" class="flex flex-col gap-4">
 	<label>
 		Page slug
