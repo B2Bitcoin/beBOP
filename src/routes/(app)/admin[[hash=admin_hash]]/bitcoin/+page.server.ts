@@ -1,16 +1,18 @@
-import { BIP84_ZPUB } from '$env/static/private';
+import { BIP84_XPUB } from '$env/static/private';
 import {
 	createWallet,
 	listWallets,
 	listTransactions,
 	getBalance,
 	getBlockchainInfo,
-	isBIP84Configured
+	isBIP84Configured,
+	bitcoinRpc,
+	type BitcoinCommand
 } from '$lib/server/bitcoin';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Order } from '$lib/types/Order.js';
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export async function load() {
@@ -36,8 +38,8 @@ export async function load() {
 		orders: orders.toArray(),
 		blockchainInfo: getBlockchainInfo(),
 		bip84: isBIP84Configured,
-		bip84Zpub: BIP84_ZPUB,
-		bitcoinDerivationIndex: runtimeConfig.bitcoinDerivationIndex
+		bip84Xpub: BIP84_XPUB,
+		dev: !!import.meta.env.DEV
 	};
 }
 
@@ -80,5 +82,24 @@ export const actions = {
 				upsert: true
 			}
 		);
+	},
+	rpc: async function ({ request }) {
+		if (!import.meta.env.DEV) {
+			throw error(403, 'Forbidden');
+		}
+		const formData = await request.formData();
+
+		const parsed = z
+			.object({ method: z.string(), params: z.string() })
+			.parse(Object.fromEntries(formData));
+
+		const resp = await bitcoinRpc(parsed.method as BitcoinCommand, JSON.parse(parsed.params));
+
+		if (!resp.ok) {
+			return fail(400, { rpcFail: (await resp.json()).error.message });
+		}
+		return {
+			rpcSuccess: (await resp.json()).result
+		};
 	}
 };
