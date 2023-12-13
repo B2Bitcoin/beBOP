@@ -9,6 +9,7 @@ import DOMPurify from 'dompurify';
 import { collections } from './database';
 import { ALLOW_JS_INJECTION } from '$env/static/private';
 import type { PickDeep } from 'type-fest';
+import type { Specification } from '$lib/types/Specification';
 
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
@@ -213,6 +214,10 @@ export async function cmsFromContent(
 	const specifications = await collections.specifications
 		.find({
 			_id: { $in: [...specificationSlugs] }
+		})
+		.project<Pick<Specification, '_id' | 'content' | 'title'>>({
+			title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+			content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] }
 		})
 		.toArray();
 
