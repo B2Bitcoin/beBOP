@@ -11,7 +11,11 @@ export async function load({ locals }) {
 
 	const products = await collections.products
 		.find(query)
-		.project<Pick<Product, '_id' | 'price' | 'name'>>({ price: 1, _id: 1, name: 1 })
+		.project<Pick<Product, '_id' | 'price' | 'name'>>({
+			price: 1,
+			_id: 1,
+			name: { $ifNull: [`$translations.${locals.language}.name`, '$name'] }
+		})
 		.toArray();
 
 	const productIds = products.map((product) => product._id);

@@ -107,9 +107,14 @@ export async function load(params) {
 							{
 								projection: {
 									_id: 1,
-									name: 1,
+									name: { $ifNull: [`$translations.${locals.language}.name`, '$name'] },
 									price: 1,
-									shortDescription: 1,
+									shortDescription: {
+										$ifNull: [
+											`$translations.${locals.language}.shortDescription`,
+											'$shortDescription'
+										]
+									},
 									type: 1,
 									shipping: 1,
 									availableDate: 1,

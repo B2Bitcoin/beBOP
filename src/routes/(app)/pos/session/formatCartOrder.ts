@@ -40,7 +40,10 @@ type FormattedCartItem = {
 	};
 };
 
-export async function formatCart(cart: WithId<Cart> | null): Promise<FormattedCartItem[]> {
+export async function formatCart(
+	cart: WithId<Cart> | null,
+	locals: Pick<App.Locals, 'language'>
+): Promise<FormattedCartItem[]> {
 	if (cart?.items.length) {
 		const products = await collections.products
 			.find<
@@ -67,9 +70,11 @@ export async function formatCart(cart: WithId<Cart> | null): Promise<FormattedCa
 				{
 					projection: {
 						_id: 1,
-						name: 1,
+						name: { $ifNull: [`$translations.${locals.language}.name`, '$name'] },
 						price: 1,
-						shortDescription: 1,
+						shortDescription: {
+							$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+						},
 						type: 1,
 						shipping: 1,
 						availableDate: 1,

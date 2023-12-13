@@ -17,7 +17,7 @@ export const load = async ({ locals }) => {
 		{ sort: { createdAt: -1 } }
 	);
 
-	const formattedCart = await formatCart(cart);
+	const formattedCart = await formatCart(cart, locals);
 
 	return {
 		cart: formattedCart,
