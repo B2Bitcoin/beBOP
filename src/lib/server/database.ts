@@ -1,4 +1,4 @@
-import { MONGODB_URL, MONGODB_DB } from '$env/static/private';
+import { MONGODB_URL, MONGODB_DB, MONGODB_IP_FAMILY } from '$env/static/private';
 import {
 	MongoClient,
 	ObjectId,
@@ -39,7 +39,12 @@ import type { Specification } from '$lib/types/Specification';
 const client = building
 	? (null as unknown as MongoClient)
 	: new MongoClient(env.VITEST ? 'mongodb://127.0.0.1:27017' : MONGODB_URL, {
-			directConnection: !!env.VITEST
+			directConnection: !!env.VITEST,
+			...(MONGODB_IP_FAMILY === '4'
+				? { family: 4 }
+				: MONGODB_IP_FAMILY === '6'
+				? { family: 6 }
+				: {})
 	  });
 
 export const connectPromise = building ? Promise.resolve() : client.connect().catch(console.error);
