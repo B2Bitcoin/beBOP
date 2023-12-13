@@ -17,6 +17,12 @@ export type Price = {
 	currency: Currency;
 };
 
+export interface Note {
+	npub?: string;
+	email?: string;
+	content: string;
+}
+
 export interface OrderPayment {
 	_id: ObjectId;
 	status: OrderPaymentStatus;
@@ -68,6 +74,7 @@ export interface OrderPayment {
 
 	lastStatusNotified?: OrderPaymentStatus;
 	bankTransferNumber?: string;
+	notes: Note[];
 }
 
 export interface OrderAddress {

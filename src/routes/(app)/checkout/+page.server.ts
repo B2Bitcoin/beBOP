@@ -151,6 +151,11 @@ export const actions = {
 					})
 					.parse(json)
 			: null;
+		const noteContent = z
+			.object({
+				noteContent: z.string().min(1)
+			})
+			.parse(json);
 
 		const { paymentMethod, discountAmount, discountType, discountJustification } = z
 			.object({

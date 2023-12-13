@@ -353,7 +353,6 @@
 
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.notifications.title')}</h2>
-
 				{#each feedItems as { key, label }}
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
 						<div class="pl-4 py-2 body-mainPlan border-b border-gray-300 text-base font-light">
@@ -412,6 +411,21 @@
 						{/if}
 					</article>
 				{/each}
+			</section>
+			<section class="gap-4 flex flex-col">
+				<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
+					<div class="pl-4 py-2 body-mainPlan border-b border-gray-300 text-base font-light">
+						Note
+					</div>
+
+					<div class="p-4 flex flex-col gap-3">
+						<label class="form-label">
+							Left a not for merchant
+
+							<textarea name="noteContent" cols="30" rows="2" class="form-input" />
+						</label>
+					</div>
+				</article>
 			</section>
 		</form>
 		<div class="w-full md:w-auto">
