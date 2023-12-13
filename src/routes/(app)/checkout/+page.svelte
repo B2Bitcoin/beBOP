@@ -541,7 +541,7 @@
 					</div>
 				{/if}
 
-				{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+				{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
@@ -781,7 +781,7 @@
 						</span>
 					</label>
 				{/if}
-				{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+				{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"
@@ -794,7 +794,7 @@
 						<span>
 							<Trans key="checkout.agreeNullVatForeigner"
 								><a
-									href="/why-vat-borderlands"
+									href="/why-vat-customs"
 									target="_blank"
 									class="body-hyperlink hover:underline"
 									slot="0"
