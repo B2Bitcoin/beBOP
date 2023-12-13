@@ -60,7 +60,6 @@
 					value="Remove from footer logo"
 					formaction="?/removeFooterLogo"
 					class="btn btn-gray"
-					on:click={() => (darkPicture = 'dark')}
 				/>
 			{:else}
 				<input
@@ -68,7 +67,6 @@
 					value="Set as footer logo"
 					formaction="?/setAsFooterLogo"
 					class="btn btn-gray"
-					on:click={() => (darkPicture = 'dark')}
 				/>
 			{/if}
 		{/if}
