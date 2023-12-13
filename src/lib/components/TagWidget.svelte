@@ -43,6 +43,10 @@
 		'var-6': {
 			component: TagWidgetVariation6,
 			pictureType: 'slim'
+		},
+		'var-1-noCTA': {
+			component: TagWidgetVariation1CTAless,
+			pictureType: 'full'
 		}
 	};
 
