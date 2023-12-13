@@ -85,6 +85,9 @@ export const actions = {
 		);
 	},
 	rpc: async function ({ request }) {
+		if (!import.meta.env.DEV) {
+			throw error(403, 'Forbidden');
+		}
 		const formData = await request.formData();
 
 		const parsed = z
