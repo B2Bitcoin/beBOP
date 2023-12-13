@@ -17,7 +17,7 @@ export const load = async ({ locals }) => {
 
 	return {
 		cmsPage: omit(cmsPage, ['content']),
-		cmsData: cmsFromContent(cmsPage.content, locals.user?.roleId),
+		cmsData: cmsFromContent(cmsPage.content, locals),
 		layoutReset: cmsPage.fullScreen
 	};
 };

@@ -11,7 +11,7 @@ import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { POS_ROLE_ID } from '$lib/types/User.js';
 import { zodNpub } from '$lib/server/nostr.js';
 import type { JsonObject } from 'type-fest';
-import { set } from 'lodash-es';
+import { omit, set } from 'lodash-es';
 import { rateLimit } from '$lib/server/rateLimit.js';
 
 export async function load({ parent, locals }) {
@@ -65,6 +65,10 @@ export const actions = {
 			.find({
 				_id: { $in: cart.items.map((item) => item.productId) }
 			})
+			.map((product) =>
+				// Set the translation to the one of the user if it exists
+				Object.assign(omit(product, 'translations'), product.translations?.[locals.language] ?? {})
+			)
 			.toArray();
 
 		const byId = Object.fromEntries(products.map((product) => [product._id, product]));

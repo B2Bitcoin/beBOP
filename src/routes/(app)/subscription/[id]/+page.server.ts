@@ -5,7 +5,7 @@ import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { error, redirect } from '@sveltejs/kit';
 import { subSeconds } from 'date-fns';
 
-export async function load({ params }) {
+export async function load({ params, locals }) {
 	const subscription = await collections.paidSubscriptions.findOne({
 		_id: params.id
 	});
@@ -14,9 +14,17 @@ export async function load({ params }) {
 		throw error(404, 'Subscription not found');
 	}
 
-	const product = await collections.products.findOne({
-		_id: subscription.productId
-	});
+	const product = await collections.products.findOne(
+		{
+			_id: subscription.productId
+		},
+		{
+			projection: {
+				_id: 1,
+				name: { $ifNull: [`$translations.${locals.language}.name`, '$name'] }
+			}
+		}
+	);
 
 	if (!product) {
 		throw error(500, 'Product associated to subscription not found');

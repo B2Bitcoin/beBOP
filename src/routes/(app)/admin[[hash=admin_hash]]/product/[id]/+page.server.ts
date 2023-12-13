@@ -10,15 +10,8 @@ import { productBaseSchema } from '../product-schema';
 import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
-import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 
 export const load = async ({ params }) => {
-	const product = await collections.products.findOne({ _id: params.id });
-
-	if (!product) {
-		throw error(404, 'Product not found');
-	}
-
 	const pictures = await collections.pictures
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
@@ -33,7 +26,6 @@ export const load = async ({ params }) => {
 		.toArray();
 
 	return {
-		product,
 		pictures,
 		digitalFiles,
 		tags,
@@ -69,16 +61,12 @@ export const actions: Actions = {
 			.object({
 				tagIds: z.string().array(),
 				...productBaseSchema,
-				changedDate: z.boolean({ coerce: true }).default(false),
-				contentBefore: z.string().max(MAX_CONTENT_LIMIT),
-				contentAfter: z.string().max(MAX_CONTENT_LIMIT)
+				changedDate: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				...json,
 				availableDate: formData.get('availableDate') || undefined,
-				tagIds: JSON.parse(String(formData.get('tagIds'))).map((x: { value: string }) => x.value),
-				contentBefore: formData.get('contentBefore'),
-				contentAfter: formData.get('contentAfter')
+				tagIds: JSON.parse(String(formData.get('tagIds'))).map((x: { value: string }) => x.value)
 			});
 
 		if (product.type !== 'resource') {
@@ -160,7 +148,7 @@ export const actions: Actions = {
 						}
 					},
 					tagIds: parsed.tagIds,
-					cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+					cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
 					contentBefore: parsed.contentBefore,
 					contentAfter: parsed.contentAfter,
 					updatedAt: new Date()

@@ -1,14 +1,25 @@
+import type { LanguageKey } from '$lib/translations';
 import type { Currency } from './Currency';
 import type { DeliveryFees } from './DeliveryFees';
 import type { ProductActionSettings } from './ProductActionSettings';
 import type { Tag } from './Tag';
 import type { Timestamps } from './Timestamps';
 
-export interface Product extends Timestamps {
-	_id: string;
+export interface ProductTranslatableFields {
 	name: string;
 	description: string;
 	shortDescription: string;
+	customPreorderText?: string;
+	cta?: {
+		label: string;
+		href: string;
+	}[];
+	contentBefore?: string;
+	contentAfter?: string;
+}
+
+export interface Product extends Timestamps, ProductTranslatableFields {
+	_id: string;
 	price: {
 		amount: number;
 		currency: Currency;
@@ -26,7 +37,6 @@ export interface Product extends Timestamps {
 	applyDeliveryFeesOnlyOnce?: boolean;
 	availableDate?: Date;
 	preorder: boolean;
-	customPreorderText?: string;
 	displayShortDescription: boolean;
 	deposit?: {
 		percentage: number;
@@ -46,12 +56,8 @@ export interface Product extends Timestamps {
 	free: boolean;
 	actionSettings: ProductActionSettings;
 	tagIds?: Tag['_id'][];
-	cta?: {
-		label: string;
-		href: string;
-	}[];
-	contentBefore?: string;
-	contentAfter?: string;
+
+	translations?: Partial<Record<LanguageKey, Partial<ProductTranslatableFields>>>;
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
@@ -59,6 +65,7 @@ export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
 export const MAX_NAME_LIMIT = 70;
 
 export const MAX_SHORT_DESCRIPTION_LIMIT = 160;
+export const MAX_DESCRIPTION_LIMIT = 10000;
 
 export const DEFAULT_MAX_QUANTITY_PER_ORDER = 10;
 

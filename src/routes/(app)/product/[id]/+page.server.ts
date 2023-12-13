@@ -40,13 +40,17 @@ export const load = async ({ params, locals }) => {
 		{
 			projection: {
 				_id: 1,
-				name: 1,
+				name: { $ifNull: [`$translations.${locals.language}.name`, '$name'] },
 				price: 1,
-				shortDescription: 1,
-				description: 1,
+				shortDescription: {
+					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+				},
+				description: { $ifNull: [`$translations.${locals.language}.description`, '$description'] },
 				availableDate: 1,
 				preorder: 1,
-				customPreorderText: 1,
+				customPreorderText: {
+					$ifNull: [`$translations.${locals.language}.customPreorderText`, '$customPreorderText']
+				},
 				type: 1,
 				displayShortDescription: 1,
 				payWhatYouWant: 1,
@@ -54,10 +58,14 @@ export const load = async ({ params, locals }) => {
 				maxQuantityPerOrder: 1,
 				stock: 1,
 				actionSettings: 1,
-				contentBefore: 1,
-				contentAfter: 1,
+				contentBefore: {
+					$ifNull: [`$translations.${locals.language}.contentBefore`, '$contentBefore']
+				},
+				contentAfter: {
+					$ifNull: [`$translations.${locals.language}.contentAfter`, '$contentAfter']
+				},
 				deposit: 1,
-				cta: 1
+				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] }
 			}
 		}
 	);
@@ -99,10 +107,10 @@ export const load = async ({ params, locals }) => {
 		pictures,
 		discount,
 		...(product.contentBefore && {
-			productCMSBefore: cmsFromContent(product.contentBefore, locals?.user?.roleId)
+			productCMSBefore: cmsFromContent(product.contentBefore, locals)
 		}),
 		...(product.contentAfter && {
-			productCMSAfter: cmsFromContent(product.contentAfter, locals?.user?.roleId)
+			productCMSAfter: cmsFromContent(product.contentAfter, locals)
 		}),
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage
 	};

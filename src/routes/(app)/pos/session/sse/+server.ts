@@ -68,7 +68,7 @@ export async function GET({ locals }) {
 			ownCartId = ownCart._id;
 		}
 		try {
-			const formattedCart = await formatCart(ownCart || null);
+			const formattedCart = await formatCart(ownCart || null, locals);
 			await writer?.ready;
 			await writer?.write(
 				`data: ${JSON.stringify({ eventType: 'cart', cart: formattedCart })}\n\n`
@@ -132,7 +132,7 @@ export async function GET({ locals }) {
 			if (cart) {
 				ownCartId = cart._id;
 			}
-			const formattedCart = await formatCart(cart);
+			const formattedCart = await formatCart(cart, locals);
 
 			writer?.write(`data: ${JSON.stringify({ eventType: 'cart', cart: formattedCart })}\n\n`);
 
