@@ -27,6 +27,16 @@
 		>;
 		payments: Array<Pick<OrderPayment, 'currencySnapshot' | 'status' | 'method'>>;
 	};
+	$: validDeposits = order.payments.filter(
+		(p) =>
+			p.currencySnapshot.main.price.amount < order.currencySnapshot.main.totalPrice.amount &&
+			(p.status === 'paid' || p.status === 'pending')
+	);
+	$: invalidDeposits = order.payments.filter(
+		(p) =>
+			p.currencySnapshot.main.price.amount < order.currencySnapshot.main.totalPrice.amount &&
+			(p.status === 'expired' || p.status === 'canceled')
+	);
 </script>
 
 <article
@@ -176,7 +186,7 @@
 
 	<span class="py-1" />
 
-	<div class="-mx-3 p-3 flex flex-col">
+	<div class="py-3 flex flex-col">
 		<div class="flex justify-between">
 			<span class="text-xl">{t('cart.total')}</span>
 			<PriceTag
@@ -194,8 +204,8 @@
 		{/if}
 	</div>
 
-	{#each order.payments.filter((p) => p.currencySnapshot.main.price.amount < order.currencySnapshot.main.totalPrice.amount) as payment}
-		<div class="-mx-3 p-3 flex flex-col">
+	{#each validDeposits as payment}
+		<div class="py-3 flex flex-col">
 			<div class="flex justify-between">
 				<span class="text-xl"
 					><span title={t('checkout.paymentMethod.' + payment.method)}
@@ -221,7 +231,7 @@
 
 	{#if orderAmountWithNoPaymentsCreated(order)}
 		{@const remaining = orderAmountWithNoPaymentsCreated(order)}
-		<div class="-mx-3 p-3 flex flex-col">
+		<div class="py-3 flex flex-col">
 			<div class="flex justify-between">
 				<span class="text-xl">{t('order.restToPay')}</span>
 				<PriceTag
@@ -239,5 +249,36 @@
 				/>
 			{/if}
 		</div>
+	{/if}
+
+	{#if invalidDeposits.length}
+		<div class="border-t border-gray-300 col-span-4" />
+
+		{#each invalidDeposits as payment}
+			<div class="py-3 flex flex-col">
+				<div class="flex justify-between">
+					<span class="text-xl"
+						><span title={t('checkout.paymentMethod.' + payment.method)}
+							>{PAYMENT_METHOD_EMOJI[payment.method]}</span
+						>
+						- {payment.status === 'canceled'
+							? t('order.depositCancelled')
+							: t('order.depositExpired')}
+					</span>
+					<PriceTag
+						class="text-2xl"
+						amount={payment.currencySnapshot.main.price.amount}
+						currency={payment.currencySnapshot.main.price.currency}
+					/>
+				</div>
+				{#if payment.currencySnapshot.secondary}
+					<PriceTag
+						class="self-end"
+						amount={payment.currencySnapshot.secondary.price.amount}
+						currency={payment.currencySnapshot.secondary.price.currency}
+					/>
+				{/if}
+			</div>
+		{/each}
 	{/if}
 </article>

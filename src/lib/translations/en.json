@@ -390,6 +390,8 @@
 			"currency": "Payment currency"
 		},
 		"createdAt": "Created at <0></0>",
+		"depositCancelled": "Deposit request cancelled",
+		"depositExpired": "Deposit request expired",
 		"depositPaid": "Deposit paid",
 		"depositToPay": "Deposit  to pay",
 		"discount": {
