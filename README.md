@@ -25,14 +25,15 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `BITCOIN_RPC_URL` - The RPC url for the bitcoin node. Set to http://127.0.0.1:8332 if you run a bitcoin node locally with default configuration
 - `BITCOIN_RPC_USER` - The RPC user
 - `BITCOIN_RPC_PASSWORD` - The RPC password
+- `BIP84_XPUB` - with derivation path m/84'/0'/0'. If you have a ZPub, use https://jlopp.github.io/xpub-converter/ to convert to xpub. This enables a completely trustless setup, where the beBOP server does not need to know the private key. You can generate the xpub from the sparrow wallet, for example.
 - `LND_REST_URL` - The LND Rest interface URL. Set to http://127.0.0.1:8080 if you run a lnd node locally with default configuration
-- `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
+- `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the beBOP will not work. Orders should work fine.
 - `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`. Example command: `cat .lnd/data/chain/bitcoin/mainnet/admin.macaroon | hexdump -e '16/1 "%02X"'`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
 - `LINK_PRELOAD_HEADERS` - Set to `true` to enable the `Link rel=preload` header, see [explanation](https://nitropack.io/blog/post/link-rel-preload-explained). If you do so, you may need to configure nginx to allow bigger header with `proxy_buffer_size   16k`, see [explanation](https://www.getpagespeed.com/server-setup/nginx/tuning-proxy_buffer_size-in-nginx).
 - `MONGODB_URL` - The connection URL to the MongoDB replicaset
 - `MONGODB_DB` - The DB name, defaulting to "bootik"
 - `NOSTR_PRIVATE_KEY` - To send notifications
-- `ORIGIN` - The url of the bootik. For example, https://dev-bootik.pvh-labs.ch
+- `ORIGIN` - The url of the beBOP. For example, https://dev-bootik.pvh-labs.ch
 - `S3_BUCKET` - The name of the bucket for the S3-compatible object storage
 - `S3_ENDPOINT` - The endpoint for the S3-compatible object storage - eg http://s3-website.us-east-1.amazonaws.com or http://s3.fr-par.scw.cloud
 - `S3_KEY_ID` - Credentials for the S3-compatible object storage

@@ -63,6 +63,10 @@
 		@apply font-bold text-5xl;
 	}
 
+	.kbd {
+		@apply px-2 py-1.5 text-xs font-semibold bg-gray-100 border border-gray-200 rounded-lg;
+	}
+
 	.btn {
 		@apply rounded-lg border-0 cursor-pointer px-4 h-10 text-xl flex items-center justify-center font-btn;
 	}

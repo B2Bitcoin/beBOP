@@ -79,7 +79,7 @@ function t(key: string, params?: Record<string, string | number | undefined>) {
 	let translation = get(data[storeGet(locale)], key) ?? get(data.en, key);
 
 	if (typeof translation !== 'string') {
-		if (params?.count) {
+		if (params?.count !== undefined) {
 			translation = translation[params.count === 1 ? 'one' : params.count === 0 ? 'zero' : 'other'];
 		}
 	}

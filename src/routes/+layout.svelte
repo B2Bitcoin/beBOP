@@ -17,8 +17,8 @@
 </script>
 
 <svelte:head>
-	<title>B2Bitcoin Bootik</title>
-	<meta name="description" content="B2Bitcoin's official bootik" />
+	<title>B2Bitcoin beBOP</title>
+	<meta name="description" content="B2Bitcoin's official beBOP" />
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
 	<script
 		lang="javascript"

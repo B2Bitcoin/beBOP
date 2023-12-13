@@ -2,7 +2,8 @@ import {
 	BITCOIN_RPC_URL,
 	BITCOIN_RPC_PASSWORD,
 	BITCOIN_RPC_USER,
-	TOR_PROXY_URL
+	TOR_PROXY_URL,
+	BIP84_XPUB
 } from '$env/static/private';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -13,6 +14,8 @@ import type { ObjectId } from 'mongodb';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
+
+export const isBIP84Configured = isBitcoinConfigured && BIP84_XPUB.startsWith('xpub');
 
 const dispatcher =
 	isBitcoinConfigured &&
@@ -26,13 +29,15 @@ const dispatcher =
 		  })
 		: undefined;
 
-type BitcoinCommand =
+export type BitcoinCommand =
 	| 'listtransactions'
 	| 'listwallets'
 	| 'createwallet'
 	| 'listreceivedbyaddress'
 	| 'dumpprivkey'
 	| 'listdescriptors'
+	| 'importdescriptors'
+	| 'getdescriptorinfo'
 	| 'getnewaddress'
 	| 'getbalance'
 	| 'getblockchaininfo';
@@ -40,7 +45,7 @@ type BitcoinCommand =
 export async function bitcoinRpc(command: BitcoinCommand, params: unknown[], wallet?: string) {
 	let url = BITCOIN_RPC_URL;
 
-	if (!['listwallets', 'createwallet', 'getblockhaininfo'].includes(command)) {
+	if (!['listwallets', 'createwallet', 'getblockhaininfo', 'setlabel'].includes(command)) {
 		const wallets = await listWallets();
 
 		if (wallet && !wallets.includes(wallet)) {
@@ -97,7 +102,15 @@ export async function currentWallet() {
 }
 
 export async function createWallet(name: string) {
-	const response = await bitcoinRpc('createwallet', [name, false, false, null, false, true]);
+	const disablePrivateKeys = !!isBIP84Configured;
+	const response = await bitcoinRpc('createwallet', [
+		name,
+		disablePrivateKeys,
+		false,
+		null,
+		false,
+		true
+	]);
 
 	if (!response.ok) {
 		console.error(await response.text());
@@ -105,10 +118,69 @@ export async function createWallet(name: string) {
 	}
 
 	const json = await response.json();
-	return z.object({ result: z.object({ name: z.string() }) }).parse(json).result.name;
+	const walletName = z.object({ result: z.object({ name: z.string() }) }).parse(json).result.name;
+
+	/**
+	 * Create new wallet watching the BIP84 addresses
+	 */
+	if (isBIP84Configured) {
+		// todo: use proper fingerprint
+		const descriptor = await getDescriptorInfo(`wpkh([00000000/84h/0h/0h]${BIP84_XPUB}/0/*)`);
+
+		const response2 = await bitcoinRpc(
+			'importdescriptors',
+			[
+				[
+					{
+						desc: descriptor.descriptor,
+						timestamp: 'now',
+						range: [0, 1000],
+						internal: false,
+						active: true
+					}
+				]
+			],
+			walletName
+		);
+
+		if (!response2.ok) {
+			console.error('import descriptors', await response2.text());
+			throw error(500, 'Could not import descriptors');
+		}
+
+		const json2 = await response2.json();
+
+		if (!json2.result[0].success) {
+			console.error('import descriptors 2', json2);
+			throw error(500, 'Could not import descriptors');
+		}
+	}
+
+	return walletName;
 }
 
-export async function getNewAddress(label: string) {
+export async function getDescriptorInfo(descriptor: string) {
+	const response = await bitcoinRpc('getdescriptorinfo', [descriptor]);
+
+	if (!response.ok) {
+		console.error('getDescriptorInfo', await response.text());
+		throw error(500, 'Could not get descriptor info');
+	}
+
+	const json = await response.json();
+	return z
+		.object({
+			result: z.object({
+				descriptor: z.string(),
+				isrange: z.boolean(),
+				issolvable: z.boolean(),
+				hasprivatekeys: z.boolean()
+			})
+		})
+		.parse(json).result;
+}
+
+export async function getNewAddress(label: string): Promise<string> {
 	const response = await bitcoinRpc('getnewaddress', [label, 'bech32']);
 
 	if (!response.ok) {
@@ -121,7 +193,7 @@ export async function getNewAddress(label: string) {
 }
 
 export async function listTransactions(label?: string) {
-	const response = await bitcoinRpc('listtransactions', [label || '*', 100]);
+	const response = await bitcoinRpc('listtransactions', [label || '*', 100, 0, true]);
 
 	if (!response.ok) {
 		console.error(await response.text());
@@ -259,3 +331,20 @@ export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[nu
 export function orderAddressLabel(orderId: string, paymentId: ObjectId) {
 	return `order:${orderId}:${paymentId}`;
 }
+
+// export function bip84Address(zpub: string, index: number): string {
+// 	return new bip84.fromZPub(zpub).getAddress(index);
+// }
+
+// export function bip84PublicKey(zpub: string, index: number): string {
+// 	return new bip84.fromZPub(zpub).getPublicKey(index);
+// }
+
+// export function isZPubValid(zpub: string): boolean {
+// 	try {
+// 		new bip84.fromZPub(zpub).getAddress(0);
+// 		return true;
+// 	} catch {
+// 		return false;
+// 	}
+// }
