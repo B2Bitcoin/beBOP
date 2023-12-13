@@ -111,7 +111,7 @@ export const actions: Actions = {
 		}
 	},
 
-	setAsFooterLogo: async function ({ params, request }) {
+	setAsFooterLogo: async function ({ params }) {
 		const picture = await collections.pictures.findOne({ _id: params.id });
 
 		if (!picture) {
