@@ -56,6 +56,7 @@
 			"submit": "Proceed"
 		},
 		"deliveryFees": "Delivery fees",
+		"deliveryFeesEstimationTooltip": "This is an estimation, definitive fees will be processed on delivery country selection.",
 		"differentBillingAddress": "My shipping address and my billing address are different",
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
 		"invalidNpub": "Invalid NostR public address",
