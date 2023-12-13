@@ -255,7 +255,7 @@
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<h2 class="text-[32px]">{t('cart.remaining')}:</h2>
-						<p class="text-sm whitespace-pre-wrap">{t('cart.remainingHelpText')}</p>
+						<p class="text-sm whitespace-pre-line">{t('cart.remainingHelpText')}</p>
 					</div>
 					<div class="flex flex-col items-end">
 						<PriceTag

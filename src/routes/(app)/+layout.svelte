@@ -117,7 +117,7 @@
 	}
 
 	$: logoClass = data.logo.isWide ? 'h-[60px] w-auto' : 'h-[60px] w-[60px] rounded-full';
-	const { t, locale } = useI18n();
+	const { t, locale, textAddress } = useI18n();
 </script>
 
 <!--
@@ -448,16 +448,16 @@
 					<!-- First column -->
 					<div>
 						<h3 class="text-lg font-semibold mb-2">{upperCase(t('footer.company.identity'))}</h3>
-						{#if data.sellerIdentity.businessName}
-							<p>{data.sellerIdentity.businessName}</p>
-						{/if}
-						{#if data.sellerIdentity.address.state}
-							<p>{data.sellerIdentity.address.state}</p>
-						{/if}
-						<p>
-							{#if data.sellerIdentity.address.city}{data.sellerIdentity.address.city},
-							{/if}{#if data.sellerIdentity.address.street}{data.sellerIdentity.address.street},
-							{/if}{data.sellerIdentity.address.zip || ''}
+						<p class="whitespace-pre-line">
+							{textAddress({
+								firstName: data.sellerIdentity.businessName,
+								lastName: '',
+								address: data.sellerIdentity.address.street,
+								zip: data.sellerIdentity.address.zip,
+								city: data.sellerIdentity.address.city,
+								country: data.sellerIdentity.address.country,
+								state: data.sellerIdentity.address.state
+							})}
 						</p>
 					</div>
 
