@@ -781,6 +781,29 @@
 						</span>
 					</label>
 				{/if}
+				{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							name="isVATNullForeigner"
+							form="checkout"
+							required
+						/>
+
+						<span>
+							<Trans key="checkout.agreeNullVatForeigner"
+								><a
+									href="/why-vat-borderlands"
+									target="_blank"
+									class="body-hyperlink hover:underline"
+									slot="0"
+									let:translation>{translation}</a
+								></Trans
+							>
+						</span>
+					</label>
+				{/if}
 
 				<input
 					type="submit"
