@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { downloadFile } from '$lib/utils/downloadFile.js';
 	import { formatDistance } from 'date-fns';
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
 	export let data;
+	export let form;
 
 	let orderById = Object.fromEntries([...data.orders].map((order) => [order._id, order]));
 
@@ -39,6 +41,21 @@
 			alert('Error dumping wallet: ' + (await response.text()));
 		}
 	}
+
+	let rpcCommand = '';
+	let rpcParams = '';
+
+	$: {
+		if (browser && rpcCommand && rpcParams && data.dev) {
+			localStorage.setItem('rpcCommand', rpcCommand);
+			localStorage.setItem('rpcParams', rpcParams);
+		}
+	}
+
+	onMount(() => {
+		rpcCommand = localStorage.getItem('rpcCommand') ?? '';
+		rpcParams = localStorage.getItem('rpcParams') ?? '';
+	});
 </script>
 
 <h1 class="text-3xl">Bitcoin node</h1>
@@ -49,6 +66,30 @@
 	<li>Blocks: {data.blockchainInfo.blocks.toLocaleString('en')}</li>
 	<li>Chain: {data.blockchainInfo.chain}</li>
 </ul>
+
+{#if data.dev}
+	<h2 class="text-2xl">Bitcoin RPC</h2>
+
+	<form action="?/rpc" class="contents" method="post">
+		<label class="form-label">
+			Command
+			<input type="text" name="method" class="form-input" bind:value={rpcCommand} />
+		</label>
+		<label class="form-label">
+			Params
+			<textarea cols="30" rows="5" name="params" class="form-input" bind:value={rpcParams} />
+		</label>
+		<button class="btn btn-black self-start" type="submit">Send</button>
+	</form>
+
+	{#if form?.rpcFail}
+		<p class="text-red-500">{form.rpcFail}</p>
+	{/if}
+
+	{#if form?.rpcSuccess}
+		<pre class="text-sm">{JSON.stringify(form.rpcSuccess, null, 2)}</pre>
+	{/if}
+{/if}
 
 <h2 class="text-2xl">BIP 84</h2>
 

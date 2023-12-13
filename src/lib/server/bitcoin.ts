@@ -34,7 +34,7 @@ const dispatcher =
 		  })
 		: undefined;
 
-type BitcoinCommand =
+export type BitcoinCommand =
 	| 'listtransactions'
 	| 'listwallets'
 	| 'createwallet'

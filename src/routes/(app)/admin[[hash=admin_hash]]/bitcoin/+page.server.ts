@@ -5,12 +5,14 @@ import {
 	listTransactions,
 	getBalance,
 	getBlockchainInfo,
-	isBIP84Configured
+	isBIP84Configured,
+	bitcoinRpc,
+	type BitcoinCommand
 } from '$lib/server/bitcoin';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Order } from '$lib/types/Order.js';
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export async function load() {
@@ -37,7 +39,8 @@ export async function load() {
 		blockchainInfo: getBlockchainInfo(),
 		bip84: isBIP84Configured,
 		bip84Zpub: BIP84_ZPUB,
-		bitcoinDerivationIndex: runtimeConfig.bitcoinDerivationIndex
+		bitcoinDerivationIndex: runtimeConfig.bitcoinDerivationIndex,
+		dev: !!import.meta.env.DEV
 	};
 }
 
@@ -80,5 +83,21 @@ export const actions = {
 				upsert: true
 			}
 		);
+	},
+	rpc: async function ({ request }) {
+		const formData = await request.formData();
+
+		const parsed = z
+			.object({ method: z.string(), params: z.string() })
+			.parse(Object.fromEntries(formData));
+
+		const resp = await bitcoinRpc(parsed.method as BitcoinCommand, JSON.parse(parsed.params));
+
+		if (!resp.ok) {
+			return fail(400, { rpcFail: (await resp.json()).error.message });
+		}
+		return {
+			rpcSuccess: (await resp.json()).result
+		};
 	}
 };
