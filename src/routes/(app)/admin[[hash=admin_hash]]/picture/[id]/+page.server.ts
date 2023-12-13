@@ -59,6 +59,12 @@ export const actions: Actions = {
 		if (picture.productId) {
 			throw error(400, 'Picture is already associated to a product');
 		}
+		if (picture.tag) {
+			throw error(400, 'Picture is already associated to a tag');
+		}
+		if (picture.slider) {
+			throw error(400, 'Picture is already associated to a slide');
+		}
 		const formData = await request.formData();
 		const logoMode = String(formData.get('darkPicture'));
 		const logoIsWide = Boolean(formData.get('isWide'));
@@ -108,6 +114,52 @@ export const actions: Actions = {
 			logoMode === 'dark'
 				? (runtimeConfig.logo.darkModePictureId = '')
 				: (runtimeConfig.logo.pictureId = '');
+		}
+	},
+
+	setAsFooterLogo: async function ({ params }) {
+		const picture = await collections.pictures.findOne({ _id: params.id });
+
+		if (!picture) {
+			throw error(404);
+		}
+
+		if (picture.productId) {
+			throw error(400, 'Picture is already associated to a product');
+		}
+		if (picture.tag) {
+			throw error(400, 'Picture is already associated to a tag');
+		}
+		if (picture.slider) {
+			throw error(400, 'Picture is already associated to a slide');
+		}
+
+		await collections.runtimeConfig.updateOne(
+			{
+				_id: 'footerLogoId'
+			},
+			{
+				$set: { data: picture._id, updatedAt: new Date() }
+			},
+			{
+				upsert: true
+			}
+		);
+		runtimeConfig.footerLogoId = picture._id;
+	},
+
+	removeFooterLogo: async function ({ params }) {
+		if (runtimeConfig.footerLogoId === params.id) {
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'footerLogoId'
+				},
+				{ $set: { data: '', updatedAt: new Date() } },
+				{
+					upsert: true
+				}
+			);
+			runtimeConfig.footerLogoId = '';
 		}
 	}
 };

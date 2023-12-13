@@ -35,6 +35,9 @@ export async function load(params) {
 		? (await collections.pictures.findOne({ _id: runtimeConfig.logo.darkModePictureId })) ||
 		  logoPicture
 		: logoPicture;
+	const footerPicture = runtimeConfig.footerLogoId
+		? (await collections.pictures.findOne({ _id: runtimeConfig.footerLogoId })) || undefined
+		: undefined;
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
 		vatExempted: runtimeConfig.vatExempted,
@@ -69,6 +72,8 @@ export async function load(params) {
 		logoPicture,
 		logoPictureDark,
 		logo: runtimeConfig.logo,
+		footerLogoId: runtimeConfig.footerLogoId,
+		footerPicture,
 		usersDarkDefaultTheme: runtimeConfig.usersDarkDefaultTheme,
 		employeesDarkefaulTheme: runtimeConfig.employeesDarkDefaultTheme,
 		displayPoweredBy: runtimeConfig.displayPoweredBy,
