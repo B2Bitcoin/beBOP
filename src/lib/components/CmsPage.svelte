@@ -46,7 +46,7 @@
 		class="body body-mainPlan"
 	/>
 {:else}
-	<main class="mx-auto max-w-7xl py-10 px-6">
+	<main class="mx-auto max-w-7xl px-6">
 		<CmsDesign
 			{products}
 			{pictures}
