@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { Specification } from '$lib/types/Specification';
 	import { specificationGroupBy } from '$lib/utils/specification';
+	import { useI18n } from '$lib/i18n';
 
 	export let specification: Pick<Specification, 'title' | 'content'>;
 
 	let className = '';
 	export { className as class };
 	let specificationCategory = specificationGroupBy(specification.content);
+	const { t, locale } = useI18n();
 </script>
 
 <div class="relative mx-auto tagWidget tagWidget-main p-6 rounded {className}">
