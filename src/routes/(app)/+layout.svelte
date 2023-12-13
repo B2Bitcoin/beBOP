@@ -451,13 +451,13 @@
 						{#if data.sellerIdentity.businessName}
 							<p>{data.sellerIdentity.businessName}</p>
 						{/if}
-						{#if data.sellerIdentity.address.state}
-							<p>{data.sellerIdentity.address.state}</p>
+						{#if data.sellerIdentity.address.street}
+							<p>{data.sellerIdentity.address.street}</p>
 						{/if}
 						<p>
-							{#if data.sellerIdentity.address.city}{data.sellerIdentity.address.city},
-							{/if}{#if data.sellerIdentity.address.street}{data.sellerIdentity.address.street},
-							{/if}{data.sellerIdentity.address.zip || ''}
+							{#if data.sellerIdentity.address.zip}{data.sellerIdentity.address.zip},
+							{/if}{#if data.sellerIdentity.address.city}{data.sellerIdentity.address.city}, 
+							{/if}{#if data.sellerIdentity.address.state}{data.sellerIdentity.address.state || ''}
 						</p>
 					</div>
 
