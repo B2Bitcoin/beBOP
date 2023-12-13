@@ -541,7 +541,7 @@
 					</div>
 				{/if}
 
-				{#if data.vatSingleCountry && data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+				{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
@@ -772,6 +772,29 @@
 							<Trans key="checkout.agreeOnlyDeposit"
 								><a
 									href="/why-pay-remainder"
+									target="_blank"
+									class="body-hyperlink hover:underline"
+									slot="0"
+									let:translation>{translation}</a
+								></Trans
+							>
+						</span>
+					</label>
+				{/if}
+				{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							name="isVATNullForeigner"
+							form="checkout"
+							required
+						/>
+
+						<span>
+							<Trans key="checkout.agreeNullVatForeigner"
+								><a
+									href="/why-vat-customs"
 									target="_blank"
 									class="body-hyperlink hover:underline"
 									slot="0"

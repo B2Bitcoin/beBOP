@@ -48,6 +48,7 @@
 	},
 	"checkout": {
 		"agreeIpCollect": "I agree to the collection of my IP address (<0>why?</0>)",
+		"agreeNullVatForeigner": "I understand that I will have to pay VAT upon delivery (<0>why?</0>)",
 		"agreeOnlyDeposit": "I agree that I need to pay the remainder in the future (<0>why?</0>)",
 		"backToCart": "Back to cart",
 		"billingInfo": "Billing address",
