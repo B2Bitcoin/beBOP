@@ -3,7 +3,8 @@ import {
 	BITCOIN_RPC_PASSWORD,
 	BITCOIN_RPC_USER,
 	TOR_PROXY_URL,
-	BIP84_ZPUB
+	BIP84_ZPUB,
+	BIP84_XPUB
 } from '$env/static/private';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -18,7 +19,8 @@ import { collections } from './database';
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
 
-export const isBIP84Configured = isBitcoinConfigured && BIP84_ZPUB && isZPubValid(BIP84_ZPUB);
+export const isBIP84Configured =
+	isBitcoinConfigured && BIP84_XPUB && BIP84_ZPUB && isZPubValid(BIP84_ZPUB);
 
 const dispatcher =
 	isBitcoinConfigured &&
@@ -39,7 +41,7 @@ type BitcoinCommand =
 	| 'listreceivedbyaddress'
 	| 'dumpprivkey'
 	| 'listdescriptors'
-	| 'importpubkey'
+	| 'importdescriptors'
 	| 'getnewaddress'
 	| 'getbalance'
 	| 'getblockchaininfo';
@@ -123,9 +125,17 @@ export async function getNewAddress(label: string): Promise<string> {
 		const derivationIndex = await generateDerivationIndex();
 
 		const address = bip84Address(BIP84_ZPUB, derivationIndex);
-		const publicKey = bip84PublicKey(BIP84_ZPUB, derivationIndex);
-		// We use importpubkey instead of importaddress because the latter does not support segwit addresses
-		const response = await bitcoinRpc('importpubkey', [publicKey, label, false]);
+		const response = await bitcoinRpc('importdescriptors', [
+			[
+				{
+					desc: `wpkh(${BIP84_XPUB}/84'/0'/0'/0/${derivationIndex})`,
+					timestamp: 'now',
+					label,
+					range: [0, 0],
+					index: 0
+				}
+			]
+		]);
 
 		if (!response.ok) {
 			console.error(await response.text());
