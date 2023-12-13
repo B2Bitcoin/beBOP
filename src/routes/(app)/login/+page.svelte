@@ -86,7 +86,7 @@
 				<p class="text-green-500">{t('login.willReceiveSessionLink')}</p>
 			{/if}
 			<div class="flex gap-4">
-				<input type="submit" class="btn body-mainCTA text-white" value="Send Authentication Link" />
+				<input type="submit" class="btn body-mainCTA" value="Send Authentication Link" />
 				<button class="btn body-secondaryCTA"><a href="/">Cancel</a></button>
 			</div>
 		</form>
