@@ -77,7 +77,7 @@
 		</label>
 		<label class="form-label">
 			Params
-			<textarea cols="30" rows="5" name="params" class="form-input" bind:value={rpcParams} />
+			<textarea cols="30" rows="10" name="params" class="form-input" bind:value={rpcParams} />
 		</label>
 		<button class="btn btn-black self-start" type="submit">Send</button>
 	</form>

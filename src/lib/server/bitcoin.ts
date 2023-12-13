@@ -141,6 +141,12 @@ export async function getNewAddress(label: string): Promise<string> {
 			console.error(await response.text());
 			throw error(500, 'Could not import address');
 		}
+		const json = await response.json();
+
+		if (!json[0].success) {
+			console.error(json);
+			throw error(500, 'Could not import address');
+		}
 
 		return address;
 	}
