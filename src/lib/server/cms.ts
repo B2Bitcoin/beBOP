@@ -8,11 +8,15 @@ import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 import { collections } from './database';
 import { ALLOW_JS_INJECTION } from '$env/static/private';
+import type { PickDeep } from 'type-fest';
 
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 
-export async function cmsFromContent(content: string, userRoleId: string | undefined) {
+export async function cmsFromContent(
+	content: string,
+	locals?: Partial<PickDeep<App.Locals, 'user.roleId' | 'language'>>
+) {
 	const PRODUCT_WIDGET_REGEX =
 		/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
@@ -139,7 +143,7 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 		raw: trimPrefix(content.slice(index), '</p>')
 	});
 	const query =
-		userRoleId === POS_ROLE_ID
+		locals?.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
 			: { 'actionSettings.eShop.visible': true };
 
@@ -234,7 +238,7 @@ export async function cmsFromContent(content: string, userRoleId: string | undef
 			.sort({ createdAt: 1 })
 			.toArray(),
 		digitalFiles,
-		roleId: userRoleId
+		roleId: locals?.user?.roleId
 	};
 }
 

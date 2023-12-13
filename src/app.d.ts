@@ -4,6 +4,7 @@
 /// <reference types="@sveltejs/kit" />
 /// <reference types="unplugin-icons/types/svelte" />
 
+import type { LanguageKey } from '$lib/translations';
 import type { Role } from '$lib/types/Role';
 import type { ObjectId } from 'mongodb';
 
@@ -27,7 +28,7 @@ declare global {
 				id: string;
 			}>;
 			clientIp?: string;
-			language: string;
+			language: LanguageKey;
 		}
 		// interface PageData {}
 		// interface Platform {}
