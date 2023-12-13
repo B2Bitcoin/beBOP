@@ -1,4 +1,4 @@
-import { BIP84_XPUB } from '$env/static/private';
+import { ALLOW_BITCOIN_RPC, BIP84_XPUB } from '$env/static/private';
 import {
 	createWallet,
 	listWallets,
@@ -39,7 +39,7 @@ export async function load() {
 		blockchainInfo: getBlockchainInfo(),
 		bip84: isBIP84Configured,
 		bip84Xpub: BIP84_XPUB,
-		dev: !!import.meta.env.DEV
+		rpc: ALLOW_BITCOIN_RPC === 'true' || ALLOW_BITCOIN_RPC === '1'
 	};
 }
 
@@ -84,7 +84,7 @@ export const actions = {
 		);
 	},
 	rpc: async function ({ request }) {
-		if (!import.meta.env.DEV) {
+		if (ALLOW_BITCOIN_RPC !== 'true' && ALLOW_BITCOIN_RPC !== '1') {
 			throw error(403, 'Forbidden');
 		}
 		const formData = await request.formData();

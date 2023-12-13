@@ -46,7 +46,7 @@
 	let rpcParams = '';
 
 	$: {
-		if (browser && rpcCommand && rpcParams && data.dev) {
+		if (browser && rpcCommand && rpcParams && data.rpc) {
 			localStorage.setItem('rpcCommand', rpcCommand);
 			localStorage.setItem('rpcParams', rpcParams);
 		}
@@ -67,7 +67,7 @@
 	<li>Chain: {data.blockchainInfo.chain}</li>
 </ul>
 
-{#if data.dev}
+{#if data.rpc}
 	<h2 class="text-2xl">Bitcoin RPC</h2>
 
 	<form action="?/rpc" class="contents" method="post">
