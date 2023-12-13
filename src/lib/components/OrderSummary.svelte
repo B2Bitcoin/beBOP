@@ -186,7 +186,7 @@
 
 	<span class="py-1" />
 
-	<div class="py-3 p-3 flex flex-col">
+	<div class="py-3 flex flex-col">
 		<div class="flex justify-between">
 			<span class="text-xl">{t('cart.total')}</span>
 			<PriceTag
@@ -205,7 +205,7 @@
 	</div>
 
 	{#each validDeposits as payment}
-		<div class="py-3 p-3 flex flex-col">
+		<div class="py-3 flex flex-col">
 			<div class="flex justify-between">
 				<span class="text-xl"
 					><span title={t('checkout.paymentMethod.' + payment.method)}
@@ -231,7 +231,7 @@
 
 	{#if orderAmountWithNoPaymentsCreated(order)}
 		{@const remaining = orderAmountWithNoPaymentsCreated(order)}
-		<div class="py-3 p-3 flex flex-col">
+		<div class="py-3 flex flex-col">
 			<div class="flex justify-between">
 				<span class="text-xl">{t('order.restToPay')}</span>
 				<PriceTag
@@ -255,7 +255,7 @@
 		<div class="border-t border-gray-300 col-span-4" />
 
 		{#each invalidDeposits as payment}
-			<div class="py-3 p-3 flex flex-col">
+			<div class="py-3 flex flex-col">
 				<div class="flex justify-between">
 					<span class="text-xl"
 						><span title={t('checkout.paymentMethod.' + payment.method)}
