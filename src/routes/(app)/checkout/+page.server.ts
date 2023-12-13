@@ -205,15 +205,26 @@ export const actions = {
 		const agreements = z
 			.object({
 				allowCollectIP: z.boolean({ coerce: true }).default(false),
-				isOnlyDeposit: z.boolean({ coerce: true }).default(false)
+				isOnlyDeposit: z.boolean({ coerce: true }).default(false),
+				isVATNullForeigner: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				allowCollectIP: formData.get('allowCollectIP'),
-				isOnlyDeposit: formData.get('isOnlyDeposit')
+				isOnlyDeposit: formData.get('isOnlyDeposit'),
+				isVATNullForeigner: formData.get('isVATNullForeigner')
 			});
 
 		if (!agreements.allowCollectIP && runtimeConfig.collectIPOnDeliverylessOrders && isDigital) {
 			throw error(400, 'You must allow the collection of your IP address');
+		}
+		const vatCountry =
+			shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry;
+		if (
+			!agreements.isVATNullForeigner &&
+			runtimeConfig.vatNullOutsideSellerCountry &&
+			runtimeConfig.vatCountry !== vatCountry
+		) {
+			throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
 		}
 
 		if (
@@ -260,8 +271,7 @@ export const actions = {
 				cart,
 				shippingAddress: shippingInfo?.shipping,
 				billingAddress: billingInfo?.billing || shippingInfo?.shipping,
-				vatCountry:
-					shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry,
+				vatCountry: vatCountry,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&
