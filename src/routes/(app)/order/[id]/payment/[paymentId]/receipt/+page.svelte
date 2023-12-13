@@ -17,7 +17,7 @@
 
 <div class="flex justify-between">
 	<Picture picture={data.logoPicture} class="h-16" />
-	<h2 class="text-xl whitespace-pre-wrap text-right">
+	<h2 class="text-xl whitespace-pre-line text-right">
 		{identity.invoice?.issuerInfo || ''}
 	</h2>
 </div>
@@ -43,11 +43,11 @@
 		{#if differentAddress}
 			<p class="font-bold">{t('checkout.billingInfo')}</p>
 		{/if}
-		<p class="whitespace-pre-wrap">{textAddress(data.order.billingAddress)}</p>
+		<p class="whitespace-pre-line">{textAddress(data.order.billingAddress)}</p>
 		{#if data.order.shippingAddress && differentAddress}
 			<br />
 			<p class="font-bold">{t('order.shippingAddress.title')}</p>
-			<p class="whitespace-pre-wrap">{textAddress(data.order.shippingAddress)}</p>
+			<p class="whitespace-pre-line">{textAddress(data.order.shippingAddress)}</p>
 		{/if}
 	{/if}
 </div>

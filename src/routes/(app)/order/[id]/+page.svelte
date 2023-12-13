@@ -244,7 +244,7 @@
 			{#if data.order.shippingAddress}
 				<div>
 					{t('order.shippingAddress.title')}:
-					<p class="body-secondaryText whitespace-pre-wrap">
+					<p class="body-secondaryText whitespace-pre-line">
 						{textAddress(data.order.shippingAddress)}
 					</p>
 				</div>
