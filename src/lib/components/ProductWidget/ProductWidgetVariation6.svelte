@@ -35,7 +35,7 @@
 					<button type="button" on:click={() => (pictureId = i)}>
 						<PictureComponent
 							{picture}
-							class="w-[95px] h-[95px] border-gray-300 border rounded object-cover mb-2 {pictureId ===
+							class="w-[88px] h-[88px] border-gray-300 border rounded object-cover mb-2 {pictureId ===
 							i
 								? 'ring-2 ring-link ring-offset-2'
 								: ''} "
