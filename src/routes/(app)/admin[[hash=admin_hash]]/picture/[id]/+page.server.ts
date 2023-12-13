@@ -59,6 +59,12 @@ export const actions: Actions = {
 		if (picture.productId) {
 			throw error(400, 'Picture is already associated to a product');
 		}
+		if (picture.tag) {
+			throw error(400, 'Picture is already associated to a tag');
+		}
+		if (picture.slider) {
+			throw error(400, 'Picture is already associated to a slide');
+		}
 		const formData = await request.formData();
 		const logoMode = String(formData.get('darkPicture'));
 		const logoIsWide = Boolean(formData.get('isWide'));
@@ -120,6 +126,12 @@ export const actions: Actions = {
 
 		if (picture.productId) {
 			throw error(400, 'Picture is already associated to a product');
+		}
+		if (picture.tag) {
+			throw error(400, 'Picture is already associated to a tag');
+		}
+		if (picture.slider) {
+			throw error(400, 'Picture is already associated to a slide');
 		}
 
 		await collections.runtimeConfig.updateOne(
