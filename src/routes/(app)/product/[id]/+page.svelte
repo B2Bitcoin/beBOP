@@ -414,7 +414,7 @@
 									disabled={loading}
 									class="btn body-cta body-mainCTA"
 								>
-									{verb}
+									{t(`product.cta.${verb}`)}
 								</button>
 							{/if}
 						{:else}
