@@ -100,13 +100,13 @@
 	</p>
 {:else}
 	<ul>
-		<li>BIP 84 Zpub: {data.bip84Zpub}</li>
+		<li>BIP 84 Xpub: {data.bip84Xpub}</li>
 		<li>
 			Derivation path: <kbd class="kbd">m/84'/0'/0'</kbd>
 		</li>
 		<li>
-			BIP 84 derivation index: {data.bitcoinDerivationIndex}. Next address will use the
-			<kbd class="kbd">m/84'/0'/0'/0/{data.bitcoinDerivationIndex + 1}</kbd> derivation path
+			Note that you need to create a new wallet (if not already done) via the UI, so that it will
+			use the Xpub.
 		</li>
 	</ul>
 {/if}
@@ -135,18 +135,11 @@
 		Changing wallet in an active beBOP means that incoming transactions in the old wallet will not
 		be detected.
 	</p>
-
-	{#if data.bip84 || true}
-		<p class="font-bold">
-			Changing wallet will ignore incoming funds to already generated addresses from your BIP84
-			ZPub.
-		</p>
-	{/if}
 {/if}
 
 <form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>
 	<input type="hidden" name="wallet" value={walletToCreate} />
-	<button class="btn btn-black">Create wallet</button>
+	<button class="btn btn-black">Create wallet {data.bip84 ? 'for bip84 xpub' : ''}</button>
 </form>
 
 <h2 class="text-2xl">Balance</h2>

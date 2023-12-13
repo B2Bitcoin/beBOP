@@ -52,6 +52,7 @@ export interface OrderPayment {
 	checkoutId?: string;
 	/** For bitcoin transactions */
 	wallet?: string;
+	label?: string;
 	/**
 	 * There are also additional fields for sumup, they are stored but not documented here.
 	 */

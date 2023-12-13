@@ -3,7 +3,6 @@ import {
 	BITCOIN_RPC_PASSWORD,
 	BITCOIN_RPC_USER,
 	TOR_PROXY_URL,
-	BIP84_ZPUB,
 	BIP84_XPUB
 } from '$env/static/private';
 import { error } from '@sveltejs/kit';
@@ -12,15 +11,11 @@ import { runtimeConfig } from './runtime-config';
 import { socksDispatcher } from 'fetch-socks';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { ObjectId } from 'mongodb';
-// @ts-expect-error no types
-import bip84 from 'bip84';
-import { collections } from './database';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
 
-export const isBIP84Configured =
-	isBitcoinConfigured && BIP84_XPUB && BIP84_ZPUB && isZPubValid(BIP84_ZPUB);
+export const isBIP84Configured = isBitcoinConfigured && BIP84_XPUB.startsWith('xpub');
 
 const dispatcher =
 	isBitcoinConfigured &&
@@ -42,6 +37,7 @@ export type BitcoinCommand =
 	| 'dumpprivkey'
 	| 'listdescriptors'
 	| 'importdescriptors'
+	| 'getdescriptorinfo'
 	| 'getnewaddress'
 	| 'getbalance'
 	| 'getblockchaininfo';
@@ -106,7 +102,15 @@ export async function currentWallet() {
 }
 
 export async function createWallet(name: string) {
-	const response = await bitcoinRpc('createwallet', [name, false, false, null, false, true]);
+	const disablePrivateKeys = !!isBIP84Configured;
+	const response = await bitcoinRpc('createwallet', [
+		name,
+		disablePrivateKeys,
+		false,
+		null,
+		false,
+		true
+	]);
 
 	if (!response.ok) {
 		console.error(await response.text());
@@ -114,43 +118,69 @@ export async function createWallet(name: string) {
 	}
 
 	const json = await response.json();
-	return z.object({ result: z.object({ name: z.string() }) }).parse(json).result.name;
+	const walletName = z.object({ result: z.object({ name: z.string() }) }).parse(json).result.name;
+
+	/**
+	 * Create new wallet watching the BIP84 addresses
+	 */
+	if (isBIP84Configured) {
+		// todo: use proper fingerprint
+		const descriptor = await getDescriptorInfo(`wpkh([00000000/84h/0h/0h]${BIP84_XPUB}/0/*)`);
+
+		const response2 = await bitcoinRpc(
+			'importdescriptors',
+			[
+				[
+					{
+						desc: descriptor.descriptor,
+						timestamp: 'now',
+						range: [0, 1000],
+						internal: false,
+						active: true
+					}
+				]
+			],
+			walletName
+		);
+
+		if (!response2.ok) {
+			console.error('import descriptors', await response2.text());
+			throw error(500, 'Could not import descriptors');
+		}
+
+		const json2 = await response2.json();
+
+		if (!json2.result[0].success) {
+			console.error('import descriptors 2', json2);
+			throw error(500, 'Could not import descriptors');
+		}
+	}
+
+	return walletName;
+}
+
+export async function getDescriptorInfo(descriptor: string) {
+	const response = await bitcoinRpc('getdescriptorinfo', [descriptor]);
+
+	if (!response.ok) {
+		console.error('getDescriptorInfo', await response.text());
+		throw error(500, 'Could not get descriptor info');
+	}
+
+	const json = await response.json();
+	return z
+		.object({
+			result: z.object({
+				descriptor: z.string(),
+				isrange: z.boolean(),
+				issolvable: z.boolean(),
+				hasprivatekeys: z.boolean()
+			})
+		})
+		.parse(json).result;
 }
 
 export async function getNewAddress(label: string): Promise<string> {
-	if (isBIP84Configured) {
-		if (runtimeConfig.bitcoinDerivationIndex === 0 && (await listWallets()).length === 0) {
-			throw error(400, 'Create a wallet first to be able to watch BIP84 addresses');
-		}
-		const derivationIndex = await generateDerivationIndex();
-
-		const address = bip84Address(BIP84_ZPUB, derivationIndex);
-		const response = await bitcoinRpc('importdescriptors', [
-			[
-				{
-					desc: `wpkh(${BIP84_XPUB}/84'/0'/0'/0/${derivationIndex})`,
-					timestamp: 'now',
-					label,
-					range: [0, 0],
-					index: 0
-				}
-			]
-		]);
-
-		if (!response.ok) {
-			console.error(await response.text());
-			throw error(500, 'Could not import address');
-		}
-		const json = await response.json();
-
-		if (!json[0].success) {
-			console.error(json);
-			throw error(500, 'Could not import address');
-		}
-
-		return address;
-	}
-
 	const response = await bitcoinRpc('getnewaddress', [label, 'bech32']);
 
 	if (!response.ok) {
@@ -302,33 +332,19 @@ export function orderAddressLabel(orderId: string, paymentId: ObjectId) {
 	return `order:${orderId}:${paymentId}`;
 }
 
-export function bip84Address(zpub: string, index: number): string {
-	return new bip84.fromZPub(zpub).getAddress(index);
-}
+// export function bip84Address(zpub: string, index: number): string {
+// 	return new bip84.fromZPub(zpub).getAddress(index);
+// }
 
-export function bip84PublicKey(zpub: string, index: number): string {
-	return new bip84.fromZPub(zpub).getPublicKey(index);
-}
+// export function bip84PublicKey(zpub: string, index: number): string {
+// 	return new bip84.fromZPub(zpub).getPublicKey(index);
+// }
 
-export function isZPubValid(zpub: string): boolean {
-	try {
-		new bip84.fromZPub(zpub).getAddress(0);
-		return true;
-	} catch {
-		return false;
-	}
-}
-
-export async function generateDerivationIndex(): Promise<number> {
-	const res = await collections.runtimeConfig.findOneAndUpdate(
-		{ _id: 'bitcoinDerivationIndex' },
-		{ $inc: { data: 1 as never } },
-		{ upsert: true, returnDocument: 'after' }
-	);
-
-	if (!res.value) {
-		throw new Error('Failed to increment derivation index');
-	}
-
-	return res.value.data as number;
-}
+// export function isZPubValid(zpub: string): boolean {
+// 	try {
+// 		new bip84.fromZPub(zpub).getAddress(0);
+// 		return true;
+// 	} catch {
+// 		return false;
+// 	}
+// }

@@ -1,4 +1,4 @@
-import { BIP84_ZPUB } from '$env/static/private';
+import { BIP84_XPUB } from '$env/static/private';
 import {
 	createWallet,
 	listWallets,
@@ -38,8 +38,7 @@ export async function load() {
 		orders: orders.toArray(),
 		blockchainInfo: getBlockchainInfo(),
 		bip84: isBIP84Configured,
-		bip84Zpub: BIP84_ZPUB,
-		bitcoinDerivationIndex: runtimeConfig.bitcoinDerivationIndex,
+		bip84Xpub: BIP84_XPUB,
 		dev: !!import.meta.env.DEV
 	};
 }

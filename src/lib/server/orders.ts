@@ -954,6 +954,7 @@ async function generatePaymentInfo(params: {
 }): Promise<{
 	address?: string;
 	wallet?: string;
+	label?: string;
 	invoiceId?: string;
 	checkoutId?: string;
 	meta?: unknown;
@@ -962,7 +963,8 @@ async function generatePaymentInfo(params: {
 		case 'bitcoin':
 			return {
 				address: await getNewAddress(orderAddressLabel(params.orderId, params.paymentId)),
-				wallet: await currentWallet()
+				wallet: await currentWallet(),
+				label: orderAddressLabel(params.orderId, params.paymentId)
 			};
 		case 'lightning': {
 			const invoice = await lndCreateInvoice(
