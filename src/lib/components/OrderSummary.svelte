@@ -194,18 +194,14 @@
 		{/if}
 	</div>
 
-	{#each order.payments.filter((p) => p.currencySnapshot.main.price.amount < order.currencySnapshot.main.totalPrice.amount) as payment}
+	{#each order.payments.filter((p) => p.currencySnapshot.main.price.amount < order.currencySnapshot.main.totalPrice.amount && (p.status === 'paid' || p.status === 'pending')) as payment}
 		<div class="-mx-3 p-3 flex flex-col">
 			<div class="flex justify-between">
 				<span class="text-xl"
 					><span title={t('checkout.paymentMethod.' + payment.method)}
 						>{PAYMENT_METHOD_EMOJI[payment.method]}</span
 					>
-					- {payment.status === 'paid'
-						? t('order.depositPaid')
-						: payment.status === 'pending'
-						? t('order.depositToPay')
-						: t('order.depositCancelled')}
+					- {payment.status === 'paid' ? t('order.depositPaid') : t('order.depositToPay')}
 				</span>
 				<PriceTag
 					class="text-2xl"
@@ -244,4 +240,32 @@
 			{/if}
 		</div>
 	{/if}
+
+	<div class="border-b border-gray-300 col-span-4" />
+	{#each order.payments.filter((p) => p.currencySnapshot.main.price.amount < order.currencySnapshot.main.totalPrice.amount && (p.status === 'expired' || p.status === 'canceled')) as payment}
+		<div class="-mx-3 p-3 flex flex-col">
+			<div class="flex justify-between">
+				<span class="text-xl"
+					><span title={t('checkout.paymentMethod.' + payment.method)}
+						>{PAYMENT_METHOD_EMOJI[payment.method]}</span
+					>
+					- {payment.status === 'canceled'
+						? t('order.depositCancelled')
+						: t('order.depositExpired')}
+				</span>
+				<PriceTag
+					class="text-2xl"
+					amount={payment.currencySnapshot.main.price.amount}
+					currency={payment.currencySnapshot.main.price.currency}
+				/>
+			</div>
+			{#if payment.currencySnapshot.secondary}
+				<PriceTag
+					class="self-end"
+					amount={payment.currencySnapshot.secondary.price.amount}
+					currency={payment.currencySnapshot.secondary.price.currency}
+				/>
+			{/if}
+		</div>
+	{/each}
 </article>
