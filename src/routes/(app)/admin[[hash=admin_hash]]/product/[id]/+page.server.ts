@@ -13,12 +13,6 @@ import { adminPrefix } from '$lib/server/admin';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 
 export const load = async ({ params }) => {
-	const product = await collections.products.findOne({ _id: params.id });
-
-	if (!product) {
-		throw error(404, 'Product not found');
-	}
-
 	const pictures = await collections.pictures
 		.find({ productId: params.id })
 		.sort({ createdAt: 1 })
@@ -33,7 +27,6 @@ export const load = async ({ params }) => {
 		.toArray();
 
 	return {
-		product,
 		pictures,
 		digitalFiles,
 		tags,
