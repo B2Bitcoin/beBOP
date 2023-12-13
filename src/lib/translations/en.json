@@ -363,7 +363,9 @@
 		"cta": {
 			"authenticateAs": "Authenticate as {as}",
 			"clearSession": "Clear session",
+			"identity": "Identity",
 			"logout": "Log out",
+			"orders": "Orders",
 			"signInWith": "Sign In With {provider}"
 		},
 		"password": {

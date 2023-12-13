@@ -57,8 +57,8 @@
 		{/each}
 	</ul>
 	<div class="flex gap-4">
-		<a class="btn body-mainCTA" href="/identity">identity</a>
-		<a class="btn body-mainCTA" href="/history">history</a>
+		<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
+		<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
 		<form method="post" action="?/clearAll" use:enhance>
 			<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
 		</form>
@@ -86,8 +86,8 @@
 				<p class="text-green-500">{t('login.willReceiveSessionLink')}</p>
 			{/if}
 			<div class="flex gap-4">
-				<input type="submit" class="btn btn-blue text-white" value="Send Authentication Link" />
-				<button class="btn btn-gray"><a href="/">Cancel</a></button>
+				<input type="submit" class="btn body-mainCTA text-white" value="Send Authentication Link" />
+				<button class="btn body-secondaryCTA"><a href="/">Cancel</a></button>
 			</div>
 		</form>
 
