@@ -65,6 +65,7 @@ export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
 export const MAX_NAME_LIMIT = 70;
 
 export const MAX_SHORT_DESCRIPTION_LIMIT = 160;
+export const MAX_DESCRIPTION_LIMIT = 10000;
 
 export const DEFAULT_MAX_QUANTITY_PER_ORDER = 10;
 

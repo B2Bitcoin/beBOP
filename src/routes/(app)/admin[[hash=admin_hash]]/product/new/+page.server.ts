@@ -172,7 +172,7 @@ export const actions: Actions = {
 							}
 						},
 						tagIds: parsed.tagIds,
-						cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href)
+						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href)
 					},
 					{ session }
 				);

@@ -2,6 +2,7 @@ import { CURRENCIES } from '$lib/types/Currency';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { z } from 'zod';
 import { deliveryFeesSchema } from '../config/delivery/schema';
+import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 
 export const productBaseSchema = {
 	name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
@@ -32,8 +33,10 @@ export const productBaseSchema = {
 	retailBasket: z.boolean({ coerce: true }).default(false),
 	depositPercentage: z.number({ coerce: true }).int().min(0).max(100).optional(),
 	enforceDeposit: z.boolean({ coerce: true }).default(false),
-	ctaLinks: z
+	cta: z
 		.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 		.optional()
-		.default([])
+		.default([]),
+	contentBefore: z.string().max(MAX_CONTENT_LIMIT).default(''),
+	contentAfter: z.string().max(MAX_CONTENT_LIMIT).default('')
 };
