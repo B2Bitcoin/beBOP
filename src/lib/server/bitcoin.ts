@@ -3,7 +3,8 @@ import {
 	BITCOIN_RPC_PASSWORD,
 	BITCOIN_RPC_USER,
 	TOR_PROXY_URL,
-	BIP84_ZPUB
+	BIP84_ZPUB,
+	BIP84_XPUB
 } from '$env/static/private';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -12,13 +13,14 @@ import { socksDispatcher } from 'fetch-socks';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { ObjectId } from 'mongodb';
 // @ts-expect-error no types
-import { fromZPub } from 'bip84';
+import bip84 from 'bip84';
 import { collections } from './database';
 
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
 
-export const isBIP84Configured = isBitcoinConfigured && BIP84_ZPUB && isZPubValid(BIP84_ZPUB);
+export const isBIP84Configured =
+	isBitcoinConfigured && BIP84_XPUB && BIP84_ZPUB && isZPubValid(BIP84_ZPUB);
 
 const dispatcher =
 	isBitcoinConfigured &&
@@ -39,7 +41,7 @@ type BitcoinCommand =
 	| 'listreceivedbyaddress'
 	| 'dumpprivkey'
 	| 'listdescriptors'
-	| 'importaddress'
+	| 'importdescriptors'
 	| 'getnewaddress'
 	| 'getbalance'
 	| 'getblockchaininfo';
@@ -115,18 +117,32 @@ export async function createWallet(name: string) {
 	return z.object({ result: z.object({ name: z.string() }) }).parse(json).result.name;
 }
 
-export async function getNewAddress(label: string) {
+export async function getNewAddress(label: string): Promise<string> {
 	if (isBIP84Configured) {
 		if (runtimeConfig.bitcoinDerivationIndex === 0 && (await listWallets()).length === 0) {
 			throw error(400, 'Create a wallet first to be able to watch BIP84 addresses');
 		}
-		const address = bip84Address(BIP84_ZPUB, await generateDerivationIndex());
-		const response = await bitcoinRpc('importaddress', [address, label, false, true]);
+		const derivationIndex = await generateDerivationIndex();
+
+		const address = bip84Address(BIP84_ZPUB, derivationIndex);
+		const response = await bitcoinRpc('importdescriptors', [
+			[
+				{
+					desc: `wpkh(${BIP84_XPUB}/84'/0'/0'/0/${derivationIndex})`,
+					timestamp: 'now',
+					label,
+					range: [0, 0],
+					index: 0
+				}
+			]
+		]);
 
 		if (!response.ok) {
 			console.error(await response.text());
 			throw error(500, 'Could not import address');
 		}
+
+		return address;
 	}
 
 	const response = await bitcoinRpc('getnewaddress', [label, 'bech32']);
@@ -281,12 +297,16 @@ export function orderAddressLabel(orderId: string, paymentId: ObjectId) {
 }
 
 export function bip84Address(zpub: string, index: number): string {
-	return new fromZPub(zpub).getAddress(index);
+	return new bip84.fromZPub(zpub).getAddress(index);
+}
+
+export function bip84PublicKey(zpub: string, index: number): string {
+	return new bip84.fromZPub(zpub).getPublicKey(index);
 }
 
 export function isZPubValid(zpub: string): boolean {
 	try {
-		new fromZPub(zpub).getAddress(0);
+		new bip84.fromZPub(zpub).getAddress(0);
 		return true;
 	} catch {
 		return false;

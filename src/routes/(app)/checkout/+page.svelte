@@ -51,7 +51,7 @@
 	};
 
 	const emails: Record<FeedKey, string> = {
-		paymentStatus: data.email || ''
+		paymentStatus: data.email || data.personalInfoConnected?.email || ''
 	};
 
 	function checkForm(event: SubmitEvent) {
@@ -383,7 +383,7 @@
 										class="form-input"
 										autocomplete="email"
 										name="{key}Email"
-										value={emails[key] || data.personalInfoConnected?.email || ''}
+										bind:value={emails[key]}
 									/>
 								</label>
 							{/if}
