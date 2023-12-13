@@ -9,6 +9,7 @@
 	import TagWidgetVariation4 from './TagWidget/TagWidgetVariation4.svelte';
 	import TagWidgetVariation5 from './TagWidget/TagWidgetVariation5.svelte';
 	import TagWidgetVariation6 from './TagWidget/TagWidgetVariation6.svelte';
+	import TagWidgetVariation1CtAless from './TagWidget/TagWidgetVariation1CTAless.svelte';
 
 	let className = '';
 	export { className as class };
@@ -45,7 +46,7 @@
 			pictureType: 'slim'
 		},
 		'var-1-noCTA': {
-			component: TagWidgetVariation1CTAless,
+			component: TagWidgetVariation1CtAless,
 			pictureType: 'full'
 		}
 	};
