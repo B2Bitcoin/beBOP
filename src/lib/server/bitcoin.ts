@@ -12,7 +12,7 @@ import { socksDispatcher } from 'fetch-socks';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { ObjectId } from 'mongodb';
 // @ts-expect-error no types
-import { fromZPub } from 'bip84';
+import bip84 = require('bip84');
 import { collections } from './database';
 
 export const isBitcoinConfigured =
@@ -281,7 +281,7 @@ export function orderAddressLabel(orderId: string, paymentId: ObjectId) {
 }
 
 export function bip84Address(zpub: string, index: number): string {
-	return new fromZPub(zpub).getAddress(index);
+	return new bip84.fromZPub(zpub).getAddress(index);
 }
 
 export function isZPubValid(zpub: string): boolean {
