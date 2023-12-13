@@ -56,10 +56,13 @@
 			</li>
 		{/each}
 	</ul>
-
-	<form method="post" action="?/clearAll" use:enhance>
-		<button class="btn btn-red">{t('login.cta.clearSession')}</button>
-	</form>
+	<div class="flex gap-4">
+		<a class="btn body-mainCTA" href="/identity">identity</a>
+		<a class="btn body-mainCTA" href="/history">history</a>
+		<form method="post" action="?/clearAll" use:enhance>
+			<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
+		</form>
+	</div>
 	{#if data.emailToLogin || data.npubToLogin}
 		<form method="post" action="?/validate&token={$page.url.searchParams.get('token')}">
 			<button class="btn btn-blue text-white">
