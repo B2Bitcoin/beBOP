@@ -28,7 +28,9 @@ export const actions = {
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional(),
 				socialNetworkIcons: z
-					.array(z.object({ svg: z.string().trim(), href: z.string().trim() }))
+					.array(
+						z.object({ name: z.string().trim(), svg: z.string().trim(), href: z.string().trim() })
+					)
 					.optional(),
 				displayPoweredBy: z.boolean({ coerce: true }),
 				displayCompanyInfo: z.boolean({ coerce: true })
@@ -75,7 +77,9 @@ export const actions = {
 			}
 		}
 
-		const arraySocialNetworkIcons = res.socialNetworkIcons?.filter((item) => item.href && item.svg);
+		const arraySocialNetworkIcons = res.socialNetworkIcons?.filter(
+			(item) => item.href && item.svg && item.name
+		);
 		if (
 			arraySocialNetworkIcons &&
 			!isEqual(arraySocialNetworkIcons, runtimeConfig.socialNetworkIcons)

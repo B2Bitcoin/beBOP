@@ -107,8 +107,17 @@
 
 	<h3 class="text-xl">Links</h3>
 
-	{#each [...data.links.socialNetworkIcons, { svg: '', href: '' }] as icon, i}
+	{#each [...data.links.socialNetworkIcons, { name: '', svg: '', href: '' }] as icon, i}
 		<div class="flex gap-4">
+			<label class="form-label">
+				Name
+				<input
+					type="text"
+					name="socialNetworkIcons[{i}].name"
+					class="form-input"
+					value={icon.name}
+				/>
+			</label>
 			<label class="form-label">
 				SVG
 				<textarea

@@ -488,7 +488,7 @@
 					<div class="flex flex-row">
 						{#each data.links.socialNetworkIcons as icon}
 							<a href={icon.href} target="_blank"
-								><img src="data:image/svg+xml;base64,{btoa(trim(icon.svg))}" alt={icon.href} /></a
+								><img src="data:image/svg+xml;base64,{btoa(trim(icon.svg))}" alt={icon.name} /></a
 							>
 						{/each}
 					</div>

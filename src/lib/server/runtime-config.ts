@@ -66,7 +66,7 @@ const defaultConfig = {
 		{ label: 'Terms of Service', href: '/terms' },
 		{ label: 'Privacy Policy', href: '/privacy' }
 	],
-	socialNetworkIcons: [{ svg: '', href: '' }],
+	socialNetworkIcons: [] as Array<{ name: string; svg: string; href: string }>,
 
 	vatExempted: false,
 	vatExemptionReason: '',
