@@ -30,7 +30,7 @@
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
-	import { trim, upperCase } from 'lodash-es';
+	import { upperCase } from 'lodash-es';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
 
 	export let data;
