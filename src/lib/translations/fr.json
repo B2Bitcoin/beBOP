@@ -427,7 +427,7 @@
 			"partiallyPaid": "partiellement payé",
 			"pending": "en attente"
 		},
-		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
+		"paymentStatusNpub": "Adresse publique Nostr pour le statut de paiement",
 		"receipt": {
 			"alreadyPaidAmount": "Montant déjà payé",
 			"bankInfo": "Coordonnées bancaires",
