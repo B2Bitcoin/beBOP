@@ -15,7 +15,7 @@
 	<h2 class="text-2xl body-title">{t('widget.specification')}</h2>
 	<div class="flex flex-row gap-6 py-3">
 		{#each Object.keys(specificationCategory) as category (category)}
-			<div class="flex-col grow max-w-[33%]">
+			<div class="flex-col grow">
 				<h2 class="text-xl body-title">{category}</h2>
 				<div class="my-3">
 					{#each specificationCategory[category] as { attribute, value } (attribute)}
