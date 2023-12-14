@@ -33,7 +33,7 @@
 	<label class="form-label">
 		Content
 		<textarea
-			name="description"
+			name="content"
 			class="form-input"
 			rows="10"
 			maxlength={MAX_CONTENT_LIMIT}
