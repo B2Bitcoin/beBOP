@@ -61,8 +61,8 @@
 		"invalidNpub": "Adresse publique Nostr invalide",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"notifications": {
-			"message": "Merci de remplir au moins une adresse de contact pour être notifié des évolutions de votre commande.",
 			"email": "E-mail",
+			"message": "Merci de remplir au moins une adresse de contact pour être notifié des évolutions de votre commande.",
 			"npub": "Adresse publique Nostr",
 			"title": "Notifications"
 		},
@@ -373,7 +373,7 @@
 			"pwned": "Votre mot de passe n'est pas sécurisé, il a été trouvé dans {count} brèches de données. Veuillez réinitialiser votre mot de passe."
 		},
 		"session": {
-			"email": "E-mail : {e-mail}",
+			"email": "E-mail : {email}",
 			"npub": "Npub : {npub}",
 			"title": "Session",
 			"userId": "ID utilisateur : {userId}"
