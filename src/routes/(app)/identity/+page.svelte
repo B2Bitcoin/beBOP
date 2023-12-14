@@ -95,6 +95,16 @@
 					/>
 				</label>
 				<label class="form-label col-span-3">
+					{t('checkout.notifications.email')}
+					<input
+						type="email"
+						name="email"
+						class="form-input"
+						placeholder={data.email || ''}
+						value={data.personalInfoConnected?.email || ''}
+					/>
+				</label>
+				<label class="form-label col-span-3">
 					{t('checkout.notifications.npub')}
 
 					<input
@@ -103,16 +113,6 @@
 						class="form-input"
 						placeholder={data.npub || ''}
 						value={data.personalInfoConnected?.npub || ''}
-					/>
-				</label>
-				<label class="form-label col-span-3">
-					{t('checkout.notifications.email')}
-					<input
-						type="email"
-						name="email"
-						class="form-input"
-						placeholder={data.email || ''}
-						value={data.personalInfoConnected?.email || ''}
 					/>
 				</label>
 				{#if data.displayNewsletterCommercialProspection}

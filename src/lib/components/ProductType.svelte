@@ -67,7 +67,7 @@
 
 {#if product.shipping}
 	<span
-		class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200 whitespace-nowrap"
+		class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200 whitespace-nowrap hidden"
 	>
 		<IconBoxTaped />
 		{t('product.type.phisical')}
