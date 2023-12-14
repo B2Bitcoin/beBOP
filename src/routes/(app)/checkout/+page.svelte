@@ -353,6 +353,9 @@
 
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.notifications.title')}</h2>
+				<label class="form-label">
+					{t('checkout.notifications.message')}
+				</label>
 
 				{#each feedItems as { key, label }}
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
