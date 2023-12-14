@@ -353,7 +353,7 @@
 
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.notifications.title')}</h2>
-				<label class="form-label">
+				<label>
 					{t('checkout.notifications.message')}
 				</label>
 
