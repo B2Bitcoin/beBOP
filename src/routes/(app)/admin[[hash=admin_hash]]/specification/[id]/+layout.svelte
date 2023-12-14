@@ -9,7 +9,7 @@
 	tabs={[
 		{ href: `${data.adminPrefix}/specification/${$page.params.id}`, name: 'Edit Specification' },
 		{
-			href: `${data.adminPrefix}/cms/${$page.params.slug}/translations`,
+			href: `${data.adminPrefix}/specification/${$page.params.id}/translations`,
 			name: 'Translations'
 		}
 	]}
