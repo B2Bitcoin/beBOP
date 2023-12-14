@@ -30,7 +30,7 @@
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
-	import { upperCase } from 'lodash-es';
+	import { trim, upperCase } from 'lodash-es';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
 
 	export let data;
@@ -480,15 +480,15 @@
 				{/if}
 
 				<div class="flex flex-col gap-4 items-center">
-					<div class="flex flex-row">
+					<div class="flex flex-row gap-2">
 						{#each data.links.footer as link}
 							<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
 						{/each}
 					</div>
 					<div class="flex flex-row">
 						{#each data.links.socialNetworkIcons as icon}
-							<a href={icon.href} data-sveltekit-preload-data="off" target="_blank"
-								>{@html icon.svg}</a
+							<a href={icon.href} target="_blank"
+								><img src="data:image/svg+xml;base64,{btoa(trim(icon.svg))}" alt={icon.href} /></a
 							>
 						{/each}
 					</div>
