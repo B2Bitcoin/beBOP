@@ -479,10 +479,19 @@
 					{/if}
 				{/if}
 
-				<div class="flex gap-4 items-center">
-					{#each data.links.footer as link}
-						<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
-					{/each}
+				<div class="flex flex-col gap-4 items-center">
+					<div class="flex flex-row">
+						{#each data.links.footer as link}
+							<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
+						{/each}
+					</div>
+					<div class="flex flex-row">
+						{#each data.links.socialNetworkIcons as icon}
+							<a href={icon.href} data-sveltekit-preload-data="off" target="_blank"
+								>{@html icon.svg}</a
+							>
+						{/each}
+					</div>
 				</div>
 
 				{#if data.footerLogoId}

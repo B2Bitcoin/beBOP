@@ -81,7 +81,8 @@ export async function load(params) {
 		links: {
 			footer: runtimeConfig.footerLinks,
 			navbar: runtimeConfig.navbarLinks,
-			topbar: runtimeConfig.topbarLinks
+			topbar: runtimeConfig.topbarLinks,
+			socialNetworkIcons: runtimeConfig.socialNetworkIcons
 		},
 		sellerIdentity: runtimeConfig.sellerIdentity,
 		deliveryFees: runtimeConfig.deliveryFees,

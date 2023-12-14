@@ -103,5 +103,34 @@
 		</div>
 	{/each}
 
+	<h2 class="text-2xl">Social network icons</h2>
+
+	<h3 class="text-xl">Links</h3>
+
+	{#each [...data.links.socialNetworkIcons, { svg: '', href: '' }] as icon, i}
+		<div class="flex gap-4">
+			<label class="form-label">
+				SVG
+				<textarea
+					name="socialNetworkIcons[{i}].svg"
+					cols="30"
+					rows="5"
+					maxlength="10000"
+					class="form-input"
+					value={icon.svg}
+				/>
+			</label>
+			<label class="form-label">
+				Url
+				<input
+					type="text"
+					name="socialNetworkIcons[{i}].href"
+					class="form-input"
+					value={icon.href}
+				/>
+			</label>
+		</div>
+	{/each}
+
 	<button class="btn btn-black self-start" type="submit">Update</button>
 </form>
