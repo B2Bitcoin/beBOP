@@ -5,6 +5,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
 	import { computeDeliveryFees } from '$lib/types/Cart.js';
@@ -176,9 +177,11 @@
 			</div>
 			{#if deliveryFees}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
-					<div class="flex flex-col">
+					<div class="flex flex-wrap items-center gap-2">
 						<h3 class="text-base">{t('checkout.deliveryFees')}</h3>
-						<div title="{t('checkout.deliveryFeesEstimationTooltip')}"><svg class="cursor-pointer" width="1em" height="1em" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 0C6.71484 0 0 6.71484 0 15C0 23.2852 6.71484 30 15 30C23.2852 30 30 23.2852 30 15C30 6.71484 23.2852 0 15 0ZM15 28.125C7.76367 28.125 1.875 22.2363 1.875 15C1.875 7.76367 7.76367 1.875 15 1.875C22.2363 1.875 28.125 7.76367 28.125 15C28.125 22.2363 22.2363 28.125 15 28.125ZM15 10.7812C15.7764 10.7812 16.4062 10.152 16.4062 9.375C16.4062 8.59863 15.7764 7.96875 15 7.96875C14.2236 7.96875 13.5938 8.5957 13.5938 9.375C13.5938 10.1543 14.2207 10.7812 15 10.7812ZM17.8125 20.625H15.9375V14.0625C15.9375 13.5469 15.5156 13.125 15 13.125H13.125C12.6094 13.125 12.1875 13.5469 12.1875 14.0625C12.1875 14.5781 12.6094 15 13.125 15H14.0625V20.625H12.1875C11.6719 20.625 11.25 21.0469 11.25 21.5625C11.25 22.0781 11.6719 22.5 12.1875 22.5H17.8125C18.3302 22.5 18.75 22.0802 18.75 21.5625C18.75 21.0469 18.3281 20.625 17.8125 20.625Z" fill="currentColor"></path></svg></div>
+						<div title={t('checkout.deliveryFeesEstimationTooltip')} class="cursor-pointer">
+							<IconInfo />
+						</div>
 					</div>
 					<div class="flex flex-col items-end">
 						<PriceTag
