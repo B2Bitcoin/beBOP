@@ -8,7 +8,7 @@
 	let className = '';
 	export { className as class };
 	let specificationCategory = specificationGroupBy(specification.content);
-	const t = useI18n();
+	const { t } = useI18n();
 </script>
 
 <div class="relative mx-auto tagWidget tagWidget-main p-6 rounded {className}">
