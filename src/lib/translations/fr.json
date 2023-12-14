@@ -61,6 +61,7 @@
 		"invalidNpub": "Adresse publique Nostr invalide",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"notifications": {
+			"message": "Merci de remplir au moins une adresse de contact pour être notifié des évolutions de votre commande.",
 			"email": "E-mail",
 			"npub": "Adresse publique Nostr",
 			"title": "Notifications"
