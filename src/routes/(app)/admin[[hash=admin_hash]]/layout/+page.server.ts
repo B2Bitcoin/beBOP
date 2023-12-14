@@ -3,6 +3,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { z } from 'zod';
 import type { JsonObject } from 'type-fest';
 import { set, isEqual } from 'lodash-es';
+import { layoutTranslatableSchema } from './layout-schema';
 
 export const actions = {
 	default: async function ({ request }) {
@@ -17,16 +18,7 @@ export const actions = {
 			.object({
 				usersDarkDefaultTheme: z.boolean({ coerce: true }),
 				employeesDarkDefaultTheme: z.boolean({ coerce: true }),
-				brandName: z.string().min(1).trim().optional(),
-				topbarLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional(),
-				footerLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional(),
-				navbarLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional(),
+				...layoutTranslatableSchema,
 				displayPoweredBy: z.boolean({ coerce: true }),
 				displayCompanyInfo: z.boolean({ coerce: true })
 			})

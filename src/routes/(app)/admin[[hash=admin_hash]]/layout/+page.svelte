@@ -2,8 +2,6 @@
 	export let data;
 </script>
 
-<h1 class="text-3xl">Layout</h1>
-
 <form method="post" class="flex flex-col gap-4">
 	<label class="checkbox-label">
 		<input

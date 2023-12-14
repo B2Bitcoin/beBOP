@@ -83,6 +83,8 @@
 		/>
 	</label>
 
+	<h2 class="text-2xl">CTA links</h2>
+
 	{#each [...(data.product.translations?.[language]?.cta || []), ...Array(3).fill( { href: '', label: '' } )].slice(0, 3) as link, i}
 		<div class="flex gap-4">
 			<label class="form-label">
