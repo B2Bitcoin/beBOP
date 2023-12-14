@@ -61,6 +61,7 @@
 		"invalidNpub": "Invalid NostR public address",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
 		"notifications": {
+			"message": "Please fill at least one contact address to be notified about your order news.",
 			"email": "Email",
 			"npub": "NostR public address",
 			"title": "Feed & Notifications"
