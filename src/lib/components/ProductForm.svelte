@@ -595,11 +595,11 @@
 				<div class="flex gap-4">
 					<label class="form-label">
 						Text
-						<input type="text" name="ctaLinks[{i}].label" class="form-input" value={link.label} />
+						<input type="text" name="cta[{i}].label" class="form-input" value={link.label} />
 					</label>
 					<label class="form-label">
 						Url
-						<input type="text" name="ctaLinks[{i}].href" class="form-input" value={link.href} />
+						<input type="text" name="cta[{i}].href" class="form-input" value={link.href} />
 					</label>
 				</div>
 			{/each}
@@ -609,11 +609,11 @@
 				<div class="flex gap-4">
 					<label class="form-label">
 						Text
-						<input type="text" name="ctaLinks[{i}].label" class="form-input" />
+						<input type="text" name="cta[{i}].label" class="form-input" />
 					</label>
 					<label class="form-label">
 						Url
-						<input type="text" name="ctaLinks[{i}].href" class="form-input" />
+						<input type="text" name="cta[{i}].href" class="form-input" />
 					</label>
 				</div>
 			{/each}
