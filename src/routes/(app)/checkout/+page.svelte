@@ -353,6 +353,9 @@
 
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.notifications.title')}</h2>
+				<p>
+					{t('checkout.notifications.message')}
+				</p>
 
 				{#each feedItems as { key, label }}
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
@@ -360,6 +363,18 @@
 							{label}
 						</div>
 						<div class="p-4 flex flex-col gap-3">
+							{#if data.emailsEnabled}
+								<label class="form-label">
+									{t('checkout.notifications.email')}
+									<input
+										type="email"
+										class="form-input"
+										autocomplete="email"
+										name="{key}Email"
+										bind:value={emails[key]}
+									/>
+								</label>
+							{/if}
 							<label class="form-label">
 								{t('checkout.notifications.npub')}
 								<input
@@ -375,18 +390,6 @@
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
-							{#if data.emailsEnabled}
-								<label class="form-label">
-									{t('checkout.notifications.email')}
-									<input
-										type="email"
-										class="form-input"
-										autocomplete="email"
-										name="{key}Email"
-										bind:value={emails[key]}
-									/>
-								</label>
-							{/if}
 						</div>
 						{#if data.displayNewsletterCommercialProspection}
 							<div class="p-4 flex flex-col gap-3">

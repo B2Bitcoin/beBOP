@@ -58,11 +58,12 @@
 		"deliveryFees": "Delivery fees",
 		"differentBillingAddress": "My shipping address and my billing address are different",
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
-		"invalidNpub": "Invalid NostR public address",
+		"invalidNpub": "Invalid Nostr public address",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
 		"notifications": {
+			"message": "Please fill at least one contact address to be notified about your order news.",
 			"email": "Email",
-			"npub": "NostR public address",
+			"npub": "Nostr public address",
 			"title": "Feed & Notifications"
 		},
 		"numProducts": {
@@ -426,7 +427,7 @@
 			"partiallyPaid": "partially paid",
 			"pending": "pending"
 		},
-		"paymentStatusNpub": "NostR public address for payment status",
+		"paymentStatusNpub": "Nostr public address for payment status",
 		"receipt": {
 			"alreadyPaidAmount": "Amount previously paid",
 			"bankInfo": "Bank details",
