@@ -529,5 +529,8 @@
 		"status": {
 			"expired": "expired"
 		}
+	},
+	"widget": {
+		"specification": "Specifications"
 	}
 }
