@@ -24,7 +24,7 @@
 	export let data;
 
 	let actionCount = 0;
-	const defaultCountry =
+	let defaultCountry =
 		(data.personalInfoConnected?.address?.country ?? (data.countryCode as CountryAlpha2)) ||
 		(data.vatCountry as CountryAlpha2);
 	let country = defaultCountry;
@@ -277,7 +277,7 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required value={defaultCountry}>
+						<select name="billing.country" class="form-input" required bind:value={defaultCountry}>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
