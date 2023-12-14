@@ -529,5 +529,8 @@
 		"status": {
 			"expired": "expiré"
 		}
+	},
+	"widget": {
+		"specification": "Caractéristiques techniques"
 	}
 }
