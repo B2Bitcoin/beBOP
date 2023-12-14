@@ -476,7 +476,7 @@
 								<div class="flex flex-wrap mb-1 gap-3">
 									<ProductType
 										product={item.product}
-										class="text-sm"
+										class="text-sm hidden"
 										hasDigitalFiles={item.digitalFiles.length >= 1}
 										depositPercentage={item.depositPercentage}
 									/>
