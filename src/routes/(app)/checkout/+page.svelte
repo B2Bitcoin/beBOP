@@ -93,7 +93,7 @@
 		data.vatCountry !== country && data.vatNullOutsideSellerCountry
 			? 0
 			: isDigital || data.vatSingleCountry
-			? data.vatRate
+			? vatRate(country)
 			: vatRate(actualCountry);
 
 	$: partialPrice =
@@ -277,7 +277,7 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required value={defaultCountry}>
+						<select name="billing.country" class="form-input" required bind:value={country}>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
