@@ -31,8 +31,9 @@
 	</label>
 
 	<p>
-		To change the logo, go to <a href="{data.adminPrefix}/picture" class="text-link hover:underline"
-			>pictures</a
+		To change the logo, go to <a
+			href="{data.adminPrefix}/picture"
+			class="body-hyperlink hover:underline">pictures</a
 		>, add a picture, and set it as logo
 	</p>
 
