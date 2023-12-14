@@ -93,7 +93,7 @@
 		data.vatCountry !== country && data.vatNullOutsideSellerCountry
 			? 0
 			: isDigital || data.vatSingleCountry
-			? data.vatRate
+			? vatRate(data.vatCountry)
 			: vatRate(actualCountry);
 
 	$: partialPrice =

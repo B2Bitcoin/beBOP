@@ -51,7 +51,7 @@ export async function load(params) {
 		userId: locals.user?._id.toString(),
 		vatRate:
 			runtimeConfig.vatCountry !== locals.countryCode && runtimeConfig.vatNullOutsideSellerCountry
-				? vatRate(runtimeConfig.vatCountry)
+				? 0
 				: runtimeConfig.vatExempted
 				? 0
 				: runtimeConfig.vatSingleCountry
@@ -81,7 +81,8 @@ export async function load(params) {
 		links: {
 			footer: runtimeConfig.footerLinks,
 			navbar: runtimeConfig.navbarLinks,
-			topbar: runtimeConfig.topbarLinks
+			topbar: runtimeConfig.topbarLinks,
+			socialNetworkIcons: runtimeConfig.socialNetworkIcons
 		},
 		sellerIdentity: runtimeConfig.sellerIdentity,
 		deliveryFees: runtimeConfig.deliveryFees,
