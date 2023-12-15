@@ -88,7 +88,8 @@ export async function load(params) {
 				runtimeConfig.navbarLinks,
 			topbar:
 				runtimeConfig[`translations.${locals.language}.config`]?.topbarLinks ??
-				runtimeConfig.topbarLinks
+				runtimeConfig.topbarLinks,
+			socialNetworkIcons: runtimeConfig.socialNetworkIcons
 		},
 		sellerIdentity: runtimeConfig.sellerIdentity,
 		deliveryFees: runtimeConfig.deliveryFees,
