@@ -10,6 +10,7 @@
 	import TagWidgetVariation5 from './TagWidget/TagWidgetVariation5.svelte';
 	import TagWidgetVariation6 from './TagWidget/TagWidgetVariation6.svelte';
 	import TagWidgetVariation1CtAless from './TagWidget/TagWidgetVariation1CTAless.svelte';
+	import TagWidgetVariation4Reverse from './TagWidget/TagWidgetVariation4Reverse.svelte';
 
 	let className = '';
 	export { className as class };
