@@ -28,3 +28,4 @@
 			{tag.shortContent}
 		</h2>
 	</div>
+</div>
