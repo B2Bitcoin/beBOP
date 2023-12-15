@@ -25,6 +25,10 @@
 			component: TagWidgetVariation1,
 			pictureType: 'full'
 		},
+		'var-1-noCTA': {
+			component: TagWidgetVariation1CtAless,
+			pictureType: 'full'
+		}
 		'var-2': {
 			component: TagWidgetVariation2,
 			pictureType: 'wide'
@@ -37,6 +41,10 @@
 			component: TagWidgetVariation4,
 			pictureType: 'avatar'
 		},
+		'var-4-reverse': {
+			component: TagWidgetVariation4Reverse,
+			pictureType: 'avatar'
+		},
 		'var-5': {
 			component: TagWidgetVariation5,
 			pictureType: 'slim'
@@ -45,10 +53,6 @@
 			component: TagWidgetVariation6,
 			pictureType: 'slim'
 		},
-		'var-1-noCTA': {
-			component: TagWidgetVariation1CtAless,
-			pictureType: 'full'
-		}
 	};
 
 	$: widget = typedInclude(typedKeys(widgets), displayOption) ? widgets[displayOption] : null;
