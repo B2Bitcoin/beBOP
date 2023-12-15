@@ -28,7 +28,7 @@
 		'var-1-noCTA': {
 			component: TagWidgetVariation1CtAless,
 			pictureType: 'full'
-		}
+		},
 		'var-2': {
 			component: TagWidgetVariation2,
 			pictureType: 'wide'
@@ -52,7 +52,7 @@
 		'var-6': {
 			component: TagWidgetVariation6,
 			pictureType: 'slim'
-		},
+		}
 	};
 
 	$: widget = typedInclude(typedKeys(widgets), displayOption) ? widgets[displayOption] : null;
