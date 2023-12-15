@@ -19,6 +19,11 @@ export const actions = {
 				usersDarkDefaultTheme: z.boolean({ coerce: true }),
 				employeesDarkDefaultTheme: z.boolean({ coerce: true }),
 				...layoutTranslatableSchema,
+				socialNetworkIcons: z
+					.array(
+						z.object({ name: z.string().trim(), svg: z.string().trim(), href: z.string().trim() })
+					)
+					.optional(),
 				displayPoweredBy: z.boolean({ coerce: true }),
 				displayCompanyInfo: z.boolean({ coerce: true })
 			})
@@ -101,6 +106,30 @@ export const actions = {
 					}
 				);
 			}
+		}
+
+		const arraySocialNetworkIcons = res.socialNetworkIcons?.filter(
+			(item) => item.href && item.svg && item.name
+		);
+		if (
+			arraySocialNetworkIcons &&
+			!isEqual(arraySocialNetworkIcons, runtimeConfig.socialNetworkIcons)
+		) {
+			runtimeConfig.socialNetworkIcons = arraySocialNetworkIcons;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'socialNetworkIcons'
+				},
+				{
+					$set: {
+						data: arraySocialNetworkIcons,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
 		}
 
 		if (res.usersDarkDefaultTheme !== runtimeConfig.usersDarkDefaultTheme) {

@@ -10,6 +10,7 @@
 	import TagWidgetVariation5 from './TagWidget/TagWidgetVariation5.svelte';
 	import TagWidgetVariation6 from './TagWidget/TagWidgetVariation6.svelte';
 	import TagWidgetVariation1CtAless from './TagWidget/TagWidgetVariation1CTAless.svelte';
+	import TagWidgetVariation4Reverse from './TagWidget/TagWidgetVariation4Reverse.svelte';
 
 	let className = '';
 	export { className as class };
@@ -25,6 +26,10 @@
 			component: TagWidgetVariation1,
 			pictureType: 'full'
 		},
+		'var-1-noCTA': {
+			component: TagWidgetVariation1CtAless,
+			pictureType: 'full'
+		},
 		'var-2': {
 			component: TagWidgetVariation2,
 			pictureType: 'wide'
@@ -37,6 +42,10 @@
 			component: TagWidgetVariation4,
 			pictureType: 'avatar'
 		},
+		'var-4-reverse': {
+			component: TagWidgetVariation4Reverse,
+			pictureType: 'avatar'
+		},
 		'var-5': {
 			component: TagWidgetVariation5,
 			pictureType: 'slim'
@@ -44,10 +53,6 @@
 		'var-6': {
 			component: TagWidgetVariation6,
 			pictureType: 'slim'
-		},
-		'var-1-noCTA': {
-			component: TagWidgetVariation1CtAless,
-			pictureType: 'full'
 		}
 	};
 

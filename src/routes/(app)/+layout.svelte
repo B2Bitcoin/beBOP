@@ -30,7 +30,6 @@
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
-	import { upperCase } from 'lodash-es';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
 
 	export let data;
@@ -447,7 +446,7 @@
 				{#if data.displayCompanyInfo && data.sellerIdentity}
 					<!-- First column -->
 					<div>
-						<h3 class="text-lg font-semibold mb-2">{upperCase(t('footer.company.identity'))}</h3>
+						<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.identity')}</h3>
 						<p class="whitespace-pre-line">
 							{textAddress({
 								firstName: data.sellerIdentity.businessName,
@@ -464,7 +463,7 @@
 					<!-- Second column -->
 					{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
 						<div>
-							<h3 class="text-lg font-semibold mb-2">{upperCase(t('footer.company.contact'))}</h3>
+							<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.contact')}</h3>
 							{#if data.sellerIdentity.contact.email}
 								<a href="mailto:{data.sellerIdentity.contact.email}">
 									{data.sellerIdentity.contact.email}
@@ -479,10 +478,19 @@
 					{/if}
 				{/if}
 
-				<div class="flex gap-4 items-center">
-					{#each data.links.footer as link}
-						<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
-					{/each}
+				<div class="flex flex-col gap-4 items-center">
+					<div class="flex flex-row gap-2">
+						{#each data.links.footer as link}
+							<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
+						{/each}
+					</div>
+					<div class="flex flex-row gap-1">
+						{#each data.links.socialNetworkIcons as icon}
+							<a href={icon.href} target="_blank"
+								><img src="data:image/svg+xml;utf8, {icon.svg}" alt={icon.name} /></a
+							>
+						{/each}
+					</div>
 				</div>
 
 				{#if data.footerLogoId}
