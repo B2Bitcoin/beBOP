@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { LanguageKey } from '$lib/translations/index.js';
+	import { MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data;
 
@@ -25,6 +26,31 @@
 			placeholder={data.defaultConfig.brandName}
 			value={data.config?.[language]?.brandName ?? ''}
 		/>
+	</label>
+
+	<label class="form-label">
+		Website title
+		<input
+			type="text"
+			name="websiteTitle"
+			class="form-input"
+			placeholder={data.defaultConfig.websiteTitle}
+			value={data.config?.[language]?.websiteTitle ?? ''}
+		/>
+	</label>
+
+	<label class="form-label">
+		Website description
+
+		<textarea
+			name="websiteShortDescription"
+			class="form-input"
+			rows="2"
+			cols="30"
+			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+			placeholder={data.defaultConfig.websiteShortDescription}
+			>{data.config?.[language]?.websiteShortDescription ?? ''}</textarea
+		>
 	</label>
 
 	<h2 class="text-2xl">Top bar links</h2>

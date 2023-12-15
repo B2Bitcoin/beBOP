@@ -16,7 +16,9 @@ export async function load() {
 			brandName: runtimeConfig.brandName,
 			topbarLinks: runtimeConfig.topbarLinks,
 			navbarLinks: runtimeConfig.navbarLinks,
-			footerLinks: runtimeConfig.footerLinks
+			footerLinks: runtimeConfig.footerLinks,
+			websiteTitle: runtimeConfig.websiteTitle,
+			websiteShortDescription: runtimeConfig.websiteShortDescription
 		}
 	};
 }

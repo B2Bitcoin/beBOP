@@ -117,7 +117,10 @@ const defaultConfig = {
 	employeesDarkDefaultTheme: false,
 	displayPoweredBy: false,
 	displayCompanyInfo: false,
-	displayNewsletterCommercialProspection: false
+	displayNewsletterCommercialProspection: false,
+
+	websiteTitle: 'B2Bitcoin beBOP',
+	websiteShortDescription: "B2Bitcoin's beBOP store"
 };
 
 export const runtimeConfigUpdatedAt: Partial<Record<ConfigKey, Date>> = {};
@@ -137,7 +140,17 @@ export type RuntimeConfig = BaseConfig &
 	Partial<
 		Record<
 			`translations.${LanguageKey}.config`,
-			Partial<Pick<BaseConfig, 'brandName' | 'topbarLinks' | 'navbarLinks' | 'footerLinks'>>
+			Partial<
+				Pick<
+					BaseConfig,
+					| 'brandName'
+					| 'topbarLinks'
+					| 'navbarLinks'
+					| 'footerLinks'
+					| 'websiteTitle'
+					| 'websiteShortDescription'
+				>
+			>
 		>
 	>;
 type ConfigKey = keyof RuntimeConfig;

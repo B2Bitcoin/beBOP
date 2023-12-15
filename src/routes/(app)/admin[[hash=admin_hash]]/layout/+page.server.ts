@@ -42,6 +42,45 @@ export const actions = {
 			);
 		}
 
+		if (res.websiteTitle && res.websiteTitle !== runtimeConfig.websiteTitle) {
+			runtimeConfig.websiteTitle = res.websiteTitle;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'websiteTitle'
+				},
+				{
+					$set: {
+						data: res.websiteTitle,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+
+		if (
+			res.websiteShortDescription &&
+			res.websiteShortDescription !== runtimeConfig.websiteShortDescription
+		) {
+			runtimeConfig.websiteShortDescription = res.websiteShortDescription;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'websiteShortDescription'
+				},
+				{
+					$set: {
+						data: res.websiteShortDescription,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+
 		for (const linkKey of ['topbarLinks', 'navbarLinks', 'footerLinks'] as const) {
 			const array = res[linkKey]?.filter((item) => item.href && item.label);
 

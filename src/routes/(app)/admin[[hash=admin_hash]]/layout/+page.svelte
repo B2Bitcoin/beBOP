@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product.js';
+
 	export let data;
 </script>
 
@@ -25,7 +27,7 @@
 
 	<label class="form-label">
 		Brand name
-		<input type="text" name="brandName" class="form-input max-w-[25rem]" value={data.brandName} />
+		<input type="text" name="brandName" class="form-input" value={data.brandName} />
 	</label>
 
 	<p>
@@ -33,6 +35,24 @@
 			>pictures</a
 		>, add a picture, and set it as logo
 	</p>
+
+	<label class="form-label">
+		Website title
+		<input type="text" name="websiteTitle" class="form-input" value={data.websiteTitle} />
+	</label>
+
+	<label class="form-label">
+		Website description
+		<textarea
+			name="websiteShortDescription"
+			cols="30"
+			rows="2"
+			placeholder="Shown in social media previews"
+			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+			class="form-input block w-full"
+			value={data.websiteShortDescription}
+		/>
+	</label>
 
 	<h3 class="text-xl">Links</h3>
 
