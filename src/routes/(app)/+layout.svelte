@@ -484,7 +484,7 @@
 							<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
 						{/each}
 					</div>
-					<div class="flex flex-row">
+					<div class="flex flex-row gap-2">
 						{#each data.links.socialNetworkIcons as icon}
 							<a href={icon.href} target="_blank"
 								><img src="data:image/svg+xml;utf8, {icon.svg}" alt={icon.name} /></a
