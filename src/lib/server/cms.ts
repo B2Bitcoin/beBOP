@@ -10,6 +10,7 @@ import { collections } from './database';
 import { ALLOW_JS_INJECTION } from '$env/static/private';
 import type { PickDeep } from 'type-fest';
 import type { Specification } from '$lib/types/Specification';
+import type { Tag } from '$lib/types/Tag';
 
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
@@ -210,6 +211,18 @@ export async function cmsFromContent(
 		.find({
 			_id: { $in: [...tagSlugs] }
 		})
+		.project<Pick<Tag, '_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'>>(
+			{
+				name: 1,
+				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+				subtitle: { $ifNull: [`$translations.${locals.language}.subtitle`, '$subtitle'] },
+				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+				shortContent: {
+					$ifNull: [`$translations.${locals.language}.shortContent`, '$shortContent']
+				},
+				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] }
+			}
+		)
 		.toArray();
 	const specifications = await collections.specifications
 		.find({
