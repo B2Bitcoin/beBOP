@@ -11,6 +11,7 @@
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
+	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
 
 	let currentDate = new Date();
 	export let data;
@@ -90,12 +91,9 @@
 								{#if payment.status !== 'paid'}
 									<li>
 										{#if payment.method === 'card'}
-											{t('order.paymentLink')}:
-											<a
-												href={trimOrigin(payment.address ?? '')}
-												class="body-hyperlink underline break-all break-words"
-											>
-												{$page.url.origin}{trimOrigin(payment.address ?? '')}
+											<a href={trimOrigin(payment.address ?? '')} class="body-hyperlink">
+												<span>{t('order.paymentLink')}</span>
+												<IconSumupWide class="h-12" />
 											</a>
 										{:else if payment.method === 'bankTransfer'}
 											{t('order.paymentIban')}:

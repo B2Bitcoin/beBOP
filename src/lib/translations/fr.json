@@ -416,7 +416,7 @@
 		"paymentAddress": "Adresse de paiement ",
 		"paymentAmount": "Montant de la transaction (hors frais)",
 		"paymentIban": "IBAN de paiement",
-		"paymentLink": "Lien de paiement",
+		"paymentLink": "Cliquez pour payer par carte avec",
 		"paymentPaidAt": "Paiement effectué le {date}",
 		"paymentStatus": {
 			"canceled": "annulé",

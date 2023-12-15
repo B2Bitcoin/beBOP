@@ -416,7 +416,7 @@
 		"paymentAddress": "Payment address",
 		"paymentAmount": "Payment amount",
 		"paymentIban": "IBAN to send the wire transfer to",
-		"paymentLink": "Payment link",
+		"paymentLink": "Click here to pay by card with",
 		"paymentPaidAt": "Payment done on {date}",
 		"paymentStatus": {
 			"canceled": "canceled",
