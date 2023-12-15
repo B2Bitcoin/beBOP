@@ -31,6 +31,7 @@
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
+	import IconSocialNetwork from '$lib/components/icons/IconSocialNetwork.svelte';
 
 	export let data;
 
@@ -486,9 +487,7 @@
 					</div>
 					<div class="flex flex-row">
 						{#each data.links.socialNetworkIcons as icon}
-							<a href={icon.href} target="_blank"
-								><img src="data:image/svg+xml;utf8, {icon.svg}" alt={icon.name} /></a
-							>
+							<a href={icon.href} target="_blank"><IconSocialNetwork svgText={icon.svg} /></a>
 						{/each}
 					</div>
 				</div>
