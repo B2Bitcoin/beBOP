@@ -8,14 +8,16 @@
 
 <p>
 	To change the content of the home page, create a CMS page with "home" slug. The catalog will still
-	be available <a href="/catalog" class="text-link underline">here</a>.
+	be available <a href="/catalog" class="body-hyperlink underline">here</a>.
 </p>
 
 <ul>
 	{#each data.cmsPages as cmsPage}
 		<li>
 			{cmsPage._id} -
-			<a href="{data.adminPrefix}/cms/{cmsPage._id}" class="underline text-link">{cmsPage.title}</a>
+			<a href="{data.adminPrefix}/cms/{cmsPage._id}" class="underline body-hyperlink"
+				>{cmsPage.title}</a
+			>
 		</li>
 	{/each}
 </ul>

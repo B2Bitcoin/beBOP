@@ -10,10 +10,12 @@
 	{#if data.picture.productId}
 		<a
 			href="{data.adminPrefix}/product/{data.picture.productId}"
-			class="underline text-link text-center">Back to product</a
+			class="underline body-hyperlink text-center">Back to product</a
 		>
 	{:else}
-		<a href="{data.adminPrefix}/picture" class="underline text-link text-center">Back to list</a>
+		<a href="{data.adminPrefix}/picture" class="underline body-hyperlink text-center"
+			>Back to list</a
+		>
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.picture.name} />

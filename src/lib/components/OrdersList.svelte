@@ -24,7 +24,7 @@
 					: order.status
 				: order.status}
 		<li class="text-lg flex flex-wrap items-center gap-1">
-			<a href="/order/{order._id}" class="text-link hover:underline">
+			<a href="/order/{order._id}" class="body-hyperlink hover:underline">
 				#{order.number.toLocaleString($locale)}
 			</a>
 			- {#each order.payments as payment}

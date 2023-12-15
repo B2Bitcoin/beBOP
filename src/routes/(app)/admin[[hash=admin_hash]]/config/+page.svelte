@@ -123,7 +123,7 @@
 	</label>
 	<p>
 		Create a fullScreen CMS page with "maintenance" slug, to show maintenance page, by following
-		<a href="/admin/cms/new" class="text-link underline">this link</a>.
+		<a href="/admin/cms/new" class="body-hyperlink underline">this link</a>.
 	</p>
 	<label class="checkbox-label">
 		<input

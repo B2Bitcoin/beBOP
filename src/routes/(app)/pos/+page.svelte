@@ -8,7 +8,7 @@
 </script>
 
 <main class="max-w-7xl p-4 flex flex-col gap-4">
-	<a href="/pos/session" class="text-link hover:underline">{t('pos.sessionLink')}</a>
+	<a href="/pos/session" class="body-hyperlink hover:underline">{t('pos.sessionLink')}</a>
 
 	<form action="/admin/logout" method="POST">
 		<button type="submit" class="btn btn-red">{t('login.cta.logout')}</button>

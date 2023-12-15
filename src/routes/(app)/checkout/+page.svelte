@@ -93,7 +93,7 @@
 		data.vatCountry !== country && data.vatNullOutsideSellerCountry
 			? 0
 			: isDigital || data.vatSingleCountry
-			? data.vatRate
+			? vatRate(country)
 			: vatRate(actualCountry);
 
 	$: partialPrice =
@@ -277,7 +277,7 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required value={defaultCountry}>
+						<select name="billing.country" class="form-input" required bind:value={country}>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
@@ -353,6 +353,9 @@
 
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.notifications.title')}</h2>
+				<p>
+					{t('checkout.notifications.message')}
+				</p>
 
 				{#each feedItems as { key, label }}
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
@@ -360,6 +363,18 @@
 							{label}
 						</div>
 						<div class="p-4 flex flex-col gap-3">
+							{#if data.emailsEnabled}
+								<label class="form-label">
+									{t('checkout.notifications.email')}
+									<input
+										type="email"
+										class="form-input"
+										autocomplete="email"
+										name="{key}Email"
+										bind:value={emails[key]}
+									/>
+								</label>
+							{/if}
 							<label class="form-label">
 								{t('checkout.notifications.npub')}
 								<input
@@ -375,18 +390,6 @@
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
-							{#if data.emailsEnabled}
-								<label class="form-label">
-									{t('checkout.notifications.email')}
-									<input
-										type="email"
-										class="form-input"
-										autocomplete="email"
-										name="{key}Email"
-										bind:value={emails[key]}
-									/>
-								</label>
-							{/if}
 						</div>
 						{#if data.displayNewsletterCommercialProspection}
 							<div class="p-4 flex flex-col gap-3">
@@ -476,7 +479,7 @@
 								<div class="flex flex-wrap mb-1 gap-3">
 									<ProductType
 										product={item.product}
-										class="text-sm"
+										class="text-sm hidden"
 										hasDigitalFiles={item.digitalFiles.length >= 1}
 										depositPercentage={item.depositPercentage}
 									/>

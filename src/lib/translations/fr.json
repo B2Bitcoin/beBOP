@@ -56,12 +56,14 @@
 			"submit": "Payer"
 		},
 		"deliveryFees": "Participation forfaitaire aux frais de port",
+		"deliveryFeesEstimationTooltip": "Ceci est une estimation, le montant définitif sera décidé par votre pays de livraison.",
 		"differentBillingAddress": "Mon adresse de livraison et mon adresse de facturation sont différentes",
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"notifications": {
 			"email": "E-mail",
+			"message": "Merci de remplir au moins une adresse de contact pour être notifié des évolutions de votre commande.",
 			"npub": "Adresse publique Nostr",
 			"title": "Notifications"
 		},
@@ -372,7 +374,7 @@
 			"pwned": "Votre mot de passe n'est pas sécurisé, il a été trouvé dans {count} brèches de données. Veuillez réinitialiser votre mot de passe."
 		},
 		"session": {
-			"email": "E-mail : {e-mail}",
+			"email": "E-mail : {email}",
 			"npub": "Npub : {npub}",
 			"title": "Session",
 			"userId": "ID utilisateur : {userId}"
@@ -426,7 +428,7 @@
 			"partiallyPaid": "partiellement payé",
 			"pending": "en attente"
 		},
-		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
+		"paymentStatusNpub": "Adresse publique Nostr pour le statut de paiement",
 		"receipt": {
 			"alreadyPaidAmount": "Montant déjà payé",
 			"bankInfo": "Coordonnées bancaires",
@@ -528,5 +530,8 @@
 		"status": {
 			"expired": "expiré"
 		}
+	},
+	"widget": {
+		"specification": "Caractéristiques techniques"
 	}
 }
