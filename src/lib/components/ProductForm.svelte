@@ -509,7 +509,7 @@
 						Prevent order if no specific delivery fee matches the customer's country (do not use
 						<a
 							href="{adminPrefix}/config/delivery"
-							class="text-link hover:underline"
+							class="body-hyperlink hover:underline"
 							target="_blank"
 						>
 							globally defined fees

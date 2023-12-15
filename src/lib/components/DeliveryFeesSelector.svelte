@@ -42,7 +42,7 @@
 					amount: 0,
 					currency: defaultCurrency
 				})}
-			class="text-link underline"
+			class="body-hyperlink underline"
 		>
 			Add fee option
 		</button>

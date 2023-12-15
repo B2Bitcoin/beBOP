@@ -41,7 +41,7 @@
 		progress={challenge.progress}
 	/>
 	<div class="flex justify-between mt-1 items-right">
-		<!-- <a href="/" class="text-link underline">How can I contribute?</a> -->
+		<!-- <a href="/" class="body-hyperlink underline">How can I contribute?</a> -->
 		<p />
 		{#if challenge.progress === challenge.goal.amount}
 			<p>{t('challenge.goalMet')}</p>
