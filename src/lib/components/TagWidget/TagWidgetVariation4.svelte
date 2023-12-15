@@ -23,7 +23,7 @@
 
 	<div class="relative shrink-0">
 		<PictureComponent {picture} class="w-[15em]" />
-		<div class="tagWidget-cta font-semibold text-xl absolute bottom-0 left-0 text-center p-1 m-2">
+		<div class="tagWidget-cta font-semibold text-xl absolute bottom-0 right-0 text-center p-1 m-2">
 			<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
 		</div>
 	</div>
