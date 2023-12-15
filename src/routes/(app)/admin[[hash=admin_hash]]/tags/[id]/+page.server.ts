@@ -7,20 +7,15 @@ import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { adminPrefix } from '$lib/server/admin';
 import { deletePicture } from '$lib/server/picture';
+import { tagTranslatableSchema } from './tag-schema';
 
 export const load = async ({ params }) => {
-	const tag = await collections.tags.findOne({ _id: params.id });
-
-	if (!tag) {
-		throw error(404, 'tag not found');
-	}
 	const pictures = await collections.pictures
 		.find({ 'tag._id': params.id })
 		.sort({ createdAt: 1 })
 		.toArray();
 
 	return {
-		tag,
 		pictures
 	};
 };
@@ -40,21 +35,12 @@ export const actions: Actions = {
 		const parsed = z
 			.object({
 				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				content: z.string().trim().max(10_000),
-				shortContent: z.string().trim().max(1_000),
 				family: z.enum(['creators', 'events', 'retailers', 'temporal']),
 				widgetUseOnly: z.boolean({ coerce: true }).default(false),
 				productTagging: z.boolean({ coerce: true }).default(false),
 				useLightDark: z.boolean({ coerce: true }).default(false),
-				title: z.string(),
-				subtitle: z.string(),
-				ctaLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional(),
-				menuLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional(),
-				cssOverride: z.string().trim().max(10_000)
+				cssOverride: z.string().trim().max(10_000),
+				...tagTranslatableSchema
 			})
 			.parse(json);
 
