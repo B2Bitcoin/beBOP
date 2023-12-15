@@ -69,7 +69,9 @@ ${runtimeConfig.brandName} team`;
 		<p>Follow <a href="${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset
 			?.token}">this link</a> to reset your password.</p>
 		<p>If you didn't ask for this password reset procedure, please ignore this message and do nothing.</p>
-		<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
+		<p>Best regards,<br>${runtimeConfig.brandName} team <br><a href="${ORIGIN}">
+		<img alt="Watchmakers United, by Luxogood" src="${ORIGIN}/picture/raw/logo-long-gris-pour-fond-blanc-png-eadyAw/format/256">
+		</a></p>`;
 		await collections.emailNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
@@ -123,12 +125,14 @@ ${runtimeConfig.brandName} team`;
 			updatedAt: new Date(),
 			subject: `Temporary session request`,
 			htmlContent: `<p>Dear user,</p>
-<p>This message was sent to you because you have requested a temporary session link.</p>
-<p>Follow <a href="${ORIGIN}/login?token=${encodeURIComponent(
+<p>You requested a link to access your Watchmakers United account. Please use the link below.</p>
+<a href="${ORIGIN}/login?token=${encodeURIComponent(
 				jwt
 			)}">this link</a> to create your temporary session.</p>
-<p>If you didn't ask for this temporary session procedure, please ignore this message and do nothing.</p>
-<p>Best regards,<br>${runtimeConfig.brandName} team</p>`,
+<p>If you did not request this link or received it by mistake, please disregard this email</p>
+<p>Best regards,<br>${runtimeConfig.brandName} team</p><br><a href="${ORIGIN}">
+<img alt="Watchmakers United, by Luxogood" src="${ORIGIN}/picture/raw/logo-long-gris-pour-fond-blanc-png-eadyAw/format/256">
+</a>`,
 			dest: session.email
 		});
 	}
