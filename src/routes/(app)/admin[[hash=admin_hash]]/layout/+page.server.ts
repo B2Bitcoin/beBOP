@@ -3,6 +3,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { z } from 'zod';
 import type { JsonObject } from 'type-fest';
 import { set, isEqual } from 'lodash-es';
+import { layoutTranslatableSchema } from './layout-schema';
 
 export const actions = {
 	default: async function ({ request }) {
@@ -17,16 +18,7 @@ export const actions = {
 			.object({
 				usersDarkDefaultTheme: z.boolean({ coerce: true }),
 				employeesDarkDefaultTheme: z.boolean({ coerce: true }),
-				brandName: z.string().min(1).trim().optional(),
-				topbarLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional(),
-				footerLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional(),
-				navbarLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
-					.optional(),
+				...layoutTranslatableSchema,
 				socialNetworkIcons: z
 					.array(
 						z.object({ name: z.string().trim(), svg: z.string().trim(), href: z.string().trim() })
@@ -46,6 +38,45 @@ export const actions = {
 				{
 					$set: {
 						data: res.brandName,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+
+		if (res.websiteTitle && res.websiteTitle !== runtimeConfig.websiteTitle) {
+			runtimeConfig.websiteTitle = res.websiteTitle;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'websiteTitle'
+				},
+				{
+					$set: {
+						data: res.websiteTitle,
+						updatedAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+
+		if (
+			res.websiteShortDescription &&
+			res.websiteShortDescription !== runtimeConfig.websiteShortDescription
+		) {
+			runtimeConfig.websiteShortDescription = res.websiteShortDescription;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'websiteShortDescription'
+				},
+				{
+					$set: {
+						data: res.websiteShortDescription,
 						updatedAt: new Date()
 					}
 				},

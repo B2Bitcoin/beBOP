@@ -16,7 +16,7 @@ import { isUniqueConstraintError } from './utils/isUniqueConstraintError';
 import { typedKeys } from '$lib/utils/typedKeys';
 import { addTranslations, type LocalesDictionary } from '$lib/i18n';
 import { trimPrefix } from '$lib/utils/trimPrefix';
-import { enhancedLanguages, languages, locales } from '$lib/translations';
+import { enhancedLanguages, languages, locales, type LanguageKey } from '$lib/translations';
 import { merge } from 'lodash-es';
 import { typedInclude } from '$lib/utils/typedIncludes';
 
@@ -118,7 +118,10 @@ const defaultConfig = {
 	employeesDarkDefaultTheme: false,
 	displayPoweredBy: false,
 	displayCompanyInfo: false,
-	displayNewsletterCommercialProspection: false
+	displayNewsletterCommercialProspection: false,
+
+	websiteTitle: 'B2Bitcoin beBOP',
+	websiteShortDescription: "B2Bitcoin's beBOP store"
 };
 
 export const runtimeConfigUpdatedAt: Partial<Record<ConfigKey, Date>> = {};
@@ -131,8 +134,26 @@ currencies.set({
 	priceReference: defaultConfig.priceReferenceCurrency
 });
 
-export type RuntimeConfig = typeof defaultConfig &
-	Record<`translations.${string}`, LocalesDictionary>;
+type BaseConfig = typeof defaultConfig;
+
+export type RuntimeConfig = BaseConfig &
+	Partial<Record<`translations.${LanguageKey}`, LocalesDictionary>> &
+	Partial<
+		Record<
+			`translations.${LanguageKey}.config`,
+			Partial<
+				Pick<
+					BaseConfig,
+					| 'brandName'
+					| 'topbarLinks'
+					| 'navbarLinks'
+					| 'footerLinks'
+					| 'websiteTitle'
+					| 'websiteShortDescription'
+				>
+			>
+		>
+	>;
 type ConfigKey = keyof RuntimeConfig;
 export type RuntimeConfigItem = {
 	[key in ConfigKey]: { _id: key; data: RuntimeConfig[key]; updatedAt: Date };

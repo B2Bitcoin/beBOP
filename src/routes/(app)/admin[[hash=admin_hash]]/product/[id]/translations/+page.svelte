@@ -83,5 +83,32 @@
 		/>
 	</label>
 
+	<h2 class="text-2xl">CTA links</h2>
+
+	{#each [...(data.product.translations?.[language]?.cta || []), ...Array(3).fill( { href: '', label: '' } )].slice(0, 3) as link, i}
+		<div class="flex gap-4">
+			<label class="form-label">
+				Text
+				<input
+					type="text"
+					name="cta[{i}].label"
+					class="form-input"
+					value={link.label}
+					placeholder={data.product.cta?.[i]?.label}
+				/>
+			</label>
+			<label class="form-label">
+				Url
+				<input
+					type="text"
+					name="cta[{i}].href"
+					class="form-input"
+					value={link.href}
+					placeholder={data.product.cta?.[i]?.href}
+				/>
+			</label>
+		</div>
+	{/each}
+
 	<button class="btn btn-black self-start" type="submit">Save</button>
 </form>

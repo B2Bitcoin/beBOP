@@ -51,7 +51,7 @@ export async function load(params) {
 		userId: locals.user?._id.toString(),
 		vatRate:
 			runtimeConfig.vatCountry !== locals.countryCode && runtimeConfig.vatNullOutsideSellerCountry
-				? 0
+				? vatRate(runtimeConfig.vatCountry)
 				: runtimeConfig.vatExempted
 				? 0
 				: runtimeConfig.vatSingleCountry
@@ -67,7 +67,8 @@ export async function load(params) {
 			secondary: runtimeConfig.secondaryCurrency,
 			priceReference: runtimeConfig.priceReferenceCurrency
 		},
-		brandName: runtimeConfig.brandName,
+		brandName:
+			runtimeConfig[`translations.${locals.language}.config`]?.brandName || runtimeConfig.brandName,
 		locales,
 		logoPicture,
 		logoPictureDark,
@@ -79,9 +80,15 @@ export async function load(params) {
 		displayPoweredBy: runtimeConfig.displayPoweredBy,
 		displayCompanyInfo: runtimeConfig.displayCompanyInfo,
 		links: {
-			footer: runtimeConfig.footerLinks,
-			navbar: runtimeConfig.navbarLinks,
-			topbar: runtimeConfig.topbarLinks,
+			footer:
+				runtimeConfig[`translations.${locals.language}.config`]?.footerLinks ??
+				runtimeConfig.footerLinks,
+			navbar:
+				runtimeConfig[`translations.${locals.language}.config`]?.navbarLinks ??
+				runtimeConfig.navbarLinks,
+			topbar:
+				runtimeConfig[`translations.${locals.language}.config`]?.topbarLinks ??
+				runtimeConfig.topbarLinks,
 			socialNetworkIcons: runtimeConfig.socialNetworkIcons
 		},
 		sellerIdentity: runtimeConfig.sellerIdentity,

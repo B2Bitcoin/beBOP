@@ -23,7 +23,7 @@
 	{#if data.info.uris.length}
 		<li>
 			<b>LN url:</b>
-			<a href="lightning:ln@{$page.url.hostname}" class="text-link">ln@{$page.url.hostname}</a>
+			<a href="lightning:ln@{$page.url.hostname}" class="body-hyperlink">ln@{$page.url.hostname}</a>
 			- any other @{$page.url.hostname} address will also work
 		</li>
 	{/if}

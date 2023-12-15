@@ -19,7 +19,6 @@ export const actions = {
 
 		const keys = [
 			'customPreorderText',
-			'cta',
 			'name',
 			'shortDescription',
 			'description',
@@ -30,11 +29,16 @@ export const actions = {
 		const parsed = z
 			.object({
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
-				...mapObject(pick(productBaseSchema, keys), (val) => val.optional())
+				...mapObject(pick(productBaseSchema, keys), (val) => val.optional()),
+				cta: productBaseSchema.cta.optional()
 			})
 			.parse(json);
 
 		const { language, ...rest } = parsed;
+
+		if (rest.cta) {
+			rest.cta = rest.cta.filter((ctaLink) => ctaLink.label && ctaLink.href);
+		}
 
 		await collections.products.updateOne(
 			{

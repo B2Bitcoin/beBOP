@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product.js';
+
 	export let data;
 </script>
-
-<h1 class="text-3xl">Layout</h1>
 
 <form method="post" class="flex flex-col gap-4">
 	<label class="checkbox-label">
@@ -27,14 +27,33 @@
 
 	<label class="form-label">
 		Brand name
-		<input type="text" name="brandName" class="form-input max-w-[25rem]" value={data.brandName} />
+		<input type="text" name="brandName" class="form-input" value={data.brandName} />
 	</label>
 
 	<p>
-		To change the logo, go to <a href="{data.adminPrefix}/picture" class="text-link hover:underline"
-			>pictures</a
+		To change the logo, go to <a
+			href="{data.adminPrefix}/picture"
+			class="body-hyperlink hover:underline">pictures</a
 		>, add a picture, and set it as logo
 	</p>
+
+	<label class="form-label">
+		Website title
+		<input type="text" name="websiteTitle" class="form-input" value={data.websiteTitle} />
+	</label>
+
+	<label class="form-label">
+		Website description
+		<textarea
+			name="websiteShortDescription"
+			cols="30"
+			rows="2"
+			placeholder="Shown in social media previews"
+			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+			class="form-input block w-full"
+			value={data.websiteShortDescription}
+		/>
+	</label>
 
 	<h3 class="text-xl">Links</h3>
 
