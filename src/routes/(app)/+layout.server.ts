@@ -79,6 +79,8 @@ export async function load(params) {
 		employeesDarkefaulTheme: runtimeConfig.employeesDarkDefaultTheme,
 		displayPoweredBy: runtimeConfig.displayPoweredBy,
 		displayCompanyInfo: runtimeConfig.displayCompanyInfo,
+		showDarkModeSwitch: runtimeConfig.showDarkModeSwitch,
+		showLanguageSwitch: runtimeConfig.showLanguageSwitch,
 		links: {
 			footer:
 				runtimeConfig[`translations.${locals.language}.config`]?.footerLinks ??

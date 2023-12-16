@@ -8,11 +8,29 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
+			name="showDarkModeSwitch"
+			class="form-checkbox"
+			checked={data.showDarkModeSwitch}
+		/>
+		Show Light/Dark mode switch in header
+	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="showLanguageSwitch"
+			class="form-checkbox"
+			checked={data.showDarkModeSwitch}
+		/>
+		Show Language switch in header
+	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
 			name="usersDarkDefaultTheme"
 			class="form-checkbox"
 			checked={data.usersDarkDefaultTheme}
 		/>
-		Use dark theme as default theme for users
+		Use Dark mode by default for users
 	</label>
 	<label class="checkbox-label">
 		<input
@@ -21,7 +39,7 @@
 			class="form-checkbox"
 			checked={data.employeesDarkefaulTheme}
 		/>
-		Use dark theme as default theme for employees
+		Use Dark mode by default for employees
 	</label>
 	<h2 class="text-2xl">Top bar</h2>
 

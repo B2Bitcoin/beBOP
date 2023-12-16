@@ -34,6 +34,8 @@ const defaultConfig = {
 	subscriptionNumber: 0,
 	themeChangeNumber: 0,
 	enableCashSales: false,
+	showDarkModeSwitch: true,
+	showLanguageSwitch: true,
 	isMaintenance: false,
 	includeOrderUrlInQRCode: false,
 	maintenanceIps: '',
