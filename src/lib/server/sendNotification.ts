@@ -45,7 +45,7 @@ export async function sendResetPasswordNotification(
 	if (npub) {
 		const content = `Dear user,
 		
-This message was sent to you because you have requested to reset your password.
+This message was sent to you because your password reset was requested.
 
 Follow this link to reset your password: ${ORIGIN}${adminPrefix()}/login/reset/${updatedUser
 			.passwordReset?.token}
@@ -137,7 +137,7 @@ ${runtimeConfig.brandName} team`;
 				jwt
 			)}">ce lien</a>.<br></p>
 <p>Nous sommes ravis de vous avoir parmi nous et nous sommes impatients de partager avec vous notre passion.<br></p>
-<b>Si vous avez des questions ou des besoins particuliers, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.<br></p>
+<p>Si vous avez des questions ou des besoins particuliers, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.<br></p>
 <p>Cordialement,<br>${runtimeConfig.brandName} team</p>`,
 			dest: session.email
 		});
