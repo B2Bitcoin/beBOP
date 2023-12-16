@@ -72,7 +72,7 @@
 				{t('login.cta.authenticateAs', { as: data.emailToLogin || data.npubToLogin })}
 			</button>
 		</form>
-	{:else if !data.email || !data.npub || !data.sso}
+	{:else if !data.email && !data.npub && !data.sso}
 		<h2 class="text-2xl">{t('login.authenticate.title')}</h2>
 		<form method="post" class="flex flex-col gap-4" action="?/sendLink">
 			<label class="form-label body-secondaryText">
