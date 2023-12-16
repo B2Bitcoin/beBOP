@@ -87,7 +87,7 @@
 			{/if}
 			<div class="flex gap-4">
 				<input type="submit" class="btn body-mainCTA" value={t('login.authenticate.ctaLabel')} />
-				<button class="btn body-secondaryCTA"><a href="/">Cancel</a></button>
+				<button class="btn body-secondaryCTA"><a href="/">{t('login.authenticate.ctaCancelLabel')}</a></button>
 			</div>
 		</form>
 
