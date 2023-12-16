@@ -56,6 +56,7 @@
 			</li>
 		{/each}
 	</ul>
+	{#if !!data.emailToLogin && !data.npubToLogin}
 	<div class="flex gap-4">
 		<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
 		<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
@@ -64,7 +65,7 @@
 				<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
 			</form>
 		{/if}
-
+	{/if}
 	</div>
 	{#if data.emailToLogin || data.npubToLogin}
 		<form method="post" action="?/validate&token={$page.url.searchParams.get('token')}">
