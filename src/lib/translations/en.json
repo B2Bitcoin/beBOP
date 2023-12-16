@@ -362,7 +362,8 @@
 			"inputLabel": "Email or npub",
 			"title": "Add authentication",
 			"ctaLabel": "Confirm",
-			"ctaCancelLabel": "Back"
+			"ctaCancelLabel": "Back",
+			"disclaimer": "For security purpose, our wbesite know no password. You can access to your personal space and your order history through a connexion link, or through a 3rd party account (SSO)."
 		},
 		"cta": {
 			"authenticateAs": "Authenticate as {as}",
