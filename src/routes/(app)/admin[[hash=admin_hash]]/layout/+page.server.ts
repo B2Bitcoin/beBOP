@@ -6,6 +6,13 @@ import { set, isEqual } from 'lodash-es';
 import { layoutTranslatableSchema } from './layout-schema';
 import { typedKeys } from '$lib/utils/typedKeys';
 
+export async function load() {
+	return {
+		// Duplicate because the one at layout level returns false on default theme
+		showDarkModeSwitch: runtimeConfig.showDarkModeSwitch
+	};
+}
+
 export const actions = {
 	default: async function ({ request }) {
 		const formData = await request.formData();

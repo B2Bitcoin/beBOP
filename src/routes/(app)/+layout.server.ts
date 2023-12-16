@@ -79,7 +79,7 @@ export async function load(params) {
 		employeesDarkefaulTheme: runtimeConfig.employeesDarkDefaultTheme,
 		displayPoweredBy: runtimeConfig.displayPoweredBy,
 		displayCompanyInfo: runtimeConfig.displayCompanyInfo,
-		showDarkModeSwitch: runtimeConfig.showDarkModeSwitch,
+		showDarkModeSwitch: runtimeConfig.showDarkModeSwitch && runtimeConfig.mainThemeId !== '',
 		showLanguageSwitch: runtimeConfig.showLanguageSwitch,
 		links: {
 			footer:
