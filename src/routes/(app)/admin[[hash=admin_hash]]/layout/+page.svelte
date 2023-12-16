@@ -8,24 +8,6 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
-			name="showDarkModeSwitch"
-			class="form-checkbox"
-			checked={data.showDarkModeSwitch}
-		/>
-		Show Light/Dark mode switch in header (only if theme supports dark mode)
-	</label>
-	<label class="checkbox-label">
-		<input
-			type="checkbox"
-			name="showLanguageSwitch"
-			class="form-checkbox"
-			checked={data.showDarkModeSwitch}
-		/>
-		Show Language switch in header (only if multiple languages are enabled)
-	</label>
-	<label class="checkbox-label">
-		<input
-			type="checkbox"
 			name="usersDarkDefaultTheme"
 			class="form-checkbox"
 			checked={data.usersDarkDefaultTheme}

@@ -373,45 +373,41 @@
 								</div>
 							</Popup>
 						{/if}
-						{#if data.showDarkModeSwitch}
-							<button
-								class="ml-4 hidden dark:inline"
-								type="button"
-								on:click={() => {
-									$theme = 'light';
-									window.localStorage.setItem('theme', 'light');
-								}}
-							>
-								<IconModeLight />
-							</button>
-							<button
-								type="button"
-								class="ml-4 dark:hidden"
-								on:click={() => {
-									$theme = 'dark';
-									window.localStorage.setItem('theme', 'dark');
-								}}
-							>
-								<IconModeDark />
-							</button>
-						{/if}
-						{#if data.showLanguageSwitch}
-							<select
-								class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none bg-transparent text-xl"
-								size="0"
-								bind:value={$locale}
-								on:change={() => {
-									document.cookie = `lang=${$locale};path=/;max-age=31536000`;
-									window.location.reload();
-								}}
-							>
-								{#each data.locales as locale}
-									<option style="background-color: var(--navbar-backgroundColor);" value={locale}>
-										{locale}
-									</option>
-								{/each}
-							</select>
-						{/if}
+						<button
+							class="ml-4 hidden dark:inline"
+							type="button"
+							on:click={() => {
+								$theme = 'light';
+								window.localStorage.setItem('theme', 'light');
+							}}
+						>
+							<IconModeLight />
+						</button>
+						<button
+							type="button"
+							class="ml-4 dark:hidden"
+							on:click={() => {
+								$theme = 'dark';
+								window.localStorage.setItem('theme', 'dark');
+							}}
+						>
+							<IconModeDark />
+						</button>
+						<select
+							class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none bg-transparent text-xl"
+							size="0"
+							bind:value={$locale}
+							on:change={() => {
+								document.cookie = `lang=${$locale};path=/;max-age=31536000`;
+								window.location.reload();
+							}}
+						>
+							{#each data.locales as locale}
+								<option style="background-color: var(--navbar-backgroundColor);" value={locale}>
+									{locale}
+								</option>
+							{/each}
+						</select>
 					</div>
 				</div>
 			</div>
