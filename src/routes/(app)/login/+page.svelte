@@ -59,9 +59,12 @@
 	<div class="flex gap-4">
 		<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
 		<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
-		<form method="post" action="?/clearAll" use:enhance>
-			<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
-		</form>
+		{#if data.email || data.npub || data.emailFromSso}
+			<form method="post" action="?/clearAll" use:enhance>
+				<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
+			</form>
+		{/if}
+
 	</div>
 	{#if data.emailToLogin || data.npubToLogin}
 		<form method="post" action="?/validate&token={$page.url.searchParams.get('token')}">
@@ -85,10 +88,12 @@
 			{#if form?.successUser}
 				<p class="text-green-500">{t('login.willReceiveSessionLink')}</p>
 			{/if}
-			<div class="flex gap-4">
-				<input type="submit" class="btn body-mainCTA" value={t('login.authenticate.ctaLabel')} />
-				<button class="btn body-secondaryCTA"><a href="/">{t('login.authenticate.ctaCancelLabel')}</a></button>
-			</div>
+                        {#if data.email || data.npub || data.emailFromSso}
+				<div class="flex gap-4">
+					<input type="submit" class="btn body-mainCTA" value={t('login.authenticate.ctaLabel')} />
+					<button class="btn body-secondaryCTA"><a href="/">{t('login.authenticate.ctaCancelLabel')}</a></button>
+				</div>
+			{/if}
 		</form>
 
 		{#if data.canSso.github || data.canSso.google || data.canSso.facebook || data.canSso.twitter}
