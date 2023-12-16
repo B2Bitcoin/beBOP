@@ -25,7 +25,7 @@
 		{#if data.userId}
 			<li class="flex gap-2 items-center">
 				{t('login.session.userId', { userId: data.userId })}
-				<form action="?/clearUserId" class="contents" use:enhance method="post">
+				<form action="?/clearUserId" class="contents hidden" use:enhance method="post">
 					<button class="text-red-500 hover:underline"><IconTrash /></button>
 				</form>
 			</li>
@@ -86,7 +86,7 @@
 				<p class="text-green-500">{t('login.willReceiveSessionLink')}</p>
 			{/if}
 			<div class="flex gap-4">
-				<input type="submit" class="btn body-mainCTA" value="Send Authentication Link" />
+				<input type="submit" class="btn body-mainCTA" value={t('login.authenticate.ctaLabel')} />
 				<button class="btn body-secondaryCTA"><a href="/">Cancel</a></button>
 			</div>
 		</form>
