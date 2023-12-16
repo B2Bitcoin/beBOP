@@ -12,7 +12,7 @@
 			class="form-checkbox"
 			checked={data.usersDarkDefaultTheme}
 		/>
-		Use dark theme as default theme for users
+		Use Dark mode by default for users
 	</label>
 	<label class="checkbox-label">
 		<input
@@ -21,7 +21,7 @@
 			class="form-checkbox"
 			checked={data.employeesDarkefaulTheme}
 		/>
-		Use dark theme as default theme for employees
+		Use Dark mode by default for employees
 	</label>
 	<h2 class="text-2xl">Top bar</h2>
 
