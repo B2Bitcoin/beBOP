@@ -57,10 +57,11 @@
 		{/each}
 	</ul>
 	{#if !data.emailToLogin && !data.npubToLogin}
+		<p>{t('login.session.identityPrefill')}</p>
 		<div class="flex gap-4">
 			<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
-			<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
 			{#if data.email || data.npub || data.sso}
+				<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
 				<form method="post" action="?/clearAll" use:enhance>
 					<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
 				</form>
