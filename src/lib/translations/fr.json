@@ -361,7 +361,8 @@
 		"authenticate": {
 			"inputLabel": "E-mail ou npub",
 			"title": "Ajouter une authentification",
-			"ctaLabel": "Valider"
+			"ctaLabel": "Valider",
+			"ctaCancelLabel": "Retour"
 		},
 		"cta": {
 			"authenticateAs": "Authentifiez-vous en tant que {as}",
