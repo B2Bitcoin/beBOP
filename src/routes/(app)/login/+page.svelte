@@ -56,17 +56,17 @@
 			</li>
 		{/each}
 	</ul>
-	{#if !!data.emailToLogin && !data.npubToLogin}
-	<div class="flex gap-4">
-		<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
-		<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
-		{#if data.email || data.npub || data.sso}
-			<form method="post" action="?/clearAll" use:enhance>
-				<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
-			</form>
-		{/if}
+	{#if !data.emailToLogin && !data.npubToLogin}
+		<div class="flex gap-4">
+			<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
+			<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
+			{#if data.email || data.npub || data.sso}
+				<form method="post" action="?/clearAll" use:enhance>
+					<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
+				</form>
+			{/if}
+		</div>
 	{/if}
-	</div>
 	{#if data.emailToLogin || data.npubToLogin}
 		<form method="post" action="?/validate&token={$page.url.searchParams.get('token')}">
 			<button class="btn btn-blue text-white">
