@@ -32,22 +32,20 @@ export const actions = {
 			})
 			.parse(json);
 
-		const { socialNetworkIcons, ...runtimeConfigUpdates } = res;
-
 		for (const linkKey of ['topbarLinks', 'navbarLinks', 'footerLinks'] as const) {
 			res[linkKey] = res[linkKey]?.filter((item) => item.href && item.label);
 		}
-		res.socialNetworkIcons = socialNetworkIcons?.filter(
+		res.socialNetworkIcons = res.socialNetworkIcons?.filter(
 			(item) => item.href && item.svg && item.name
 		);
 
-		for (const key of typedKeys(runtimeConfigUpdates)) {
-			if (!isEqual(runtimeConfig[key], runtimeConfigUpdates[key])) {
-				runtimeConfig[key] = runtimeConfigUpdates[key] as never;
+		for (const key of typedKeys(res)) {
+			if (!isEqual(runtimeConfig[key], res[key])) {
+				runtimeConfig[key] = res[key] as never;
 				await collections.runtimeConfig.updateOne(
 					{ _id: key },
 					{
-						$set: { data: runtimeConfigUpdates[key], updatedAt: new Date() },
+						$set: { data: res[key], updatedAt: new Date() },
 						$setOnInsert: { createdAt: new Date() }
 					},
 					{ upsert: true }
