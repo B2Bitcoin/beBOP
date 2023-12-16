@@ -380,7 +380,8 @@
 			"email": "E-mail : {email}",
 			"npub": "Npub : {npub}",
 			"title": "Session",
-			"userId": "ID utilisateur : {userId}"
+			"userId": "ID utilisateur : {userId}",
+			"identityPrefill": "Vous pouvez pré-remplir votre adresse postale et votre adresse de contact. En cas de commande, ces informations seront pré-remplies. Si vous décidez de créer un compte par la suite, ces informations seront sauvegardées pour de futurs achats."
 		},
 		"sso": {
 			"title": "Ou connectez-vous avec"
