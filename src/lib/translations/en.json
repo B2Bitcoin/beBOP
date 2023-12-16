@@ -361,7 +361,8 @@
 		"authenticate": {
 			"inputLabel": "Email or npub",
 			"title": "Add authentication",
-			"ctaLabel": "Confirm"
+			"ctaLabel": "Confirm",
+			"ctaCancelLabel": "Back"
 		},
 		"cta": {
 			"authenticateAs": "Authenticate as {as}",
