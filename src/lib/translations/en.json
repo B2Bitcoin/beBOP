@@ -360,7 +360,8 @@
 	"login": {
 		"authenticate": {
 			"inputLabel": "Email or npub",
-			"title": "Add authentication"
+			"title": "Add authentication",
+			"ctaLabel": "Confirm"
 		},
 		"cta": {
 			"authenticateAs": "Authenticate as {as}",
