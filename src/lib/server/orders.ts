@@ -1062,22 +1062,29 @@ function paymentMethodExpiration(paymentMethod: PaymentMethod) {
 }
 
 function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
-	return paymentMethod === 'point-of-sale' || paymentMethod === 'bankTransfer'
-		? {
+	switch (paymentMethod) {
+		case 'point-of-sale':
+		case 'bankTransfer':
+			return {
 				amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
 				currency: runtimeConfig.mainCurrency
-		  }
-		: paymentMethod === 'card'
-		? {
+			};
+		case 'card':
+			return {
 				amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
 				currency: runtimeConfig.sumUp.currency
-		  }
-		: paymentMethod === 'bitcoin'
-		? {
+			};
+		case 'bitcoin':
+			return {
 				amount: toCurrency('BTC', price.amount, price.currency),
 				currency: 'BTC'
-		  }
-		: { amount: toCurrency('SAT', price.amount, price.currency), currency: 'SAT' };
+			};
+		case 'lightning':
+			return {
+				amount: toCurrency('SAT', price.amount, price.currency),
+				currency: 'SAT'
+			};
+	}
 }
 
 export async function addOrderPayment(
