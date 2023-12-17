@@ -9,7 +9,7 @@ import {
 } from '$env/static/private';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { htmlToText } from 'html-to-text';
-import { runtimeConfig } from './runtime-config';
+import { defaultConfig, runtimeConfig, type EmailTemplateKey } from './runtime-config';
 import { collections } from './database';
 import { ClientSession, ObjectId } from 'mongodb';
 import { mapKeys } from '$lib/utils/mapKeys';
@@ -73,16 +73,16 @@ export async function sendEmail(params: { to: string; subject: string; html: str
 
 export async function queueEmail(
 	to: string,
-	template: {
-		subject: string;
-		html: string;
-	},
+	templateKey: EmailTemplateKey,
 	vars: Record<string, string | undefined>,
 	opts?: {
 		session?: ClientSession;
 	}
 ): Promise<void> {
 	const lowerVars = mapKeys(vars, (key) => key.toLowerCase());
+	const template = runtimeConfig.emailTemplates[templateKey].default
+		? defaultConfig.emailTemplates[templateKey]
+		: runtimeConfig.emailTemplates[templateKey];
 
 	await collections.emailNotifications.insertOne(
 		{

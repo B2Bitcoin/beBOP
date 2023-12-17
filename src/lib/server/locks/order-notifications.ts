@@ -12,7 +12,7 @@ import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
-import { refreshPromise, runtimeConfig } from '../runtime-config';
+import { refreshPromise, runtimeConfig, type EmailTemplateKey } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
 import { building } from '$app/environment';
 import { rateLimit } from '../rateLimit';
@@ -169,44 +169,43 @@ async function handleOrderNotification(order: Order): Promise<void> {
 				}
 
 				if (email) {
-					let emailTemplate = { subject: '', html: '' };
+					let templateKey: EmailTemplateKey | null = null;
 					switch (payment.status) {
 						case 'canceled':
-							emailTemplate = runtimeConfig.emailTemplates['order.payment.canceled'];
+							templateKey = 'order.payment.canceled';
 							break;
 						case 'expired':
-							emailTemplate = runtimeConfig.emailTemplates['order.payment.expired'];
+							templateKey = 'order.payment.expired';
 							break;
 						case 'paid':
 							if (isOrderFullyPaid(order)) {
-								emailTemplate = runtimeConfig.emailTemplates['order.paid'];
+								templateKey = 'order.paid';
 							} else {
-								emailTemplate = runtimeConfig.emailTemplates['order.payment.paid'];
+								templateKey = 'order.payment.paid';
 							}
 							break;
 						case 'pending':
 							switch (payment.method) {
 								case 'bitcoin':
-									emailTemplate = runtimeConfig.emailTemplates['order.payment.pending.bitcoin'];
+									templateKey = 'order.payment.pending.bitcoin';
 									break;
 								case 'lightning':
-									emailTemplate = runtimeConfig.emailTemplates['order.payment.pending.lightning'];
+									templateKey = 'order.payment.pending.lightning';
 									break;
 								case 'card':
-									emailTemplate = runtimeConfig.emailTemplates['order.payment.pending.card'];
+									templateKey = 'order.payment.pending.card';
 									break;
 								case 'bankTransfer':
-									emailTemplate =
-										runtimeConfig.emailTemplates['order.payment.pending.bankTransfer'];
+									templateKey = 'order.payment.pending.bankTransfer';
 									break;
 							}
 					}
 
-					if (emailTemplate.html && emailTemplate.subject) {
+					if (templateKey) {
 						const vars = {
 							orderNumber: order.number.toLocaleString(order.locale || 'en'),
 							orderLink: `${ORIGIN}/order/${order._id}`,
-							paymentLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}`,
+							paymentLink: `${ORIGIN}/order/${order._id}/pay/${payment._id}`,
 							paymentAddress: payment.address,
 							amount: payment.price.amount.toLocaleString(order.locale || 'en', {
 								maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency],
@@ -217,7 +216,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							bic: runtimeConfig.sellerIdentity?.bank?.bic
 						};
 
-						await queueEmail(email, emailTemplate, vars, { session });
+						await queueEmail(email, templateKey, vars, { session });
 					}
 				}
 

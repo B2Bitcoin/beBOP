@@ -44,9 +44,7 @@ export async function sendResetPasswordNotification(
 		throw new Error('Problem updating user');
 	}
 	if (npub) {
-		const content = `Dear user,
-		
-This message was sent to you because you have requested to reset your password.
+		const content = `This message was sent to you because you have requested to reset your password.
 
 Follow this link to reset your password: ${ORIGIN}${adminPrefix()}/login/reset/${updatedUser
 			.passwordReset?.token}
@@ -62,7 +60,7 @@ If you didn't ask for this password reset procedure, please ignore this message 
 		});
 	}
 	if (email) {
-		await queueEmail(email, runtimeConfig.emailTemplates.passwordReset, {
+		await queueEmail(email, 'passwordReset', {
 			resetLink: `${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset?.token}`
 		});
 	}
@@ -80,9 +78,7 @@ export async function sendAuthentificationlink(session: { email?: string; npub?:
 			.setProtectedHeader({ alg: 'HS256' })
 			.sign(Buffer.from(runtimeConfig.authLinkJwtSigningKey));
 
-		const content = `Dear user,
-		
-This message was sent to you because you have requested a temporary session link.
+		const content = `This message was sent to you because you have requested a temporary session link.
 
 Follow this link to create your temporary session: ${ORIGIN}/login?token=${encodeURIComponent(jwt)}
 		
@@ -104,7 +100,7 @@ ${runtimeConfig.brandName} team`;
 			.setExpirationTime('1h')
 			.setProtectedHeader({ alg: 'HS256' })
 			.sign(Buffer.from(runtimeConfig.authLinkJwtSigningKey));
-		await queueEmail(session.email, runtimeConfig.emailTemplates.temporarySessionRequest, {
+		await queueEmail(session.email, 'temporarySessionRequest', {
 			sessionLink: `${ORIGIN}/login?token=${encodeURIComponent(jwt)}`
 		});
 	}
