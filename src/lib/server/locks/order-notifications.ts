@@ -185,8 +185,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 				}
 
 				if (email) {
-					let htmlContent = `<p>Dear customer,</p>
-     						<p>I hope you're doing well !</p>`;
+					let htmlContent = `<p>Dear customer,<br>I hope you're doing well !</p>`;
 						
 					htmlContent += `<p>We're contacting you about your order #${order.number}, which current payment status being ${payment.status}</p><p>You can retrieve your order informations <a href="${ORIGIN}/order/${order._id}">by following this link</a></p>`;
 
