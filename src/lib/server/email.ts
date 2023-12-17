@@ -54,7 +54,7 @@ async function getTransporter() {
 export async function sendEmail(params: { to: string; subject: string; html: string }) {
 	const transporter = await getTransporter();
 
-	return transporter.sendMail({
+	const res = await transporter.sendMail({
 		from: SMTP_FROM || SMTP_USER,
 		to: params.to,
 		subject: params.subject,
@@ -64,4 +64,6 @@ export async function sendEmail(params: { to: string; subject: string; html: str
 			replyTo: runtimeConfig.sellerIdentity?.contact.email
 		})
 	});
+
+	console.log('Email sent', res);
 }
