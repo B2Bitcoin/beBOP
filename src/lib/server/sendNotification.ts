@@ -8,6 +8,7 @@ import { SignJWT } from 'jose';
 import { addMinutes } from 'date-fns';
 import { adminPrefix } from '$lib/server/admin';
 import { error } from '@sveltejs/kit';
+import { queueEmail } from './email';
 
 export async function sendResetPasswordNotification(
 	user: User,
@@ -61,16 +62,8 @@ If you didn't ask for this password reset procedure, please ignore this message 
 		});
 	}
 	if (email) {
-		await collections.emailNotifications.insertOne({
-			_id: new ObjectId(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			subject: runtimeConfig.emailTemplates.passwordReset.subject,
-			htmlContent: runtimeConfig.emailTemplates.passwordReset.html.replace(
-				'{{resetLink}}',
-				`${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset?.token}`
-			),
-			dest: email
+		await queueEmail(email, runtimeConfig.emailTemplates.passwordReset, {
+			resetLink: `${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset?.token}`
 		});
 	}
 
@@ -111,16 +104,8 @@ ${runtimeConfig.brandName} team`;
 			.setExpirationTime('1h')
 			.setProtectedHeader({ alg: 'HS256' })
 			.sign(Buffer.from(runtimeConfig.authLinkJwtSigningKey));
-		await collections.emailNotifications.insertOne({
-			_id: new ObjectId(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			subject: runtimeConfig.emailTemplates.temporarySessionRequest.subject,
-			htmlContent: runtimeConfig.emailTemplates.temporarySessionRequest.html.replace(
-				'{{sessionLink}}',
-				`${ORIGIN}/login?token=${encodeURIComponent(jwt)}`
-			),
-			dest: session.email
+		await queueEmail(session.email, runtimeConfig.emailTemplates.temporarySessionRequest, {
+			sessionLink: `${ORIGIN}/login?token=${encodeURIComponent(jwt)}`
 		});
 	}
 }

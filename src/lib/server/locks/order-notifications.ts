@@ -18,6 +18,7 @@ import { building } from '$app/environment';
 import { rateLimit } from '../rateLimit';
 import { isOrderFullyPaid } from '../orders';
 import { FRACTION_DIGITS_PER_CURRENCY } from '$lib/types/Currency';
+import { queueEmail } from '../email';
 
 const lock = new Lock('order-notifications');
 
@@ -216,23 +217,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							bic: runtimeConfig.sellerIdentity?.bank?.bic
 						};
 
-						await collections.emailNotifications.insertOne(
-							{
-								_id: new ObjectId(),
-								createdAt: new Date(),
-								updatedAt: new Date(),
-								subject: emailTemplate.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
-									return p1 in vars ? vars[p1 as keyof typeof vars] || match : match;
-								}),
-								htmlContent: emailTemplate.html.replace(/{{([^}]+)}}/g, (match, p1) => {
-									return p1 in vars ? vars[p1 as keyof typeof vars] || match : match;
-								}),
-								dest: email
-							},
-							{
-								session
-							}
-						);
+						await queueEmail(email, emailTemplate, vars, { session });
 					}
 				}
 
