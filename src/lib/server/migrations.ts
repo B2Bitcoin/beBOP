@@ -275,6 +275,30 @@ const migrations = [
 				);
 			}
 		}
+	},
+	{
+		name: 'Change bankTransfer to bank-transfer',
+		_id: new ObjectId('657f7c76602c2bc0ef4acef4'),
+		run: async (session: ClientSession) => {
+			let count = 10;
+			while (count--) {
+				const result = await collections.orders.updateMany(
+					{
+						'payments.method': 'bankTransfer'
+					},
+					{
+						$set: {
+							'payments.$.method': 'bank-transfer'
+						}
+					},
+					{ session }
+				);
+
+				if (result.modifiedCount === 0) {
+					break;
+				}
+			}
+		}
 	}
 ];
 
