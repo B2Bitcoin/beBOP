@@ -20,7 +20,7 @@ import { enhancedLanguages, languages, locales, type LanguageKey } from '$lib/tr
 import { merge } from 'lodash-es';
 import { typedInclude } from '$lib/utils/typedIncludes';
 
-export const defaultConfig = Object.freeze({
+const baseConfig = {
 	adminHash: '',
 	isAdminCreated: false,
 	exchangeRate: defaultExchangeRate,
@@ -189,7 +189,9 @@ Amount: {{amount}} {{currency}}</p>`,
 			default: true as boolean
 		}
 	}
-});
+};
+
+export const defaultConfig = Object.freeze(baseConfig);
 
 export type EmailTemplateKey = keyof typeof defaultConfig.emailTemplates;
 
@@ -203,7 +205,7 @@ currencies.set({
 	priceReference: defaultConfig.priceReferenceCurrency
 });
 
-type BaseConfig = typeof defaultConfig;
+type BaseConfig = typeof baseConfig;
 
 export type RuntimeConfig = BaseConfig &
 	Partial<Record<`translations.${LanguageKey}`, LocalesDictionary>> &
@@ -353,7 +355,7 @@ export function stop(): void {
 	changeStream?.close().catch(console.error);
 }
 
-export const runtimeConfig = structuredClone(defaultConfig) as RuntimeConfig;
+export const runtimeConfig = structuredClone(baseConfig) as RuntimeConfig;
 
 export function resetConfig() {
 	if (!import.meta.env.VITEST) {
