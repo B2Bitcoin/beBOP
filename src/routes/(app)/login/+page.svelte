@@ -25,7 +25,7 @@
 		{#if data.userId}
 			<li class="flex gap-2 items-center">
 				{t('login.session.userId', { userId: data.userId })}
-				<form action="?/clearUserId" class="contents" use:enhance method="post">
+				<form action="?/clearUserId" class="contents hidden" use:enhance method="post">
 					<button class="text-red-500 hover:underline"><IconTrash /></button>
 				</form>
 			</li>
@@ -56,21 +56,27 @@
 			</li>
 		{/each}
 	</ul>
-	<div class="flex gap-4">
-		<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
-		<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
-		<form method="post" action="?/clearAll" use:enhance>
-			<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
-		</form>
-	</div>
+	{#if !data.emailToLogin && !data.npubToLogin}
+		<p>{t('login.session.identityPrefill')}</p>
+		<div class="flex gap-4">
+			<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
+			{#if data.email || data.npub || data.sso?.length}
+				<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
+				<form method="post" action="?/clearAll" use:enhance>
+					<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
+				</form>
+			{/if}
+		</div>
+	{/if}
 	{#if data.emailToLogin || data.npubToLogin}
 		<form method="post" action="?/validate&token={$page.url.searchParams.get('token')}">
 			<button class="btn btn-blue text-white">
 				{t('login.cta.authenticateAs', { as: data.emailToLogin || data.npubToLogin })}
 			</button>
 		</form>
-	{:else}
+	{:else if !data.email && !data.npub && !data.sso?.length}
 		<h2 class="text-2xl">{t('login.authenticate.title')}</h2>
+		<p>{t('login.authenticate.disclaimer')}</p>
 		<form method="post" class="flex flex-col gap-4" action="?/sendLink">
 			<label class="form-label body-secondaryText">
 				{t('login.authenticate.inputLabel')}
@@ -86,8 +92,8 @@
 				<p class="text-green-500">{t('login.willReceiveSessionLink')}</p>
 			{/if}
 			<div class="flex gap-4">
-				<input type="submit" class="btn body-mainCTA" value="Send Authentication Link" />
-				<button class="btn body-secondaryCTA"><a href="/">Cancel</a></button>
+				<input type="submit" class="btn body-mainCTA" value={t('login.authenticate.ctaLabel')} />
+				<button class="btn body-secondaryCTA"><a href="/">{t('login.authenticate.ctaCancelLabel')}</a></button>
 			</div>
 		</form>
 

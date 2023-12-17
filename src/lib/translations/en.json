@@ -360,7 +360,10 @@
 	"login": {
 		"authenticate": {
 			"inputLabel": "Email or npub",
-			"title": "Add authentication"
+			"title": "Add authentication",
+			"ctaLabel": "Confirm",
+			"ctaCancelLabel": "Back",
+			"disclaimer": "For security purpose, our wbesite know no password. You can access to your personal space and your order history through a connexion link, or through a 3rd party account (SSO)."
 		},
 		"cta": {
 			"authenticateAs": "Authenticate as {as}",
@@ -377,7 +380,8 @@
 			"email": "Email: {email}",
 			"npub": "Npub: {npub}",
 			"title": "Session",
-			"userId": "UserId: {userId}"
+			"userId": "UserId: {userId}",
+			"identityPrefill": "You can pre-fill your postal address and your contact address. If you make an order, these informations will be pre-filled. If you decide to create an account later, these informations will be saved for future orders."
 		},
 		"sso": {
 			"title": "Or sign in with"
