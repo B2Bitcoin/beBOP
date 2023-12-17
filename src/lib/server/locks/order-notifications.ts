@@ -188,14 +188,11 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					let htmlContent = `<p>Dear customer,</p>
      						<p>I hope you're doing well !</p>`;
 						
-					htmlContent += `<p>We're contacting you about your order #${order.number}, which current payment status being ${payment.status}</p>
-     						<p>You can retrieve your order informations <a href="${ORIGIN}/order/${order._id}">by following this link</a></p>`;
+					htmlContent += `<p>We're contacting you about your order #${order.number}, which current payment status being ${payment.status}</p><p>You can retrieve your order informations <a href="${ORIGIN}/order/${order._id}">by following this link</a></p>`;
 
 					if (payment.status === 'pending') {
 
-						htmlContent += `<p>We have to thank you for your order, and we inform you that it was succesfully saved on our system.</p>
-      							<p>We're now expecting your payment to finalise your purchase.</p>
-	     						<p>Once we'll receive your payment, we'll contact you back to give you details your products delivery.</p>`;
+						htmlContent += `<p>We have to thank you for your order, and we inform you that it was succesfully saved on our system.</p><p>We're now expecting your payment to finalise your purchase.</p><p>Once we'll receive your payment, we'll contact you back to give you details your products delivery.</p>`;
 						
 						if (payment.method === 'bitcoin') {
 							htmlContent += `<p>Please send ${toBitcoins(
@@ -212,17 +209,15 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					}
 					if (payment.status === 'paid' && isOrderFullyPaid(order)) {
 						
-						htmlContent += `<p>Great news ! We received and validated your payment. Thanks for your trust in ${runtimeConfig.brandName}.</p>
-      							<p>Your satisfaction is our greatest priority. Feel free to contact us about anything, for any specific request or any question.</p>`;
+						htmlContent += `<p>Great news ! We received and validated your payment. Thanks for your trust in ${runtimeConfig.brandName}.</p><p>Your satisfaction is our greatest priority. Feel free to contact us about anything, for any specific request or any question.</p>`;
 						
 
 					}
 					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
 						
-						htmlContent += `<p>Great news ! We received and validated your payment. Thanks for your trust in ${runtimeConfig.brandName}.</p>
-      							<p>Your satisfaction is our greatest priority. Feel free to contact us about anything, for any specific request or any question.</p>`;
-						
+						htmlContent += `<p>Great news ! We received and validated your payment. Thanks for your trust in ${runtimeConfig.brandName}.</p><p>Your satisfaction is our greatest priority. Feel free to contact us about anything, for any specific request or any question.</p>`;
 						htmlContent += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> is not fully paid yet</p>`;
+						
 					}
 
 					htmlContent += `<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
