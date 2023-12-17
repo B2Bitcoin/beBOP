@@ -195,21 +195,21 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						htmlContentEn += `<p>We have to thank you for your order, and we inform you that it was succesfully saved on our system.</p><p>We're now expecting your payment to finalise your purchase.</p><p>Once we'll receive your payment, we'll contact you back to give you details your products delivery.</p>`;
 						htmlContentFR += `<p>Nous vous remercions de votre commande, et vous informons qu'elle a bien été enregistrée dans notre système.</p><p>Nous attendons maintenant le règlement de votre paiement pour finaliser la transaction.</p><p>Dès réception de votre paiement, nous vous recontacterons pour vous informer des details pour la livraison de votre achat.</p>`;
 						if (payment.method === 'bitcoin') {
-							htmlContentEn += `<p>Please send ${toBitcoins(
+							htmlContentEn += `<p>In order to pay, please send ${toBitcoins(
 								payment.price.amount,
 								payment.price.currency
-							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
+							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to the following address: ${
 								payment.address
 							}</p>`;
-							htmlContentFR += `<p>Veuillez envoyer ${toBitcoins(
+							htmlContentFR += `<p>Pour régler, merci d'envoyer la somme de ${toBitcoins(
 								payment.price.amount,
 								payment.price.currency
-							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC à l'adresse ${
+							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC à l'adresse suivante : ${
 								payment.address
 							}</p>`;
 						} else if (payment.method === 'lightning') {
-							htmlContentEn += `<p>Please pay this invoice: ${payment.address}</p>`;
-							htmlContentFR += `<p>Merci de régler cette facture : ${payment.address}</p>`;
+							htmlContentEn += `<p>Please pay this Lightning invoice by <a href="lightning:${payment.address}">clicking this link</a>.<br>Lightning payment address: ${payment.address}</p>`;
+							htmlContentFR += `<p>Merci de régler cette facture Lightning en <a href="lightning:${payment.address}"cliquant sur ce lien</a>.<br>Addresse de paiement Lightning : ${payment.address}</p>`;
 						} else if (payment.method === 'card') {
 							htmlContentEn += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
 							htmlContentFR += `<p>Merci de régler via ce lien : <a href="${payment.address}">${payment.address}</a></p>`;
