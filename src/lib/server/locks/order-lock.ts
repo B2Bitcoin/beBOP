@@ -128,6 +128,10 @@ async function maintainOrders() {
 							console.error(inspect(err, { depth: 10 }));
 						}
 						break;
+					// handled by admin
+					case 'bank-transfer':
+					case 'point-of-sale':
+						break;
 				}
 			}
 		}

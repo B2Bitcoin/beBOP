@@ -990,7 +990,7 @@ async function generatePaymentInfo(params: {
 		case 'point-of-sale': {
 			return {};
 		}
-		case 'bankTransfer': {
+		case 'bank-transfer': {
 			return { address: runtimeConfig.sellerIdentity?.bank?.iban };
 		}
 		case 'card':
@@ -1056,23 +1056,35 @@ async function generateCardPaymentInfo(params: {
 }
 
 function paymentMethodExpiration(paymentMethod: PaymentMethod) {
-	return paymentMethod === 'point-of-sale' || paymentMethod === 'bankTransfer'
+	return paymentMethod === 'point-of-sale' || paymentMethod === 'bank-transfer'
 		? undefined
 		: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 }
 
 function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
-	return paymentMethod === 'point-of-sale' || paymentMethod === 'bankTransfer'
-		? {
+	switch (paymentMethod) {
+		case 'point-of-sale':
+		case 'bank-transfer':
+			return {
 				amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
 				currency: runtimeConfig.mainCurrency
-		  }
-		: paymentMethod === 'card'
-		? {
+			};
+		case 'card':
+			return {
 				amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
 				currency: runtimeConfig.sumUp.currency
-		  }
-		: { amount: toCurrency('SAT', price.amount, price.currency), currency: 'SAT' };
+			};
+		case 'bitcoin':
+			return {
+				amount: toCurrency('BTC', price.amount, price.currency),
+				currency: 'BTC'
+			};
+		case 'lightning':
+			return {
+				amount: toCurrency('SAT', price.amount, price.currency),
+				currency: 'SAT'
+			};
+	}
 }
 
 export async function addOrderPayment(

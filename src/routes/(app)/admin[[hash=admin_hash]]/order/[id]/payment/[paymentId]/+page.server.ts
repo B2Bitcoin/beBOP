@@ -25,7 +25,7 @@ export const actions = {
 		}
 		const formData = await request.formData();
 		const parsed =
-			payment.method === 'bankTransfer'
+			payment.method === 'bank-transfer'
 				? z
 						.object({
 							bankTransferNumber: z.string().trim().min(1).max(100)

@@ -8,6 +8,7 @@ import { SignJWT } from 'jose';
 import { addMinutes } from 'date-fns';
 import { adminPrefix } from '$lib/server/admin';
 import { error } from '@sveltejs/kit';
+import { queueEmail } from './email';
 
 export async function sendResetPasswordNotification(
 	user: User,
@@ -43,17 +44,12 @@ export async function sendResetPasswordNotification(
 		throw new Error('Problem updating user');
 	}
 	if (npub) {
-		const content = `Dear user,
-		
-This message was sent to you because you have requested to reset your password.
+		const content = `This message was sent to you because you have requested to reset your password.
 
 Follow this link to reset your password: ${ORIGIN}${adminPrefix()}/login/reset/${updatedUser
 			.passwordReset?.token}
 		
-If you didn't ask for this password reset procedure, please ignore this message and do nothing.
-
-Best regards,
-${runtimeConfig.brandName} team`;
+If you didn't ask for this password reset procedure, please ignore this message and do nothing.`;
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
@@ -64,19 +60,8 @@ ${runtimeConfig.brandName} team`;
 		});
 	}
 	if (email) {
-		const content = `<p>Dear user,</p>
-		<p>This message was sent to you because you have requested to reset your password.</p>
-		<p>Follow <a href="${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset
-			?.token}">this link</a> to reset your password.</p>
-		<p>If you didn't ask for this password reset procedure, please ignore this message and do nothing.</p>
-		<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
-		await collections.emailNotifications.insertOne({
-			_id: new ObjectId(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			subject: `Password Reset`,
-			htmlContent: content,
-			dest: email
+		await queueEmail(email, 'passwordReset', {
+			resetLink: `${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset?.token}`
 		});
 	}
 
@@ -93,9 +78,7 @@ export async function sendAuthentificationlink(session: { email?: string; npub?:
 			.setProtectedHeader({ alg: 'HS256' })
 			.sign(Buffer.from(runtimeConfig.authLinkJwtSigningKey));
 
-		const content = `Dear user,
-		
-This message was sent to you because you have requested a temporary session link.
+		const content = `This message was sent to you because you have requested a temporary session link.
 
 Follow this link to create your temporary session: ${ORIGIN}/login?token=${encodeURIComponent(jwt)}
 		
@@ -117,19 +100,8 @@ ${runtimeConfig.brandName} team`;
 			.setExpirationTime('1h')
 			.setProtectedHeader({ alg: 'HS256' })
 			.sign(Buffer.from(runtimeConfig.authLinkJwtSigningKey));
-		await collections.emailNotifications.insertOne({
-			_id: new ObjectId(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			subject: `Temporary session request`,
-			htmlContent: `<p>Dear user,</p>
-<p>This message was sent to you because you have requested a temporary session link.</p>
-<p>Follow <a href="${ORIGIN}/login?token=${encodeURIComponent(
-				jwt
-			)}">this link</a> to create your temporary session.</p>
-<p>If you didn't ask for this temporary session procedure, please ignore this message and do nothing.</p>
-<p>Best regards,<br>${runtimeConfig.brandName} team</p>`,
-			dest: session.email
+		await queueEmail(session.email, 'temporarySessionRequest', {
+			sessionLink: `${ORIGIN}/login?token=${encodeURIComponent(jwt)}`
 		});
 	}
 }

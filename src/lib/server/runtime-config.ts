@@ -20,7 +20,7 @@ import { enhancedLanguages, languages, locales, type LanguageKey } from '$lib/tr
 import { merge } from 'lodash-es';
 import { typedInclude } from '$lib/utils/typedIncludes';
 
-const defaultConfig = {
+const baseConfig = {
 	adminHash: '',
 	isAdminCreated: false,
 	exchangeRate: defaultExchangeRate,
@@ -121,8 +121,79 @@ const defaultConfig = {
 	displayNewsletterCommercialProspection: false,
 
 	websiteTitle: 'B2Bitcoin beBOP',
-	websiteShortDescription: "B2Bitcoin's beBOP store"
+	websiteShortDescription: "B2Bitcoin's beBOP store",
+
+	emailTemplates: {
+		passwordReset: {
+			subject: 'Password reset',
+			html: `<p>This message was sent to you because you have requested to reset your password.</p>
+<p>Follow <a href="{{resetLink}}">this link</a> to reset your password.</p>
+<p>If you didn't ask for this password reset procedure, please ignore this message and do nothing.</p>`,
+			default: true as boolean
+		},
+		temporarySessionRequest: {
+			subject: 'Temporary session request',
+			html: `<p>This message was sent to you because you have requested a temporary session link.</p>
+<p>Follow <a href="{{sessionLink}}">this link</a> to create your temporary session.</p>
+<p>If you didn't ask for this temporary session procedure, please ignore this message and do nothing.</p>`,
+			default: true as boolean
+		},
+		'order.payment.expired': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is expired, see <a href="{{orderLink}}">{{orderLink}}</a></p>`,
+			default: true as boolean
+		},
+		'order.payment.canceled': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is cancelled, see <a href="{{orderLink}}">{{orderLink}}</a></p>`,
+			default: true as boolean
+		},
+		'order.payment.pending.card': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is pending, see <a href="{{orderLink}}">{{orderLink}}</a></p>
+<p>Please pay using this link: <a href="{{paymentLink}}">{{paymentLink}}</a></p>`,
+			default: true as boolean
+		},
+		'order.payment.pending.bank-transfer': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is pending, see <a href="{{orderLink}}">{{orderLink}}</a></p>
+<p>Please pay using this information:</p>
+<p>IBAN: {{iban}}<br/>
+BIC: {{bic}}<br/>
+Amount: {{amount}} {{currency}}</p>`,
+			default: true as boolean
+		},
+		'order.payment.pending.lightning': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is pending, see <a href="{{orderLink}}">{{orderLink}}</a></p>
+<p>Please pay using this information:</p>
+<p>Lightning invoice: {{paymentAddress}}</p>`,
+			default: true as boolean
+		},
+		'order.payment.pending.bitcoin': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is pending, see <a href="{{orderLink}}">{{orderLink}}</a></p>
+<p>Please send {{amount}} {{currency}} to {{paymentAddress}}</p>`,
+			default: true as boolean
+		},
+		'order.paid': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is paid, see <a href="{{orderLink}}">{{orderLink}}</a></p>
+<p>Order <a href="{{orderLink}}">#{{orderNumber}}</a> is fully paid!</p>`,
+			default: true as boolean
+		},
+		'order.payment.paid': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is paid, see <a href="{{orderLink}}">{{orderLink}}</a></p>
+<p>Order <a href="{{orderLink}}">#{{orderNumber}}</a> is not fully paid yet.</p>`,
+			default: true as boolean
+		}
+	}
 };
+
+export const defaultConfig = Object.freeze(baseConfig);
+
+export type EmailTemplateKey = keyof typeof defaultConfig.emailTemplates;
 
 export const runtimeConfigUpdatedAt: Partial<Record<ConfigKey, Date>> = {};
 
@@ -134,7 +205,7 @@ currencies.set({
 	priceReference: defaultConfig.priceReferenceCurrency
 });
 
-type BaseConfig = typeof defaultConfig;
+type BaseConfig = typeof baseConfig;
 
 export type RuntimeConfig = BaseConfig &
 	Partial<Record<`translations.${LanguageKey}`, LocalesDictionary>> &
@@ -284,7 +355,7 @@ export function stop(): void {
 	changeStream?.close().catch(console.error);
 }
 
-export const runtimeConfig = { ...defaultConfig } as RuntimeConfig;
+export const runtimeConfig = structuredClone(baseConfig) as RuntimeConfig;
 
 export function resetConfig() {
 	if (!import.meta.env.VITEST) {

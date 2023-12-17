@@ -62,8 +62,8 @@
 		"invalidNpub": "Invalid Nostr public address",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
 		"notifications": {
-			"message": "Please fill at least one contact address to be notified about your order news.",
 			"email": "Email",
+			"message": "Please fill at least one contact address to be notified about your order news.",
 			"npub": "Nostr public address",
 			"title": "Feed & Notifications"
 		},
@@ -77,7 +77,7 @@
 			"title": "Payment"
 		},
 		"paymentMethod": {
-			"bankTransfer": "Bank transfer",
+			"bank-transfer": "Bank transfer",
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",
@@ -359,11 +359,11 @@
 	},
 	"login": {
 		"authenticate": {
-			"inputLabel": "Email or npub",
-			"title": "Add authentication",
-			"ctaLabel": "Confirm",
 			"ctaCancelLabel": "Back",
-			"disclaimer": "For security purpose, our wbesite know no password. You can access to your personal space and your order history through a connexion link, or through a 3rd party account (SSO)."
+			"ctaLabel": "Confirm",
+			"disclaimer": "For security purpose, our wbesite know no password. You can access to your personal space and your order history through a connexion link, or through a 3rd party account (SSO).",
+			"inputLabel": "Email or npub",
+			"title": "Add authentication"
 		},
 		"cta": {
 			"authenticateAs": "Authenticate as {as}",
@@ -378,10 +378,10 @@
 		},
 		"session": {
 			"email": "Email: {email}",
+			"identityPrefill": "You can pre-fill your postal address and your contact address. If you make an order, these informations will be pre-filled. If you decide to create an account later, these informations will be saved for future orders.",
 			"npub": "Npub: {npub}",
 			"title": "Session",
-			"userId": "UserId: {userId}",
-			"identityPrefill": "You can pre-fill your postal address and your contact address. If you make an order, these informations will be pre-filled. If you decide to create an account later, these informations will be saved for future orders."
+			"userId": "UserId: {userId}"
 		},
 		"sso": {
 			"title": "Or sign in with"
@@ -419,6 +419,7 @@
 		},
 		"paymentAddress": "Payment address",
 		"paymentAmount": "Payment amount",
+		"paymentBic": "BIC",
 		"paymentIban": "IBAN to send the wire transfer to",
 		"paymentLink": "Click here to pay by card with",
 		"paymentPaidAt": "Payment done on {date}",

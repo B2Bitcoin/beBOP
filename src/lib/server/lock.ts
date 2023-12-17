@@ -50,11 +50,15 @@ export class Lock {
 						{
 							_id: this.id,
 							ownerId: processId,
-							instanceId: this.instanceId
+							// In dev mode, acquires older locks.
+							instanceId: {
+								$lte: this.instanceId
+							}
 						},
 						{
 							$set: {
-								updatedAt: new Date()
+								updatedAt: new Date(),
+								instanceId: this.instanceId
 							}
 						}
 					);
