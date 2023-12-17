@@ -12,11 +12,12 @@ import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
-import { refreshPromise } from '../runtime-config';
+import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
 import { building } from '$app/environment';
 import { rateLimit } from '../rateLimit';
 import { isOrderFullyPaid } from '../orders';
+import { FRACTION_DIGITS_PER_CURRENCY } from '$lib/types/Currency';
 
 const lock = new Lock('order-notifications');
 
@@ -133,72 +134,99 @@ async function handleOrderNotification(order: Order): Promise<void> {
 
 		for (const payment of payments) {
 			await withTransaction(async (session) => {
-				let shouldNotify = true;
+				if (npub) {
+					let content = `Payment for order #${order.number} is ${payment.status}, see ${ORIGIN}/order/${order._id}`;
 
-				if (payment.method === 'point-of-sale') {
-					shouldNotify = payment.status === 'paid';
+					if (payment.status === 'pending') {
+						if (payment.method === 'bitcoin') {
+							content += `\n\nPlease send ${toBitcoins(
+								payment.price.amount,
+								payment.price.currency
+							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${payment.address}`;
+						} else if (payment.method === 'lightning') {
+							content += `\n\nPlease pay this invoice: ${payment.address}`;
+						} else if (payment.method === 'card') {
+							content += `\n\nPlease pay using this link: ${payment.address}`;
+						}
+					}
+					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
+						content += `Order #${order.number} is not fully paid yet`;
+					}
+					await collections.nostrNotifications.insertOne(
+						{
+							_id: new ObjectId(),
+							createdAt: new Date(),
+							kind: Kind.EncryptedDirectMessage,
+							updatedAt: new Date(),
+							content,
+							dest: npub
+						},
+						{
+							session
+						}
+					);
 				}
-				if (shouldNotify) {
-					if (npub) {
-						let content = `Payment for order #${order.number} is ${payment.status}, see ${ORIGIN}/order/${order._id}`;
 
-						if (payment.status === 'pending') {
-							if (payment.method === 'bitcoin') {
-								content += `\n\nPlease send ${toBitcoins(
-									payment.price.amount,
-									payment.price.currency
-								).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${payment.address}`;
-							} else if (payment.method === 'lightning') {
-								content += `\n\nPlease pay this invoice: ${payment.address}`;
-							} else if (payment.method === 'card') {
-								content += `\n\nPlease pay using this link: ${payment.address}`;
+				if (email) {
+					let emailTemplate = { subject: '', html: '' };
+					switch (payment.status) {
+						case 'canceled':
+							emailTemplate = runtimeConfig.emailTemplates['order.payment.canceled'];
+							break;
+						case 'expired':
+							emailTemplate = runtimeConfig.emailTemplates['order.payment.expired'];
+							break;
+						case 'paid':
+							if (isOrderFullyPaid(order)) {
+								emailTemplate = runtimeConfig.emailTemplates['order.paid'];
+							} else {
+								emailTemplate = runtimeConfig.emailTemplates['order.payment.paid'];
 							}
-						}
-						if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
-							content += `Order #${order.number} is not fully paid yet`;
-						}
-						await collections.nostrNotifications.insertOne(
-							{
-								_id: new ObjectId(),
-								createdAt: new Date(),
-								kind: Kind.EncryptedDirectMessage,
-								updatedAt: new Date(),
-								content,
-								dest: npub
-							},
-							{
-								session
+							break;
+						case 'pending':
+							switch (payment.method) {
+								case 'bitcoin':
+									emailTemplate = runtimeConfig.emailTemplates['order.payment.pending.bitcoin'];
+									break;
+								case 'lightning':
+									emailTemplate = runtimeConfig.emailTemplates['order.payment.pending.lightning'];
+									break;
+								case 'card':
+									emailTemplate = runtimeConfig.emailTemplates['order.payment.pending.card'];
+									break;
+								case 'bankTransfer':
+									emailTemplate =
+										runtimeConfig.emailTemplates['order.payment.pending.bankTransfer'];
+									break;
 							}
-						);
 					}
 
-					if (email) {
-						let htmlContent = `<p>Payment for order #${order.number} is ${payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a></p>`;
+					if (emailTemplate.html && emailTemplate.subject) {
+						const vars = {
+							orderNumber: order.number.toLocaleString(order.locale || 'en'),
+							orderLink: `${ORIGIN}/order/${order._id}`,
+							paymentLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}`,
+							paymentAddress: payment.address,
+							amount: payment.price.amount.toLocaleString(order.locale || 'en', {
+								maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency],
+								minimumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency]
+							}),
+							currency: payment.price.currency,
+							iban: runtimeConfig.sellerIdentity?.bank?.iban,
+							bic: runtimeConfig.sellerIdentity?.bank?.bic
+						};
 
-						if (payment.status === 'pending') {
-							if (payment.method === 'bitcoin') {
-								htmlContent += `<p>Please send ${toBitcoins(
-									payment.price.amount,
-									payment.price.currency
-								).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
-									payment.address
-								}</p>`;
-							} else if (payment.method === 'lightning') {
-								htmlContent += `<p>Please pay this invoice: ${payment.address}</p>`;
-							} else if (payment.method === 'card') {
-								htmlContent += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
-							}
-						}
-						if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
-							htmlContent += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> is not fully paid yet</p>`;
-						}
 						await collections.emailNotifications.insertOne(
 							{
 								_id: new ObjectId(),
 								createdAt: new Date(),
 								updatedAt: new Date(),
-								subject: `Order #${order.number}`,
-								htmlContent,
+								subject: emailTemplate.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
+									return p1 in vars ? vars[p1 as keyof typeof vars] || match : match;
+								}),
+								htmlContent: emailTemplate.html.replace(/{{([^}]+)}}/g, (match, p1) => {
+									return p1 in vars ? vars[p1 as keyof typeof vars] || match : match;
+								}),
 								dest: email
 							},
 							{

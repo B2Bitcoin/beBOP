@@ -359,11 +359,11 @@
 	},
 	"login": {
 		"authenticate": {
-			"inputLabel": "E-mail ou npub",
-			"title": "Ajouter une authentification",
-			"ctaLabel": "Valider",
 			"ctaCancelLabel": "Retour",
-			"disclaimer": "Pour des raisons de securite, notre site ne stocke aucun mot de passe. Vous pouvez accéder à votre espace personnel et votre historique de commande via un lien de connexion privé, ou via un compte tiers (SSO)."
+			"ctaLabel": "Valider",
+			"disclaimer": "Pour des raisons de securite, notre site ne stocke aucun mot de passe. Vous pouvez accéder à votre espace personnel et votre historique de commande via un lien de connexion privé, ou via un compte tiers (SSO).",
+			"inputLabel": "E-mail ou npub",
+			"title": "Ajouter une authentification"
 		},
 		"cta": {
 			"authenticateAs": "Authentifiez-vous en tant que {as}",
@@ -378,10 +378,10 @@
 		},
 		"session": {
 			"email": "E-mail : {email}",
+			"identityPrefill": "Vous pouvez pré-remplir votre adresse postale et votre adresse de contact. En cas de commande, ces informations seront pré-remplies. Si vous décidez de créer un compte par la suite, ces informations seront sauvegardées pour de futurs achats.",
 			"npub": "Npub : {npub}",
 			"title": "Session",
-			"userId": "ID utilisateur : {userId}",
-			"identityPrefill": "Vous pouvez pré-remplir votre adresse postale et votre adresse de contact. En cas de commande, ces informations seront pré-remplies. Si vous décidez de créer un compte par la suite, ces informations seront sauvegardées pour de futurs achats."
+			"userId": "ID utilisateur : {userId}"
 		},
 		"sso": {
 			"title": "Ou connectez-vous avec"
@@ -419,6 +419,7 @@
 		},
 		"paymentAddress": "Adresse de paiement ",
 		"paymentAmount": "Montant de la transaction (hors frais)",
+		"paymentBic": "BIC",
 		"paymentIban": "IBAN de paiement",
 		"paymentLink": "Cliquez pour payer par carte avec",
 		"paymentPaidAt": "Paiement effectué le {date}",

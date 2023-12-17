@@ -96,10 +96,18 @@
 												<IconSumupWide class="h-12" />
 											</a>
 										{:else if payment.method === 'bankTransfer'}
-											{t('order.paymentIban')}:
-											<code class="break-words body-secondaryText break-all"
-												>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
-											>
+											<p>
+												{t('order.paymentIban')}:
+												<code class="break-words body-secondaryText break-all">
+													{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}
+												</code>
+											</p>
+											<p>
+												{t('order.paymentBic')}:
+												<code class="break-words body-secondaryText break-all">
+													{data.sellerIdentity?.bank?.bic}
+												</code>
+											</p>
 										{:else}
 											{t('order.paymentAddress')}:
 											<code class="break-words body-secondaryText break-all">{payment.address}</code

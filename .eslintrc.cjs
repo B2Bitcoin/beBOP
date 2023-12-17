@@ -32,6 +32,7 @@ module.exports = {
 		'@typescript-eslint/no-explicit-any': 'error',
 		'@typescript-eslint/no-non-null-assertion': 'error',
 		'@typescript-eslint/no-unused-vars': 'error',
+		'@typescript-eslint/switch-exhaustiveness-check': 'error',
 		curly: 'error'
 	},
 	env: {

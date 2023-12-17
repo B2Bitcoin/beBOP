@@ -50,10 +50,7 @@ This message was sent to you because you have requested to reset your password.
 Follow this link to reset your password: ${ORIGIN}${adminPrefix()}/login/reset/${updatedUser
 			.passwordReset?.token}
 		
-If you didn't ask for this password reset procedure, please ignore this message and do nothing.
-
-Best regards,
-${runtimeConfig.brandName} team`;
+If you didn't ask for this password reset procedure, please ignore this message and do nothing.`;
 		await collections.nostrNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
@@ -64,18 +61,15 @@ ${runtimeConfig.brandName} team`;
 		});
 	}
 	if (email) {
-		const content = `<p>Dear user,</p>
-		<p>This message was sent to you because you have requested to reset your password.</p>
-		<p>Follow <a href="${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset
-			?.token}">this link</a> to reset your password.</p>
-		<p>If you didn't ask for this password reset procedure, please ignore this message and do nothing.</p>
-		<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
 		await collections.emailNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			subject: `Password Reset`,
-			htmlContent: content,
+			subject: runtimeConfig.emailTemplates.passwordReset.subject,
+			htmlContent: runtimeConfig.emailTemplates.passwordReset.html.replace(
+				'{{resetLink}}',
+				`${ORIGIN}${adminPrefix()}/login/reset/${updatedUser.passwordReset?.token}`
+			),
 			dest: email
 		});
 	}
@@ -121,14 +115,11 @@ ${runtimeConfig.brandName} team`;
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			subject: `Temporary session request`,
-			htmlContent: `<p>Dear user,</p>
-<p>This message was sent to you because you have requested a temporary session link.</p>
-<p>Follow <a href="${ORIGIN}/login?token=${encodeURIComponent(
-				jwt
-			)}">this link</a> to create your temporary session.</p>
-<p>If you didn't ask for this temporary session procedure, please ignore this message and do nothing.</p>
-<p>Best regards,<br>${runtimeConfig.brandName} team</p>`,
+			subject: runtimeConfig.emailTemplates.temporarySessionRequest.subject,
+			htmlContent: runtimeConfig.emailTemplates.temporarySessionRequest.html.replace(
+				'{{sessionLink}}',
+				`${ORIGIN}/login?token=${encodeURIComponent(jwt)}`
+			),
 			dest: session.email
 		});
 	}
