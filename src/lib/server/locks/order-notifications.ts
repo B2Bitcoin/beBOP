@@ -26,22 +26,6 @@ const watchQuery = [
 	{
 		$match: {
 			$or: [
-				// Not practical when there can be an arbitrary number of payments
-				// {
-				// 	$expr: {
-				// 		$not: {
-				// 			$not: [
-				// 				{
-				// 					$getField: {
-				// 						// TODO: check
-				// 						input: '$updateDescription.updatedFields',
-				// 						field: 'payments.0.status'
-				// 					}
-				// 				}
-				// 			]
-				// 		}
-				// 	}
-				// },
 				{
 					operationType: 'insert'
 				},
@@ -103,7 +87,7 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 
 	if (change.operationType === 'update') {
 		const updatedFields = Object.keys(change.updateDescription.updatedFields ?? {});
-		if (!updatedFields.some((field) => /^payments\.\d+\.status$/.test(field))) {
+		if (!updatedFields.some((field) => field === 'payments' || field.startsWith('payments.'))) {
 			return;
 		}
 	}
@@ -149,25 +133,30 @@ async function handleOrderNotification(order: Order): Promise<void> {
 
 		for (const payment of payments) {
 			await withTransaction(async (session) => {
-				if (npub) {
-					let content = `Payment for order #${order.number} is ${payment.status}, see ${ORIGIN}/order/${order._id}`;
+				let shouldNotify = true;
 
-					if (payment.status === 'pending') {
-						if (payment.method === 'bitcoin') {
-							content += `\n\nPlease send ${toBitcoins(
-								payment.price.amount,
-								payment.price.currency
-							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${payment.address}`;
-						} else if (payment.method === 'lightning') {
-							content += `\n\nPlease pay this invoice: ${payment.address}`;
-						} else if (payment.method === 'card') {
-							content += `\n\nPlease pay using this link: ${payment.address}`;
+				if (payment.method === 'point-of-sale') {
+					shouldNotify = payment.status === 'paid';
+				}
+				if (shouldNotify) {
+					if (npub) {
+						let content = `Payment for order #${order.number} is ${payment.status}, see ${ORIGIN}/order/${order._id}`;
+
+						if (payment.status === 'pending') {
+							if (payment.method === 'bitcoin') {
+								content += `\n\nPlease send ${toBitcoins(
+									payment.price.amount,
+									payment.price.currency
+								).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${payment.address}`;
+							} else if (payment.method === 'lightning') {
+								content += `\n\nPlease pay this invoice: ${payment.address}`;
+							} else if (payment.method === 'card') {
+								content += `\n\nPlease pay using this link: ${payment.address}`;
+							}
 						}
-					}
-					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
-						content += `Order #${order.number} is not fully paid yet`;
-					}
-					if (!(payment.method === 'point-of-sale' && payment.status !== 'paid')) {
+						if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
+							content += `Order #${order.number} is not fully paid yet`;
+						}
 						await collections.nostrNotifications.insertOne(
 							{
 								_id: new ObjectId(),
@@ -182,29 +171,27 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							}
 						);
 					}
-				}
 
-				if (email) {
-					let htmlContent = `<p>Payment for order #${order.number} is ${payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a></p>`;
+					if (email) {
+						let htmlContent = `<p>Payment for order #${order.number} is ${payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a></p>`;
 
-					if (payment.status === 'pending') {
-						if (payment.method === 'bitcoin') {
-							htmlContent += `<p>Please send ${toBitcoins(
-								payment.price.amount,
-								payment.price.currency
-							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
-								payment.address
-							}</p>`;
-						} else if (payment.method === 'lightning') {
-							htmlContent += `<p>Please pay this invoice: ${payment.address}</p>`;
-						} else if (payment.method === 'card') {
-							htmlContent += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
+						if (payment.status === 'pending') {
+							if (payment.method === 'bitcoin') {
+								htmlContent += `<p>Please send ${toBitcoins(
+									payment.price.amount,
+									payment.price.currency
+								).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
+									payment.address
+								}</p>`;
+							} else if (payment.method === 'lightning') {
+								htmlContent += `<p>Please pay this invoice: ${payment.address}</p>`;
+							} else if (payment.method === 'card') {
+								htmlContent += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
+							}
 						}
-					}
-					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
-						htmlContent += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> is not fully paid yet</p>`;
-					}
-					if (!(payment.method === 'point-of-sale' && payment.status !== 'paid')) {
+						if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
+							htmlContent += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> is not fully paid yet</p>`;
+						}
 						await collections.emailNotifications.insertOne(
 							{
 								_id: new ObjectId(),

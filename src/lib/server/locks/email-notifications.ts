@@ -75,7 +75,7 @@ function watch() {
 	});
 	changeStream.on('change', (ev) => handleChanges(ev).catch(console.error));
 	changeStream.on('error', (err) => {
-		console.error(err);
+		console.error('email-notifications', err);
 		changeStream.close().catch(console.error);
 		watch();
 	});
