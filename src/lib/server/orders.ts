@@ -990,7 +990,7 @@ async function generatePaymentInfo(params: {
 		case 'point-of-sale': {
 			return {};
 		}
-		case 'bankTransfer': {
+		case 'bank-transfer': {
 			return { address: runtimeConfig.sellerIdentity?.bank?.iban };
 		}
 		case 'card':
@@ -1056,7 +1056,7 @@ async function generateCardPaymentInfo(params: {
 }
 
 function paymentMethodExpiration(paymentMethod: PaymentMethod) {
-	return paymentMethod === 'point-of-sale' || paymentMethod === 'bankTransfer'
+	return paymentMethod === 'point-of-sale' || paymentMethod === 'bank-transfer'
 		? undefined
 		: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 }
@@ -1064,7 +1064,7 @@ function paymentMethodExpiration(paymentMethod: PaymentMethod) {
 function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 	switch (paymentMethod) {
 		case 'point-of-sale':
-		case 'bankTransfer':
+		case 'bank-transfer':
 			return {
 				amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
 				currency: runtimeConfig.mainCurrency

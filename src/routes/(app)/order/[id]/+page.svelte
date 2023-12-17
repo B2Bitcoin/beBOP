@@ -95,7 +95,7 @@
 												<span>{t('order.paymentLink')}</span>
 												<IconSumupWide class="h-12" />
 											</a>
-										{:else if payment.method === 'bankTransfer'}
+										{:else if payment.method === 'bank-transfer'}
 											<p>
 												{t('order.paymentIban')}:
 												<code class="break-words body-secondaryText break-all">
@@ -160,7 +160,7 @@
 									{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
 								{/if}
 
-								{#if payment.method === 'bankTransfer'}
+								{#if payment.method === 'bank-transfer'}
 									{#if data.sellerIdentity?.contact.email}
 										<a
 											href="mailto:{data.sellerIdentity.contact.email}"
@@ -172,7 +172,7 @@
 								{/if}
 							{/if}
 						{/if}
-						{#if (payment.method === 'point-of-sale' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
+						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
 							<div class="flex flex-wrap gap-2">
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
@@ -180,7 +180,7 @@
 									method="post"
 									class="contents"
 								>
-									{#if payment.method === 'bankTransfer'}
+									{#if payment.method === 'bank-transfer'}
 										<input
 											class="form-input w-auto"
 											type="text"

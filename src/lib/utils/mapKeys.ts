@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function mapKeys<T extends Record<string, any>, U extends Record<string, any>>(
 	obj: T,
 	fn: (key: keyof T) => keyof U

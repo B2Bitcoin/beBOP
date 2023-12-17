@@ -8,7 +8,8 @@ module.exports = {
 		'prettier'
 	],
 	plugins: ['svelte', '@typescript-eslint'],
-	ignorePatterns: ['*.cjs'],
+	// All because of `parserOptions.project`
+	ignorePatterns: ['*.cjs', '*.js', 'playwrite.config.ts', 'scripts'],
 	overrides: [
 		{
 			files: ['*.svelte'],
@@ -23,7 +24,9 @@ module.exports = {
 	},
 	parserOptions: {
 		sourceType: 'module',
-		ecmaVersion: 2020
+		ecmaVersion: 2020,
+		project: 'tsconfig.json',
+		extraFileExtensions: ['.svelte']
 	},
 	rules: {
 		'no-empty': 'off',

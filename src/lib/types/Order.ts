@@ -203,7 +203,7 @@ export function orderAmountWithNoPaymentsCreated(
 }
 
 export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
-	bankTransfer: '🏦',
+	'bank-transfer': '🏦',
 	card: '💳',
 	'point-of-sale': '🛒',
 	lightning: '⚡',

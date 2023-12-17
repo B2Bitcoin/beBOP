@@ -154,7 +154,7 @@ export const defaultConfig = Object.freeze({
 <p>Please pay using this link: <a href="{{paymentLink}}">{{paymentLink}}</a></p>`,
 			default: true as boolean
 		},
-		'order.payment.pending.bankTransfer': {
+		'order.payment.pending.bank-transfer': {
 			subject: 'Order #{{orderNumber}}',
 			html: `<p>Payment for order #{{orderNumber}} is pending, see <a href="{{orderLink}}">{{orderLink}}</a></p>
 <p>Please pay using this information:</p>
