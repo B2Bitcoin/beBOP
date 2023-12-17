@@ -114,6 +114,7 @@ export const actions = {
 			],
 			paidPayment.method,
 			{
+				locale: locals.language,
 				user: userIdentifier(locals),
 				shippingAddress: lastOrder.shippingAddress,
 				vatCountry: lastOrder.vat?.country ?? '',

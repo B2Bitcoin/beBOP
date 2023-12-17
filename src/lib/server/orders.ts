@@ -33,6 +33,7 @@ import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import type { PaymentMethod } from './payment-methods';
 import { vatRate } from '$lib/types/Country';
 import { filterUndef } from '$lib/utils/filterUndef';
+import type { LanguageKey } from '$lib/translations';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -410,6 +411,7 @@ export async function createOrder(
 	}>,
 	paymentMethod: PaymentMethod,
 	params: {
+		locale: LanguageKey;
 		user: UserIdentifier;
 		notifications?: {
 			paymentStatus?: {
@@ -667,6 +669,7 @@ export async function createOrder(
 		await collections.orders.insertOne(
 			{
 				_id: orderId,
+				locale: params.locale,
 				number: orderNumber,
 				createdAt: new Date(),
 				updatedAt: new Date(),

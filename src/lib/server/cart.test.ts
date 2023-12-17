@@ -81,6 +81,7 @@ describe('cart', () => {
 				],
 				'point-of-sale',
 				{
+					locale: 'en',
 					cart: cart2,
 					user: {
 						sessionId: 'test-session-id2'

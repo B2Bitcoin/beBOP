@@ -260,6 +260,7 @@ export const actions = {
 			})),
 			paymentMethod,
 			{
+				locale: locals.language,
 				user: {
 					sessionId: locals.sessionId,
 					userId: locals.user?._id,
