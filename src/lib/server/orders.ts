@@ -1072,6 +1072,11 @@ function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 				amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
 				currency: runtimeConfig.sumUp.currency
 		  }
+		: paymentMethod === 'bitcoin'
+		? {
+				amount: toCurrency('BTC', price.amount, price.currency),
+				currency: 'BTC'
+		  }
 		: { amount: toCurrency('SAT', price.amount, price.currency), currency: 'SAT' };
 }
 

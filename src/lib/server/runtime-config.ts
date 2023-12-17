@@ -159,7 +159,7 @@ export const defaultConfig = Object.freeze({
 			html: `<p>Payment for order #{{orderNumber}} is pending, see <a href="{{orderLink}}">{{orderLink}}</a></p>
 <p>Please pay using this information:</p>
 <p>IBAN: {{iban}}<br/>
-BIC: {{bic}}
+BIC: {{bic}}<br/>
 Amount: {{amount}} {{currency}}</p>`,
 			default: true as boolean
 		},
