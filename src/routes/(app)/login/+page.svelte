@@ -60,7 +60,7 @@
 		<p>{t('login.session.identityPrefill')}</p>
 		<div class="flex gap-4">
 			<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
-			{#if data.email || data.npub || data.sso}
+			{#if data.email || data.npub || data.sso?.length}
 				<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
 				<form method="post" action="?/clearAll" use:enhance>
 					<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
