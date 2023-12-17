@@ -45,7 +45,7 @@ export async function sendResetPasswordNotification(
 	if (npub) {
 		const content = `Dear user,
 		
-This message was sent to you because you have requested to reset your password.
+This message was sent to you because your password reset was requested.
 
 Follow this link to reset your password: ${ORIGIN}${adminPrefix()}/login/reset/${updatedUser
 			.passwordReset?.token}
@@ -123,12 +123,22 @@ ${runtimeConfig.brandName} team`;
 			updatedAt: new Date(),
 			subject: `Temporary session request`,
 			htmlContent: `<p>Dear user,</p>
-<p>This message was sent to you because you have requested a temporary session link.</p>
-<p>Follow <a href="${ORIGIN}/login?token=${encodeURIComponent(
+<p>We are please to have you in the ${runtimeConfig.brandName} community!<br></p>
+<p>To access your private session and benefit from all our exclusive services, please follow <a href="${ORIGIN}/login?token=${encodeURIComponent(
 				jwt
-			)}">this link</a> to create your temporary session.</p>
-<p>If you didn't ask for this temporary session procedure, please ignore this message and do nothing.</p>
-<p>Best regards,<br>${runtimeConfig.brandName} team</p>`,
+			)}">this link</a>.<br></p>
+<p>We are delighted to have you with us and look forward to sharing our passion for horology with you.<br></p>
+<p>If you have any questions or specific needs, feel free to contact us. We are here to help.<br></p>
+<p>Best regards,<br>${runtimeConfig.brandName} team<br></p>
+<p>-----<br></p>
+<p>Cher utilisatrice, cher utilisateur,<br></p>
+<p>Nous sommes ravis de vous compter au sein de la communauté ${runtimeConfig.brandName} !<br></p>
+<p>Pour accéder à votre session privée et bénéficier de tous nos services exclusifs, merci de suivre <a href="${ORIGIN}/login?token=${encodeURIComponent(
+				jwt
+			)}">ce lien</a>.<br></p>
+<p>Nous sommes ravis de vous avoir parmi nous et nous sommes impatients de partager avec vous notre passion.<br></p>
+<p>Si vous avez des questions ou des besoins particuliers, n'hésitez pas à nous contacter. Nous sommes là pour vous aider.<br></p>
+<p>Cordialement,<br>${runtimeConfig.brandName} team</p>`,
 			dest: session.email
 		});
 	}
