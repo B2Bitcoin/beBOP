@@ -22,6 +22,7 @@ describe('order', () => {
 				],
 				'point-of-sale',
 				{
+					locale: 'en',
 					user: {
 						sessionId: 'test-session-id'
 					},
@@ -56,6 +57,7 @@ describe('order', () => {
 				],
 				'point-of-sale',
 				{
+					locale: 'en',
 					user: {
 						sessionId: 'test-session-id'
 					},
@@ -73,6 +75,7 @@ describe('order', () => {
 				],
 				'point-of-sale',
 				{
+					locale: 'en',
 					user: {
 						sessionId: 'test-session-id'
 					},
@@ -111,6 +114,7 @@ describe('order', () => {
 				],
 				'point-of-sale',
 				{
+					locale: 'en',
 					user: {
 						sessionId: 'test-session-id'
 					},
@@ -144,6 +148,7 @@ describe('order', () => {
 			],
 			'point-of-sale',
 			{
+				locale: 'en',
 				user: {
 					sessionId: 'test-session-id'
 				},
@@ -161,6 +166,7 @@ describe('order', () => {
 			],
 			'point-of-sale',
 			{
+				locale: 'en',
 				user: {
 					sessionId: 'test-session-id'
 				},

@@ -485,6 +485,7 @@ const commands: Record<
 			}
 
 			await createOrder(items, paymentMethod, {
+				locale: 'en',
 				notifications: {
 					paymentStatus: {
 						npub: senderNpub
