@@ -121,7 +121,7 @@ async function maintainOrders() {
 									amount: checkout.amount,
 									currency: checkout.currency
 								});
-							} else if (checkout.status === 'FAILED') {
+							} else if (checkout.status === 'FAILED' || checkout.status === 'EXPIRED') {
 								order = await onOrderPaymentFailed(order, payment, 'expired');
 							}
 						} catch (err) {

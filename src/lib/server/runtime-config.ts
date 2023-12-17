@@ -37,7 +37,7 @@ const defaultConfig = {
 	isMaintenance: false,
 	includeOrderUrlInQRCode: false,
 	maintenanceIps: '',
-	brandName: 'My Space',
+	brandName: 'My beBOP',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	reserveStockInMinutes: 20,
