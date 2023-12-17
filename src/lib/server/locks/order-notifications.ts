@@ -12,7 +12,7 @@ import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
-import { refreshPromise } from '../runtime-config';
+import { runtimeConfig, refreshPromise } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
 import { building } from '$app/environment';
 import { rateLimit } from '../rateLimit';
