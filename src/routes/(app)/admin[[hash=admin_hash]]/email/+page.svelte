@@ -5,6 +5,8 @@
 	export let data;
 </script>
 
+<h1 class="text-3xl">Emails</h1>
+
 {#if form?.success}
 	<p class="alert-success">Email queued</p>
 {/if}

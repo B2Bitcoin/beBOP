@@ -66,6 +66,10 @@ export const adminLinks = [
 			{
 				href: '/admin/backup',
 				label: 'Backup'
+			},
+			{
+				href: '/admin/template',
+				label: 'Templates'
 			}
 		]
 	},
