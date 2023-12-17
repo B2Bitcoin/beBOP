@@ -516,9 +516,6 @@
 		},
 		"vatExcluded": "VAT excluded"
 	},
-	"sendNotification": {
-		"requestLink1": "You requested a link to access your Watchmakers United account. Please use the link below."
-	},
 	"subscription": {
 		"associated": {
 			"npub": "Associated to npub: {npub}"
