@@ -219,10 +219,10 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						htmlContentEn += `<p>Great news ! We received and validated your partial payment. Thanks for your trust in ${runtimeConfig.brandName}.</p><p>Your order will be process once fully paid. We will contact your to provide details regarding the future payment (means & schedule).</p>`;
 						htmlContentEn += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> (partially paid)</p>`;
 						htmlContentFR += `<p>Bonne nouvelle ! Nous avons bien reçu votre paiement partiel. Un grand merci pour votre confiance en ${runtimeConfig.brandName}.</p><p>Votre commande sera finalisée dès qu'entièrement payée. Nous vous contacterons pour vous fournir les détails à propos du reste du paiement (méthode de paiement et plannification).</p>`;
-						htmlContentFR += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> (paiement partiel)</p>`;
+						htmlContentFR += `<p>Commande <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> (paiement partiel)</p>`;
 					}
 					if (payment.status === 'paid' && isOrderFullyPaid(order)) {
-						htmlContentEn += `<p>Great news ! We received and validated your payment. Thanks for your trust in ${runtimeConfig.brandName}.</p><p>Upon receipt of your payment, we will contact you to provide details regarding the delivery of your purchase.</p><p>Your satisfaction is our greatest priority. Feel free to contact us about anything, for any specific request or any question.</p>`;
+						htmlContentEn += `<p>Great news ! We received and validated your payment. Thanks for your trust in ${runtimeConfig.brandName}.</p><p>We will contact you very soon to provide details regarding the delivery of your purchase.</p><p>Your satisfaction is our greatest priority. Feel free to contact us about anything, for any specific request or any question.</p>`;
 						htmlContentFR += `<p>Bonne nouvelle ! Nous avons bien reçu votre paiement. Un grand merci pour votre confiance en ${runtimeConfig.brandName}.</p><p>Nous vous contacterons prochainement pour vous informer de l'expédition de votre commande.</p><p>Votre satisfaction est notre priorité absolue. N'hésitez pas à nous contacter si vous avez des demandes spécifiques ou des questions.</p>`;
 					}
 					htmlContentEn += `<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
