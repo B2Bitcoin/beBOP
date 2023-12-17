@@ -198,21 +198,21 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							htmlContentEn += `<p>In order to pay, please send ${toBitcoins(
 								payment.price.amount,
 								payment.price.currency
-							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to the following address: ${
+							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to the following address ${
 								payment.address
 							}</p>`;
 							htmlContentFR += `<p>Pour régler, merci d'envoyer la somme de ${toBitcoins(
 								payment.price.amount,
 								payment.price.currency
-							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC à l'adresse suivante : ${
+							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC à l'adresse suivante ${
 								payment.address
 							}</p>`;
 						} else if (payment.method === 'lightning') {
-							htmlContentEn += `<p>Please pay this Lightning invoice by <a href="lightning:${payment.address}">clicking this link</a>.<br>Lightning payment address: ${payment.address}</p>`;
-							htmlContentFR += `<p>Merci de régler cette facture Lightning en <a href="lightning:${payment.address}"cliquant sur ce lien</a>.<br>Addresse de paiement Lightning : ${payment.address}</p>`;
+							htmlContentEn += `<p>Please pay this Lightning invoice by <a href="lightning:${payment.address}">clicking this link</a>.<br>Lightning payment address ${payment.address}</p>`;
+							htmlContentFR += `<p>Merci de régler cette facture Lightning en <a href="lightning:${payment.address}"cliquant sur ce lien</a>.<br>Addresse de paiement Lightning ${payment.address}</p>`;
 						} else if (payment.method === 'card') {
-							htmlContentEn += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
-							htmlContentFR += `<p>Merci de régler via ce lien : <a href="${payment.address}">${payment.address}</a></p>`;
+							htmlContentEn += `<p>Please pay using this link <a href="${payment.address}">${payment.address}</a></p>`;
+							htmlContentFR += `<p>Merci de régler via ce lien <a href="${payment.address}">${payment.address}</a></p>`;
 						}
 					}
 					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
