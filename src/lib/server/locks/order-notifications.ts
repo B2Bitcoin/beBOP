@@ -188,12 +188,12 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					let htmlContentEn = `<p>Dear customer,<br>I hope you're doing well !</p>`;
 					let htmlContentFR = `<p>Chère cliente, cher client,<br>Nous espérons que vous allez bien. !</p>`;
 					let htmlContent = ``;
-						
+
 					htmlContentEn += `<p>We're contacting you about your order #${order.number}, which current payment status being ${payment.status}.</p><p>You can retrieve your order informations <a href="${ORIGIN}/order/${order._id}">by following this link</a>.</p>`;
-					htmlContentFr += `<p>Nous vous contactons à propos de votre commande #${order.number}, actuellement au statut "${payment.status}".</p><p>Vous pouvez retrouver les informations à propos de votre commande <a href="${ORIGIN}/order/${order._id}">en suivant ce lien</a>.</p>`;
+					htmlContentFR += `<p>Nous vous contactons à propos de votre commande #${order.number}, actuellement au statut "${payment.status}".</p><p>Vous pouvez retrouver les informations à propos de votre commande <a href="${ORIGIN}/order/${order._id}">en suivant ce lien</a>.</p>`;
 					if (payment.status === 'pending') {
 						htmlContentEn += `<p>We have to thank you for your order, and we inform you that it was succesfully saved on our system.</p><p>We're now expecting your payment to finalise your purchase.</p><p>Once we'll receive your payment, we'll contact you back to give you details your products delivery.</p>`;
-						htmlContentFr += `<p>Nous vous remercions de votre commande, et vous informons qu'elle a bien été enregistrée dans notre système.</p><p>Nous attendons maintenant le règlement de votre paiement pour finaliser la transaction.</p><p>Dès réception de votre paiement, nous vous recontacterons pour vous informer des details pour la livraison de votre achat.</p>`;
+						htmlContentFR += `<p>Nous vous remercions de votre commande, et vous informons qu'elle a bien été enregistrée dans notre système.</p><p>Nous attendons maintenant le règlement de votre paiement pour finaliser la transaction.</p><p>Dès réception de votre paiement, nous vous recontacterons pour vous informer des details pour la livraison de votre achat.</p>`;
 						if (payment.method === 'bitcoin') {
 							htmlContentEn += `<p>Please send ${toBitcoins(
 								payment.price.amount,
@@ -201,7 +201,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
 								payment.address
 							}</p>`;
-							htmlContentFr += `<p>Veuillez envoyer ${toBitcoins(
+							htmlContentFR += `<p>Veuillez envoyer ${toBitcoins(
 								payment.price.amount,
 								payment.price.currency
 							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC à l'adresse ${
@@ -209,28 +209,27 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							}</p>`;
 						} else if (payment.method === 'lightning') {
 							htmlContentEn += `<p>Please pay this invoice: ${payment.address}</p>`;
-							htmlContentFr += `<p>Merci de régler cette facture : ${payment.address}</p>`;
+							htmlContentFR += `<p>Merci de régler cette facture : ${payment.address}</p>`;
 						} else if (payment.method === 'card') {
 							htmlContentEn += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
-							htmlContentFr += `<p>Merci de régler via ce lien : <a href="${payment.address}">${payment.address}</a></p>`;
+							htmlContentFR += `<p>Merci de régler via ce lien : <a href="${payment.address}">${payment.address}</a></p>`;
 						}
 					}
 					if (payment.status === 'paid' && isOrderFullyPaid(order)) {
 						htmlContentEn += `<p>Great news ! We received and validated your partial payment. Thanks for your trust in ${runtimeConfig.brandName}.</p><p>Your order will be process once fully paid. We will contact your to provide details regarding the future payment (means & schedule).</p>`;
-						htmlContentFr += `<p>Bonne nouvelle ! Nous avons bien reçu votre paiement partiel. Un grand merci pour votre confiance en ${runtimeConfig.brandName}.</p><p>Votre commande sera finalisée dès qu'entièrement payée. Nous vous contacterons pour vous fournir les détails à propos du reste du paiement (méthode de paiement et plannification).</p>`;
+						htmlContentFR += `<p>Bonne nouvelle ! Nous avons bien reçu votre paiement partiel. Un grand merci pour votre confiance en ${runtimeConfig.brandName}.</p><p>Votre commande sera finalisée dès qu'entièrement payée. Nous vous contacterons pour vous fournir les détails à propos du reste du paiement (méthode de paiement et plannification).</p>`;
 					}
 					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
 						htmlContentEn += `<p>Great news ! We received and validated your payment. Thanks for your trust in ${runtimeConfig.brandName}.</p><p>Upon receipt of your payment, we will contact you to provide details regarding the delivery of your purchase.</p><p>Your satisfaction is our greatest priority. Feel free to contact us about anything, for any specific request or any question.</p>`;
-						htmlContentFr += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> (partially paid)</p>`;
-						htmlContentFr += `<p>Bonne nouvelle ! Nous avons bien reçu votre paiement. Un grand merci pour votre confiance en ${runtimeConfig.brandName}.</p><p>Nous vous contacterons prochainement pour vous informer de l'expédition de votre commande.</p><p>Votre satisfaction est notre priorité absolue. N'hésitez pas à nous contacter si vous avez des demandes spécifiques ou des questions.</p>`;
-						htmlContentFr += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> (paiement partiel)</p>`;
-						
+						htmlContentFR += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> (partially paid)</p>`;
+						htmlContentFR += `<p>Bonne nouvelle ! Nous avons bien reçu votre paiement. Un grand merci pour votre confiance en ${runtimeConfig.brandName}.</p><p>Nous vous contacterons prochainement pour vous informer de l'expédition de votre commande.</p><p>Votre satisfaction est notre priorité absolue. N'hésitez pas à nous contacter si vous avez des demandes spécifiques ou des questions.</p>`;
+						htmlContentFR += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> (paiement partiel)</p>`;
 					}
 					htmlContentEn += `<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
-					htmlContentFr += `<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
+					htmlContentFR += `<p>Best regards,<br>${runtimeConfig.brandName} team</p>`;
 					htmlContent += htmlContentEn;
 					htmlContent += `<p></p><p>-----</p><p></p>`;
-					htmlContent += htmlContentFr;
+					htmlContent += htmlContentFR;
 					if (!(payment.method === 'point-of-sale' && payment.status !== 'paid')) {
 						await collections.emailNotifications.insertOne(
 							{
@@ -246,7 +245,6 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							}
 						);
 					}
-					
 				}
 
 				await collections.orders.updateOne(
