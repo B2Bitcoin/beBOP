@@ -165,7 +165,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						}
 					}
 					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
-						content += `Order #${order.number} is not fully paid yet`;
+						content += `\n\nOrder #${order.number} is not fully paid yet`;
 					}
 					if (!(payment.method === 'point-of-sale' && payment.status !== 'paid')) {
 						await collections.nostrNotifications.insertOne(
@@ -187,7 +187,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 				if (email) {
 					let htmlContentEn = `<p>Dear customer,<br>I hope you're doing well!</p>`;
 					let htmlContentFR = `<p>Chère cliente, cher client,<br>Nous espérons que vous allez bien !</p>`;
-					let htmlContent = `<img alt="Watchmakers United, by Luxogood" src="${ORIGIN}/picture/raw/logo-long-gris-pour-fond-blanc-png-eadyAw/format/256">`;
+					let htmlContent = ``;
 
 					htmlContentEn += `<p>We're contacting you about your order #${order.number}, which current payment status being ${payment.status}.</p><p>You can retrieve your order informations <a href="${ORIGIN}/order/${order._id}">by following this link</a>.</p>`;
 					htmlContentFR += `<p>Nous vous contactons à propos de votre commande #${order.number}, actuellement au statut "${payment.status}".</p><p>Vous pouvez retrouver les informations à propos de votre commande <a href="${ORIGIN}/order/${order._id}">en suivant ce lien</a>.</p>`;
