@@ -26,22 +26,6 @@ const watchQuery = [
 	{
 		$match: {
 			$or: [
-				// Not practical when there can be an arbitrary number of payments
-				// {
-				// 	$expr: {
-				// 		$not: {
-				// 			$not: [
-				// 				{
-				// 					$getField: {
-				// 						// TODO: check
-				// 						input: '$updateDescription.updatedFields',
-				// 						field: 'payments.0.status'
-				// 					}
-				// 				}
-				// 			]
-				// 		}
-				// 	}
-				// },
 				{
 					operationType: 'insert'
 				},
@@ -103,7 +87,7 @@ async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void>
 
 	if (change.operationType === 'update') {
 		const updatedFields = Object.keys(change.updateDescription.updatedFields ?? {});
-		if (!updatedFields.some((field) => /^payments\.\d+\.status$/.test(field))) {
+		if (!updatedFields.some((field) => field === 'payments' || field.startsWith('payments.'))) {
 			return;
 		}
 	}
