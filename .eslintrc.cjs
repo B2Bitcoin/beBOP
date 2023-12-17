@@ -9,7 +9,7 @@ module.exports = {
 	],
 	plugins: ['svelte', '@typescript-eslint'],
 	// All because of `parserOptions.project`
-	ignorePatterns: ['*.cjs', '*.js', 'playwrite.config.ts', 'scripts'],
+	ignorePatterns: ['*.cjs', '*.js', 'playwright.config.ts', 'scripts'],
 	overrides: [
 		{
 			files: ['*.svelte'],
