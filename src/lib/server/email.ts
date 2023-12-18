@@ -5,7 +5,8 @@ import {
 	SMTP_PASSWORD,
 	SMTP_PORT,
 	SMTP_USER,
-	SMTP_FROM
+	SMTP_FROM,
+	ORIGIN
 } from '$env/static/private';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { htmlToText } from 'html-to-text';
@@ -79,7 +80,16 @@ export async function queueEmail(
 		session?: ClientSession;
 	}
 ): Promise<void> {
-	const lowerVars = mapKeys(vars, (key) => key.toLowerCase());
+	const lowerVars = mapKeys(
+		{
+			...vars,
+			websiteLink: ORIGIN,
+			brandName: runtimeConfig.brandName,
+			iban: runtimeConfig.sellerIdentity?.bank?.iban,
+			bic: runtimeConfig.sellerIdentity?.bank?.bic
+		},
+		(key) => key.toLowerCase()
+	);
 	const template = runtimeConfig.emailTemplates[templateKey].default
 		? defaultConfig.emailTemplates[templateKey]
 		: runtimeConfig.emailTemplates[templateKey];

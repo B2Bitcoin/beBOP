@@ -18,8 +18,8 @@ const data: LocalesDictionary = {};
 
 let languagesLoaded = false;
 
-export function useI18n() {
-	const language = getContext<string>('language');
+export function useI18n(language?: string) {
+	language ||= getContext<string>('language');
 
 	locale.set(language);
 
