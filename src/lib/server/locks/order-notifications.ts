@@ -39,7 +39,7 @@ const watchQuery = [
 	}
 ];
 
-let changeStream: ChangeStream<Order>;
+let changeStream: ChangeStream<Order> | null = null;
 
 async function watch(opts?: { operationTime?: Timestamp }) {
 	try {
@@ -66,7 +66,8 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 		.once('error', async (err) => {
 			console.error('change stream error', err);
 			// In case it couldn't resume correctly, start from 1 hour ago
-			await changeStream.close().catch(console.error);
+			changeStream?.close().catch(console.error);
+			changeStream = null;
 
 			if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
 				watch({ operationTime: Timestamp.fromBits(0, getUnixTime(subHours(new Date(), 1))) });
@@ -84,7 +85,8 @@ lock.onAcquire = () => {
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
 	if (!lock.ownsLock) {
-		changeStream.close().catch(console.error);
+		changeStream?.close().catch(console.error);
+		changeStream = null;
 		return;
 	}
 	if (!('fullDocument' in change) || !change.fullDocument) {
