@@ -193,7 +193,7 @@
 					class="form-checkbox"
 					bind:checked={vatSingleCountry}
 				/>
-				Use VAT rate from seller's country (always true for digital goods)
+				Use VAT rate from seller's country (always true for orders that are 100% digital goods)
 			</label>
 			<label class="checkbox-label">
 				<input
