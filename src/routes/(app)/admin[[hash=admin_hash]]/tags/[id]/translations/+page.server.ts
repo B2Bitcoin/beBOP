@@ -17,9 +17,9 @@ export const actions = {
 		const parsed = z
 			.object({
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
-				...mapObject(omit(tagTranslatableSchema, ['ctaLinks', 'menuLinks']), (x) => x.optional()),
-				ctaLinks: tagTranslatableSchema.ctaLinks.optional(),
-				menuLinks: tagTranslatableSchema.menuLinks.optional()
+				...mapObject(omit(tagTranslatableSchema, ['cta', 'menu']), (x) => x.optional()),
+				cta: tagTranslatableSchema.cta.optional(),
+				menu: tagTranslatableSchema.menu.optional()
 			})
 			.parse(json);
 
