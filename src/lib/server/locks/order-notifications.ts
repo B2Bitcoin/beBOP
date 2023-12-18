@@ -14,7 +14,6 @@ import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
 import { refreshPromise, type EmailTemplateKey } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
-import { building } from '$app/environment';
 import { rateLimit } from '../rateLimit';
 import { isOrderFullyPaid } from '../orders';
 import { FRACTION_DIGITS_PER_CURRENCY } from '$lib/types/Currency';
@@ -79,12 +78,16 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 	return changeStream;
 }
 
-if (!building) {
-	watch();
-}
+lock.onAcquire = () => {
+	watch().catch(console.error);
+};
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
-	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
+	if (!lock.ownsLock) {
+		changeStream.close().catch(console.error);
+		return;
+	}
+	if (!('fullDocument' in change) || !change.fullDocument) {
 		return;
 	}
 
