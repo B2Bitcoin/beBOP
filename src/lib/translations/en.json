@@ -355,6 +355,9 @@
 		"poweredBy": "Powered by"
 	},
 	"identity": {
+		"cta": {
+			"update": "Update"
+		},
 		"personalInformation": "Personal Information"
 	},
 	"login": {

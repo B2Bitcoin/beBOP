@@ -355,6 +355,9 @@
 		"poweredBy": "Alimenté par"
 	},
 	"identity": {
+		"cta": {
+			"update": "Mettre à jour"
+		},
 		"personalInformation": "Information Personnelle"
 	},
 	"login": {

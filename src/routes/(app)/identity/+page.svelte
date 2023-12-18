@@ -135,7 +135,7 @@
 						{t('newsletter.allowPartnerContact')}
 					</label>
 				{/if}
-				<button type="submit" class="btn btn-black self-start">Update</button>
+				<button type="submit" class="btn btn-black self-start">{t('identity.cta.update')}</button>
 			</section>
 		</form>
 	</div>
