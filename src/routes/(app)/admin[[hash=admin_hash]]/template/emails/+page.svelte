@@ -15,6 +15,17 @@
 	});
 </script>
 
+<p>
+	<kbd class="kbd">{'{{websiteLink}}'}</kbd>, <kbd class="kbd">{'{{brandName}}'}</kbd>,
+	<kbd class="kbd">{'{{iban}}'}</kbd>
+	and <kbd class="kbd">{'{{bic}}'}</kbd> are always available in templates.
+</p>
+<p>
+	For orders, <kbd class="kbd">{'{{orderNumber}}'}</kbd>, <kbd class="kbd">{'{{orderLink}}'}</kbd>,
+	<kbd class="kbd">{'{{invoiceLink}}'}</kbd>, <kbd class="kbd">{'{{amount}}'}</kbd>,
+	<kbd class="kbd">{'{{currency}}'}</kbd>, <kbd class="kbd">{'{{paymentStatus}}'}</kbd>,
+	<kbd class="kbd">{'{{paymentLink}}'}</kbd>, <kbd class="kbd">{'{{qrcodeLink}}'}</kbd> are also available.
+</p>
 {#each zippedTemplates as template}
 	<form class="contents" method="post">
 		<h2 class="text-2xl">{template.key}</h2>

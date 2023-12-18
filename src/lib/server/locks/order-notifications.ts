@@ -12,13 +12,13 @@ import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
-import { refreshPromise, runtimeConfig, type EmailTemplateKey } from '../runtime-config';
+import { refreshPromise, type EmailTemplateKey } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
-import { building } from '$app/environment';
 import { rateLimit } from '../rateLimit';
 import { isOrderFullyPaid } from '../orders';
 import { FRACTION_DIGITS_PER_CURRENCY } from '$lib/types/Currency';
 import { queueEmail } from '../email';
+import { useI18n } from '$lib/i18n';
 
 const lock = new Lock('order-notifications');
 
@@ -39,7 +39,7 @@ const watchQuery = [
 	}
 ];
 
-let changeStream: ChangeStream<Order>;
+let changeStream: ChangeStream<Order> | null = null;
 
 async function watch(opts?: { operationTime?: Timestamp }) {
 	try {
@@ -66,7 +66,8 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 		.once('error', async (err) => {
 			console.error('change stream error', err);
 			// In case it couldn't resume correctly, start from 1 hour ago
-			await changeStream.close().catch(console.error);
+			changeStream?.close().catch(console.error);
+			changeStream = null;
 
 			if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
 				watch({ operationTime: Timestamp.fromBits(0, getUnixTime(subHours(new Date(), 1))) });
@@ -78,12 +79,17 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 	return changeStream;
 }
 
-if (!building) {
-	watch();
-}
+lock.onAcquire = () => {
+	watch().catch(console.error);
+};
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
-	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
+	if (!lock.ownsLock) {
+		changeStream?.close().catch(console.error);
+		changeStream = null;
+		return;
+	}
+	if (!('fullDocument' in change) || !change.fullDocument) {
 		return;
 	}
 
@@ -204,19 +210,22 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							}
 					}
 
+					const { t } = useI18n(order.locale || 'en');
+
 					if (templateKey) {
 						const vars = {
 							orderNumber: order.number.toLocaleString(order.locale || 'en'),
 							orderLink: `${ORIGIN}/order/${order._id}`,
-							paymentLink: `${ORIGIN}/order/${order._id}/pay/${payment._id}`,
+							paymentLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/pay`,
+							invoiceLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/receipt`,
+							qrcodeLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/qrcode`,
+							paymentStatus: t('order.paymentStatus.' + payment.status),
 							paymentAddress: payment.address,
 							amount: payment.price.amount.toLocaleString(order.locale || 'en', {
 								maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency],
 								minimumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency]
 							}),
-							currency: payment.price.currency,
-							iban: runtimeConfig.sellerIdentity?.bank?.iban,
-							bic: runtimeConfig.sellerIdentity?.bank?.bic
+							currency: payment.price.currency
 						};
 
 						await queueEmail(email, templateKey, vars, { session });
