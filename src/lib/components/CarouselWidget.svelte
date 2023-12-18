@@ -24,6 +24,19 @@
 			target={images[index].slide?.openNewTab ? '_blank' : '_self'}
 			let:Slide
 			let:index
+			on:click|preventDefault={() => {
+				// We need to prevent default here because otherwise the link will be opened twice
+				// We have custom handling for mobile devices, because the click event is absorbed by the gesture handler
+				console.log('a click');
+				const url = images[index].slide?.url;
+				if (url) {
+					if (images[index].slide?.openNewTab) {
+						window.open(url, '_blank');
+					} else {
+						window.location.href = url;
+					}
+				}
+			}}
 		>
 			<Slide image={images[index]} />
 		</a>
