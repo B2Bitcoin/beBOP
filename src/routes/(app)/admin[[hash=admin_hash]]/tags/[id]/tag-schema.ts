@@ -5,6 +5,6 @@ export const tagTranslatableSchema = {
 	shortContent: z.string().trim().max(1_000),
 	title: z.string(),
 	subtitle: z.string(),
-	ctaLinks: z.array(z.object({ href: z.string().trim(), label: z.string().trim() })).optional(),
-	menuLinks: z.array(z.object({ href: z.string().trim(), label: z.string().trim() })).optional()
+	cta: z.array(z.object({ href: z.string().trim(), label: z.string().trim() })).optional(),
+	menu: z.array(z.object({ href: z.string().trim(), label: z.string().trim() })).optional()
 };
