@@ -27,7 +27,6 @@
 			on:click|preventDefault={() => {
 				// We need to prevent default here because otherwise the link will be opened twice
 				// We have custom handling for mobile devices, because the click event is absorbed by the gesture handler
-				console.log('a click');
 				const url = images[index].slide?.url;
 				if (url) {
 					if (images[index].slide?.openNewTab) {
