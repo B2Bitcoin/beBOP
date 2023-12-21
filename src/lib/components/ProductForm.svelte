@@ -48,6 +48,7 @@
 		availableDate: undefined,
 		displayShortDescription: false,
 		free: false,
+		priceOnDemand: false
 		stock: undefined,
 		maxQuantityPerOrder: DEFAULT_MAX_QUANTITY_PER_ORDER,
 		actionSettings: defaultActionSettings,
@@ -286,7 +287,7 @@
 				type="checkbox"
 				bind:checked={product.priceondemand}
 				on:input={() => priceAmountElement?.setCustomValidity('')}
-				name="free"
+				name="priceOnDemand"
 			/>
 			This is a price-on-demand product (🔬experimental)
 		</label>
