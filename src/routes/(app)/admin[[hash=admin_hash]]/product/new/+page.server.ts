@@ -134,6 +134,7 @@ export const actions: Actions = {
 							currency: parsed.priceCurrency,
 							amount: priceAmount
 						},
+						priceondemand: parsed.priceondemand,
 						type: parsed.type,
 						availableDate: parsed.availableDate || undefined,
 						preorder: parsed.preorder,
