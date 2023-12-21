@@ -12,6 +12,7 @@ export const TEST_PRODUCT = {
 		amount: 100,
 		currency: 'EUR'
 	},
+	priceondemand: false,
 	shipping: false,
 	preorder: false,
 	free: false,
@@ -50,6 +51,7 @@ export const TEST_PRODUCT_UNLIMITED = {
 		amount: 100,
 		currency: 'EUR'
 	},
+	priceondemand: false,
 	shipping: false,
 	preorder: false,
 	free: false,
