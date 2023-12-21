@@ -48,7 +48,7 @@
 		availableDate: undefined,
 		displayShortDescription: false,
 		free: false,
-		priceOnDemand: false
+		priceOnDemand: false,
 		stock: undefined,
 		maxQuantityPerOrder: DEFAULT_MAX_QUANTITY_PER_ORDER,
 		actionSettings: defaultActionSettings,
