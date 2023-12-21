@@ -37,6 +37,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 	applyDeliveryFeesOnlyOnce?: boolean;
 	availableDate?: Date;
 	preorder: boolean;
+	priceondemand: boolean;
 	displayShortDescription: boolean;
 	deposit?: {
 		percentage: number;
