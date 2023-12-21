@@ -281,6 +281,16 @@
 			This is a free product
 		</label>
 		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={product.priceondemand}
+				on:input={() => priceAmountElement?.setCustomValidity('')}
+				name="free"
+			/>
+			This is a price-on-demand product (🔬experimental)
+		</label>
+		<label class="checkbox-label">
 			<input class="form-checkbox" type="checkbox" bind:checked={allowDeposit} />
 			Allow partial deposit
 		</label>
