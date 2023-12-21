@@ -229,7 +229,7 @@
 				class="flex flex-col gap-2 border-gray-300 md:border-l md:border-b md:rounded md:pl-4 md:pb-4 h-fit overflow-hidden"
 			>
 				<hr class="border-gray-300 md:hidden mt-4 pb-2" />
-				{if data.product.price.priceondemand}
+				{if data.product.priceondemand}
 					<div class="flex gap-2 md:flex-col md:items-start items-center justify-between">
 						<PriceTag
 							currency={data.product.price.currency}
