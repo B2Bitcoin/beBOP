@@ -229,52 +229,53 @@
 				class="flex flex-col gap-2 border-gray-300 md:border-l md:border-b md:rounded md:pl-4 md:pb-4 h-fit overflow-hidden"
 			>
 				<hr class="border-gray-300 md:hidden mt-4 pb-2" />
-				<div class="flex gap-2 md:flex-col md:items-start items-center justify-between">
-					<PriceTag
-						currency={data.product.price.currency}
-						class="text-2xl md:text-4xl truncate max-w-full"
-						short={false}
-						amount={data.product.price.amount}
-						main
-					/>
-					<PriceTag
-						currency={data.product.price.currency}
-						amount={data.product.price.amount}
-						secondary
-						class="text-xl"
-					/>
-					<span class="font-semibold">{t('product.vatExcluded')}</span>
-				</div>
-
-				{#if data.discount}
-					<hr class="border-gray-300" />
-					<h3 class="text-[22px]">
-						{t('product.discountBanner', {
-							discountPercentage: data.discount.percentage,
-							hours: hoursDifference
-						})}
-					</h3>
-					{#if 0}
-						<GoalProgress text="1h32min left" goal={600} progress={444} />
-					{/if}
-					{#if data.discount.percentage === 100}
+				{if data.product.price.priceondemand}
+					<div class="flex gap-2 md:flex-col md:items-start items-center justify-between">
+						<PriceTag
+							currency={data.product.price.currency}
+							class="text-2xl md:text-4xl truncate max-w-full"
+							short={false}
+							amount={data.product.price.amount}
+							main
+						/>
+						<PriceTag
+							currency={data.product.price.currency}
+							amount={data.product.price.amount}
+							secondary
+							class="text-xl"
+						/>
+						<span class="font-semibold">{t('product.vatExcluded')}</span>
+					</div>
+	
+					{#if data.discount}
 						<hr class="border-gray-300" />
-						<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
-							<IconInfo class="text-[#E4C315]" />
-							<div>
-								<h3 class="font-semibold">{t('product.freeWithTitle')}</h3>
-								<p>
-									{t('product.freeWithSub')}
-								</p>
-								<a href="/cabinet" class="text-[#E4C315] hover:underline"
-									>{t('product.seeInCabinet')}</a
-								>
+						<h3 class="text-[22px]">
+							{t('product.discountBanner', {
+								discountPercentage: data.discount.percentage,
+								hours: hoursDifference
+							})}
+						</h3>
+						{#if 0}
+							<GoalProgress text="1h32min left" goal={600} progress={444} />
+						{/if}
+						{#if data.discount.percentage === 100}
+							<hr class="border-gray-300" />
+							<div class="border border-[#F1DA63] bg-[#FFFBD5] p-2 rounded text-base flex gap-2">
+								<IconInfo class="text-[#E4C315]" />
+								<div>
+									<h3 class="font-semibold">{t('product.freeWithTitle')}</h3>
+									<p>
+										{t('product.freeWithSub')}
+									</p>
+									<a href="/cabinet" class="text-[#E4C315] hover:underline"
+										>{t('product.seeInCabinet')}</a
+									>
+								</div>
 							</div>
-						</div>
+						{/if}
 					{/if}
+					<hr class="border-gray-300 my-2" />
 				{/if}
-				<hr class="border-gray-300 my-2" />
-
 				{#if isPreorder && data.product.availableDate}
 					{#if data.product.customPreorderText}
 						<p>
