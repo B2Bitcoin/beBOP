@@ -707,7 +707,7 @@
 				{#if addDiscount}
 					<input
 						type="number"
-						class="form-input"
+						class="form-input text-black"
 						name="discountAmount"
 						placeholder="Ex: 10"
 						form="checkout"
@@ -720,7 +720,7 @@
 					<select
 						name="discountType"
 						bind:value={discountType}
-						class="form-input"
+						class="form-input text-black"
 						form="checkout"
 						required
 					>
@@ -734,7 +734,12 @@
 
 					<label class="form-label col-span-3">
 						{t('pos.discountJustification')}
-						<input type="text" class="form-input" form="checkout" name="discountJustification" />
+						<input
+							type="text"
+							class="form-input text-black"
+							form="checkout"
+							name="discountJustification"
+						/>
 					</label>
 				{/if}
 
