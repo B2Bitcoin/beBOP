@@ -417,7 +417,7 @@
 		</form>
 		<div class="w-full md:w-auto">
 			<article
-				class="rounded sticky top-4 md:-mr-2 md:-mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
+				class="rounded sticky top-4 md:-mr-2 md:-mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1 body-mainPlan"
 			>
 				<div class="flex justify-between">
 					<a href="/cart" class="body-hyperlink hover:underline"
