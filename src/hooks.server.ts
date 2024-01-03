@@ -38,6 +38,7 @@ import { refreshSessionCookie } from '$lib/server/cookies';
 import { renewSessionId } from '$lib/server/user';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { rateLimit } from '$lib/server/rateLimit';
+import { toIPv4Maybe } from '$lib/server/utils/toIPv4Maybe';
 
 const SSO_COOKIE = 'next-auth.session-token';
 
@@ -103,7 +104,7 @@ const addSecurityHeaders: Handle = async ({ event, resolve }) => {
 
 const handleGlobal: Handle = async ({ event, resolve }) => {
 	try {
-		event.locals.clientIp = event.getClientAddress();
+		event.locals.clientIp = toIPv4Maybe(event.getClientAddress());
 	} catch {}
 	event.locals.countryCode = event.locals.clientIp
 		? countryFromIp(event.locals.clientIp)
