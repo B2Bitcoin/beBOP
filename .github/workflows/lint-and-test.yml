@@ -37,7 +37,7 @@ jobs:
           then
             echo "no changed files to test"
           else
-            pnpm run prettier ${{ steps.changed-files.outputs.all_changed_files }};
+            pnpm run format ${{ steps.changed-files.outputs.all_changed_files }};
             git diff | head -n 100;
             git diff --name-only --exit-code
           fi
