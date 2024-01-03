@@ -31,6 +31,10 @@ jobs:
           cache: 'pnpm'
       - run: |
           pnpm install --frozen-lockfile
+      # Run this first to generate .svelte-kit/tsconfig.json
+      - name: 'Build'
+        run: |
+          pnpm run build
       - name: 'Checking prettier errors'
         run: |
           if [ -z "${{ steps.changed-files.outputs.all_changed_files }}" ]
@@ -54,9 +58,6 @@ jobs:
       - name: 'Checking type errors'
         run: |
           pnpm run check
-      - name: 'Build'
-        run: |
-          pnpm run build
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.10.0
         with:
