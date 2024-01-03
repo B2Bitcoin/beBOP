@@ -1,4 +1,4 @@
-import { ORIGIN } from '$env/static/private';
+import { ORIGIN, SMTP_USER } from '$env/static/private';
 import { collections } from '$lib/server/database';
 import type { User } from '$lib/types/User';
 import { ObjectId } from 'mongodb';
@@ -9,6 +9,7 @@ import { addMinutes } from 'date-fns';
 import { adminPrefix } from '$lib/server/admin';
 import { error } from '@sveltejs/kit';
 import { queueEmail } from './email';
+import type { Order } from '$lib/types/Order';
 
 export async function sendResetPasswordNotification(
 	user: User,
@@ -102,6 +103,20 @@ ${runtimeConfig.brandName} team`;
 			.sign(Buffer.from(runtimeConfig.authLinkJwtSigningKey));
 		await queueEmail(session.email, 'temporarySessionRequest', {
 			sessionLink: `${ORIGIN}/login?token=${encodeURIComponent(jwt)}`
+		});
+	}
+}
+
+export async function sendOrderStatusSeller(order: Order) {
+	const content = `You have a ${order.status} with number ${order.number}. Best regards, ${runtimeConfig.brandName} team`;
+	if (runtimeConfig.sellerIdentity?.contact.email) {
+		await collections.emailNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			subject: 'Order Status',
+			htmlContent: content,
+			dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
 		});
 	}
 }
