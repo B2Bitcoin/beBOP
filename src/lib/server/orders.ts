@@ -951,10 +951,6 @@ export async function createOrder(
 		}
 	});
 
-	let orderCreated = await collections.orders.findOne({ _id: orderId });
-	if (orderCreated) {
-		sendOrderStatusSeller(orderCreated);
-	}
 	return orderId;
 }
 
