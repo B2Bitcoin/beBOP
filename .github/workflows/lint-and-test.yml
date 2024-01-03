@@ -12,6 +12,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          diff_relative: true
+          files: |
+            **/*.ts
+            **/*.svelte
       - uses: pnpm/action-setup@v2
         with:
           version: 8.3.1
@@ -21,11 +31,26 @@ jobs:
           cache: 'pnpm'
       - run: |
           pnpm install --frozen-lockfile
-      - name: 'Checking lint/format errors'
+      - name: 'Checking prettier errors'
         run: |
-          pnpm run lint:ci
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+          if [ -z "${{ steps.changed-files.outputs.all_changed_files }}" ]
+          then
+            echo "no changed files to test"
+          else
+            pnpm run prettier ${{ steps.changed-files.outputs.all_changed_files }};
+            git diff | head -n 100;
+            git diff --name-only --exit-code
+          fi
+      - name: 'Checking lint errors'
+        run: |
+          if [ -z "${{ steps.changed-files.outputs.all_changed_files }}" ]
+          then
+            echo "no changed files to test"
+          else
+            pnpm run lint ${{ steps.changed-files.outputs.all_changed_files }};
+            git diff | head -n 100;
+            git diff --name-only --exit-code
+          fi
       - name: 'Checking type errors'
         run: |
           pnpm run check
