@@ -86,7 +86,7 @@ export async function queueEmail(
 	vars: Record<string, string | undefined>,
 	opts?: {
 		session?: ClientSession;
-		cc?: string;
+		bcc?: string;
 	}
 ): Promise<void> {
 	const lowerVars = mapKeys(
@@ -110,8 +110,8 @@ export async function queueEmail(
 			updatedAt: new Date(),
 			dest: to,
 			...(opts &&
-				opts.cc && {
-					cc: opts.cc
+				opts.bcc && {
+					bcc: opts.bcc
 				}),
 			subject: template.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
 				return lowerVars[p1.toLowerCase()] || match;
