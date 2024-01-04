@@ -38,7 +38,8 @@ async function handleEmailNotification(email: EmailNotification): Promise<void> 
 			await sendEmail({
 				to: email.dest,
 				subject: email.subject,
-				html: email.htmlContent
+				html: email.htmlContent,
+				...(email.cc && { cc: email.cc })
 			});
 		} catch (err) {
 			console.error('Send mail error', err);

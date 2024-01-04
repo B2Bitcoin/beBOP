@@ -34,7 +34,6 @@ import type { PaymentMethod } from './payment-methods';
 import { vatRate } from '$lib/types/Country';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { LanguageKey } from '$lib/translations';
-import { sendOrderStatusSeller } from './sendNotification';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -296,10 +295,6 @@ export async function onOrderPayment(
 			}
 			//#endregion
 
-			//#region challenges
-			sendOrderStatusSeller(order);
-			//endregion
-
 			// Update product stock in DB
 			for (const item of order.items.filter((item) => item.product.stock)) {
 				await collections.products.updateOne(
@@ -353,7 +348,6 @@ export async function onOrderPaymentFailed(
 			throw new Error('Failed to update order');
 		}
 		order = ret.value;
-		sendOrderStatusSeller(order);
 
 		return order;
 	});
@@ -951,10 +945,6 @@ export async function createOrder(
 		}
 	});
 
-	const orderCreated = await collections.orders.findOne({ _id: orderId });
-	if (orderCreated) {
-		sendOrderStatusSeller(orderCreated);
-	}
 	return orderId;
 }
 

@@ -12,7 +12,7 @@ import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
-import { refreshPromise, type EmailTemplateKey } from '../runtime-config';
+import { refreshPromise, type EmailTemplateKey, runtimeConfig } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
 import { rateLimit } from '../rateLimit';
 import { isOrderFullyPaid } from '../orders';
@@ -228,7 +228,12 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							currency: payment.price.currency
 						};
 
-						await queueEmail(email, templateKey, vars, { session });
+						await queueEmail(email, templateKey, vars, {
+							session,
+							...(!!runtimeConfig.sellerIdentity?.contact.email && {
+								cc: runtimeConfig.sellerIdentity?.contact.email
+							})
+						});
 					}
 				}
 
