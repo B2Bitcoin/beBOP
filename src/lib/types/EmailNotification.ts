@@ -16,7 +16,7 @@ export interface EmailNotification extends Timestamps {
 	};
 
 	dest: string;
-	cc?: string;
+	bcc?: string;
 
 	processedAt?: Date;
 }

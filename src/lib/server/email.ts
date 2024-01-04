@@ -59,7 +59,7 @@ export async function sendEmail(params: {
 	to: string;
 	subject: string;
 	html: string;
-	cc?: string;
+	bcc?: string;
 }) {
 	const transporter = await getTransporter();
 
@@ -72,8 +72,8 @@ export async function sendEmail(params: {
 		...(!!runtimeConfig.sellerIdentity?.contact.email && {
 			replyTo: runtimeConfig.sellerIdentity?.contact.email
 		}),
-		...(params.cc && {
-			cc: params.cc
+		...(params.bcc && {
+			cc: params.bcc
 		})
 	});
 

@@ -230,10 +230,10 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						await queueEmail(email, templateKey, vars, {
 							session,
 							...(!!runtimeConfig.sellerIdentity?.contact.email && {
-								cc: runtimeConfig.sellerIdentity?.contact.email
+								bcc: runtimeConfig.sellerIdentity?.contact.email
 							})
 						});
-					} else if (!!runtimeConfig.sellerIdentity?.contact.email) {
+					} else if (runtimeConfig.sellerIdentity?.contact.email) {
 						await queueEmail(runtimeConfig.sellerIdentity?.contact.email, templateKey, vars, {
 							session
 						});
