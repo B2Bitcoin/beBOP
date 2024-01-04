@@ -39,7 +39,7 @@ async function handleEmailNotification(email: EmailNotification): Promise<void> 
 				to: email.dest,
 				subject: email.subject,
 				html: email.htmlContent,
-				...(email.bcc && { cc: email.bcc })
+				...(email.bcc && { bcc: email.bcc })
 			});
 		} catch (err) {
 			console.error('Send mail error', err);
