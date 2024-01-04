@@ -173,69 +173,73 @@ async function handleOrderNotification(order: Order): Promise<void> {
 						}
 					);
 				}
+				// #region emailNotification
+				let templateKey: EmailTemplateKey | null = null;
+				switch (payment.status) {
+					case 'canceled':
+						templateKey = 'order.payment.canceled';
+						break;
+					case 'expired':
+						templateKey = 'order.payment.expired';
+						break;
+					case 'paid':
+						if (isOrderFullyPaid(order)) {
+							templateKey = 'order.paid';
+						} else {
+							templateKey = 'order.payment.paid';
+						}
+						break;
+					case 'pending':
+						switch (payment.method) {
+							case 'bitcoin':
+								templateKey = 'order.payment.pending.bitcoin';
+								break;
+							case 'lightning':
+								templateKey = 'order.payment.pending.lightning';
+								break;
+							case 'card':
+								templateKey = 'order.payment.pending.card';
+								break;
+							case 'bank-transfer':
+								templateKey = 'order.payment.pending.bank-transfer';
+								break;
+							case 'point-of-sale':
+								// no email
+								break;
+						}
+				}
 
-				if (email) {
-					let templateKey: EmailTemplateKey | null = null;
-					switch (payment.status) {
-						case 'canceled':
-							templateKey = 'order.payment.canceled';
-							break;
-						case 'expired':
-							templateKey = 'order.payment.expired';
-							break;
-						case 'paid':
-							if (isOrderFullyPaid(order)) {
-								templateKey = 'order.paid';
-							} else {
-								templateKey = 'order.payment.paid';
-							}
-							break;
-						case 'pending':
-							switch (payment.method) {
-								case 'bitcoin':
-									templateKey = 'order.payment.pending.bitcoin';
-									break;
-								case 'lightning':
-									templateKey = 'order.payment.pending.lightning';
-									break;
-								case 'card':
-									templateKey = 'order.payment.pending.card';
-									break;
-								case 'bank-transfer':
-									templateKey = 'order.payment.pending.bank-transfer';
-									break;
-								case 'point-of-sale':
-									// no email
-									break;
-							}
-					}
+				const { t } = useI18n(order.locale || 'en');
 
-					const { t } = useI18n(order.locale || 'en');
-
-					if (templateKey) {
-						const vars = {
-							orderNumber: order.number.toLocaleString(order.locale || 'en'),
-							orderLink: `${ORIGIN}/order/${order._id}`,
-							paymentLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/pay`,
-							invoiceLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/receipt`,
-							qrcodeLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/qrcode`,
-							paymentStatus: t('order.paymentStatus.' + payment.status),
-							paymentAddress: payment.address,
-							amount: payment.price.amount.toLocaleString(order.locale || 'en', {
-								maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency],
-								minimumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency]
-							}),
-							currency: payment.price.currency
-						};
-
+				if (templateKey) {
+					const vars = {
+						orderNumber: order.number.toLocaleString(order.locale || 'en'),
+						orderLink: `${ORIGIN}/order/${order._id}`,
+						paymentLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/pay`,
+						invoiceLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/receipt`,
+						qrcodeLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/qrcode`,
+						paymentStatus: t('order.paymentStatus.' + payment.status),
+						paymentAddress: payment.address,
+						amount: payment.price.amount.toLocaleString(order.locale || 'en', {
+							maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency],
+							minimumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency]
+						}),
+						currency: payment.price.currency
+					};
+					if (email) {
 						await queueEmail(email, templateKey, vars, {
 							session,
 							...(!!runtimeConfig.sellerIdentity?.contact.email && {
 								cc: runtimeConfig.sellerIdentity?.contact.email
 							})
 						});
+					} else if (!!runtimeConfig.sellerIdentity?.contact.email) {
+						await queueEmail(runtimeConfig.sellerIdentity?.contact.email, templateKey, vars, {
+							session
+						});
 					}
 				}
+				//#endregion
 
 				await collections.orders.updateOne(
 					{
