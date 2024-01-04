@@ -10,7 +10,7 @@ const ALL_PAYMENT_METHODS = [
 	'bitcoin',
 	'point-of-sale',
 	'card',
-	'bankTransfer'
+	'bank-transfer'
 ] as const;
 export type PaymentMethod = (typeof ALL_PAYMENT_METHODS)[number];
 
@@ -19,7 +19,7 @@ export const paymentMethods = (role?: string) =>
 		? ALL_PAYMENT_METHODS
 		: [
 				...(isSumupEnabled() /* && role !== POS_ROLE_ID */ ? (['card'] as const) : []),
-				...(runtimeConfig.sellerIdentity?.bank ? (['bankTransfer'] as const) : []),
+				...(runtimeConfig.sellerIdentity?.bank ? (['bank-transfer'] as const) : []),
 				...(isBitcoinConfigured ? (['bitcoin'] as const) : []),
 				...(isLightningConfigured ? (['lightning'] as const) : []),
 				...(runtimeConfig.enableCashSales && role === POS_ROLE_ID

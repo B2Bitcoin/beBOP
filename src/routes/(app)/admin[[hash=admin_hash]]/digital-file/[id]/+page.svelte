@@ -8,14 +8,14 @@
 	{#if data.digitalFile.productId}
 		<a
 			href="{data.adminPrefix}/product/{data.digitalFile.productId}"
-			class="underline text-link text-center"
+			class="underline body-hyperlink text-center"
 		>
 			Back to product
 		</a>
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.digitalFile.name} />
-	<a href={data.downloadLink} target="_blank" class="underline text-link text-center"
+	<a href={data.downloadLink} target="_blank" class="underline body-hyperlink text-center"
 		>Download file</a
 	>
 	<div class="flex gap-4 justify-between">

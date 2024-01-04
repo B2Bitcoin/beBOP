@@ -123,7 +123,7 @@
 	</label>
 	<p>
 		Create a fullScreen CMS page with "maintenance" slug, to show maintenance page, by following
-		<a href="/admin/cms/new" class="text-link underline">this link</a>.
+		<a href="/admin/cms/new" class="body-hyperlink underline">this link</a>.
 	</p>
 	<label class="checkbox-label">
 		<input
@@ -193,7 +193,7 @@
 					class="form-checkbox"
 					bind:checked={vatSingleCountry}
 				/>
-				Use VAT rate from seller's country
+				Use VAT rate from seller's country (always true for orders that are 100% digital goods)
 			</label>
 			<label class="checkbox-label">
 				<input

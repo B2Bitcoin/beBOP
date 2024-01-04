@@ -24,7 +24,7 @@
 					: order.status
 				: order.status}
 		<li class="text-lg flex flex-wrap items-center gap-1">
-			<a href="/order/{order._id}" class="text-link hover:underline">
+			<a href="/order/{order._id}" class="body-hyperlink hover:underline">
 				#{order.number.toLocaleString($locale)}
 			</a>
 			- {#each order.payments as payment}
@@ -63,13 +63,13 @@
 			{/if}
 			{#if adminPrefix}
 				{#each order.payments as payment}
-					{#if payment.status === 'pending' && (payment.method === 'point-of-sale' || payment.method === 'bankTransfer')}
+					{#if payment.status === 'pending' && (payment.method === 'point-of-sale' || payment.method === 'bank-transfer')}
 						<form
 							action="{adminPrefix}/order/{order._id}/payment/{payment.id}?/confirm"
 							method="post"
 							class="flex flex-row"
 						>
-							{#if payment.method === 'bankTransfer'}
+							{#if payment.method === 'bank-transfer'}
 								<input
 									class="form-input grow mx-2"
 									type="text"

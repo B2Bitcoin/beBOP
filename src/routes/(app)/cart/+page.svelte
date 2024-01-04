@@ -5,6 +5,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
 	import { computeDeliveryFees } from '$lib/types/Cart.js';
@@ -176,8 +177,11 @@
 			</div>
 			{#if deliveryFees}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
-					<div class="flex flex-col">
+					<div class="flex flex-wrap items-center gap-2">
 						<h3 class="text-base">{t('checkout.deliveryFees')}</h3>
+						<div title={t('checkout.deliveryFeesEstimationTooltip')} class="cursor-pointer">
+							<IconInfo />
+						</div>
 					</div>
 					<div class="flex flex-col items-end">
 						<PriceTag
@@ -255,7 +259,7 @@
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<h2 class="text-[32px]">{t('cart.remaining')}:</h2>
-						<p class="text-sm whitespace-pre-wrap">{t('cart.remainingHelpText')}</p>
+						<p class="text-sm whitespace-pre-line">{t('cart.remainingHelpText')}</p>
 					</div>
 					<div class="flex flex-col items-end">
 						<PriceTag

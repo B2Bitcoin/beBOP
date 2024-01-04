@@ -7,6 +7,7 @@ import type { SellerIdentity } from './SellerIdentity';
 import type { PaymentMethod } from '$lib/server/payment-methods';
 import type { ObjectId } from 'mongodb';
 import { sumCurrency } from '$lib/utils/sumCurrency';
+import type { LanguageKey } from '$lib/translations';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -94,6 +95,7 @@ export interface Order extends Timestamps {
 	_id: string;
 
 	number: number;
+	locale: LanguageKey;
 
 	items: Array<{
 		product: Product;
@@ -208,7 +210,7 @@ export function orderAmountWithNoPaymentsCreated(
 }
 
 export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
-	bankTransfer: '🏦',
+	'bank-transfer': '🏦',
 	card: '💳',
 	'point-of-sale': '🛒',
 	lightning: '⚡',

@@ -1,18 +1,20 @@
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { redirect } from '@sveltejs/kit';
-import { GET as GET_picture } from '../picture/raw/[id]/format/[width]/+server';
 import { collections } from '$lib/server/database';
 import DEFAULT_LOGO from '$lib/assets/bebop-light.svg';
-export const GET = async () => {
+import { getS3DownloadLink } from '$lib/server/s3';
+export const GET = async ({ url }) => {
 	if (runtimeConfig.logo) {
 		const picture = await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId });
 
 		if (picture) {
-			const width = picture.storage.formats[0].width;
+			if (url.searchParams.has('original')) {
+				throw redirect(302, await getS3DownloadLink(picture.storage.original.key));
+			}
 
-			//@ts-expect-error only params is needed
-			return await GET_picture({ params: { id: picture._id, width: String(width) } });
+			throw redirect(302, await getS3DownloadLink(picture.storage.formats[0].key));
 		}
 	}
+
 	throw redirect(302, DEFAULT_LOGO);
 };

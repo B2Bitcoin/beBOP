@@ -56,12 +56,14 @@
 			"submit": "Payer"
 		},
 		"deliveryFees": "Participation forfaitaire aux frais de port",
+		"deliveryFeesEstimationTooltip": "Ceci est une estimation, le montant définitif sera décidé par votre pays de livraison.",
 		"differentBillingAddress": "Mon adresse de livraison et mon adresse de facturation sont différentes",
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"notifications": {
 			"email": "E-mail",
+			"message": "Merci de remplir au moins une adresse de contact pour être notifié des évolutions de votre commande.",
 			"npub": "Adresse publique Nostr",
 			"title": "Notifications"
 		},
@@ -75,7 +77,7 @@
 			"title": "Paiement"
 		},
 		"paymentMethod": {
-			"bankTransfer": "Virement bancaire",
+			"bank-transfer": "Virement bancaire",
 			"bitcoin": "BTC on-chain",
 			"card": "Carte bancaire",
 			"cash": "Espèces",
@@ -353,24 +355,33 @@
 		"poweredBy": "Alimenté par"
 	},
 	"identity": {
+		"cta": {
+			"update": "Mettre à jour"
+		},
 		"personalInformation": "Information Personnelle"
 	},
 	"login": {
 		"authenticate": {
+			"ctaCancelLabel": "Retour",
+			"ctaLabel": "Valider",
+			"disclaimer": "Pour des raisons de securite, notre site ne stocke aucun mot de passe. Vous pouvez accéder à votre espace personnel et votre historique de commande via un lien de connexion privé, ou via un compte tiers (SSO).",
 			"inputLabel": "E-mail ou npub",
 			"title": "Ajouter une authentification"
 		},
 		"cta": {
 			"authenticateAs": "Authentifiez-vous en tant que {as}",
 			"clearSession": "Effacer la session",
+			"identity": "Identité",
 			"logout": "Se déconnecter",
+			"orders": "Commandes",
 			"signInWith": "Connectez-vous avec {provider}"
 		},
 		"password": {
 			"pwned": "Votre mot de passe n'est pas sécurisé, il a été trouvé dans {count} brèches de données. Veuillez réinitialiser votre mot de passe."
 		},
 		"session": {
-			"email": "E-mail : {e-mail}",
+			"email": "E-mail : {email}",
+			"identityPrefill": "Vous pouvez pré-remplir votre adresse postale et votre adresse de contact. En cas de commande, ces informations seront pré-remplies. Si vous décidez de créer un compte par la suite, ces informations seront sauvegardées pour de futurs achats.",
 			"npub": "Npub : {npub}",
 			"title": "Session",
 			"userId": "ID utilisateur : {userId}"
@@ -411,8 +422,9 @@
 		},
 		"paymentAddress": "Adresse de paiement ",
 		"paymentAmount": "Montant de la transaction (hors frais)",
+		"paymentBic": "BIC",
 		"paymentIban": "IBAN de paiement",
-		"paymentLink": "Lien de paiement",
+		"paymentLink": "Cliquez pour payer par carte avec",
 		"paymentPaidAt": "Paiement effectué le {date}",
 		"paymentStatus": {
 			"canceled": "annulé",
@@ -424,7 +436,7 @@
 			"partiallyPaid": "partiellement payé",
 			"pending": "en attente"
 		},
-		"paymentStatusNpub": "Adresse publique NostR pour le statut de paiement",
+		"paymentStatusNpub": "Adresse publique Nostr pour le statut de paiement",
 		"receipt": {
 			"alreadyPaidAmount": "Montant déjà payé",
 			"bankInfo": "Coordonnées bancaires",
@@ -526,5 +538,8 @@
 		"status": {
 			"expired": "expiré"
 		}
+	},
+	"widget": {
+		"specification": "Caractéristiques techniques"
 	}
 }

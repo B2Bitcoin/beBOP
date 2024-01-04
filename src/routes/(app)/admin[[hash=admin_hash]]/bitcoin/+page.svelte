@@ -121,10 +121,10 @@
 				{#if data.currentWallet !== wallet}
 					<form action="?/setCurrentWallet" method="post">
 						<input type="hidden" value={wallet} name="wallet" />
-						<button type="submit" class="text-link underline"> select </button>
+						<button type="submit" class="body-hyperlink underline"> select </button>
 					</form>
 				{/if}
-				<button on:click|preventDefault={() => dump(wallet)} class="text-link underline">
+				<button on:click|preventDefault={() => dump(wallet)} class="body-hyperlink underline">
 					dump
 				</button>
 			</li>
@@ -158,7 +158,7 @@
 					convertedTo={data.currencies.priceReference}
 				/>){/if} / Txid:
 			<a
-				class="underline text-link break-all"
+				class="underline body-hyperlink break-all"
 				href="https://www.blockchain.com/en/explorer/transactions/{data.blockchainInfo.chain ===
 				'test'
 					? 'btc-testnet'
@@ -167,7 +167,7 @@
 			{#if transaction.label.startsWith('order:') && orderById[transaction.label.slice('order:'.length)]}
 				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)].createdAt}
 				/
-				<a class="underline text-link" href="/order/{transaction.label.slice('order:'.length)}"
+				<a class="underline body-hyperlink" href="/order/{transaction.label.slice('order:'.length)}"
 					>Order</a
 				>
 				created

@@ -5,11 +5,15 @@ import {
 	SMTP_PASSWORD,
 	SMTP_PORT,
 	SMTP_USER,
-	SMTP_FROM
+	SMTP_FROM,
+	ORIGIN
 } from '$env/static/private';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { htmlToText } from 'html-to-text';
-import { runtimeConfig } from './runtime-config';
+import { defaultConfig, runtimeConfig, type EmailTemplateKey } from './runtime-config';
+import { collections } from './database';
+import { ClientSession, ObjectId } from 'mongodb';
+import { mapKeys } from '$lib/utils/mapKeys';
 
 const fakeEmail = SMTP_FAKE === 'true' || SMTP_FAKE === '1';
 export const emailsEnabled = !!(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASSWORD) || fakeEmail;
@@ -49,12 +53,12 @@ async function getTransporter() {
 }
 
 /**
- * Do not call this function directly, instead insert the email in `collections.emailNotifications` and let the worker handle it.
+ * Do not call this function directly, instead call queueEmail.
  */
 export async function sendEmail(params: { to: string; subject: string; html: string }) {
 	const transporter = await getTransporter();
 
-	return transporter.sendMail({
+	const res = await transporter.sendMail({
 		from: SMTP_FROM || SMTP_USER,
 		to: params.to,
 		subject: params.subject,
@@ -64,4 +68,47 @@ export async function sendEmail(params: { to: string; subject: string; html: str
 			replyTo: runtimeConfig.sellerIdentity?.contact.email
 		})
 	});
+
+	console.log('Email sent', res);
+}
+
+export async function queueEmail(
+	to: string,
+	templateKey: EmailTemplateKey,
+	vars: Record<string, string | undefined>,
+	opts?: {
+		session?: ClientSession;
+	}
+): Promise<void> {
+	const lowerVars = mapKeys(
+		{
+			...vars,
+			websiteLink: ORIGIN,
+			brandName: runtimeConfig.brandName,
+			iban: runtimeConfig.sellerIdentity?.bank?.iban,
+			bic: runtimeConfig.sellerIdentity?.bank?.bic
+		},
+		(key) => key.toLowerCase()
+	);
+	const template = runtimeConfig.emailTemplates[templateKey].default
+		? defaultConfig.emailTemplates[templateKey]
+		: runtimeConfig.emailTemplates[templateKey];
+
+	await collections.emailNotifications.insertOne(
+		{
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			dest: to,
+			subject: template.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
+				return lowerVars[p1.toLowerCase()] || match;
+			}),
+			htmlContent: template.html.replace(/{{([^}]+)}}/g, (match, p1) => {
+				return lowerVars[p1.toLowerCase()] || match;
+			})
+		},
+		{
+			session: opts?.session
+		}
+	);
 }

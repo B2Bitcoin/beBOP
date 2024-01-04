@@ -45,7 +45,8 @@ export async function load({ parent, locals }) {
 		},
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
-		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
+		vatExempted: runtimeConfig.vatExempted
 	};
 }
 
@@ -265,6 +266,7 @@ export const actions = {
 			})),
 			paymentMethod,
 			{
+				locale: locals.language,
 				user: {
 					sessionId: locals.sessionId,
 					userId: locals.user?._id,

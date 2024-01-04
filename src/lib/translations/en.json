@@ -56,13 +56,15 @@
 			"submit": "Proceed"
 		},
 		"deliveryFees": "Delivery fees",
+		"deliveryFeesEstimationTooltip": "This is an estimation, definitive fees will be processed on delivery country selection.",
 		"differentBillingAddress": "My shipping address and my billing address are different",
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
-		"invalidNpub": "Invalid NostR public address",
+		"invalidNpub": "Invalid Nostr public address",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
 		"notifications": {
 			"email": "Email",
-			"npub": "NostR public address",
+			"message": "Please fill at least one contact address to be notified about your order news.",
+			"npub": "Nostr public address",
 			"title": "Feed & Notifications"
 		},
 		"numProducts": {
@@ -75,7 +77,7 @@
 			"title": "Payment"
 		},
 		"paymentMethod": {
-			"bankTransfer": "Bank transfer",
+			"bank-transfer": "Bank transfer",
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",
@@ -353,17 +355,25 @@
 		"poweredBy": "Powered by"
 	},
 	"identity": {
+		"cta": {
+			"update": "Update"
+		},
 		"personalInformation": "Personal Information"
 	},
 	"login": {
 		"authenticate": {
+			"ctaCancelLabel": "Back",
+			"ctaLabel": "Confirm",
+			"disclaimer": "For security purpose, our wbesite know no password. You can access to your personal space and your order history through a connexion link, or through a 3rd party account (SSO).",
 			"inputLabel": "Email or npub",
 			"title": "Add authentication"
 		},
 		"cta": {
 			"authenticateAs": "Authenticate as {as}",
 			"clearSession": "Clear session",
+			"identity": "Identity",
 			"logout": "Log out",
+			"orders": "Orders",
 			"signInWith": "Sign In With {provider}"
 		},
 		"password": {
@@ -371,6 +381,7 @@
 		},
 		"session": {
 			"email": "Email: {email}",
+			"identityPrefill": "You can pre-fill your postal address and your contact address. If you make an order, these informations will be pre-filled. If you decide to create an account later, these informations will be saved for future orders.",
 			"npub": "Npub: {npub}",
 			"title": "Session",
 			"userId": "UserId: {userId}"
@@ -411,8 +422,9 @@
 		},
 		"paymentAddress": "Payment address",
 		"paymentAmount": "Payment amount",
+		"paymentBic": "BIC",
 		"paymentIban": "IBAN to send the wire transfer to",
-		"paymentLink": "Payment link",
+		"paymentLink": "Click here to pay by card with",
 		"paymentPaidAt": "Payment done on {date}",
 		"paymentStatus": {
 			"canceled": "canceled",
@@ -424,7 +436,7 @@
 			"partiallyPaid": "partially paid",
 			"pending": "pending"
 		},
-		"paymentStatusNpub": "NostR public address for payment status",
+		"paymentStatusNpub": "Nostr public address for payment status",
 		"receipt": {
 			"alreadyPaidAmount": "Amount previously paid",
 			"bankInfo": "Bank details",
@@ -526,5 +538,8 @@
 		"status": {
 			"expired": "expired"
 		}
+	},
+	"widget": {
+		"specification": "Specifications"
 	}
 }

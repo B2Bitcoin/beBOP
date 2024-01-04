@@ -10,11 +10,13 @@ const processId = new ObjectId();
 export class Lock {
 	id: string;
 	ownsLock = false;
+	instanceId = new ObjectId();
 
 	onAcquire?: () => void;
 
 	constructor(id: string) {
 		this.id = id;
+		this.instanceId = new ObjectId();
 
 		this.maintain();
 	}
@@ -34,7 +36,8 @@ export class Lock {
 						_id: this.id,
 						createdAt: new Date(),
 						updatedAt: new Date(),
-						ownerId: processId
+						ownerId: processId,
+						instanceId: this.instanceId
 					};
 
 					await collections.locks.insertOne(lock);
@@ -46,11 +49,16 @@ export class Lock {
 					const res = await collections.locks.updateOne(
 						{
 							_id: this.id,
-							ownerId: processId
+							ownerId: processId,
+							// In dev mode, acquires older locks.
+							instanceId: {
+								$lte: this.instanceId
+							}
 						},
 						{
 							$set: {
-								updatedAt: new Date()
+								updatedAt: new Date(),
+								instanceId: this.instanceId
 							}
 						}
 					);

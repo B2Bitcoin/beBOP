@@ -11,6 +11,7 @@
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
+	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
 
 	let currentDate = new Date();
 	export let data;
@@ -90,18 +91,23 @@
 								{#if payment.status !== 'paid'}
 									<li>
 										{#if payment.method === 'card'}
-											{t('order.paymentLink')}:
-											<a
-												href={trimOrigin(payment.address ?? '')}
-												class="body-hyperlink underline break-all break-words"
-											>
-												{$page.url.origin}{trimOrigin(payment.address ?? '')}
+											<a href={trimOrigin(payment.address ?? '')} class="body-hyperlink">
+												<span>{t('order.paymentLink')}</span>
+												<IconSumupWide class="h-12" />
 											</a>
-										{:else if payment.method === 'bankTransfer'}
-											{t('order.paymentIban')}:
-											<code class="break-words body-secondaryText break-all"
-												>{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}</code
-											>
+										{:else if payment.method === 'bank-transfer'}
+											<p>
+												{t('order.paymentIban')}:
+												<code class="break-words body-secondaryText break-all">
+													{data.sellerIdentity?.bank?.iban.replace(/.{4}(?=.)/g, '$& ')}
+												</code>
+											</p>
+											<p>
+												{t('order.paymentBic')}:
+												<code class="break-words body-secondaryText break-all">
+													{data.sellerIdentity?.bank?.bic}
+												</code>
+											</p>
 										{:else}
 											{t('order.paymentAddress')}:
 											<code class="break-words body-secondaryText break-all">{payment.address}</code
@@ -154,7 +160,7 @@
 									{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
 								{/if}
 
-								{#if payment.method === 'bankTransfer'}
+								{#if payment.method === 'bank-transfer'}
 									{#if data.sellerIdentity?.contact.email}
 										<a
 											href="mailto:{data.sellerIdentity.contact.email}"
@@ -166,7 +172,7 @@
 								{/if}
 							{/if}
 						{/if}
-						{#if (payment.method === 'point-of-sale' || payment.method === 'bankTransfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
+						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
 							<div class="flex flex-wrap gap-2">
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
@@ -174,7 +180,7 @@
 									method="post"
 									class="contents"
 								>
-									{#if payment.method === 'bankTransfer'}
+									{#if payment.method === 'bank-transfer'}
 										<input
 											class="form-input w-auto"
 											type="text"
@@ -244,7 +250,7 @@
 			{#if data.order.shippingAddress}
 				<div>
 					{t('order.shippingAddress.title')}:
-					<p class="body-secondaryText whitespace-pre-wrap">
+					<p class="body-secondaryText whitespace-pre-line">
 						{textAddress(data.order.shippingAddress)}
 					</p>
 				</div>

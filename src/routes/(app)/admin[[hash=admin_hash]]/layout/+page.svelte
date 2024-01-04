@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product.js';
+
 	export let data;
 </script>
-
-<h1 class="text-3xl">Layout</h1>
 
 <form method="post" class="flex flex-col gap-4">
 	<label class="checkbox-label">
@@ -12,7 +12,7 @@
 			class="form-checkbox"
 			checked={data.usersDarkDefaultTheme}
 		/>
-		Use dark theme as default theme for users
+		Use Dark mode by default for users
 	</label>
 	<label class="checkbox-label">
 		<input
@@ -21,20 +21,39 @@
 			class="form-checkbox"
 			checked={data.employeesDarkefaulTheme}
 		/>
-		Use dark theme as default theme for employees
+		Use Dark mode by default for employees
 	</label>
 	<h2 class="text-2xl">Top bar</h2>
 
 	<label class="form-label">
 		Brand name
-		<input type="text" name="brandName" class="form-input max-w-[25rem]" value={data.brandName} />
+		<input type="text" name="brandName" class="form-input" value={data.brandName} />
 	</label>
 
 	<p>
-		To change the logo, go to <a href="{data.adminPrefix}/picture" class="text-link hover:underline"
-			>pictures</a
+		To change the logo, go to <a
+			href="{data.adminPrefix}/picture"
+			class="body-hyperlink hover:underline">pictures</a
 		>, add a picture, and set it as logo
 	</p>
+
+	<label class="form-label">
+		Website title
+		<input type="text" name="websiteTitle" class="form-input" value={data.websiteTitle} />
+	</label>
+
+	<label class="form-label">
+		Website description
+		<textarea
+			name="websiteShortDescription"
+			cols="30"
+			rows="2"
+			placeholder="Shown in social media previews"
+			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+			class="form-input block w-full"
+			value={data.websiteShortDescription}
+		/>
+	</label>
 
 	<h3 class="text-xl">Links</h3>
 
@@ -99,6 +118,44 @@
 			<label class="form-label">
 				Url
 				<input type="text" name="footerLinks[{i}].href" class="form-input" value={link.href} />
+			</label>
+		</div>
+	{/each}
+
+	<h2 class="text-2xl">Social network icons</h2>
+
+	<h3 class="text-xl">Links</h3>
+
+	{#each [...data.links.socialNetworkIcons, { name: '', svg: '', href: '' }] as icon, i}
+		<div class="flex gap-4">
+			<label class="form-label">
+				Name
+				<input
+					type="text"
+					name="socialNetworkIcons[{i}].name"
+					class="form-input"
+					value={icon.name}
+				/>
+			</label>
+			<label class="form-label">
+				SVG
+				<textarea
+					name="socialNetworkIcons[{i}].svg"
+					cols="30"
+					rows="5"
+					maxlength="10000"
+					class="form-input"
+					value={icon.svg}
+				/>
+			</label>
+			<label class="form-label">
+				Url
+				<input
+					type="text"
+					name="socialNetworkIcons[{i}].href"
+					class="form-input"
+					value={icon.href}
+				/>
 			</label>
 		</div>
 	{/each}

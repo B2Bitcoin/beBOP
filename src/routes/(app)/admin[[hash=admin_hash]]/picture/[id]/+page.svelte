@@ -10,10 +10,12 @@
 	{#if data.picture.productId}
 		<a
 			href="{data.adminPrefix}/product/{data.picture.productId}"
-			class="underline text-link text-center">Back to product</a
+			class="underline body-hyperlink text-center">Back to product</a
 		>
 	{:else}
-		<a href="{data.adminPrefix}/picture" class="underline text-link text-center">Back to list</a>
+		<a href="{data.adminPrefix}/picture" class="underline body-hyperlink text-center"
+			>Back to list</a
+		>
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.picture.name} />
@@ -52,6 +54,21 @@
 					formaction="?/setAsLogo"
 					class="btn btn-gray"
 					on:click={() => (darkPicture = 'dark')}
+				/>
+			{/if}
+			{#if data.footerLogoId === data.picture._id}
+				<input
+					type="submit"
+					value="Remove from footer logo"
+					formaction="?/removeFooterLogo"
+					class="btn btn-gray"
+				/>
+			{:else}
+				<input
+					type="submit"
+					value="Set as footer logo"
+					formaction="?/setAsFooterLogo"
+					class="btn btn-gray"
 				/>
 			{/if}
 		{/if}

@@ -140,7 +140,7 @@
 	{/if}
 
 	<div class="flex flex-row my-12">
-		<div class="w-14 min-w-[48px] py-12 hidden md:block">
+		<div class="w-14 min-w-[48px] py-14 hidden md:block">
 			{#if data.pictures.length > 1}
 				{#each data.pictures as picture, i}
 					<a
@@ -163,7 +163,7 @@
 				<!-- add product name -->
 				<h2 class="text-4xl body-title">{data.product.name}</h2>
 				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
-				<div class="aspect-video w-full overflow-hidden">
+				<div class="aspect-video w-full overflow-hidden px-4">
 					<Picture
 						picture={currentPicture}
 						class="mx-auto rounded h-full object-contain"
@@ -414,7 +414,7 @@
 									disabled={loading}
 									class="btn body-cta body-mainCTA"
 								>
-									{verb}
+									{t(`product.cta.${verb}`)}
 								</button>
 							{/if}
 						{:else}

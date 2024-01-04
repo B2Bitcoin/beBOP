@@ -81,7 +81,10 @@ export const actions = {
 				runtimeConfig[key] = runtimeConfigUpdates[key] as never;
 				await collections.runtimeConfig.updateOne(
 					{ _id: key },
-					{ $set: { data: runtimeConfigUpdates[key], updatedAt: new Date() } },
+					{
+						$set: { data: runtimeConfigUpdates[key], updatedAt: new Date() },
+						$setOnInsert: { createdAt: new Date() }
+					},
 					{ upsert: true }
 				);
 			}

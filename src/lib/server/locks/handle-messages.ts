@@ -40,7 +40,7 @@ function watch() {
 	);
 	changeStream.on('change', (ev) => handleChanges(ev).catch(console.error));
 	changeStream.on('error', (err) => {
-		console.error(err);
+		console.error('handle-messages', err);
 		changeStream.close().catch(console.error);
 		watch();
 	});
@@ -485,6 +485,7 @@ const commands: Record<
 			}
 
 			await createOrder(items, paymentMethod, {
+				locale: 'en',
 				notifications: {
 					paymentStatus: {
 						npub: senderNpub

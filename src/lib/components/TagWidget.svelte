@@ -9,6 +9,8 @@
 	import TagWidgetVariation4 from './TagWidget/TagWidgetVariation4.svelte';
 	import TagWidgetVariation5 from './TagWidget/TagWidgetVariation5.svelte';
 	import TagWidgetVariation6 from './TagWidget/TagWidgetVariation6.svelte';
+	import TagWidgetVariation1CtAless from './TagWidget/TagWidgetVariation1CTAless.svelte';
+	import TagWidgetVariation4Reverse from './TagWidget/TagWidgetVariation4Reverse.svelte';
 
 	let className = '';
 	export { className as class };
@@ -24,6 +26,10 @@
 			component: TagWidgetVariation1,
 			pictureType: 'full'
 		},
+		'var-1-noCTA': {
+			component: TagWidgetVariation1CtAless,
+			pictureType: 'full'
+		},
 		'var-2': {
 			component: TagWidgetVariation2,
 			pictureType: 'wide'
@@ -34,6 +40,10 @@
 		},
 		'var-4': {
 			component: TagWidgetVariation4,
+			pictureType: 'avatar'
+		},
+		'var-4-reverse': {
+			component: TagWidgetVariation4Reverse,
 			pictureType: 'avatar'
 		},
 		'var-5': {

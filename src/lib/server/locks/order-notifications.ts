@@ -12,11 +12,13 @@ import { ORIGIN } from '$env/static/private';
 import { Kind } from 'nostr-tools';
 import { toBitcoins } from '$lib/utils/toBitcoins';
 import { getUnixTime, subHours } from 'date-fns';
-import { refreshPromise } from '../runtime-config';
+import { refreshPromise, type EmailTemplateKey } from '../runtime-config';
 import { refreshAvailableStockInDb } from '../product';
-import { building } from '$app/environment';
 import { rateLimit } from '../rateLimit';
 import { isOrderFullyPaid } from '../orders';
+import { FRACTION_DIGITS_PER_CURRENCY } from '$lib/types/Currency';
+import { queueEmail } from '../email';
+import { useI18n } from '$lib/i18n';
 
 const lock = new Lock('order-notifications');
 
@@ -26,22 +28,6 @@ const watchQuery = [
 	{
 		$match: {
 			$or: [
-				// Not practical when there can be an arbitrary number of payments
-				// {
-				// 	$expr: {
-				// 		$not: {
-				// 			$not: [
-				// 				{
-				// 					$getField: {
-				// 						// TODO: check
-				// 						input: '$updateDescription.updatedFields',
-				// 						field: 'payments.0.status'
-				// 					}
-				// 				}
-				// 			]
-				// 		}
-				// 	}
-				// },
 				{
 					operationType: 'insert'
 				},
@@ -53,7 +39,7 @@ const watchQuery = [
 	}
 ];
 
-let changeStream: ChangeStream<Order>;
+let changeStream: ChangeStream<Order> | null = null;
 
 async function watch(opts?: { operationTime?: Timestamp }) {
 	try {
@@ -80,7 +66,8 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 		.once('error', async (err) => {
 			console.error('change stream error', err);
 			// In case it couldn't resume correctly, start from 1 hour ago
-			await changeStream.close().catch(console.error);
+			changeStream?.close().catch(console.error);
+			changeStream = null;
 
 			if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
 				watch({ operationTime: Timestamp.fromBits(0, getUnixTime(subHours(new Date(), 1))) });
@@ -92,18 +79,23 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 	return changeStream;
 }
 
-if (!building) {
-	watch();
-}
+lock.onAcquire = () => {
+	watch().catch(console.error);
+};
 
 async function handleChanges(change: ChangeStreamDocument<Order>): Promise<void> {
-	if (!lock.ownsLock || !('fullDocument' in change) || !change.fullDocument) {
+	if (!lock.ownsLock) {
+		changeStream?.close().catch(console.error);
+		changeStream = null;
+		return;
+	}
+	if (!('fullDocument' in change) || !change.fullDocument) {
 		return;
 	}
 
 	if (change.operationType === 'update') {
 		const updatedFields = Object.keys(change.updateDescription.updatedFields ?? {});
-		if (!updatedFields.some((field) => /^payments\.\d+\.status$/.test(field))) {
+		if (!updatedFields.some((field) => field === 'payments' || field.startsWith('payments.'))) {
 			return;
 		}
 	}
@@ -167,57 +159,76 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
 						content += `Order #${order.number} is not fully paid yet`;
 					}
-					if (!(payment.method === 'point-of-sale' && payment.status !== 'paid')) {
-						await collections.nostrNotifications.insertOne(
-							{
-								_id: new ObjectId(),
-								createdAt: new Date(),
-								kind: Kind.EncryptedDirectMessage,
-								updatedAt: new Date(),
-								content,
-								dest: npub
-							},
-							{
-								session
-							}
-						);
-					}
+					await collections.nostrNotifications.insertOne(
+						{
+							_id: new ObjectId(),
+							createdAt: new Date(),
+							kind: Kind.EncryptedDirectMessage,
+							updatedAt: new Date(),
+							content,
+							dest: npub
+						},
+						{
+							session
+						}
+					);
 				}
 
 				if (email) {
-					let htmlContent = `<p>Payment for order #${order.number} is ${payment.status}, see <a href="${ORIGIN}/order/${order._id}">${ORIGIN}/order/${order._id}</a></p>`;
-
-					if (payment.status === 'pending') {
-						if (payment.method === 'bitcoin') {
-							htmlContent += `<p>Please send ${toBitcoins(
-								payment.price.amount,
-								payment.price.currency
-							).toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC to ${
-								payment.address
-							}</p>`;
-						} else if (payment.method === 'lightning') {
-							htmlContent += `<p>Please pay this invoice: ${payment.address}</p>`;
-						} else if (payment.method === 'card') {
-							htmlContent += `<p>Please pay using this link: <a href="${payment.address}">${payment.address}</a></p>`;
-						}
-					}
-					if (payment.status === 'paid' && !isOrderFullyPaid(order)) {
-						htmlContent += `<p>Order <a href="${ORIGIN}/order/${order._id}">#${order.number}</a> is not fully paid yet</p>`;
-					}
-					if (!(payment.method === 'point-of-sale' && payment.status !== 'paid')) {
-						await collections.emailNotifications.insertOne(
-							{
-								_id: new ObjectId(),
-								createdAt: new Date(),
-								updatedAt: new Date(),
-								subject: `Order #${order.number}`,
-								htmlContent,
-								dest: email
-							},
-							{
-								session
+					let templateKey: EmailTemplateKey | null = null;
+					switch (payment.status) {
+						case 'canceled':
+							templateKey = 'order.payment.canceled';
+							break;
+						case 'expired':
+							templateKey = 'order.payment.expired';
+							break;
+						case 'paid':
+							if (isOrderFullyPaid(order)) {
+								templateKey = 'order.paid';
+							} else {
+								templateKey = 'order.payment.paid';
 							}
-						);
+							break;
+						case 'pending':
+							switch (payment.method) {
+								case 'bitcoin':
+									templateKey = 'order.payment.pending.bitcoin';
+									break;
+								case 'lightning':
+									templateKey = 'order.payment.pending.lightning';
+									break;
+								case 'card':
+									templateKey = 'order.payment.pending.card';
+									break;
+								case 'bank-transfer':
+									templateKey = 'order.payment.pending.bank-transfer';
+									break;
+								case 'point-of-sale':
+									// no email
+									break;
+							}
+					}
+
+					const { t } = useI18n(order.locale || 'en');
+
+					if (templateKey) {
+						const vars = {
+							orderNumber: order.number.toLocaleString(order.locale || 'en'),
+							orderLink: `${ORIGIN}/order/${order._id}`,
+							paymentLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/pay`,
+							invoiceLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/receipt`,
+							qrcodeLink: `${ORIGIN}/order/${order._id}/payment/${payment._id}/qrcode`,
+							paymentStatus: t('order.paymentStatus.' + payment.status),
+							paymentAddress: payment.address,
+							amount: payment.price.amount.toLocaleString(order.locale || 'en', {
+								maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency],
+								minimumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[payment.price.currency]
+							}),
+							currency: payment.price.currency
+						};
+
+						await queueEmail(email, templateKey, vars, { session });
 					}
 				}
 

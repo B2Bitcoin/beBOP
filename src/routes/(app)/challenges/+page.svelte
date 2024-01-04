@@ -19,7 +19,7 @@
 			<ul>
 				{#each data.challenges as chal}
 					<li>
-						<a href={'challenges/' + chal._id} class="underline text-link">
+						<a href={'challenges/' + chal._id} class="underline body-hyperlink">
 							{chal.name}
 						</a>
 					</li>
