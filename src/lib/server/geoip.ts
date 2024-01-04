@@ -3,6 +3,7 @@ import { building } from '$app/environment';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { rootDir } from './root-dir';
+import ipModule from 'ip';
 
 const ipv4s: { start: bigint; end: bigint; country: string }[] = [];
 const ipv6s: { start: bigint; end: bigint; country: string }[] = [];
@@ -61,15 +62,14 @@ function ipToInt(ip: string): { type: 'v4' | 'v6'; value: number | bigint } {
 			)
 		};
 	}
-
-	// Handle IPv6
-	const groups = ip
-		.split(':')
-		.map((group) => group.padStart(4, '0'))
-		.join('');
 	return {
 		type: 'v6',
-		value: BigInt('0x' + groups)
+		value: BigInt(
+			'0x' +
+				Array.from(ipModule.toBuffer(ip))
+					.map((i) => i.toString(16).padStart(2, '0'))
+					.join('')
+		)
 	};
 }
 
