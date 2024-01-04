@@ -1,4 +1,4 @@
-import { ORIGIN, SMTP_USER } from '$env/static/private';
+import { ORIGIN } from '$env/static/private';
 import { collections } from '$lib/server/database';
 import type { User } from '$lib/types/User';
 import { ObjectId } from 'mongodb';
@@ -9,7 +9,6 @@ import { addMinutes } from 'date-fns';
 import { adminPrefix } from '$lib/server/admin';
 import { error } from '@sveltejs/kit';
 import { queueEmail } from './email';
-import type { Order } from '$lib/types/Order';
 
 export async function sendResetPasswordNotification(
 	user: User,
