@@ -73,7 +73,7 @@ export async function sendEmail(params: {
 			replyTo: runtimeConfig.sellerIdentity?.contact.email
 		}),
 		...(params.bcc && {
-			cc: params.bcc
+			bcc: params.bcc
 		})
 	});
 
