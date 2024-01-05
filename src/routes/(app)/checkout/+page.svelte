@@ -416,12 +416,12 @@
 			</section>
 			<section class="gap-4 flex flex-col">
 				<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
-					<div class="pl-4 py-2 body-mainPlan border-b border-gray-300 text-base font-light">
+					<div class="pl-4 py-2 body-mainPlan border-b border-gray-300 text-xl font-light">
 						Note
 					</div>
 
 					<div class="p-4 flex flex-col gap-3">
-						<label class="form-label">
+						<label class="form-label text-xl">
 							Left a not for merchant
 
 							<textarea name="noteContent" cols="30" rows="2" class="form-input" />

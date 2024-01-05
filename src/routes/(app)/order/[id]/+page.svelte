@@ -299,7 +299,26 @@
 					</div>
 				</form>
 			{/if}
+
+			<form action="/orderNote" method="post" class="contents">
+				<section class="gap-4 flex flex-col">
+					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
+						<div class="p-4 flex flex-col gap-3">
+							<label class="form-label text-2xl">
+								Employee note
+
+								<textarea name="noteContent" cols="30" rows="2" class="form-input" />
+							</label>
+						</div>
+					</article>
+					<div class="flex flex-wrap gap-3 justify-between">
+						<button type="submit" class="btn btn-blue self-start">Save employee note</button>
+						<a href="/order/id/notes" class="btn btn-gray self-end">See order notes</a>
+					</div>
+				</section>
+			</form>
 		</div>
+
 		<div class="">
 			<OrderSummary class="sticky top-4 -mr-2 -mt-2" order={data.order} />
 		</div>
