@@ -55,7 +55,12 @@ async function getTransporter() {
 /**
  * Do not call this function directly, instead call queueEmail.
  */
-export async function sendEmail(params: { to: string; subject: string; html: string }) {
+export async function sendEmail(params: {
+	to: string;
+	subject: string;
+	html: string;
+	bcc?: string;
+}) {
 	const transporter = await getTransporter();
 
 	const res = await transporter.sendMail({
@@ -66,6 +71,9 @@ export async function sendEmail(params: { to: string; subject: string; html: str
 		text: htmlToText(params.html),
 		...(!!runtimeConfig.sellerIdentity?.contact.email && {
 			replyTo: runtimeConfig.sellerIdentity?.contact.email
+		}),
+		...(params.bcc && {
+			bcc: params.bcc
 		})
 	});
 
@@ -78,6 +86,7 @@ export async function queueEmail(
 	vars: Record<string, string | undefined>,
 	opts?: {
 		session?: ClientSession;
+		bcc?: string;
 	}
 ): Promise<void> {
 	const lowerVars = mapKeys(
@@ -100,6 +109,10 @@ export async function queueEmail(
 			createdAt: new Date(),
 			updatedAt: new Date(),
 			dest: to,
+			...(opts &&
+				opts.bcc && {
+					bcc: opts.bcc
+				}),
 			subject: template.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
 				return lowerVars[p1.toLowerCase()] || match;
 			}),
