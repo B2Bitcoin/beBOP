@@ -364,7 +364,7 @@
 		"authenticate": {
 			"ctaCancelLabel": "Back",
 			"ctaLabel": "Confirm",
-			"disclaimer": "For security purpose, our wbesite know no password. You can access to your personal space and your order history through a connexion link, or through a 3rd party account (SSO).",
+			"disclaimer": "For security purpose, our website knows no password. You can access to your personal space and your order history through a connexion link, or through a 3rd party account (SSO).",
 			"inputLabel": "Email or npub",
 			"title": "Add authentication"
 		},
