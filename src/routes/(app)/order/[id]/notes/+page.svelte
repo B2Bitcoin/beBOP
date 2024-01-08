@@ -1,47 +1,11 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
-	import { page } from '$app/stores';
 	import OrderSummary from '$lib/components/OrderSummary.svelte';
-	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
-	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
-	import { UrlDependency } from '$lib/types/UrlDependency';
-	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
-	import { trimOrigin } from '$lib/utils/trimOrigin';
-	import { differenceInMinutes } from 'date-fns';
-	import { onMount } from 'svelte';
-	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
 
-	let currentDate = new Date();
 	export let data;
 
-	let count = 0;
-
-	onMount(() => {
-		const interval = setInterval(() => {
-			currentDate = new Date();
-
-			if (data.order.status === 'pending') {
-				count++;
-				if (count % 4 === 0) {
-					invalidate(UrlDependency.Order);
-				}
-			}
-		}, 1000);
-		return () => clearInterval(interval);
-	});
-
-	const { t, locale, textAddress } = useI18n();
-
-	let receiptIFrame: Record<string, HTMLIFrameElement | null> = Object.fromEntries(
-		data.order.payments.map((payment) => [payment.id, null])
-	);
-	let receiptReady: Record<string, boolean> = Object.fromEntries(
-		data.order.payments.map((payment) => [payment.id, false])
-	);
-
-	$: remainingAmount = orderAmountWithNoPaymentsCreated(data.order);
+	const { t, locale } = useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
