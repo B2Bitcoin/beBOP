@@ -300,7 +300,7 @@
 				</form>
 			{/if}
 
-			<form action="/orderNote" method="post" class="contents">
+			<form action="?/saveNote" method="post" class="contents">
 				<section class="gap-4 flex flex-col">
 					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
 						<div class="p-4 flex flex-col gap-3">
