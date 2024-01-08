@@ -152,11 +152,13 @@ export const actions = {
 					})
 					.parse(json)
 			: null;
-		// const noteContent = z
-		// 	.object({
-		// 		noteContent: z.string().min(1)
-		// 	})
-		// 	.parse(json);
+		const note = json.noteContent
+			? z
+					.object({
+						noteContent: z.string().min(1)
+					})
+					.parse(json)
+			: null;
 
 		const { paymentMethod, discountAmount, discountType, discountJustification } = z
 			.object({
@@ -294,6 +296,7 @@ export const actions = {
 							justification: discountJustification
 						}
 					}),
+				...(note && { note: note.noteContent }),
 				...(agreements.allowCollectIP && { clientIp: locals.clientIp })
 			}
 		);

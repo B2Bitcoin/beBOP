@@ -414,6 +414,9 @@
 		"list": {
 			"title": "Liste de vos commandes"
 		},
+		"note": {
+			"title": "Notes de la commande #{number}"
+		},
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
 			"one": "Le paiement sera validé après 1 confirmation.",

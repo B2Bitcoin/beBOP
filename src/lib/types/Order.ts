@@ -22,6 +22,7 @@ export interface Note {
 	npub?: string;
 	email?: string;
 	content: string;
+	createdAt: Date;
 }
 
 export interface OrderPayment {
@@ -75,7 +76,6 @@ export interface OrderPayment {
 
 	lastStatusNotified?: OrderPaymentStatus;
 	bankTransferNumber?: string;
-	notes?: Note[];
 }
 
 export interface OrderAddress {
@@ -185,6 +185,7 @@ export interface Order extends Timestamps {
 	};
 
 	clientIp?: string;
+	notes?: Note[];
 }
 interface SimplifiedOrderPayment {
 	id: string;

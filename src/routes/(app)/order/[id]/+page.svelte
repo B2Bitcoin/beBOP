@@ -313,7 +313,8 @@
 					</article>
 					<div class="flex flex-wrap gap-3 justify-between">
 						<button type="submit" class="btn btn-blue self-start">Save employee note</button>
-						<a href="/order/id/notes" class="btn btn-gray self-end">See order notes</a>
+						<a href="/order/{data.order._id}/notes" class="btn btn-gray self-end">See order notes</a
+						>
 					</div>
 				</section>
 			</form>

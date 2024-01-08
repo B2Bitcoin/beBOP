@@ -435,6 +435,7 @@ export async function createOrder(
 			justification: string;
 		};
 		clientIp?: string;
+		note?: string;
 	}
 ): Promise<Order['_id']> {
 	const npubAddress = params.notifications?.paymentStatus?.npub;
@@ -927,7 +928,17 @@ export async function createOrder(
 							}
 						})
 					}
-				}
+				},
+				...(params.note && {
+					notes: [
+						{
+							content: params.note,
+							createdAt: new Date(),
+							...(npubAddress && { npub: npubAddress }),
+							...(email && { email })
+						}
+					]
+				})
 			},
 			{ session }
 		);

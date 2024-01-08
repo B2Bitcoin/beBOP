@@ -62,6 +62,7 @@
 				/>
 			{/if}
 			{#if adminPrefix}
+				-<a href="/order/{order._id}/notes" class="body-hyperlink hover:underline">📝</a>
 				{#each order.payments as payment}
 					{#if payment.status === 'pending' && (payment.method === 'point-of-sale' || payment.method === 'bank-transfer')}
 						<form

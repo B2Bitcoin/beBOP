@@ -112,6 +112,7 @@ export async function fetchOrderForUser(orderId: string) {
 		vatFree: order.vatFree,
 		discount: order.discount,
 		currencySnapshot: order.currencySnapshot,
-		status: order.status
+		status: order.status,
+		notes: order.notes || []
 	};
 }
