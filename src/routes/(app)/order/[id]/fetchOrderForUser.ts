@@ -113,6 +113,10 @@ export async function fetchOrderForUser(orderId: string) {
 		discount: order.discount,
 		currencySnapshot: order.currencySnapshot,
 		status: order.status,
-		notes: order.notes || []
+		notes:
+			order.notes?.map((note) => ({
+				...note,
+				userId: note.userId?.toString()
+			})) || []
 	};
 }
