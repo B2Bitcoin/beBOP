@@ -5,6 +5,7 @@ import { isAllowedOnPage } from '$lib/types/Role';
 import { adminPrefix } from '$lib/server/admin';
 import { userIdentifier } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
+import { z } from 'zod';
 
 export const actions = {
 	addPayment: async function (event) {
