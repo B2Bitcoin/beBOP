@@ -46,31 +46,5 @@ export const actions = {
 		);
 
 		throw redirect(303, request.headers.get('referer') || '/');
-	},
-	saveNote: async function ({ params, request, locals }) {
-		const data = await request.formData();
-		const { noteContent } = z
-			.object({
-				noteContent: z.string().min(1)
-			})
-			.parse({
-				noteContent: data.get('noteContent')
-			});
-		await collections.orders.updateOne(
-			{
-				_id: params.id
-			},
-			{
-				$push: {
-					notes: {
-						content: noteContent,
-						createdAt: new Date(),
-						...(userIdentifier(locals).npub && { npub: userIdentifier(locals).npub }),
-						...(userIdentifier(locals).email && { email: userIdentifier(locals).email })
-					}
-				}
-			}
-		);
-		throw redirect(303, `/order/${params.id}/notes`);
 	}
 };

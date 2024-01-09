@@ -7,7 +7,7 @@
 	import { useI18n } from '$lib/i18n';
 	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 	import { UrlDependency } from '$lib/types/UrlDependency';
-	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
+	import { CUSTOMER_ROLE_ID, POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User.js';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
@@ -300,24 +300,33 @@
 				</form>
 			{/if}
 
-			<form action="?/saveNote" method="post" class="contents">
-				<section class="gap-4 flex flex-col">
-					<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
-						<div class="p-4 flex flex-col gap-3">
-							<label class="form-label text-2xl">
-								Employee note
+			{#if data.roleId === POS_ROLE_ID || data.roleId === SUPER_ADMIN_ROLE_ID}
+				<form
+					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/saveNote"
+					method="post"
+					class="contents"
+				>
+					<section class="gap-4 flex flex-col">
+						<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
+							<div class="p-4 flex flex-col gap-3">
+								<label class="form-label text-2xl">
+									{t('order.note.label')}
 
-								<textarea name="noteContent" cols="30" rows="2" class="form-input" />
-							</label>
+									<textarea name="noteContent" cols="30" rows="2" class="form-input" />
+								</label>
+							</div>
+						</article>
+						<div class="flex flex-wrap gap-3 justify-between">
+							<button type="submit" class="btn btn-blue self-start"
+								>{t('order.note.saveText')}</button
+							>
+							<a href="/order/{data.order._id}/notes" class="btn btn-gray self-end"
+								>{t('order.note.seeText')}</a
+							>
 						</div>
-					</article>
-					<div class="flex flex-wrap gap-3 justify-between">
-						<button type="submit" class="btn btn-blue self-start">Save employee note</button>
-						<a href="/order/{data.order._id}/notes" class="btn btn-gray self-end">See order notes</a
-						>
-					</div>
-				</section>
-			</form>
+					</section>
+				</form>
+			{/if}
 		</div>
 
 		<div class="">

@@ -28,7 +28,7 @@ import { checkCartItems } from './cart';
 import { userQuery } from './user';
 import { SMTP_USER } from '$env/static/private';
 import { toCurrency } from '$lib/utils/toCurrency';
-import { POS_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import type { PaymentMethod } from './payment-methods';
 import { vatRate } from '$lib/types/Country';
@@ -934,6 +934,8 @@ export async function createOrder(
 						{
 							content: params.note,
 							createdAt: new Date(),
+							role: params.user.userRoleId || CUSTOMER_ROLE_ID,
+							...(params.user && { userId: params.user.userId }),
 							...(npubAddress && { npub: npubAddress }),
 							...(email && { email })
 						}

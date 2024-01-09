@@ -19,6 +19,7 @@ export async function load({ locals }) {
 			number: order.number,
 			createdAt: order.createdAt,
 			status: order.status,
+			notes: order.notes,
 			currencySnapshot: order.currencySnapshot
 		}))
 	};

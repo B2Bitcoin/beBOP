@@ -14,6 +14,7 @@ export async function load() {
 			number: order.number,
 			createdAt: order.createdAt,
 			currencySnapshot: order.currencySnapshot,
+			notes: order.notes,
 			status: order.status
 		}))
 	};

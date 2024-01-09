@@ -21,6 +21,7 @@ export const load = async (event) => {
 			currencySnapshot: order.currencySnapshot,
 			number: order.number,
 			createdAt: order.createdAt,
+			notes: order.notes,
 			status: order.status
 		}))
 	};

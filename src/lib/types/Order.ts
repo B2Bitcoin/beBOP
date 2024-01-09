@@ -8,6 +8,7 @@ import type { PaymentMethod } from '$lib/server/payment-methods';
 import type { ObjectId } from 'mongodb';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import type { LanguageKey } from '$lib/translations';
+import type { User } from './User';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -21,6 +22,8 @@ export type Price = {
 export interface Note {
 	npub?: string;
 	email?: string;
+	userId?: User['_id'];
+	role: string; // CUSTOMER_ROLE_ID or other
 	content: string;
 	createdAt: Date;
 }
