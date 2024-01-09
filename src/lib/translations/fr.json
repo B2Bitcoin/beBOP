@@ -368,7 +368,7 @@
 		"authenticate": {
 			"ctaCancelLabel": "Retour",
 			"ctaLabel": "Valider",
-			"disclaimer": "Pour des raisons de securite, notre site ne stocke aucun mot de passe. Vous pouvez accéder à votre espace personnel et votre historique de commande via un lien de connexion privé, ou via un compte tiers (SSO).",
+			"disclaimer": "Pour des raisons de sécurité, notre site ne stocke aucun mot de passe. Vous pouvez accéder à votre espace personnel et votre historique de commande via un lien de connexion privé, ou via un compte tiers (SSO).",
 			"inputLabel": "E-mail ou npub",
 			"title": "Ajouter une authentification"
 		},

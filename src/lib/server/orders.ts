@@ -348,6 +348,7 @@ export async function onOrderPaymentFailed(
 			throw new Error('Failed to update order');
 		}
 		order = ret.value;
+
 		return order;
 	});
 }
