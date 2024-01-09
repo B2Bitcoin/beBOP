@@ -5,8 +5,6 @@ import { fetchOrderForUser } from './fetchOrderForUser.js';
 import { getS3DownloadLink } from '$lib/server/s3.js';
 import { uniqBy } from '$lib/utils/uniqBy.js';
 import { paymentMethods } from '$lib/server/payment-methods.js';
-import { z } from 'zod';
-import { userIdentifier } from '$lib/server/user.js';
 
 export async function load({ params, depends, locals }) {
 	depends(UrlDependency.Order);
