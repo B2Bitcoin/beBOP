@@ -1,11 +1,8 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { actions as adminOrderActions } from '../../../admin[[hash=admin_hash]]/order/[id]/+page.server';
 import { collections } from '$lib/server/database';
 import { isAllowedOnPage } from '$lib/types/Role';
 import { adminPrefix } from '$lib/server/admin';
-import { userIdentifier } from '$lib/server/user';
-import { POS_ROLE_ID } from '$lib/types/User';
-import { z } from 'zod';
 
 export const actions = {
 	addPayment: async function (event) {
