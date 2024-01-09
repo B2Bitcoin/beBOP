@@ -23,7 +23,7 @@ export const actions = {
 		// @ts-expect-error different route but compatible
 		return addPayment(event);
 	},
-	saveNote: async function ({ event }) {
+	saveNote: async function (event) {
 		const saveNote = adminOrderActions.saveNote;
 
 		return saveNote(event);
