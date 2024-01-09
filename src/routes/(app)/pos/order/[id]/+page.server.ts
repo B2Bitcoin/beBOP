@@ -26,32 +26,9 @@ export const actions = {
 		// @ts-expect-error different route but compatible
 		return addPayment(event);
 	},
-	saveNote: async function ({ params, request, locals }) {
-		const data = await request.formData();
-		const { noteContent } = z
-			.object({
-				noteContent: z.string().min(1)
-			})
-			.parse({
-				noteContent: data.get('noteContent')
-			});
-		await collections.orders.updateOne(
-			{
-				_id: params.id
-			},
-			{
-				$push: {
-					notes: {
-						content: noteContent,
-						createdAt: new Date(),
-						role: POS_ROLE_ID,
-						...(locals.user && { userId: locals.user._id }),
-						...(userIdentifier(locals).npub && { npub: userIdentifier(locals).npub }),
-						...(userIdentifier(locals).email && { email: userIdentifier(locals).email })
-					}
-				}
-			}
-		);
-		throw redirect(303, `/order/${params.id}/notes`);
+	saveNote: async function ({ event }) {
+		const saveNote = adminOrderActions.saveNote;
+
+		return saveNote(event);
 	}
 };

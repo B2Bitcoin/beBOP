@@ -62,7 +62,7 @@
 		"invalidNpub": "Invalid Nostr public address",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
 		"note": {
-			"label": "Left a note for merchant",
+			"label": "Leave a note for merchant",
 			"title": "Note"
 		},
 		"notifications": {

@@ -300,7 +300,7 @@
 				</form>
 			{/if}
 
-			{#if data.roleId === POS_ROLE_ID || data.roleId === SUPER_ADMIN_ROLE_ID}
+			{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
 				<form
 					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/saveNote"
 					method="post"
