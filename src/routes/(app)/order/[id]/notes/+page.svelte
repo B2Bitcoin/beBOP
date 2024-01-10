@@ -13,6 +13,9 @@
 		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
 	>
 		<div class="col-span-2 flex flex-col gap-2">
+			<a href="/order/{data.order._id}" class="body-hyperlink hover:underline"
+				>&lt;&lt; {t('order.note.backToOrder')}
+			</a>
 			<h1 class="text-3xl body-title">{t('order.note.title', { number: data.order.number })}</h1>
 			<p class="text-base">
 				<Trans key="order.createdAt"

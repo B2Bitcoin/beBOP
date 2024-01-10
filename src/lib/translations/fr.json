@@ -419,6 +419,7 @@
 			"title": "Liste de vos commandes"
 		},
 		"note": {
+			"backToOrder": "Aller à la commande",
 			"label": "Note de l'employé",
 			"saveText": "Enregistrer la note",
 			"seeText": "Voir notes commande",

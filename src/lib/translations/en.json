@@ -419,6 +419,7 @@
 			"title": "List of your orders"
 		},
 		"note": {
+			"backToOrder": "Go to order",
 			"label": "Employee note",
 			"saveText": "Save note",
 			"seeText": "See order notes",
