@@ -28,7 +28,7 @@
 			</p>
 			<br />
 			{#each data.order.notes as note}
-				{note.email || note.npub || ''}({note.role})<br />
+				{note.email || note.npub || note.userId || ''} ({note.role})<br />
 				<p class="text-base">
 					<time datetime={note.createdAt.toJSON()} title={note.createdAt.toLocaleString($locale)}
 						>{note.createdAt.toLocaleString($locale)}</time
