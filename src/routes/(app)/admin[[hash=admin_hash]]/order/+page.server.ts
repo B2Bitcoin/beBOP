@@ -16,8 +16,8 @@ export async function load() {
 			currencySnapshot: order.currencySnapshot,
 			notes:
 				order.notes?.map((note) => ({
-					...note,
-					userId: note.userId?.toString()
+					content: note.content,
+					createdAt: note.createdAt
 				})) || [],
 			status: order.status
 		}))

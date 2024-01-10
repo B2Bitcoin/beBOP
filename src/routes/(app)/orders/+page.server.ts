@@ -21,8 +21,8 @@ export async function load({ locals }) {
 			status: order.status,
 			notes:
 				order.notes?.map((note) => ({
-					...note,
-					userId: note.userId?.toString()
+					content: note.content,
+					createdAt: note.createdAt
 				})) || [],
 			currencySnapshot: order.currencySnapshot
 		}))

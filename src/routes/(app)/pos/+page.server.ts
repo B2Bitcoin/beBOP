@@ -23,8 +23,8 @@ export const load = async (event) => {
 			createdAt: order.createdAt,
 			notes:
 				order.notes?.map((note) => ({
-					...note,
-					userId: note.userId?.toString()
+					content: note.content,
+					createdAt: note.createdAt
 				})) || [],
 			status: order.status
 		}))
