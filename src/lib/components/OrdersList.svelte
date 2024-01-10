@@ -61,7 +61,7 @@
 					amount={order.currencySnapshot.main.totalReceived.amount}
 				/>
 			{/if}
-			{#if order.notes && order.notes?.length > 0}
+			{#if order.notes?.length}
 				-<a href="/order/{order._id}/notes" class="body-hyperlink hover:underline">📝</a>
 			{/if}
 			{#if adminPrefix}
