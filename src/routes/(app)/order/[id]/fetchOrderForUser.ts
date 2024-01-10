@@ -4,6 +4,7 @@ import { isOrderFullyPaid } from '$lib/server/orders';
 import { picturesForProducts } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { isSumupEnabled } from '$lib/server/sumup';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
 
@@ -115,8 +116,9 @@ export async function fetchOrderForUser(orderId: string) {
 		status: order.status,
 		notes:
 			order.notes?.map((note) => ({
-				...note,
-				userId: note.userId?.toString()
+				content: note.content,
+				createdAt: note.createdAt,
+				isEmployee: note.role !== CUSTOMER_ROLE_ID
 			})) || []
 	};
 }

@@ -28,7 +28,7 @@
 			</p>
 			<br />
 			{#each data.order.notes as note}
-				{note.email || note.npub || note.userId || ''} ({note.role})<br />
+				{note.isEmployee ? t('order.note.author') : t('order.note.authorCustomer')}<br />
 				<p class="text-base">
 					<time datetime={note.createdAt.toJSON()} title={note.createdAt.toLocaleString($locale)}
 						>{note.createdAt.toLocaleString($locale)}</time
@@ -39,7 +39,7 @@
 					cols="30"
 					rows="2"
 					class="form-input"
-					disabled
+					readonly
 					value={note.content}
 				/>
 			{/each}

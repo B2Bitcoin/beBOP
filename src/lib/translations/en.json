@@ -419,6 +419,8 @@
 			"title": "List of your orders"
 		},
 		"note": {
+			"author": "Employee",
+			"authorCustomer": "Customer",
 			"backToOrder": "Go to order",
 			"label": "Employee note",
 			"saveText": "Save note",
