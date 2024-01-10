@@ -148,7 +148,7 @@
 		{:else}
 			<div class="flex flex-col items-center gap-3">
 				<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
-				<img src="/order/{order?._id}/payments/${order?.payments[0]?.id}/qrcode" alt="QR code" />
+				<img src="/order/{order?._id}/payment/{order?.payments[0]?.id}/qrcode" alt="QR code" />
 			</div>
 		{/if}
 	{:else if view === 'canceled'}
