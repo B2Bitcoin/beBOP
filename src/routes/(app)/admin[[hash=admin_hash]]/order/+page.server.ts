@@ -14,7 +14,10 @@ export async function load() {
 			number: order.number,
 			createdAt: order.createdAt,
 			currencySnapshot: order.currencySnapshot,
-			notes: order.notes,
+			notes: order.notes?.map((note) => ({
+				...note,
+				userId: note.userId?.toString()
+			})),
 			status: order.status
 		}))
 	};
