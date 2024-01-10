@@ -420,6 +420,7 @@
 		},
 		"note": {
 			"author": "Employé",
+			"authorCustomer": "Client",
 			"backToOrder": "Aller à la commande",
 			"label": "Note de l'employé",
 			"saveText": "Enregistrer la note",
