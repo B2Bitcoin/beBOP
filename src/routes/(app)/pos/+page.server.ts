@@ -21,10 +21,11 @@ export const load = async (event) => {
 			currencySnapshot: order.currencySnapshot,
 			number: order.number,
 			createdAt: order.createdAt,
-			notes: order.notes?.map((note) => ({
-				...note,
-				userId: note.userId?.toString()
-			})),
+			notes:
+				order.notes?.map((note) => ({
+					...note,
+					userId: note.userId?.toString()
+				})) || [],
 			status: order.status
 		}))
 	};

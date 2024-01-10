@@ -195,7 +195,14 @@ interface SimplifiedOrderPayment {
 	method: PaymentMethod;
 	status: OrderPaymentStatus;
 }
-export type SimplifiedOrder = Omit<Order, 'payments'> & { payments: SimplifiedOrderPayment[] };
+interface SimplifiedOrderNotes {
+	content: string;
+	createdAt: Date;
+}
+export type SimplifiedOrder = Omit<Order, 'payments' | 'notes'> & {
+	payments: SimplifiedOrderPayment[];
+	notes: SimplifiedOrderNotes[];
+};
 
 export function orderAmountWithNoPaymentsCreated(
 	order: Pick<Order, 'currencySnapshot'> & {
