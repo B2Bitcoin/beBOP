@@ -83,7 +83,7 @@
 	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat = totalPrice + vat;
 
-	const { t } = useI18n();
+	const { t, countryName } = useI18n();
 </script>
 
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
@@ -148,7 +148,7 @@
 		{:else}
 			<div class="flex flex-col items-center gap-3">
 				<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
-				<img src="/order/{order?._id}/payments/${order?.payments[0]?.id}/qrcode" alt="QR code" />
+				<img src="/order/{order?._id}/payment/{order?.payments[0]?.id}/qrcode" alt="QR code" />
 			</div>
 		{/if}
 	{:else if view === 'canceled'}
@@ -175,7 +175,7 @@
 					<div class="flex flex-col">
 						<h2 class="text-gray-800 text-[28px]">Vat ({data.vatRate}%):</h2>
 						<p class="text-sm text-gray-600">
-							{(t('cart.vatRate'), { country: data.vatCountry })}.
+							{t('cart.vatRate', { country: countryName(data.vatCountry) })}.
 							{#if data.vatSingleCountry}
 								{t('cart.vatSellerCountry')}
 							{:else}
