@@ -41,6 +41,10 @@ export const adminLinks = [
 			{
 				href: '/admin/specification',
 				label: 'Specification'
+			},
+			{
+				href: '/admin/form',
+				label: 'Form'
 			}
 		]
 	},
