@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { useI18n } from '$lib/i18n';
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import type { ContactForm } from '$lib/types/ContactForm';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
@@ -10,7 +9,6 @@
 	let className = '';
 	export { className as class };
 
-	const { t } = useI18n();
 	let title = contactForm.title;
 	let content = contactForm.content;
 </script>
