@@ -7,7 +7,8 @@
 		CmsSlider,
 		CmsTag,
 		CmsToken,
-		CmsSpecification
+		CmsSpecification,
+		CmsContactForm
 	} from '$lib/server/cms';
 	import CmsDesign from './CmsDesign.svelte';
 
@@ -25,6 +26,7 @@
 	export let roleId: string | undefined;
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
+	export let contactForms: CmsContactForm[];
 </script>
 
 <svelte:head>
@@ -43,6 +45,7 @@
 		{tags}
 		{roleId}
 		{specifications}
+		{contactForms}
 		class="body body-mainPlan"
 	/>
 {:else}
@@ -57,6 +60,7 @@
 			{tags}
 			{roleId}
 			{specifications}
+			{contactForms}
 			class="body"
 		/>
 	</main>

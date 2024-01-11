@@ -136,6 +136,7 @@
 			digitalFiles={data.productCMSBefore.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSBefore.specifications}
+			contactForms={data.productCMSBefore.contactForms}
 		/>
 	{/if}
 
@@ -457,6 +458,7 @@
 			digitalFiles={data.productCMSAfter.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSAfter.specifications}
+			contactForms={data.productCMSAfter.contactForms}
 		/>
 	{/if}
 </main>

@@ -3,6 +3,7 @@
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId';
 
+	export let data;
 	let title: string;
 	let slug: string;
 </script>
@@ -34,6 +35,17 @@
 			placeholder="Slug"
 			bind:value={slug}
 			title="Only lowercase letters, numbers and dashes are allowed"
+			required
+		/>
+	</label>
+	<label class="form-label">
+		target
+		<input
+			class="form-input block"
+			type="text"
+			name="target"
+			placeholder="Target"
+			value={data.sellerIdentity?.contact.email || ''}
 			required
 		/>
 	</label>

@@ -3,8 +3,7 @@
 	import type { ContactForm } from '$lib/types/ContactForm';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 
-	export let contactForm: Pick<ContactForm, 'title' | 'content'>;
-	export let target: string;
+	export let contactForm: Pick<ContactForm, 'title' | 'content' | 'target'>;
 
 	let className = '';
 	export { className as class };
@@ -37,7 +36,7 @@
 		bind:value={content}
 		class="form-input block w-full"
 	/>
-	<a href="mailto:{target}?subject={title}&body={content}" class="btn tagWidget-cta"
+	<a href="mailto:{contactForm.target}?subject={title}&body={content}" class="btn tagWidget-cta"
 		>Contact our team</a
 	>
 </div>

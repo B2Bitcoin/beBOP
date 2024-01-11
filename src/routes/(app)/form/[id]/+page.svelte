@@ -4,4 +4,4 @@
 	export let data;
 </script>
 
-<ContactForm contactForm={data.contactForm} target={data.target} />
+<ContactForm contactForm={data.contactForm} />

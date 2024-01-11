@@ -33,6 +33,7 @@ export const actions = {
 		const parsed = z
 			.object({
 				title: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				target: z.string().trim().min(1).max(100),
 				content: z.string().trim().min(1).max(MAX_CONTENT_LIMIT)
 			})
 			.parse(Object.fromEntries(data));
@@ -43,6 +44,7 @@ export const actions = {
 			{
 				$set: {
 					title: parsed.title,
+					target: parsed.target,
 					content: parsed.content,
 					updatedAt: new Date()
 				}

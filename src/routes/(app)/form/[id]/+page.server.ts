@@ -1,5 +1,4 @@
 import { collections } from '$lib/server/database';
-import { runtimeConfig } from '$lib/server/runtime-config';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
@@ -10,7 +9,6 @@ export const load = async ({ params }) => {
 	}
 
 	return {
-		contactForm,
-		target: runtimeConfig.sellerIdentity?.contact.email || ''
+		contactForm
 	};
 };

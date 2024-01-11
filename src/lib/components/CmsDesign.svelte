@@ -15,9 +15,11 @@
 		CmsSlider,
 		CmsSpecification,
 		CmsTag,
-		CmsToken
+		CmsToken,
+		CmsContactForm
 	} from '$lib/server/cms';
 	import SpecificationWidget from './SpecificationWidget.svelte';
+	import ContactForm from './ContactForm.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -28,7 +30,7 @@
 	export let roleId: string | undefined;
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
-
+	export let contactForms: CmsContactForm[];
 	let classNames = '';
 	export { classNames as class };
 
@@ -53,6 +55,9 @@
 	);
 	$: specificationById = Object.fromEntries(
 		specifications.map((specification) => [specification._id, specification])
+	);
+	$: contactFormById = Object.fromEntries(
+		contactForms.map((contactForm) => [contactForm._id, contactForm])
 	);
 </script>
 
@@ -86,6 +91,8 @@
 			/>
 		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
 			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
+		{:else if token.type === 'contactFormWidget' && contactFormById[token.slug]}
+			<ContactForm contactForm={contactFormById[token.slug]} class="not-prose my-5" />
 		{:else}
 			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html token.raw}

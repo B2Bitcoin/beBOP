@@ -41,6 +41,16 @@
 			disabled
 		/>
 	</label>
+	<label class="form-label">
+		target
+		<input
+			class="form-input block"
+			type="text"
+			name="target"
+			placeholder="Target"
+			value={data.contactForm.target}
+		/>
+	</label>
 	Content
 
 	<textarea
