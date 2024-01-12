@@ -3,7 +3,7 @@
 	import { useI18n } from '$lib/i18n';
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import type { ContactForm } from '$lib/types/ContactForm';
-	import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
+	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 
 	export let contactForm: Pick<ContactForm, '_id' | 'subject' | 'content' | 'target'>;
 
