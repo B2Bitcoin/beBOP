@@ -4,7 +4,7 @@
 	import type { ContactForm } from '$lib/types/ContactForm';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 
-	export let contactForm: Pick<ContactForm, 'subject' | 'content' | 'target'>;
+	export let contactForm: Pick<ContactForm, '_id' | 'subject' | 'content' | 'target'>;
 
 	let className = '';
 	export { className as class };
@@ -14,15 +14,21 @@
 	const { t } = useI18n();
 </script>
 
-<div class="relative mx-auto tagWidget flex flex-col gap-4 tagWidget-main p-6 rounded {className}">
+<form
+	method="post"
+	action="/form/{contactForm._id}?/sendEmail"
+	class="relative mx-auto tagWidget flex flex-col gap-4 tagWidget-main p-6 rounded {className}"
+>
+	<input class="form-input" type="hidden" name="target" bind:value={contactForm.target} />
+
 	<label class="form-label">
 		Subject
 		<input
 			class="form-input"
 			type="text"
 			maxlength={MAX_NAME_LIMIT}
-			name="title"
-			placeholder="title"
+			name="subject"
+			placeholder="Subject"
 			bind:value={subject}
 		/>
 	</label>
@@ -38,7 +44,5 @@
 		bind:value={content}
 		class="form-input block w-full"
 	/>
-	<a href="mailto:{contactForm.target}?subject={subject}&body={content}" class="btn tagWidget-cta"
-		>{t('contact.form.contactUs')}</a
-	>
-</div>
+	<button type="submit" class="btn tagWidget-cta">{t('contact.form.contactUs')}</button>
+</form>
