@@ -6,7 +6,6 @@
 	export let data;
 
 	let language: LanguageKey = 'fr';
-	let title = data.contactForm.title;
 </script>
 
 <form method="post" class="contents">

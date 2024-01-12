@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { adminPrefix } from '$lib/server/admin';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
-import { contactFormTranslatableSchema } from './contact-form-schema';
 
 export async function load({ params }) {
 	const contactForm = await collections.contactForms.findOne({
