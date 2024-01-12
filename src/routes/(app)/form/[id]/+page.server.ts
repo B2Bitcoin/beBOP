@@ -2,7 +2,7 @@ import { SMTP_USER } from '$env/static/private';
 import { collections } from '$lib/server/database';
 import { rateLimit } from '$lib/server/rateLimit';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 
