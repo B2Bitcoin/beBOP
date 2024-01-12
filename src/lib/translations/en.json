@@ -91,6 +91,11 @@
 		"tosAgree": "I agree to the <0>terms of service</0>",
 		"vatShippingAddress": "The country is determined by the shipping address"
 	},
+	"contact": {
+		"form": {
+			"contactUs": "Contact us"
+		}
+	},
 	"country": {
 		"alpha2": {
 			"AD": "Andorra",

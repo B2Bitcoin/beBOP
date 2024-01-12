@@ -17,6 +17,7 @@ export const actions: Actions = {
 				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				title: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				target: z.string().trim().min(1).max(100),
+				subject: z.string().trim().min(1).max(100),
 				content: z.string().trim().min(1).max(MAX_CONTENT_LIMIT)
 			})
 			.parse(Object.fromEntries(formData));
@@ -30,6 +31,7 @@ export const actions: Actions = {
 			title: parsed.title,
 			content: parsed.content,
 			target: parsed.target,
+			subject: parsed.subject,
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});

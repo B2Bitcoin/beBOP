@@ -38,6 +38,7 @@
 			required
 		/>
 	</label>
+
 	<label class="form-label">
 		target
 		<input
@@ -48,6 +49,10 @@
 			value={data.sellerIdentity?.contact.email || ''}
 			required
 		/>
+	</label>
+	<label class="form-label">
+		Subject
+		<input class="form-input block" type="text" name="subject" placeholder="Subject" required />
 	</label>
 	Content
 

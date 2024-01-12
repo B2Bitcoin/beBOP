@@ -51,6 +51,17 @@
 			value={data.contactForm.target}
 		/>
 	</label>
+	<label class="form-label">
+		Subject
+		<input
+			class="form-input block"
+			type="text"
+			name="subject"
+			placeholder="Subject"
+			value={data.contactForm.subject}
+			required
+		/>
+	</label>
 	Content
 
 	<textarea

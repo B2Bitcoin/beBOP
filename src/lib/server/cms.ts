@@ -256,10 +256,10 @@ export async function cmsFromContent(
 		.find({
 			_id: { $in: [...contactFormSlugs] }
 		})
-		.project<Pick<ContactForm, '_id' | 'content' | 'title' | 'target'>>({
-			tite: 1,
-			content: 1,
-			target: 1
+		.project<Pick<ContactForm, '_id' | 'content' | 'target' | 'subject'>>({
+			content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+			target: 1,
+			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] }
 		})
 		.toArray();
 
