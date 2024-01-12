@@ -9,6 +9,11 @@ import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
+import { ORIGIN, SMTP_USER } from '$env/static/private';
+import { ObjectId } from 'mongodb';
+import { mapKeys } from '$lib/utils/mapKeys';
+import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
+import { rateLimit } from '$lib/server/rateLimit';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -166,5 +171,50 @@ export const actions = {
 		throw redirect(303, '/checkout');
 	},
 
-	addToCart
+	addToCart,
+
+	sendEmail: async function ({ request, params, locals }) {
+		const product = await collections.products.findOne<Pick<Product, '_id' | 'name'>>(
+			{ _id: params.id },
+			{
+				projection: {
+					_id: 1,
+					name: { $ifNull: [`$translations.${locals.language}.name`, '$name'] }
+				}
+			}
+		);
+
+		rateLimit(locals.clientIp, 'email', 5, { minutes: 5 });
+
+		const data = await request.formData();
+		const parsed = z
+			.object({
+				content: z.string().max(MAX_CONTENT_LIMIT),
+				target: z.string().max(100),
+				subject: z.string().max(100)
+			})
+			.parse(Object.fromEntries(data));
+
+		const lowerVars = mapKeys(
+			{
+				productLink: product ? `${ORIGIN}/product/${product._id}` : '',
+				productName: product ? product.name : '',
+				websiteLink: ORIGIN,
+				brandName: runtimeConfig.brandName
+			},
+			(key) => key.toLowerCase()
+		);
+		await collections.emailNotifications.insertOne({
+			_id: new ObjectId(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			subject: parsed.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
+				return lowerVars[p1.toLowerCase()] || match;
+			}),
+			htmlContent: parsed.content.replace(/{{([^}]+)}}/g, (match, p1) => {
+				return lowerVars[p1.toLowerCase()] || match;
+			}),
+			dest: parsed.target || SMTP_USER
+		});
+	}
 };
