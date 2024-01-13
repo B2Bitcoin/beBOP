@@ -455,7 +455,7 @@ export const VAT_RATES = {
 	SD: 17,
 	SR: 10,
 	SE: 25,
-	CH: 7.7,
+	CH: 8.1,
 	TW: 5,
 	TJ: 18,
 	TZ: 18,
