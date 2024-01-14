@@ -20,13 +20,13 @@ export async function cmsFromContent(
 	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
-		/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
-	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
+		/\[Product=(?<slug>[\p{L}\d_-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/giu;
+	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/giu;
 	const SLIDER_WIDGET_REGEX =
-		/\[Slider=(?<slug>[a-z0-9-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/gi;
-	const TAG_WIDGET_REGEX = /\[Tag=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
-	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[a-z0-9-]+)\]/gi;
-	const PICTURE_WIDGET_REGEX = /\[Picture=(?<slug>[a-z0-9-]+)\]/gi;
+		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/giu;
+	const TAG_WIDGET_REGEX = /\[Tag=(?<slug>[\p{L}\d_-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/giu;
+	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[\p{L}\d_-]+)\]/giu;
+	const PICTURE_WIDGET_REGEX = /\[Picture=(?<slug>[\p{L}\d_-]+)\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
