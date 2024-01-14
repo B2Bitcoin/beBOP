@@ -63,11 +63,19 @@
 			conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
 		/>
 
-		<p class="text-gray-700 my-3">
-			To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code>,
-			where
-			<code class="font-mono">slug</code> is the slug of your product
-		</p>
+		<div class="text-gray-700 my-3">
+			<p>
+				To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code
+				>, where
+				<code class="font-mono">slug</code> is the slug of your product
+			</p>
+			<p>
+				To include pictures, add a paragraph with only <code class="font-mono">[Picture=slug]</code
+				>. You can also set the width, height and fit:
+				<code class="font-mono">[Picture=slug width=100 height=100 fit=cover]</code> or
+				<code class="font-mono">[Picture=slug width=100 height=100 fit=contain]</code>
+			</p>
+		</div>
 
 		Raw HTML
 

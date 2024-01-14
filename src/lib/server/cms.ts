@@ -20,13 +20,15 @@ export async function cmsFromContent(
 	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
-		/\[Product=(?<slug>[\p{L}\d_-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/giu;
+		/\[Product=(?<slug>[\p{L}\d_-]+)(?:[? ]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/giu;
 	const SLIDER_WIDGET_REGEX =
-		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/giu;
-	const TAG_WIDGET_REGEX = /\[Tag=(?<slug>[\p{L}\d_-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/giu;
+		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:[? ]autoplay=(?<autoplay>[a-z0-9-]+))?\]/giu;
+	const TAG_WIDGET_REGEX =
+		/\[Tag=(?<slug>[\p{L}\d_-]+)(?:[? ]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[\p{L}\d_-]+)\]/giu;
-	const PICTURE_WIDGET_REGEX = /\[Picture=(?<slug>[\p{L}\d_-]+)\]/giu;
+	const PICTURE_WIDGET_REGEX =
+		/\[Picture=(?<slug>[\p{L}\d_-]+)(?:[? ]height=(?<height>\d+))?(?:[? ]width=(?<width>\d+))?(?:[? ]fit=(?<fit>(cover|contain)))?\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -72,6 +74,9 @@ export async function cmsFromContent(
 				type: 'pictureWidget';
 				slug: string;
 				raw: string;
+				fit?: 'cover' | 'contain';
+				width?: number;
+				height?: number;
 		  }
 	> = [];
 
@@ -159,7 +164,10 @@ export async function cmsFromContent(
 					tokens.push({
 						type: 'pictureWidget',
 						slug: match.groups.slug,
-						raw: match[0]
+						raw: match[0],
+						fit: match.groups?.fit as 'cover' | 'contain' | undefined,
+						width: match.groups?.width ? Number(match.groups.width) : undefined,
+						height: match.groups?.height ? Number(match.groups.height) : undefined
 					});
 					break;
 			}
