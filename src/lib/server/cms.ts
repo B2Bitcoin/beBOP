@@ -119,7 +119,7 @@ export async function cmsFromContent(
 						display: match.groups?.display,
 						raw: match[0]
 					});
-					continue;
+					break;
 				case 'challengeWidget':
 					challengeSlugs.add(match.groups.slug);
 					tokens.push({
@@ -127,7 +127,7 @@ export async function cmsFromContent(
 						slug: match.groups.slug,
 						raw: match[0]
 					});
-					continue;
+					break;
 				case 'sliderWidget':
 					sliderSlugs.add(match.groups.slug);
 					tokens.push({
@@ -136,7 +136,7 @@ export async function cmsFromContent(
 						autoplay: Number(match.groups?.autoplay),
 						raw: match[0]
 					});
-					continue;
+					break;
 				case 'tagWidget':
 					tagSlugs.add(match.groups.slug);
 					tokens.push({
@@ -145,7 +145,7 @@ export async function cmsFromContent(
 						display: match.groups?.display,
 						raw: match[0]
 					});
-					continue;
+					break;
 				case 'specificationWidget':
 					specificationSlugs.add(match.groups.slug);
 					tokens.push({
@@ -153,7 +153,7 @@ export async function cmsFromContent(
 						slug: match.groups.slug,
 						raw: match[0]
 					});
-					continue;
+					break;
 				case 'pictureWidget':
 					pictureSlugs.add(match.groups.slug);
 					tokens.push({
@@ -161,7 +161,7 @@ export async function cmsFromContent(
 						slug: match.groups.slug,
 						raw: match[0]
 					});
-					continue;
+					break;
 			}
 		}
 		index = match.index + match[0].length;
