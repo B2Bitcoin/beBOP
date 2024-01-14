@@ -89,7 +89,18 @@
 		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
 			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
 		{:else if token.type === 'pictureWidget'}
-			<PictureComponent picture={pictureById[token.slug]} class="my-5" />
+			{token.width}
+			{token.height}
+			{token.fit}
+			<PictureComponent
+				picture={pictureById[token.slug]}
+				class="my-5 {token.height ? `h-[${token.height}px]` : ''} {token.width
+					? `w-[${token.width}px]`
+					: ''}"
+				style="{token.fit ? `object-fit: ${token.fit};` : ''}{token.width
+					? `width: ${token.width}px;`
+					: ''}{token.height ? `height: ${token.height}px;` : ''}"
+			/>
 		{:else}
 			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html token.raw}

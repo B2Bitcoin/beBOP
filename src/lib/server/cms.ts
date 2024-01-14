@@ -20,15 +20,15 @@ export async function cmsFromContent(
 	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
-		/\[Product=(?<slug>[\p{L}\d_-]+)(?:[? ]display=(?<display>[a-z0-9-]+))?\]/giu;
+		/\[Product=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/giu;
 	const SLIDER_WIDGET_REGEX =
-		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:[? ]autoplay=(?<autoplay>[a-z0-9-]+))?\]/giu;
+		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:[?\s]autoplay=(?<autoplay>[\d]+))?\]/giu;
 	const TAG_WIDGET_REGEX =
-		/\[Tag=(?<slug>[\p{L}\d_-]+)(?:[? ]display=(?<display>[a-z0-9-]+))?\]/giu;
+		/\[Tag=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const PICTURE_WIDGET_REGEX =
-		/\[Picture=(?<slug>[\p{L}\d_-]+)(?:[? ]height=(?<height>\d+))?(?:[? ]width=(?<width>\d+))?(?:[? ]fit=(?<fit>(cover|contain)))?\]/giu;
+		/\[Picture=(?<slug>[\p{L}\d_-]+)((?:[?\s]width=(?<width>\d+))?(?:[?\s]height=(?<height>\d+))?(?:[?\s]fit=(?<fit>(cover|contain)))?)*\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -161,13 +161,21 @@ export async function cmsFromContent(
 					break;
 				case 'pictureWidget':
 					pictureSlugs.add(match.groups.slug);
+					// With multiple options, to handle any ordering for the options, we need to parse the string again
+					const raw = match[0];
+					const fit = /[?\s]fit=(?<fit>(cover|contain))/.exec(raw)?.groups?.fit as
+						| 'cover'
+						| 'contain'
+						| undefined;
+					const width = /[?\s]width=(?<width>\d+)/.exec(raw)?.groups?.width;
+					const height = /[?\s]height=(?<height>\d+)/.exec(raw)?.groups?.height;
 					tokens.push({
 						type: 'pictureWidget',
 						slug: match.groups.slug,
-						raw: match[0],
-						fit: match.groups?.fit as 'cover' | 'contain' | undefined,
-						width: match.groups?.width ? Number(match.groups.width) : undefined,
-						height: match.groups?.height ? Number(match.groups.height) : undefined
+						raw,
+						fit,
+						width: width ? Number(width) : undefined,
+						height: height ? Number(height) : undefined
 					});
 					break;
 			}

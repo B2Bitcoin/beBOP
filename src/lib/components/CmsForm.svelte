@@ -94,19 +94,42 @@
 			conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
 		/>
 
-		<div class="text-gray-700 my-3">
-			<p>
+		<ul class="text-gray-700 my-3 list-disc ml-4">
+			<li>
 				To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code
 				>, where
 				<code class="font-mono">slug</code> is the slug of your product
-			</p>
-			<p>
+			</li>
+			<li>
 				To include pictures, add a paragraph with only <code class="font-mono">[Picture=slug]</code
 				>. You can also set the width, height and fit:
 				<code class="font-mono">[Picture=slug width=100 height=100 fit=cover]</code> or
 				<code class="font-mono">[Picture=slug width=100 height=100 fit=contain]</code>
-			</p>
-		</div>
+			</li>
+			<li>
+				To include challenges, add a paragraph with only <code class="font-mono"
+					>[Challenge=slug]</code
+				>, where
+				<code class="font-mono">slug</code> is the slug of your challenge
+			</li>
+			<li>
+				To include sliders, add a paragraph with only <code class="font-mono">[Slider=slug]</code>,
+				where
+				<code class="font-mono">slug</code> is the slug of your slider. You can specify the autoplay
+				duration in milliseconds like this:
+				<code class="font-mono">[Slider=slug autoplay=3000]</code>
+			</li>
+			<li>
+				To include a specification widget, add a paragraph with only <code class="font-mono"
+					>[Specification=slug]</code
+				>, where <code class="font-mono">slug</code> is the slug of your specification.
+			</li>
+			<li>
+				To include a tag widget, add a paragraph with only <code class="font-mono">[Tag=slug]</code
+				>, where
+				<code class="font-mono">slug</code> is the slug of your tag.
+			</li>
+		</ul>
 
 		Raw HTML
 
