@@ -89,9 +89,6 @@
 		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
 			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
 		{:else if token.type === 'pictureWidget'}
-			{token.width}
-			{token.height}
-			{token.fit}
 			<PictureComponent
 				picture={pictureById[token.slug]}
 				class="my-5 {token.height ? `h-[${token.height}px]` : ''} {token.width
