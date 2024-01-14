@@ -13,12 +13,20 @@
 			class="underline body-hyperlink text-center">Back to product</a
 		>
 	{:else}
-		<a href="{data.adminPrefix}/picture" class="underline body-hyperlink text-center"
-			>Back to list</a
-		>
+		<a href="{data.adminPrefix}/picture" class="underline body-hyperlink text-center">
+			Back to list
+		</a>
 	{/if}
 
-	<input type="text" name="name" class="form-input" value={data.picture.name} />
+	<label class="form-label">
+		Slug
+		<input type="text" disabled class="form-input" value={data.picture._id} />
+	</label>
+
+	<label class="form-label">
+		Name
+		<input type="text" name="name" class="form-input" value={data.picture.name} />
+	</label>
 
 	<Picture picture={data.picture} class="object-contain max-h-[500px] max-w-full" />
 	<div class="flex gap-4">
