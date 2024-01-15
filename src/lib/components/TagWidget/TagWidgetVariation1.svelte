@@ -25,7 +25,7 @@
 				</h2>
 				<div class="flex text-centern justify-between mt-auto">
 					{#each tag.cta as cta}
-						<div class="tagWidget-cta font-semibold text-xl text-center w-auto p-1">
+						<div class="btn tagWidget-cta text-xl text-center w-auto p-1">
 							<a class="tagWidget-hyperlink" href={cta.href}>{cta.label}</a>
 						</div>
 					{/each}
