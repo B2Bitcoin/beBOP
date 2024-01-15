@@ -177,3 +177,5 @@ Then, go in the config page : /admin/config
 
 And : Copy/paste your Plausible URL in the plausible input
 #for example: https://plausible.your-domain.com/js/script.js
+
+To have **emails**, for example to have multiple users, you need [to configure SMTP with environment variables](https://plausible.io/docs/self-hosting-configuration#mailersmtp-setup).

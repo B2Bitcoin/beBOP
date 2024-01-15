@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ChallengeWidget from './ChallengeWidget.svelte';
 	import CarouselWidget from './CarouselWidget.svelte';
+	import PictureComponent from './Picture.svelte';
 	import type { Picture } from '$lib/types/Picture';
 	import ProductWidget from './ProductWidget.svelte';
 	import { POS_ROLE_ID } from '$lib/types/User';
@@ -54,6 +55,7 @@
 		pictures.filter((picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId),
 		'productId'
 	);
+	$: pictureById = Object.fromEntries(pictures.map((picture) => [picture._id, picture]));
 	$: specificationById = Object.fromEntries(
 		specifications.map((specification) => [specification._id, specification])
 	);
@@ -92,11 +94,23 @@
 			/>
 		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
 			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
+<<<<<<< HEAD
 		{:else if token.type === 'contactFormWidget' && contactFormById[token.slug]}
 			<ContactForm
 				contactForm={contactFormById[token.slug]}
 				{sessionEmail}
 				class="not-prose my-5"
+=======
+		{:else if token.type === 'pictureWidget'}
+			<PictureComponent
+				picture={pictureById[token.slug]}
+				class="my-5 {token.height ? `h-[${token.height}px]` : ''} {token.width
+					? `w-[${token.width}px]`
+					: ''}"
+				style="{token.fit ? `object-fit: ${token.fit};` : ''}{token.width
+					? `width: ${token.width}px;`
+					: ''}{token.height ? `height: ${token.height}px;` : ''}"
+>>>>>>> cf1b0cd4f900873b04594f4080bc2c29faa55ba2
 			/>
 		{:else}
 			<!-- eslint-disable svelte/no-at-html-tags -->

@@ -22,12 +22,15 @@ export async function cmsFromContent(
 	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
-		/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
-	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/gi;
+		/\[Product=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
+	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/giu;
 	const SLIDER_WIDGET_REGEX =
-		/\[Slider=(?<slug>[a-z0-9-]+)(?:\?autoplay=(?<autoplay>[a-z0-9-]+))?\]/gi;
-	const TAG_WIDGET_REGEX = /\[Tag=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
-	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[a-z0-9-]+)\]/gi;
+		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:[?\s]autoplay=(?<autoplay>[\d]+))?\]/giu;
+	const TAG_WIDGET_REGEX =
+		/\[Tag=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
+	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[\p{L}\d_-]+)\]/giu;
+	const PICTURE_WIDGET_REGEX =
+		/\[Picture=(?<slug>[\p{L}\d_-]+)((?:[?\s]width=(?<width>\d+))?(?:[?\s]height=(?<height>\d+))?(?:[?\s]fit=(?<fit>(cover|contain)))?)*\]/giu;
 	const CONTACTFORM_WIDGET_REGEX = /\[Form=(?<slug>[a-z0-9-]+)\]/gi;
 
 	const productSlugs = new Set<string>();
@@ -35,6 +38,7 @@ export async function cmsFromContent(
 	const sliderSlugs = new Set<string>();
 	const tagSlugs = new Set<string>();
 	const specificationSlugs = new Set<string>();
+	const pictureSlugs = new Set<string>();
 	const contactFormSlugs = new Set<string>();
 
 	const tokens: Array<
@@ -71,10 +75,17 @@ export async function cmsFromContent(
 				raw: string;
 		  }
 		| {
-				type: 'contactFormWidget';
+				type: 'pictureWidget';
 				slug: string;
 				raw: string;
+				fit?: 'cover' | 'contain';
+				width?: number;
+				height?: number;
 		  }
+		  |
+		  {		type: 'contactFormWidget';
+		  slug: string;
+		  raw: string;}
 	> = [];
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
@@ -83,6 +94,7 @@ export async function cmsFromContent(
 	const tagMatches = content.matchAll(TAG_WIDGET_REGEX);
 	const specificationMatches = content.matchAll(SPECIFICATION_WIDGET_REGEX);
 	const contactFormMatches = content.matchAll(CONTACTFORM_WIDGET_REGEX);
+	const pictureMatches = content.matchAll(PICTURE_WIDGET_REGEX);
 
 	let index = 0;
 
@@ -101,7 +113,9 @@ export async function cmsFromContent(
 			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
 		),
 		...[...contactFormMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' }),
+		...[...pictureMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
 		)
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
@@ -111,51 +125,79 @@ export async function cmsFromContent(
 			type: 'html',
 			raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html)
 		});
-		if (match.type === 'productWidget' && match.groups?.slug) {
-			productSlugs.add(match.groups.slug);
-			tokens.push({
-				type: 'productWidget',
-				slug: match.groups.slug,
-				display: match.groups?.display,
-				raw: match[0]
-			});
-		} else if (match.type === 'challengeWidget' && match.groups?.slug) {
-			challengeSlugs.add(match.groups.slug);
-			tokens.push({
-				type: 'challengeWidget',
-				slug: match.groups.slug,
-				raw: match[0]
-			});
-		} else if (match.type === 'sliderWidget' && match.groups?.slug) {
-			sliderSlugs.add(match.groups.slug);
-			tokens.push({
-				type: 'sliderWidget',
-				slug: match.groups.slug,
-				autoplay: Number(match.groups?.autoplay),
-				raw: match[0]
-			});
-		} else if (match.type === 'tagWidget' && match.groups?.slug) {
-			tagSlugs.add(match.groups.slug);
-			tokens.push({
-				type: 'tagWidget',
-				slug: match.groups.slug,
-				display: match.groups?.display,
-				raw: match[0]
-			});
-		} else if (match.type === 'specificationWidget' && match.groups?.slug) {
-			specificationSlugs.add(match.groups.slug);
-			tokens.push({
-				type: 'specificationWidget',
-				slug: match.groups.slug,
-				raw: match[0]
-			});
-		} else if (match.type === 'contactFormWidget' && match.groups?.slug) {
-			contactFormSlugs.add(match.groups.slug);
-			tokens.push({
-				type: 'contactFormWidget',
-				slug: match.groups.slug,
-				raw: match[0]
-			});
+		if (match.groups?.slug) {
+			switch (match.type) {
+				case 'productWidget':
+					productSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'productWidget',
+						slug: match.groups.slug,
+						display: match.groups?.display,
+						raw: match[0]
+					});
+					break;
+				case 'challengeWidget':
+					challengeSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'challengeWidget',
+						slug: match.groups.slug,
+						raw: match[0]
+					});
+					break;
+				case 'sliderWidget':
+					sliderSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'sliderWidget',
+						slug: match.groups.slug,
+						autoplay: Number(match.groups?.autoplay),
+						raw: match[0]
+					});
+					break;
+				case 'tagWidget':
+					tagSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'tagWidget',
+						slug: match.groups.slug,
+						display: match.groups?.display,
+						raw: match[0]
+					});
+					break;
+				case 'specificationWidget':
+					specificationSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'specificationWidget',
+						slug: match.groups.slug,
+						raw: match[0]
+					});
+					break;
+				case 'pictureWidget':
+					pictureSlugs.add(match.groups.slug);
+					// With multiple options, to handle any ordering for the options, we need to parse the string again
+					const raw = match[0];
+					const fit = /[?\s]fit=(?<fit>(cover|contain))/.exec(raw)?.groups?.fit as
+						| 'cover'
+						| 'contain'
+						| undefined;
+					const width = /[?\s]width=(?<width>\d+)/.exec(raw)?.groups?.width;
+					const height = /[?\s]height=(?<height>\d+)/.exec(raw)?.groups?.height;
+					tokens.push({
+						type: 'pictureWidget',
+						slug: match.groups.slug,
+						raw,
+						fit,
+						width: width ? Number(width) : undefined,
+						height: height ? Number(height) : undefined
+					});
+					break;
+			    case 'contactFormWidget' :
+					contactFormSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'contactFormWidget',
+						slug: match.groups.slug,
+						raw: match[0]
+					});
+				break;
+			}
 		}
 		index = match.index + match[0].length;
 	}
@@ -283,6 +325,9 @@ export async function cmsFromContent(
 					},
 					{
 						productId: { $in: [...productSlugs] }
+					},
+					{
+						_id: { $in: [...pictureSlugs] }
 					}
 				]
 			})
