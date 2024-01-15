@@ -1,8 +1,10 @@
 import { collections } from '$lib/server/database';
 import { addOrderPayment } from '$lib/server/orders';
 import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
+import { userIdentifier } from '$lib/server/user';
 import { parsePriceAmount } from '$lib/types/Currency.js';
 import { orderAmountWithNoPaymentsCreated as orderAmountWithNoPayments } from '$lib/types/Order.js';
+import { SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
@@ -47,5 +49,33 @@ export const actions = {
 		await addOrderPayment(order, parsed.method, amount, { expiresAt: null });
 
 		throw redirect(303, `/order/${order._id}`);
+	},
+	saveNote: async function ({ params, request, locals }) {
+		const data = await request.formData();
+		const { noteContent } = z
+			.object({
+				noteContent: z.string().min(1)
+			})
+			.parse({
+				noteContent: data.get('noteContent')
+			});
+		await collections.orders.updateOne(
+			{
+				_id: params.id
+			},
+			{
+				$push: {
+					notes: {
+						content: noteContent,
+						createdAt: new Date(),
+						role: SUPER_ADMIN_ROLE_ID,
+						...(locals.user && { userId: locals.user._id }),
+						...(userIdentifier(locals).npub && { npub: userIdentifier(locals).npub }),
+						...(userIdentifier(locals).email && { email: userIdentifier(locals).email })
+					}
+				}
+			}
+		);
+		throw redirect(303, `/order/${params.id}/notes`);
 	}
 };

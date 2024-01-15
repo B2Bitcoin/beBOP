@@ -21,6 +21,11 @@ export const load = async (event) => {
 			currencySnapshot: order.currencySnapshot,
 			number: order.number,
 			createdAt: order.createdAt,
+			notes:
+				order.notes?.map((note) => ({
+					content: note.content,
+					createdAt: note.createdAt
+				})) || [],
 			status: order.status
 		}))
 	};

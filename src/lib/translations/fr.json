@@ -61,6 +61,10 @@
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
+		"note": {
+			"label": "Laissez un message au vendeur",
+			"title": "Note"
+		},
 		"notifications": {
 			"email": "E-mail",
 			"message": "Merci de remplir au moins une adresse de contact pour être notifié des évolutions de votre commande.",
@@ -413,6 +417,15 @@
 		"linkReminder": "Conservez ce lien : <0></0> pour accéder à la commande ultérieurement.",
 		"list": {
 			"title": "Liste de vos commandes"
+		},
+		"note": {
+			"author": "Employé",
+			"authorCustomer": "Client",
+			"backToOrder": "Aller à la commande",
+			"label": "Note de l'employé",
+			"saveText": "Enregistrer la note",
+			"seeText": "Voir notes commande",
+			"title": "Notes de la commande #{number}"
 		},
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {

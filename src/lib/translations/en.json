@@ -61,6 +61,10 @@
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
 		"invalidNpub": "Invalid Nostr public address",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
+		"note": {
+			"label": "Leave a note for merchant",
+			"title": "Note"
+		},
 		"notifications": {
 			"email": "Email",
 			"message": "Please fill at least one contact address to be notified about your order news.",
@@ -413,6 +417,15 @@
 		"linkReminder": "Keep this link: <0></0> to access the order later.",
 		"list": {
 			"title": "List of your orders"
+		},
+		"note": {
+			"author": "Employee",
+			"authorCustomer": "Customer",
+			"backToOrder": "Go to order",
+			"label": "Employee note",
+			"saveText": "Save note",
+			"seeText": "See order notes",
+			"title": "Order notes #{number}"
 		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {

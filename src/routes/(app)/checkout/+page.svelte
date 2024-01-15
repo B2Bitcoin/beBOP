@@ -414,6 +414,21 @@
 					</article>
 				{/each}
 			</section>
+			<section class="gap-4 flex flex-col">
+				<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
+					<div class="pl-4 py-2 body-mainPlan border-b border-gray-300 text-xl font-light">
+						{t('checkout.note.title')}
+					</div>
+
+					<div class="p-4 flex flex-col gap-3">
+						<label class="form-label text-xl">
+							{t('checkout.note.label')}
+
+							<textarea name="noteContent" cols="30" rows="2" class="form-input" />
+						</label>
+					</div>
+				</article>
+			</section>
 		</form>
 		<div class="w-full md:w-auto">
 			<article

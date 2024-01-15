@@ -8,6 +8,7 @@ import type { PaymentMethod } from '$lib/server/payment-methods';
 import type { ObjectId } from 'mongodb';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import type { LanguageKey } from '$lib/translations';
+import type { User } from './User';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -17,6 +18,15 @@ export type Price = {
 	amount: number;
 	currency: Currency;
 };
+
+export interface Note {
+	npub?: string;
+	email?: string;
+	userId?: User['_id'];
+	role: string; // CUSTOMER_ROLE_ID or other
+	content: string;
+	createdAt: Date;
+}
 
 export interface OrderPayment {
 	_id: ObjectId;
@@ -178,13 +188,21 @@ export interface Order extends Timestamps {
 	};
 
 	clientIp?: string;
+	notes?: Note[];
 }
 interface SimplifiedOrderPayment {
 	id: string;
 	method: PaymentMethod;
 	status: OrderPaymentStatus;
 }
-export type SimplifiedOrder = Omit<Order, 'payments'> & { payments: SimplifiedOrderPayment[] };
+interface SimplifiedOrderNotes {
+	content: string;
+	createdAt: Date;
+}
+export type SimplifiedOrder = Omit<Order, 'payments' | 'notes'> & {
+	payments: SimplifiedOrderPayment[];
+	notes: SimplifiedOrderNotes[];
+};
 
 export function orderAmountWithNoPaymentsCreated(
 	order: Pick<Order, 'currencySnapshot'> & {

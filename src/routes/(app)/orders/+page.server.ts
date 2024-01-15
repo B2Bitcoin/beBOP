@@ -19,6 +19,11 @@ export async function load({ locals }) {
 			number: order.number,
 			createdAt: order.createdAt,
 			status: order.status,
+			notes:
+				order.notes?.map((note) => ({
+					content: note.content,
+					createdAt: note.createdAt
+				})) || [],
 			currencySnapshot: order.currencySnapshot
 		}))
 	};
