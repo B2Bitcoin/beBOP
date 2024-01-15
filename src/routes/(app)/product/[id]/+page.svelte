@@ -438,7 +438,11 @@
 				{/if}
 				{#if data.product.cta}
 					{#each data.product.cta as cta}
-						{#if !cta.displayOnly && data.showCheckoutButton}
+						{#if !cta.displayOnly}
+							<a href={cta.href} class="btn body-cta body-secondaryCTA">
+								{cta.label}
+							</a>
+						{:else if !data.showCheckoutButton}
 							<a href={cta.href} class="btn body-cta body-secondaryCTA">
 								{cta.label}
 							</a>
