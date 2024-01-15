@@ -12,13 +12,14 @@ import type { PickDeep } from 'type-fest';
 import type { Specification } from '$lib/types/Specification';
 import type { Tag } from '$lib/types/Tag';
 import type { ContactForm } from '$lib/types/ContactForm';
+import { sessionEmail } from '$lib/components/CmsDesign.svelte';
 
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 
 export async function cmsFromContent(
 	content: string,
-	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language'>>
+	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
 		/\[Product=(?<slug>[a-z0-9-]+)(?:\?display=(?<display>[a-z0-9-]+))?\]/gi;
@@ -288,7 +289,8 @@ export async function cmsFromContent(
 			.sort({ createdAt: 1 })
 			.toArray(),
 		digitalFiles,
-		roleId: locals.user?.roleId
+		roleId: locals.user?.roleId,
+		sessionEmail: locals.email
 	};
 }
 

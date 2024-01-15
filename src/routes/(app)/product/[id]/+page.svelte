@@ -137,6 +137,7 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSBefore.specifications}
 			contactForms={data.productCMSBefore.contactForms}
+			sessionEmail={data.productCMSBefore.sessionEmail}
 		/>
 	{/if}
 
@@ -459,6 +460,7 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSAfter.specifications}
 			contactForms={data.productCMSAfter.contactForms}
+			sessionEmail={data.productCMSAfter.sessionEmail}
 		/>
 	{/if}
 </main>

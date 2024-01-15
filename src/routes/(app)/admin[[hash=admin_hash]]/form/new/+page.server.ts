@@ -18,7 +18,9 @@ export const actions: Actions = {
 				title: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				target: z.string().trim().min(1).max(100),
 				subject: z.string().trim().min(1).max(100),
-				content: z.string().trim().min(1).max(MAX_CONTENT_LIMIT)
+				content: z.string().trim().min(1).max(MAX_CONTENT_LIMIT),
+				displayFromField: z.boolean({ coerce: true }).default(false),
+				prefillWithSession: z.boolean({ coerce: true }).default(false)
 			})
 			.parse(Object.fromEntries(formData));
 
@@ -32,6 +34,8 @@ export const actions: Actions = {
 			content: parsed.content,
 			target: parsed.target,
 			subject: parsed.subject,
+			displayFromField: parsed.displayFromField,
+			prefillWithSession: parsed.prefillWithSession,
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});

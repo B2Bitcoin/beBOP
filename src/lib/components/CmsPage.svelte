@@ -24,6 +24,7 @@
 	export let sliders: CmsSlider[];
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
+	export let sessionEmail: string | undefined;
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
 	export let contactForms: CmsContactForm[];
@@ -46,6 +47,7 @@
 		{roleId}
 		{specifications}
 		{contactForms}
+		{sessionEmail}
 		class="body body-mainPlan"
 	/>
 {:else}
@@ -61,6 +63,7 @@
 			{roleId}
 			{specifications}
 			{contactForms}
+			{sessionEmail}
 			class="body"
 		/>
 	</main>

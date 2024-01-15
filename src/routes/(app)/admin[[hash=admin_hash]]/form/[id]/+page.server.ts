@@ -35,7 +35,9 @@ export const actions = {
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
 				content: z.string().max(MAX_CONTENT_LIMIT),
 				target: z.string().max(100),
-				subject: z.string().max(100)
+				subject: z.string().max(100),
+				displayFromField: z.boolean({ coerce: true }).default(false),
+				prefillWithSession: z.boolean({ coerce: true }).default(false)
 			})
 			.parse(Object.fromEntries(data));
 		await collections.contactForms.updateOne(
@@ -48,6 +50,8 @@ export const actions = {
 					target: parsed.target,
 					content: parsed.content,
 					subject: parsed.subject,
+					displayFromField: parsed.displayFromField,
+					prefillWithSession: parsed.prefillWithSession,
 					updatedAt: new Date()
 				}
 			}

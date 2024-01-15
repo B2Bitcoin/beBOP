@@ -6,6 +6,7 @@
 	export let data;
 	let title = data.contactForm.title;
 	let slug = data.contactForm._id;
+	let displayFrom = data.contactForm.displayFromField;
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this Contact form?')) {
 			event.preventDefault();
@@ -51,6 +52,26 @@
 			value={data.contactForm.target}
 		/>
 	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			name="displayFromField"
+			placeholder="From"
+			bind:checked={displayFrom}
+			required
+		/> Display From field
+	</label>
+	{#if displayFrom}
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="prefillWithSession"
+				placeholder="From"
+				checked={data.contactForm.prefillWithSession}
+			/> Prefill with session information
+		</label>{/if}
 	<label class="form-label">
 		Subject
 		<input

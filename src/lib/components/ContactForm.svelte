@@ -5,8 +5,11 @@
 	import type { ContactForm } from '$lib/types/ContactForm';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 
-	export let contactForm: Pick<ContactForm, '_id' | 'subject' | 'content' | 'target'>;
-
+	export let contactForm: Pick<
+		ContactForm,
+		'_id' | 'subject' | 'content' | 'target' | 'displayFromField' | 'prefillWithSession'
+	>;
+	export let sessionEmail: string | undefined = undefined;
 	let className = '';
 	export { className as class };
 
@@ -21,6 +24,19 @@
 	class="relative mx-auto tagWidget flex flex-col gap-4 tagWidget-main p-6 rounded {className}"
 >
 	<input class="form-input" type="hidden" name="target" bind:value={contactForm.target} />
+	{#if contactForm.displayFromField}
+		<label class="form-label">
+			from
+			<input
+				class="form-input"
+				type="text"
+				maxlength={MAX_NAME_LIMIT}
+				name="from"
+				placeholder="From"
+				value={contactForm.prefillWithSession ? sessionEmail ?? '' : ''}
+			/>
+		</label>
+	{/if}
 	<label class="form-label">
 		Subject
 		<input

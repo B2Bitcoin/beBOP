@@ -28,6 +28,7 @@
 	export let sliders: CmsSlider[];
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
+	export let sessionEmail: string | undefined;
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
 	export let contactForms: CmsContactForm[];
@@ -92,7 +93,11 @@
 		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
 			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
 		{:else if token.type === 'contactFormWidget' && contactFormById[token.slug]}
-			<ContactForm contactForm={contactFormById[token.slug]} class="not-prose my-5" />
+			<ContactForm
+				contactForm={contactFormById[token.slug]}
+				{sessionEmail}
+				class="not-prose my-5"
+			/>
 		{:else}
 			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html token.raw}

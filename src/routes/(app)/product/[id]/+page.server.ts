@@ -191,7 +191,8 @@ export const actions = {
 			.object({
 				content: z.string().max(MAX_CONTENT_LIMIT),
 				target: z.string().max(100),
-				subject: z.string().max(100)
+				subject: z.string().max(100),
+				from: z.string().max(100).optional()
 			})
 			.parse(Object.fromEntries(data));
 
@@ -204,6 +205,8 @@ export const actions = {
 			},
 			(key) => key.toLowerCase()
 		);
+		const htmlContent = parsed.from ? parsed.content + ` contact ${parsed.from}` : parsed.content;
+
 		await collections.emailNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
@@ -211,7 +214,7 @@ export const actions = {
 			subject: parsed.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
 				return lowerVars[p1.toLowerCase()] || match;
 			}),
-			htmlContent: parsed.content.replace(/{{([^}]+)}}/g, (match, p1) => {
+			htmlContent: htmlContent.replace(/{{([^}]+)}}/g, (match, p1) => {
 				return lowerVars[p1.toLowerCase()] || match;
 			}),
 			dest: parsed.target || SMTP_USER
