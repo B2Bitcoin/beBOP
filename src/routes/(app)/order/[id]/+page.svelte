@@ -299,7 +299,36 @@
 					</div>
 				</form>
 			{/if}
+
+			{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+				<form
+					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/saveNote"
+					method="post"
+					class="contents"
+				>
+					<section class="gap-4 flex flex-col">
+						<article class="rounded border border-gray-300 overflow-hidden flex flex-col">
+							<div class="p-4 flex flex-col gap-3">
+								<label class="form-label text-2xl">
+									{t('order.note.label')}
+
+									<textarea name="noteContent" cols="30" rows="2" class="form-input" />
+								</label>
+							</div>
+						</article>
+						<div class="flex flex-wrap gap-3 justify-between">
+							<button type="submit" class="btn btn-blue self-start"
+								>{t('order.note.saveText')}</button
+							>
+							<a href="/order/{data.order._id}/notes" class="btn btn-gray self-end"
+								>{t('order.note.seeText')}</a
+							>
+						</div>
+					</section>
+				</form>
+			{/if}
 		</div>
+
 		<div class="">
 			<OrderSummary class="sticky top-4 -mr-2 -mt-2" order={data.order} />
 		</div>

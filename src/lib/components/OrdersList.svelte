@@ -7,7 +7,7 @@
 	export let orders:
 		| Pick<
 				SimplifiedOrder,
-				'_id' | 'payments' | 'number' | 'createdAt' | 'currencySnapshot' | 'status'
+				'_id' | 'payments' | 'number' | 'createdAt' | 'currencySnapshot' | 'status' | 'notes'
 		  >[]
 		| [];
 	export let adminPrefix: string | undefined = undefined;
@@ -60,6 +60,9 @@
 					currency={order.currencySnapshot.main.totalReceived.currency}
 					amount={order.currencySnapshot.main.totalReceived.amount}
 				/>
+			{/if}
+			{#if order.notes?.length}
+				-<a href="/order/{order._id}/notes" class="body-hyperlink hover:underline">📝</a>
 			{/if}
 			{#if adminPrefix}
 				{#each order.payments as payment}
