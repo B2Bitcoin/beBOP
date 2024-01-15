@@ -82,10 +82,7 @@ export async function cmsFromContent(
 				width?: number;
 				height?: number;
 		  }
-		  |
-		  {		type: 'contactFormWidget';
-		  slug: string;
-		  raw: string;}
+		| { type: 'contactFormWidget'; slug: string; raw: string }
 	> = [];
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
@@ -113,7 +110,8 @@ export async function cmsFromContent(
 			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
 		),
 		...[...contactFormMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' }),
+			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
+		),
 		...[...pictureMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
 		)
@@ -189,14 +187,14 @@ export async function cmsFromContent(
 						height: height ? Number(height) : undefined
 					});
 					break;
-			    case 'contactFormWidget' :
+				case 'contactFormWidget':
 					contactFormSlugs.add(match.groups.slug);
 					tokens.push({
 						type: 'contactFormWidget',
 						slug: match.groups.slug,
 						raw: match[0]
 					});
-				break;
+					break;
 			}
 		}
 		index = match.index + match[0].length;
