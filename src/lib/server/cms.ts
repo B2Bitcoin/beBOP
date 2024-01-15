@@ -12,7 +12,6 @@ import type { PickDeep } from 'type-fest';
 import type { Specification } from '$lib/types/Specification';
 import type { Tag } from '$lib/types/Tag';
 import type { ContactForm } from '$lib/types/ContactForm';
-import { sessionEmail } from '$lib/components/CmsDesign.svelte';
 
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
