@@ -76,15 +76,17 @@
 		Subject
 		<input class="form-input block" type="text" name="subject" placeholder="Subject" required />
 	</label>
-	Content
 
-	<textarea
-		name="content"
-		cols="30"
-		rows="10"
-		maxlength={MAX_CONTENT_LIMIT}
-		placeholder="message"
-		class="form-input block w-full"
-	/>
+	Content
+	<label class="form-label">
+		<textarea
+			name="content"
+			cols="30"
+			rows="10"
+			maxlength={MAX_CONTENT_LIMIT}
+			placeholder="message"
+			class="form-input block w-full"
+		/>
+	</label>
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
 </form>

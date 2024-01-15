@@ -24,7 +24,7 @@
 			class="form-input block"
 			type="text"
 			name="subject"
-			placeholder="Subject"
+			placeholder={data.contactForm.subject}
 			value={data.contactForm.translations?.[language]?.subject ?? ''}
 		/>
 	</label>
@@ -36,7 +36,7 @@
 		rows="10"
 		maxlength={MAX_CONTENT_LIMIT}
 		value={data.contactForm.translations?.[language]?.content ?? ''}
-		placeholder="message"
+		placeholder={data.contactForm.content}
 		class="form-input block w-full"
 	/>
 

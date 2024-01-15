@@ -59,7 +59,6 @@
 			name="displayFromField"
 			placeholder="From"
 			bind:checked={displayFrom}
-			required
 		/> Display From field
 	</label>
 	{#if displayFrom}
