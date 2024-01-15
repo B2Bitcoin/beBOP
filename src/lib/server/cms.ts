@@ -296,9 +296,16 @@ export async function cmsFromContent(
 		.find({
 			_id: { $in: [...contactFormSlugs] }
 		})
-		.project<Pick<ContactForm, '_id' | 'content' | 'target' | 'subject'>>({
+		.project<
+			Pick<
+				ContactForm,
+				'_id' | 'content' | 'target' | 'subject' | 'displayFromField' | 'prefillWithSession'
+			>
+		>({
 			content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
 			target: 1,
+			displayFromField: 1,
+			prefillWithSession: 1,
 			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] }
 		})
 		.toArray();

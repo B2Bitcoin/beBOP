@@ -26,7 +26,7 @@
 	<input class="form-input" type="hidden" name="target" bind:value={contactForm.target} />
 	{#if contactForm.displayFromField}
 		<label class="form-label">
-			from
+			{t('contactForm.from')}
 			<input
 				class="form-input"
 				type="text"
@@ -38,7 +38,7 @@
 		</label>
 	{/if}
 	<label class="form-label">
-		Subject
+		{t('contactForm.subject')}
 		<input
 			class="form-input"
 			type="text"
@@ -49,7 +49,7 @@
 		/>
 	</label>
 
-	Content
+	{t('contactForm.content')}
 
 	<textarea
 		name="content"

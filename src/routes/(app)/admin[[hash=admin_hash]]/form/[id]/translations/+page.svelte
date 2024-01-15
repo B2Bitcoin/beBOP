@@ -19,19 +19,6 @@
 	</label>
 
 	<label class="form-label">
-		Title
-		<input
-			class="form-input"
-			type="text"
-			maxlength={MAX_NAME_LIMIT}
-			name="title"
-			placeholder="title"
-			value={data.contactForm.translations?.[language]?.title ?? ''}
-			required
-		/>
-	</label>
-
-	<label class="form-label">
 		Subject
 		<input
 			class="form-input block"
@@ -39,7 +26,6 @@
 			name="subject"
 			placeholder="Subject"
 			value={data.contactForm.translations?.[language]?.subject ?? ''}
-			required
 		/>
 	</label>
 	Content
