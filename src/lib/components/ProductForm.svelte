@@ -590,7 +590,7 @@
 			</tbody>
 		</table>
 		<h3 class="text-xl">Add custom CTA</h3>
-		{#each [...(product.cta || []), ...Array(3).fill( { href: '', label: '' } )].slice(0, 3) as link, i}
+		{#each [...(product.cta || []), ...Array(3).fill( { href: '', label: '', displayOnly: false } )].slice(0, 3) as link, i}
 			<div class="flex gap-4">
 				<label class="form-label">
 					Text
@@ -599,6 +599,10 @@
 				<label class="form-label">
 					Url
 					<input type="text" name="cta[{i}].href" class="form-input" value={link.href} />
+				</label>
+				<label class="checkbox-label">
+					<input type="checkbox" name="cta[{i}].displayOnly" bind:checked={link.displayOnly} /> Show
+					only if Add to cart / Order button aren't available
 				</label>
 			</div>
 		{/each}
