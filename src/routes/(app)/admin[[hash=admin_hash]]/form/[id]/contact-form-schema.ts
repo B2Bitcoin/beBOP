@@ -1,5 +1,4 @@
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
-import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { z } from 'zod';
 
 export const contactFormTranslatableSchema = {
