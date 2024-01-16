@@ -14,5 +14,10 @@
 		}
 	]}
 />
-
+<p>
+	<kbd class="kbd">{'{{websiteLink}}'}</kbd>, <kbd class="kbd">{'{{brandName}}'}</kbd>,
+	<kbd class="kbd">{'{{pageLink}}'}</kbd>
+	and
+	<kbd class="kbd">{'{{pageName}}'}</kbd> are always available in templates.
+</p>
 <slot />
