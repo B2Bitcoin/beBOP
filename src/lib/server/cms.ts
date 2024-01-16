@@ -20,7 +20,7 @@ const purify = DOMPurify(window);
 
 export async function cmsFromContent(
 	content: string,
-	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email'>>
+	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email' | 'sso'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
 		/\[Product=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
@@ -351,7 +351,7 @@ export async function cmsFromContent(
 			.toArray(),
 		digitalFiles,
 		roleId: locals.user?.roleId,
-		sessionEmail: locals.email
+		sessionEmail: locals.email || locals.sso?.find((sso) => sso.email)?.email
 	};
 }
 
