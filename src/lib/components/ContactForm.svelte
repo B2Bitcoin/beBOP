@@ -48,17 +48,18 @@
 			bind:value={subject}
 		/>
 	</label>
+	<label class="form-label">
+		{t('contactForm.content')}
 
-	{t('contactForm.content')}
-
-	<textarea
-		name="content"
-		cols="20"
-		rows="5"
-		placeholder="message"
-		maxlength={MAX_CONTENT_LIMIT}
-		bind:value={content}
-		class="form-input block w-full"
-	/>
+		<textarea
+			name="content"
+			cols="20"
+			rows="5"
+			placeholder="message"
+			maxlength={MAX_CONTENT_LIMIT}
+			bind:value={content}
+			class="form-input block w-full"
+		/>
+	</label>
 	<button type="submit" class="btn tagWidget-cta">{t('contact.form.contactUs')}</button>
 </form>
