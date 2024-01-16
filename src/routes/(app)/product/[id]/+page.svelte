@@ -102,8 +102,10 @@
 	}
 	const lowerVars = mapKeys(
 		{
-			productLink: `${data.websiteLink}/product/${data.product._id}`,
-			productName: data.product.name
+			pageLink: $page.url,
+			pageName: data.product.name,
+			websiteLink: data.websiteLink,
+			brandName: data.brandName
 		},
 		(key) => key.toLowerCase()
 	);

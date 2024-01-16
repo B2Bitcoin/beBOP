@@ -47,6 +47,8 @@ export const actions = {
 
 		const lowerVars = mapKeys(
 			{
+				pageLink: window.location.href,
+				pageName: window.document.title,
 				websiteLink: ORIGIN,
 				brandName: runtimeConfig.brandName
 			},

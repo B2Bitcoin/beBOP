@@ -311,9 +311,6 @@ export async function cmsFromContent(
 			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] }
 		})
 		.toArray();
-	const lowerVars = mapKeys({ websiteLink: ORIGIN, brandName: runtimeConfig.brandName }, (key) =>
-		key.toLowerCase()
-	);
 	return {
 		tokens,
 		challenges,
@@ -321,15 +318,7 @@ export async function cmsFromContent(
 		products,
 		tags,
 		specifications,
-		contactForms: contactForms.map((contactForm) => ({
-			...contactForm,
-			subject: contactForm.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
-				return lowerVars[p1.toLowerCase()] || match;
-			}),
-			content: contactForm.content.replace(/{{([^}]+)}}/g, (match, p1) => {
-				return lowerVars[p1.toLowerCase()] || match;
-			})
-		})),
+		contactForms,
 		pictures: await collections.pictures
 			.find({
 				$or: [
