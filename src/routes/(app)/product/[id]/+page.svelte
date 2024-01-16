@@ -20,6 +20,7 @@
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
+	import { mapKeys } from '$lib/utils/mapKeys.js';
 
 	export let data;
 
@@ -99,6 +100,13 @@
 
 		return true;
 	}
+	const lowerVars = mapKeys(
+		{
+			productLink: `${data.websiteLink}/product/${data.product._id}`,
+			productName: data.product.name
+		},
+		(key) => key.toLowerCase()
+	);
 
 	const { t, locale } = useI18n();
 </script>
@@ -136,7 +144,15 @@
 			digitalFiles={data.productCMSBefore.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSBefore.specifications}
-			contactForms={data.productCMSBefore.contactForms}
+			contactForms={data.productCMSBefore?.contactForms.map((contactForm) => ({
+				...contactForm,
+				subject: contactForm.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
+					return lowerVars[p1.toLowerCase()] || match;
+				}),
+				content: contactForm.content.replace(/{{([^}]+)}}/g, (match, p1) => {
+					return lowerVars[p1.toLowerCase()] || match;
+				})
+			}))}
 			sessionEmail={data.productCMSBefore.sessionEmail}
 		/>
 	{/if}
@@ -459,7 +475,15 @@
 			digitalFiles={data.productCMSAfter.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSAfter.specifications}
-			contactForms={data.productCMSAfter.contactForms}
+			contactForms={data.productCMSAfter?.contactForms.map((contactForm) => ({
+				...contactForm,
+				subject: contactForm.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
+					return lowerVars[p1.toLowerCase()] || match;
+				}),
+				content: contactForm.content.replace(/{{([^}]+)}}/g, (match, p1) => {
+					return lowerVars[p1.toLowerCase()] || match;
+				})
+			}))}
 			sessionEmail={data.productCMSAfter.sessionEmail}
 		/>
 	{/if}

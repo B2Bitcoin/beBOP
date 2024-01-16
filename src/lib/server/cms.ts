@@ -7,11 +7,13 @@ import { trimSuffix } from '$lib/utils/trimSuffix';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 import { collections } from './database';
-import { ALLOW_JS_INJECTION } from '$env/static/private';
+import { ALLOW_JS_INJECTION, ORIGIN } from '$env/static/private';
 import type { PickDeep } from 'type-fest';
 import type { Specification } from '$lib/types/Specification';
 import type { Tag } from '$lib/types/Tag';
 import type { ContactForm } from '$lib/types/ContactForm';
+import { mapKeys } from '$lib/utils/mapKeys';
+import { runtimeConfig } from './runtime-config';
 
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
@@ -309,7 +311,9 @@ export async function cmsFromContent(
 			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] }
 		})
 		.toArray();
-
+	const lowerVars = mapKeys({ websiteLink: ORIGIN, brandName: runtimeConfig.brandName }, (key) =>
+		key.toLowerCase()
+	);
 	return {
 		tokens,
 		challenges,
@@ -317,7 +321,15 @@ export async function cmsFromContent(
 		products,
 		tags,
 		specifications,
-		contactForms,
+		contactForms: contactForms.map((contactForm) => ({
+			...contactForm,
+			subject: contactForm.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
+				return lowerVars[p1.toLowerCase()] || match;
+			}),
+			content: contactForm.content.replace(/{{([^}]+)}}/g, (match, p1) => {
+				return lowerVars[p1.toLowerCase()] || match;
+			})
+		})),
 		pictures: await collections.pictures
 			.find({
 				$or: [

@@ -1,3 +1,4 @@
+import { ORIGIN } from '$env/static/private';
 import { adminPrefix } from '$lib/server/admin.js';
 import { getCartFromDb } from '$lib/server/cart.js';
 import { collections } from '$lib/server/database';
@@ -93,6 +94,7 @@ export async function load(params) {
 		},
 		sellerIdentity: runtimeConfig.sellerIdentity,
 		deliveryFees: runtimeConfig.deliveryFees,
+		websiteLink: ORIGIN,
 		cart: cart
 			? Promise.all(
 					cart.items.map(async (item) => {
