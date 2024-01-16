@@ -6,7 +6,7 @@
 	export let data;
 	const lowerVars = mapKeys(
 		{
-			pageLink: $page.url,
+			pageLink: $page.url.toString(),
 			pageName: data.cmsPage.title,
 			websiteLink: data.websiteLink,
 			brandName: data.brandName
