@@ -205,8 +205,10 @@ export const actions = {
 			},
 			(key) => key.toLowerCase()
 		);
-		const htmlContent = parsed.from ? parsed.content + ` contact ${parsed.from}` : parsed.content;
-
+		const parsedMessageHtml = parsed.content.replace(/\r\n/g, '<br>');
+		const htmlContent = `Message envoyé par formulaire sur le site ${ORIGIN}<br> Adresse de contact : ${
+			parsed.from ? parsed.from : 'non-renseigné'
+		}  <br> Message envoyé :<br> ${parsedMessageHtml}`;
 		await collections.emailNotifications.insertOne({
 			_id: new ObjectId(),
 			createdAt: new Date(),
