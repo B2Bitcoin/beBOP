@@ -19,7 +19,7 @@
 
 <form
 	method="post"
-	action="/form?/sendEmail"
+	action="/form/{contactForm._id}?/sendEmail"
 	class="relative mx-auto tagWidget flex flex-col gap-4 tagWidget-main p-6 rounded {className}"
 >
 	<input class="form-input" type="hidden" name="target" bind:value={contactForm.target} />
