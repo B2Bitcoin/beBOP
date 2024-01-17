@@ -9,11 +9,6 @@ import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
-import { ORIGIN, SMTP_USER } from '$env/static/private';
-import { ObjectId } from 'mongodb';
-import { mapKeys } from '$lib/utils/mapKeys';
-import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
-import { rateLimit } from '$lib/server/rateLimit';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
