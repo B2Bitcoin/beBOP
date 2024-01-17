@@ -95,6 +95,16 @@
 		"tosAgree": "J'accepte les <0>conditions d'utilisation</0>",
 		"vatShippingAddress": "Le pays est déterminé par l'adresse de livraison"
 	},
+	"contact": {
+		"form": {
+			"contactUs": "Contactez nous"
+		}
+	},
+	"contactForm": {
+		"content": "Message",
+		"from": "Adresse de contact",
+		"subject": "Demande"
+	},
 	"country": {
 		"alpha2": {
 			"AD": "Andorre",

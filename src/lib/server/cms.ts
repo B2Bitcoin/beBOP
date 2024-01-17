@@ -11,13 +11,14 @@ import { ALLOW_JS_INJECTION } from '$env/static/private';
 import type { PickDeep } from 'type-fest';
 import type { Specification } from '$lib/types/Specification';
 import type { Tag } from '$lib/types/Tag';
+import type { ContactForm } from '$lib/types/ContactForm';
 
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 
 export async function cmsFromContent(
 	content: string,
-	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language'>>
+	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email' | 'sso'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
 		/\[Product=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
@@ -29,6 +30,7 @@ export async function cmsFromContent(
 	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const PICTURE_WIDGET_REGEX =
 		/\[Picture=(?<slug>[\p{L}\d_-]+)((?:[?\s]width=(?<width>\d+))?(?:[?\s]height=(?<height>\d+))?(?:[?\s]fit=(?<fit>(cover|contain)))?)*\]/giu;
+	const CONTACTFORM_WIDGET_REGEX = /\[Form=(?<slug>[\p{L}\d_-]+)\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -36,6 +38,7 @@ export async function cmsFromContent(
 	const tagSlugs = new Set<string>();
 	const specificationSlugs = new Set<string>();
 	const pictureSlugs = new Set<string>();
+	const contactFormSlugs = new Set<string>();
 
 	const tokens: Array<
 		| {
@@ -78,6 +81,7 @@ export async function cmsFromContent(
 				width?: number;
 				height?: number;
 		  }
+		| { type: 'contactFormWidget'; slug: string; raw: string }
 	> = [];
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
@@ -85,6 +89,7 @@ export async function cmsFromContent(
 	const sliderMatches = content.matchAll(SLIDER_WIDGET_REGEX);
 	const tagMatches = content.matchAll(TAG_WIDGET_REGEX);
 	const specificationMatches = content.matchAll(SPECIFICATION_WIDGET_REGEX);
+	const contactFormMatches = content.matchAll(CONTACTFORM_WIDGET_REGEX);
 	const pictureMatches = content.matchAll(PICTURE_WIDGET_REGEX);
 
 	let index = 0;
@@ -102,6 +107,9 @@ export async function cmsFromContent(
 		...[...tagMatches].map((m) => Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' })),
 		...[...specificationMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
+		),
+		...[...contactFormMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
 		),
 		...[...pictureMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
@@ -176,6 +184,14 @@ export async function cmsFromContent(
 						fit,
 						width: width ? Number(width) : undefined,
 						height: height ? Number(height) : undefined
+					});
+					break;
+				case 'contactFormWidget':
+					contactFormSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'contactFormWidget',
+						slug: match.groups.slug,
+						raw: match[0]
 					});
 					break;
 			}
@@ -276,7 +292,23 @@ export async function cmsFromContent(
 			content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] }
 		})
 		.toArray();
-
+	const contactForms = await collections.contactForms
+		.find({
+			_id: { $in: [...contactFormSlugs] }
+		})
+		.project<
+			Pick<
+				ContactForm,
+				'_id' | 'content' | 'target' | 'subject' | 'displayFromField' | 'prefillWithSession'
+			>
+		>({
+			content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+			target: 1,
+			displayFromField: 1,
+			prefillWithSession: 1,
+			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] }
+		})
+		.toArray();
 	return {
 		tokens,
 		challenges,
@@ -284,6 +316,7 @@ export async function cmsFromContent(
 		products,
 		tags,
 		specifications,
+		contactForms,
 		pictures: await collections.pictures
 			.find({
 				$or: [
@@ -316,3 +349,4 @@ export type CmsTag = Awaited<ReturnType<typeof cmsFromContent>>['tags'][number];
 export type CmsPicture = Awaited<ReturnType<typeof cmsFromContent>>['pictures'][number];
 export type CmsDigitalFile = Awaited<ReturnType<typeof cmsFromContent>>['digitalFiles'][number];
 export type CmsSpecification = Awaited<ReturnType<typeof cmsFromContent>>['specifications'][number];
+export type CmsContactForm = Awaited<ReturnType<typeof cmsFromContent>>['contactForms'][number];
