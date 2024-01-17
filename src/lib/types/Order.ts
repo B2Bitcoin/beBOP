@@ -79,6 +79,7 @@ export interface OrderPayment {
 
 	lastStatusNotified?: OrderPaymentStatus;
 	bankTransferNumber?: string;
+	sumupTransactionId?: string;
 }
 
 export interface OrderAddress {

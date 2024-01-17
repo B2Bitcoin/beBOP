@@ -24,7 +24,7 @@ export const actions = {
 			throw error(400, 'Payment is not pending');
 		}
 		const formData = await request.formData();
-		const parsed =
+		const bankInfo =
 			payment.method === 'bank-transfer'
 				? z
 						.object({
@@ -34,9 +34,22 @@ export const actions = {
 							bankTransferNumber: formData.get('bankTransferNumber')
 						})
 				: null;
+		const sumUpInfo =
+			payment.method === 'card'
+				? z
+						.object({
+							sumupTransactionId: z.string().trim().min(1).max(100)
+						})
+						.parse({
+							sumupTransactionId: formData.get('sumupTransactionId')
+						})
+				: null;
 
 		await onOrderPayment(order, payment, payment.price, {
-			...(parsed && parsed.bankTransferNumber && { bankTransferNumber: parsed.bankTransferNumber })
+			...(bankInfo &&
+				bankInfo.bankTransferNumber && { bankTransferNumber: bankInfo.bankTransferNumber }),
+			...(sumUpInfo &&
+				sumUpInfo.sumupTransactionId && { sumupTransactionId: sumUpInfo.sumupTransactionId })
 		});
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);

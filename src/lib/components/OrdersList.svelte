@@ -66,7 +66,7 @@
 			{/if}
 			{#if adminPrefix}
 				{#each order.payments as payment}
-					{#if payment.status === 'pending' && (payment.method === 'point-of-sale' || payment.method === 'bank-transfer')}
+					{#if payment.status === 'pending' && (payment.method === 'point-of-sale' || payment.method === 'bank-transfer' || payment.method === 'card')}
 						<form
 							action="{adminPrefix}/order/{order._id}/payment/{payment.id}?/confirm"
 							method="post"
@@ -79,6 +79,15 @@
 									name="bankTransferNumber"
 									required
 									placeholder="bank transfer number"
+								/>
+							{/if}
+							{#if payment.method === 'card'}
+								<input
+									class="form-input grow mx-2"
+									type="text"
+									name="sumupTransactionId"
+									required
+									placeholder="sumUp transaction id"
 								/>
 							{/if}
 							<button type="submit" class="btn btn-black whitespace-nowrap">Mark paid</button>
