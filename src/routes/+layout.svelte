@@ -9,7 +9,7 @@
 	import '@fontsource/gloock/400.css';
 	import { page } from '$app/stores';
 	import { setContext } from 'svelte';
-	import { PUBLIC_COMMIT_ID } from '$env/static/public';
+	import { PUBLIC_VERSION } from '$env/static/public';
 
 	export let data;
 
@@ -22,12 +22,12 @@
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
 	<script
 		lang="javascript"
-		src="/script/language/en.js?v={PUBLIC_COMMIT_ID}-{data.enUpdatedAt.getTime()}"
+		src="/script/language/en.js?v={PUBLIC_VERSION}-{data.enUpdatedAt.getTime()}"
 	></script>
 	{#if data.language !== 'en'}
 		<script
 			lang="javascript"
-			src="/script/language/{data.language}.js?v={PUBLIC_COMMIT_ID}-{data.languageUpdatedAt.getTime()}"
+			src="/script/language/{data.language}.js?v={PUBLIC_VERSION}-{data.languageUpdatedAt.getTime()}"
 		></script>
 	{/if}
 	{#if data.plausibleScriptUrl}
