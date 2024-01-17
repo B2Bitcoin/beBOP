@@ -16,9 +16,12 @@
 		CmsSlider,
 		CmsSpecification,
 		CmsTag,
-		CmsToken
+		CmsToken,
+		CmsContactForm
 	} from '$lib/server/cms';
 	import SpecificationWidget from './SpecificationWidget.svelte';
+	import ContactForm from './ContactForm.svelte';
+	import { mapKeys } from '$lib/utils/mapKeys';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -27,11 +30,26 @@
 	export let sliders: CmsSlider[];
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
+	export let sessionEmail: string | undefined;
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
-
+	export let contactForms: CmsContactForm[];
+	export let pageName: string | undefined;
+	export let pageLink: string | undefined;
+	export let websiteLink: string | undefined;
+	export let brandName: string | undefined;
 	let classNames = '';
 	export { classNames as class };
+
+	const lowerVars = mapKeys(
+		{
+			pageLink: pageLink,
+			pageName: pageName,
+			websiteLink: websiteLink,
+			brandName: brandName
+		},
+		(key) => key.toLowerCase()
+	);
 
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: digitalFilesByProduct = Object.fromEntries(
@@ -55,6 +73,20 @@
 	$: pictureById = Object.fromEntries(pictures.map((picture) => [picture._id, picture]));
 	$: specificationById = Object.fromEntries(
 		specifications.map((specification) => [specification._id, specification])
+	);
+	$: contactFormById = Object.fromEntries(
+		contactForms.map((contactForm) => [
+			contactForm._id,
+			{
+				...contactForm,
+				subject: contactForm.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
+					return lowerVars[p1.toLowerCase()] || match;
+				}),
+				content: contactForm.content.replace(/{{([^}]+)}}/g, (match, p1) => {
+					return lowerVars[p1.toLowerCase()] || match;
+				})
+			}
+		])
 	);
 </script>
 
@@ -88,6 +120,12 @@
 			/>
 		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
 			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
+		{:else if token.type === 'contactFormWidget' && contactFormById[token.slug]}
+			<ContactForm
+				contactForm={contactFormById[token.slug]}
+				{sessionEmail}
+				class="not-prose my-5"
+			/>
 		{:else if token.type === 'pictureWidget'}
 			<PictureComponent
 				picture={pictureById[token.slug]}

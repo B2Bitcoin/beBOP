@@ -35,6 +35,7 @@ import type { Theme } from '$lib/types/Theme';
 import { env } from '$env/dynamic/private';
 import type { PersonalInfo } from '$lib/types/PersonalInfo';
 import type { Specification } from '$lib/types/Specification';
+import type { ContactForm } from '$lib/types/ContactForm';
 
 const client = building
 	? (null as unknown as MongoClient)
@@ -78,6 +79,7 @@ const genCollection = () => ({
 	themes: db.collection<Theme>('themes'),
 	personalInfo: db.collection<PersonalInfo>('personalInfo'),
 	specifications: db.collection<Specification>('specifications'),
+	contactForms: db.collection<ContactForm>('contactForms'),
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
 

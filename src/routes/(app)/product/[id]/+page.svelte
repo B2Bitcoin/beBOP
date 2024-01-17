@@ -99,7 +99,6 @@
 
 		return true;
 	}
-
 	const { t, locale } = useI18n();
 </script>
 
@@ -136,6 +135,12 @@
 			digitalFiles={data.productCMSBefore.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSBefore.specifications}
+			contactForms={data.productCMSBefore?.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.product.name}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
 		/>
 	{/if}
 
@@ -463,6 +468,12 @@
 			digitalFiles={data.productCMSAfter.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSAfter.specifications}
+			contactForms={data.productCMSAfter.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.product.name}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
 		/>
 	{/if}
 </main>
