@@ -17,7 +17,7 @@ COPY --link --chown=1000 .npmrc .
 COPY --link --chown=1000 package.json .
 COPY --link --chown=1000 pnpm-lock.yaml .
 
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY --link --chown=1000 . .
 
