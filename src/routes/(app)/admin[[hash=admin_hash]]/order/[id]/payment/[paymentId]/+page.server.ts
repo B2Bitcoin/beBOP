@@ -35,7 +35,7 @@ export const actions = {
 						})
 				: null;
 		const sumUpInfo =
-			payment.method === 'card'
+			payment.method === 'point-of-sale'
 				? z
 						.object({
 							sumupTransactionId: z.string().trim().min(1).max(100)

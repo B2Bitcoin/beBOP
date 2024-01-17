@@ -66,7 +66,7 @@
 			{/if}
 			{#if adminPrefix}
 				{#each order.payments as payment}
-					{#if payment.status === 'pending' && (payment.method === 'point-of-sale' || payment.method === 'bank-transfer' || payment.method === 'card')}
+					{#if payment.status === 'pending' && (payment.method === 'point-of-sale' || payment.method === 'bank-transfer')}
 						<form
 							action="{adminPrefix}/order/{order._id}/payment/{payment.id}?/confirm"
 							method="post"
@@ -81,7 +81,7 @@
 									placeholder="bank transfer number"
 								/>
 							{/if}
-							{#if payment.method === 'card'}
+							{#if payment.method === 'point-of-sale'}
 								<input
 									class="form-input grow mx-2"
 									type="text"

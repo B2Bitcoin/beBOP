@@ -172,7 +172,7 @@
 								{/if}
 							{/if}
 						{/if}
-						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer' || payment.method === 'card') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
+						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
 							<div class="flex flex-wrap gap-2">
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
@@ -189,7 +189,7 @@
 											placeholder="bank transfer number"
 										/>
 									{/if}
-									{#if payment.method === 'card'}
+									{#if payment.method === 'point-of-sale'}
 										<input
 											class="form-input grow mx-2"
 											type="text"
