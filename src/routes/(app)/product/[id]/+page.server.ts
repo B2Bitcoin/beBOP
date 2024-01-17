@@ -171,55 +171,5 @@ export const actions = {
 		throw redirect(303, '/checkout');
 	},
 
-	addToCart,
-
-	sendEmail: async function ({ request, params, locals }) {
-		const product = await collections.products.findOne<Pick<Product, '_id' | 'name'>>(
-			{ _id: params.id },
-			{
-				projection: {
-					_id: 1,
-					name: { $ifNull: [`$translations.${locals.language}.name`, '$name'] }
-				}
-			}
-		);
-
-		rateLimit(locals.clientIp, 'email', 5, { minutes: 5 });
-
-		const data = await request.formData();
-		const parsed = z
-			.object({
-				content: z.string().max(MAX_CONTENT_LIMIT),
-				target: z.string().max(100),
-				subject: z.string().max(100),
-				from: z.string().max(100).optional()
-			})
-			.parse(Object.fromEntries(data));
-
-		const lowerVars = mapKeys(
-			{
-				productLink: product ? `${ORIGIN}/product/${product._id}` : '',
-				productName: product ? product.name : '',
-				websiteLink: ORIGIN,
-				brandName: runtimeConfig.brandName
-			},
-			(key) => key.toLowerCase()
-		);
-		const parsedMessageHtml = parsed.content.replace(/\r\n/g, '<br>');
-		const htmlContent = `Message envoyé par formulaire sur le site ${ORIGIN}<br> Adresse de contact : ${
-			parsed.from ? parsed.from : 'non-renseigné'
-		}  <br> Message envoyé :<br> ${parsedMessageHtml}`;
-		await collections.emailNotifications.insertOne({
-			_id: new ObjectId(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			subject: parsed.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
-				return lowerVars[p1.toLowerCase()] || match;
-			}),
-			htmlContent: htmlContent.replace(/{{([^}]+)}}/g, (match, p1) => {
-				return lowerVars[p1.toLowerCase()] || match;
-			}),
-			dest: parsed.target || SMTP_USER
-		});
-	}
+	addToCart
 };

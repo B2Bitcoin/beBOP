@@ -4,7 +4,7 @@ import { rateLimit } from '$lib/server/rateLimit';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { mapKeys } from '$lib/utils/mapKeys';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 
@@ -45,15 +45,6 @@ export const actions = {
 			})
 			.parse(Object.fromEntries(data));
 
-		const lowerVars = mapKeys(
-			{
-				pageLink: window.location.href,
-				pageName: window.document.title,
-				websiteLink: ORIGIN,
-				brandName: runtimeConfig.brandName
-			},
-			(key) => key.toLowerCase()
-		);
 		const parsedMessageHtml = parsed.content.replace(/\r\n/g, '<br>');
 		const htmlContent = `Message envoyé par formulaire sur le site ${ORIGIN}<br> Adresse de contact : ${
 			parsed.from ? parsed.from : 'non-renseigné'
@@ -62,13 +53,10 @@ export const actions = {
 			_id: new ObjectId(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			subject: parsed.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
-				return lowerVars[p1.toLowerCase()] || match;
-			}),
-			htmlContent: htmlContent.replace(/{{([^}]+)}}/g, (match, p1) => {
-				return lowerVars[p1.toLowerCase()] || match;
-			}),
+			subject: parsed.subject,
+			htmlContent: htmlContent,
 			dest: parsed.target || SMTP_USER
 		});
+		throw redirect(303, request.headers.get('referer') || '/');
 	}
 };

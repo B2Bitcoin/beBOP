@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { useI18n } from '$lib/i18n';
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import type { ContactForm } from '$lib/types/ContactForm';
@@ -20,7 +19,7 @@
 
 <form
 	method="post"
-	action="{$page.url.pathname === '/' ? '/home' : ''}?/sendEmail"
+	action="/form?/sendEmail"
 	class="relative mx-auto tagWidget flex flex-col gap-4 tagWidget-main p-6 rounded {className}"
 >
 	<input class="form-input" type="hidden" name="target" bind:value={contactForm.target} />

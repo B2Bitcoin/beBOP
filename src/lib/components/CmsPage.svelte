@@ -25,6 +25,10 @@
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
 	export let sessionEmail: string | undefined;
+	export let pageLink: string | undefined;
+	export let pageName: string | undefined;
+	export let websiteLink: string | undefined;
+	export let brandName: string | undefined;
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
 	export let contactForms: CmsContactForm[];
@@ -48,6 +52,10 @@
 		{specifications}
 		{contactForms}
 		{sessionEmail}
+		{pageLink}
+		{pageName}
+		{websiteLink}
+		{brandName}
 		class="body body-mainPlan"
 	/>
 {:else}
@@ -64,6 +72,10 @@
 			{specifications}
 			{contactForms}
 			{sessionEmail}
+			{pageLink}
+			{pageName}
+			{websiteLink}
+			{brandName}
 			class="body"
 		/>
 	</main>

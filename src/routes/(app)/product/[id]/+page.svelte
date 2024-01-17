@@ -20,7 +20,6 @@
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
-	import { mapKeys } from '$lib/utils/mapKeys.js';
 
 	export let data;
 
@@ -100,16 +99,6 @@
 
 		return true;
 	}
-	const lowerVars = mapKeys(
-		{
-			pageLink: $page.url.toString(),
-			pageName: data.product.name,
-			websiteLink: data.websiteLink,
-			brandName: data.brandName
-		},
-		(key) => key.toLowerCase()
-	);
-
 	const { t, locale } = useI18n();
 </script>
 
@@ -146,16 +135,12 @@
 			digitalFiles={data.productCMSBefore.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSBefore.specifications}
-			contactForms={data.productCMSBefore?.contactForms.map((contactForm) => ({
-				...contactForm,
-				subject: contactForm.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
-					return lowerVars[p1.toLowerCase()] || match;
-				}),
-				content: contactForm.content.replace(/{{([^}]+)}}/g, (match, p1) => {
-					return lowerVars[p1.toLowerCase()] || match;
-				})
-			}))}
-			sessionEmail={data.productCMSBefore.sessionEmail}
+			contactForms={data.productCMSBefore?.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.product.name}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
 		/>
 	{/if}
 
@@ -477,16 +462,12 @@
 			digitalFiles={data.productCMSAfter.digitalFiles}
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSAfter.specifications}
-			contactForms={data.productCMSAfter?.contactForms.map((contactForm) => ({
-				...contactForm,
-				subject: contactForm.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
-					return lowerVars[p1.toLowerCase()] || match;
-				}),
-				content: contactForm.content.replace(/{{([^}]+)}}/g, (match, p1) => {
-					return lowerVars[p1.toLowerCase()] || match;
-				})
-			}))}
-			sessionEmail={data.productCMSAfter.sessionEmail}
+			contactForms={data.productCMSAfter.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.product.name}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
 		/>
 	{/if}
 </main>

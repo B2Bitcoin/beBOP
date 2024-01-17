@@ -30,7 +30,7 @@ export async function cmsFromContent(
 	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const PICTURE_WIDGET_REGEX =
 		/\[Picture=(?<slug>[\p{L}\d_-]+)((?:[?\s]width=(?<width>\d+))?(?:[?\s]height=(?<height>\d+))?(?:[?\s]fit=(?<fit>(cover|contain)))?)*\]/giu;
-	const CONTACTFORM_WIDGET_REGEX = /\[Form=(?<slug>[a-z0-9-]+)\]/gi;
+	const CONTACTFORM_WIDGET_REGEX = /\[Form=(?<slug>[\p{L}\d_-]+)\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -337,8 +337,7 @@ export async function cmsFromContent(
 			.sort({ createdAt: 1 })
 			.toArray(),
 		digitalFiles,
-		roleId: locals.user?.roleId,
-		sessionEmail: locals.email || locals.sso?.find((sso) => sso.email)?.email
+		roleId: locals.user?.roleId
 	};
 }
 
