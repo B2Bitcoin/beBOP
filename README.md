@@ -1,6 +1,6 @@
-# B2BitcoinBootik
+# BeBOP
 
-P2P Bootik for merch, subscribers and crowdfunding
+P2P BeBOP for merch, subscribers and crowdfunding
 
 ## Requirements
 
@@ -28,14 +28,14 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `BIP84_XPUB` - with derivation path m/84'/0'/0'. If you have a ZPub, use https://jlopp.github.io/xpub-converter/ to convert to xpub. This enables a completely trustless setup, where the beBOP server does not need to know the private key. You can generate the xpub from the sparrow wallet, for example.
 - `LND_REST_URL` - The LND Rest interface URL. Set to http://127.0.0.1:8080 if you run a lnd node locally with default configuration
 - `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the beBOP will not work. Orders should work fine.
-- `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`. Example command: `cat .lnd/data/chain/bitcoin/mainnet/admin.macaroon | hexdump -e '16/1 "%02X"'`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the bootik will not work. Orders should work fine.
+- `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`. Example command: `cat .lnd/data/chain/bitcoin/mainnet/admin.macaroon | hexdump -e '16/1 "%02X"'`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the beBOP will not work. Orders should work fine.
 - `LINK_PRELOAD_HEADERS` - Set to `true` to enable the `Link rel=preload` header, see [explanation](https://nitropack.io/blog/post/link-rel-preload-explained). If you do so, you may need to configure nginx to allow bigger header with `proxy_buffer_size   16k`, see [explanation](https://www.getpagespeed.com/server-setup/nginx/tuning-proxy_buffer_size-in-nginx).
 - `MONGODB_URL` - The connection URL to the MongoDB replicaset
-- `MONGODB_DB` - The DB name, defaulting to "bootik"
+- `MONGODB_DB` - The DB name, defaulting to "bebop"
 - `NOSTR_PRIVATE_KEY` - To send notifications
 - `ORIGIN` - The url of the beBOP. For example, https://dev-bootik.pvh-labs.ch
 - `S3_BUCKET` - The name of the bucket for the S3-compatible object storage
-- `S3_ENDPOINT` - The endpoint for the S3-compatible object storage - eg http://s3-website.us-east-1.amazonaws.com or http://s3.fr-par.scw.cloud
+- `S3_ENDPOINT_URL` - The endpoint for the S3-compatible object storage - eg http://s3-website.us-east-1.amazonaws.com or http://s3.fr-par.scw.cloud
 - `S3_KEY_ID` - Credentials for the S3-compatible object storage
 - `S3_KEY_SECRET` - Credentials for the S3-compatible object storage
 - `S3_REGION` - Region from the S3-compatible object storage
@@ -74,13 +74,35 @@ You can set the `PORT` environment variable to change from the default 3000 port
 You can also use [pm2](https://pm2.keymetrics.io/docs/usage/quick-start/) to manage your node application, and run it on multiple cores.
 
 ```shell
-pm2 start --name bootik --update-env build/index.js
+pm2 start --name bebop --update-env build/index.js
 
 # If behind a reverse proxy, you can use the following config:
-# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 pm2 start --name bootik --update-env build/index.js
+# ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1 pm2 start --name bebop --update-env build/index.js
 ```
 
 Note: for uploading large payloads you may want to set the `BODY_SIZE_LIMIT=20000000` environment variable to allow 20MB payloads for example. It should not be needed for normal usage.
+
+### Docker
+
+- Build the docker image
+
+```shell
+docker build --build-arg VERSION=$(git rev-parse HEAD) -t bebop .
+```
+
+- Run the docker image with environment variables
+
+```shell
+export DOTENV_LOCAL=$(cat .env.local)
+docker run -p 3000:3000 --env DOTENV_LOCAL=$DOTENV_LOCAL bebop
+```
+
+or
+
+```shell
+# Be careful, double-quotes surrounding values in .env.local will not be ignored
+docker run -p 3000:3000 --env-file .env.local bebop
+```
 
 ### Maintenance mode
 
