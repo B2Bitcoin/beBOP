@@ -38,7 +38,7 @@ export const productBaseSchema = {
 			z.object({
 				href: z.string().trim(),
 				label: z.string().trim(),
-				displayOnly: z.boolean({ coerce: true }).default(false)
+				fallback: z.boolean({ coerce: true }).default(false)
 			})
 		)
 		.optional()

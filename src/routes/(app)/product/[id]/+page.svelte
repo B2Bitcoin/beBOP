@@ -443,7 +443,7 @@
 				{/if}
 				{#if data.product.cta}
 					{#each data.product.cta as cta}
-						{#if !cta.displayOnly}
+						{#if !cta.fallback}
 							<a href={cta.href} class="btn body-cta body-secondaryCTA">
 								{cta.label}
 							</a>

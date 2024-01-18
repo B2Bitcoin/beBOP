@@ -13,7 +13,7 @@ export interface ProductTranslatableFields {
 	cta?: {
 		label: string;
 		href: string;
-		displayOnly?: boolean;
+		fallback?: boolean;
 	}[];
 	contentBefore?: string;
 	contentAfter?: string;
