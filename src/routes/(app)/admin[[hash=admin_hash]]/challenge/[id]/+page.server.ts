@@ -1,5 +1,6 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
+import { CURRENCIES } from '$lib/types/Currency';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -40,11 +41,12 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { name, goalAmount, productIds, beginsAt, endsAt } = z
+		const { name, goalAmount, productIds, currency, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				productIds: z.string().array(),
 				goalAmount: z.number({ coerce: true }).int().positive(),
+				currency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
@@ -54,6 +56,7 @@ export const actions = {
 					(x: { value: string }) => x.value
 				),
 				goalAmount: data.get('goalAmount'),
+				currency: data.get('currency') || 'SAT',
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
@@ -67,6 +70,7 @@ export const actions = {
 					name,
 					productIds,
 					'goal.amount': goalAmount,
+					...(challenge.mode === 'moneyAmount' && { 'goal.currency': currency }),
 					beginsAt,
 					endsAt,
 					updatedAt: new Date()
