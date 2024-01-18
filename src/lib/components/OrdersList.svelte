@@ -81,6 +81,15 @@
 									placeholder="bank transfer number"
 								/>
 							{/if}
+							{#if payment.method === 'point-of-sale'}
+								<input
+									class="form-input grow mx-2"
+									type="text"
+									name="detail"
+									required
+									placeholder="Detail (card transaction ID, or point-of-sale payment method)"
+								/>
+							{/if}
 							<button type="submit" class="btn btn-black whitespace-nowrap">Mark paid</button>
 						</form>
 						<form

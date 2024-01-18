@@ -130,45 +130,45 @@
 									</li>
 								{/if}
 							</ul>
+						{/if}
 
-							{#if payment.status === 'paid' && payment.invoice?.number}
-								<button
-									class="btn btn-black self-start"
-									type="button"
-									disabled={!receiptReady[payment.id]}
-									on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
-									>{t('order.receipt.create')}</button
-								>
-								<iframe
-									src="/order/{data.order._id}/payment/{payment.id}/receipt"
-									style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
-									title=""
-									on:load={() => (receiptReady = { ...receiptReady, [payment.id]: true })}
-									bind:this={receiptIFrame[payment.id]}
-								/>
+						{#if payment.status === 'paid' && payment.invoice?.number}
+							<button
+								class="btn btn-black self-start"
+								type="button"
+								disabled={!receiptReady[payment.id]}
+								on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
+								>{t('order.receipt.create')}</button
+							>
+							<iframe
+								src="/order/{data.order._id}/payment/{payment.id}/receipt"
+								style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+								title=""
+								on:load={() => (receiptReady = { ...receiptReady, [payment.id]: true })}
+								bind:this={receiptIFrame[payment.id]}
+							/>
+						{/if}
+						{#if payment.status === 'pending' && (payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card')}
+							<img
+								src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+								class="w-96 h-96"
+								alt="QR code"
+							/>
+						{/if}
+						{#if payment.status === 'pending' && payment.method !== 'point-of-sale'}
+							{t('order.payToComplete')}
+							{#if payment.method === 'bitcoin'}
+								{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
 							{/if}
-							{#if payment.status === 'pending' && (payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card')}
-								<img
-									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
-									class="w-96 h-96"
-									alt="QR code"
-								/>
-							{/if}
-							{#if payment.status === 'pending'}
-								{t('order.payToComplete')}
-								{#if payment.method === 'bitcoin'}
-									{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
-								{/if}
 
-								{#if payment.method === 'bank-transfer'}
-									{#if data.sellerIdentity?.contact.email}
-										<a
-											href="mailto:{data.sellerIdentity.contact.email}"
-											class="btn btn-black self-start"
-										>
-											{t('order.informSeller')}
-										</a>
-									{/if}
+							{#if payment.method === 'bank-transfer'}
+								{#if data.sellerIdentity?.contact.email}
+									<a
+										href="mailto:{data.sellerIdentity.contact.email}"
+										class="btn btn-black self-start"
+									>
+										{t('order.informSeller')}
+									</a>
 								{/if}
 							{/if}
 						{/if}
@@ -187,6 +187,15 @@
 											name="bankTransferNumber"
 											required
 											placeholder="bank transfer number"
+										/>
+									{/if}
+									{#if payment.method === 'point-of-sale'}
+										<input
+											class="form-input grow mx-2"
+											type="text"
+											name="detail"
+											required
+											placeholder="Detail (card transaction ID, or point-of-sale payment method)"
 										/>
 									{/if}
 									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
