@@ -34,17 +34,25 @@
 		"vatSellerCountry": "The country is the seller's country."
 	},
 	"challenge": {
+		"amazingText": "You are amazing",
 		"endsAt": "Ends <0></0>",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
 		"list": "List of challenges",
+		"moneyAmount": {
+			"amazingText": "You are amazing",
+			"goalOvershot": "on a target of"
+		},
 		"numProducts": {
 			"one": "{count} product",
 			"other": "{count} products",
 			"zero": "{count} products"
 		},
 		"singleTitle": "Challenge {name}",
-		"title": "Challenges"
+		"title": "Challenges",
+		"totalProducts": {
+			"goalOvershot": "pre-sales on a target of"
+		}
 	},
 	"checkout": {
 		"agreeIpCollect": "I agree to the collection of my IP address (<0>why?</0>)",
