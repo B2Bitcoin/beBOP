@@ -95,7 +95,7 @@
 
 {#if !data.bip84}
 	<p>
-		BIP 84 is not enabled. Configure <kbd class="kbd">BIP84_ZPUB</kbd> in the environment to enable it,
+		BIP 84 is not enabled. Configure <kbd class="kbd">BIP84_XPUB</kbd> in the environment to enable it,
 		as well as the bitcoin node
 	</p>
 {:else}
