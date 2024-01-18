@@ -49,20 +49,22 @@
 			<p>{t('challenge.goalMet')}</p>
 		{:else if challenge.progress > challenge.goal.amount && challenge.goal.currency}
 			<div class="flex flex-row body-secondaryText gap-1">
-				<PriceTag
-					amount={challenge.progress}
-					class="text-gray-800 text-base"
-					currency={challenge.goal.currency}
-					main
-				/>
-				{t('challenge.moneyAmount.goalOvershot')}
-				<PriceTag
-					amount={challenge.goal.amount}
-					class="text-gray-800 text-base"
-					currency={challenge.goal.currency}
-					main
-				/>
-				! {t('challenge.amazingText')} ! 🤭
+				<Trans key="challenge.moneyAmount.goalOvershot">
+					<PriceTag
+						amount={challenge.progress}
+						class="text-gray-800 text-base"
+						currency={challenge.goal.currency}
+						main
+						slot="0"
+					/>
+					<PriceTag
+						amount={challenge.goal.amount}
+						class="text-gray-800 text-base"
+						currency={challenge.goal.currency}
+						main
+						slot="1"
+					/>
+				</Trans>
 			</div>
 		{:else if challenge.progress > challenge.goal.amount && !challenge.goal.currency}
 			<div class="flex flex-row body-secondaryText gap-1">

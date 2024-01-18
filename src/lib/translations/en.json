@@ -41,7 +41,7 @@
 		"list": "List of challenges",
 		"moneyAmount": {
 			"amazingText": "You are amazing",
-			"goalOvershot": "on a target of"
+			"goalOvershot": "<0></0> on a target of <1></1> ! You are amazing !"
 		},
 		"numProducts": {
 			"one": "{count} product",

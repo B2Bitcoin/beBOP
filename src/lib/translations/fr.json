@@ -41,7 +41,7 @@
 		"list": "Liste des défis",
 		"moneyAmount": {
 			"amazingText": "Vous êtes incroyables",
-			"goalOvershot": "sur un objectif de"
+			"goalOvershot": "<0></0> sur un objectif de <1></1>! Vous êtes incroyables !"
 		},
 		"numProducts": {
 			"one": "{count} produit",
