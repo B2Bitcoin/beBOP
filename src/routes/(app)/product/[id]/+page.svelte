@@ -443,9 +443,15 @@
 				{/if}
 				{#if data.product.cta}
 					{#each data.product.cta as cta}
-						<a href={cta.href} class="btn body-cta body-secondaryCTA">
-							{cta.label}
-						</a>
+						{#if !cta.fallback}
+							<a href={cta.href} class="btn body-cta body-secondaryCTA">
+								{cta.label}
+							</a>
+						{:else if !canBuy || amountAvailable <= 0}
+							<a href={cta.href} class="btn body-cta body-secondaryCTA">
+								{cta.label}
+							</a>
+						{/if}
 					{/each}
 				{/if}
 			</div>
