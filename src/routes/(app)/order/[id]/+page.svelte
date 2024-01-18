@@ -193,9 +193,9 @@
 										<input
 											class="form-input grow mx-2"
 											type="text"
-											name="sumupTransactionId"
+											name="detail"
 											required
-											placeholder="sumUp transaction id"
+											placeholder="Detail (card transaction ID, or point-of-sale payment method)"
 										/>
 									{/if}
 									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>

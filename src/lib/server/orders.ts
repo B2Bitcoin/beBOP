@@ -72,7 +72,7 @@ export async function onOrderPayment(
 	received: { currency: Currency; amount: number },
 	params?: {
 		bankTransferNumber?: string;
-		sumupTransactionId?: string;
+		detail?: string;
 	}
 ): Promise<Order> {
 	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
@@ -99,8 +99,8 @@ export async function onOrderPayment(
 					...(params?.bankTransferNumber && {
 						'payments.$.bankTransferNumber': params.bankTransferNumber
 					}),
-					...(params?.sumupTransactionId && {
-						'payments.$.sumupTransactionId': params.sumupTransactionId
+					...(params?.detail && {
+						'payments.$.detail': params.detail
 					}),
 					'payments.$.paidAt': paidAt,
 					...(isOrderFullyPaid(order) && {

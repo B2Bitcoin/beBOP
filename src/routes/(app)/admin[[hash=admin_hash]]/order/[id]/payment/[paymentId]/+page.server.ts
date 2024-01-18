@@ -34,22 +34,21 @@ export const actions = {
 							bankTransferNumber: formData.get('bankTransferNumber')
 						})
 				: null;
-		const sumUpInfo =
+		const posInfo =
 			payment.method === 'point-of-sale'
 				? z
 						.object({
-							sumupTransactionId: z.string().trim().min(1).max(100)
+							detail: z.string().trim().min(1).max(100)
 						})
 						.parse({
-							sumupTransactionId: formData.get('sumupTransactionId')
+							detail: formData.get('detail')
 						})
 				: null;
 
 		await onOrderPayment(order, payment, payment.price, {
 			...(bankInfo &&
 				bankInfo.bankTransferNumber && { bankTransferNumber: bankInfo.bankTransferNumber }),
-			...(sumUpInfo &&
-				sumUpInfo.sumupTransactionId && { sumupTransactionId: sumUpInfo.sumupTransactionId })
+			...(posInfo && posInfo.detail && { detail: posInfo.detail })
 		});
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
