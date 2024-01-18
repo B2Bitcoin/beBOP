@@ -53,5 +53,5 @@ if ! grep -q "^${S3_KEY_SECRET}$" ${ENV_LOCAL_PATH}; then
 	fi;
 fi
 
-pnpm run build
+PUBLIC_VERSION=$(cat ./.git-commit-hash) pnpm run build
 PORT=3000 node build/index.js

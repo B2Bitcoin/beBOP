@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+  bebop:
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - ./.env.local:/app/.env.local
+    init: true
+    ports:
+      - 3000:3000
+    networks:
+      - front
+      - back
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+  mongo:
+    image: mongo:6.0.9
+    hostname: mongodb
+    # ports:
+    #   - 27017:27017
+    command: --replSet rs0 --bind_ip_all
+    mem_limit: '5g'
+    mem_reservation: '3g'
+    healthcheck:
+      test: test $$(mongosh --quiet --eval 'try {rs.status().ok} catch(e) {rs.initiate().ok}') -eq 1
+      interval: 5s
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - back
+volumes:
+  mongo-data:
+networks:
+  front:
+  back:

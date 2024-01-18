@@ -1,10 +1,16 @@
 # If behind a reverse proxy, set the following environment variables to get the correct IP address:
 # - ADDRESS_HEADER=X-Forwarded-For 
 # - XFF_DEPTH=1
-FROM node:20-slim
+FROM node:20 AS build
 
-ARG VERSION
-ENV PUBLIC_VERSION=$VERSION
+WORKDIR /app
+
+COPY --link .git .git
+
+# Compute last commit hash
+RUN git rev-parse HEAD > /app/.git-commit-hash
+
+FROM node:20-slim
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -19,9 +25,14 @@ COPY --link --chown=1000 pnpm-lock.yaml .
 
 RUN pnpm install --frozen-lockfile
 
-COPY --link --chown=1000 . .
+COPY --link --chown=1000 src src
+COPY --link --chown=1000 assets assets
+COPY --link --chown=1000 static static
+COPY --link --chown=1000 tsconfig.json *.config.js *.config.ts entrypoint.sh .env ./
 
 EXPOSE 3000
+
+COPY --link --chown=1000 --from=build /app/.git-commit-hash /app/.git-commit-hash
 
 RUN chmod +x /app/entrypoint.sh
 

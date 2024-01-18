@@ -87,7 +87,7 @@ Note: for uploading large payloads you may want to set the `BODY_SIZE_LIMIT=2000
 - Build the docker image
 
 ```shell
-docker build --build-arg VERSION=$(git rev-parse HEAD) -t bebop .
+docker build -t bebop .
 ```
 
 - Run the docker image with environment variables
@@ -103,6 +103,17 @@ or
 # Be careful, double-quotes surrounding values in .env.local will not be ignored
 docker run -p 3000:3000 --env-file .env.local bebop
 ```
+
+### Docker compose
+
+If you also want to launch a local mongodb and minio, you can use the following command:
+
+```
+# --build will rebuild the docker image when you change the code
+docker-compose up --build -d
+```
+
+It will still use the `.env.local` file for the environment variables if present, overriding the values for MongoDB and S3.
 
 ### Maintenance mode
 
