@@ -68,10 +68,10 @@
 			</div>
 		{:else if challenge.progress > challenge.goal.amount && !challenge.goal.currency}
 			<div class="flex flex-row body-secondaryText gap-1">
-				{challenge.progress}
-				{t('challenge.totalProducts.goalOvershot')}
-				{challenge.goal.amount}
-				! {t('challenge.amazingText')} ! 🤭
+				{t('challenge.totalProducts.goalOvershot', {
+					progress: challenge.progress.toLocaleString($locale),
+					goal: challenge.goal.amount.toLocaleString($locale)
+				})}
 			</div>
 		{:else if challenge.goal.currency}
 			<PriceTag

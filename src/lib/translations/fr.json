@@ -34,13 +34,11 @@
 		"vatSellerCountry": "La TVA est celle du pays du vendeur."
 	},
 	"challenge": {
-		"amazingText": "Vous êtes incroyables",
 		"endsAt": "Termine le <0></0>",
 		"goalMet": "Merci à tous ! \n👏👏",
 		"goalOvershot": "Vous êtes incroyables ! \n🤭",
 		"list": "Liste des défis",
 		"moneyAmount": {
-			"amazingText": "Vous êtes incroyables",
 			"goalOvershot": "<0></0> sur un objectif de <1></1>! Vous êtes incroyables !"
 		},
 		"numProducts": {
@@ -51,7 +49,7 @@
 		"singleTitle": "Défi {name}",
 		"title": "Défis",
 		"totalProducts": {
-			"goalOvershot": "préventes sur un objectif de"
+			"goalOvershot": "{progress} préventes sur un objectif de {goal}! Vous êtes incroyables !"
 		}
 	},
 	"checkout": {

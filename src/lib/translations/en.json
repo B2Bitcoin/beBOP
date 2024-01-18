@@ -34,13 +34,11 @@
 		"vatSellerCountry": "The country is the seller's country."
 	},
 	"challenge": {
-		"amazingText": "You are amazing",
 		"endsAt": "Ends <0></0>",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
 		"list": "List of challenges",
 		"moneyAmount": {
-			"amazingText": "You are amazing",
 			"goalOvershot": "<0></0> on a target of <1></1> ! You are amazing !"
 		},
 		"numProducts": {
@@ -51,7 +49,7 @@
 		"singleTitle": "Challenge {name}",
 		"title": "Challenges",
 		"totalProducts": {
-			"goalOvershot": "pre-sales on a target of"
+			"goalOvershot": "{progress} pre-sales on a target of {goal}! You are amazing !"
 		}
 	},
 	"checkout": {
