@@ -18,6 +18,19 @@ const s3client = building
 	  });
 
 if (s3client) {
+	const buckets = await s3client.listBuckets({});
+
+	if (!buckets.Buckets?.some((b) => b.Name === S3_BUCKET)) {
+		await s3client.send(
+			new AWS.CreateBucketCommand({
+				Bucket: S3_BUCKET,
+				CreateBucketConfiguration: {
+					LocationConstraint: S3_REGION
+				}
+			})
+		);
+	}
+
 	await s3client
 		.send(
 			new AWS.PutBucketCorsCommand({

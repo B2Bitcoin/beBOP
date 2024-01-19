@@ -8,16 +8,19 @@ services:
     init: true
     ports:
       - 3000:3000
-    networks:
-      - front
-      - back
+    depends_on:
+      - mongo
+      - minio
     environment:
       - MONGODB_URL=mongodb://mongodb:27017
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_BUCKET = bebop
+      - S3_REGION = localhost
+      - S3_ACCESS_KEY = ${S3_ACCESS_KEY:-minio}
+      - S3_SECRET_KEY = ${S3_SECRET_KEY:-minio123}
   mongo:
     image: mongo:6.0.9
     hostname: mongodb
-    # ports:
-    #   - 27017:27017
     command: --replSet rs0 --bind_ip_all
     mem_limit: '5g'
     mem_reservation: '3g'
@@ -26,10 +29,17 @@ services:
       interval: 5s
     volumes:
       - mongo-data:/data/db
-    networks:
-      - back
+  minio:
+    image: quay.io/minio/minio:latest
+    hostname: minio
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: ${S3_ACCESS_KEY:-minio}
+      MINIO_SECRET_KEY: ${S3_SECRET_KEY:-minio123}
+    volumes:
+      - minio_data:/data
+    command: server /data
 volumes:
   mongo-data:
-networks:
-  front:
-  back:
+  minio_data:
