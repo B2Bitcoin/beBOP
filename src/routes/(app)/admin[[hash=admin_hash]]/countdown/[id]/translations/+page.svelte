@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LanguageKey } from '$lib/translations/index.js';
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
-	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import { MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
 	export let data;
 

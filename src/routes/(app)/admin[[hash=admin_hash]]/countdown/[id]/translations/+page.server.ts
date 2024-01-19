@@ -3,10 +3,7 @@ import { locales, type LanguageKey } from '$lib/translations/index.js';
 import type { JsonObject } from 'type-fest';
 import { mapObject } from '$lib/utils/mapObject.js';
 import { z } from 'zod';
-import {
-	countdownTranslatableSchema,
-	specificationTranslatableSchema
-} from '../countdown-schema.js';
+import { countdownTranslatableSchema } from '../countdown-schema.js';
 
 export const actions = {
 	default: async function ({ request, params }) {
