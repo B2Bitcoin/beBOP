@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CURRENCIES } from '$lib/types/Currency.js';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { MultiSelect } from 'svelte-multiselect';
@@ -69,7 +70,16 @@
 			required
 		/>
 	</label>
-
+	{#if data.challenge.mode === 'moneyAmount'}
+		<label class="form-label w-full">
+			Currency
+			<select name="currency" class="form-input" bind:value={data.challenge.goal.currency}>
+				{#each CURRENCIES as currency}
+					<option value={currency}>{currency}</option>
+				{/each}
+			</select>
+		</label>
+	{/if}
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
 			Beginning date
