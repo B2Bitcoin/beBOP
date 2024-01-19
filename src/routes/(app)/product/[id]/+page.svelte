@@ -141,6 +141,7 @@
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
 			sessionEmail={data.email}
+			countdowns={data.productCMSBefore.countdowns}
 		/>
 	{/if}
 
@@ -474,6 +475,7 @@
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
 			sessionEmail={data.email}
+			countdowns={data.productCMSAfter.countdowns}
 		/>
 	{/if}
 </main>

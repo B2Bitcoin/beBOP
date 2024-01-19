@@ -40,11 +40,15 @@ export const adminLinks = [
 			},
 			{
 				href: '/admin/specification',
-				label: 'Specification'
+				label: 'Specifications'
 			},
 			{
 				href: '/admin/form',
-				label: 'Form'
+				label: 'Forms'
+			},
+			{
+				href: '/admin/countdown',
+				label: 'Countdowns'
 			}
 		]
 	},

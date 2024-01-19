@@ -23,6 +23,7 @@
 		pageName={data.cmsPage.title}
 		websiteLink={data.websiteLink}
 		brandName={data.brandName}
+		countdowns={data.cmsData.countdowns}
 	/>
 {:else}
 	<Catalog {...data.catalog} />

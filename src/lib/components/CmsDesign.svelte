@@ -17,11 +17,13 @@
 		CmsSpecification,
 		CmsTag,
 		CmsToken,
-		CmsContactForm
+		CmsContactForm,
+		CmsCountdown
 	} from '$lib/server/cms';
 	import SpecificationWidget from './SpecificationWidget.svelte';
 	import ContactForm from './ContactForm.svelte';
 	import { mapKeys } from '$lib/utils/mapKeys';
+	import CountdownWidget from './CountdownWidget.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -34,6 +36,7 @@
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
 	export let contactForms: CmsContactForm[];
+	export let countdowns: CmsCountdown[];
 	export let pageName: string | undefined;
 	export let pageLink: string | undefined;
 	export let websiteLink: string | undefined;
@@ -88,6 +91,7 @@
 			}
 		])
 	);
+	$: countdownById = Object.fromEntries(countdowns.map((countdown) => [countdown._id, countdown]));
 </script>
 
 <div class="prose max-w-full {classNames}">
@@ -126,6 +130,8 @@
 				{sessionEmail}
 				class="not-prose my-5"
 			/>
+		{:else if token.type === 'countdownWidget' && countdownById[token.slug]}
+			<CountdownWidget countdown={countdownById[token.slug]} class="not-prose my-5" />
 		{:else if token.type === 'pictureWidget'}
 			<PictureComponent
 				picture={pictureById[token.slug]}

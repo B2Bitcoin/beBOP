@@ -12,6 +12,7 @@ import type { PickDeep } from 'type-fest';
 import type { Specification } from '$lib/types/Specification';
 import type { Tag } from '$lib/types/Tag';
 import type { ContactForm } from '$lib/types/ContactForm';
+import type { Countdown } from '$lib/types/Countdown';
 
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
@@ -31,6 +32,7 @@ export async function cmsFromContent(
 	const PICTURE_WIDGET_REGEX =
 		/\[Picture=(?<slug>[\p{L}\d_-]+)((?:[?\s]width=(?<width>\d+))?(?:[?\s]height=(?<height>\d+))?(?:[?\s]fit=(?<fit>(cover|contain)))?)*\]/giu;
 	const CONTACTFORM_WIDGET_REGEX = /\[Form=(?<slug>[\p{L}\d_-]+)\]/giu;
+	const COUNTDOWN_WIDGET_REGEX = /\[Countdown=(?<slug>[\p{L}\d_-]+)\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -39,6 +41,7 @@ export async function cmsFromContent(
 	const specificationSlugs = new Set<string>();
 	const pictureSlugs = new Set<string>();
 	const contactFormSlugs = new Set<string>();
+	const countdownFormSlugs = new Set<string>();
 
 	const tokens: Array<
 		| {
@@ -82,6 +85,7 @@ export async function cmsFromContent(
 				height?: number;
 		  }
 		| { type: 'contactFormWidget'; slug: string; raw: string }
+		| { type: 'countdownWidget'; slug: string; raw: string }
 	> = [];
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
@@ -91,6 +95,7 @@ export async function cmsFromContent(
 	const specificationMatches = content.matchAll(SPECIFICATION_WIDGET_REGEX);
 	const contactFormMatches = content.matchAll(CONTACTFORM_WIDGET_REGEX);
 	const pictureMatches = content.matchAll(PICTURE_WIDGET_REGEX);
+	const countdownMatches = content.matchAll(COUNTDOWN_WIDGET_REGEX);
 
 	let index = 0;
 
@@ -113,6 +118,9 @@ export async function cmsFromContent(
 		),
 		...[...pictureMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
+		),
+		...[...countdownMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'countdownWidget' })
 		)
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
@@ -190,6 +198,14 @@ export async function cmsFromContent(
 					contactFormSlugs.add(match.groups.slug);
 					tokens.push({
 						type: 'contactFormWidget',
+						slug: match.groups.slug,
+						raw: match[0]
+					});
+					break;
+				case 'countdownWidget':
+					countdownFormSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'countdownWidget',
 						slug: match.groups.slug,
 						raw: match[0]
 					});
@@ -309,6 +325,18 @@ export async function cmsFromContent(
 			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] }
 		})
 		.toArray();
+	const countdowns = await collections.countdowns
+		.find({
+			_id: { $in: [...countdownFormSlugs] }
+		})
+		.project<Pick<Countdown, '_id' | 'title' | 'description' | 'endsAt'>>({
+			title: {
+				$ifNull: [`$translations.${locals.language}.title`, '$title']
+			},
+			description: { $ifNull: [`$translations.${locals.language}.description`, '$description'] },
+			endsAt: 1
+		})
+		.toArray();
 	return {
 		tokens,
 		challenges,
@@ -317,6 +345,7 @@ export async function cmsFromContent(
 		tags,
 		specifications,
 		contactForms,
+		countdowns,
 		pictures: await collections.pictures
 			.find({
 				$or: [
@@ -350,3 +379,4 @@ export type CmsPicture = Awaited<ReturnType<typeof cmsFromContent>>['pictures'][
 export type CmsDigitalFile = Awaited<ReturnType<typeof cmsFromContent>>['digitalFiles'][number];
 export type CmsSpecification = Awaited<ReturnType<typeof cmsFromContent>>['specifications'][number];
 export type CmsContactForm = Awaited<ReturnType<typeof cmsFromContent>>['contactForms'][number];
+export type CmsCountdown = Awaited<ReturnType<typeof cmsFromContent>>['countdowns'][number];
