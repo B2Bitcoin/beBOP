@@ -339,4 +339,8 @@ export async function runMigrations() {
 	} finally {
 		lock.destroy();
 	}
+
+	while ((await collections.migrations.countDocuments()) < migrations.length) {
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+	}
 }

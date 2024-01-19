@@ -347,8 +347,6 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 				throw err;
 			});
 	}
-
-	await runMigrations();
 }
 
 export function stop(): void {
@@ -364,4 +362,4 @@ export function resetConfig() {
 	Object.assign(runtimeConfig, defaultConfig);
 }
 
-export const refreshPromise = building ? Promise.resolve() : refresh();
+export const refreshPromise = building ? Promise.resolve() : refresh().then(() => runMigrations());
