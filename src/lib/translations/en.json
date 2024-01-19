@@ -38,13 +38,19 @@
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
 		"list": "List of challenges",
+		"moneyAmount": {
+			"goalOvershot": "<0></0> on a target of <1></1> ! You are amazing !"
+		},
 		"numProducts": {
 			"one": "{count} product",
 			"other": "{count} products",
 			"zero": "{count} products"
 		},
 		"singleTitle": "Challenge {name}",
-		"title": "Challenges"
+		"title": "Challenges",
+		"totalProducts": {
+			"goalOvershot": "{progress} pre-sales on a target of {goal}! You are amazing !"
+		}
 	},
 	"checkout": {
 		"agreeIpCollect": "I agree to the collection of my IP address (<0>why?</0>)",
