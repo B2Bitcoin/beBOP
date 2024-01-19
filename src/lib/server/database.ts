@@ -36,6 +36,7 @@ import { env } from '$env/dynamic/private';
 import type { PersonalInfo } from '$lib/types/PersonalInfo';
 import type { Specification } from '$lib/types/Specification';
 import type { ContactForm } from '$lib/types/ContactForm';
+import type { Countdown } from '$lib/types/Countdown';
 
 const client = building
 	? (null as unknown as MongoClient)
@@ -80,6 +81,8 @@ const genCollection = () => ({
 	personalInfo: db.collection<PersonalInfo>('personalInfo'),
 	specifications: db.collection<Specification>('specifications'),
 	contactForms: db.collection<ContactForm>('contactForms'),
+	countdowns: db.collection<Countdown>('countdowns'),
+
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
 
