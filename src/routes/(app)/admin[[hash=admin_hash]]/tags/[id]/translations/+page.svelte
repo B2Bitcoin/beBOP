@@ -73,7 +73,7 @@
 					name="cta[{i}].label"
 					class="form-input"
 					value={data.tag.translations?.[language]?.cta?.[i]?.label ?? ''}
-					placeholder={data.tag.cta[i]?.label || ''}
+					placeholder={data.tag.cta ? data.tag.cta[i]?.label || '' : ''}
 				/>
 			</label>
 			<label class="form-label">
@@ -83,7 +83,7 @@
 					name="cta[{i}].href"
 					class="form-input"
 					value={data.tag.translations?.[language]?.cta?.[i]?.href ?? ''}
-					placeholder={data.tag.cta[i]?.href || ''}
+					placeholder={data.tag.cta ? data.tag.cta[i]?.href || '' : ''}
 				/>
 			</label>
 		</div>
@@ -97,7 +97,7 @@
 					type="text"
 					name="menu[{i}].label"
 					class="form-input"
-					placeholder={data.tag.menu[i]?.label || ''}
+					placeholder={data.tag.menu ? data.tag.menu[i]?.label || '' : ''}
 					value={data.tag.translations?.[language]?.menu?.[i]?.label ?? ''}
 				/>
 			</label>
@@ -107,7 +107,7 @@
 					type="text"
 					name="menu[{i}].href"
 					class="form-input"
-					placeholder={data.tag.menu[i]?.href || ''}
+					placeholder={data.tag.menu ? data.tag.menu[i]?.href || '' : ''}
 					value={data.tag.translations?.[language]?.menu?.[i]?.href ?? ''}
 				/>
 			</label>

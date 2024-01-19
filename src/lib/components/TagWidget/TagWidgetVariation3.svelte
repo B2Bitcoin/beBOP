@@ -26,11 +26,13 @@
 			</h2>
 		</div>
 		<div class="flex text-center justify-evenly mt-auto">
-			{#each tag.cta as cta}
-				<div class="btn text-4xl tagWidget-cta mx-20 md:text-4xl text-center w-auto">
-					<a class="tagWidget-hyperlink" href={cta.href}>{cta.label}</a>
-				</div>
-			{/each}
+			{#if tag.cta}
+				{#each tag.cta as cta}
+					<div class="btn text-4xl tagWidget-cta mx-20 md:text-4xl text-center w-auto">
+						<a class="tagWidget-hyperlink" href={cta.href}>{cta.label}</a>
+					</div>
+				{/each}
+			{/if}
 		</div>
 	</div>
 </div>

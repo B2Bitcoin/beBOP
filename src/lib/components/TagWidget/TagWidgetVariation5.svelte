@@ -20,7 +20,9 @@
 		</div>
 		<div class="flex justify-evenly py-4 items-center">
 			<div class="btn tagWidget-cta text-xl text-center w-auto p-2 m-2">
-				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
+				{#if tag.cta}
+					<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
+				{/if}
 			</div>
 			<h2 class="text-lg pb-2">
 				{tag.shortContent}
