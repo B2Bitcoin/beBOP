@@ -4,17 +4,16 @@ import type { Countdown } from '$lib/types/Countdown';
 
 export const load = async ({ params, locals }) => {
 	const countdown = await collections.countdowns.findOne<
-		Pick<Countdown, '_id' | 'shortDescription' | 'description' | 'beginsAt' | 'endsAt'>
+		Pick<Countdown, '_id' | 'title' | 'description' | 'endsAt'>
 	>(
 		{ _id: params.id },
 		{
 			projection: {
 				_id: 1,
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+				title: {
+					$ifNull: [`$translations.${locals.language}.title`, '$title']
 				},
 				description: { $ifNull: [`$translations.${locals.language}.description`, '$description'] },
-				beginsAt: 1,
 				endsAt: 1
 			}
 		}

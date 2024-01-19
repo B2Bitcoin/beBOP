@@ -4,25 +4,11 @@
 		MAX_NAME_LIMIT,
 		MAX_SHORT_DESCRIPTION_LIMIT
 	} from '$lib/types/Product';
-	import { addDays } from 'date-fns';
 
 	export let data;
-	let title = data.countdown.title;
+	let name = data.countdown.name;
 	let slug = data.countdown._id;
-	let beginsAt = data.beginsAt;
-	let endsAt = data.endsAt;
-	let endsAtElement: HTMLInputElement;
 
-	function checkForm(event: SubmitEvent) {
-		if (endsAt < beginsAt) {
-			endsAtElement.setCustomValidity('End date must be after beginning date');
-			endsAtElement.reportValidity();
-			event.preventDefault();
-			return;
-		} else {
-			endsAtElement.setCustomValidity('');
-		}
-	}
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this specification?')) {
 			event.preventDefault();
@@ -30,16 +16,16 @@
 	}
 </script>
 
-<form method="post" class="flex flex-col gap-4" on:submit={checkForm}>
+<form method="post" class="flex flex-col gap-4">
 	<label class="form-label">
-		Title
+		Name
 		<input
 			class="form-input"
 			type="text"
 			maxlength={MAX_NAME_LIMIT}
-			name="title"
-			placeholder="Countdown title"
-			bind:value={title}
+			name="name"
+			placeholder="Countdown name"
+			bind:value={name}
 			required
 		/>
 	</label>
@@ -57,15 +43,15 @@
 		/>
 	</label>
 	<label class="form-label">
-		Short description
+		Title
 		<textarea
-			name="shortDescription"
+			name="title"
 			cols="30"
-			rows="5"
+			rows="3"
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
-			placeholder="Countdown short description"
+			placeholder="Countdown title"
 			class="form-input block w-full"
-			value={data.countdown.shortDescription}
+			value={data.countdown.title}
 			required
 		/>
 	</label>
@@ -82,24 +68,16 @@
 			required
 		/>
 	</label>
-	<div class="flex flex-wrap gap-4">
-		<label class="form-label">
-			Begin At
-			<input class="form-input" type="date" name="beginsAt" required bind:value={beginsAt} />
-		</label>
-	</div>
+
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
 			End At
 			<input
 				class="form-input"
-				type="date"
+				type="datetime-local"
 				required
 				name="endsAt"
-				min={addDays(new Date(), 1).toJSON().slice(0, 10)}
-				bind:value={endsAt}
-				bind:this={endsAtElement}
-				on:input={() => endsAtElement?.setCustomValidity('')}
+				value={data.countdown.endsAt.toISOString().slice(0, 16)}
 			/>
 		</label>
 	</div>

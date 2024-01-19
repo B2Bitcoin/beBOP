@@ -329,12 +329,11 @@ export async function cmsFromContent(
 		.find({
 			_id: { $in: [...countdownFormSlugs] }
 		})
-		.project<Pick<Countdown, '_id' | 'shortDescription' | 'description' | 'beginsAt' | 'endsAt'>>({
-			shortDescription: {
-				$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+		.project<Pick<Countdown, '_id' | 'title' | 'description' | 'endsAt'>>({
+			title: {
+				$ifNull: [`$translations.${locals.language}.title`, '$title']
 			},
 			description: { $ifNull: [`$translations.${locals.language}.description`, '$description'] },
-			beginsAt: 1,
 			endsAt: 1
 		})
 		.toArray();

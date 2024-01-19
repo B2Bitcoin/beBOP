@@ -5,9 +5,9 @@ export function load() {
 	return {
 		countdowns: collections.countdowns
 			.find({})
-			.project<Pick<Countdown, '_id' | 'title'>>({
+			.project<Pick<Countdown, '_id' | 'name'>>({
 				_id: 1,
-				title: 1
+				name: 1
 			})
 			.sort({ updatedAt: -1 })
 			.toArray()

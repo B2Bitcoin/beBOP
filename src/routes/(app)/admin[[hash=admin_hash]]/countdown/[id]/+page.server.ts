@@ -20,10 +20,9 @@ export const actions = {
 
 		const parsed = z
 			.object({
-				title: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				description: z.string().trim().min(1).max(MAX_DESCRIPTION_LIMIT),
-				shortDescription: z.string().trim().min(1).max(MAX_SHORT_DESCRIPTION_LIMIT),
-				beginsAt: z.date({ coerce: true }),
+				title: z.string().trim().min(1).max(MAX_SHORT_DESCRIPTION_LIMIT),
 				endsAt: z.date({ coerce: true })
 			})
 			.parse(Object.fromEntries(data));
@@ -34,10 +33,9 @@ export const actions = {
 			},
 			{
 				$set: {
-					title: parsed.title,
+					name: parsed.name,
 					description: parsed.description,
-					shortDescription: parsed.shortDescription,
-					beginsAt: parsed.beginsAt,
+					title: parsed.title,
 					endsAt: parsed.endsAt,
 					updatedAt: new Date()
 				}

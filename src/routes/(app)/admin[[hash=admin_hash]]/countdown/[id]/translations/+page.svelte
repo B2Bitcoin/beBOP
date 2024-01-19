@@ -19,17 +19,17 @@
 	</label>
 
 	<label class="form-label">
-		Short description
+		Title
 		<textarea
-			name="shortDescription"
+			name="title"
 			class="form-input"
 			rows="10"
+			cols="3"
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
-			placeholder={data.countdown.shortDescription}
-			value={data.countdown.translations?.[language]?.shortDescription ?? ''}
+			placeholder={data.countdown.title}
+			value={data.countdown.translations?.[language]?.title ?? ''}
 		/>
 	</label>
-
 	<label class="form-label">
 		Description
 		<textarea

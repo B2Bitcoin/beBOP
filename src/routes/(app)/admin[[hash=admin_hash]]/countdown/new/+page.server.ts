@@ -18,10 +18,9 @@ export const actions: Actions = {
 		const parsed = z
 			.object({
 				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				title: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				description: z.string().trim().min(1).max(MAX_DESCRIPTION_LIMIT),
-				shortDescription: z.string().trim().min(1).max(MAX_SHORT_DESCRIPTION_LIMIT),
-				beginsAt: z.date({ coerce: true }),
+				title: z.string().trim().min(1).max(MAX_SHORT_DESCRIPTION_LIMIT),
 				endsAt: z.date({ coerce: true })
 			})
 			.parse(Object.fromEntries(formData));
@@ -32,10 +31,9 @@ export const actions: Actions = {
 
 		await collections.countdowns.insertOne({
 			_id: parsed.slug,
-			title: parsed.title,
+			name: parsed.name,
 			description: parsed.description,
-			shortDescription: parsed.shortDescription,
-			beginsAt: parsed.beginsAt,
+			title: parsed.title,
 			endsAt: parsed.endsAt,
 			createdAt: new Date(),
 			updatedAt: new Date()

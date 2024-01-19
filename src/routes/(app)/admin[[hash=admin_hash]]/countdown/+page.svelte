@@ -11,7 +11,7 @@
 		<li>
 			{countdown._id} -
 			<a href="{data.adminPrefix}/countdown/{countdown._id}" class="underline body-hyperlink"
-				>{countdown.title}</a
+				>{countdown.name}</a
 			>
 		</li>
 	{:else}

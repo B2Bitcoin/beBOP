@@ -8,8 +8,6 @@ export const load = async ({ params }) => {
 		throw error(404, 'countdown not found');
 	}
 	return {
-		countdown,
-		beginsAt: countdown.beginsAt?.toJSON().slice(0, 10),
-		endsAt: countdown.endsAt.toJSON().slice(0, 10)
+		countdown
 	};
 };
