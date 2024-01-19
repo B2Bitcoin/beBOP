@@ -10,9 +10,9 @@
 	$: distance = countdown.endsAt.getTime() - new Date().getTime();
 	function UpdateCountdown() {
 		if (countdown.beginsAt > new Date()) {
-			distance = countdown.endsAt.getTime() - countdown.beginsAt.getTime();
+			distance = Math.max(countdown.endsAt.getTime() - countdown.beginsAt.getTime(), 0);
 		} else {
-			distance = countdown.endsAt.getTime() - new Date().getTime();
+			distance = Math.max(countdown.endsAt.getTime() - new Date().getTime(), 0);
 		}
 	}
 	setInterval(UpdateCountdown, 1000);
