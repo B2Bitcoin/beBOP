@@ -24,14 +24,14 @@ export const actions: Actions = {
 			.object({
 				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				content: z.string().trim().max(10_000),
-				shortContent: z.string().trim().max(1_000),
+				content: z.string().trim().max(10_000).optional(),
+				shortContent: z.string().trim().max(1_000).optional(),
 				family: z.enum(['creators', 'events', 'retailers', 'temporal']),
 				widgetUseOnly: z.boolean({ coerce: true }).default(false),
 				productTagging: z.boolean({ coerce: true }).default(false),
 				useLightDark: z.boolean({ coerce: true }).default(false),
-				title: z.string(),
-				subtitle: z.string(),
+				title: z.string().optional(),
+				subtitle: z.string().optional(),
 				mainPictureId: z.string().trim().min(1).max(500),
 				fullPictureId: z.string().trim().min(1).max(500),
 				wideBannerId: z.string().trim().min(1).max(500),
@@ -45,7 +45,7 @@ export const actions: Actions = {
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional()
 					.default([]),
-				cssOverride: z.string().trim().max(10_000)
+				cssOverride: z.string().trim().max(10_000).optional()
 			})
 			.parse(json);
 
@@ -97,17 +97,21 @@ export const actions: Actions = {
 			createdAt: new Date(),
 			updatedAt: new Date(),
 			name: parsed.name,
-			title: parsed.title,
-			subtitle: parsed.subtitle,
+			...(parsed.title && { title: parsed.title }),
+			...(parsed.subtitle && { subtitle: parsed.subtitle }),
 			family: parsed.family,
-			content: parsed.content,
-			shortContent: parsed.shortContent,
-			cssOveride: parsed.cssOverride,
+			...(parsed.content && { content: parsed.content }),
+			...(parsed.shortContent && { shortContent: parsed.shortContent }),
+			...(parsed.cssOverride && { cssOveride: parsed.cssOverride }),
 			widgetUseOnly: parsed.widgetUseOnly,
 			productTagging: parsed.productTagging,
 			useLightDark: parsed.useLightDark,
-			cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href),
-			menu: parsed.menuLinks?.filter((menuLink) => menuLink.label && menuLink.href)
+			...(parsed.ctaLinks.length && {
+				cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href)
+			}),
+			...(parsed.menuLinks.length && {
+				menu: parsed.menuLinks?.filter((menuLink) => menuLink.label && menuLink.href)
+			})
 		});
 		throw redirect(303, `${adminPrefix()}/tags/${parsed.slug}`);
 	}

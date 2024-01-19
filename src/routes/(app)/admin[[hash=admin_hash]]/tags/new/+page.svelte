@@ -115,11 +115,11 @@
 
 	<label class="form-label">
 		Tag title
-		<input class="form-input" type="text" name="title" placeholder="Tag title" required />
+		<input class="form-input" type="text" name="title" placeholder="Tag title" />
 	</label>
 	<label class="form-label">
 		Tag subtitle
-		<input class="form-input" type="text" name="subtitle" placeholder="Tag subtitle" required />
+		<input class="form-input" type="text" name="subtitle" placeholder="Tag subtitle" />
 	</label>
 	<label class="form-label">
 		Short content

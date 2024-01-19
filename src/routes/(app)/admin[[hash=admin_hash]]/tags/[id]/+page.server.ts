@@ -52,17 +52,21 @@ export const actions: Actions = {
 				$set: {
 					updatedAt: new Date(),
 					name: parsed.name,
-					title: parsed.title,
-					subtitle: parsed.subtitle,
+					...(parsed.title && { title: parsed.title }),
+					...(parsed.subtitle && { subtitle: parsed.subtitle }),
 					family: parsed.family,
-					content: parsed.content,
-					shortContent: parsed.shortContent,
-					cssOveride: parsed.cssOverride,
+					...(parsed.content && { content: parsed.content }),
+					...(parsed.shortContent && { shortContent: parsed.shortContent }),
+					...(parsed.cssOverride && { cssOveride: parsed.cssOverride }),
 					widgetUseOnly: parsed.widgetUseOnly,
 					productTagging: parsed.productTagging,
 					useLightDark: parsed.useLightDark,
-					cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
-					menu: parsed.menu?.filter((menuLink) => menuLink.label && menuLink.href)
+					...(parsed.cta?.length && {
+						cta: parsed.cta?.filter((cta) => cta.label && cta.href)
+					}),
+					...(parsed.menu?.length && {
+						menu: parsed.menu?.filter((menu) => menu.label && menu.href)
+					})
 				}
 			}
 		);
