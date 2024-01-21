@@ -162,7 +162,7 @@ If you want to access a local BTC node or LND node, use `host.docker.internal` a
 BITCOIN_RPC_URL=http://host.docker.internal:8332
 ```
 
-When placing the bootik behind a reverse proxy, to get your user's IPs, you will need to set the `ADDRESS_HEADER` to `X-Forwaded-For` and the `XFF_DEPTH` header to `1` (or appropriate value depending on your config) in the environment.
+When placing the beBOP behind a reverse proxy, to get your user's IPs, you will need to set the `ADDRESS_HEADER` to `X-Forwaded-For` and the `XFF_DEPTH` header to `1` (or appropriate value depending on your config) in the environment.
 
 ### Maintenance mode
 
@@ -193,7 +193,7 @@ export NEW_S3_KEY="..."
 export NEW_S3_SECRET="..."
 export NEW_S3_ENDPOINT="..."
 
-pnpm run copy-bootik
+pnpm run copy-db-s3
 ```
 
 ## Local development
