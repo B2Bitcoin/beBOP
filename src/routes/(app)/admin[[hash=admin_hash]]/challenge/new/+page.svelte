@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CURRENCIES } from '$lib/types/Currency.js';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { addDays, addMonths } from 'date-fns';
@@ -57,7 +58,16 @@
 			required
 		/>
 	</label>
-
+	{#if mode === 'moneyAmount'}
+		<label class="form-label w-full">
+			currency
+			<select name="currency" class="form-input">
+				{#each CURRENCIES as currency}
+					<option value={currency}>{currency}</option>
+				{/each}
+			</select>
+		</label>
+	{/if}
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
 			Beginning date

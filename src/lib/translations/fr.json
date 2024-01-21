@@ -38,13 +38,19 @@
 		"goalMet": "Merci à tous ! \n👏👏",
 		"goalOvershot": "Vous êtes incroyables ! \n🤭",
 		"list": "Liste des défis",
+		"moneyAmount": {
+			"goalOvershot": "<0></0> sur un objectif de <1></1>! Vous êtes incroyables !"
+		},
 		"numProducts": {
 			"one": "{count} produit",
 			"other": "{count} produits",
 			"zero": "{count} produits"
 		},
 		"singleTitle": "Défi {name}",
-		"title": "Défis"
+		"title": "Défis",
+		"totalProducts": {
+			"goalOvershot": "{progress} préventes sur un objectif de {goal}! Vous êtes incroyables !"
+		}
 	},
 	"checkout": {
 		"agreeIpCollect": "J'accepte la collecte de mon adresse IP (<0>pourquoi?</0>)",

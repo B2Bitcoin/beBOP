@@ -30,13 +30,15 @@
 	</div>
 	<GoalProgress
 		class="font-bold mt-3 body-title"
-		text="{challenge.goal.currency
-			? Number(Math.max(0, challenge.progress)).toLocaleString($locale, {
-					style: 'currency',
-					currency: challenge.goal.currency,
-					minimumFractionDigits: 0
-			  })
-			: Math.max(challenge.progress, 0)} 🙂"
+		text={challenge.goal.currency
+			? Number(Math.max(0, challenge.progress))
+					.toLocaleString($locale, {
+						style: 'currency',
+						currency: challenge.goal.currency,
+						minimumFractionDigits: 0
+					})
+					.toString()
+			: Math.max(challenge.progress, 0).toString()}
 		goal={challenge.goal.amount}
 		progress={challenge.progress}
 	/>
@@ -45,8 +47,32 @@
 		<p />
 		{#if challenge.progress === challenge.goal.amount}
 			<p>{t('challenge.goalMet')}</p>
-		{:else if challenge.progress > challenge.goal.amount}
-			<p>{t('challenge.goalOvershot')}</p>
+		{:else if challenge.progress > challenge.goal.amount && challenge.goal.currency}
+			<div class="flex flex-row body-secondaryText gap-1">
+				<Trans key="challenge.moneyAmount.goalOvershot">
+					<PriceTag
+						amount={challenge.progress}
+						class="text-gray-800 text-base"
+						currency={challenge.goal.currency}
+						main
+						slot="0"
+					/>
+					<PriceTag
+						amount={challenge.goal.amount}
+						class="text-gray-800 text-base"
+						currency={challenge.goal.currency}
+						main
+						slot="1"
+					/>
+				</Trans>
+			</div>
+		{:else if challenge.progress > challenge.goal.amount && !challenge.goal.currency}
+			<div class="flex flex-row body-secondaryText gap-1">
+				{t('challenge.totalProducts.goalOvershot', {
+					progress: challenge.progress.toLocaleString($locale),
+					goal: challenge.goal.amount.toLocaleString($locale)
+				})}
+			</div>
 		{:else if challenge.goal.currency}
 			<PriceTag
 				amount={challenge.goal.amount}

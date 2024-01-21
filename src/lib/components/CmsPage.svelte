@@ -8,7 +8,8 @@
 		CmsTag,
 		CmsToken,
 		CmsSpecification,
-		CmsContactForm
+		CmsContactForm,
+		CmsCountdown
 	} from '$lib/server/cms';
 	import CmsDesign from './CmsDesign.svelte';
 
@@ -32,6 +33,7 @@
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
 	export let contactForms: CmsContactForm[];
+	export let countdowns: CmsCountdown[];
 </script>
 
 <svelte:head>
@@ -56,6 +58,7 @@
 		{pageName}
 		{websiteLink}
 		{brandName}
+		{countdowns}
 		class="body body-mainPlan"
 	/>
 {:else}
@@ -76,6 +79,7 @@
 			{pageName}
 			{websiteLink}
 			{brandName}
+			{countdowns}
 			class="body"
 		/>
 	</main>
