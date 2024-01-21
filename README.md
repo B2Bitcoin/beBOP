@@ -117,11 +117,13 @@ echo "S3_KEY_ID=$(openssl rand -base64 63 | tr -d '\n')" >> .env.local
 echo "S3_KEY_SECRET=$(openssl rand -base64 63 | tr -d '\n')" >> .env.local
 ```
 
+Make sure to have a fairly recent version of docker & docker compose.
+
 #### Start the containers
 
 ```
 # --build will rebuild the docker image when you change the code
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 It will still use the `.env.local` file for the environment variables if present, overriding the values for MongoDB and S3.
