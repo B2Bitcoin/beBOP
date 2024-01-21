@@ -106,7 +106,18 @@ docker run -p 3000:3000 --env-file .env.local bebop
 
 ### Docker compose
 
-If you also want to launch a local mongodb and minio, you can use the following command:
+Docker compose is used for local development, but you can also use it for production. It will launch a mongodb and minio container.
+
+#### Required configuration
+
+Edit `.env.local` to add a S3 access key and secret if not already present, for example:
+
+```console
+echo "S3_KEY_ID=$(openssl rand -base64 63 | tr -d '\n')" >> .env.local
+echo "S3_KEY_SECRET=$(openssl rand -base64 63 | tr -d '\n')" >> .env.local
+```
+
+#### Start the containers
 
 ```
 # --build will rebuild the docker image when you change the code
@@ -114,6 +125,26 @@ docker-compose up --build -d
 ```
 
 It will still use the `.env.local` file for the environment variables if present, overriding the values for MongoDB and S3.
+
+Minio will be available on http://localhost:9000 and bebop on http://localhost:3000.
+
+#### Other configuration
+
+See the beginning of the README for other environment variables you can set in `.env.local`, including the SMTP credentials.
+
+If you run in production, you will need to set the `ORIGIN` environment variable to the URL of your beBOP instance:
+
+```env
+# .env.local - replace with your beBOP url
+ORIGIN=https://bebop.example.com
+```
+
+As well as the object storage (minio) url:
+
+```env
+# .env.local - replace with your minio url
+S3_ENDPOINT_URL=https://minio.bebop.example.com
+```
 
 ### Maintenance mode
 
