@@ -17,7 +17,9 @@ services:
     # But not needed as bebop takes a while to start up
     environment:
       - MONGODB_URL=${MONGODB_URL:-mongodb://mongodb:27017}
+      - ORIGIN=${ORIGIN:-http://localhost:3000}
       - S3_ENDPOINT_URL=${S3_ENDPOINT_URL:-http://minio:9000}
+      - PUBLIC_S3_ENDPOINT_URL=${PUBLIC_S3_ENDPOINT_URL:-${S3_ENDPOINT_URL:-http://localhost:9000}}
       - S3_BUCKET=${S3_BUCKET:-bebop}
       - S3_REGION=${S3_REGION:-localhost}
       - S3_KEY_ID=${S3_KEY_ID:-minio}

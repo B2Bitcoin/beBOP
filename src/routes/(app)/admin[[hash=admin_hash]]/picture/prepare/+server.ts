@@ -1,6 +1,6 @@
 import { S3_BUCKET } from '$env/static/private';
 import { collections } from '$lib/server/database';
-import { s3client, secureLink } from '$lib/server/s3';
+import { publicS3Client, secureLink } from '$lib/server/s3';
 import { generateId } from '$lib/utils/generateId';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -24,7 +24,7 @@ export async function POST({ request }) {
 
 	const presignedUrl = secureLink(
 		await getSignedUrl(
-			s3client,
+			publicS3Client,
 			new PutObjectCommand({
 				Bucket: S3_BUCKET,
 				Key: key,

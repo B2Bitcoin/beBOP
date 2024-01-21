@@ -9,7 +9,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 import { parsePriceAmount } from '$lib/types/Currency';
-import { getS3DownloadLink, s3ProductPrefix, s3client } from '$lib/server/s3';
+import { getPrivateS3DownloadLink, s3ProductPrefix, s3client } from '$lib/server/s3';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
@@ -111,7 +111,7 @@ export const actions: Actions = {
 			throw error(400, 'Error when uploading picture');
 		}
 
-		const resp = await fetch(await getS3DownloadLink(pendingPicture.storage.original.key));
+		const resp = await fetch(await getPrivateS3DownloadLink(pendingPicture.storage.original.key));
 
 		if (!resp.ok) {
 			throw error(400, 'Error when uploading picture');

@@ -1,7 +1,7 @@
 import { S3_BUCKET } from '$env/static/private';
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
-import { getS3DownloadLink, s3client } from '$lib/server/s3';
+import { getPublicS3DownloadLink, s3client } from '$lib/server/s3';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { error, redirect } from '@sveltejs/kit';
 
@@ -14,7 +14,7 @@ export async function load({ params }) {
 		throw error(404, 'Digital file not found');
 	}
 
-	const downloadLink = getS3DownloadLink(digitalFile.storage.key);
+	const downloadLink = getPublicS3DownloadLink(digitalFile.storage.key);
 
 	return {
 		digitalFile,

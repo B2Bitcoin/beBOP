@@ -162,6 +162,8 @@ If you want to access a local BTC node or LND node, use `host.docker.internal` a
 BITCOIN_RPC_URL=http://host.docker.internal:8332
 ```
 
+When placing the bootik behind a reverse proxy, to get your user's IPs, you will need to set the `ADDRESS_HEADER` to `X-Forwaded-For` and the `XFF_DEPTH` header to `1` (or appropriate value depending on your config) in the environment.
+
 ### Maintenance mode
 
 It's possible to enable maintenance mode in the admin.
@@ -227,21 +229,19 @@ docker run \
    quay.io/minio/minio server /data --console-address ":9090"
 ```
 
-Then, go on http://127.0.0.1:9090 , login with the user/password above, and create a "bootik" S3 bucket.
-
 Then go on http://127.0.0.1:9090/access-keys and create an access key. Copy the "Access Key" and "Secret Key" safely.
 
 In your `.env.local` file, add the following:
 
 ```dotenv
-S3_BUCKET="bootik"
+S3_BUCKET="bebop" # Or another bucket name of your choice
 S3_KEY_ID=<Access key> #for example: uY2vtFFX7vBVucEs
 S3_KEY_SECRET=<Secret Key> #for example: GhNSZXUMiZsJl6LTvSCWPW0ZbCwHVL17
 S3_ENDPOINT_URL=http://127.0.0.1:9000
 S3_REGION="localhost"
 ```
 
-Then restart `pnpm dev`.
+Then restart `pnpm dev`. The bucket will be created automatically.
 
 ### Configuring MongoDB
 

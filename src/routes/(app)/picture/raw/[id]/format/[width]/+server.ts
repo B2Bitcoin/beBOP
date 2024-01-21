@@ -1,7 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { collections } from '$lib/server/database';
-import { getS3DownloadLink } from '$lib/server/s3';
+import { getPublicS3DownloadLink } from '$lib/server/s3';
 
 export const GET: RequestHandler = async ({ params }) => {
 	const picture = await collections.pictures.findOne({
@@ -19,5 +19,5 @@ export const GET: RequestHandler = async ({ params }) => {
 		throw error(500, "Error when finding picture's format");
 	}
 
-	throw redirect(302, await getS3DownloadLink(format.key));
+	throw redirect(302, await getPublicS3DownloadLink(format.key));
 };

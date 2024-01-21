@@ -1,5 +1,5 @@
 import { isLightningConfigured, lndGetInfo } from '$lib/server/lightning';
-import { getS3DownloadLink } from '$lib/server/s3';
+import { getPrivateS3DownloadLink } from '$lib/server/s3';
 import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { collections } from '$lib/server/database';
@@ -40,7 +40,7 @@ export const GET = async ({ params, url }) => {
 		)?.key;
 
 		const rawPicture = key
-			? await fetch(getS3DownloadLink(key)).then((r) => (r.ok ? r.blob() : null))
+			? await fetch(getPrivateS3DownloadLink(key)).then((r) => (r.ok ? r.blob() : null))
 			: null;
 
 		// Convert to 512x512 PNG
