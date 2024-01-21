@@ -128,7 +128,9 @@ Make sure to have a fairly recent version of docker & docker compose.
 #### Start the containers
 
 ```
-# --build will rebuild the docker image when you change the code
+# Optional: update dependencies
+docker compose pull
+# --build will rebuild the docker image when you change the code. Use --force-recreate to force a rebuild (eg after updating dependencies).
 docker compose up --build -d
 ```
 
