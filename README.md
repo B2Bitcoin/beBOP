@@ -87,7 +87,7 @@ Note: for uploading large payloads you may want to set the `BODY_SIZE_LIMIT=2000
 - Build the docker image
 
 ```shell
-docker build --build-arg VERSION=$(git rev-parse HEAD) -t bebop .
+docker build -t bebop .
 ```
 
 - Run the docker image with environment variables
@@ -103,6 +103,66 @@ or
 # Be careful, double-quotes surrounding values in .env.local will not be ignored
 docker run -p 3000:3000 --env-file .env.local bebop
 ```
+
+If you want to access a local BTC node or LND node, use `host.docker.internal` as the hostname instead of `localhost`:
+
+```env
+BITCOIN_RPC_URL=http://host.docker.internal:8332
+```
+
+### Docker compose
+
+Docker compose is used for local development, but you can also use it for production. It will launch a mongodb and minio container.
+
+#### Required configuration
+
+Edit `.env.local` to add a S3 access key and secret if not already present, for example:
+
+```console
+echo "S3_KEY_ID=$(openssl rand -base64 63 | tr -d '\n')" >> .env.local
+echo "S3_KEY_SECRET=$(openssl rand -base64 63 | tr -d '\n')" >> .env.local
+```
+
+Make sure to have a fairly recent version of docker & docker compose.
+
+#### Start the containers
+
+```
+# Optional: update dependencies
+docker compose pull
+# --build will rebuild the docker image when you change the code. Use --force-recreate to force a rebuild (eg after updating dependencies).
+docker compose up --build -d
+```
+
+It will still use the `.env.local` file for the environment variables if present, overriding the values for MongoDB and S3.
+
+Minio will be available on http://localhost:9000 and bebop on http://localhost:3000.
+
+#### Other configuration
+
+See the beginning of the README for other environment variables you can set in `.env.local`, including the SMTP credentials.
+
+If you run in production, you will need to set the `ORIGIN` environment variable to the URL of your beBOP instance:
+
+```env
+# .env.local - replace with your beBOP url
+ORIGIN=https://bebop.example.com
+```
+
+As well as the object storage (minio) url:
+
+```env
+# .env.local - replace with your minio url
+S3_ENDPOINT_URL=https://minio.bebop.example.com
+```
+
+If you want to access a local BTC node or LND node, use `host.docker.internal` as the hostname instead of `localhost`:
+
+```env
+BITCOIN_RPC_URL=http://host.docker.internal:8332
+```
+
+When placing the bootik behind a reverse proxy, to get your user's IPs, you will need to set the `ADDRESS_HEADER` to `X-Forwaded-For` and the `XFF_DEPTH` header to `1` (or appropriate value depending on your config) in the environment.
 
 ### Maintenance mode
 
@@ -169,21 +229,19 @@ docker run \
    quay.io/minio/minio server /data --console-address ":9090"
 ```
 
-Then, go on http://127.0.0.1:9090 , login with the user/password above, and create a "bootik" S3 bucket.
-
 Then go on http://127.0.0.1:9090/access-keys and create an access key. Copy the "Access Key" and "Secret Key" safely.
 
 In your `.env.local` file, add the following:
 
 ```dotenv
-S3_BUCKET="bootik"
+S3_BUCKET="bebop" # Or another bucket name of your choice
 S3_KEY_ID=<Access key> #for example: uY2vtFFX7vBVucEs
 S3_KEY_SECRET=<Secret Key> #for example: GhNSZXUMiZsJl6LTvSCWPW0ZbCwHVL17
 S3_ENDPOINT_URL=http://127.0.0.1:9000
 S3_REGION="localhost"
 ```
 
-Then restart `pnpm dev`.
+Then restart `pnpm dev`. The bucket will be created automatically.
 
 ### Configuring MongoDB
 

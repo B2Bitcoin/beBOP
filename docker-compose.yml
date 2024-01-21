@@ -1,0 +1,62 @@
+services:
+  bebop:
+    build:
+      dockerfile: Dockerfile
+    init: true
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+      - minio
+    # Alternatively:
+    # depends_on:
+    #   mongo:
+    #     condition: service_healthy
+    #   minio:
+    #     condition: service_started
+    # But not needed as bebop takes a while to start up
+    environment:
+      - MONGODB_URL=${MONGODB_URL:-mongodb://mongodb:27017}
+      - ORIGIN=${ORIGIN:-http://localhost:3000}
+      - S3_ENDPOINT_URL=${S3_ENDPOINT_URL:-http://minio:9000}
+      - PUBLIC_S3_ENDPOINT_URL=${PUBLIC_S3_ENDPOINT_URL:-${S3_ENDPOINT_URL:-http://localhost:9000}}
+      - S3_BUCKET=${S3_BUCKET:-bebop}
+      - S3_REGION=${S3_REGION:-localhost}
+      - S3_KEY_ID=${S3_KEY_ID:-minio}
+      - S3_KEY_SECRET=${S3_KEY_SECRET:-minio123}
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.local
+        required: true
+  mongo:
+    image: mongo:6.0.9
+    hostname: mongodb
+    command: --replSet rs0 --bind_ip_all
+    mem_limit: '5g'
+    mem_reservation: '3g'
+    healthcheck:
+      test: test $$(mongosh --quiet --eval 'try {rs.status().ok} catch(e) {rs.initiate().ok}') -eq 1
+      interval: 5s
+    volumes:
+      - mongo-data:/data/db
+  minio:
+    image: quay.io/minio/minio:latest
+    hostname: minio
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: ${S3_KEY_ID:-minio}
+      MINIO_SECRET_KEY: ${S3_KEY_SECRET:-minio123}
+      MINIO_SERVER_URL: ${S3_ENDPOINT_URL:-http://localhost:9000}
+    volumes:
+      - minio_data:/data
+    command: server /data
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.local
+        required: true
+volumes:
+  mongo-data:
+  minio_data:
