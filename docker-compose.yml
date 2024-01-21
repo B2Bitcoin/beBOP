@@ -3,10 +3,8 @@ services:
     build:
       dockerfile: Dockerfile
     init: true
-    # ports:
-    #   - 3000:3000
-    # So that bebop can access the bitcoin node (if BITCOIN_RPC_URL points to a local node)
-    network_mode: host
+    ports:
+      - 3000:3000
     depends_on:
       - mongo
       - minio

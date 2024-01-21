@@ -104,6 +104,12 @@ or
 docker run -p 3000:3000 --env-file .env.local bebop
 ```
 
+If you want to access a local BTC node or LND node, use `host.docker.internal` as the hostname instead of `localhost`:
+
+```env
+BITCOIN_RPC_URL=http://host.docker.internal:8332
+```
+
 ### Docker compose
 
 Docker compose is used for local development, but you can also use it for production. It will launch a mongodb and minio container.
@@ -146,6 +152,12 @@ As well as the object storage (minio) url:
 ```env
 # .env.local - replace with your minio url
 S3_ENDPOINT_URL=https://minio.bebop.example.com
+```
+
+If you want to access a local BTC node or LND node, use `host.docker.internal` as the hostname instead of `localhost`:
+
+```env
+BITCOIN_RPC_URL=http://host.docker.internal:8332
 ```
 
 ### Maintenance mode
