@@ -11,7 +11,7 @@ on:
         description: 'Environment to deploy to'
 
 jobs:
-  deploy-bootik:
+  deploy:
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event.inputs.environment || vars.DEFAULT_ENV }}
