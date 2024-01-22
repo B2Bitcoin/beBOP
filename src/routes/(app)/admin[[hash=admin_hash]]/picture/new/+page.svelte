@@ -2,12 +2,13 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { uploadPicture } from '$lib/types/Picture.js';
+	import { TAGTYPES, uploadPicture } from '$lib/types/Picture.js';
 
 	export let data;
 
 	const productId = $page.url.searchParams.get('productId');
 	const sliderId = $page.url.searchParams.get('sliderId');
+	const tagId = $page.url.searchParams.get('tagId');
 
 	let files: FileList;
 	let fileName = '';
@@ -88,9 +89,6 @@
 					>{productId}</a
 				>
 			</p>
-		{/if}
-
-		{#if productId}
 			<input type="hidden" name="productId" value={productId} />
 		{/if}
 
@@ -98,10 +96,21 @@
 			<p>
 				Associated slider: <a href="/admin/slider/{sliderId}" class="hover:underline">{sliderId}</a>
 			</p>
-		{/if}
-
-		{#if sliderId}
 			<input type="hidden" name="sliderId" value={sliderId} />
+		{/if}
+		{#if tagId}
+			<label class="form-label w-full">
+				Tag type
+				<select name="tagType" class="form-input">
+					{#each TAGTYPES as tagType}
+						<option value={tagType}>{tagType}</option>
+					{/each}
+				</select>
+			</label>
+			<p>
+				Associated tag: <a href="/admin/tags/{tagId}" class="hover:underline">{tagId}</a>
+			</p>
+			<input type="hidden" name="tagId" value={tagId} />
 		{/if}
 
 		<input type="submit" class="btn btn-gray self-start" value="Add" />
