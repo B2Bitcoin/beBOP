@@ -88,7 +88,6 @@
 			bind:value={data.tag.title}
 			name="title"
 			placeholder="Tag title"
-			required
 		/>
 	</label>
 	<label class="form-label">
@@ -99,7 +98,6 @@
 			bind:value={data.tag.subtitle}
 			name="subtitle"
 			placeholder="Tag subtitle"
-			required
 		/>
 	</label>
 	<label class="form-label">

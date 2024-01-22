@@ -32,11 +32,11 @@ export const actions: Actions = {
 				useLightDark: z.boolean({ coerce: true }).default(false),
 				title: z.string(),
 				subtitle: z.string(),
-				mainPictureId: z.string().trim().min(1).max(500),
-				fullPictureId: z.string().trim().min(1).max(500),
-				wideBannerId: z.string().trim().min(1).max(500),
-				slimBannerId: z.string().trim().min(1).max(500),
-				avatarId: z.string().trim().min(1).max(500),
+				mainPictureId: z.string().trim().max(500),
+				fullPictureId: z.string().trim().max(500),
+				wideBannerId: z.string().trim().max(500),
+				slimBannerId: z.string().trim().max(500),
+				avatarId: z.string().trim().max(500),
 				ctaLinks: z
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional()
@@ -59,8 +59,10 @@ export const actions: Actions = {
 			{ id: parsed.slimBannerId, type: 'slim' as TagType },
 			{ id: parsed.avatarId, type: 'avatar' as TagType }
 		];
+		const tagPicturesFiltred = tagPictures.filter((picture) => picture.id);
+
 		await Promise.all(
-			tagPictures.map(async (tagPicture) => {
+			tagPicturesFiltred.map(async (tagPicture) => {
 				const pendingPicture = await collections.pendingPictures.findOne({
 					_id: tagPicture.id
 				});

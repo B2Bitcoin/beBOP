@@ -31,8 +31,10 @@
 			];
 			await Promise.all(
 				picturesToUpload.map(async (picture) => {
-					const pictureId = await uploadPicture(data.adminPrefix, picture.file[0]);
-					formData.set(picture.id, pictureId);
+					if (picture.file) {
+						const pictureId = await uploadPicture(data.adminPrefix, picture.file[0]);
+						formData.set(picture.id, pictureId);
+					}
 				})
 			);
 
@@ -50,7 +52,7 @@
 
 			applyAction(result);
 		} finally {
-			submitting = true;
+			submitting = false;
 		}
 	}
 </script>
@@ -115,11 +117,11 @@
 
 	<label class="form-label">
 		Tag title
-		<input class="form-input" type="text" name="title" placeholder="Tag title" required />
+		<input class="form-input" type="text" name="title" placeholder="Tag title" />
 	</label>
 	<label class="form-label">
 		Tag subtitle
-		<input class="form-input" type="text" name="subtitle" placeholder="Tag subtitle" required />
+		<input class="form-input" type="text" name="subtitle" placeholder="Tag subtitle" />
 	</label>
 	<label class="form-label">
 		Short content
@@ -138,7 +140,6 @@
 			accept="image/jpeg,image/png,image/webp"
 			class="block"
 			bind:files={fileMainPicture}
-			required
 			disabled={submitting}
 		/>
 	</label>
@@ -150,7 +151,6 @@
 			accept="image/jpeg,image/png,image/webp"
 			class="block"
 			bind:files={fileFullPicture}
-			required
 			disabled={submitting}
 		/>
 	</label>
@@ -162,7 +162,6 @@
 			accept="image/jpeg,image/png,image/webp"
 			class="block"
 			bind:files={fileWideBanner}
-			required
 			disabled={submitting}
 		/>
 	</label>
@@ -174,7 +173,6 @@
 			accept="image/jpeg,image/png,image/webp"
 			class="block"
 			bind:files={fileSlimBanner}
-			required
 			disabled={submitting}
 		/>
 	</label>
@@ -186,7 +184,6 @@
 			accept="image/jpeg,image/png,image/webp"
 			class="block"
 			bind:files={fileAvatar}
-			required
 			disabled={submitting}
 		/>
 	</label>

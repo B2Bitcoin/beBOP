@@ -61,8 +61,8 @@ export const actions: Actions = {
 					widgetUseOnly: parsed.widgetUseOnly,
 					productTagging: parsed.productTagging,
 					useLightDark: parsed.useLightDark,
-					cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
-					menu: parsed.menu?.filter((menuLink) => menuLink.label && menuLink.href)
+					cta: parsed.cta?.filter((cta) => cta.label && cta.href),
+					menu: parsed.menu?.filter((menu) => menu.label && menu.href)
 				}
 			}
 		);
