@@ -197,7 +197,9 @@
 </form>
 
 <h2 class="text-2xl my-4">Photos</h2>
-
+{#if data.pictures.length < 5}
+	<a href="/admin/picture/new?tagId={data.tag._id}" class="underline">Add picture</a>
+{/if}
 <div class="flex flex-row flex-wrap gap-6 mt-6">
 	{#each data.pictures as picture}
 		<div class="flex flex-col text-center">

@@ -2,7 +2,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { uploadPicture } from '$lib/types/Picture.js';
+	import { TAGTYPES, uploadPicture } from '$lib/types/Picture.js';
 
 	export let data;
 
@@ -99,6 +99,14 @@
 			<input type="hidden" name="sliderId" value={sliderId} />
 		{/if}
 		{#if tagId}
+			<label class="form-label w-full">
+				Tag type
+				<select name="tagType" class="form-input">
+					{#each TAGTYPES as tagType}
+						<option value={tagType}>{tagType}</option>
+					{/each}
+				</select>
+			</label>
 			<p>
 				Associated tag: <a href="/admin/tags/{tagId}" class="hover:underline">{tagId}</a>
 			</p>
