@@ -4,7 +4,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { adminPrefix } from '$lib/server/admin';
 import { collections } from '$lib/server/database';
-import { getS3DownloadLink, s3client } from '$lib/server/s3';
+import { getPrivateS3DownloadLink, s3client } from '$lib/server/s3';
 import { S3_BUCKET } from '$env/static/private';
 
 export const actions: Actions = {
@@ -28,7 +28,7 @@ export const actions: Actions = {
 			throw error(400, 'Error when uploading picture');
 		}
 
-		const resp = await fetch(await getS3DownloadLink(pendingPicture.storage.original.key));
+		const resp = await fetch(await getPrivateS3DownloadLink(pendingPicture.storage.original.key));
 
 		if (!resp.ok) {
 			throw error(400, 'Error when uploading picture');

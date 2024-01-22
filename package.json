@@ -1,5 +1,5 @@
 {
-	"name": "b2bitcoinbootik",
+	"name": "bebop",
 	"version": "0.0.1",
 	"private": true,
 	"packageManager": "pnpm@8.3.1",
@@ -13,7 +13,7 @@
 		"test:unit": "vitest --no-threads",
 		"lint": "eslint",
 		"format": "prettier --write",
-		"copy-bootik": "ts-node --esm scripts/copy-bootik.ts"
+		"copy-db-s3": "ts-node --esm scripts/copy-db-s3.ts"
 	},
 	"devDependencies": {
 		"@fontsource/outfit": "^4.5.11",

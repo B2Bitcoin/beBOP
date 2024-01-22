@@ -3,6 +3,7 @@ import { collections, withTransaction } from './database';
 import { marked } from 'marked';
 import { env } from '$env/dynamic/private';
 import type { OrderPayment } from '$lib/types/Order';
+import { Lock } from './lock';
 
 const migrations = [
 	{
@@ -306,26 +307,40 @@ export async function runMigrations() {
 	if (env.VITEST) {
 		return;
 	}
-	const migrationsInDb = await collections.migrations.find().toArray();
+	const lock = await Lock.tryAcquire('migrations');
+	if (!lock) {
+		return;
+	}
 
-	const migrationsToRun = migrations.filter(
-		(migration) => !migrationsInDb.find((migrationInDb) => migrationInDb._id.equals(migration._id))
-	);
+	try {
+		const migrationsInDb = await collections.migrations.find().toArray();
 
-	for (const migration of migrationsToRun) {
-		console.log('running migration', migration.name);
-		await withTransaction(async (session) => {
-			await collections.migrations.insertOne(
-				{
-					_id: migration._id,
-					name: migration.name,
-					createdAt: new Date(),
-					updatedAt: new Date()
-				},
-				{ session }
-			);
-			await migration.run(session);
-		});
-		console.log('done');
+		const migrationsToRun = migrations.filter(
+			(migration) =>
+				!migrationsInDb.find((migrationInDb) => migrationInDb._id.equals(migration._id))
+		);
+
+		for (const migration of migrationsToRun) {
+			console.log('running migration', migration.name);
+			await withTransaction(async (session) => {
+				await collections.migrations.insertOne(
+					{
+						_id: migration._id,
+						name: migration.name,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					},
+					{ session }
+				);
+				await migration.run(session);
+			});
+			console.log('done');
+		}
+	} finally {
+		lock.destroy();
+	}
+
+	while ((await collections.migrations.countDocuments()) < migrations.length) {
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 	}
 }

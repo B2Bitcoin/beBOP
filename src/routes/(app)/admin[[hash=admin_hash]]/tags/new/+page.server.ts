@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { set } from 'lodash-es';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import type { JsonObject } from 'type-fest';
-import { getS3DownloadLink, s3client } from '$lib/server/s3';
+import { getPrivateS3DownloadLink, s3client } from '$lib/server/s3';
 import { S3_BUCKET } from '$env/static/private';
 import { generatePicture } from '$lib/server/picture';
 import type { TagType } from '$lib/types/Picture';
@@ -71,7 +71,9 @@ export const actions: Actions = {
 					throw error(400, 'Error when uploading picture');
 				}
 
-				const resp = await fetch(await getS3DownloadLink(pendingPicture.storage.original.key));
+				const resp = await fetch(
+					await getPrivateS3DownloadLink(pendingPicture.storage.original.key)
+				);
 
 				if (!resp.ok) {
 					throw error(400, 'Error when uploading picture');
