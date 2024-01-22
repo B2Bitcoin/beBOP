@@ -6,18 +6,14 @@ export interface TagTranslatableFields {
 	subtitle: string;
 	content: string;
 	shortContent: string;
-	cta:
-		| {
-				label: string;
-				href: string;
-		  }[]
-		| [];
-	menu:
-		| {
-				label: string;
-				href: string;
-		  }[]
-		| [];
+	cta: {
+		label: string;
+		href: string;
+	}[];
+	menu: {
+		label: string;
+		href: string;
+	}[];
 }
 
 export interface Tag extends Timestamps, TagTranslatableFields {
