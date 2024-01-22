@@ -16,6 +16,7 @@ export const actions: Actions = {
 				name: z.string(),
 				productId: z.string().optional(),
 				sliderId: z.string().optional(),
+				tagId: z.string().optional(),
 				pictureId: z.string().min(1).max(500)
 			})
 			.parse(Object.fromEntries(formData));
