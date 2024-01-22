@@ -24,19 +24,19 @@ export const actions: Actions = {
 			.object({
 				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				content: z.string().trim().max(10_000).optional(),
-				shortContent: z.string().trim().max(1_000).optional(),
+				content: z.string().trim().max(10_000),
+				shortContent: z.string().trim().max(1_000),
 				family: z.enum(['creators', 'events', 'retailers', 'temporal']),
 				widgetUseOnly: z.boolean({ coerce: true }).default(false),
 				productTagging: z.boolean({ coerce: true }).default(false),
 				useLightDark: z.boolean({ coerce: true }).default(false),
-				title: z.string().optional(),
-				subtitle: z.string().optional(),
-				mainPictureId: z.string().trim().max(500).optional(),
-				fullPictureId: z.string().trim().max(500).optional(),
-				wideBannerId: z.string().trim().max(500).optional(),
-				slimBannerId: z.string().trim().max(500).optional(),
-				avatarId: z.string().trim().max(500).optional(),
+				title: z.string(),
+				subtitle: z.string(),
+				mainPictureId: z.string().trim().max(500),
+				fullPictureId: z.string().trim().max(500),
+				wideBannerId: z.string().trim().max(500),
+				slimBannerId: z.string().trim().max(500),
+				avatarId: z.string().trim().max(500),
 				ctaLinks: z
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional()
@@ -45,7 +45,7 @@ export const actions: Actions = {
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional()
 					.default([]),
-				cssOverride: z.string().trim().max(10_000).optional()
+				cssOverride: z.string().trim().max(10_000)
 			})
 			.parse(json);
 
@@ -101,21 +101,17 @@ export const actions: Actions = {
 			createdAt: new Date(),
 			updatedAt: new Date(),
 			name: parsed.name,
-			...(parsed.title && { title: parsed.title }),
-			...(parsed.subtitle && { subtitle: parsed.subtitle }),
+			title: parsed.title,
+			subtitle: parsed.subtitle,
 			family: parsed.family,
-			...(parsed.content && { content: parsed.content }),
-			...(parsed.shortContent && { shortContent: parsed.shortContent }),
-			...(parsed.cssOverride && { cssOveride: parsed.cssOverride }),
+			content: parsed.content,
+			shortContent: parsed.shortContent,
+			cssOveride: parsed.cssOverride,
 			widgetUseOnly: parsed.widgetUseOnly,
 			productTagging: parsed.productTagging,
 			useLightDark: parsed.useLightDark,
-			...(parsed.ctaLinks.length && {
-				cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href)
-			}),
-			...(parsed.menuLinks.length && {
-				menu: parsed.menuLinks?.filter((menuLink) => menuLink.label && menuLink.href)
-			})
+			cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+			menu: parsed.menuLinks?.filter((menuLink) => menuLink.label && menuLink.href)
 		});
 		throw redirect(303, `${adminPrefix()}/tags/${parsed.slug}`);
 	}

@@ -17,9 +17,7 @@
 	<div class="relative">
 		<PictureComponent {picture} />
 		<div class="btn tagWidget-cta text-xl absolute bottom-0 right-0 text-center p-2 m-2">
-			{#if tag.cta}
-				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
-			{/if}
+			<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
 		</div>
 	</div>
 

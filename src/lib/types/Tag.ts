@@ -2,18 +2,22 @@ import type { LanguageKey } from '$lib/translations';
 import type { Timestamps } from './Timestamps';
 
 export interface TagTranslatableFields {
-	title?: string;
-	subtitle?: string;
-	content?: string;
-	shortContent?: string;
-	cta?: {
-		label: string;
-		href: string;
-	}[];
-	menu?: {
-		label: string;
-		href: string;
-	}[];
+	title: string;
+	subtitle: string;
+	content: string;
+	shortContent: string;
+	cta:
+		| {
+				label: string;
+				href: string;
+		  }[]
+		| [];
+	menu:
+		| {
+				label: string;
+				href: string;
+		  }[]
+		| [];
 }
 
 export interface Tag extends Timestamps, TagTranslatableFields {
@@ -23,7 +27,7 @@ export interface Tag extends Timestamps, TagTranslatableFields {
 	widgetUseOnly: boolean;
 	productTagging: boolean;
 	useLightDark: boolean;
-	cssOveride?: string;
+	cssOveride: string;
 
 	translations?: Partial<Record<LanguageKey, Partial<TagTranslatableFields>>>;
 }

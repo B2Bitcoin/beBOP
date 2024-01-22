@@ -26,13 +26,11 @@
 				{tag.shortContent}
 			</h2>
 			<div class="flex text-centern justify-evenly mt-auto mb-2">
-				{#if tag.cta}
-					{#each tag.cta as cta}
-						<div class="btn tagWidget-cta text-xl text-center w-auto p-3">
-							<a class="tagWidget-hyperlink" href={cta.href}>{cta.label}</a>
-						</div>
-					{/each}
-				{/if}
+				{#each tag.cta as cta}
+					<div class="btn tagWidget-cta text-xl text-center w-auto p-3">
+						<a class="tagWidget-hyperlink" href={cta.href}>{cta.label}</a>
+					</div>
+				{/each}
 			</div>
 		</div>
 	</div>

@@ -131,7 +131,7 @@
 					type="text"
 					name="cta[{i}].label"
 					class="form-input"
-					value={data.tag.cta ? data.tag.cta[i]?.label || '' : ''}
+					value={data.tag.cta[i]?.label || ''}
 				/>
 			</label>
 			<label class="form-label">
@@ -140,7 +140,7 @@
 					type="text"
 					name="cta[{i}].href"
 					class="form-input"
-					value={data.tag.cta ? data.tag.cta[i]?.href || '' : ''}
+					value={data.tag.cta[i]?.href || ''}
 				/>
 			</label>
 		</div>
@@ -154,7 +154,7 @@
 					type="text"
 					name="menu[{i}].label"
 					class="form-input"
-					value={data.tag.menu ? data.tag.menu[i]?.label || '' : ''}
+					value={data.tag.menu[i]?.label || ''}
 				/>
 			</label>
 			<label class="form-label">
@@ -163,7 +163,7 @@
 					type="text"
 					name="menu[{i}].href"
 					class="form-input"
-					value={data.tag.menu ? data.tag.menu[i]?.href || '' : ''}
+					value={data.tag.menu[i]?.href || ''}
 				/>
 			</label>
 		</div>
