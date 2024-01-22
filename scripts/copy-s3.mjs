@@ -1,11 +1,6 @@
-import mongodb from 'mongodb';
 import * as AWS from '@aws-sdk/client-s3';
 
 const envVars = [
-	'OLD_DB_NAME',
-	'NEW_DB_NAME',
-	'OLD_DB_URL',
-	'NEW_DB_URL',
 	'OLD_S3_BUCKET',
 	'NEW_S3_BUCKET',
 	'OLD_S3_REGION',
@@ -19,10 +14,6 @@ const envVars = [
 ];
 
 const {
-	OLD_DB_NAME,
-	NEW_DB_NAME,
-	OLD_DB_URL,
-	NEW_DB_URL,
 	OLD_S3_BUCKET,
 	NEW_S3_BUCKET,
 	OLD_S3_REGION,
@@ -36,10 +27,6 @@ const {
 } = process.env;
 
 if (
-	!OLD_DB_NAME ||
-	!NEW_DB_NAME ||
-	!OLD_DB_URL ||
-	!NEW_DB_URL ||
 	!OLD_S3_BUCKET ||
 	!NEW_S3_BUCKET ||
 	!OLD_S3_REGION ||
@@ -56,9 +43,6 @@ if (
 	);
 	process.exit(1);
 }
-
-const oldDb = new mongodb.MongoClient(OLD_DB_URL);
-const newDb = new mongodb.MongoClient(NEW_DB_URL);
 
 const oldS3 = new AWS.S3({
 	region: OLD_S3_REGION,
@@ -79,29 +63,6 @@ const newS3 = new AWS.S3({
 });
 
 async function main() {
-	await oldDb.connect();
-	await newDb.connect();
-
-	const oldDbInstance = oldDb.db(OLD_DB_NAME);
-	const newDbInstance = newDb.db(NEW_DB_NAME);
-
-	const collections = await oldDbInstance.listCollections().toArray();
-
-	for (const collection of collections) {
-		const collectionName = collection.name;
-
-		console.log(`Copying ${collectionName}...`);
-
-		const oldCollection = oldDbInstance.collection(collectionName);
-		const newCollection = newDbInstance.collection(collectionName);
-
-		const oldCollectionData = await oldCollection.find().toArray();
-
-		if (oldCollectionData.length) {
-			await newCollection.insertMany(oldCollectionData);
-		}
-	}
-
 	console.log('Copying S3...');
 
 	for await (const page of AWS.paginateListObjectsV2(

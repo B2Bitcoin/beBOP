@@ -12,8 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest --no-threads",
 		"lint": "eslint",
-		"format": "prettier --write",
-		"copy-db-s3": "ts-node --esm scripts/copy-db-s3.ts"
+		"format": "prettier --write"
 	},
 	"devDependencies": {
 		"@fontsource/outfit": "^4.5.11",
