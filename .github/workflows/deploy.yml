@@ -14,7 +14,7 @@ jobs:
   deploy-bootik:
     runs-on: ubuntu-latest
     environment:
-      name: ${{ github.event.inputs.environment }}
+      name: ${{ github.event.inputs.environment || ${{ vars.DEFAULT_ENV }} }}
       url: ${{ vars.DEPLOY_URL }}
     steps:
       - uses: actions/checkout@v3
