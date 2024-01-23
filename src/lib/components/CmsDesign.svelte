@@ -92,6 +92,11 @@
 		])
 	);
 	$: countdownById = Object.fromEntries(countdowns.map((countdown) => [countdown._id, countdown]));
+
+	$: productsByTag = groupBy(
+		products.filter((product) => !!product.tagIds),
+		'tagIds'
+	);
 </script>
 
 <div class="prose max-w-full {classNames}">
@@ -107,6 +112,18 @@
 					: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
 				class="not-prose my-5"
 			/>
+		{:else if token.type === 'productTag' && productsByTag[token.slug]}
+			{#each productsByTag[token.slug] as product}
+				<ProductWidget
+					{product}
+					pictures={picturesByProduct[product._id]}
+					hasDigitalFiles={digitalFilesByProduct[product._id] !== null}
+					canBuy={roleId === POS_ROLE_ID
+						? product.actionSettings.retail.canBeAddedToBasket
+						: product.actionSettings.eShop.canBeAddedToBasket}
+					class="not-prose my-5"
+				/>
+			{/each}
 		{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 			<ChallengeWidget challenge={challengeById[token.slug]} class="not-prose my-5" />
 		{:else if token.type === 'sliderWidget' && sliderById[token.slug]}

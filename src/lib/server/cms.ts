@@ -33,6 +33,8 @@ export async function cmsFromContent(
 		/\[Picture=(?<slug>[\p{L}\d_-]+)((?:[?\s]width=(?<width>\d+))?(?:[?\s]height=(?<height>\d+))?(?:[?\s]fit=(?<fit>(cover|contain)))?)*\]/giu;
 	const CONTACTFORM_WIDGET_REGEX = /\[Form=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const COUNTDOWN_WIDGET_REGEX = /\[Countdown=(?<slug>[\p{L}\d_-]+)\]/giu;
+	const PRODUCT_TAG_REGEX =
+		/\[ProductTag=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -42,6 +44,7 @@ export async function cmsFromContent(
 	const pictureSlugs = new Set<string>();
 	const contactFormSlugs = new Set<string>();
 	const countdownFormSlugs = new Set<string>();
+	const productTagSlugs = new Set<string>();
 
 	const tokens: Array<
 		| {
@@ -86,6 +89,7 @@ export async function cmsFromContent(
 		  }
 		| { type: 'contactFormWidget'; slug: string; raw: string }
 		| { type: 'countdownWidget'; slug: string; raw: string }
+		| { type: 'productTag'; slug: string; display: string | undefined; raw: string }
 	> = [];
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
@@ -96,6 +100,7 @@ export async function cmsFromContent(
 	const contactFormMatches = content.matchAll(CONTACTFORM_WIDGET_REGEX);
 	const pictureMatches = content.matchAll(PICTURE_WIDGET_REGEX);
 	const countdownMatches = content.matchAll(COUNTDOWN_WIDGET_REGEX);
+	const productTagMatches = content.matchAll(PRODUCT_TAG_REGEX);
 
 	let index = 0;
 
@@ -121,6 +126,9 @@ export async function cmsFromContent(
 		),
 		...[...countdownMatches].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'countdownWidget' })
+		),
+		...[...productTagMatches].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'productTag' })
 		)
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
@@ -210,6 +218,15 @@ export async function cmsFromContent(
 						raw: match[0]
 					});
 					break;
+				case 'productTag':
+					productTagSlugs.add(match.groups.slug);
+					tokens.push({
+						type: 'productTag',
+						slug: match.groups.slug,
+						display: match.groups?.display,
+						raw: match[0]
+					});
+					break;
 			}
 		}
 		index = match.index + match[0].length;
@@ -226,7 +243,7 @@ export async function cmsFromContent(
 
 	const products = await collections.products
 		.find({
-			_id: { $in: [...productSlugs] },
+			$or: [{ tagIds: { $in: [...productTagSlugs] } }, { _id: { $in: [...productSlugs] } }],
 			...query
 		})
 		.project<
@@ -242,6 +259,7 @@ export async function cmsFromContent(
 				| 'shipping'
 				| 'actionSettings'
 				| 'stock'
+				| 'tagIds'
 			>
 		>({
 			price: 1,
@@ -254,7 +272,8 @@ export async function cmsFromContent(
 			type: 1,
 			shipping: 1,
 			actionSettings: 1,
-			stock: 1
+			stock: 1,
+			tagIds: 1
 		})
 		.toArray();
 	const challenges = await collections.challenges
