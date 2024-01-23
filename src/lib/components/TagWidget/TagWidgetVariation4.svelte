@@ -23,8 +23,10 @@
 
 	<div class="relative shrink-0">
 		<PictureComponent {picture} class="w-[15em]" />
-		<div class="btn tagWidget-cta text-xl absolute bottom-0 left-0 text-center p-2 m-2">
-			<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
-		</div>
+		{#if tag.cta.length}
+			<div class="btn tagWidget-cta text-xl absolute bottom-0 left-0 text-center p-2 m-2">
+				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
+			</div>
+		{/if}
 	</div>
 </div>
