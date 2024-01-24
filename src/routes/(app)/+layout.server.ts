@@ -52,7 +52,7 @@ export async function load(params) {
 		userId: locals.user?._id.toString(),
 		vatRate:
 			runtimeConfig.vatCountry !== locals.countryCode && runtimeConfig.vatNullOutsideSellerCountry
-				? vatRate(runtimeConfig.vatCountry)
+				? 0
 				: runtimeConfig.vatExempted
 				? 0
 				: runtimeConfig.vatSingleCountry
