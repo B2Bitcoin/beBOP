@@ -142,7 +142,7 @@
 					? `width: ${token.width}px;`
 					: ''}{token.height ? `height: ${token.height}px;` : ''}"
 			/>
-		{:else}
+		{:else if token.type === 'html'}
 			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html token.raw}
 		{/if}
