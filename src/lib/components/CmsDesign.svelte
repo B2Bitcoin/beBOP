@@ -93,10 +93,9 @@
 	);
 	$: countdownById = Object.fromEntries(countdowns.map((countdown) => [countdown._id, countdown]));
 
-	$: productsByTag = groupBy(
-		products.filter((product) => !!product.tagIds),
-		'tagIds'
-	);
+	function productsByTag(searchTag: string) {
+		return products.filter((product) => product.tagIds?.includes(searchTag));
+	}
 </script>
 
 <div class="prose max-w-full {classNames}">
@@ -112,8 +111,8 @@
 					: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
 				class="not-prose my-5"
 			/>
-		{:else if token.type === 'productTag' && productsByTag[token.slug]}
-			{#each productsByTag[token.slug] as product}
+		{:else if token.type === 'productTag' && productsByTag(token.slug)}
+			{#each productsByTag(token.slug) as product}
 				<ProductWidget
 					{product}
 					pictures={picturesByProduct[product._id]}

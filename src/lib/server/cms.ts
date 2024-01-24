@@ -375,7 +375,7 @@ export async function cmsFromContent(
 						'tag._id': { $in: [...tagSlugs] }
 					},
 					{
-						productId: { $in: [...productSlugs] }
+						productId: { $in: [...products.map((product) => product._id)] }
 					},
 					{
 						_id: { $in: [...pictureSlugs] }
