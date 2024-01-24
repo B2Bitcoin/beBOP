@@ -92,6 +92,10 @@
 		])
 	);
 	$: countdownById = Object.fromEntries(countdowns.map((countdown) => [countdown._id, countdown]));
+
+	function productsByTag(searchTag: string) {
+		return products.filter((product) => product.tagIds?.includes(searchTag));
+	}
 </script>
 
 <div class="prose max-w-full {classNames}">
@@ -107,6 +111,19 @@
 					: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
 				class="not-prose my-5"
 			/>
+		{:else if token.type === 'tagProducts' && productsByTag(token.slug)}
+			{#each productsByTag(token.slug) as product}
+				<ProductWidget
+					{product}
+					pictures={picturesByProduct[product._id]}
+					hasDigitalFiles={digitalFilesByProduct[product._id] !== null}
+					canBuy={roleId === POS_ROLE_ID
+						? product.actionSettings.retail.canBeAddedToBasket
+						: product.actionSettings.eShop.canBeAddedToBasket}
+					class="not-prose my-5"
+					displayOption={token.display}
+				/>
+			{/each}
 		{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
 			<ChallengeWidget challenge={challengeById[token.slug]} class="not-prose my-5" />
 		{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
