@@ -16,9 +16,11 @@
 <div class="mx-auto tagWidget tagWidget-main flex rounded sm:gap-2 {className}">
 	<div class="relative">
 		<PictureComponent {picture} />
-		<div class="btn tagWidget-cta text-xl absolute bottom-0 right-0 text-center p-2 m-2">
-			<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
-		</div>
+		{#if tag.cta.length}
+			<div class="btn tagWidget-cta text-xl absolute bottom-0 right-0 text-center p-2 m-2">
+				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
+			</div>
+		{/if}
 	</div>
 
 	<div class="flex flex-col ml-2">

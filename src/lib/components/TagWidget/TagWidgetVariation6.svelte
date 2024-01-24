@@ -20,11 +20,12 @@
 		>
 			<h2 class="text-sm uppercase md:text-2xl lg:text-5xl body-title">{tag.title}</h2>
 		</div>
-
-		<div
-			class="btn text-sm tagWidget-cta absolute bottom-0 right-0 md:text-xl lg:text-xl text-center w-auto p-2 m-2"
-		>
-			<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
-		</div>
+		{#if tag.cta.length}
+			<div
+				class="btn text-sm tagWidget-cta absolute bottom-0 right-0 md:text-xl lg:text-xl text-center w-auto p-2 m-2"
+			>
+				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
+			</div>
+		{/if}
 	</div>
 </div>
