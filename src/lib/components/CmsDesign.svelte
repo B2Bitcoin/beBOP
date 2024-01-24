@@ -121,6 +121,7 @@
 						? product.actionSettings.retail.canBeAddedToBasket
 						: product.actionSettings.eShop.canBeAddedToBasket}
 					class="not-prose my-5"
+					displayOption={token.display}
 				/>
 			{/each}
 		{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
