@@ -111,7 +111,7 @@
 					: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
 				class="not-prose my-5"
 			/>
-		{:else if token.type === 'productTag' && productsByTag(token.slug)}
+		{:else if token.type === 'tagProducts' && productsByTag(token.slug)}
 			{#each productsByTag(token.slug) as product}
 				<ProductWidget
 					{product}
