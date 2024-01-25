@@ -32,6 +32,8 @@ const dispatcher =
 export type BitcoinCommand =
 	| 'listtransactions'
 	| 'listwallets'
+	| 'loadwallet'
+	| 'listwalletdir'
 	| 'createwallet'
 	| 'listreceivedbyaddress'
 	| 'dumpprivkey'
@@ -45,7 +47,16 @@ export type BitcoinCommand =
 export async function bitcoinRpc(command: BitcoinCommand, params: unknown[], wallet?: string) {
 	let url = BITCOIN_RPC_URL;
 
-	if (!['listwallets', 'createwallet', 'getblockhaininfo', 'setlabel'].includes(command)) {
+	if (
+		![
+			'listwallets',
+			'createwallet',
+			'getblockhaininfo',
+			'setlabel',
+			'listwalletdir',
+			'loadwallet'
+		].includes(command)
+	) {
 		const wallets = await listWallets();
 
 		if (wallet && !wallets.includes(wallet)) {
@@ -326,6 +337,18 @@ export async function dumpWalletInfo(wallet: string): Promise<{
 	return {
 		privKeys
 	};
+}
+
+export async function listDiskWallets() {
+	const response = await bitcoinRpc('listwalletdir', []);
+
+	if (!response.ok) {
+		console.error(await response.text());
+		throw error(500, 'Could not list disk wallets');
+	}
+
+	const json = await response.json();
+	return z.object({ result: z.array(z.object({ name: z.string() })) }).parse(json).result;
 }
 
 export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[number];
