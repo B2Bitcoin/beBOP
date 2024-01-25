@@ -90,7 +90,7 @@
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
 	$: actualVatRate =
-		data.vatExempted || (data.vatCountry !== country && data.vatNullOutsideSellerCountry)
+		data.vatExempted || (data.vatCountry !== actualCountry && data.vatNullOutsideSellerCountry)
 			? 0
 			: vatRate(actualCountry);
 
