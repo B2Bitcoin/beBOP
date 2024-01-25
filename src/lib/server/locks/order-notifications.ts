@@ -45,7 +45,7 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 	try {
 		rateLimit('0.0.0.0', 'changeStream.order-notifications', 10, { minutes: 5 });
 	} catch (err) {
-		console.error('Too many changestream restarts, aborting');
+		console.error('Too many changestream restarts for order-notifications, aborting');
 		process.exit(1);
 	}
 	changeStream = collections.orders
