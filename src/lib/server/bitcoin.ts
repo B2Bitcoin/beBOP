@@ -348,7 +348,9 @@ export async function listDiskWallets() {
 	}
 
 	const json = await response.json();
-	return z.object({ result: z.array(z.object({ name: z.string() })) }).parse(json).result;
+	return z
+		.object({ result: z.object({ wallets: z.array(z.object({ name: z.string() })) }) })
+		.parse(json).result.wallets;
 }
 
 export async function loadWallet(wallet: string) {
