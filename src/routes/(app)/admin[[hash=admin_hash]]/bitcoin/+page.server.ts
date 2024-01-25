@@ -7,7 +7,8 @@ import {
 	getBlockchainInfo,
 	isBIP84Configured,
 	bitcoinRpc,
-	type BitcoinCommand
+	type BitcoinCommand,
+	loadDiskWallets
 } from '$lib/server/bitcoin';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
@@ -101,5 +102,8 @@ export const actions = {
 		return {
 			rpcSuccess: (await resp.json()).result
 		};
+	},
+	loadWallets: async function () {
+		await loadDiskWallets();
 	}
 };
