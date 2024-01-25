@@ -49,6 +49,10 @@ export const adminLinks = [
 			{
 				href: '/admin/countdown',
 				label: 'Countdowns'
+			},
+			{
+				href: '/admin/gallery',
+				label: 'Galleries'
 			}
 		]
 	},
