@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { generateId } from '$lib/utils/generateId';
-	import { upperFirst } from '$lib/utils/upperFirst';
-	import PictureComponent from '$lib/components/Picture.svelte';
 
 	export let data;
 	let name = data.gallery.name;
