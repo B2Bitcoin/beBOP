@@ -80,7 +80,7 @@ export async function bitcoinRpc(command: BitcoinCommand, params: unknown[], wal
 			method: command,
 			params
 		}),
-		...{ dispatcher }
+		...{ dispatcher, autoSelectFamily: true }
 	});
 }
 

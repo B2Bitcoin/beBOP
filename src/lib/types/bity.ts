@@ -43,7 +43,8 @@ export async function bityEstimate(params: {
 			output: {
 				currency: params.to
 			}
-		})
+		}),
+		...{ autoSelectFamily: true }
 	});
 
 	if (!response.ok) {

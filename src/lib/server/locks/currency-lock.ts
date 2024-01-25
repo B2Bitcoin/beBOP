@@ -28,7 +28,9 @@ async function maintainExchangeRate() {
 				continue;
 			}
 
-			const resp = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=BTC');
+			const resp = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=BTC', {
+				...{ autoSelectFamily: true }
+			} as unknown as RequestInit);
 
 			if (!resp.ok) {
 				throw new Error(`Coinbase API returned ${resp.status}`);

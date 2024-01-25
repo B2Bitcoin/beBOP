@@ -1048,7 +1048,8 @@ async function generateCardPaymentInfo(params: {
 				...(params.expiresAt && {
 					valid_until: params.expiresAt.toISOString()
 				})
-			})
+			}),
+			...{ autoSelectFamily: true }
 		});
 
 		if (!resp.ok) {

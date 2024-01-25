@@ -33,7 +33,10 @@ export async function checkPasswordPwnedTimes(password: string): Promise<number>
 		.toUpperCase();
 
 	const pwnedPasswordResp = await fetch(
-		`https://api.pwnedpasswords.com/range/${sha1Hex.slice(0, 5)}`
+		`https://api.pwnedpasswords.com/range/${sha1Hex.slice(0, 5)}`,
+		{
+			autoSelectFamily: true
+		} as unknown as RequestInit
 	);
 	if (!pwnedPasswordResp.ok) {
 		// Don't block the user if the API is down
