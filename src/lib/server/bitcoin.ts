@@ -351,6 +351,31 @@ export async function listDiskWallets() {
 	return z.object({ result: z.array(z.object({ name: z.string() })) }).parse(json).result;
 }
 
+export async function loadWallet(wallet: string) {
+	// true to load on startup / persist wallet
+	const response = await bitcoinRpc('loadwallet', [wallet, true]);
+
+	if (!response.ok) {
+		console.error(await response.text());
+		throw error(500, 'Could not load wallet');
+	}
+
+	const json = await response.json();
+	return z.object({ result: z.object({ name: z.string(), warning: z.string() }) }).parse(json)
+		.result;
+}
+
+export async function loadDiskWallets() {
+	const wallets = await listDiskWallets();
+	const loadedWallets = await listWallets();
+
+	for (const wallet of wallets) {
+		if (!loadedWallets.includes(wallet.name)) {
+			await loadWallet(wallet.name);
+		}
+	}
+}
+
 export type BitcoinTransaction = Awaited<ReturnType<typeof listTransactions>>[number];
 
 export function orderAddressLabel(orderId: string, paymentId: ObjectId) {

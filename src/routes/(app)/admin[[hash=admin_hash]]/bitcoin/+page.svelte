@@ -137,10 +137,16 @@
 	</p>
 {/if}
 
-<form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>
-	<input type="hidden" name="wallet" value={walletToCreate} />
-	<button class="btn btn-black">Create wallet {data.bip84 ? 'for bip84 xpub' : ''}</button>
-</form>
+<div class="flex gap-2">
+	<form action="?/createWallet" method="post" on:submit|preventDefault={inputWalletName}>
+		<input type="hidden" name="wallet" value={walletToCreate} />
+		<button class="btn btn-black">Create wallet {data.bip84 ? 'for bip84 xpub' : ''}</button>
+	</form>
+
+	<form action="?/loadWallets" method="post">
+		<button class="btn btn-black">Load all wallets on disk</button>
+	</form>
+</div>
 
 <h2 class="text-2xl">Balance</h2>
 
