@@ -19,6 +19,7 @@ import { isOrderFullyPaid } from '../orders';
 import { FRACTION_DIGITS_PER_CURRENCY } from '$lib/types/Currency';
 import { queueEmail } from '../email';
 import { useI18n } from '$lib/i18n';
+import { typedInclude } from '$lib/utils/typedIncludes';
 
 const lock = new Lock('order-notifications');
 
@@ -69,7 +70,10 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 			changeStream?.close().catch(console.error);
 			changeStream = null;
 
-			if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
+			if (
+				err instanceof MongoServerError &&
+				typedInclude(['ChangeStreamHistoryLost', 'ChangeStreamFatalError'], err.codeName)
+			) {
 				watch({ operationTime: Timestamp.fromBits(0, getUnixTime(subHours(new Date(), 1))) });
 			} else {
 				watch();
