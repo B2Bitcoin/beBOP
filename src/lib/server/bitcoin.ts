@@ -109,6 +109,8 @@ export async function createWallet(name: string) {
 		false,
 		null,
 		false,
+		true,
+		// load wallet on startup
 		true
 	]);
 
