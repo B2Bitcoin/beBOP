@@ -30,6 +30,7 @@
 	let country = defaultCountry;
 
 	let isFreeVat = false;
+	let offerDeliveryFees = false;
 	let addDiscount = false;
 	let discountAmount: number;
 	let discountType: DiscountType;
@@ -85,7 +86,10 @@
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
+	$: deliveryFees =
+		data.roleId === 'POS_ROLE_ID' && data.deliveryFees.makePOSDeliveryNull
+			? 0
+			: computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
@@ -711,6 +715,19 @@
 							</Trans>
 						</span>
 					</label>
+					{#if data.deliveryFees.makePOSDeliveryNull}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								name="offerDeliveryFees"
+								form="checkout"
+								bind:checked={offerDeliveryFees}
+								required
+							/>
+							{t('pos.offerDeliveryFees')}
+						</label>
+					{/if}
 				{/if}
 
 				{#if isFreeVat}
@@ -718,6 +735,17 @@
 						{t('pos.vatFreeReason')}:
 						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" />
 					</label>
+				{/if}
+				{#if offerDeliveryFees}
+					<label class="form-label col-span-3">
+						{t('pos.discountJustification')}
+						<input
+							type="text"
+							class="form-input"
+							form="checkout"
+							name="reasonOfferDeliveryFees"
+						/></label
+					>
 				{/if}
 				{#if addDiscount}
 					<input

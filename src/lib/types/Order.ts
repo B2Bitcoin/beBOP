@@ -138,6 +138,9 @@ export interface Order extends Timestamps {
 	vatFree?: {
 		reason: string;
 	};
+	deliveryFeesFree?: {
+		reason: string;
+	};
 
 	currencySnapshot: {
 		main: {

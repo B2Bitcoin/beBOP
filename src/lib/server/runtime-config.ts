@@ -83,6 +83,7 @@ const baseConfig = {
 		mode: 'flatFee' as 'flatFee' | 'perItem',
 		applyFlatFeeToEachItem: false,
 		onlyPayHighest: false,
+		makePOSDeliveryNull: false,
 		deliveryFees: {
 			default: {
 				amount: 0,
@@ -122,7 +123,6 @@ const baseConfig = {
 
 	websiteTitle: 'B2Bitcoin beBOP',
 	websiteShortDescription: "B2Bitcoin's beBOP store",
-
 	emailTemplates: {
 		passwordReset: {
 			subject: 'Password reset',

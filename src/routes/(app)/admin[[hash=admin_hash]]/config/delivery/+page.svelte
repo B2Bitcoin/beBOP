@@ -28,6 +28,15 @@
 		Fee depending on product
 	</label>
 
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="makePOSDeliveryNull"
+			class="form-checkbox"
+			checked={data.deliveryFees.makePOSDeliveryNull}
+		/>
+		Make free delivery on POS sale
+	</label>
 	<h2 class="text-2xl">
 		{mode === 'flatFee' ? 'Flat fee config' : 'Product delivery fees'}
 	</h2>
