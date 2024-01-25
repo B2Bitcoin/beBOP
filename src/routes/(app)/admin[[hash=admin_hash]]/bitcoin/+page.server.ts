@@ -103,7 +103,7 @@ export const actions = {
 			rpcSuccess: (await resp.json()).result
 		};
 	},
-	loadWallet: async function () {
+	loadWallets: async function () {
 		await loadDiskWallets();
 	}
 };
