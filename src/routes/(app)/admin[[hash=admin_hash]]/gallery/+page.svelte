@@ -11,7 +11,7 @@
 		<li>
 			{gallery._id} -
 			<a href="{data.adminPrefix}/gallery/{gallery._id}" class="underline body-hyperlink"
-				>{gallery.principal.title}</a
+				>{gallery.name}</a
 			>
 		</li>
 	{:else}

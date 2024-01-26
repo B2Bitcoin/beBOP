@@ -8,17 +8,6 @@ import { set } from 'lodash-es';
 import { adminPrefix } from '$lib/server/admin';
 import { deletePicture } from '$lib/server/picture';
 
-export const load = async ({ params }) => {
-	const pictures = await collections.pictures
-		.find({ 'tag._id': params.id })
-		.sort({ createdAt: 1 })
-		.toArray();
-
-	return {
-		pictures
-	};
-};
-
 export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();

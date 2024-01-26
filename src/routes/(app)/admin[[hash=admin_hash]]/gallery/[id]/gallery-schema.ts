@@ -4,14 +4,14 @@ export const galleryTranslatableSchema = {
 	principal: z.object({
 		title: z.string(),
 		content: z.string().trim().max(10_000),
-		cta: z.object({ href: z.string().trim(), label: z.string().trim() })
+		cta: z.object({ href: z.string().trim(), label: z.string().trim() }).optional()
 	}),
 	secondary: z
 		.array(
 			z.object({
 				title: z.string(),
 				content: z.string().trim().max(10_000),
-				cta: z.object({ href: z.string().trim(), label: z.string().trim() })
+				cta: z.object({ href: z.string().trim(), label: z.string().trim() }).optional()
 			})
 		)
 		.optional()
