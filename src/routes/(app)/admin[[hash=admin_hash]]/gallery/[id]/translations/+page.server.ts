@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database.js';
 import { locales, type LanguageKey } from '$lib/translations/index.js';
-import { omit, set } from 'lodash-es';
+import { set } from 'lodash-es';
 import type { JsonObject } from 'type-fest';
 import { z } from 'zod';
 import { mapObject } from '$lib/utils/mapObject.js';
