@@ -58,11 +58,6 @@ export async function load(params) {
 				: runtimeConfig.vatSingleCountry
 				? vatRate(runtimeConfig.vatCountry)
 				: vatRate(locals.countryCode ?? runtimeConfig.vatCountry),
-		vatRateDigital: runtimeConfig.vatExempted
-			? 0
-			: runtimeConfig.vatSingleCountry
-			? vatRate(runtimeConfig.vatCountry)
-			: vatRate(locals.countryCode ?? runtimeConfig.vatCountry),
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
 		vatCountry: runtimeConfig.vatSingleCountry
 			? runtimeConfig.vatCountry

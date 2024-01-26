@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import IconDownArrow from '$lib/components/icons/IconDownArrow.svelte';
 	import IconSearch from '$lib/components/icons/IconSearch.svelte';
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
@@ -31,6 +31,7 @@
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
+	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
 
 	export let data;
 
@@ -41,6 +42,7 @@
 	let cartErrorProductId = '';
 
 	let actionCount = 0;
+	let country = data.countryCode as CountryAlpha2;
 
 	$exchangeRate = data.exchangeRate;
 	$currencies = data.currencies;
@@ -50,7 +52,14 @@
 
 	$: items = data.cart || [];
 	$: isDigital = items.every((item) => !item.product.shipping);
-	$: actualVatRate = isDigital ? data.vatRateDigital : data.vatRate;
+	$: actualVatRate =
+		!isDigital && data.vatCountry !== country && data.vatNullOutsideSellerCountry
+			? 0
+			: data.vatExempted
+			? 0
+			: data.vatSingleCountry
+			? vatRate(data.vatCountry)
+			: vatRate(country ?? data.vatCountry);
 	$: partialPrice = sumCurrency(
 		UNDERLYING_CURRENCY,
 		items.map((item) => ({

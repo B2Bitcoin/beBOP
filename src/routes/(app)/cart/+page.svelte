@@ -9,7 +9,7 @@
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
 	import { computeDeliveryFees } from '$lib/types/Cart.js';
-	import type { CountryAlpha2 } from '$lib/types/Country.js';
+	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
@@ -27,7 +27,14 @@
 
 	$: items = data.cart || [];
 	$: isDigital = items.every((item) => !item.product.shipping);
-	$: actualVatRate = isDigital ? data.vatRateDigital : data.vatRate;
+	$: actualVatRate =
+		!isDigital && data.vatCountry !== country && data.vatNullOutsideSellerCountry
+			? 0
+			: data.vatExempted
+			? 0
+			: data.vatSingleCountry
+			? vatRate(data.vatCountry)
+			: vatRate(country ?? data.vatCountry);
 	$: partialPrice =
 		sumCurrency(
 			UNDERLYING_CURRENCY,

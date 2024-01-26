@@ -90,9 +90,13 @@
 	$: isDigital = items.every((item) => !item.product.shipping);
 	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
 	$: actualVatRate =
-		data.vatExempted || (data.vatCountry !== actualCountry && data.vatNullOutsideSellerCountry)
+		!isDigital && data.vatCountry !== country && data.vatNullOutsideSellerCountry
 			? 0
-			: vatRate(actualCountry);
+			: data.vatExempted
+			? 0
+			: data.vatSingleCountry
+			? vatRate(data.vatCountry)
+			: vatRate(country ?? data.vatCountry);
 
 	$: partialPrice =
 		sumCurrency(
