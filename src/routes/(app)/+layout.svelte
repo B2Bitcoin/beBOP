@@ -49,6 +49,8 @@
 	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
+	$: isDigital = items.every((item) => !item.product.shipping);
+	$: actualVatRate = isDigital ? data.vatRateDigital : data.vatRate;
 	$: partialPrice = sumCurrency(
 		UNDERLYING_CURRENCY,
 		items.map((item) => ({
@@ -67,9 +69,9 @@
 			amount: (item.customPrice || item.product.price).amount * item.quantity
 		}))
 	);
-	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+	$: partialVat = fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: totalPriceWithVat =
-		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+		totalPrice + fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: partialPriceWithVat = partialPrice + partialVat;
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
@@ -337,13 +339,13 @@
 											</div>
 										</form>
 									{/each}
-									{#if data.vatCountry !== data.countryCode && data.vatNullOutsideSellerCountry}
+									{#if !isDigital && data.vatCountry !== data.countryCode && data.vatNullOutsideSellerCountry}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('product.vatExcluded')}
 										</div>
 									{:else if data.countryCode && !data.vatExempted}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({data.vatRate}%) <PriceTag
+											{t('cart.vat')} ({actualVatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
 												amount={partialVat}
 												main

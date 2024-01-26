@@ -26,6 +26,8 @@
 	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
 	$: items = data.cart || [];
+	$: isDigital = items.every((item) => !item.product.shipping);
+	$: actualVatRate = isDigital ? data.vatRateDigital : data.vatRate;
 	$: partialPrice =
 		sumCurrency(
 			UNDERLYING_CURRENCY,
@@ -47,10 +49,10 @@
 			}))
 		) + (deliveryFees || 0);
 
-	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+	$: partialVat = fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 	$: partialPriceWithVat = partialPrice + partialVat;
 	$: totalPriceWithVat =
-		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+		totalPrice + fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
 
 	const { t, locale, countryName } = useI18n();
 </script>
@@ -203,7 +205,7 @@
 					{t('checkout.noDeliveryInCountry')}
 				</div>
 			{/if}
-			{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+			{#if !isDigital && data.vatCountry !== country && data.vatNullOutsideSellerCountry}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<span class="font-semibold">{t('product.vatExcluded')}</span>
@@ -215,7 +217,7 @@
 			{:else if data.vatCountry && !data.vatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
-						<h2 class="text-[28px]">{t('cart.vat')} ({data.vatRate}%):</h2>
+						<h2 class="text-[28px]">{t('cart.vat')} ({actualVatRate}%):</h2>
 						<p class="text-sm">
 							{t('cart.vatRate', { country: countryName(data.vatCountry) })}.
 							{#if data.vatSingleCountry}
