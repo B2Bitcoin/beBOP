@@ -124,4 +124,7 @@ export function s3ProductPrefix(productId: string): string {
 export function s3TagPrefix(tagId: string): string {
 	return `tags/${tagId}/`;
 }
+export function s3GalleryPrefix(galleryId: string): string {
+	return `galleries/${galleryId}/`;
+}
 export { s3client, publicS3Client };

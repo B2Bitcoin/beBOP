@@ -86,6 +86,13 @@
 				value={data.gallery.translations?.[language]?.secondary?.[i]?.content || ''}
 			/>
 		</label>
+		<input
+			type="hidden"
+			name="secondary[{i}].pictureId"
+			class="form-input"
+			value={data.gallery.secondary[i].pictureId || ''}
+		/>
+
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text

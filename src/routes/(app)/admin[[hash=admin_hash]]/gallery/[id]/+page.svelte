@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { generateId } from '$lib/utils/generateId';
+	import PictureComponent from '$lib/components/Picture.svelte';
 
 	export let data;
 	let name = data.gallery.name;
@@ -9,6 +10,7 @@
 			event.preventDefault();
 		}
 	}
+	$: pictureById = Object.fromEntries(data.pictures.map((picture) => [picture._id, picture]));
 </script>
 
 <form method="post" class="flex flex-col gap-4" action="?/update">
@@ -103,6 +105,18 @@
 				value={data.gallery.secondary[i]?.content || ''}
 			/>
 		</label>
+		<div class="flex flex-col">
+			<a
+				href="{data.adminPrefix}/picture/{data.gallery.secondary[i]?.pictureId}"
+				class="flex flex-col"
+			>
+				<PictureComponent
+					picture={pictureById[data.gallery.secondary[i]?.pictureId || '']}
+					class="h-36 block"
+					style="object-fit: scale-down;"
+				/>
+			</a>
+		</div>
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text

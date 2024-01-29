@@ -3,7 +3,7 @@ import { collections, withTransaction } from '$lib/server/database';
 import { generateId } from '$lib/utils/generateId';
 import type { ClientSession } from 'mongodb';
 import { error } from '@sveltejs/kit';
-import { s3ProductPrefix, s3TagPrefix, s3client } from './s3';
+import { s3GalleryPrefix, s3ProductPrefix, s3TagPrefix, s3client } from './s3';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { S3_BUCKET } from '$env/static/private';
 import * as mimeTypes from 'mime-types';
@@ -22,6 +22,7 @@ export async function generatePicture(
 		productId?: string;
 		tag?: { _id: string; type: TagType };
 		slider?: { _id: string; url?: string; openNewTab?: boolean };
+		galleryId?: string;
 		cb?: (session: ClientSession) => Promise<void>;
 	}
 ): Promise<void> {
@@ -46,7 +47,7 @@ export async function generatePicture(
 		throw error(400, 'Invalid image format: ' + format);
 	}
 
-	const _id = generateId(name, true);
+	const _id = opts?.galleryId ? name : generateId(name, true);
 	const extension = '.' + mimeTypes.extension(mime);
 
 	const uploadedKeys: string[] = [];
@@ -57,6 +58,8 @@ export async function generatePicture(
 		? s3TagPrefix(opts.tag._id)
 		: opts?.slider
 		? s3TagPrefix(opts.slider._id)
+		: opts?.galleryId
+		? s3GalleryPrefix(opts.galleryId)
 		: `pictures/`;
 
 	const path = `${pathPrefix}${_id}${extension}`;
@@ -148,6 +151,7 @@ export async function generatePicture(
 						formats
 					},
 					...(opts?.productId && { productId: opts.productId }),
+					...(opts?.galleryId && { galleryId: opts.galleryId }),
 					...(opts?.tag && { tag: { _id: opts?.tag._id, type: opts?.tag.type } }),
 					...(opts?.slider && {
 						slider: {

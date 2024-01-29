@@ -8,6 +8,17 @@ import { set } from 'lodash-es';
 import { adminPrefix } from '$lib/server/admin';
 import { deletePicture } from '$lib/server/picture';
 
+export const load = async ({ params }) => {
+	const pictures = await collections.pictures
+		.find({ galleryId: params.id })
+		.sort({ createdAt: 1 })
+		.toArray();
+
+	return {
+		pictures
+	};
+};
+
 export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
@@ -62,11 +73,11 @@ export const actions: Actions = {
 	},
 
 	delete: async ({ params }) => {
-		for await (const picture of collections.pictures.find({ 'tag._id': params.id })) {
+		for await (const picture of collections.pictures.find({ galleryId: params.id })) {
 			await deletePicture(picture._id);
 		}
-		await collections.tags.deleteOne({ _id: params.id });
+		await collections.galleries.deleteOne({ _id: params.id });
 
-		throw redirect(303, `${adminPrefix()}/tags`);
+		throw redirect(303, `${adminPrefix()}/gallery`);
 	}
 };

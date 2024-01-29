@@ -1,15 +1,57 @@
 <script lang="ts">
+	import { applyAction, deserialize } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { uploadPicture } from '$lib/types/Picture';
 	import { generateId } from '$lib/utils/generateId';
 
+	export let data;
 	let name = '';
 	let slug = '';
-
 	let submitting = false;
+	let formElement: HTMLFormElement;
+	let galleryPictures: FileList[] = [];
+
+	async function handleSubmit() {
+		try {
+			submitting = true;
+			// Need to load here, or for some reason, some inputs disappear afterwards
+			const formData = new FormData(formElement);
+			await Promise.all(
+				galleryPictures.map(async (picture, i) => {
+					if (picture[0]) {
+						const pictureId = await uploadPicture(data.adminPrefix, picture[0]);
+						formData.set(`secondary[${i}].pictureId`, pictureId);
+					}
+				})
+			);
+
+			const finalResponse = await fetch(formElement.action, {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = deserialize(await finalResponse.text());
+
+			if (result.type === 'success') {
+				// rerun all `load` functions, following the successful update
+				await invalidateAll();
+			}
+
+			applyAction(result);
+		} finally {
+			submitting = false;
+		}
+	}
 </script>
 
 <h1 class="text-3xl">Add a gallery</h1>
 
-<form method="post" class="flex flex-col gap-4">
+<form
+	method="post"
+	class="flex flex-col gap-4"
+	bind:this={formElement}
+	on:submit|preventDefault={handleSubmit}
+>
 	<label class="form-label">
 		Gallery name
 		<input
@@ -74,6 +116,17 @@
 				rows="5"
 				maxlength="10000"
 				class="form-input"
+			/>
+		</label>
+		<label class="form-label">
+			Picture {i + 1}
+			<input type="hidden" name="secondary[{i}].pictureId" class="form-input" />
+			<input
+				type="file"
+				accept="image/jpeg,image/png,image/webp"
+				class="block"
+				bind:files={galleryPictures[i]}
+				disabled={submitting}
 			/>
 		</label>
 		<div class="flex gap-4">
