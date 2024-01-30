@@ -23,12 +23,7 @@ export const actions: Actions = {
 				title: z.string().trim().min(1).max(MAX_SHORT_DESCRIPTION_LIMIT),
 				endsAt: z.date({ coerce: true })
 			})
-			.parse({
-				name: formData.get('name'),
-				description: formData.get('description'),
-				title: formData.get('title'),
-				endsAt: new Date(formData.get('endsAt')?.toString() || '').toJSON()
-			});
+			.parse(Object.fromEntries(formData));
 
 		if (await collections.specifications.countDocuments({ _id: parsed.slug })) {
 			throw error(409, 'Countdown with same slug already exists');

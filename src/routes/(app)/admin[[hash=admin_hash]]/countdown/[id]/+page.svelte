@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { deserialize } from '$app/forms';
 	import {
 		MAX_DESCRIPTION_LIMIT,
 		MAX_NAME_LIMIT,
@@ -8,18 +9,32 @@
 	export let data;
 	let name = data.countdown.name;
 	let slug = data.countdown._id;
+	let endsAt = data.countdown.endsAt.toISOString().slice(0, 16);
+	let formElement: HTMLFormElement;
+
+	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
+	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
+	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
+
+	function handleDate() {
+		const formData = new FormData(formElement);
+		formData.set('endsAt', new Date(endsAt).toJSON());
+		formElement.submit();
+	}
 
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this specification?')) {
 			event.preventDefault();
 		}
 	}
-	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
-	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
-	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
 </script>
 
-<form method="post" class="flex flex-col gap-4">
+<form
+	method="post"
+	class="flex flex-col gap-4"
+	on:submit|preventDefault={handleDate}
+	bind:this={formElement}
+>
 	<label class="form-label">
 		Name
 		<input
@@ -75,13 +90,7 @@
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
 			End At (your browser's current zone is {timezoneString})
-			<input
-				class="form-input"
-				type="datetime-local"
-				required
-				name="endsAt"
-				value={data.countdown.endsAt.toISOString().slice(0, 16)}
-			/>
+			<input class="form-input" type="datetime-local" required name="endsAt" bind:value={endsAt} />
 		</label>
 	</div>
 	<div class="flex flex-row justify-between gap-2">
