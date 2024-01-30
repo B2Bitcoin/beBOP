@@ -162,6 +162,7 @@
 			<GalleryWidget
 				gallery={galleryById[token.slug]}
 				pictures={picturesByGallery[token.slug]}
+				displayOption={token.display}
 				class="not-prose my-5"
 			/>
 		{:else if token.type === 'pictureWidget'}

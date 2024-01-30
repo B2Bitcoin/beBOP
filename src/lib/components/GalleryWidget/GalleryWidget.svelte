@@ -5,13 +5,15 @@
 
 	export let pictures: Picture[];
 	export let gallery: Pick<Gallery, '_id' | 'name' | 'principal' | 'secondary'>;
+	export let displayOption = 'var-1';
+
 	let className = '';
 	export { className as class };
 	$: pictureById = Object.fromEntries(pictures.map((picture) => [picture._id, picture]));
 </script>
 
 <!-- flex-row-reverse -->
-<div class="mx-auto flex rounded {className}">
+<div class="mx-auto flex rounded {className} {displayOption === 'var-2' ? 'flex-row-reverse' : ''}">
 	<div class="flex-1">
 		<div class="tagWidget tagWidget-main m-2 p-4 max-w-[344px]">
 			<h2 class="text-2xl body-title pb-2 uppercase">{gallery.principal.title}</h2>
