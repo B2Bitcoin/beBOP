@@ -25,7 +25,12 @@ export const actions = {
 				title: z.string().trim().min(1).max(MAX_SHORT_DESCRIPTION_LIMIT),
 				endsAt: z.date({ coerce: true })
 			})
-			.parse(Object.fromEntries(data));
+			.parse({
+				name: data.get('name'),
+				description: data.get('description'),
+				title: data.get('title'),
+				endsAt: new Date(data.get('endsAt')?.toString() || '').toJSON()
+			});
 
 		await collections.countdowns.updateOne(
 			{
