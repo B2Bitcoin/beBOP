@@ -18,12 +18,14 @@
 		CmsTag,
 		CmsToken,
 		CmsContactForm,
-		CmsCountdown
+		CmsCountdown,
+		CmsGallery
 	} from '$lib/server/cms';
 	import SpecificationWidget from './SpecificationWidget.svelte';
 	import ContactForm from './ContactForm.svelte';
 	import { mapKeys } from '$lib/utils/mapKeys';
 	import CountdownWidget from './CountdownWidget.svelte';
+	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -41,6 +43,8 @@
 	export let pageLink: string | undefined;
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
+	export let galleries: CmsGallery[];
+
 	let classNames = '';
 	export { classNames as class };
 
@@ -73,6 +77,10 @@
 		pictures.filter((picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId),
 		'productId'
 	);
+	$: picturesByGallery = groupBy(
+		pictures.filter((picture): picture is SetRequired<Picture, 'galleryId'> => !!picture.galleryId),
+		'galleryId'
+	);
 	$: pictureById = Object.fromEntries(pictures.map((picture) => [picture._id, picture]));
 	$: specificationById = Object.fromEntries(
 		specifications.map((specification) => [specification._id, specification])
@@ -96,6 +104,7 @@
 	function productsByTag(searchTag: string) {
 		return products.filter((product) => product.tagIds?.includes(searchTag));
 	}
+	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
 </script>
 
 <div class="prose max-w-full {classNames}">
@@ -149,6 +158,12 @@
 			/>
 		{:else if token.type === 'countdownWidget' && countdownById[token.slug]}
 			<CountdownWidget countdown={countdownById[token.slug]} class="not-prose my-5" />
+		{:else if token.type === 'galleryWidget' && galleryById[token.slug]}
+			<GalleryWidget
+				gallery={galleryById[token.slug]}
+				pictures={picturesByGallery[token.slug]}
+				class="not-prose my-5"
+			/>
 		{:else if token.type === 'pictureWidget'}
 			<PictureComponent
 				picture={pictureById[token.slug]}

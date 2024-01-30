@@ -22,4 +22,5 @@
 	brandName={data.brandName}
 	sessionEmail={data.email}
 	countdowns={data.cmsData.countdowns}
+	galleries={data.cmsData.galleries}
 />

@@ -4,13 +4,14 @@
 	import PictureComponent from '../Picture.svelte';
 
 	export let pictures: Picture[];
-	export let gallery: Gallery;
+	export let gallery: Pick<Gallery, '_id' | 'name' | 'principal' | 'secondary'>;
 	let className = '';
 	export { className as class };
 	$: pictureById = Object.fromEntries(pictures.map((picture) => [picture._id, picture]));
 </script>
 
-<div class="mx-auto flex rounded gap-2 {className}">
+<!-- flex-row-reverse -->
+<div class="mx-auto flex rounded {className}">
 	<div class="flex-1">
 		<div class="tagWidget tagWidget-main m-2 p-4 max-w-[344px]">
 			<h2 class="text-2xl body-title pb-2 uppercase">{gallery.principal.title}</h2>
