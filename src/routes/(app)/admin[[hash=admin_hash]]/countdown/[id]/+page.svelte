@@ -33,6 +33,7 @@
 	class="flex flex-col gap-4"
 	on:submit|preventDefault={handleDate}
 	bind:this={formElement}
+	action="?/update"
 >
 	<label class="form-label">
 		Name
