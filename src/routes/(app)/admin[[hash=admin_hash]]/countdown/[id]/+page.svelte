@@ -22,7 +22,7 @@
 	}
 
 	function confirmDelete(event: Event) {
-		if (!confirm('Would you like to delete this specification?')) {
+		if (!confirm('Would you like to delete this countdown?')) {
 			event.preventDefault();
 		}
 	}
