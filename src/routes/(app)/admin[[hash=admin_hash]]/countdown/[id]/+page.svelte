@@ -14,6 +14,9 @@
 			event.preventDefault();
 		}
 	}
+	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
+	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
+	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
 </script>
 
 <form method="post" class="flex flex-col gap-4">
@@ -71,7 +74,7 @@
 
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
-			End At
+			End At (your browser's current zone is {timezoneString})
 			<input
 				class="form-input"
 				type="datetime-local"

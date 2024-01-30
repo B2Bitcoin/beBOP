@@ -8,6 +8,9 @@
 
 	let name: string;
 	let slug: string;
+	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
+	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
+	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
 </script>
 
 <h1 class="text-3xl">Add a specification</h1>
@@ -66,7 +69,7 @@
 	</label>
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
-			End At
+			End At (your browser's current zone is {timezoneString})
 			<input class="form-input" type="datetime-local" required name="endsAt" />
 		</label>
 	</div>
