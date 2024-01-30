@@ -106,7 +106,8 @@ async function maintainOrders() {
 							const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + checkoutId, {
 								headers: {
 									Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
-								}
+								},
+								...{ autoSelectFamily: true }
 							});
 
 							if (!response.ok) {

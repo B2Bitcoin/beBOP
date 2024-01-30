@@ -19,6 +19,7 @@ import { isOrderFullyPaid } from '../orders';
 import { FRACTION_DIGITS_PER_CURRENCY } from '$lib/types/Currency';
 import { queueEmail } from '../email';
 import { useI18n } from '$lib/i18n';
+import { typedInclude } from '$lib/utils/typedIncludes';
 
 const lock = new Lock('order-notifications');
 
@@ -45,7 +46,7 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 	try {
 		rateLimit('0.0.0.0', 'changeStream.order-notifications', 10, { minutes: 5 });
 	} catch (err) {
-		console.error('Too many changestream restarts, aborting');
+		console.error('Too many changestream restarts for order-notifications, aborting');
 		process.exit(1);
 	}
 	changeStream = collections.orders
@@ -69,7 +70,10 @@ async function watch(opts?: { operationTime?: Timestamp }) {
 			changeStream?.close().catch(console.error);
 			changeStream = null;
 
-			if (err instanceof MongoServerError && err.codeName === 'ChangeStreamHistoryLost') {
+			if (
+				err instanceof MongoServerError &&
+				typedInclude(['ChangeStreamHistoryLost', 'ChangeStreamFatalError'], err.codeName)
+			) {
 				watch({ operationTime: Timestamp.fromBits(0, getUnixTime(subHours(new Date(), 1))) });
 			} else {
 				watch();

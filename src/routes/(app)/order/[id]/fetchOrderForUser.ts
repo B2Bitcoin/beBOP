@@ -33,7 +33,8 @@ export async function fetchOrderForUser(orderId: string) {
 			const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + payment.checkoutId, {
 				headers: {
 					Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
-				}
+				},
+				...{ autoSelectFamily: true }
 			});
 
 			if (!response.ok) {
