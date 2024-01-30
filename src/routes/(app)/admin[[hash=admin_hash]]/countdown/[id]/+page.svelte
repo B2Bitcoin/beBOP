@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { deserialize } from '$app/forms';
 	import {
 		MAX_DESCRIPTION_LIMIT,
 		MAX_NAME_LIMIT,
