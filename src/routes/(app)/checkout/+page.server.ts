@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { paymentMethods } from '$lib/server/payment-methods';
-import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
+import { COUNTRY_ALPHA2S, vatRate, type CountryAlpha2 } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { createOrder } from '$lib/server/orders';
@@ -231,30 +231,22 @@ export const actions = {
 		if (!agreements.allowCollectIP && runtimeConfig.collectIPOnDeliverylessOrders && isDigital) {
 			throw error(400, 'You must allow the collection of your IP address');
 		}
+		const vatBillingCountry =
+			billingInfo?.billing?.country &&
+			vatRate(runtimeConfig.vatCountry) === vatRate(billingInfo?.billing?.country)
+				? billingInfo?.billing?.country
+				: undefined;
 		const vatCountry =
-			shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry;
+			shippingInfo?.shipping?.country ??
+			vatBillingCountry ??
+			locals.countryCode ??
+			runtimeConfig.vatCountry;
 		if (
 			!agreements.isVATNullForeigner &&
 			runtimeConfig.vatNullOutsideSellerCountry &&
 			runtimeConfig.vatCountry !== vatCountry
 		) {
 			throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
-		}
-
-		if (
-			!agreements.isOnlyDeposit &&
-			cart.items.some(
-				(item) =>
-					item.depositPercentage !== undefined &&
-					item.depositPercentage !== null &&
-					(item.depositPercentage ?? 0) < 100 &&
-					(item.customPrice || byId[item.productId].price).amount > 0
-			)
-		) {
-			throw error(
-				400,
-				'You must acknowledge that you are only paying a deposit and will have to pay the rest later'
-			);
 		}
 
 		rateLimit(locals.clientIp, 'email', 10, { minutes: 1 });
