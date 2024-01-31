@@ -551,6 +551,7 @@
 			"resource": "Ressource",
 			"subscription": "Abonnement"
 		},
+		"vatAtBorders": "Vous devrez régler la TVA sur les produits physiques avec la douane",
 		"vatExcluded": "Hors TVA"
 	},
 	"subscription": {

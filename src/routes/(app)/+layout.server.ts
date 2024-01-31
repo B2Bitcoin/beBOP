@@ -5,7 +5,6 @@ import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier } from '$lib/server/user.js';
 import { locales } from '$lib/translations/index.js';
-import { vatRate } from '$lib/types/Country.js';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import { filterUndef } from '$lib/utils/filterUndef';
@@ -50,14 +49,6 @@ export async function load(params) {
 		npub: locals.npub,
 		sso: locals.sso,
 		userId: locals.user?._id.toString(),
-		vatRate:
-			runtimeConfig.vatCountry !== locals.countryCode && runtimeConfig.vatNullOutsideSellerCountry
-				? 0
-				: runtimeConfig.vatExempted
-				? 0
-				: runtimeConfig.vatSingleCountry
-				? vatRate(runtimeConfig.vatCountry)
-				: vatRate(locals.countryCode ?? runtimeConfig.vatCountry),
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
 		vatCountry: runtimeConfig.vatSingleCountry
 			? runtimeConfig.vatCountry
