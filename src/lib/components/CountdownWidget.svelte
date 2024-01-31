@@ -1,13 +1,15 @@
 <script lang="ts">
 	import type { Countdown } from '$lib/types/Countdown';
+	import { differenceInMilliseconds } from 'date-fns';
 	import { onMount } from 'svelte';
 
 	let className = '';
 	export { className as class };
 	export let countdown: Pick<Countdown, '_id' | 'title' | 'description' | 'endsAt'>;
-	$: distance = countdown.endsAt.getTime() - new Date().getTime();
+
+	$: distance = differenceInMilliseconds(countdown.endsAt, new Date());
 	function updateCountdown() {
-		distance = Math.max(countdown.endsAt.getTime() - new Date().getTime(), 0);
+		distance = Math.max(differenceInMilliseconds(countdown.endsAt, new Date()), 0);
 	}
 	onMount(() => {
 		const interval = setInterval(updateCountdown, 1000);

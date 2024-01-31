@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import {
 		MAX_DESCRIPTION_LIMIT,
 		MAX_NAME_LIMIT,
@@ -83,7 +84,7 @@
 	</label>
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
-			End At (your browser's current zone is {timezoneString})
+			End At {#if browser}(your browser's current zone is {timezoneString}){/if}
 			<input class="form-input" type="datetime-local" required name="endsAt" bind:value={endsAt} />
 		</label>
 	</div>
