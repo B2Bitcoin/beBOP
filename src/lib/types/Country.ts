@@ -1,6 +1,9 @@
 // Gotten from https://gist.githubusercontent.com/tadast/8827699/raw/f5cac3d42d16b78348610fc4ec301e9234f82821/countries_codes_and_coordinates.csv
 
+import { sumCurrency } from '$lib/utils/sumCurrency';
 import type { IterableElement } from 'type-fest';
+import { UNDERLYING_CURRENCY } from './Currency';
+import type { Price } from './Order';
 
 export const COUNTRY_ALPHA2S = new Set([
 	'AD',
@@ -487,4 +490,131 @@ export const VAT_RATES = {
 
 export function vatRate(country: string): number {
 	return VAT_RATES[country as keyof typeof VAT_RATES] || 0;
+}
+
+export function computeVatInfo(
+	items: Array<{
+		product: { shipping: boolean; price: Price };
+		quantity: number;
+		customPrice?: Price;
+		depositPercentage?: number;
+	}>,
+	params: {
+		vatExempted: boolean;
+		vatNullOutsideSellerCountry: boolean;
+		userCountry: string | undefined;
+		bebopCountry: string;
+		vatSingleCountry: boolean;
+	}
+): {
+	digitalVatRate: number;
+	physicalVatRate: number;
+	isPhysicalVatExempted: boolean;
+	partialPrice: number;
+	partialVat: number;
+	partialPhysicalVat: number;
+	partialDigitalVat: number;
+	totalPrice: number;
+	totalVat: number;
+	totalPriceWithVat: number;
+	partialPriceWithVat: number;
+} {
+	const digitalVatRate = params.vatExempted
+		? 0
+		: vatRate(
+				params.vatSingleCountry ? params.bebopCountry : params.userCountry ?? params.bebopCountry
+		  );
+	const isPhysicalVatExempted =
+		params.vatNullOutsideSellerCountry && params.bebopCountry !== params.userCountry;
+	const physicalVatRate =
+		params.vatExempted || isPhysicalVatExempted
+			? 0
+			: vatRate(
+					params.vatSingleCountry ? params.bebopCountry : params.userCountry ?? params.bebopCountry
+			  );
+
+	const partialPrice = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount:
+				((item.customPrice || item.product.price).amount *
+					item.quantity *
+					(item.depositPercentage ?? 100)) /
+				100
+		}))
+	);
+	const partialVat = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount:
+				((item.customPrice || item.product.price).amount *
+					item.quantity *
+					(item.depositPercentage ?? 100) *
+					((item.product.shipping ? physicalVatRate : digitalVatRate) / 100)) /
+				100
+		}))
+	);
+	const partialPhysicalVat = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items
+			.filter((item) => item.product.shipping)
+			.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount:
+					((item.customPrice || item.product.price).amount *
+						item.quantity *
+						(item.depositPercentage ?? 100) *
+						(physicalVatRate / 100)) /
+					100
+			}))
+	);
+	const partialDigitalVat = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items
+			.filter((item) => !item.product.shipping)
+			.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount:
+					((item.customPrice || item.product.price).amount *
+						item.quantity *
+						(item.depositPercentage ?? 100) *
+						(digitalVatRate / 100)) /
+					100
+			}))
+	);
+	const totalPrice = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount: (item.customPrice || item.product.price).amount * item.quantity
+		}))
+	);
+	const totalVat = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items.map((item) => ({
+			currency: (item.customPrice || item.product.price).currency,
+			amount:
+				(item.customPrice || item.product.price).amount *
+				item.quantity *
+				((item.product.shipping ? physicalVatRate : digitalVatRate) / 100)
+		}))
+	);
+	const totalPriceWithVat = totalPrice + totalVat;
+	const partialPriceWithVat = partialPrice + partialVat;
+
+	return {
+		digitalVatRate,
+		physicalVatRate,
+		isPhysicalVatExempted,
+		partialPrice,
+		partialVat,
+		partialPhysicalVat,
+		partialDigitalVat,
+		totalPrice,
+		totalVat,
+		totalPriceWithVat,
+		partialPriceWithVat
+	};
 }

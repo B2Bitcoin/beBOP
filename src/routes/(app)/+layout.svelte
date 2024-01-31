@@ -24,15 +24,12 @@
 	import { slide } from 'svelte/transition';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
 	import { currencies } from '$lib/stores/currencies';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { useI18n } from '$lib/i18n';
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
-	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
-	import { some } from 'lodash-es';
+	import { computeVatInfo } from '$lib/types/Country.js';
 
 	export let data;
 
@@ -51,81 +48,13 @@
 	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
-	$: digitalVatRate = data.vatExempted ? 0 : vatRate(data.vatCountry);
-	$: isPhysicalVatExempted =
-		data.vatNullOutsideSellerCountry && data.vatCountry !== data.countryCode;
-	$: physicalVatRate = data.vatExempted || isPhysicalVatExempted ? 0 : vatRate(data.vatCountry);
-
-	$: partialPrice = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount:
-				((item.customPrice || item.product.price).amount *
-					item.quantity *
-					(item.depositPercentage ?? 100)) /
-				100
-		}))
-	);
-	$: partialVat = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount:
-				((item.customPrice || item.product.price).amount *
-					item.quantity *
-					(item.depositPercentage ?? 100) *
-					((item.product.shipping ? physicalVatRate : digitalVatRate) / 100)) /
-				100
-		}))
-	);
-	$: partialPhysicalVat = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items
-			.filter((item) => item.product.shipping)
-			.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					((item.customPrice || item.product.price).amount *
-						item.quantity *
-						(item.depositPercentage ?? 100) *
-						(physicalVatRate / 100)) /
-					100
-			}))
-	);
-	$: partialDigitalVat = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items
-			.filter((item) => !item.product.shipping)
-			.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					((item.customPrice || item.product.price).amount *
-						item.quantity *
-						(item.depositPercentage ?? 100) *
-						(digitalVatRate / 100)) /
-					100
-			}))
-	);
-	$: totalPrice = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount: (item.customPrice || item.product.price).amount * item.quantity
-		}))
-	);
-	$: totalVat = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount:
-				(item.customPrice || item.product.price).amount *
-				item.quantity *
-				((item.product.shipping ? physicalVatRate : digitalVatRate) / 100)
-		}))
-	);
-	$: totalPriceWithVat = totalPrice + totalVat;
-	$: partialPriceWithVat = partialPrice + partialVat;
+	$: vat = computeVatInfo(items, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted,
+		userCountry: data.countryCode
+	});
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
@@ -392,45 +321,51 @@
 											</div>
 										</form>
 									{/each}
-									{#if items.some((item) => item.product.shipping) && isPhysicalVatExempted}
+									{#if items.some((item) => item.product.shipping) && vat.isPhysicalVatExempted}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('product.vatAtBorders')}
 										</div>
 									{/if}
-									{#if physicalVatRate !== digitalVatRate && partialDigitalVat && partialPhysicalVat}
+									{#if vat.physicalVatRate !== vat.digitalVatRate && vat.partialDigitalVat && vat.partialPhysicalVat}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({physicalVatRate}%) <PriceTag
+											{t('cart.vat')} ({vat.physicalVatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={partialPhysicalVat}
+												amount={vat.partialPhysicalVat}
 												main
 											/>
 										</div>
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({digitalVatRate}%) <PriceTag
+											{t('cart.vat')} ({vat.digitalVatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={partialDigitalVat}
+												amount={vat.partialDigitalVat}
 												main
 											/>
 										</div>
 									{:else}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({partialPhysicalVat ? physicalVatRate : digitalVatRate}%) <PriceTag
+											{t('cart.vat')} ({vat.partialPhysicalVat
+												? vat.physicalVatRate
+												: vat.digitalVatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={partialVat}
+												amount={vat.partialVat}
 												main
 											/>
 										</div>
 									{/if}
 									<div class="flex gap-1 text-xl justify-end items-center">
 										{t('cart.total')}
-										<PriceTag currency={UNDERLYING_CURRENCY} amount={partialPriceWithVat} main />
+										<PriceTag
+											currency={UNDERLYING_CURRENCY}
+											amount={vat.partialPriceWithVat}
+											main
+										/>
 									</div>
-									{#if totalPriceWithVat !== partialPriceWithVat}
+									{#if vat.totalPriceWithVat !== vat.partialPriceWithVat}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.remainingShort')}
 											<PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={totalPriceWithVat - partialPriceWithVat}
+												amount={vat.totalPriceWithVat - vat.partialPriceWithVat}
 												main
 											/>
 										</div>
