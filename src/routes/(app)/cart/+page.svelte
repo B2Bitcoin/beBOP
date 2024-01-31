@@ -232,14 +232,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={vat.partialPriceWithVat}
-						currency={UNDERLYING_CURRENCY}
+						currency={vat.currency}
 						main
 						class="text-[32px]"
 					/>
 					<PriceTag
 						class="text-base"
 						amount={vat.partialPriceWithVat}
-						currency={UNDERLYING_CURRENCY}
+						currency={vat.currency}
 						secondary
 					/>
 				</div>
