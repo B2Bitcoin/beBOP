@@ -230,7 +230,9 @@ export const actions = {
 			throw error(400, 'You must allow the collection of your IP address');
 		}
 		const vatCountry =
-			shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry;
+			shippingInfo?.shipping?.country ??
+			locals.countryCode ??
+			(runtimeConfig.vatCountry || undefined);
 		if (
 			!agreements.isVATNullForeigner &&
 			runtimeConfig.vatNullOutsideSellerCountry &&

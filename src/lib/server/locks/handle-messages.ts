@@ -494,7 +494,7 @@ const commands: Record<
 				user: {
 					npub: senderNpub
 				},
-				vatCountry: '',
+				vatCountry: undefined,
 				shippingAddress: null,
 				cart
 			}).catch(async (e) => {

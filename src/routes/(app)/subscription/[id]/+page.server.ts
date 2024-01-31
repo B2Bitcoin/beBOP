@@ -117,7 +117,7 @@ export const actions = {
 				locale: locals.language,
 				user: userIdentifier(locals),
 				shippingAddress: lastOrder.shippingAddress,
-				vatCountry: lastOrder.vat?.country ?? '',
+				vatCountry: lastOrder.vat?.country || undefined,
 				notifications: lastOrder.notifications
 			}
 		);

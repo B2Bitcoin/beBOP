@@ -132,7 +132,7 @@ export interface Order extends Timestamps {
 	vat?: {
 		price: Price;
 		rate: number;
-		country: string;
+		country: CountryAlpha2;
 	};
 
 	vatFree?: {
