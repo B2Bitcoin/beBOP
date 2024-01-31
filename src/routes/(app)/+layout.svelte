@@ -29,7 +29,9 @@
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
-	import { computeVatInfo } from '$lib/types/Country.js';
+	import { computeDeliveryFees, computeVatInfo } from '$lib/types/Cart.js';
+	import { isAlpha2CountryCode } from '$lib/types/Country.js';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 
 	export let data;
 
@@ -48,12 +50,20 @@
 	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
+	$: deliveryFees =
+		data.countryCode && isAlpha2CountryCode(data.countryCode)
+			? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
+			: NaN;
 	$: vat = computeVatInfo(items, {
 		bebopCountry: data.vatCountry,
 		vatSingleCountry: data.vatSingleCountry,
 		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
 		vatExempted: data.vatExempted,
-		userCountry: data.countryCode
+		userCountry: data.countryCode,
+		deliveryFees: {
+			amount: deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		}
 	});
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
@@ -321,6 +331,28 @@
 											</div>
 										</form>
 									{/each}
+									{#if deliveryFees}
+										<div class="flex gap-1 text-lg justify-end items-center">
+											{t('checkout.deliveryFees')}
+											<div
+												title={t('checkout.deliveryFeesEstimationTooltip')}
+												class="cursor-pointer"
+											>
+												<IconInfo />
+											</div>
+
+											<PriceTag
+												class="truncate"
+												amount={deliveryFees}
+												currency={UNDERLYING_CURRENCY}
+												main
+											/>
+										</div>
+									{:else if isNaN(deliveryFees)}
+										<div class="alert-error mt-3">
+											{t('checkout.noDeliveryInCountry')}
+										</div>
+									{/if}
 									{#if items.some((item) => item.product.shipping) && vat.isPhysicalVatExempted}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('product.vatAtBorders')}
