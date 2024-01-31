@@ -125,6 +125,7 @@
 			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
 		(discountType === 'percentage' && discountAmount < 100);
 	let showBillingInfo = false;
+	let isProfessionalOrder = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -231,9 +232,18 @@
 						{t('checkout.differentBillingAddress')}
 					</label>
 				{/if}
+				<label class="col-span-6 checkbox-label">
+					<input
+						type="checkbox"
+						class="form-checkbox"
+						form="checkout"
+						bind:checked={isProfessionalOrder}
+					/>
+					{t('checkout.isProBilling')}
+				</label>
 			</section>
 
-			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory)}
+			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory) || isProfessionalOrder}
 				<section class="gap-4 grid grid-cols-6 w-4/5">
 					<h2 class="font-light text-2xl col-span-6">{t('checkout.billingInfo')}</h2>
 
@@ -317,6 +327,17 @@
 							autocomplete="postal-code"
 						/>
 					</label>
+					{#if isProfessionalOrder}
+						<label class="form-label col-span-3">
+							{t('address.companyName')}
+							<input type="text" class="form-input" name="billing.companyName" />
+						</label>
+
+						<label class="form-label col-span-3">
+							{t('address.vatNumber')}
+							<input type="text" class="form-input" name="billing.vatNumber" />
+						</label>
+					{/if}
 				</section>
 			{/if}
 

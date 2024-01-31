@@ -2,10 +2,12 @@
 	"address": {
 		"address": "Adresse",
 		"city": "Ville",
+		"companyName": "Nom d'entreprise",
 		"country": "Pays",
 		"firstName": "Prénom",
 		"lastName": "Nom",
 		"state": "Canton / Région",
+		"vatNumber": "Numéro TVA",
 		"zipCode": "Code postal"
 	},
 	"cart": {
@@ -66,6 +68,7 @@
 		"differentBillingAddress": "Mon adresse de livraison et mon adresse de facturation sont différentes",
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
+		"isProBilling": "Ceci est une commande professionnelle",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"note": {
 			"label": "Laissez un message au vendeur",

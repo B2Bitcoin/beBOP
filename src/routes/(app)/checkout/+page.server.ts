@@ -117,7 +117,9 @@ export const actions = {
 							city: z.string().min(1),
 							state: z.string().optional(),
 							zip: z.string().min(1),
-							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+							vatNumber: z.string().optional(),
+							companyName: z.string().optional()
 						})
 					})
 					.parse(json)
