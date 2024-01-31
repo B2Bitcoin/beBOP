@@ -5,6 +5,7 @@
 /// <reference types="unplugin-icons/types/svelte" />
 
 import type { LanguageKey } from '$lib/translations';
+import type { CountryAlpha2 } from '$lib/types/Country';
 import type { Role } from '$lib/types/Role';
 import type { ObjectId } from 'mongodb';
 
@@ -16,7 +17,7 @@ declare global {
 		interface Locals {
 			status?: number;
 			sessionId: string;
-			countryCode?: string;
+			countryCode?: CountryAlpha2;
 			user?: { _id: ObjectId; login: string; roleId: string; role?: Role };
 			email?: string;
 			npub?: string;

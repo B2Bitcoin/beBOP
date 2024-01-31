@@ -551,7 +551,6 @@
 			"resource": "Resource",
 			"subscription": "Subscription"
 		},
-		"vatAtBorders": "You will need to handle VAT on physical products with customs",
 		"vatExcluded": "VAT excluded"
 	},
 	"subscription": {

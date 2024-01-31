@@ -355,7 +355,7 @@
 									{/if}
 									{#if items.some((item) => item.product.shipping) && vat.isPhysicalVatExempted}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('product.vatAtBorders')}
+											{t('cart.vatNullOutsideSellerCountry')}
 										</div>
 									{/if}
 									{#if vat.physicalVatRate !== vat.digitalVatRate && vat.partialDigitalVat && vat.partialPhysicalVat}

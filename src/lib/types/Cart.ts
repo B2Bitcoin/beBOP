@@ -99,8 +99,8 @@ export function computeVatInfo(
 	params: {
 		vatExempted: boolean;
 		vatNullOutsideSellerCountry: boolean;
-		userCountry: string | undefined;
-		bebopCountry: string;
+		userCountry: CountryAlpha2 | undefined;
+		bebopCountry: CountryAlpha2 | undefined;
 		vatSingleCountry: boolean;
 		deliveryFees: Price;
 	}
@@ -116,20 +116,27 @@ export function computeVatInfo(
 	totalVat: number;
 	totalPriceWithVat: number;
 	partialPriceWithVat: number;
+	physicalVatCountry: CountryAlpha2 | undefined;
+	digitalVatCountry: CountryAlpha2 | undefined;
+	singleVatCountry: boolean;
+	currency: Currency;
 } {
-	const digitalVatRate = params.vatExempted
-		? 0
-		: vatRate(
-				params.vatSingleCountry ? params.bebopCountry : params.userCountry ?? params.bebopCountry
-		  );
 	const isPhysicalVatExempted =
 		params.vatNullOutsideSellerCountry && params.bebopCountry !== params.userCountry;
-	const physicalVatRate =
+	const singleVatCountry = params.vatSingleCountry && !!params.bebopCountry;
+	const physicalVatCountry =
 		params.vatExempted || isPhysicalVatExempted
-			? 0
-			: vatRate(
-					params.vatSingleCountry ? params.bebopCountry : params.userCountry ?? params.bebopCountry
-			  );
+			? undefined
+			: params.vatSingleCountry
+			? params.bebopCountry
+			: params.userCountry ?? params.bebopCountry;
+	const digitalVatCountry = params.vatExempted
+		? undefined
+		: params.vatSingleCountry
+		? params.bebopCountry
+		: params.userCountry ?? params.bebopCountry;
+	const digitalVatRate = vatRate(digitalVatCountry);
+	const physicalVatRate = vatRate(physicalVatCountry);
 
 	const partialPrice = sumCurrency(UNDERLYING_CURRENCY, [
 		...items.map((item) => ({
@@ -222,6 +229,10 @@ export function computeVatInfo(
 		totalPrice,
 		totalVat,
 		totalPriceWithVat,
-		partialPriceWithVat
+		partialPriceWithVat,
+		digitalVatCountry,
+		physicalVatCountry,
+		singleVatCountry,
+		currency: UNDERLYING_CURRENCY
 	};
 }

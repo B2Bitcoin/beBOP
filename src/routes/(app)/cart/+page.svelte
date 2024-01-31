@@ -2,64 +2,42 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { goto, invalidate } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
+	import CartVat from '$lib/components/CartVat.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
-	import { computeDeliveryFees } from '$lib/types/Cart.js';
-	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
+	import { computeDeliveryFees, computeVatInfo } from '$lib/types/Cart.js';
+	import { isAlpha2CountryCode } from '$lib/types/Country.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	export let data;
 
 	let actionCount = 0;
-	let country = data.countryCode as CountryAlpha2;
 
 	let errorMessage = data.errorMessage;
 	let errorProductId = '';
-	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
 	$: items = data.cart || [];
-	$: isDigital = items.every((item) => !item.product.shipping);
-	$: actualVatRate =
-		!isDigital && data.vatCountry !== country && data.vatNullOutsideSellerCountry
-			? 0
-			: data.vatExempted
-			? 0
-			: data.vatSingleCountry
-			? vatRate(data.vatCountry)
-			: vatRate(country ?? data.vatCountry);
-	$: partialPrice =
-		sumCurrency(
-			UNDERLYING_CURRENCY,
-			items.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					((item.customPrice || item.product.price).amount *
-						item.quantity *
-						(item.depositPercentage ?? 100)) /
-					100
-			}))
-		) + (deliveryFees || 0);
-	$: totalPrice =
-		sumCurrency(
-			UNDERLYING_CURRENCY,
-			items.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount: (item.customPrice || item.product.price).amount * item.quantity
-			}))
-		) + (deliveryFees || 0);
-
-	$: partialVat = fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
-	$: partialPriceWithVat = partialPrice + partialVat;
-	$: totalPriceWithVat =
-		totalPrice + fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
+	$: deliveryFees =
+		data.countryCode && isAlpha2CountryCode(data.countryCode)
+			? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
+			: NaN;
+	$: vat = computeVatInfo(items, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted,
+		userCountry: data.countryCode,
+		deliveryFees: {
+			amount: deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		}
+	});
 
 	const { t, locale, countryName } = useI18n();
 </script>
@@ -212,7 +190,7 @@
 					{t('checkout.noDeliveryInCountry')}
 				</div>
 			{/if}
-			{#if !isDigital && data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+			{#if items.some((item) => item.product.shipping) && vat.isPhysicalVatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<span class="font-semibold">{t('product.vatExcluded')}</span>
@@ -221,50 +199,52 @@
 						</p>
 					</div>
 				</div>
-			{:else if data.vatCountry && !data.vatExempted}
-				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
-					<div class="flex flex-col">
-						<h2 class="text-[28px]">{t('cart.vat')} ({actualVatRate}%):</h2>
-						<p class="text-sm">
-							{t('cart.vatRate', { country: countryName(data.vatCountry) })}.
-							{#if data.vatSingleCountry}
-								{t('cart.vatSellerCountry')}
-							{:else}
-								<Trans key="cart.vatIpCountry">
-									<a href="https://lite.ip2location.com" slot="0"> https://lite.ip2location.com </a>
-								</Trans>
-							{/if}
-						</p>
-					</div>
-					<div class="flex flex-col items-end">
-						<PriceTag amount={partialVat} currency={UNDERLYING_CURRENCY} main class="text-[28px]" />
-						<PriceTag
-							class="text-base"
-							amount={partialVat}
-							currency={UNDERLYING_CURRENCY}
-							secondary
-						/>
-					</div>
-				</div>
+			{/if}
+			{#if vat.physicalVatRate !== vat.digitalVatRate && vat.partialDigitalVat && vat.partialPhysicalVat && vat.physicalVatCountry && vat.digitalVatCountry}
+				<CartVat
+					vatAmount={vat.partialPhysicalVat}
+					vatRate={vat.physicalVatRate}
+					vatSingleCountry={vat.singleVatCountry}
+					vatCountry={vat.physicalVatCountry}
+					vatCurrency={vat.currency}
+				></CartVat>
+				<CartVat
+					vatAmount={vat.partialDigitalVat}
+					vatRate={vat.digitalVatRate}
+					vatSingleCountry={vat.singleVatCountry}
+					vatCountry={vat.digitalVatCountry}
+					vatCurrency={vat.currency}
+				></CartVat>
+			{:else if vat.totalVat}
+				{@const country = vat.digitalVatCountry || vat.physicalVatCountry}
+				{#if country}
+					<CartVat
+						vatAmount={vat.totalVat}
+						vatRate={vat.digitalVatRate || vat.physicalVatRate}
+						vatSingleCountry={vat.singleVatCountry}
+						vatCountry={country}
+						vatCurrency={vat.currency}
+					></CartVat>
+				{/if}
 			{/if}
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 				<h2 class="text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={partialPriceWithVat}
+						amount={vat.partialPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						main
 						class="text-[32px]"
 					/>
 					<PriceTag
 						class="text-base"
-						amount={partialPriceWithVat}
+						amount={vat.partialPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
 			</div>
-			{#if totalPriceWithVat !== partialPriceWithVat}
+			{#if vat.totalPriceWithVat !== vat.partialPriceWithVat}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<h2 class="text-[32px]">{t('cart.remaining')}:</h2>
@@ -272,14 +252,14 @@
 					</div>
 					<div class="flex flex-col items-end">
 						<PriceTag
-							amount={totalPriceWithVat - partialPriceWithVat}
+							amount={vat.totalPriceWithVat - vat.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							main
 							class="text-[32px]"
 						/>
 						<PriceTag
 							class="text-base"
-							amount={totalPriceWithVat - partialPriceWithVat}
+							amount={vat.totalPriceWithVat - vat.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							secondary
 						/>
