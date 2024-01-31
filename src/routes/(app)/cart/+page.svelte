@@ -7,7 +7,6 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
 	import { computeDeliveryFees, computeVatInfo } from '$lib/types/Cart.js';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
@@ -39,7 +38,7 @@
 		}
 	});
 
-	const { t, locale, countryName } = useI18n();
+	const { t, locale } = useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10 body-mainPlan">
