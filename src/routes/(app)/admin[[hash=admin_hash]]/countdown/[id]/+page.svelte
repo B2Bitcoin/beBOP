@@ -10,17 +10,10 @@
 	let name = data.countdown.name;
 	let slug = data.countdown._id;
 	let endsAt = data.countdown.endsAt.toISOString().slice(0, 16);
-	let formElement: HTMLFormElement;
 
 	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
 	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
 	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
-
-	function handleDate() {
-		const formData = new FormData(formElement);
-		formData.set('endsAt', new Date(endsAt).toJSON());
-		formElement.submit();
-	}
 
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this countdown?')) {
@@ -29,13 +22,7 @@
 	}
 </script>
 
-<form
-	method="post"
-	class="flex flex-col gap-4"
-	on:submit|preventDefault={handleDate}
-	bind:this={formElement}
-	action="?/update"
->
+<form method="post" class="flex flex-col gap-4" action="?/update">
 	<label class="form-label">
 		Name
 		<input

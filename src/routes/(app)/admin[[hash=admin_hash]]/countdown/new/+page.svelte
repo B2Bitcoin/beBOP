@@ -10,27 +10,15 @@
 	let name: string;
 	let slug: string;
 	let endsAt = new Date().toISOString().slice(0, 16);
-	let formElement: HTMLFormElement;
 
 	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
 	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
 	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
-
-	function handleDate() {
-		const formData = new FormData(formElement);
-		formData.set('endsAt', new Date(endsAt).toJSON());
-		formElement.submit();
-	}
 </script>
 
 <h1 class="text-3xl">Add a specification</h1>
 
-<form
-	method="post"
-	class="flex flex-col gap-4"
-	on:submit|preventDefault={handleDate}
-	bind:this={formElement}
->
+<form method="post" class="flex flex-col gap-4">
 	<label class="form-label">
 		Name
 		<input
