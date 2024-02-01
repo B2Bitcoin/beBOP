@@ -90,6 +90,7 @@ export interface OrderAddress {
 	state?: string;
 	zip: string;
 	country: CountryAlpha2;
+	isProfessional?: boolean;
 	companyName?: string;
 	vatNumber?: string;
 }
