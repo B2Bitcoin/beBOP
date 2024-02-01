@@ -87,7 +87,7 @@
 
 	$: items = data.cart || [];
 	$: deliveryFees =
-		data.roleId === 'POS_ROLE_ID' && data.deliveryFees.makePOSDeliveryNull
+		data.roleId === 'POS_ROLE_ID' && data.deliveryFees.allowFreeForPOS
 			? 0
 			: computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
@@ -715,7 +715,7 @@
 							</Trans>
 						</span>
 					</label>
-					{#if data.deliveryFees.makePOSDeliveryNull}
+					{#if data.deliveryFees.allowFreeForPOS}
 						<label class="checkbox-label">
 							<input
 								type="checkbox"
@@ -723,7 +723,6 @@
 								name="offerDeliveryFees"
 								form="checkout"
 								bind:checked={offerDeliveryFees}
-								required
 							/>
 							{t('pos.offerDeliveryFees')}
 						</label>

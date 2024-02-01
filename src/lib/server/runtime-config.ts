@@ -83,7 +83,7 @@ const baseConfig = {
 		mode: 'flatFee' as 'flatFee' | 'perItem',
 		applyFlatFeeToEachItem: false,
 		onlyPayHighest: false,
-		makePOSDeliveryNull: false,
+		allowFreeForPOS: false,
 		deliveryFees: {
 			default: {
 				amount: 0,

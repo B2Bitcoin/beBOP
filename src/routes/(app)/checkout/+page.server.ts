@@ -190,7 +190,7 @@ export const actions = {
 			isFreeVat = vatDetails.isFreeVat;
 			reasonFreeVat = vatDetails.reasonFreeVat;
 
-			if (runtimeConfig.deliveryFees.makePOSDeliveryNull) {
+			if (runtimeConfig.deliveryFees.allowFreeForPOS) {
 				const feesDetails = z
 					.object({
 						offerDeliveryFees: z.coerce.boolean().optional(),
@@ -316,7 +316,7 @@ export const actions = {
 				...(note && { note: note.noteContent }),
 				...(agreements.allowCollectIP && { clientIp: locals.clientIp }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
-					runtimeConfig.deliveryFees.makePOSDeliveryNull &&
+					runtimeConfig.deliveryFees.allowFreeForPOS &&
 					offerDeliveryFees && { reasonOfferDeliveryFees })
 			}
 		);

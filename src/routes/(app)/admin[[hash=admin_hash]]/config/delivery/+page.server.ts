@@ -20,7 +20,7 @@ export const actions = {
 				onlyPayHighest: z.boolean({ coerce: true }),
 				applyFlatFeeToEachItem: z.boolean({ coerce: true }),
 				deliveryFees: deliveryFeesSchema.default({}),
-				makePOSDeliveryNull: z.boolean({ coerce: true })
+				allowFreeForPOS: z.boolean({ coerce: true })
 			})
 			.parse(json);
 

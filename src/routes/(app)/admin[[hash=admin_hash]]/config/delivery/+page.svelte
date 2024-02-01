@@ -31,9 +31,9 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
-			name="makePOSDeliveryNull"
+			name="allowFreeForPOS"
 			class="form-checkbox"
-			checked={data.deliveryFees.makePOSDeliveryNull}
+			checked={data.deliveryFees.allowFreeForPOS}
 		/>
 		Make free delivery on POS sale
 	</label>
