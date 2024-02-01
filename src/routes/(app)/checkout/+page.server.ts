@@ -249,6 +249,22 @@ export const actions = {
 			throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
 		}
 
+		if (
+			!agreements.isOnlyDeposit &&
+			cart.items.some(
+				(item) =>
+					item.depositPercentage !== undefined &&
+					item.depositPercentage !== null &&
+					(item.depositPercentage ?? 0) < 100 &&
+					(item.customPrice || byId[item.productId].price).amount > 0
+			)
+		) {
+			throw error(
+				400,
+				'You must acknowledge that you are only paying a deposit and will have to pay the rest later'
+			);
+		}
+
 		rateLimit(locals.clientIp, 'email', 10, { minutes: 1 });
 
 		const orderId = await createOrder(
