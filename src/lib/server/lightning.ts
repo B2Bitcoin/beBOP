@@ -73,7 +73,8 @@ function lndRpc(
 		},
 		method: options.method || 'GET',
 		...(dispatcher && { dispatcher }),
-		...(options?.body && { body: options.body })
+		...(options?.body && { body: options.body }),
+		...{ autoSelectFamily: true }
 	});
 }
 
