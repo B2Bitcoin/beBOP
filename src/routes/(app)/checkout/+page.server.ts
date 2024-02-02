@@ -118,7 +118,7 @@ export const actions = {
 							state: z.string().optional(),
 							zip: z.string().min(1),
 							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
-							isProfessionalOrder: z.boolean({ coerce: true }).default(false),
+							isCompany: z.boolean({ coerce: true }).default(false),
 							vatNumber: z.string().optional(),
 							companyName: z.string().optional()
 						})
@@ -232,8 +232,15 @@ export const actions = {
 		if (!agreements.allowCollectIP && runtimeConfig.collectIPOnDeliverylessOrders && isDigital) {
 			throw error(400, 'You must allow the collection of your IP address');
 		}
-		if (billingInfo?.billing.isProfessionalOrder && !billingInfo?.billing.companyName) {
-			throw error(400, 'The company name is required for professional order ');
+		if (billingInfo?.billing.isCompany) {
+			if (!billingInfo?.billing.companyName) {
+				throw error(400, 'The company name is required for professional order ');
+			}
+		} else {
+			if (billingInfo?.billing) {
+				delete billingInfo.billing.companyName;
+				delete billingInfo.billing.vatNumber;
+			}
 		}
 		const vatCountry =
 			shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry;

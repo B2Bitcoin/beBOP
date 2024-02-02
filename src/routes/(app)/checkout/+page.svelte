@@ -237,7 +237,7 @@
 						type="checkbox"
 						class="form-checkbox"
 						form="checkout"
-						name="billing.isProfessionalOrder"
+						name="billing.isCompany"
 						bind:checked={isProfessionalOrder}
 					/>
 					{t('checkout.isProBilling')}
