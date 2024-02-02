@@ -235,16 +235,8 @@ export const actions = {
 		if (billingInfo?.billing.isProfessionalOrder && !billingInfo?.billing.companyName) {
 			throw error(400, 'The company name is required for professional order ');
 		}
-		const vatBillingCountry =
-			billingInfo?.billing?.country &&
-			vatRate(runtimeConfig.vatCountry) === vatRate(billingInfo?.billing?.country)
-				? billingInfo?.billing?.country
-				: undefined;
 		const vatCountry =
-			shippingInfo?.shipping?.country ??
-			vatBillingCountry ??
-			locals.countryCode ??
-			runtimeConfig.vatCountry;
+			shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry;
 		if (
 			!agreements.isVATNullForeigner &&
 			runtimeConfig.vatNullOutsideSellerCountry &&
