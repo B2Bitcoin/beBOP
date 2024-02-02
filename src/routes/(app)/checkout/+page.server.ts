@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database';
 import { paymentMethods } from '$lib/server/payment-methods';
-import { COUNTRY_ALPHA2S, vatRate, type CountryAlpha2 } from '$lib/types/Country';
+import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { createOrder } from '$lib/server/orders';
