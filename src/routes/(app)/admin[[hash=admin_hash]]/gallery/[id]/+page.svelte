@@ -1,19 +1,64 @@
 <script lang="ts">
 	import { generateId } from '$lib/utils/generateId';
 	import PictureComponent from '$lib/components/Picture.svelte';
+	import { invalidateAll } from '$app/navigation';
+	import { applyAction, deserialize } from '$app/forms';
+	import { uploadPicture } from '$lib/types/Picture.js';
 
 	export let data;
 	let name = data.gallery.name;
 	let slug = data.gallery._id;
+	let submitting = false;
+	let formElement: HTMLFormElement;
+
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this gallery?')) {
 			event.preventDefault();
 		}
 	}
+	let galleryPictures: FileList[] = [];
 	$: pictureById = Object.fromEntries(data.pictures.map((picture) => [picture._id, picture]));
+
+	async function handleSubmit() {
+		try {
+			submitting = true;
+			// Need to load here, or for some reason, some inputs disappear afterwards
+			const formData = new FormData(formElement);
+			await Promise.all(
+				galleryPictures.map(async (picture, i) => {
+					if (picture[0]) {
+						const pictureId = await uploadPicture(data.adminPrefix, picture[0]);
+						formData.set(`secondary[${i}].pictureId`, pictureId);
+					}
+				})
+			);
+
+			const finalResponse = await fetch(formElement.action, {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = deserialize(await finalResponse.text());
+
+			if (result.type === 'success') {
+				// rerun all `load` functions, following the successful update
+				await invalidateAll();
+			}
+
+			applyAction(result);
+		} finally {
+			submitting = false;
+		}
+	}
 </script>
 
-<form method="post" class="flex flex-col gap-4" action="?/update">
+<form
+	method="post"
+	class="flex flex-col gap-4"
+	action="?/update"
+	bind:this={formElement}
+	on:submit|preventDefault={handleSubmit}
+>
 	<label class="form-label">
 		Gallery name
 		<input
@@ -116,12 +161,22 @@
 					style="object-fit: scale-down;"
 				/>
 			</a>
-			<input
-				type="hidden"
-				name="secondary[{i}].pictureId"
-				class="form-input"
-				value={data.gallery.secondary[i]?.pictureId}
-			/>
+			<label class="form-label">
+				Picture {i + 1}
+				<input
+					type="hidden"
+					name="secondary[{i}].pictureId"
+					class="form-input"
+					value={data.gallery.secondary[i]?.pictureId}
+				/>
+				<input
+					type="file"
+					accept="image/jpeg,image/png,image/webp"
+					class="block"
+					bind:files={galleryPictures[i]}
+					disabled={submitting}
+				/>
+			</label>
 		</div>
 		<div class="flex gap-4">
 			<label class="form-label">
@@ -146,7 +201,12 @@
 	{/each}
 
 	<div class="flex flex-row justify-between gap-2">
-		<input type="submit" class="btn btn-blue self-start text-white" value="Update" />
+		<input
+			type="submit"
+			class="btn btn-blue self-start text-white"
+			value="Update"
+			disabled={submitting}
+		/>
 		<a href="/gallery/{data.gallery._id}" class="btn btn-gray">View</a>
 
 		<button

@@ -28,7 +28,7 @@
 			>
 		</div>
 		<div class="tagWidget tagWidget-main m-2 p-4 max-w-[344px]">
-			<p class="min-h-[600px] mt-2 text-gray-800">
+			<p class="min-h-[630px] mt-2 text-gray-800">
 				{gallery.principal.content}
 			</p>
 		</div>
