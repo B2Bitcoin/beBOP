@@ -13,8 +13,12 @@
 </script>
 
 <!-- flex-row-reverse -->
-<div class="mx-auto flex rounded {className} {displayOption === 'var-2' ? 'flex-row-reverse' : ''}">
-	<div class="flex-1">
+<div
+	class="mx-auto flex rounded justify-center {className} {displayOption === 'var-2'
+		? 'flex-row-reverse'
+		: ''}"
+>
+	<div class="flex-col">
 		<div class="tagWidget tagWidget-main m-2 p-4 max-w-[344px]">
 			<h2 class="text-2xl body-title pb-2 uppercase">{gallery.principal.title}</h2>
 		</div>
@@ -24,13 +28,13 @@
 			>
 		</div>
 		<div class="tagWidget tagWidget-main m-2 p-4 max-w-[344px]">
-			<p class="mt-2 text-gray-800">
+			<p class="min-h-[600px] mt-2 text-gray-800">
 				{gallery.principal.content}
 			</p>
 		</div>
 	</div>
 	{#each gallery.secondary as secondary}
-		<div class="flex-1">
+		<div class="flex-col">
 			<div class="m-2 justify-items-center max-w-[344px]">
 				<PictureComponent
 					picture={pictureById[secondary.pictureId || '']}
@@ -42,7 +46,7 @@
 				<h2 class="text-xl body-title pb-2 uppercase">{secondary.title}</h2>
 			</div>
 			<div class="m-2 tagWidget tagWidget-main p-4 text-center max-w-[344px]">
-				<p class="mt-2 text-gray-800">
+				<p class="min-h-[285px] mt-2 text-gray-800">
 					{secondary.content}
 				</p>
 			</div>
