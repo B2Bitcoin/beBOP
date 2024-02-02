@@ -35,7 +35,7 @@
 			class="form-checkbox"
 			checked={data.deliveryFees.allowFreeForPOS}
 		/>
-		Make free delivery on POS sale
+		Allow voiding delivery fees on POS sale
 	</label>
 	<h2 class="text-2xl">
 		{mode === 'flatFee' ? 'Flat fee config' : 'Product delivery fees'}

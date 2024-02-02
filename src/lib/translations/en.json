@@ -500,7 +500,7 @@
 		"lastOrders": {
 			"title": "Last orders"
 		},
-		"offerDeliveryFees": "Offer delivery fees for this order",
+		"offerDeliveryFees": "Void delivery fees for this order",
 		"order": {
 			"satReceived": "received"
 		},

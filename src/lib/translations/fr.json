@@ -500,7 +500,7 @@
 		"lastOrders": {
 			"title": "Dernières commandes"
 		},
-		"offerDeliveryFees": "Offrir la participation forfaitaire aux frais de port pour cette commande",
+		"offerDeliveryFees": "Enlever les frais de port pour cette commande",
 		"order": {
 			"satReceived": "reçu"
 		},
