@@ -116,6 +116,12 @@
 					style="object-fit: scale-down;"
 				/>
 			</a>
+			<input
+				type="hidden"
+				name="secondary[{i}].pictureId"
+				class="form-input"
+				value={data.gallery.secondary[i]?.pictureId}
+			/>
 		</div>
 		<div class="flex gap-4">
 			<label class="form-label">
