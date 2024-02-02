@@ -45,6 +45,10 @@ export const actions: Actions = {
 			303,
 			picture.productId
 				? `${adminPrefix()}/product/${picture.productId}`
+				: picture.tag?._id
+				? `${adminPrefix()}/tags/${picture.tag._id}`
+				: picture.slider?._id
+				? `${adminPrefix()}/tags/${picture.slider._id}`
 				: `${adminPrefix()}/picture`
 		);
 	},
