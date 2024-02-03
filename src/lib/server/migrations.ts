@@ -118,7 +118,9 @@ const migrations = [
 						},
 						...(order.vat && {
 							vat: {
+								// @ts-expect-error migration stuff
 								currency: order.vat.price.currency,
+								// @ts-expect-error migration stuff
 								amount: order.vat.price.amount
 							}
 						})
@@ -142,7 +144,9 @@ const migrations = [
 						},
 						...(order.vat && {
 							vat: {
+								// @ts-expect-error migration stuff
 								currency: order.vat.price.currency,
+								// @ts-expect-error migration stuff
 								amount: order.vat.price.amount
 							}
 						})
@@ -299,6 +303,70 @@ const migrations = [
 					break;
 				}
 			}
+		}
+	},
+	{
+		name: 'Convert VAT rate to array in orders',
+		_id: new ObjectId('65bd8fc40914f6a599ede07d'),
+		run: async (session: ClientSession) => {
+			await collections.orders.updateMany(
+				{ 'vat.price.currency': { $type: 'string' } },
+				[
+					{
+						$set: {
+							vat: ['$vat'],
+							items: {
+								$map: {
+									input: '$items',
+									as: 'item',
+									in: {
+										$mergeObjects: [
+											'$$item',
+											{
+												vatRate: ['$vat.rate']
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				],
+				{ session }
+			);
+			await collections.orders.updateMany(
+				{ 'currencySnapshot.main.vat.currency': { $type: 'string' } },
+				[
+					{
+						$set: {
+							'currencySnapshot.main.vat': ['$currencySnapshot.main.vat']
+						}
+					}
+				],
+				{ session }
+			);
+			await collections.orders.updateMany(
+				{ 'currencySnapshot.priceReference.vat.currency': { $type: 'string' } },
+				[
+					{
+						$set: {
+							'currencySnapshot.priceReference.vat': ['$currencySnapshot.priceReference.vat']
+						}
+					}
+				],
+				{ session }
+			);
+			await collections.orders.updateMany(
+				{ 'currencySnapshot.secondary.vat.currency': { $type: 'string' } },
+				[
+					{
+						$set: {
+							'currencySnapshot.secondary.vat': ['$currencySnapshot.secondary.vat']
+						}
+					}
+				],
+				{ session }
+			);
 		}
 	}
 	// Todo:
