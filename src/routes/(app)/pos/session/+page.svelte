@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { useI18n } from '$lib/i18n';
-	import { computeVatInfo } from '$lib/types/Cart.js';
+	import { computePriceInfo } from '$lib/types/Cart.js';
 	import PosVat from '$lib/components/PosVat.svelte';
 
 	interface CustomEventSource {
@@ -76,7 +76,7 @@
 	// 	data.countryCode && isAlpha2CountryCode(data.countryCode)
 	// 		? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
 	// 		: NaN;
-	$: vat = computeVatInfo(cart, {
+	$: priceInfo = computePriceInfo(cart, {
 		bebopCountry: data.vatCountry,
 		vatSingleCountry: data.vatSingleCountry,
 		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
@@ -195,30 +195,30 @@
 		</div>
 	{:else if cart && view === 'updateCart'}
 		<div class="flex justify-between flex-col p-2 gap-2 bg-gray-300 fixed left-0 right-0 bottom-0">
-			{#if vat.physicalVatRate !== vat.digitalVatRate && vat.partialDigitalVat && vat.partialPhysicalVat && vat.physicalVatCountry && vat.digitalVatCountry}
+			{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat && priceInfo.physicalVatCountry && priceInfo.digitalVatCountry}
 				<PosVat
-					vatAmount={vat.partialPhysicalVat}
-					vatRate={vat.physicalVatRate}
-					vatSingleCountry={vat.singleVatCountry}
-					vatCountry={vat.physicalVatCountry}
-					vatCurrency={vat.currency}
+					vatAmount={priceInfo.partialPhysicalVat}
+					vatRate={priceInfo.physicalVatRate}
+					vatSingleCountry={priceInfo.singleVatCountry}
+					vatCountry={priceInfo.physicalVatCountry}
+					vatCurrency={priceInfo.currency}
 				></PosVat>
 				<PosVat
-					vatAmount={vat.partialDigitalVat}
-					vatRate={vat.digitalVatRate}
-					vatSingleCountry={vat.singleVatCountry}
-					vatCountry={vat.digitalVatCountry}
-					vatCurrency={vat.currency}
+					vatAmount={priceInfo.partialDigitalVat}
+					vatRate={priceInfo.digitalVatRate}
+					vatSingleCountry={priceInfo.singleVatCountry}
+					vatCountry={priceInfo.digitalVatCountry}
+					vatCurrency={priceInfo.currency}
 				></PosVat>
-			{:else if vat.totalVat}
-				{@const country = vat.digitalVatCountry || vat.physicalVatCountry}
+			{:else if priceInfo.totalVat}
+				{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
 				{#if country}
 					<PosVat
-						vatAmount={vat.totalVat}
-						vatRate={vat.digitalVatRate || vat.physicalVatRate}
-						vatSingleCountry={vat.singleVatCountry}
+						vatAmount={priceInfo.totalVat}
+						vatRate={priceInfo.digitalVatRate || priceInfo.physicalVatRate}
+						vatSingleCountry={priceInfo.singleVatCountry}
 						vatCountry={country}
-						vatCurrency={vat.currency}
+						vatCurrency={priceInfo.currency}
 					></PosVat>
 				{/if}
 			{/if}
@@ -227,15 +227,15 @@
 				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={vat.totalPriceWithVat}
-						currency={vat.currency}
+						amount={priceInfo.totalPriceWithVat}
+						currency={priceInfo.currency}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
-						amount={vat.totalPriceWithVat}
-						currency={vat.currency}
+						amount={priceInfo.totalPriceWithVat}
+						currency={priceInfo.currency}
 						secondary
 					/>
 				</div>

@@ -301,6 +301,9 @@ const migrations = [
 			}
 		}
 	}
+	// Todo:
+	// - convert vat to array in orders
+	// - add vat rate for each item in orders
 ];
 
 export async function runMigrations() {

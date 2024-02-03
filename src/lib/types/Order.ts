@@ -120,6 +120,7 @@ export interface Order extends Timestamps {
 				customPrice?: Price;
 			};
 		};
+		vatRate: number;
 	}>;
 
 	shippingAddress?: OrderAddress;
@@ -129,11 +130,11 @@ export interface Order extends Timestamps {
 		currency: Currency;
 	};
 
-	vat?: {
+	vat?: Array<{
 		price: Price;
 		rate: number;
 		country: CountryAlpha2;
-	};
+	}>;
 
 	vatFree?: {
 		reason: string;
@@ -143,21 +144,21 @@ export interface Order extends Timestamps {
 		main: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};
 		priceReference: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};
 		secondary?: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};

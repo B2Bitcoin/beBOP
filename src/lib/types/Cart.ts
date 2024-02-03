@@ -7,8 +7,12 @@ import { UNDERLYING_CURRENCY, type Currency } from './Currency';
 import type { Product } from './Product';
 import type { Timestamps } from './Timestamps';
 import type { UserIdentifier } from './UserIdentifier';
-import type { Price } from './Order';
+import type { DiscountType, Price } from './Order';
 import { sumCurrency } from '$lib/utils/sumCurrency';
+import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
+import { currencies } from '$lib/stores/currencies';
+import { get } from 'svelte/store';
+import { filterUndef } from '$lib/utils/filterUndef';
 
 export interface Cart extends Timestamps {
 	_id: ObjectId;
@@ -89,7 +93,7 @@ export function computeDeliveryFees(
 	return deliveryFeesConfig.onlyPayHighest ? Math.max(...fees) : sum(fees);
 }
 
-export function computeVatInfo(
+export function computePriceInfo(
 	items: Array<{
 		product: { shipping: boolean; price: Price };
 		quantity: number;
@@ -103,6 +107,10 @@ export function computeVatInfo(
 		bebopCountry: CountryAlpha2 | undefined;
 		vatSingleCountry: boolean;
 		deliveryFees: Price;
+		discount?: {
+			amount: number;
+			type: DiscountType;
+		} | null;
 	}
 ): {
 	digitalVatRate: number;
@@ -116,10 +124,19 @@ export function computeVatInfo(
 	totalVat: number;
 	totalPriceWithVat: number;
 	partialPriceWithVat: number;
+	discount: number;
 	physicalVatCountry: CountryAlpha2 | undefined;
 	digitalVatCountry: CountryAlpha2 | undefined;
 	singleVatCountry: boolean;
 	currency: Currency;
+	/** Aggregate physical vat & digital vat when rates are the same or one is null */
+	vat: Array<{
+		price: Price;
+		rate: number;
+		country: CountryAlpha2;
+	}>;
+	/** Vat rate for each individual item */
+	vatRates: number[];
 } {
 	const isPhysicalVatExempted =
 		params.vatNullOutsideSellerCountry && params.bebopCountry !== params.userCountry;
@@ -181,6 +198,7 @@ export function computeVatInfo(
 			currency: params.deliveryFees.currency
 		}
 	]);
+	const vatRates = items.map((item) => (item.product.shipping ? physicalVatRate : digitalVatRate));
 	const partialDigitalVat = sumCurrency(
 		UNDERLYING_CURRENCY,
 		items
@@ -215,8 +233,106 @@ export function computeVatInfo(
 			currency: params.deliveryFees.currency
 		}
 	]);
-	const totalPriceWithVat = totalPrice + totalVat;
-	const partialPriceWithVat = partialPrice + partialVat;
+	const digitalVat = sumCurrency(
+		UNDERLYING_CURRENCY,
+		items
+			.filter((item) => !item.product.shipping)
+			.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount:
+					((item.customPrice || item.product.price).amount *
+						item.quantity *
+						(digitalVatRate / 100)) /
+					100
+			}))
+	);
+	const physicalVat = sumCurrency(UNDERLYING_CURRENCY, [
+		...items
+			.filter((item) => item.product.shipping)
+			.map((item) => ({
+				currency: (item.customPrice || item.product.price).currency,
+				amount:
+					((item.customPrice || item.product.price).amount *
+						item.quantity *
+						(item.depositPercentage ?? 100) *
+						(physicalVatRate / 100)) /
+					100
+			})),
+		{
+			amount: (params.deliveryFees.amount * physicalVatRate) / 100,
+			currency: params.deliveryFees.currency
+		}
+	]);
+
+	let totalPriceWithVat = totalPrice + totalVat;
+	let partialPriceWithVat = partialPrice + partialVat;
+	let discountAmount = 0;
+
+	if (params.discount) {
+		const oldTotalPriceWithVat = totalPriceWithVat;
+		if (params.discount.type === 'percentage') {
+			const discount = (totalPriceWithVat * params.discount.amount) / 100;
+			totalPriceWithVat = fixCurrencyRounding(
+				Math.max(totalPriceWithVat - discount, 0),
+				UNDERLYING_CURRENCY
+			);
+		} else {
+			totalPriceWithVat = Math.max(
+				sumCurrency(UNDERLYING_CURRENCY, [
+					{ amount: totalPriceWithVat, currency: UNDERLYING_CURRENCY },
+					{ amount: -params.discount.amount, currency: get(currencies).main }
+				]),
+				0
+			);
+		}
+		discountAmount = oldTotalPriceWithVat - totalPriceWithVat;
+		if (discountAmount) {
+			partialPriceWithVat = fixCurrencyRounding(
+				Math.max(
+					partialPriceWithVat - (discountAmount * partialPriceWithVat) / oldTotalPriceWithVat,
+					0
+				),
+				UNDERLYING_CURRENCY
+			);
+		}
+	}
+
+	const vat: Array<{
+		price: Price;
+		rate: number;
+		country: CountryAlpha2;
+	}> = filterUndef([
+		physicalVatCountry
+			? {
+					price: {
+						amount: physicalVat,
+						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
+					},
+					rate: physicalVatRate,
+					country: physicalVatCountry
+			  }
+			: undefined,
+		digitalVatCountry
+			? {
+					price: {
+						amount: digitalVat,
+						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
+					},
+					rate: digitalVatRate,
+					country: digitalVatCountry
+			  }
+			: undefined
+	]).filter((vat) => vat.price.amount > 0);
+
+	if (
+		vat.length === 2 &&
+		vat[0].rate === vat[1].rate &&
+		vat[0].country === vat[1].country &&
+		vat[0].price.currency === vat[1].price.currency
+	) {
+		vat[0].price.amount += vat[1].price.amount;
+		vat.pop();
+	}
 
 	return {
 		digitalVatRate,
@@ -233,6 +349,9 @@ export function computeVatInfo(
 		digitalVatCountry,
 		physicalVatCountry,
 		singleVatCountry,
-		currency: UNDERLYING_CURRENCY
+		currency: UNDERLYING_CURRENCY,
+		discount: discountAmount,
+		vat,
+		vatRates
 	};
 }

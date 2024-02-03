@@ -86,7 +86,7 @@ describe('cart', () => {
 					user: {
 						sessionId: 'test-session-id2'
 					},
-					vatCountry: 'FR',
+					userVatCountry: 'FR',
 					shippingAddress: null
 				}
 			)

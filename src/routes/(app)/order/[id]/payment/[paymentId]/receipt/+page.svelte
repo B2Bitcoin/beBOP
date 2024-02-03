@@ -3,6 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
+	import { sum } from '$lib/utils/sum.js';
 
 	export let data;
 
@@ -13,6 +14,11 @@
 		data.order.shippingAddress &&
 		data.order.billingAddress &&
 		textAddress(data.order.shippingAddress) !== textAddress(data.order.billingAddress);
+
+	const totalVat = {
+		currency: data.order.currencySnapshot.main.totalPrice.currency,
+		amount: sum(data.order.vat?.map((vat) => vat.price.amount) ?? [0])
+	};
 </script>
 
 <div class="flex justify-between">
@@ -89,17 +95,13 @@
 				<td class="text-center border border-white px-2">
 					<PriceTag amount={unitPrice} currency={priceCurrency} inline />
 				</td>
-				<td class="text-center border border-white px-2">{data.order.vat?.rate ?? 0}%</td>
+				<td class="text-center border border-white px-2">{item.vatRate ?? 0}%</td>
 				<td class="text-center border border-white px-2">
-					<PriceTag
-						amount={(price * (data.order.vat?.rate ?? 0)) / 100}
-						currency={priceCurrency}
-						inline
-					/>
+					<PriceTag amount={(price * (item.vatRate ?? 0)) / 100} currency={priceCurrency} inline />
 				</td>
 				<td class="text-right border border-white px-2">
 					<PriceTag
-						amount={price + (price * (data.order.vat?.rate ?? 0)) / 100}
+						amount={price + (price * (item.vatRate ?? 0)) / 100}
 						currency={priceCurrency}
 						inline
 					/>
@@ -116,14 +118,7 @@
 		>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
 			<PriceTag
-				amount={data.order.vat?.price.amount === 0
-					? data.order.currencySnapshot.main.totalPrice.amount
-					: data.order.currencySnapshot.main.totalPrice.currency ===
-					  data.order.currencySnapshot.main.vat?.currency
-					? data.order.currencySnapshot.main.totalPrice.amount -
-					  data.order.currencySnapshot.main.vat.amount
-					: data.order.currencySnapshot.main.totalPrice.amount /
-					  (1 + (data.order.vat?.rate ?? 0) / 100)}
+				amount={data.order.currencySnapshot.main.totalPrice.amount - totalVat.amount}
 				currency={data.order.currencySnapshot.main.totalPrice.currency}
 				inline
 			/>
@@ -132,12 +127,7 @@
 	<tr style:background-color="#e7e6e6">
 		<td class="border border-white px-2 text-right">{t('order.receipt.totalVat')}</td>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
-			<PriceTag
-				amount={data.order.currencySnapshot.main.vat?.amount ?? 0}
-				currency={data.order.currencySnapshot.main.vat?.currency ??
-					data.order.currencySnapshot.main.totalPrice.currency}
-				inline
-			/>
+			<PriceTag amount={totalVat.amount} currency={totalVat.currency} inline />
 		</td>
 	</tr>
 	<tr style:background-color="#aeaaaa" class="text-white font-bold">

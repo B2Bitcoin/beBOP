@@ -29,9 +29,9 @@
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
-	import { computeDeliveryFees, computeVatInfo } from '$lib/types/Cart.js';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 
 	export let data;
 
@@ -54,7 +54,7 @@
 		data.countryCode && isAlpha2CountryCode(data.countryCode)
 			? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
 			: NaN;
-	$: vat = computeVatInfo(items, {
+	$: priceInfo = computePriceInfo(items, {
 		bebopCountry: data.vatCountry,
 		vatSingleCountry: data.vatSingleCountry,
 		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
@@ -68,7 +68,7 @@
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
-		// Refresh exchange rate every 5 minutes
+		// Refresh exchange rate every 5 minutescomputeCartPrices
 		const interval = setInterval(
 			() =>
 				fetch('/exchange-rate', {
@@ -353,33 +353,33 @@
 											{t('checkout.noDeliveryInCountry')}
 										</div>
 									{/if}
-									{#if items.some((item) => item.product.shipping) && vat.isPhysicalVatExempted}
+									{#if items.some((item) => item.product.shipping) && priceInfo.isPhysicalVatExempted}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.vatNullOutsideSellerCountry')}
 										</div>
 									{/if}
-									{#if vat.physicalVatRate !== vat.digitalVatRate && vat.partialDigitalVat && vat.partialPhysicalVat}
+									{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({vat.physicalVatRate}%) <PriceTag
+											{t('cart.vat')} ({priceInfo.physicalVatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={vat.partialPhysicalVat}
+												amount={priceInfo.partialPhysicalVat}
 												main
 											/>
 										</div>
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({vat.digitalVatRate}%) <PriceTag
+											{t('cart.vat')} ({priceInfo.digitalVatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={vat.partialDigitalVat}
+												amount={priceInfo.partialDigitalVat}
 												main
 											/>
 										</div>
 									{:else}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({vat.partialPhysicalVat
-												? vat.physicalVatRate
-												: vat.digitalVatRate}%) <PriceTag
+											{t('cart.vat')} ({priceInfo.partialPhysicalVat
+												? priceInfo.physicalVatRate
+												: priceInfo.digitalVatRate}%) <PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={vat.partialVat}
+												amount={priceInfo.partialVat}
 												main
 											/>
 										</div>
@@ -388,16 +388,16 @@
 										{t('cart.total')}
 										<PriceTag
 											currency={UNDERLYING_CURRENCY}
-											amount={vat.partialPriceWithVat}
+											amount={priceInfo.partialPriceWithVat}
 											main
 										/>
 									</div>
-									{#if vat.totalPriceWithVat !== vat.partialPriceWithVat}
+									{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.remainingShort')}
 											<PriceTag
 												currency={UNDERLYING_CURRENCY}
-												amount={vat.totalPriceWithVat - vat.partialPriceWithVat}
+												amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
 												main
 											/>
 										</div>

@@ -8,7 +8,7 @@
 	import ProductType from '$lib/components/ProductType.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { useI18n } from '$lib/i18n';
-	import { computeDeliveryFees, computeVatInfo } from '$lib/types/Cart.js';
+	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
@@ -26,7 +26,7 @@
 		data.countryCode && isAlpha2CountryCode(data.countryCode)
 			? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
 			: NaN;
-	$: vat = computeVatInfo(items, {
+	$: priceInfo = computePriceInfo(items, {
 		bebopCountry: data.vatCountry,
 		vatSingleCountry: data.vatSingleCountry,
 		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
@@ -189,7 +189,7 @@
 					{t('checkout.noDeliveryInCountry')}
 				</div>
 			{/if}
-			{#if items.some((item) => item.product.shipping) && vat.isPhysicalVatExempted}
+			{#if items.some((item) => item.product.shipping) && priceInfo.isPhysicalVatExempted}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<span class="font-semibold">{t('product.vatExcluded')}</span>
@@ -199,30 +199,30 @@
 					</div>
 				</div>
 			{/if}
-			{#if vat.physicalVatRate !== vat.digitalVatRate && vat.partialDigitalVat && vat.partialPhysicalVat && vat.physicalVatCountry && vat.digitalVatCountry}
+			{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat && priceInfo.physicalVatCountry && priceInfo.digitalVatCountry}
 				<CartVat
-					vatAmount={vat.partialPhysicalVat}
-					vatRate={vat.physicalVatRate}
-					vatSingleCountry={vat.singleVatCountry}
-					vatCountry={vat.physicalVatCountry}
-					vatCurrency={vat.currency}
+					vatAmount={priceInfo.partialPhysicalVat}
+					vatRate={priceInfo.physicalVatRate}
+					vatSingleCountry={priceInfo.singleVatCountry}
+					vatCountry={priceInfo.physicalVatCountry}
+					vatCurrency={priceInfo.currency}
 				></CartVat>
 				<CartVat
-					vatAmount={vat.partialDigitalVat}
-					vatRate={vat.digitalVatRate}
-					vatSingleCountry={vat.singleVatCountry}
-					vatCountry={vat.digitalVatCountry}
-					vatCurrency={vat.currency}
+					vatAmount={priceInfo.partialDigitalVat}
+					vatRate={priceInfo.digitalVatRate}
+					vatSingleCountry={priceInfo.singleVatCountry}
+					vatCountry={priceInfo.digitalVatCountry}
+					vatCurrency={priceInfo.currency}
 				></CartVat>
-			{:else if vat.totalVat}
-				{@const country = vat.digitalVatCountry || vat.physicalVatCountry}
+			{:else if priceInfo.totalVat}
+				{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
 				{#if country}
 					<CartVat
-						vatAmount={vat.totalVat}
-						vatRate={vat.digitalVatRate || vat.physicalVatRate}
-						vatSingleCountry={vat.singleVatCountry}
+						vatAmount={priceInfo.totalVat}
+						vatRate={priceInfo.digitalVatRate || priceInfo.physicalVatRate}
+						vatSingleCountry={priceInfo.singleVatCountry}
 						vatCountry={country}
-						vatCurrency={vat.currency}
+						vatCurrency={priceInfo.currency}
 					></CartVat>
 				{/if}
 			{/if}
@@ -230,20 +230,20 @@
 				<h2 class="text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={vat.partialPriceWithVat}
-						currency={vat.currency}
+						amount={priceInfo.partialPriceWithVat}
+						currency={priceInfo.currency}
 						main
 						class="text-[32px]"
 					/>
 					<PriceTag
 						class="text-base"
-						amount={vat.partialPriceWithVat}
-						currency={vat.currency}
+						amount={priceInfo.partialPriceWithVat}
+						currency={priceInfo.currency}
 						secondary
 					/>
 				</div>
 			</div>
-			{#if vat.totalPriceWithVat !== vat.partialPriceWithVat}
+			{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<h2 class="text-[32px]">{t('cart.remaining')}:</h2>
@@ -251,14 +251,14 @@
 					</div>
 					<div class="flex flex-col items-end">
 						<PriceTag
-							amount={vat.totalPriceWithVat - vat.partialPriceWithVat}
+							amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							main
 							class="text-[32px]"
 						/>
 						<PriceTag
 							class="text-base"
-							amount={vat.totalPriceWithVat - vat.partialPriceWithVat}
+							amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							secondary
 						/>

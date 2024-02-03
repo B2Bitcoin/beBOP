@@ -8,7 +8,7 @@
 	import { typedValues } from '$lib/utils/typedValues';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { computeDeliveryFees, computeVatInfo } from '$lib/types/Cart';
+	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
@@ -80,7 +80,7 @@
 	$: items = data.cart || [];
 	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
-	$: vat = computeVatInfo(items, {
+	$: priceInfo = computePriceInfo(items, {
 		bebopCountry: data.vatCountry,
 		vatSingleCountry: data.vatSingleCountry,
 		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
@@ -95,11 +95,13 @@
 	$: isDigital = items.every((item) => !item.product.shipping);
 
 	$: paymentMethods = data.paymentMethods.filter((method) =>
-		method === 'bitcoin' ? toCurrency('SAT', vat.partialPriceWithVat, vat.currency) >= 10_000 : true
+		method === 'bitcoin'
+			? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
+			: true
 	);
 	$: isDiscountValid =
 		(discountType === 'fiat' &&
-			vat.totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
+			priceInfo.totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
 		(discountType === 'percentage' && discountAmount < 100);
 	let showBillingInfo = false;
 </script>
@@ -534,7 +536,7 @@
 					</div>
 				{/if}
 
-				{#if !isDigital && vat.isPhysicalVatExempted}
+				{#if !isDigital && priceInfo.isPhysicalVatExempted}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
@@ -547,32 +549,32 @@
 					</div>
 				{/if}
 
-				{#if vat.physicalVatRate !== vat.digitalVatRate && vat.partialDigitalVat && vat.partialPhysicalVat && vat.physicalVatCountry && vat.digitalVatCountry}
+				{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat && priceInfo.physicalVatCountry && priceInfo.digitalVatCountry}
 					<OrderVat
-						vatAmount={vat.partialPhysicalVat}
-						vatRate={vat.physicalVatRate}
-						vatSingleCountry={vat.singleVatCountry}
-						vatCountry={vat.physicalVatCountry}
-						vatCurrency={vat.currency}
+						vatAmount={priceInfo.partialPhysicalVat}
+						vatRate={priceInfo.physicalVatRate}
+						vatSingleCountry={priceInfo.singleVatCountry}
+						vatCountry={priceInfo.physicalVatCountry}
+						vatCurrency={priceInfo.currency}
 						{isDigital}
 					/>
 					<OrderVat
-						vatAmount={vat.partialDigitalVat}
-						vatRate={vat.digitalVatRate}
-						vatSingleCountry={vat.singleVatCountry}
-						vatCountry={vat.digitalVatCountry}
-						vatCurrency={vat.currency}
+						vatAmount={priceInfo.partialDigitalVat}
+						vatRate={priceInfo.digitalVatRate}
+						vatSingleCountry={priceInfo.singleVatCountry}
+						vatCountry={priceInfo.digitalVatCountry}
+						vatCurrency={priceInfo.currency}
 						{isDigital}
 					></OrderVat>
-				{:else if vat.totalVat}
-					{@const country = vat.digitalVatCountry || vat.physicalVatCountry}
+				{:else if priceInfo.totalVat}
+					{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
 					{#if country}
 						<OrderVat
-							vatAmount={vat.totalVat}
-							vatRate={vat.digitalVatRate || vat.physicalVatRate}
-							vatSingleCountry={vat.singleVatCountry}
+							vatAmount={priceInfo.totalVat}
+							vatRate={priceInfo.digitalVatRate || priceInfo.physicalVatRate}
+							vatSingleCountry={priceInfo.singleVatCountry}
 							vatCountry={country}
-							vatCurrency={vat.currency}
+							vatCurrency={priceInfo.currency}
 							{isDigital}
 						></OrderVat>
 					{/if}
@@ -585,20 +587,20 @@
 						<span class="text-xl">{t('cart.total')}</span>
 						<PriceTag
 							class="text-2xl"
-							amount={vat.partialPriceWithVat}
+							amount={priceInfo.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end"
-						amount={vat.partialPriceWithVat}
+						amount={priceInfo.partialPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
 
-				{#if vat.totalPriceWithVat !== vat.partialPriceWithVat}
+				{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 					<div class="-mx-3 p-3 flex flex-col">
 						<div class="flex justify-between">
 							<span class="text-xl flex gap-1 items-center flex-wrap"
@@ -608,15 +610,15 @@
 							>
 							<PriceTag
 								class="text-2xl"
-								amount={vat.totalPriceWithVat - vat.partialPriceWithVat}
-								currency={vat.currency}
+								amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
+								currency={priceInfo.currency}
 								main
 							/>
 						</div>
 						<PriceTag
 							class="self-end"
-							amount={vat.totalPriceWithVat - vat.partialPriceWithVat}
-							currency={vat.currency}
+							amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
+							currency={priceInfo.currency}
 							secondary
 						/>
 					</div>
@@ -748,7 +750,7 @@
 						</span>
 					</label>
 				{/if}
-				{#if vat.totalPriceWithVat !== vat.partialPriceWithVat}
+				{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"

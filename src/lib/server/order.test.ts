@@ -27,7 +27,7 @@ describe('order', () => {
 						sessionId: 'test-session-id'
 					},
 					shippingAddress: null,
-					vatCountry: 'FR'
+					userVatCountry: 'FR'
 				}
 			);
 
@@ -62,7 +62,7 @@ describe('order', () => {
 						sessionId: 'test-session-id'
 					},
 					shippingAddress: null,
-					vatCountry: 'FR'
+					userVatCountry: 'FR'
 				}
 			);
 
@@ -80,7 +80,7 @@ describe('order', () => {
 						sessionId: 'test-session-id'
 					},
 					shippingAddress: null,
-					vatCountry: 'FR'
+					userVatCountry: 'FR'
 				}
 			);
 
@@ -119,7 +119,7 @@ describe('order', () => {
 						sessionId: 'test-session-id'
 					},
 					shippingAddress: null,
-					vatCountry: 'FR'
+					userVatCountry: 'FR'
 				}
 			);
 
@@ -153,7 +153,7 @@ describe('order', () => {
 					sessionId: 'test-session-id'
 				},
 				shippingAddress: null,
-				vatCountry: 'FR'
+				userVatCountry: 'FR'
 			}
 		);
 
@@ -171,7 +171,7 @@ describe('order', () => {
 					sessionId: 'test-session-id'
 				},
 				shippingAddress: null,
-				vatCountry: 'FR'
+				userVatCountry: 'FR'
 			}
 		);
 
