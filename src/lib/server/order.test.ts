@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { cleanDb } from './test-utils';
 import { collections } from './database';
-import { TEST_PRODUCT, TEST_PRODUCT_UNLIMITED } from './seed/product';
+import { TEST_DIGITAL_PRODUCT, TEST_DIGITAL_PRODUCT_UNLIMITED } from './seed/product';
 import { addOrderPayment, createOrder, lastInvoiceNumber, onOrderPayment } from './orders';
 import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 
 describe('order', () => {
 	beforeEach(async () => {
 		await cleanDb();
-		await collections.products.insertMany([TEST_PRODUCT, TEST_PRODUCT_UNLIMITED]);
+		await collections.products.insertMany([TEST_DIGITAL_PRODUCT, TEST_DIGITAL_PRODUCT_UNLIMITED]);
 	});
 
 	describe('onOrderPaid', () => {
@@ -16,7 +16,7 @@ describe('order', () => {
 			const orderId = await createOrder(
 				[
 					{
-						product: TEST_PRODUCT,
+						product: TEST_DIGITAL_PRODUCT,
 						quantity: 1
 					}
 				],
@@ -51,7 +51,7 @@ describe('order', () => {
 			const order1Id = await createOrder(
 				[
 					{
-						product: TEST_PRODUCT,
+						product: TEST_DIGITAL_PRODUCT,
 						quantity: 1
 					}
 				],
@@ -69,7 +69,7 @@ describe('order', () => {
 			const order2Id = await createOrder(
 				[
 					{
-						product: TEST_PRODUCT,
+						product: TEST_DIGITAL_PRODUCT,
 						quantity: 1
 					}
 				],
@@ -108,7 +108,7 @@ describe('order', () => {
 			const order3Id = await createOrder(
 				[
 					{
-						product: TEST_PRODUCT,
+						product: TEST_DIGITAL_PRODUCT,
 						quantity: 1
 					}
 				],
@@ -141,7 +141,7 @@ describe('order', () => {
 		const order1Id = await createOrder(
 			[
 				{
-					product: TEST_PRODUCT,
+					product: TEST_DIGITAL_PRODUCT,
 					quantity: 1,
 					depositPercentage: 50
 				}
@@ -160,7 +160,7 @@ describe('order', () => {
 		const order2Id = await createOrder(
 			[
 				{
-					product: TEST_PRODUCT,
+					product: TEST_DIGITAL_PRODUCT,
 					quantity: 1
 				}
 			],
