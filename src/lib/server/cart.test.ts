@@ -121,7 +121,7 @@ describe('cart', () => {
 						TEST_DIGITAL_PRODUCT.price.currency
 					)
 				);
-				expect(priceInfo.totalPrice).toBe(priceInfo.totalVat);
+				expect(priceInfo.totalPrice).toBe(priceInfo.totalPriceWithVat);
 				expect(priceInfo.totalVat).toBe(0);
 				expect(priceInfo.partialDigitalVat).toBe(0);
 				expect(priceInfo.partialPhysicalVat).toBe(0);
@@ -167,8 +167,8 @@ describe('cart', () => {
 
 					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
 					expect(priceInfo.totalVat).toBeGreaterThan(0);
-					expect(priceInfo.partialDigitalVat).toBe(0);
-					expect(priceInfo.partialPhysicalVat).toBeGreaterThan(0);
+					expect(priceInfo.partialDigitalVat).toBeGreaterThan(0);
+					expect(priceInfo.partialPhysicalVat).toBe(0);
 					expect(priceInfo.vat.length).toBe(1);
 				});
 
@@ -191,7 +191,7 @@ describe('cart', () => {
 							TEST_PHYSICAL_PRODUCT.price.currency
 						)
 					);
-					expect(priceInfo.totalPrice).toBe(priceInfo.totalVat);
+					expect(priceInfo.totalPrice).toBe(priceInfo.totalPriceWithVat);
 					expect(priceInfo.totalVat).toBe(0);
 					expect(priceInfo.partialDigitalVat).toBe(0);
 					expect(priceInfo.partialPhysicalVat).toBe(0);
