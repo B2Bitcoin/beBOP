@@ -50,10 +50,7 @@ export async function load(params) {
 		sso: locals.sso,
 		userId: locals.user?._id.toString(),
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
-		vatCountry:
-			(runtimeConfig.vatSingleCountry
-				? runtimeConfig.vatCountry
-				: locals.countryCode ?? runtimeConfig.vatCountry) || undefined,
+		vatCountry: runtimeConfig.vatCountry,
 		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
 		currencies: {
 			main: runtimeConfig.mainCurrency,

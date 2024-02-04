@@ -72,7 +72,7 @@ const baseConfig = {
 	vatExempted: false,
 	vatExemptionReason: '',
 	vatSingleCountry: false,
-	vatCountry: '' as CountryAlpha2 | '',
+	vatCountry: 'FR' satisfies CountryAlpha2 as CountryAlpha2,
 	vatNullOutsideSellerCountry: false,
 	collectIPOnDeliverylessOrders: false,
 	isBillingAddressMandatory: false,

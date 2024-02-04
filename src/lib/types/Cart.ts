@@ -147,11 +147,7 @@ export function computePriceInfo(
 			: params.vatSingleCountry
 			? params.bebopCountry
 			: params.userCountry ?? params.bebopCountry;
-	const digitalVatCountry = params.vatExempted
-		? undefined
-		: params.vatSingleCountry
-		? params.bebopCountry
-		: params.userCountry ?? params.bebopCountry;
+	const digitalVatCountry = params.vatExempted ? undefined : params.bebopCountry;
 	const digitalVatRate = vatRate(digitalVatCountry);
 	const physicalVatRate = vatRate(physicalVatCountry);
 
