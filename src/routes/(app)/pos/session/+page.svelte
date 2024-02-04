@@ -16,6 +16,8 @@
 		close?: () => void;
 	}
 
+	const ORDER_CLEAR_TIMEOUT = 5_000;
+
 	let eventSourceInstance: CustomEventSource | void | null = null;
 	export let data;
 	let cart = data.cart;
@@ -23,11 +25,11 @@
 
 	$: view = cart && cart.length > 0 ? 'updateCart' : order ? order.status : 'welcome';
 
-	setTimeout(() => {
+	let currentTimeout = setTimeout(() => {
 		if (order === data.order && order?.status !== 'pending') {
 			order = null;
 		}
-	}, 5_000);
+	}, ORDER_CLEAR_TIMEOUT);
 
 	async function subscribeToServerEvents() {
 		eventSourceInstance = await fetchEventSource(`/pos/session/sse`, {
@@ -39,11 +41,12 @@
 							cart = sseCart;
 						} else if (eventType === 'order') {
 							order = sseOrder;
-							setTimeout(() => {
+							clearTimeout(currentTimeout);
+							currentTimeout = setTimeout(() => {
 								if (order === sseOrder && order?.status !== 'pending') {
 									order = null;
 								}
-							}, 5_000);
+							}, ORDER_CLEAR_TIMEOUT);
 						}
 					} catch (err) {
 						console.error('=> SSE Error:', err);
