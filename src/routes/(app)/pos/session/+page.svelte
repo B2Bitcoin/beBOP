@@ -175,6 +175,7 @@
 		<div class="flex justify-between flex-col p-2 gap-2 bg-gray-300 fixed left-0 right-0 bottom-0">
 			{#if order.payments.length > 1 || order.payments[0].price.amount !== order.totalPrice.amount}
 				{@const payment = order.payments.find((p) => p.status === 'pending')}
+				{@const remainingAmount = orderAmountWithNoPaymentsCreated(order)}
 				{#if payment}
 					<div class="flex justify-between">
 						<h3 class="text-gray-800 text-[28px]">{t('pos.pendingPayment')}:</h3>
@@ -193,8 +194,8 @@
 							/>
 						</div>
 					</div>
-				{:else}
-					{@const remainingAmount = orderAmountWithNoPaymentsCreated(order)}
+				{/if}
+				{#if remainingAmount > 0}
 					<div class="flex justify-between">
 						<h3 class="text-gray-800 text-[28px]">{t('order.restToPay')}:</h3>
 						<div class="flex flex-col items-end">
