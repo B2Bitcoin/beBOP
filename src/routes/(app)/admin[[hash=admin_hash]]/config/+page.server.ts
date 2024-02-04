@@ -28,7 +28,9 @@ export async function load(event) {
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
-		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
+		// Repeat because the one in layout.server.ts is a computed value depending on other params
+		vatCountry: runtimeConfig.vatCountry
 	};
 }
 

@@ -204,7 +204,7 @@
 				/>
 				Make VAT = 0% for deliveries outside seller's country
 			</label>
-			{#if vatSingleCountry}
+			{#if vatSingleCountry || data.vatNullOutsideSellerCountry}
 				<label class="form-label">
 					Seller's country for VAT purposes
 					<select name="vatCountry" class="form-input">
