@@ -10,6 +10,7 @@
 	export let vatRate: number;
 	export let vatCountry: CountryAlpha2;
 	export let vatSingleCountry: boolean;
+	export let isDigital: boolean;
 
 	const { t, countryName } = useI18n();
 </script>
@@ -19,7 +20,7 @@
 		<h2 class="text-gray-800 text-[28px]">Vat ({vatRate}%):</h2>
 		<p class="text-sm text-gray-600">
 			{t('cart.vatRate', { country: countryName(vatCountry) })}.
-			{#if vatSingleCountry}
+			{#if vatSingleCountry || isDigital}
 				{t('cart.vatSellerCountry')}
 			{:else}
 				<Trans key="cart.vatIpCountry">

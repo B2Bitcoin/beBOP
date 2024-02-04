@@ -503,6 +503,7 @@
 		"order": {
 			"satReceived": "reçu"
 		},
+		"pendingPayment": "Paiement en cours",
 		"session": {
 			"waitingPaymentConfirmation": "En attente de confirmation",
 			"welcomeMessage": "Nous sommes heureux de vous voir",

@@ -88,7 +88,7 @@
 		}
 	});
 
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 </script>
 
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
@@ -96,6 +96,7 @@
 		{#if cart.length}
 			<div class="overflow-auto h-[90vh]">
 				{#each cart as item}
+					{@const price = item.customPrice || item.product.price}
 					<div class="flex items-center justify-between w-full">
 						<div class="flex flex-col">
 							<h2 class="text-sm text-gray-850">{item.quantity} x {item.product.name}</h2>
@@ -113,47 +114,40 @@
 						</div>
 
 						<div class="flex flex-col items-end justify-center">
-							{#if item.product.type !== 'subscription' && item.customPrice}
-								<PriceTag
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									main
-									class="text-2xl text-gray-800 truncate"
-								/>
-								<PriceTag
-									class="text-base text-gray-600 truncate"
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									secondary
-								/>
-							{:else}
-								<PriceTag
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									main
-									class="text-2xl text-gray-800 truncate"
-								/>
-								<PriceTag
-									class="text-base text-gray-600 truncate"
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									secondary
-								/>
-							{/if}
+							<PriceTag
+								amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
+								currency={price.currency}
+								main
+								class="text-2xl text-gray-800 truncate"
+								>{item.depositPercentage
+									? `(${(item.depositPercentage / 100).toLocaleString($locale, {
+											style: 'percent'
+									  })})`
+									: ''}</PriceTag
+							>
+							<PriceTag
+								class="text-base text-gray-600 truncate"
+								amount={(item.quantity *
+									item.product.price.amount *
+									(item.depositPercentage ?? 100)) /
+									100}
+								currency={price.currency}
+								secondary
+							/>
 						</div>
 					</div>
-
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
 		{/if}
 	{:else if view === 'pending'}
-		{#if order?.payments[0]?.method === 'point-of-sale'}
+		{@const payment = order?.payments?.find((p) => p.status === 'pending')}
+		{#if payment?.method === 'point-of-sale'}
 			<div class="text-2xl text-center">{t('pos.session.waitingPaymentConfirmation')}</div>
 		{:else}
 			<div class="flex flex-col items-center gap-3">
 				<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
-				<img src="/order/{order?._id}/payment/{order?.payments[0]?.id}/qrcode" alt="QR code" />
+				<img src="/order/{order?._id}/payment/{payment?.id}/qrcode" alt="QR code" />
 			</div>
 		{/if}
 	{:else if view === 'canceled'}
@@ -175,6 +169,26 @@
 
 	{#if order && view === 'pending'}
 		<div class="flex justify-between flex-col p-2 gap-2 bg-gray-300 fixed left-0 right-0 bottom-0">
+			{#if order.payments.length > 1 || order.payments[0].price.amount !== order.totalPrice.amount}
+				{@const payment = order.payments.find((p) => p.status === 'pending')}
+				<div class="flex justify-between">
+					<h3 class="text-gray-800 text-[28px]">{t('pos.pendingPayment')}:</h3>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							amount={payment?.price.amount || 0}
+							currency={payment?.price.currency || UNDERLYING_CURRENCY}
+							main
+							class="text-[28px] text-gray-800"
+						/>
+						<PriceTag
+							class="text-base text-gray-600"
+							amount={payment?.price.amount || 0}
+							currency={UNDERLYING_CURRENCY}
+							secondary
+						/>
+					</div>
+				</div>
+			{/if}
 			<div class="flex justify-between">
 				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
@@ -202,6 +216,7 @@
 					vatSingleCountry={priceInfo.singleVatCountry}
 					vatCountry={priceInfo.physicalVatCountry}
 					vatCurrency={priceInfo.currency}
+					isDigital={false}
 				></PosVat>
 				<PosVat
 					vatAmount={priceInfo.partialDigitalVat}
@@ -209,6 +224,7 @@
 					vatSingleCountry={priceInfo.singleVatCountry}
 					vatCountry={priceInfo.digitalVatCountry}
 					vatCurrency={priceInfo.currency}
+					isDigital={true}
 				></PosVat>
 			{:else if priceInfo.totalVat}
 				{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
@@ -219,6 +235,7 @@
 						vatSingleCountry={priceInfo.singleVatCountry}
 						vatCountry={country}
 						vatCurrency={priceInfo.currency}
+						isDigital={priceInfo.partialPhysicalVat === 0}
 					></PosVat>
 				{/if}
 			{/if}
@@ -227,14 +244,14 @@
 				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={priceInfo.totalPriceWithVat}
+						amount={priceInfo.partialPriceWithVat}
 						currency={priceInfo.currency}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
-						amount={priceInfo.totalPriceWithVat}
+						amount={priceInfo.partialPriceWithVat}
 						currency={priceInfo.currency}
 						secondary
 					/>
