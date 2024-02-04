@@ -136,8 +136,10 @@ export function formatOrder(order: Order) {
 			id: payment._id.toString(),
 			price: payment.currencySnapshot.main.price,
 			status: payment.status,
-			method: payment.method
+			method: payment.method,
+			currencySnapshot: payment.currencySnapshot
 		})),
+		currencySnapshot: order.currencySnapshot,
 		status: order.status,
 		vat: order.vat,
 		totalPrice: order.currencySnapshot.main.totalPrice

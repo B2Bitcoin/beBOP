@@ -8,6 +8,7 @@
 	import { useI18n } from '$lib/i18n';
 	import { computePriceInfo } from '$lib/types/Cart.js';
 	import PosVat from '$lib/components/PosVat.svelte';
+	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order.js';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -144,7 +145,7 @@
 		{@const payment = order?.payments?.find((p) => p.status === 'pending')}
 		{#if payment?.method === 'point-of-sale'}
 			<div class="text-2xl text-center">{t('pos.session.waitingPaymentConfirmation')}</div>
-		{:else}
+		{:else if payment}
 			<div class="flex flex-col items-center gap-3">
 				<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
 				<img src="/order/{order?._id}/payment/{payment?.id}/qrcode" alt="QR code" />
@@ -171,23 +172,44 @@
 		<div class="flex justify-between flex-col p-2 gap-2 bg-gray-300 fixed left-0 right-0 bottom-0">
 			{#if order.payments.length > 1 || order.payments[0].price.amount !== order.totalPrice.amount}
 				{@const payment = order.payments.find((p) => p.status === 'pending')}
-				<div class="flex justify-between">
-					<h3 class="text-gray-800 text-[28px]">{t('pos.pendingPayment')}:</h3>
-					<div class="flex flex-col items-end">
-						<PriceTag
-							amount={payment?.price.amount || 0}
-							currency={payment?.price.currency || UNDERLYING_CURRENCY}
-							main
-							class="text-[28px] text-gray-800"
-						/>
-						<PriceTag
-							class="text-base text-gray-600"
-							amount={payment?.price.amount || 0}
-							currency={UNDERLYING_CURRENCY}
-							secondary
-						/>
+				{#if payment}
+					<div class="flex justify-between">
+						<h3 class="text-gray-800 text-[28px]">{t('pos.pendingPayment')}:</h3>
+						<div class="flex flex-col items-end">
+							<PriceTag
+								amount={payment?.price.amount || 0}
+								currency={payment?.price.currency || UNDERLYING_CURRENCY}
+								main
+								class="text-[28px] text-gray-800"
+							/>
+							<PriceTag
+								class="text-base text-gray-600"
+								amount={payment?.price.amount || 0}
+								currency={UNDERLYING_CURRENCY}
+								secondary
+							/>
+						</div>
 					</div>
-				</div>
+				{:else}
+					{@const remainingAmount = orderAmountWithNoPaymentsCreated(order)}
+					<div class="flex justify-between">
+						<h3 class="text-gray-800 text-[28px]">{t('order.restToPay')}:</h3>
+						<div class="flex flex-col items-end">
+							<PriceTag
+								amount={remainingAmount}
+								currency={order.totalPrice.currency}
+								main
+								class="text-[28px] text-gray-800"
+							/>
+							<PriceTag
+								class="text-base text-gray-600"
+								amount={remainingAmount}
+								currency={order.totalPrice.currency}
+								secondary
+							/>
+						</div>
+					</div>
+				{/if}
 			{/if}
 			<div class="flex justify-between">
 				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>

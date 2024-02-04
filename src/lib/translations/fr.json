@@ -507,7 +507,7 @@
 		"session": {
 			"waitingPaymentConfirmation": "En attente de confirmation",
 			"welcomeMessage": "Nous sommes heureux de vous voir",
-			"welcomeTitle": "Accueillir"
+			"welcomeTitle": "Bienvenue"
 		},
 		"sessionLink": "Session point de vente",
 		"vatFree": "Il s'agit d'une commande sans TVA (<0>conditions</0>)",
