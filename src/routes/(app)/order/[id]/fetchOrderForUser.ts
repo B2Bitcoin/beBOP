@@ -87,6 +87,7 @@ export async function fetchOrderForUser(orderId: string) {
 				availableDate: item.product.availableDate,
 				shipping: item.product.shipping
 			},
+			vatRate: item.vatRate,
 			...(item.customPrice && { customPrice: item.customPrice }),
 			picture: pictures.find((picture) => picture.productId === item.product._id),
 			digitalFiles: digitalFiles.filter(
@@ -100,14 +101,14 @@ export async function fetchOrderForUser(orderId: string) {
 			currency: order.shippingPrice.currency
 		},
 		sellerIdentity: order.sellerIdentity,
-		vat: order.vat && {
-			country: order.vat.country,
+		vat: order.vat?.map((item) => ({
+			country: item.country,
 			price: {
-				amount: order.vat.price.amount,
-				currency: order.vat.price.currency
+				amount: item.price.amount,
+				currency: item.price.currency
 			},
-			rate: order.vat.rate
-		},
+			rate: item.rate
+		})),
 		shippingAddress: order.shippingAddress,
 		billingAddress: order.billingAddress,
 		notifications: order.notifications,

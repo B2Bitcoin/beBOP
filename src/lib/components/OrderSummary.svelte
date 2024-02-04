@@ -13,7 +13,7 @@
 	import ProductType from './ProductType.svelte';
 	import IconInfo from './icons/IconInfo.svelte';
 
-	const { t } = useI18n();
+	const { t, countryName } = useI18n();
 
 	let classNames = '';
 	export { classNames as class };
@@ -129,11 +129,11 @@
 		<div class="border-b border-gray-300 col-span-4" />
 	{/if}
 
-	{#if order.vat}
+	{#each order.vat || [] as vat, i}
 		<div class="flex justify-between items-center">
 			<h3 class="text-base flex items-center gap-2">
-				{t('cart.vat')} ({order.vat.rate}%)
-				<div title="VAT rate for {order.vat.country}">
+				{t('cart.vat')} ({vat.rate}%)
+				<div title={t('cart.vatRate', { country: countryName(vat.country) })}>
 					<IconInfo class="cursor-pointer" />
 				</div>
 			</h3>
@@ -142,21 +142,21 @@
 				{#if order.currencySnapshot.main.vat}
 					<PriceTag
 						class="text-2xl truncate"
-						amount={order.currencySnapshot.main.vat.amount}
-						currency={order.currencySnapshot.main.vat.currency}
+						amount={order.currencySnapshot.main.vat[i].amount}
+						currency={order.currencySnapshot.main.vat[i].currency}
 					/>
 				{/if}
 				{#if order.currencySnapshot.secondary?.vat}
 					<PriceTag
-						amount={order.currencySnapshot.secondary.vat.amount}
-						currency={order.currencySnapshot.secondary.vat.currency}
+						amount={order.currencySnapshot.secondary.vat[i].amount}
+						currency={order.currencySnapshot.secondary.vat[i].currency}
 						class="text-base truncate"
 					/>
 				{/if}
 			</div>
 		</div>
 		<div class="border-b border-gray-300 col-span-4" />
-	{/if}
+	{/each}
 
 	{#if order?.discount}
 		<div class="flex justify-between items-center">
