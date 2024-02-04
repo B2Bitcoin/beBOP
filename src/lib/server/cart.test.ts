@@ -148,6 +148,8 @@ describe('cart', () => {
 					expect(priceInfo.partialDigitalVat).toBe(0);
 					expect(priceInfo.partialPhysicalVat).toBeGreaterThan(0);
 					expect(priceInfo.vat.length).toBe(1);
+					expect(priceInfo.vat[1].price.amount).toBe(priceInfo.totalVat);
+					expect(priceInfo.vat[1].price.amount).toBe(priceInfo.partialPhysicalVat);
 				});
 			});
 
