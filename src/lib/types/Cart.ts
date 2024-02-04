@@ -245,10 +245,7 @@ export function computePriceInfo(
 			.map((item) => ({
 				currency: (item.customPrice || item.product.price).currency,
 				amount:
-					(item.customPrice || item.product.price).amount *
-					item.quantity *
-					(item.depositPercentage ?? 100) *
-					(physicalVatRate / 100)
+					(item.customPrice || item.product.price).amount * item.quantity * (physicalVatRate / 100)
 			})),
 		{
 			amount: (params.deliveryFees.amount * physicalVatRate) / 100,
