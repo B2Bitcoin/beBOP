@@ -1,0 +1,36 @@
+name: Lint and test
+on:
+  pull_request:
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          diff_relative: true
+          files: |
+            **/*.ts
+            **/*.svelte
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.3.1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: |
+          pnpm install --frozen-lockfile
+      - name: 'Test'
+        run: |
+          pnpm run test:unit
