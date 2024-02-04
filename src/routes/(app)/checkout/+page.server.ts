@@ -248,7 +248,9 @@ export const actions = {
 			throw error(400, 'You must allow the collection of your IP address');
 		}
 		const vatCountry =
-			shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry;
+			shippingInfo?.shipping?.country ??
+			locals.countryCode ??
+			(runtimeConfig.vatCountry || undefined);
 		if (
 			!agreements.isVATNullForeigner &&
 			runtimeConfig.vatNullOutsideSellerCountry &&
@@ -301,7 +303,7 @@ export const actions = {
 				cart,
 				shippingAddress: shippingInfo?.shipping,
 				billingAddress: billingInfo?.billing || shippingInfo?.shipping,
-				vatCountry: vatCountry,
+				userVatCountry: vatCountry,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { rootDir } from './root-dir';
 import ipModule from 'ip';
+import { isAlpha2CountryCode, type CountryAlpha2 } from '$lib/types/Country';
 
 const ipv4s: { start: bigint; end: bigint; country: string }[] = [];
 const ipv6s: { start: bigint; end: bigint; country: string }[] = [];
@@ -73,9 +74,9 @@ function ipToInt(ip: string): { type: 'v4' | 'v6'; value: number | bigint } {
 	};
 }
 
-const cache = new Map<string, string>();
+const cache = new Map<string, CountryAlpha2 | undefined>();
 
-export function countryFromIp(ip: string): string {
+export function countryFromIp(ip: string): CountryAlpha2 | undefined {
 	if (ip === '::1' || ip === '127.0.0.1') {
 		return 'FR';
 	}
@@ -101,10 +102,8 @@ export function countryFromIp(ip: string): string {
 		const mid = Math.floor((left + right) / 2);
 
 		if (value >= array[mid].start && value <= array[mid].end) {
-			let result = array[mid].country;
-			if (result === '-') {
-				result = '';
-			}
+			const tmp = array[mid].country;
+			const result = isAlpha2CountryCode(tmp) ? tmp : undefined;
 			cache.set(ip, result);
 			if (cache.size > 10_000) {
 				// This deletes the oldest entry
@@ -121,6 +120,5 @@ export function countryFromIp(ip: string): string {
 		}
 	}
 
-	cache.set(ip, '');
-	return '';
+	cache.set(ip, undefined);
 }

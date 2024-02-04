@@ -19,7 +19,7 @@ import { lndCreateInvoice } from './lightning';
 import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
-import { computeDeliveryFees, type Cart } from '$lib/types/Cart';
+import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
 import { MININUM_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
@@ -31,7 +31,7 @@ import { toCurrency } from '$lib/utils/toCurrency';
 import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import type { PaymentMethod } from './payment-methods';
-import { vatRate } from '$lib/types/Country';
+import type { CountryAlpha2 } from '$lib/types/Country';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { LanguageKey } from '$lib/translations';
 
@@ -430,7 +430,7 @@ export async function createOrder(
 		 * Also, allows using the stock reserved by the cart
 		 */
 		cart?: WithId<Cart>;
-		vatCountry: string;
+		userVatCountry: CountryAlpha2 | undefined;
 		shippingAddress: Order['shippingAddress'] | null;
 		billingAddress?: Order['billingAddress'] | null;
 		reasonFreeVat?: string;
@@ -502,73 +502,21 @@ export async function createOrder(
 		}
 	}
 
-	const shippingSatoshis = toSatoshis(shippingPrice.amount, shippingPrice.currency);
-	let totalSatoshis = shippingSatoshis;
-	let partialSatoshis = shippingSatoshis;
+	const discountInfo =
+		params.user.userRoleId === POS_ROLE_ID && params?.discount?.amount ? params.discount : null;
 
-	const itemPrices = items.map((item) => {
-		const quantity = item.quantity;
-		const price =
-			item.product.type !== 'subscription' && item.customPrice
-				? item.customPrice || item.product.price
-				: item.product.price;
-
-		return { amount: price.amount * quantity, currency: price.currency };
+	const priceInfo = computePriceInfo(items, {
+		deliveryFees: shippingPrice,
+		vatExempted: runtimeConfig.vatExempted,
+		userCountry: params.userVatCountry,
+		bebopCountry: runtimeConfig.vatCountry || undefined,
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
+		vatSingleCountry: runtimeConfig.vatSingleCountry,
+		discount: discountInfo
 	});
 
-	totalSatoshis += sumCurrency('SAT', itemPrices);
-
-	const partialItemPrices = items.map((item) => {
-		const quantity = item.quantity;
-		const price =
-			item.product.type !== 'subscription' && item.customPrice
-				? item.customPrice || item.product.price
-				: item.product.price;
-
-		return {
-			amount: (price.amount * quantity * (item.depositPercentage ?? 100)) / 100,
-			currency: price.currency
-		};
-	});
-
-	partialSatoshis += sumCurrency('SAT', partialItemPrices);
-
-	const vatCountry =
-		runtimeConfig.vatNullOutsideSellerCountry && runtimeConfig.vatCountry !== params.vatCountry
-			? 0
-			: runtimeConfig.vatSingleCountry
-			? runtimeConfig.vatCountry
-			: params.vatCountry;
-
-	const vat: Order['vat'] =
-		!vatCountry || runtimeConfig.vatExempted || params.reasonFreeVat
-			? undefined
-			: {
-					country: vatCountry,
-					price: {
-						amount: fixCurrencyRounding(totalSatoshis * (vatRate(vatCountry) / 100), 'SAT'),
-						currency: 'SAT'
-					},
-					rate: vatRate(vatCountry)
-			  };
-	const partialVat: Order['vat'] =
-		!vatCountry || runtimeConfig.vatExempted || params.reasonFreeVat
-			? undefined
-			: {
-					country: vatCountry,
-					price: {
-						amount: fixCurrencyRounding(partialSatoshis * (vatRate(vatCountry) / 100), 'SAT'),
-						currency: 'SAT'
-					},
-					rate: vatRate(vatCountry)
-			  };
-
-	if (vat) {
-		totalSatoshis += vat.price.amount;
-	}
-	if (partialVat) {
-		partialSatoshis += partialVat.price.amount;
-	}
+	const totalSatoshis = toSatoshis(priceInfo.totalPriceWithVat, priceInfo.currency);
+	const partialSatoshis = toSatoshis(priceInfo.partialPriceWithVat, priceInfo.currency);
 
 	const orderNumber = await generateOrderNumber();
 	const orderId = crypto.randomUUID();
@@ -577,17 +525,11 @@ export async function createOrder(
 		currency: Currency;
 		amount: number;
 	} | null = null;
-	let amount = 0;
-	if (params.user.userRoleId === POS_ROLE_ID && params?.discount?.amount) {
-		if (params.discount.type === 'fiat') {
-			amount = toSatoshis(params.discount.amount, runtimeConfig.mainCurrency);
-		} else if (params.discount.type === 'percentage') {
-			amount = fixCurrencyRounding(totalSatoshis * (params.discount.amount / 100), 'SAT');
-		}
-
-		if (amount > totalSatoshis) {
-			amount = totalSatoshis;
-		}
+	if (priceInfo.discount && params.discount && params.user.userRoleId === POS_ROLE_ID) {
+		discount = {
+			currency: params.discount.type === 'fiat' ? runtimeConfig.mainCurrency : 'SAT',
+			amount: params.discount.type === 'fiat' ? params?.discount?.amount : priceInfo.discount
+		};
 
 		await collections.emailNotifications.insertOne({
 			_id: new ObjectId(),
@@ -596,7 +538,11 @@ export async function createOrder(
 			subject: 'NEW DISCOUNT',
 			htmlContent: `A discount of ${params?.discount?.amount}${
 				params.discount.type === 'fiat' ? runtimeConfig.mainCurrency : '%'
-			} (${amount} SAT) has been applied to the <a href="${ORIGIN}/order/${orderId}">order ${orderNumber}</a> (${toCurrency(
+			} (${toCurrency(
+				'SAT',
+				priceInfo.discount,
+				priceInfo.currency
+			)} SAT) has been applied to the <a href="${ORIGIN}/order/${orderId}">order ${orderNumber}</a> (${toCurrency(
 				runtimeConfig.mainCurrency,
 				totalSatoshis,
 				'SAT'
@@ -605,13 +551,6 @@ export async function createOrder(
 			}. Justification: ${params?.discount?.justification ?? '-'} `,
 			dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
 		});
-
-		discount = {
-			currency: params.discount.type === 'fiat' ? runtimeConfig.mainCurrency : 'SAT',
-			amount: params.discount.type === 'fiat' ? params?.discount?.amount : amount
-		};
-		partialSatoshis -= (amount * partialSatoshis) / totalSatoshis;
-		totalSatoshis -= amount;
 	}
 
 	const subscriptions = items.filter((item) => item.product.type === 'subscription');
@@ -685,11 +624,12 @@ export async function createOrder(
 				updatedAt: new Date(),
 				status: 'pending',
 				sellerIdentity: runtimeConfig.sellerIdentity,
-				items: items.map((item) => ({
+				items: items.map((item, i) => ({
 					quantity: item.quantity,
 					product: item.product,
 					customPrice: item.customPrice,
 					depositPercentage: item.depositPercentage,
+					vatRate: priceInfo.vatRates[i],
 					currencySnapshot: {
 						main: {
 							price: {
@@ -757,7 +697,7 @@ export async function createOrder(
 				})),
 				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
 				...(billingAddress && { billingAddress: billingAddress }),
-				...(vat && { vat }),
+				...(priceInfo.vat.length && { vat: priceInfo.vat }),
 				...(shippingPrice
 					? {
 							shippingPrice
@@ -846,15 +786,11 @@ export async function createOrder(
 								currency: runtimeConfig.mainCurrency
 							}
 						}),
-						...(vat && {
-							vat: {
-								amount: toCurrency(
-									runtimeConfig.mainCurrency,
-									vat.price.amount,
-									vat.price.currency
-								),
+						...(priceInfo.totalVat && {
+							vat: priceInfo.vat.map(({ price }) => ({
+								amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
 								currency: runtimeConfig.mainCurrency
-							}
+							}))
 						}),
 						...(discount && {
 							discount: {
@@ -879,15 +815,17 @@ export async function createOrder(
 									currency: runtimeConfig.secondaryCurrency
 								}
 							}),
-							...(vat && {
-								vat: {
+							...(priceInfo.totalVat && {
+								vat: priceInfo.vat.map(({ price }) => ({
 									amount: toCurrency(
-										runtimeConfig.secondaryCurrency,
-										vat.price.amount,
-										vat.price.currency
+										// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+										runtimeConfig.secondaryCurrency!,
+										price.amount,
+										price.currency
 									),
-									currency: runtimeConfig.secondaryCurrency
-								}
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									currency: runtimeConfig.secondaryCurrency!
+								}))
 							}),
 							...(discount && {
 								discount: {
@@ -916,15 +854,15 @@ export async function createOrder(
 								currency: runtimeConfig.priceReferenceCurrency
 							}
 						}),
-						...(vat && {
-							vat: {
+						...(priceInfo.totalVat && {
+							vat: priceInfo.vat.map(({ price }) => ({
 								amount: toCurrency(
 									runtimeConfig.priceReferenceCurrency,
-									vat.price.amount,
-									vat.price.currency
+									price.amount,
+									price.currency
 								),
 								currency: runtimeConfig.priceReferenceCurrency
-							}
+							}))
 						}),
 						...(discount && {
 							discount: {
