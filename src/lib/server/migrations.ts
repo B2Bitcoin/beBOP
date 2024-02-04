@@ -323,7 +323,7 @@ const migrations = [
 										$mergeObjects: [
 											'$$item',
 											{
-												vatRate: ['$vat.rate']
+												vatRate: '$vat.rate'
 											}
 										]
 									}
