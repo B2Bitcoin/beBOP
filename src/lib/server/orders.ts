@@ -205,7 +205,8 @@ export async function onOrderPayment(
 						currency:
 							order.currencySnapshot.priceReference.totalReceived?.currency ??
 							runtimeConfig.priceReferenceCurrency
-					}
+					},
+					updatedAt: new Date()
 				}
 			},
 			{ session, returnDocument: 'after' }

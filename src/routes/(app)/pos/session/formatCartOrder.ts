@@ -38,6 +38,7 @@ type FormattedCartItem = {
 		amount: number;
 		currency: Currency;
 	};
+	depositPercentage?: number;
 };
 
 export async function formatCart(
@@ -114,6 +115,7 @@ export async function formatCart(
 						picture: pictureByProductId[item.productId] || null,
 						digitalFiles: digitalFilesByProductId[item.productId] || [],
 						quantity: item.quantity,
+						depositPercentage: item.depositPercentage,
 						...(item.customPrice && { customPrice: item.customPrice })
 					};
 				})
@@ -132,10 +134,12 @@ export function formatOrder(order: Order) {
 		number: order.number,
 		payments: order.payments.map((payment) => ({
 			id: payment._id.toString(),
-			price: payment.price,
+			price: payment.currencySnapshot.main.price,
 			status: payment.status,
-			method: payment.method
+			method: payment.method,
+			currencySnapshot: payment.currencySnapshot
 		})),
+		currencySnapshot: order.currencySnapshot,
 		status: order.status,
 		vat: order.vat,
 		totalPrice: order.currencySnapshot.main.totalPrice
