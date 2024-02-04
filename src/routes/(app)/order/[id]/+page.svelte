@@ -46,7 +46,7 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
 	<div
-		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
+		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid flex md:grid-cols-3 sm:flex-wrap gap-2"
 	>
 		<div class="col-span-2 flex flex-col gap-2">
 			<h1 class="text-3xl body-title">{t('order.singleTitle', { number: data.order.number })}</h1>

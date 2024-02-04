@@ -211,15 +211,18 @@ export function orderAmountWithNoPaymentsCreated(
 		payments: Pick<OrderPayment, 'currencySnapshot' | 'status'>[];
 	}
 ): number {
-	return (
-		order.currencySnapshot.main.totalPrice.amount -
-		sumCurrency(
-			order.currencySnapshot.main.totalPrice.currency,
-			order.payments
-				.filter((payment) => payment.status === 'pending' || payment.status === 'paid')
-				.map((payment) => payment.currencySnapshot.main.price)
-		)
-	);
+	return sumCurrency(order.currencySnapshot.main.totalPrice.currency, [
+		{
+			amount: order.currencySnapshot.main.totalPrice.amount,
+			currency: order.currencySnapshot.main.totalPrice.currency
+		},
+		...order.payments
+			.filter((payment) => payment.status === 'pending' || payment.status === 'paid')
+			.map((payment) => ({
+				amount: -payment.currencySnapshot.main.price.amount,
+				currency: payment.currencySnapshot.main.price.currency
+			}))
+	]);
 }
 
 export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
