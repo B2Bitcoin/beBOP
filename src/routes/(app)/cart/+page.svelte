@@ -54,7 +54,7 @@
 				class="grid gap-x-4 gap-y-6 overflow-hidden"
 				style="grid-template-columns: auto 1fr auto auto"
 			>
-				{#each items as item}
+				{#each items as item, i}
 					{@const price = item.customPrice || item.product.price}
 					<form
 						method="POST"
@@ -150,7 +150,7 @@
 								currency={price.currency}
 								secondary
 							/>
-							<span class="font-semibold">{t('product.vatExcluded')}</span>
+							<span class="font-semibold">{t('cart.vat')} {priceInfo.vatRates[i]}%</span>
 						</div>
 					</form>
 
@@ -206,6 +206,7 @@
 					vatSingleCountry={priceInfo.singleVatCountry}
 					vatCountry={priceInfo.physicalVatCountry}
 					vatCurrency={priceInfo.currency}
+					isDigital={false}
 				></CartVat>
 				<CartVat
 					vatAmount={priceInfo.partialDigitalVat}
@@ -213,16 +214,18 @@
 					vatSingleCountry={priceInfo.singleVatCountry}
 					vatCountry={priceInfo.digitalVatCountry}
 					vatCurrency={priceInfo.currency}
+					isDigital={true}
 				></CartVat>
-			{:else if priceInfo.totalVat}
+			{:else if priceInfo.partialVat}
 				{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
 				{#if country}
 					<CartVat
-						vatAmount={priceInfo.totalVat}
+						vatAmount={priceInfo.partialVat}
 						vatRate={priceInfo.digitalVatRate || priceInfo.physicalVatRate}
 						vatSingleCountry={priceInfo.singleVatCountry}
 						vatCountry={country}
 						vatCurrency={priceInfo.currency}
+						isDigital={priceInfo.partialPhysicalVat === 0}
 					></CartVat>
 				{/if}
 			{/if}

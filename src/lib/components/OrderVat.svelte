@@ -22,11 +22,9 @@
 			<div
 				title="{t('cart.vatRate', {
 					country: countryName(vatCountry)
-				})}. {vatSingleCountry
+				})}. {vatSingleCountry || isDigital
 					? t('cart.vatSellerCountry')
-					: isDigital
-					? `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`
-					: t('checkout.vatShippingAddress')}"
+					: `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`}"
 			>
 				<IconInfo class="cursor-pointer" />
 			</div>

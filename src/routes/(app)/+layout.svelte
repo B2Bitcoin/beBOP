@@ -355,7 +355,10 @@
 									{/if}
 									{#if items.some((item) => item.product.shipping) && priceInfo.isPhysicalVatExempted}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vatNullOutsideSellerCountry')}
+											{t('product.vatExcluded')}
+											<div title={t('cart.vatNullOutsideSellerCountry')}>
+												<IconInfo class="cursor-pointer" />
+											</div>
 										</div>
 									{/if}
 									{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat}

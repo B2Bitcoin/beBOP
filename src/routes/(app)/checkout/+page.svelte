@@ -556,7 +556,7 @@
 						vatSingleCountry={priceInfo.singleVatCountry}
 						vatCountry={priceInfo.physicalVatCountry}
 						vatCurrency={priceInfo.currency}
-						{isDigital}
+						isDigital={false}
 					/>
 					<OrderVat
 						vatAmount={priceInfo.partialDigitalVat}
@@ -564,18 +564,18 @@
 						vatSingleCountry={priceInfo.singleVatCountry}
 						vatCountry={priceInfo.digitalVatCountry}
 						vatCurrency={priceInfo.currency}
-						{isDigital}
+						isDigital={true}
 					></OrderVat>
-				{:else if priceInfo.totalVat}
+				{:else if priceInfo.partialVat}
 					{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
 					{#if country}
 						<OrderVat
-							vatAmount={priceInfo.totalVat}
+							vatAmount={priceInfo.partialVat}
 							vatRate={priceInfo.digitalVatRate || priceInfo.physicalVatRate}
 							vatSingleCountry={priceInfo.singleVatCountry}
 							vatCountry={country}
 							vatCurrency={priceInfo.currency}
-							{isDigital}
+							isDigital={isDigital || priceInfo.isPhysicalVatExempted}
 						></OrderVat>
 					{/if}
 				{/if}
