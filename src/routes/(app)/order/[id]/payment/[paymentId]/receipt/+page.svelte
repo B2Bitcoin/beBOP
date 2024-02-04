@@ -17,7 +17,7 @@
 
 	const totalVat = {
 		currency: data.order.currencySnapshot.main.totalPrice.currency,
-		amount: sum(data.order.vat?.map((vat) => vat.price.amount) ?? [0])
+		amount: sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0])
 	};
 </script>
 
@@ -124,6 +124,18 @@
 			/>
 		</td>
 	</tr>
+	{#if data.order.shippingPrice && data.order.currencySnapshot.main.shippingPrice}
+		<tr style:background-color="#e7e6e6">
+			<td class="border border-white px-2 text-right">{t('checkout.deliveryFees')}</td>
+			<td class="border border-white px-2 text-right whitespace-nowrap">
+				<PriceTag
+					amount={data.order.currencySnapshot.main.shippingPrice.amount}
+					currency={data.order.currencySnapshot.main.shippingPrice.currency}
+					inline
+				/>
+			</td>
+		</tr>
+	{/if}
 	<tr style:background-color="#e7e6e6">
 		<td class="border border-white px-2 text-right">{t('order.receipt.totalVat')}</td>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
