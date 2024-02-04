@@ -13,7 +13,7 @@
 	import ProductType from './ProductType.svelte';
 	import IconInfo from './icons/IconInfo.svelte';
 
-	const { t } = useI18n();
+	const { t, countryName } = useI18n();
 
 	let classNames = '';
 	export { classNames as class };
@@ -133,7 +133,7 @@
 		<div class="flex justify-between items-center">
 			<h3 class="text-base flex items-center gap-2">
 				{t('cart.vat')} ({vat.rate}%)
-				<div title="VAT rate for {vat.country}">
+				<div title={t('cart.vatRate', { country: countryName(vat.country) })}>
 					<IconInfo class="cursor-pointer" />
 				</div>
 			</h3>
