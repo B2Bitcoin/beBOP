@@ -4,6 +4,7 @@ import { isOrderFullyPaid } from '$lib/server/orders';
 import { picturesForProducts } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { isSumupEnabled } from '$lib/server/sumup';
+import { FAKE_ORDER_INVOICE_NUMBER } from '$lib/types/Order';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
@@ -45,6 +46,11 @@ export async function fetchOrderForUser(orderId: string) {
 
 			if (checkout.status === 'PAID') {
 				payment.status = 'paid';
+
+				payment.invoice = {
+					number: FAKE_ORDER_INVOICE_NUMBER,
+					createdAt: new Date()
+				};
 
 				if (isOrderFullyPaid(order) && order.status === 'pending') {
 					order.status = 'paid';
