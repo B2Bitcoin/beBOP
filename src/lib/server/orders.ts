@@ -487,15 +487,14 @@ export async function createOrder(
 		} else {
 			const { country } = params.shippingAddress;
 
-			shippingPrice.amount =
-				params.user.userRoleId === 'POS_ROLE_ID' && params.reasonOfferDeliveryFees
-					? 0
-					: computeDeliveryFees(
-							runtimeConfig.mainCurrency,
-							country,
-							items,
-							runtimeConfig.deliveryFees
-					  );
+			shippingPrice.amount = params.reasonOfferDeliveryFees
+				? 0
+				: computeDeliveryFees(
+						runtimeConfig.mainCurrency,
+						country,
+						items,
+						runtimeConfig.deliveryFees
+				  );
 
 			if (isNaN(shippingPrice.amount)) {
 				throw error(400, 'Some products are not available in your country');
