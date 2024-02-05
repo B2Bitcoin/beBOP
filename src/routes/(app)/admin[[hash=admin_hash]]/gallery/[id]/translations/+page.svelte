@@ -70,6 +70,7 @@
 				class="form-input"
 				type="text"
 				name="secondary[{i}].title"
+				maxlength="30"
 				placeholder={data.gallery.secondary[i]?.title}
 				value={data.gallery.translations?.[language]?.secondary?.[i]?.title || ''}
 			/>
@@ -80,7 +81,7 @@
 				name="secondary[{i}].content"
 				cols="30"
 				rows="5"
-				maxlength="10000"
+				maxlength="150"
 				class="form-input"
 				placeholder={data.gallery.secondary[i]?.content}
 				value={data.gallery.translations?.[language]?.secondary?.[i]?.content || ''}

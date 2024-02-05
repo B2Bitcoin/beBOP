@@ -135,6 +135,7 @@
 				class="form-input"
 				type="text"
 				name="secondary[{i}].title"
+				maxlength="30"
 				placeholder="Gallery title"
 				value={data.gallery.secondary[i]?.title || ''}
 			/>
@@ -145,7 +146,7 @@
 				name="secondary[{i}].content"
 				cols="30"
 				rows="5"
-				maxlength="10000"
+				maxlength="150"
 				class="form-input"
 				value={data.gallery.secondary[i]?.content || ''}
 			/>
