@@ -6,14 +6,14 @@ beBOP utilise nativement certaines pages obligatoires pour afficher différents 
 Ces pages sont des pages CMS pouvant être personnalisées dans /admin/CMS comme n'importe quelle page de contenu enrichi.
 
 Les slugs de ces pages sont :
-/home
-/error
-/maintenance
-/terms
-/privacy
-/why-vat-customs
-/why-collect-ip
-/why-pay-reminder
+- /home
+- /error
+- /maintenance
+- /terms
+- /privacy
+- /why-vat-customs
+- /why-collect-ip
+- /why-pay-reminder
 
 ## /home - Homepage
 Cette page est affichée lors de l'accès à la racine de votre site (/).
