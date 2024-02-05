@@ -115,7 +115,7 @@ export function computePriceInfo(
 ): {
 	digitalVatRate: number;
 	physicalVatRate: number;
-	isPhysicalVatExempted: boolean;
+	physicalVatAtCustoms: boolean;
 	partialPrice: number;
 	partialVat: number;
 	partialPhysicalVat: number;
@@ -134,6 +134,7 @@ export function computePriceInfo(
 		price: Price;
 		rate: number;
 		country: CountryAlpha2;
+		partialPrice: Price;
 	}>;
 	/** Vat rate for each individual item */
 	vatRates: number[];
@@ -147,7 +148,11 @@ export function computePriceInfo(
 			: params.vatSingleCountry
 			? params.bebopCountry
 			: params.userCountry ?? params.bebopCountry;
-	const digitalVatCountry = params.vatExempted ? undefined : params.bebopCountry;
+	const digitalVatCountry = params.vatExempted
+		? undefined
+		: params.vatSingleCountry
+		? params.bebopCountry
+		: params.userCountry ?? params.bebopCountry;
 	const digitalVatRate = vatRate(digitalVatCountry);
 	const physicalVatRate = vatRate(physicalVatCountry);
 
@@ -290,11 +295,16 @@ export function computePriceInfo(
 		price: Price;
 		rate: number;
 		country: CountryAlpha2;
+		partialPrice: Price;
 	}> = filterUndef([
 		physicalVatCountry
 			? {
 					price: {
 						amount: physicalVat,
+						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
+					},
+					partialPrice: {
+						amount: partialPhysicalVat,
 						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
 					},
 					rate: physicalVatRate,
@@ -307,6 +317,10 @@ export function computePriceInfo(
 						amount: digitalVat,
 						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
 					},
+					partialPrice: {
+						amount: partialDigitalVat,
+						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
+					},
 					rate: digitalVatRate,
 					country: digitalVatCountry
 			  }
@@ -317,16 +331,18 @@ export function computePriceInfo(
 		vat.length === 2 &&
 		vat[0].rate === vat[1].rate &&
 		vat[0].country === vat[1].country &&
-		vat[0].price.currency === vat[1].price.currency
+		vat[0].price.currency === vat[1].price.currency &&
+		vat[0].partialPrice.currency === vat[1].partialPrice.currency
 	) {
 		vat[0].price.amount += vat[1].price.amount;
+		vat[0].partialPrice.amount += vat[1].partialPrice.amount;
 		vat.pop();
 	}
 
 	return {
 		digitalVatRate,
 		physicalVatRate,
-		isPhysicalVatExempted,
+		physicalVatAtCustoms: isPhysicalVatExempted,
 		partialPrice,
 		partialVat,
 		partialPhysicalVat,

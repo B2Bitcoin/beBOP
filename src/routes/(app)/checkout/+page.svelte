@@ -17,14 +17,14 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
-	import OrderVat from '$lib/components/OrderVat.svelte';
 
 	export let data;
 
 	let actionCount = 0;
-	const defaultCountry =
+	const defaultShippingCountry =
 		(data.personalInfoConnected?.address?.country ?? data.countryCode) || data.vatCountry || 'FR';
-	let country = defaultCountry;
+	const digitalCountry = data.countryCode || data.vatCountry || 'FR';
+	let country = defaultShippingCountry;
 
 	let isFreeVat = false;
 	let offerDeliveryFees = false;
@@ -88,8 +88,8 @@
 		bebopCountry: data.vatCountry,
 		vatSingleCountry: data.vatSingleCountry,
 		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
-		vatExempted: data.vatExempted,
-		userCountry: country,
+		vatExempted: data.vatExempted || isFreeVat,
+		userCountry: isDigital ? digitalCountry : country,
 		deliveryFees: {
 			amount: deliveryFees || 0,
 			currency: UNDERLYING_CURRENCY
@@ -269,7 +269,12 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required value={defaultCountry}>
+						<select
+							name="billing.country"
+							class="form-input"
+							required
+							value={defaultShippingCountry}
+						>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
@@ -562,7 +567,7 @@
 					</div>
 				{/if}
 
-				{#if !isDigital && priceInfo.isPhysicalVatExempted}
+				{#if !isDigital && priceInfo.physicalVatAtCustoms}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
@@ -575,38 +580,42 @@
 					</div>
 				{/if}
 
-				{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat && priceInfo.physicalVatCountry && priceInfo.digitalVatCountry}
-					<OrderVat
-						vatAmount={priceInfo.partialPhysicalVat}
-						vatRate={priceInfo.physicalVatRate}
-						vatSingleCountry={priceInfo.singleVatCountry}
-						vatCountry={priceInfo.physicalVatCountry}
-						vatCurrency={priceInfo.currency}
-						isDigital={false}
-					/>
-					<OrderVat
-						vatAmount={priceInfo.partialDigitalVat}
-						vatRate={priceInfo.digitalVatRate}
-						vatSingleCountry={priceInfo.singleVatCountry}
-						vatCountry={priceInfo.digitalVatCountry}
-						vatCurrency={priceInfo.currency}
-						isDigital={true}
-					></OrderVat>
-				{:else if priceInfo.partialVat}
-					{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
-					{#if country}
-						<OrderVat
-							vatAmount={priceInfo.partialVat}
-							vatRate={priceInfo.partialDigitalVat
-								? priceInfo.digitalVatRate
-								: priceInfo.physicalVatRate}
-							vatSingleCountry={priceInfo.singleVatCountry}
-							vatCountry={country}
-							vatCurrency={priceInfo.currency}
-							isDigital={priceInfo.partialPhysicalVat === 0}
-						></OrderVat>
-					{/if}
-				{/if}
+				{#each priceInfo.vat as vat}
+					<div class="flex justify-between items-center">
+						<div class="flex flex-col">
+							<h3 class="text-base flex flex-row gap-2 items-center">
+								{t('cart.vat')} ({vat.rate}%)
+								<div
+									title="{t('cart.vatRate', {
+										country: countryName(vat.country)
+									})}. {priceInfo.singleVatCountry
+										? t('cart.vatSellerCountry')
+										: !isDigital
+										? `${t('checkout.vatShippingAddress')}`
+										: `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`}"
+								>
+									<IconInfo class="cursor-pointer" />
+								</div>
+							</h3>
+						</div>
+
+						<div class="flex flex-col ml-auto items-end justify-center">
+							<PriceTag
+								class="text-2xl truncate"
+								amount={vat.partialPrice.amount}
+								currency={vat.partialPrice.currency}
+								main
+							/>
+							<PriceTag
+								amount={vat.partialPrice.amount}
+								currency={vat.partialPrice.currency}
+								class="text-base truncate"
+								secondary
+							/>
+						</div>
+					</div>
+					<div class="border-b border-gray-300 col-span-4" />
+				{/each}
 
 				<span class="py-1" />
 
@@ -670,28 +679,30 @@
 				</label>
 
 				{#if data.roleId === POS_ROLE_ID}
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							bind:checked={isFreeVat}
-							name="isFreeVat"
-							form="checkout"
-						/>
-						<span>
-							<Trans key="pos.vatFree"
-								><a
-									href="/terms"
-									target="_blank"
-									class="body-hyperlink hover:underline"
-									slot="0"
-									let:translation
+					{#if !data.vatExempted}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								bind:checked={isFreeVat}
+								name="isFreeVat"
+								form="checkout"
+							/>
+							<span>
+								<Trans key="pos.vatFree"
+									><a
+										href="/terms"
+										target="_blank"
+										class="body-hyperlink hover:underline"
+										slot="0"
+										let:translation
+									>
+										{translation}
+									</a></Trans
 								>
-									{translation}
-								</a></Trans
-							>
-						</span>
-					</label>
+							</span>
+						</label>
+					{/if}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"

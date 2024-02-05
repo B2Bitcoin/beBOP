@@ -33,6 +33,7 @@
 		value={item.quantity}
 	/>
 	<input type="hidden" name="quantity" value={item.quantity} />
+	<input type="hidden" name="deposit" value={!!item.depositPercentage} />
 	<button
 		formaction="/cart/{item.product._id}/?/increase"
 		class="{sm ? 'px-1' : 'px-3'} bg-gray-300 text-gray-800 disabled:text-gray-450 rounded-r"
