@@ -504,15 +504,19 @@ export async function createOrder(
 	const discountInfo =
 		params.user.userRoleId === POS_ROLE_ID && params?.discount?.amount ? params.discount : null;
 
+	const vatExempted = runtimeConfig.vatExempted || !!params.reasonFreeVat;
 	const priceInfo = computePriceInfo(items, {
 		deliveryFees: shippingPrice,
-		vatExempted: runtimeConfig.vatExempted,
+		vatExempted,
 		userCountry: params.userVatCountry,
 		bebopCountry: runtimeConfig.vatCountry || undefined,
 		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
 		discount: discountInfo
 	});
+	const vatExemptedReason = vatExempted
+		? params.reasonFreeVat || runtimeConfig.vatExemptionReason
+		: undefined;
 
 	const totalSatoshis = toSatoshis(priceInfo.totalPriceWithVat, priceInfo.currency);
 	const partialSatoshis = toSatoshis(priceInfo.partialPriceWithVat, priceInfo.currency);
@@ -755,9 +759,9 @@ export async function createOrder(
 					...(!params.user.email && email && { email }),
 					...(!params.user.npub && npubAddress && { npub: npubAddress })
 				},
-				...(params.reasonFreeVat && {
+				...(vatExemptedReason && {
 					vatFree: {
-						reason: params.reasonFreeVat
+						reason: vatExemptedReason
 					}
 				}),
 				...(discount &&

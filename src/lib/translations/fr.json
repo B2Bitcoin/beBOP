@@ -482,7 +482,8 @@
 			"totalExcVat": "Total HT",
 			"totalInclVat": "Total TTC",
 			"totalVat": "TVA totale",
-			"unitPrice": "Prix ​​unit. HT"
+			"unitPrice": "Prix ​​unit. HT",
+			"vatFreeReason": "Exempt de TVA: {reason}"
 		},
 		"restToPay": "Reste à payer",
 		"shippingAddress": {

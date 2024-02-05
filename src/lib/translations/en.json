@@ -482,7 +482,8 @@
 			"totalExcVat": "Total Excl. VAT",
 			"totalInclVat": "Total Incl. VAT",
 			"totalVat": "Total VAT",
-			"unitPrice": "Unit price"
+			"unitPrice": "Unit price",
+			"vatFreeReason": "No VAT: {reason}"
 		},
 		"restToPay": "Remaining to pay",
 		"shippingAddress": {

@@ -679,28 +679,30 @@
 				</label>
 
 				{#if data.roleId === POS_ROLE_ID}
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							bind:checked={isFreeVat}
-							name="isFreeVat"
-							form="checkout"
-						/>
-						<span>
-							<Trans key="pos.vatFree"
-								><a
-									href="/terms"
-									target="_blank"
-									class="body-hyperlink hover:underline"
-									slot="0"
-									let:translation
+					{#if priceInfo.totalVat > 0}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								bind:checked={isFreeVat}
+								name="isFreeVat"
+								form="checkout"
+							/>
+							<span>
+								<Trans key="pos.vatFree"
+									><a
+										href="/terms"
+										target="_blank"
+										class="body-hyperlink hover:underline"
+										slot="0"
+										let:translation
+									>
+										{translation}
+									</a></Trans
 								>
-									{translation}
-								</a></Trans
-							>
-						</span>
-					</label>
+							</span>
+						</label>
+					{/if}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"
