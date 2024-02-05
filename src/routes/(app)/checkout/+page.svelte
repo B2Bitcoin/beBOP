@@ -265,7 +265,7 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required bind:value={country}>
+						<select name="billing.country" class="form-input" required value={defaultCountry}>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
