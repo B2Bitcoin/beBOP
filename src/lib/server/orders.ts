@@ -488,7 +488,7 @@ export async function createOrder(
 			const { country } = params.shippingAddress;
 
 			shippingPrice.amount =
-				params.user.userRoleId === 'POS_ROLE_ID' && runtimeConfig.deliveryFees.allowFreeForPOS
+				params.user.userRoleId === 'POS_ROLE_ID' && params.reasonOfferDeliveryFees
 					? 0
 					: computeDeliveryFees(
 							runtimeConfig.mainCurrency,
