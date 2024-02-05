@@ -24,7 +24,7 @@
 
 			if (
 				data.order.status === 'pending' ||
-				data.order.payments.some((p) => p.invoice?.number === -1)
+				data.order.payments.some((p) => p.invoice?.number === FAKE_ORDER_INVOICE_NUMBER)
 			) {
 				count++;
 				if (count % 4 === 0) {
