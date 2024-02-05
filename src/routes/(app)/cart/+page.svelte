@@ -221,7 +221,9 @@
 				{#if country}
 					<CartVat
 						vatAmount={priceInfo.partialVat}
-						vatRate={priceInfo.digitalVatRate || priceInfo.physicalVatRate}
+						vatRate={priceInfo.partialDigitalVat
+							? priceInfo.digitalVatRate
+							: priceInfo.physicalVatRate}
 						vatSingleCountry={priceInfo.singleVatCountry}
 						vatCountry={country}
 						vatCurrency={priceInfo.currency}
