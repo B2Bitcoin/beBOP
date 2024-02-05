@@ -82,6 +82,8 @@ export interface OrderPayment {
 	detail?: string;
 }
 
+export const FAKE_ORDER_INVOICE_NUMBER = -1;
+
 export interface OrderAddress {
 	firstName: string;
 	lastName: string;
