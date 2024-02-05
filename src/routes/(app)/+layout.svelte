@@ -361,36 +361,19 @@
 											</div>
 										</div>
 									{/if}
-									{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat}
+									{#each priceInfo.vat as vat}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({priceInfo.physicalVatRate}%) <PriceTag
-												currency={UNDERLYING_CURRENCY}
-												amount={priceInfo.partialPhysicalVat}
+											{t('cart.vat')} ({vat.rate}%) <PriceTag
+												currency={vat.partialPrice.currency}
+												amount={vat.partialPrice.amount}
 												main
 											/>
 										</div>
-										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({priceInfo.digitalVatRate}%) <PriceTag
-												currency={UNDERLYING_CURRENCY}
-												amount={priceInfo.partialDigitalVat}
-												main
-											/>
-										</div>
-									{:else}
-										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({priceInfo.partialPhysicalVat
-												? priceInfo.physicalVatRate
-												: priceInfo.digitalVatRate}%) <PriceTag
-												currency={UNDERLYING_CURRENCY}
-												amount={priceInfo.partialVat}
-												main
-											/>
-										</div>
-									{/if}
+									{/each}
 									<div class="flex gap-1 text-xl justify-end items-center">
 										{t('cart.total')}
 										<PriceTag
-											currency={UNDERLYING_CURRENCY}
+											currency={priceInfo.currency}
 											amount={priceInfo.partialPriceWithVat}
 											main
 										/>
@@ -399,7 +382,7 @@
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.remainingShort')}
 											<PriceTag
-												currency={UNDERLYING_CURRENCY}
+												currency={priceInfo.currency}
 												amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
 												main
 											/>

@@ -2,10 +2,10 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { goto, invalidate } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
-	import CartVat from '$lib/components/CartVat.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
+	import Trans from '$lib/components/Trans.svelte';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { useI18n } from '$lib/i18n';
 	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
@@ -38,7 +38,7 @@
 		}
 	});
 
-	const { t, locale } = useI18n();
+	const { t, locale, countryName } = useI18n();
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10 body-mainPlan">
@@ -199,38 +199,37 @@
 					</div>
 				</div>
 			{/if}
-			{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat && priceInfo.physicalVatCountry && priceInfo.digitalVatCountry}
-				<CartVat
-					vatAmount={priceInfo.partialPhysicalVat}
-					vatRate={priceInfo.physicalVatRate}
-					vatSingleCountry={priceInfo.singleVatCountry}
-					vatCountry={priceInfo.physicalVatCountry}
-					vatCurrency={priceInfo.currency}
-					isDigital={false}
-				></CartVat>
-				<CartVat
-					vatAmount={priceInfo.partialDigitalVat}
-					vatRate={priceInfo.digitalVatRate}
-					vatSingleCountry={priceInfo.singleVatCountry}
-					vatCountry={priceInfo.digitalVatCountry}
-					vatCurrency={priceInfo.currency}
-					isDigital={true}
-				></CartVat>
-			{:else if priceInfo.partialVat}
-				{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
-				{#if country}
-					<CartVat
-						vatAmount={priceInfo.partialVat}
-						vatRate={priceInfo.partialDigitalVat
-							? priceInfo.digitalVatRate
-							: priceInfo.physicalVatRate}
-						vatSingleCountry={priceInfo.singleVatCountry}
-						vatCountry={country}
-						vatCurrency={priceInfo.currency}
-						isDigital={priceInfo.partialPhysicalVat === 0}
-					></CartVat>
-				{/if}
-			{/if}
+			{#each priceInfo.vat as vat}
+				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
+					<div class="flex flex-col">
+						<h2 class="text-[28px]">{t('cart.vat')} ({vat.rate}%):</h2>
+						<p class="text-sm">
+							{t('cart.vatRate', { country: countryName(vat.country) })}.
+							{#if priceInfo.singleVatCountry}
+								{t('cart.vatSellerCountry')}
+							{:else}
+								<Trans key="cart.vatIpCountry">
+									<a href="https://lite.ip2location.com" slot="0"> https://lite.ip2location.com </a>
+								</Trans>
+							{/if}
+						</p>
+					</div>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							amount={vat.partialPrice.amount}
+							currency={vat.partialPrice.currency}
+							main
+							class="text-[28px]"
+						/>
+						<PriceTag
+							class="text-base"
+							amount={vat.partialPrice.amount}
+							currency={vat.partialPrice.currency}
+							secondary
+						/>
+					</div>
+				</div>
+			{/each}
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 				<h2 class="text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
