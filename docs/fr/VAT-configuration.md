@@ -12,7 +12,7 @@ Il existe 3 grands régimes de TVA, dont une variation :
 - la vente sous TVA du pays du vendeur avec exonération pour les acheteurs se faisant livrer à l'étranger, sous réserve de déclaration de paiement de la TVA de leur pays auprès de leurs propres services douaniers
 
 Pour contrôle fiscal, respect de la loi et comptabilité, il est parfois nécessaire recueillir des données liées au client, pour justifier une éventuelle exonération de TVA.
-Ces points sont abordés dans le [privacy-management.md](/privacy-management.md).
+Ces points sont abordés dans le [privacy-management.md](/docs/fr/privacy-management.md).
 
 ## Cas 1 : exemption de TVA sur sous justification
 
@@ -65,7 +65,7 @@ Quand, dans /amdin/config, aucune option de régime de TVA n'est activée et qu'
 - le taux de TVA indiqué sur la facture sera celui du pays de livraison choisi par le client, ou celui du pays dans lequel est géolocalisé son IP (d'après des données originaires de ip2location.com) dans le cadre d'un panier sans article nécessitant une livraison
 
 ## L'IP de l'utilisateur utilisée pour l'évaluation de la TVA est-elle stockée ?
-Ces points sont abordés dans le [privacy-management.md](/privacy-management.md).
+Ces points sont abordés dans le [privacy-management.md](/docs/frprivacy-management.md).
 Mais, sans autre configuration exigeant des informations du client, l'information n'est pas stockée : elle est récupérée du navigateur (car fournie par ce dernier) et utilisée pour donner une estimation de la TVA et des frais de port avant le renseignement de l'adresse postale du client (recommandation légale imposée par certains pays), mais elle n'est nativement pas stockée dans les bases de données beBOP.
 En revanche, les services fiscaux et frontaliers peuvent exiger dans certains pays un nombre de preuves justifiant le paiement de la TVA par le client qui n'est pas celle du pays du vendeur. En ce cas, beBOP propose certaines options (sans pour autant les encourager nativement).
 A noter que l'IP est considérée comme une donnée de facturation valide dans certains pays, et que le vendeur n'est pas responsable de l'adresse IP poussée par le navigateur du client.
