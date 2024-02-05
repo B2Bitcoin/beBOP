@@ -179,6 +179,9 @@ export const actions = {
 		let isFreeVat: boolean | undefined;
 		let reasonFreeVat: string | undefined;
 
+		let offerDeliveryFees: boolean | undefined;
+		let reasonOfferDeliveryFees: string | undefined;
+
 		if (locals.user?.roleId === POS_ROLE_ID) {
 			const vatDetails = z
 				.object({
@@ -189,11 +192,26 @@ export const actions = {
 
 			isFreeVat = vatDetails.isFreeVat;
 			reasonFreeVat = vatDetails.reasonFreeVat;
+
+			if (runtimeConfig.deliveryFees.allowFreeForPOS) {
+				const feesDetails = z
+					.object({
+						offerDeliveryFees: z.coerce.boolean().optional(),
+						reasonOfferDeliveryFees: z.string().optional()
+					})
+					.parse(Object.fromEntries(formData));
+				offerDeliveryFees = feesDetails.offerDeliveryFees;
+				reasonOfferDeliveryFees = feesDetails.reasonOfferDeliveryFees;
+			}
 		}
 
 		if (isFreeVat && !reasonFreeVat) {
 			throw error(400, 'Reason for free VAT is required');
 		}
+		if (offerDeliveryFees && !reasonOfferDeliveryFees) {
+			throw error(400, 'You must acknowledge that you offer delivery fees and add a justification');
+		}
+
 		if (
 			runtimeConfig.displayNewsletterCommercialProspection &&
 			newsletterProspection &&
@@ -269,7 +287,6 @@ export const actions = {
 				'You must acknowledge that you are only paying a deposit and will have to pay the rest later'
 			);
 		}
-
 		rateLimit(locals.clientIp, 'email', 10, { minutes: 1 });
 
 		const orderId = await createOrder(
@@ -312,7 +329,10 @@ export const actions = {
 						}
 					}),
 				...(note && { note: note.noteContent }),
-				...(agreements.allowCollectIP && { clientIp: locals.clientIp })
+				...(agreements.allowCollectIP && { clientIp: locals.clientIp }),
+				...(locals.user?.roleId === POS_ROLE_ID &&
+					runtimeConfig.deliveryFees.allowFreeForPOS &&
+					offerDeliveryFees && { reasonOfferDeliveryFees })
 			}
 		);
 

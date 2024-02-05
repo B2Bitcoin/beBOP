@@ -503,6 +503,7 @@
 		"lastOrders": {
 			"title": "Dernières commandes"
 		},
+		"offerDeliveryFees": "Enlever les frais de port pour cette commande",
 		"order": {
 			"satReceived": "reçu"
 		},
