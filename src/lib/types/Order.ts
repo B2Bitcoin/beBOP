@@ -90,6 +90,9 @@ export interface OrderAddress {
 	state?: string;
 	zip: string;
 	country: CountryAlpha2;
+	isCompany?: boolean;
+	companyName?: string;
+	vatNumber?: string;
 }
 
 export interface Order extends Timestamps {
