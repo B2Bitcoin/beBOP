@@ -27,8 +27,7 @@ export async function load(event) {
 		adminHash: runtimeConfig.adminHash,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
-		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
-		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry
+		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection
 	};
 }
 

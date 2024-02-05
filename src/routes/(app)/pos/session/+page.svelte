@@ -2,19 +2,21 @@
 	import { fetchEventSource } from '@microsoft/fetch-event-source';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
 	import CheckCircleOutlined from '~icons/ant-design/check-circle-outlined';
 	import { onMount } from 'svelte';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { useI18n } from '$lib/i18n';
-	import Trans from '$lib/components/Trans.svelte';
+	import { computePriceInfo } from '$lib/types/Cart.js';
+	import PosVat from '$lib/components/PosVat.svelte';
+	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order.js';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
 		onmessage?: ((this: CustomEventSource, ev: MessageEvent) => unknown) | null;
 		close?: () => void;
 	}
+
+	const ORDER_CLEAR_TIMEOUT = 5_000;
 
 	let eventSourceInstance: CustomEventSource | void | null = null;
 	export let data;
@@ -23,11 +25,11 @@
 
 	$: view = cart && cart.length > 0 ? 'updateCart' : order ? order.status : 'welcome';
 
-	setTimeout(() => {
+	let currentTimeout = setTimeout(() => {
 		if (order === data.order && order?.status !== 'pending') {
 			order = null;
 		}
-	}, 5_000);
+	}, ORDER_CLEAR_TIMEOUT);
 
 	async function subscribeToServerEvents() {
 		eventSourceInstance = await fetchEventSource(`/pos/session/sse`, {
@@ -39,11 +41,12 @@
 							cart = sseCart;
 						} else if (eventType === 'order') {
 							order = sseOrder;
-							setTimeout(() => {
+							clearTimeout(currentTimeout);
+							currentTimeout = setTimeout(() => {
 								if (order === sseOrder && order?.status !== 'pending') {
 									order = null;
 								}
-							}, 5_000);
+							}, ORDER_CLEAR_TIMEOUT);
 						}
 					} catch (err) {
 						console.error('=> SSE Error:', err);
@@ -73,17 +76,23 @@
 		};
 	});
 
-	$: totalPrice = sumCurrency(
-		UNDERLYING_CURRENCY,
-		cart.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount: (item.customPrice || item.product.price).amount * item.quantity
-		}))
-	);
-	$: vat = fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: totalPriceWithVat = totalPrice + vat;
+	// $: deliveryFees =
+	// 	data.countryCode && isAlpha2CountryCode(data.countryCode)
+	// 		? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
+	// 		: NaN;
+	$: priceInfo = computePriceInfo(cart, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted,
+		userCountry: data.countryCode,
+		deliveryFees: {
+			amount: 0, //deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		}
+	});
 
-	const { t, countryName } = useI18n();
+	const { t, locale } = useI18n();
 </script>
 
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
@@ -91,6 +100,7 @@
 		{#if cart.length}
 			<div class="overflow-auto h-[90vh]">
 				{#each cart as item}
+					{@const price = item.customPrice || item.product.price}
 					<div class="flex items-center justify-between w-full">
 						<div class="flex flex-col">
 							<h2 class="text-sm text-gray-850">{item.quantity} x {item.product.name}</h2>
@@ -108,47 +118,40 @@
 						</div>
 
 						<div class="flex flex-col items-end justify-center">
-							{#if item.product.type !== 'subscription' && item.customPrice}
-								<PriceTag
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									main
-									class="text-2xl text-gray-800 truncate"
-								/>
-								<PriceTag
-									class="text-base text-gray-600 truncate"
-									amount={item.quantity * item.customPrice.amount}
-									currency={item.customPrice.currency}
-									secondary
-								/>
-							{:else}
-								<PriceTag
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									main
-									class="text-2xl text-gray-800 truncate"
-								/>
-								<PriceTag
-									class="text-base text-gray-600 truncate"
-									amount={item.quantity * item.product.price.amount}
-									currency={item.product.price.currency}
-									secondary
-								/>
-							{/if}
+							<PriceTag
+								amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
+								currency={price.currency}
+								main
+								class="text-2xl text-gray-800 truncate"
+								>{item.depositPercentage
+									? `(${(item.depositPercentage / 100).toLocaleString($locale, {
+											style: 'percent'
+									  })})`
+									: ''}</PriceTag
+							>
+							<PriceTag
+								class="text-base text-gray-600 truncate"
+								amount={(item.quantity *
+									item.product.price.amount *
+									(item.depositPercentage ?? 100)) /
+									100}
+								currency={price.currency}
+								secondary
+							/>
 						</div>
 					</div>
-
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 			</div>
 		{/if}
 	{:else if view === 'pending'}
-		{#if order?.payments[0]?.method === 'point-of-sale'}
+		{@const payment = order?.payments?.find((p) => p.status === 'pending')}
+		{#if payment?.method === 'point-of-sale'}
 			<div class="text-2xl text-center">{t('pos.session.waitingPaymentConfirmation')}</div>
-		{:else}
+		{:else if payment}
 			<div class="flex flex-col items-center gap-3">
 				<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
-				<img src="/order/{order?._id}/payment/{order?.payments[0]?.id}/qrcode" alt="QR code" />
+				<img src="/order/{order?._id}/payment/{payment?.id}/qrcode" alt="QR code" />
 			</div>
 		{/if}
 	{:else if view === 'canceled'}
@@ -168,53 +171,114 @@
 		</div>
 	{/if}
 
-	{#if (order || cart) && view !== 'welcome'}
+	{#if order && view === 'pending'}
 		<div class="flex justify-between flex-col p-2 gap-2 bg-gray-300 fixed left-0 right-0 bottom-0">
-			{#if data.vatCountry && !data.vatExempted}
-				<div class="flex justify-end border-b border-gray-300 gap-6">
-					<div class="flex flex-col">
-						<h2 class="text-gray-800 text-[28px]">Vat ({data.vatRate}%):</h2>
-						<p class="text-sm text-gray-600">
-							{t('cart.vatRate', { country: countryName(data.vatCountry) })}.
-							{#if data.vatSingleCountry}
-								{t('cart.vatSellerCountry')}
-							{:else}
-								<Trans key="cart.vatIpCountry">
-									<a href="https://lite.ip2location.com" slot="0"> https://lite.ip2location.com </a>
-								</Trans>
-							{/if}
-						</p>
+			{#if order.payments.length > 1 || order.payments[0].price.amount !== order.totalPrice.amount}
+				{@const payment = order.payments.find((p) => p.status === 'pending')}
+				{@const remainingAmount = orderAmountWithNoPaymentsCreated(order)}
+				{#if payment}
+					<div class="flex justify-between">
+						<h3 class="text-gray-800 text-[28px]">{t('pos.pendingPayment')}:</h3>
+						<div class="flex flex-col items-end">
+							<PriceTag
+								amount={payment?.price.amount || 0}
+								currency={payment?.price.currency || UNDERLYING_CURRENCY}
+								main
+								class="text-[28px] text-gray-800"
+							/>
+							<PriceTag
+								class="text-base text-gray-600"
+								amount={payment?.price.amount || 0}
+								currency={UNDERLYING_CURRENCY}
+								secondary
+							/>
+						</div>
 					</div>
-					<div class="flex flex-col items-end">
-						<PriceTag
-							amount={view === 'pending' ? order?.vat?.price?.amount || 0 : vat}
-							currency={UNDERLYING_CURRENCY}
-							main
-							class="text-[28px] text-gray-800"
-						/>
-						<PriceTag
-							class="text-base text-gray-600"
-							amount={view === 'pending' ? order?.vat?.price?.amount || 0 : vat}
-							currency={UNDERLYING_CURRENCY}
-							secondary
-						/>
+				{/if}
+				{#if remainingAmount > 0}
+					<div class="flex justify-between">
+						<h3 class="text-gray-800 text-[28px]">{t('order.restToPay')}:</h3>
+						<div class="flex flex-col items-end">
+							<PriceTag
+								amount={remainingAmount}
+								currency={order.totalPrice.currency}
+								main
+								class="text-[28px] text-gray-800"
+							/>
+							<PriceTag
+								class="text-base text-gray-600"
+								amount={remainingAmount}
+								currency={order.totalPrice.currency}
+								secondary
+							/>
+						</div>
 					</div>
+				{/if}
+			{/if}
+			<div class="flex justify-between">
+				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
+				<div class="flex flex-col items-end">
+					<PriceTag
+						amount={order.totalPrice.amount || 0}
+						currency={order.totalPrice.currency || UNDERLYING_CURRENCY}
+						main
+						class="text-[32px] text-gray-800"
+					/>
+					<PriceTag
+						class="text-base text-gray-600"
+						amount={order.totalPrice.amount || 0}
+						currency={UNDERLYING_CURRENCY}
+						secondary
+					/>
 				</div>
+			</div>
+		</div>
+	{:else if cart && view === 'updateCart'}
+		<div class="flex justify-between flex-col p-2 gap-2 bg-gray-300 fixed left-0 right-0 bottom-0">
+			{#if priceInfo.physicalVatRate !== priceInfo.digitalVatRate && priceInfo.partialDigitalVat && priceInfo.partialPhysicalVat && priceInfo.physicalVatCountry && priceInfo.digitalVatCountry}
+				<PosVat
+					vatAmount={priceInfo.partialPhysicalVat}
+					vatRate={priceInfo.physicalVatRate}
+					vatSingleCountry={priceInfo.singleVatCountry}
+					vatCountry={priceInfo.physicalVatCountry}
+					vatCurrency={priceInfo.currency}
+					isDigital={false}
+				></PosVat>
+				<PosVat
+					vatAmount={priceInfo.partialDigitalVat}
+					vatRate={priceInfo.digitalVatRate}
+					vatSingleCountry={priceInfo.singleVatCountry}
+					vatCountry={priceInfo.digitalVatCountry}
+					vatCurrency={priceInfo.currency}
+					isDigital={true}
+				></PosVat>
+			{:else if priceInfo.totalVat}
+				{@const country = priceInfo.digitalVatCountry || priceInfo.physicalVatCountry}
+				{#if country}
+					<PosVat
+						vatAmount={priceInfo.totalVat}
+						vatRate={priceInfo.digitalVatRate || priceInfo.physicalVatRate}
+						vatSingleCountry={priceInfo.singleVatCountry}
+						vatCountry={country}
+						vatCurrency={priceInfo.currency}
+						isDigital={priceInfo.partialPhysicalVat === 0}
+					></PosVat>
+				{/if}
 			{/if}
 
 			<div class="flex justify-between">
 				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={view === 'pending' ? order?.totalPrice?.amount || 0 : totalPriceWithVat}
-						currency={UNDERLYING_CURRENCY}
+						amount={priceInfo.partialPriceWithVat}
+						currency={priceInfo.currency}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
-						amount={view === 'pending' ? order?.totalPrice?.amount || 0 : totalPriceWithVat}
-						currency={UNDERLYING_CURRENCY}
+						amount={priceInfo.partialPriceWithVat}
+						currency={priceInfo.currency}
 						secondary
 					/>
 				</div>

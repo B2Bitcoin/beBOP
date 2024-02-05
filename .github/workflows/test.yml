@@ -1,0 +1,42 @@
+name: Test
+on:
+  pull_request:
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          diff_relative: true
+          files: |
+            **/*.ts
+            **/*.svelte
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.3.1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: |
+          pnpm install --frozen-lockfile
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: '6.0'
+          mongodb-replica-set: test-rs
+      - name: 'Test'
+        run: |
+          pnpm run test:unit

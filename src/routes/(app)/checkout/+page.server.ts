@@ -117,7 +117,10 @@ export const actions = {
 							city: z.string().min(1),
 							state: z.string().optional(),
 							zip: z.string().min(1),
-							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+							isCompany: z.boolean({ coerce: true }).default(false),
+							vatNumber: z.string().optional(),
+							companyName: z.string().optional()
 						})
 					})
 					.parse(json)
@@ -247,8 +250,20 @@ export const actions = {
 		if (!agreements.allowCollectIP && runtimeConfig.collectIPOnDeliverylessOrders && isDigital) {
 			throw error(400, 'You must allow the collection of your IP address');
 		}
+		if (billingInfo?.billing.isCompany) {
+			if (!billingInfo?.billing.companyName) {
+				throw error(400, 'The company name is required for professional order ');
+			}
+		} else {
+			if (billingInfo?.billing) {
+				delete billingInfo.billing.companyName;
+				delete billingInfo.billing.vatNumber;
+			}
+		}
 		const vatCountry =
-			shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry;
+			shippingInfo?.shipping?.country ??
+			locals.countryCode ??
+			(runtimeConfig.vatCountry || undefined);
 		if (
 			!agreements.isVATNullForeigner &&
 			runtimeConfig.vatNullOutsideSellerCountry &&
@@ -301,7 +316,7 @@ export const actions = {
 				cart,
 				shippingAddress: shippingInfo?.shipping,
 				billingAddress: billingInfo?.billing || shippingInfo?.shipping,
-				vatCountry: vatCountry,
+				userVatCountry: vatCountry,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&

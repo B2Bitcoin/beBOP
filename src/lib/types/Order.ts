@@ -90,6 +90,9 @@ export interface OrderAddress {
 	state?: string;
 	zip: string;
 	country: CountryAlpha2;
+	isCompany?: boolean;
+	companyName?: string;
+	vatNumber?: string;
 }
 
 export interface Order extends Timestamps {
@@ -120,6 +123,7 @@ export interface Order extends Timestamps {
 				customPrice?: Price;
 			};
 		};
+		vatRate: number;
 	}>;
 
 	shippingAddress?: OrderAddress;
@@ -129,11 +133,11 @@ export interface Order extends Timestamps {
 		currency: Currency;
 	};
 
-	vat?: {
+	vat?: Array<{
 		price: Price;
 		rate: number;
-		country: string;
-	};
+		country: CountryAlpha2;
+	}>;
 
 	vatFree?: {
 		reason: string;
@@ -146,21 +150,21 @@ export interface Order extends Timestamps {
 		main: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};
 		priceReference: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};
 		secondary?: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};
@@ -213,15 +217,18 @@ export function orderAmountWithNoPaymentsCreated(
 		payments: Pick<OrderPayment, 'currencySnapshot' | 'status'>[];
 	}
 ): number {
-	return (
-		order.currencySnapshot.main.totalPrice.amount -
-		sumCurrency(
-			order.currencySnapshot.main.totalPrice.currency,
-			order.payments
-				.filter((payment) => payment.status === 'pending' || payment.status === 'paid')
-				.map((payment) => payment.currencySnapshot.main.price)
-		)
-	);
+	return sumCurrency(order.currencySnapshot.main.totalPrice.currency, [
+		{
+			amount: order.currencySnapshot.main.totalPrice.amount,
+			currency: order.currencySnapshot.main.totalPrice.currency
+		},
+		...order.payments
+			.filter((payment) => payment.status === 'pending' || payment.status === 'paid')
+			.map((payment) => ({
+				amount: -payment.currencySnapshot.main.price.amount,
+				currency: payment.currencySnapshot.main.price.currency
+			}))
+	]);
 }
 
 export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
