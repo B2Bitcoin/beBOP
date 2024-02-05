@@ -18,7 +18,7 @@
 		? 'flex-row-reverse'
 		: ''}"
 >
-	<div class="flex-1">
+	<div class="flex-col grow-[2]">
 		<div class="tagWidget tagWidget-main m-2 p-4">
 			<h2 class="text-2xl body-title pb-2 uppercase">{gallery.principal.title}</h2>
 		</div>
@@ -34,7 +34,7 @@
 		</div>
 	</div>
 	{#each gallery.secondary as secondary}
-		<div class="flex-1">
+		<div class="flex-col grow-[1]">
 			<div class="m-2 justify-items-center">
 				<PictureComponent
 					picture={pictureById[secondary.pictureId || '']}
