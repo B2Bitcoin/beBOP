@@ -91,7 +91,7 @@
 			class="form-input"
 			type="text"
 			name="principal.title"
-			value={data.gallery.principal.content}
+			value={data.gallery.principal.title}
 			placeholder="Gallery title"
 		/>
 	</label>
