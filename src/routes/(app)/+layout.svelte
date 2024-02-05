@@ -353,7 +353,7 @@
 											{t('checkout.noDeliveryInCountry')}
 										</div>
 									{/if}
-									{#if items.some((item) => item.product.shipping) && priceInfo.isPhysicalVatExempted}
+									{#if items.some((item) => item.product.shipping) && priceInfo.physicalVatAtCustoms}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('product.vatExcluded')}
 											<div title={t('cart.vatNullOutsideSellerCountry')}>

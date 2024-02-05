@@ -189,7 +189,7 @@
 					{t('checkout.noDeliveryInCountry')}
 				</div>
 			{/if}
-			{#if items.some((item) => item.product.shipping) && priceInfo.isPhysicalVatExempted}
+			{#if items.some((item) => item.product.shipping) && priceInfo.physicalVatAtCustoms}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<span class="font-semibold">{t('product.vatExcluded')}</span>

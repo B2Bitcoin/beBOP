@@ -115,7 +115,7 @@ export function computePriceInfo(
 ): {
 	digitalVatRate: number;
 	physicalVatRate: number;
-	isPhysicalVatExempted: boolean;
+	physicalVatAtCustoms: boolean;
 	partialPrice: number;
 	partialVat: number;
 	partialPhysicalVat: number;
@@ -342,7 +342,7 @@ export function computePriceInfo(
 	return {
 		digitalVatRate,
 		physicalVatRate,
-		isPhysicalVatExempted,
+		physicalVatAtCustoms: isPhysicalVatExempted,
 		partialPrice,
 		partialVat,
 		partialPhysicalVat,

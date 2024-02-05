@@ -88,7 +88,7 @@
 		bebopCountry: data.vatCountry,
 		vatSingleCountry: data.vatSingleCountry,
 		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
-		vatExempted: data.vatExempted,
+		vatExempted: data.vatExempted || isFreeVat,
 		userCountry: isDigital ? digitalCountry : country,
 		deliveryFees: {
 			amount: deliveryFees || 0,
@@ -567,7 +567,7 @@
 					</div>
 				{/if}
 
-				{#if !isDigital && priceInfo.isPhysicalVatExempted}
+				{#if !isDigital && priceInfo.physicalVatAtCustoms}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
@@ -679,7 +679,7 @@
 				</label>
 
 				{#if data.roleId === POS_ROLE_ID}
-					{#if priceInfo.totalVat > 0}
+					{#if !data.vatExempted}
 						<label class="checkbox-label">
 							<input
 								type="checkbox"
