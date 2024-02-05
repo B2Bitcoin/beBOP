@@ -486,15 +486,14 @@ export async function createOrder(
 			throw error(400, 'Shipping address is required');
 		} else {
 			const { country } = params.shippingAddress;
-
-			shippingPrice.amount = params.reasonOfferDeliveryFees
-				? 0
-				: computeDeliveryFees(
-						runtimeConfig.mainCurrency,
-						country,
-						items,
-						runtimeConfig.deliveryFees
-				  );
+			if (!params.reasonOfferDeliveryFees) {
+				shippingPrice.amount = computeDeliveryFees(
+					runtimeConfig.mainCurrency,
+					country,
+					items,
+					runtimeConfig.deliveryFees
+				);
+			}
 
 			if (isNaN(shippingPrice.amount)) {
 				throw error(400, 'Some products are not available in your country');
