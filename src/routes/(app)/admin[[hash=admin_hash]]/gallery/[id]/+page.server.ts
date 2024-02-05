@@ -46,7 +46,7 @@ export const actions: Actions = {
 					.array(
 						z.object({
 							title: z.string().trim().max(30),
-							content: z.string().trim().max(150),
+							content: z.string().trim().max(160),
 							pictureId: z.string().trim().max(100),
 							cta: z.object({ href: z.string().trim(), label: z.string().trim() })
 						})

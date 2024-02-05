@@ -106,6 +106,7 @@
 				type="text"
 				name="secondary[{i}].title"
 				placeholder="Gallery title"
+				maxlength="30"
 			/>
 		</label>
 		<label class="form-label">
@@ -114,7 +115,7 @@
 				name="secondary[{i}].content"
 				cols="30"
 				rows="5"
-				maxlength="10000"
+				maxlength="160"
 				class="form-input"
 			/>
 		</label>

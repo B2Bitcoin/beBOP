@@ -81,7 +81,7 @@
 				name="secondary[{i}].content"
 				cols="30"
 				rows="5"
-				maxlength="150"
+				maxlength="160"
 				class="form-input"
 				placeholder={data.gallery.secondary[i]?.content}
 				value={data.gallery.translations?.[language]?.secondary?.[i]?.content || ''}
