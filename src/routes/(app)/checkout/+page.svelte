@@ -21,9 +21,10 @@
 	export let data;
 
 	let actionCount = 0;
-	const defaultCountry =
+	const defaultShippingCountry =
 		(data.personalInfoConnected?.address?.country ?? data.countryCode) || data.vatCountry || 'FR';
-	let country = defaultCountry;
+	const digitalCountry = data.countryCode || data.vatCountry || 'FR';
+	let country = defaultShippingCountry;
 
 	let isFreeVat = false;
 	let offerDeliveryFees = false;
@@ -88,7 +89,7 @@
 		vatSingleCountry: data.vatSingleCountry,
 		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
 		vatExempted: data.vatExempted,
-		userCountry: country,
+		userCountry: isDigital ? digitalCountry : country,
 		deliveryFees: {
 			amount: deliveryFees || 0,
 			currency: UNDERLYING_CURRENCY
@@ -268,7 +269,12 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required value={defaultCountry}>
+						<select
+							name="billing.country"
+							class="form-input"
+							required
+							value={defaultShippingCountry}
+						>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
