@@ -5,15 +5,22 @@
 		MAX_NAME_LIMIT,
 		MAX_SHORT_DESCRIPTION_LIMIT
 	} from '$lib/types/Product';
+	import { addHours } from 'date-fns';
 
 	export let data;
 	let name = data.countdown.name;
 	let slug = data.countdown._id;
-	let endsAt = data.countdown.endsAt.toISOString().slice(0, 16);
 
 	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
 	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
 	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
+
+	let endsAt = addHours(
+		data.countdown.endsAt,
+		timezoneOffsetHours > 0 ? timezoneOffsetHours : Math.abs(timezoneOffsetHours)
+	)
+		.toISOString()
+		.slice(0, 16);
 
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this countdown?')) {

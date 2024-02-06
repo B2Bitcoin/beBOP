@@ -20,7 +20,9 @@
 <div class="flex flex-row gap-4 {className}">
 	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4 grow pr-5">
 		<div class="p-4 grow">
-			<h2 class="text-2xl font-bold mb-2 body-title">{countdown.title}</h2>
+			<h2 class="text-2xl font-bold mb-2 body-title">
+				{countdown.title}
+			</h2>
 
 			<p class="mb-4">{countdown.description}</p>
 		</div>
