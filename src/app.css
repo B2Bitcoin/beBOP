@@ -199,6 +199,31 @@
 		color: var(--body-title-color);
 		font-family: var(--body-title-fontFamily);
 	}
+	.prose :where(a):not(:where([class~='not-prose'] *)) {
+		color: var(--body-hyperlink-color);
+		text-decoration: underline;
+		font-weight: 500;
+	}
+	.prose :where(h1):not(:where([class~='not-prose'] *)) {
+		color: var(--body-title-color);
+		font-weight: 800;
+		font-size: 2.25em;
+		margin-top: 0;
+		margin-bottom: 0.8888889em;
+		line-height: 1.1111111;
+	}
+	.prose :where(h2):not(:where([class~='not-prose'] *)) {
+		color: var(--body-title-color);
+		font-weight: 700;
+		font-size: 1.5em;
+		margin-top: 1em;
+		margin-bottom: 1em;
+		line-height: 1.3333333;
+	}
+	.prose :where(h2 strong):not(:where([class~='not-prose'] *)) {
+		font-weight: 800;
+		color: inherit;
+	}
 	.body {
 		color: var(--body-text-color);
 		font-family: var(--body-text-fontFamily);
