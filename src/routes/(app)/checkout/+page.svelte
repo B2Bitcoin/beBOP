@@ -742,7 +742,7 @@
 				{#if isFreeVat}
 					<label class="form-label col-span-3">
 						{t('pos.vatFreeReason')}:
-						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" />
+						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" required />
 					</label>
 				{/if}
 				{#if offerDeliveryFees}
