@@ -37,6 +37,7 @@ import type { PersonalInfo } from '$lib/types/PersonalInfo';
 import type { Specification } from '$lib/types/Specification';
 import type { ContactForm } from '$lib/types/ContactForm';
 import type { Countdown } from '$lib/types/Countdown';
+import type { Gallery } from '$lib/types/Gallery';
 
 const client = building
 	? (null as unknown as MongoClient)
@@ -82,6 +83,7 @@ const genCollection = () => ({
 	specifications: db.collection<Specification>('specifications'),
 	contactForms: db.collection<ContactForm>('contactForms'),
 	countdowns: db.collection<Countdown>('countdowns'),
+	galleries: db.collection<Gallery>('galleries'),
 
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });

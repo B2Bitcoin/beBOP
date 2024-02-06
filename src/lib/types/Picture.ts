@@ -24,6 +24,7 @@ export interface Picture extends Timestamps {
 		openNewTab?: boolean;
 	};
 	name: string;
+	galleryId?: string;
 
 	storage: {
 		original: ImageData;
