@@ -19,6 +19,7 @@ import { trimPrefix } from '$lib/utils/trimPrefix';
 import { enhancedLanguages, languages, locales, type LanguageKey } from '$lib/translations';
 import { merge } from 'lodash-es';
 import { typedInclude } from '$lib/utils/typedIncludes';
+import type { CountryAlpha2 } from '$lib/types/Country';
 
 const baseConfig = {
 	adminHash: '',
@@ -71,7 +72,7 @@ const baseConfig = {
 	vatExempted: false,
 	vatExemptionReason: '',
 	vatSingleCountry: false,
-	vatCountry: '',
+	vatCountry: 'FR' satisfies CountryAlpha2 as CountryAlpha2,
 	vatNullOutsideSellerCountry: false,
 	collectIPOnDeliverylessOrders: false,
 	isBillingAddressMandatory: false,
@@ -83,6 +84,7 @@ const baseConfig = {
 		mode: 'flatFee' as 'flatFee' | 'perItem',
 		applyFlatFeeToEachItem: false,
 		onlyPayHighest: false,
+		allowFreeForPOS: false,
 		deliveryFees: {
 			default: {
 				amount: 0,
@@ -122,7 +124,6 @@ const baseConfig = {
 
 	websiteTitle: 'B2Bitcoin beBOP',
 	websiteShortDescription: "B2Bitcoin's beBOP store",
-
 	emailTemplates: {
 		passwordReset: {
 			subject: 'Password reset',

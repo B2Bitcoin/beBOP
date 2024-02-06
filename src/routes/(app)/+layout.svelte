@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import IconDownArrow from '$lib/components/icons/IconDownArrow.svelte';
 	import IconSearch from '$lib/components/icons/IconSearch.svelte';
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
@@ -24,13 +24,14 @@
 	import { slide } from 'svelte/transition';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
 	import { currencies } from '$lib/stores/currencies';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { useI18n } from '$lib/i18n';
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
+	import { isAlpha2CountryCode } from '$lib/types/Country.js';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 
 	export let data;
 
@@ -49,32 +50,25 @@
 	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
-	$: partialPrice = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount:
-				((item.customPrice || item.product.price).amount *
-					item.quantity *
-					(item.depositPercentage ?? 100)) /
-				100
-		}))
-	);
-	$: totalPrice = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount: (item.customPrice || item.product.price).amount * item.quantity
-		}))
-	);
-	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: totalPriceWithVat =
-		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: partialPriceWithVat = partialPrice + partialVat;
+	$: deliveryFees =
+		data.countryCode && isAlpha2CountryCode(data.countryCode)
+			? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
+			: NaN;
+	$: priceInfo = computePriceInfo(items, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted,
+		userCountry: data.countryCode,
+		deliveryFees: {
+			amount: deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		}
+	});
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
-		// Refresh exchange rate every 5 minutes
+		// Refresh exchange rate every 5 minutescomputeCartPrices
 		const interval = setInterval(
 			() =>
 				fetch('/exchange-rate', {
@@ -337,29 +331,59 @@
 											</div>
 										</form>
 									{/each}
-									{#if data.vatCountry !== data.countryCode && data.vatNullOutsideSellerCountry}
+									{#if deliveryFees}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('product.vatExcluded')}
-										</div>
-									{:else if data.countryCode && !data.vatExempted}
-										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({data.vatRate}%) <PriceTag
+											{t('checkout.deliveryFees')}
+											<div
+												title={t('checkout.deliveryFeesEstimationTooltip')}
+												class="cursor-pointer"
+											>
+												<IconInfo />
+											</div>
+
+											<PriceTag
+												class="truncate"
+												amount={deliveryFees}
 												currency={UNDERLYING_CURRENCY}
-												amount={partialVat}
 												main
 											/>
 										</div>
+									{:else if isNaN(deliveryFees)}
+										<div class="alert-error mt-3">
+											{t('checkout.noDeliveryInCountry')}
+										</div>
 									{/if}
+									{#if items.some((item) => item.product.shipping) && priceInfo.physicalVatAtCustoms}
+										<div class="flex gap-1 text-lg justify-end items-center">
+											{t('product.vatExcluded')}
+											<div title={t('cart.vatNullOutsideSellerCountry')}>
+												<IconInfo class="cursor-pointer" />
+											</div>
+										</div>
+									{/if}
+									{#each priceInfo.vat as vat}
+										<div class="flex gap-1 text-lg justify-end items-center">
+											{t('cart.vat')} ({vat.rate}%) <PriceTag
+												currency={vat.partialPrice.currency}
+												amount={vat.partialPrice.amount}
+												main
+											/>
+										</div>
+									{/each}
 									<div class="flex gap-1 text-xl justify-end items-center">
 										{t('cart.total')}
-										<PriceTag currency={UNDERLYING_CURRENCY} amount={partialPriceWithVat} main />
+										<PriceTag
+											currency={priceInfo.currency}
+											amount={priceInfo.partialPriceWithVat}
+											main
+										/>
 									</div>
-									{#if totalPriceWithVat !== partialPriceWithVat}
+									{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.remainingShort')}
 											<PriceTag
-												currency={UNDERLYING_CURRENCY}
-												amount={totalPriceWithVat - partialPriceWithVat}
+												currency={priceInfo.currency}
+												amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
 												main
 											/>
 										</div>

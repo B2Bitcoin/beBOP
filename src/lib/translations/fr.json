@@ -2,10 +2,12 @@
 	"address": {
 		"address": "Adresse",
 		"city": "Ville",
+		"companyName": "Nom d'entreprise",
 		"country": "Pays",
 		"firstName": "Prénom",
 		"lastName": "Nom",
 		"state": "Canton / Région",
+		"vatNumber": "Numéro TVA",
 		"zipCode": "Code postal"
 	},
 	"cart": {
@@ -29,7 +31,7 @@
 		"vat": "TVA",
 		"vatIpCountry": "Déterminé par votre adresse IP et grâce aux données de <0></0>",
 		"vatIpCountryText": "Déterminé par votre adresse IP et grâce aux données de {link}",
-		"vatNullOutsideSellerCountry": "La TVA devra être acquitée par le client aux douanes lors de la livraison",
+		"vatNullOutsideSellerCountry": "La TVA sur les produits physiques devra être acquitée par le client aux douanes lors de la livraison",
 		"vatRate": "Taux de TVA : {country}",
 		"vatSellerCountry": "La TVA est celle du pays du vendeur."
 	},
@@ -66,6 +68,7 @@
 		"differentBillingAddress": "Mon adresse de livraison et mon adresse de facturation sont différentes",
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
+		"isProBilling": "Ceci est une commande professionnelle",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"note": {
 			"label": "Laissez un message au vendeur",
@@ -479,7 +482,8 @@
 			"totalExcVat": "Total HT",
 			"totalInclVat": "Total TTC",
 			"totalVat": "TVA totale",
-			"unitPrice": "Prix ​​unit. HT"
+			"unitPrice": "Prix ​​unit. HT",
+			"vatFreeReason": "Exempt de TVA: {reason}"
 		},
 		"restToPay": "Reste à payer",
 		"shippingAddress": {
@@ -500,13 +504,15 @@
 		"lastOrders": {
 			"title": "Dernières commandes"
 		},
+		"offerDeliveryFees": "Enlever les frais de port pour cette commande",
 		"order": {
 			"satReceived": "reçu"
 		},
+		"pendingPayment": "Paiement en cours",
 		"session": {
 			"waitingPaymentConfirmation": "En attente de confirmation",
 			"welcomeMessage": "Nous sommes heureux de vous voir",
-			"welcomeTitle": "Accueillir"
+			"welcomeTitle": "Bienvenue"
 		},
 		"sessionLink": "Session point de vente",
 		"vatFree": "Il s'agit d'une commande sans TVA (<0>conditions</0>)",

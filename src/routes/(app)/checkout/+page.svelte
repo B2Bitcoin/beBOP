@@ -8,10 +8,8 @@
 	import { typedValues } from '$lib/utils/typedValues';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { computeDeliveryFees } from '$lib/types/Cart';
+	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { POS_ROLE_ID } from '$lib/types/User.js';
@@ -19,17 +17,17 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
-	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
 
 	export let data;
 
 	let actionCount = 0;
-	const defaultCountry =
-		(data.personalInfoConnected?.address?.country ?? (data.countryCode as CountryAlpha2)) ||
-		(data.vatCountry as CountryAlpha2);
-	let country = defaultCountry;
+	const defaultShippingCountry =
+		(data.personalInfoConnected?.address?.country ?? data.countryCode) || data.vatCountry || 'FR';
+	const digitalCountry = data.countryCode || data.vatCountry || 'FR';
+	let country = defaultShippingCountry;
 
 	let isFreeVat = false;
+	let offerDeliveryFees = false;
 	let addDiscount = false;
 	let discountAmount: number;
 	let discountType: DiscountType;
@@ -75,56 +73,42 @@
 		}
 	}
 
-	$: paymentMethods = data.paymentMethods.filter((method) =>
-		method === 'bitcoin' ? partialSatoshi >= 10_000 : true
-	);
-
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
 	$: paymentMethod = typedInclude(paymentMethods, paymentMethod)
 		? paymentMethod
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
+	$: deliveryFees =
+		data.roleId === 'POS_ROLE_ID' && data.deliveryFees.allowFreeForPOS
+			? 0
+			: computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
+
+	$: priceInfo = computePriceInfo(items, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted || isFreeVat,
+		userCountry: isDigital ? digitalCountry : country,
+		deliveryFees: {
+			amount: deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		}
+	});
 
 	$: isDigital = items.every((item) => !item.product.shipping);
-	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
-	$: actualVatRate =
-		data.vatExempted || (data.vatCountry !== actualCountry && data.vatNullOutsideSellerCountry)
-			? 0
-			: vatRate(actualCountry);
 
-	$: partialPrice =
-		sumCurrency(
-			UNDERLYING_CURRENCY,
-			items.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					((item.customPrice || item.product.price).amount *
-						item.quantity *
-						(item.depositPercentage ?? 100)) /
-					100
-			}))
-		) + (deliveryFees || 0);
-	$: totalPrice =
-		sumCurrency(
-			UNDERLYING_CURRENCY,
-			items.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount: (item.customPrice || item.product.price).amount * item.quantity
-			}))
-		) + (deliveryFees || 0);
-	$: totalPriceWithVat =
-		totalPrice + fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
-
-	$: partialVat = fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
-	$: partialPriceWithVat = partialPrice + partialVat;
-	$: partialSatoshi = toCurrency('SAT', partialPriceWithVat, UNDERLYING_CURRENCY);
+	$: paymentMethods = data.paymentMethods.filter((method) =>
+		method === 'bitcoin'
+			? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
+			: true
+	);
 	$: isDiscountValid =
 		(discountType === 'fiat' &&
-			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
+			priceInfo.totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
 		(discountType === 'percentage' && discountAmount < 100);
 	let showBillingInfo = false;
+	let isProfessionalOrder = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -231,9 +215,19 @@
 						{t('checkout.differentBillingAddress')}
 					</label>
 				{/if}
+				<label class="col-span-6 checkbox-label">
+					<input
+						type="checkbox"
+						class="form-checkbox"
+						form="checkout"
+						name="billing.isCompany"
+						bind:checked={isProfessionalOrder}
+					/>
+					{t('checkout.isProBilling')}
+				</label>
 			</section>
 
-			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory)}
+			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory) || isProfessionalOrder}
 				<section class="gap-4 grid grid-cols-6 w-4/5">
 					<h2 class="font-light text-2xl col-span-6">{t('checkout.billingInfo')}</h2>
 
@@ -275,7 +269,12 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required bind:value={country}>
+						<select
+							name="billing.country"
+							class="form-input"
+							required
+							value={defaultShippingCountry}
+						>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
@@ -317,6 +316,17 @@
 							autocomplete="postal-code"
 						/>
 					</label>
+					{#if isProfessionalOrder}
+						<label class="form-label col-span-3">
+							{t('address.companyName')}
+							<input type="text" class="form-input" name="billing.companyName" />
+						</label>
+
+						<label class="form-label col-span-3">
+							{t('address.vatNumber')}
+							<input type="text" class="form-input" name="billing.vatNumber" />
+						</label>
+					{/if}
 				</section>
 			{/if}
 
@@ -557,7 +567,7 @@
 					</div>
 				{/if}
 
-				{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+				{#if !isDigital && priceInfo.physicalVatAtCustoms}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
@@ -568,19 +578,21 @@
 							</h3>
 						</div>
 					</div>
-				{:else if data.vatCountry && !data.vatExempted}
+				{/if}
+
+				{#each priceInfo.vat as vat}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
-								{t('cart.vat')} ({actualVatRate}%)
+								{t('cart.vat')} ({vat.rate}%)
 								<div
 									title="{t('cart.vatRate', {
-										country: countryName(actualCountry)
-									})}. {data.vatSingleCountry
+										country: countryName(vat.country)
+									})}. {priceInfo.singleVatCountry
 										? t('cart.vatSellerCountry')
-										: isDigital
-										? `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`
-										: t('checkout.vatShippingAddress')}"
+										: !isDigital
+										? `${t('checkout.vatShippingAddress')}`
+										: `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`}"
 								>
 									<IconInfo class="cursor-pointer" />
 								</div>
@@ -590,20 +602,20 @@
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
 								class="text-2xl truncate"
-								amount={partialVat}
-								currency={UNDERLYING_CURRENCY}
+								amount={vat.partialPrice.amount}
+								currency={vat.partialPrice.currency}
 								main
 							/>
 							<PriceTag
-								amount={partialVat}
-								currency={UNDERLYING_CURRENCY}
+								amount={vat.partialPrice.amount}
+								currency={vat.partialPrice.currency}
 								class="text-base truncate"
 								secondary
 							/>
 						</div>
 					</div>
 					<div class="border-b border-gray-300 col-span-4" />
-				{/if}
+				{/each}
 
 				<span class="py-1" />
 
@@ -612,20 +624,20 @@
 						<span class="text-xl">{t('cart.total')}</span>
 						<PriceTag
 							class="text-2xl"
-							amount={partialPriceWithVat}
+							amount={priceInfo.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end"
-						amount={partialPriceWithVat}
+						amount={priceInfo.partialPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
 
-				{#if totalPriceWithVat !== partialPriceWithVat}
+				{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 					<div class="-mx-3 p-3 flex flex-col">
 						<div class="flex justify-between">
 							<span class="text-xl flex gap-1 items-center flex-wrap"
@@ -635,15 +647,15 @@
 							>
 							<PriceTag
 								class="text-2xl"
-								amount={partialPriceWithVat}
-								currency={UNDERLYING_CURRENCY}
+								amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
+								currency={priceInfo.currency}
 								main
 							/>
 						</div>
 						<PriceTag
 							class="self-end"
-							amount={partialPriceWithVat}
-							currency={UNDERLYING_CURRENCY}
+							amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
+							currency={priceInfo.currency}
 							secondary
 						/>
 					</div>
@@ -667,28 +679,30 @@
 				</label>
 
 				{#if data.roleId === POS_ROLE_ID}
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							bind:checked={isFreeVat}
-							name="isFreeVat"
-							form="checkout"
-						/>
-						<span>
-							<Trans key="pos.vatFree"
-								><a
-									href="/terms"
-									target="_blank"
-									class="body-hyperlink hover:underline"
-									slot="0"
-									let:translation
+					{#if !data.vatExempted}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								bind:checked={isFreeVat}
+								name="isFreeVat"
+								form="checkout"
+							/>
+							<span>
+								<Trans key="pos.vatFree"
+									><a
+										href="/terms"
+										target="_blank"
+										class="body-hyperlink hover:underline"
+										slot="0"
+										let:translation
+									>
+										{translation}
+									</a></Trans
 								>
-									{translation}
-								</a></Trans
-							>
-						</span>
-					</label>
+							</span>
+						</label>
+					{/if}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"
@@ -711,6 +725,18 @@
 							</Trans>
 						</span>
 					</label>
+					{#if data.deliveryFees.allowFreeForPOS}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								name="offerDeliveryFees"
+								form="checkout"
+								bind:checked={offerDeliveryFees}
+							/>
+							{t('pos.offerDeliveryFees')}
+						</label>
+					{/if}
 				{/if}
 
 				{#if isFreeVat}
@@ -718,6 +744,17 @@
 						{t('pos.vatFreeReason')}:
 						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" />
 					</label>
+				{/if}
+				{#if offerDeliveryFees}
+					<label class="form-label col-span-3">
+						{t('pos.discountJustification')}
+						<input
+							type="text"
+							class="form-input"
+							form="checkout"
+							name="reasonOfferDeliveryFees"
+						/></label
+					>
 				{/if}
 				{#if addDiscount}
 					<input
@@ -775,7 +812,7 @@
 						</span>
 					</label>
 				{/if}
-				{#if totalPriceWithVat !== partialPriceWithVat}
+				{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"

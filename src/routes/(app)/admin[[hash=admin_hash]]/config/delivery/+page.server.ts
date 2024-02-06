@@ -19,7 +19,8 @@ export const actions = {
 				mode: z.enum(['flatFee', 'perItem']),
 				onlyPayHighest: z.boolean({ coerce: true }),
 				applyFlatFeeToEachItem: z.boolean({ coerce: true }),
-				deliveryFees: deliveryFeesSchema.default({})
+				deliveryFees: deliveryFeesSchema.default({}),
+				allowFreeForPOS: z.boolean({ coerce: true })
 			})
 			.parse(json);
 

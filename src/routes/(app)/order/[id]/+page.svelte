@@ -5,7 +5,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n';
-	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
+	import { FAKE_ORDER_INVOICE_NUMBER, orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
@@ -22,7 +22,10 @@
 		const interval = setInterval(() => {
 			currentDate = new Date();
 
-			if (data.order.status === 'pending') {
+			if (
+				data.order.status === 'pending' ||
+				data.order.payments.some((p) => p.invoice?.number === FAKE_ORDER_INVOICE_NUMBER)
+			) {
 				count++;
 				if (count % 4 === 0) {
 					invalidate(UrlDependency.Order);
@@ -46,7 +49,7 @@
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
 	<div
-		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
+		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid flex md:grid-cols-3 sm:flex-wrap gap-2"
 	>
 		<div class="col-span-2 flex flex-col gap-2">
 			<h1 class="text-3xl body-title">{t('order.singleTitle', { number: data.order.number })}</h1>
@@ -140,13 +143,15 @@
 								on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
 								>{t('order.receipt.create')}</button
 							>
-							<iframe
-								src="/order/{data.order._id}/payment/{payment.id}/receipt"
-								style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
-								title=""
-								on:load={() => (receiptReady = { ...receiptReady, [payment.id]: true })}
-								bind:this={receiptIFrame[payment.id]}
-							/>
+							{#if payment.invoice.number !== FAKE_ORDER_INVOICE_NUMBER}
+								<iframe
+									src="/order/{data.order._id}/payment/{payment.id}/receipt"
+									style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+									title=""
+									on:load={() => (receiptReady = { ...receiptReady, [payment.id]: true })}
+									bind:this={receiptIFrame[payment.id]}
+								/>
+							{/if}
 						{/if}
 						{#if payment.status === 'pending' && (payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card')}
 							<img

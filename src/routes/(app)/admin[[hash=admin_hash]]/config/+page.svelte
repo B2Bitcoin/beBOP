@@ -193,7 +193,7 @@
 					class="form-checkbox"
 					bind:checked={vatSingleCountry}
 				/>
-				Use VAT rate from seller's country (always true for orders that are 100% digital goods)
+				Use VAT rate from seller's country
 			</label>
 			<label class="checkbox-label">
 				<input
@@ -204,18 +204,16 @@
 				/>
 				Make VAT = 0% for deliveries outside seller's country
 			</label>
-			{#if vatSingleCountry}
-				<label class="form-label">
-					Seller's country for VAT purposes
-					<select name="vatCountry" class="form-input">
-						{#each sortedCountryCodes() as countryCode}
-							<option value={countryCode} selected={data.vatCountry === countryCode}>
-								{countryName(countryCode)}
-							</option>
-						{/each}
-					</select>
-				</label>
-			{/if}
+			<label class="form-label">
+				Seller's country for VAT purposes
+				<select name="vatCountry" class="form-input">
+					{#each sortedCountryCodes() as countryCode}
+						<option value={countryCode} selected={data.vatCountry === countryCode}>
+							{countryName(countryCode)}
+						</option>
+					{/each}
+				</select>
+			</label>
 		{/if}
 	</div>
 	<label class="form-label">

@@ -5,52 +5,38 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import Trans from '$lib/components/Trans.svelte';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { useI18n } from '$lib/i18n';
-	import { computeDeliveryFees } from '$lib/types/Cart.js';
-	import type { CountryAlpha2 } from '$lib/types/Country.js';
+	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
+	import { isAlpha2CountryCode } from '$lib/types/Country.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
 
 	export let data;
 
 	let actionCount = 0;
-	let country = data.countryCode as CountryAlpha2;
 
 	let errorMessage = data.errorMessage;
 	let errorProductId = '';
-	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
 
 	$: items = data.cart || [];
-	$: partialPrice =
-		sumCurrency(
-			UNDERLYING_CURRENCY,
-			items.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					((item.customPrice || item.product.price).amount *
-						item.quantity *
-						(item.depositPercentage ?? 100)) /
-					100
-			}))
-		) + (deliveryFees || 0);
-	$: totalPrice =
-		sumCurrency(
-			UNDERLYING_CURRENCY,
-			items.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount: (item.customPrice || item.product.price).amount * item.quantity
-			}))
-		) + (deliveryFees || 0);
-
-	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: partialPriceWithVat = partialPrice + partialVat;
-	$: totalPriceWithVat =
-		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
+	$: deliveryFees =
+		data.countryCode && isAlpha2CountryCode(data.countryCode)
+			? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
+			: NaN;
+	$: priceInfo = computePriceInfo(items, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted,
+		userCountry: data.countryCode,
+		deliveryFees: {
+			amount: deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		}
+	});
 
 	const { t, locale, countryName } = useI18n();
 </script>
@@ -68,7 +54,7 @@
 				class="grid gap-x-4 gap-y-6 overflow-hidden"
 				style="grid-template-columns: auto 1fr auto auto"
 			>
-				{#each items as item}
+				{#each items as item, i}
 					{@const price = item.customPrice || item.product.price}
 					<form
 						method="POST"
@@ -164,7 +150,7 @@
 								currency={price.currency}
 								secondary
 							/>
-							<span class="font-semibold">{t('product.vatExcluded')}</span>
+							<span class="font-semibold">{t('cart.vat')} {priceInfo.vatRates[i]}%</span>
 						</div>
 					</form>
 
@@ -203,7 +189,7 @@
 					{t('checkout.noDeliveryInCountry')}
 				</div>
 			{/if}
-			{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+			{#if items.some((item) => item.product.shipping) && priceInfo.physicalVatAtCustoms}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<span class="font-semibold">{t('product.vatExcluded')}</span>
@@ -212,13 +198,14 @@
 						</p>
 					</div>
 				</div>
-			{:else if data.vatCountry && !data.vatExempted}
+			{/if}
+			{#each priceInfo.vat as vat}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
-						<h2 class="text-[28px]">{t('cart.vat')} ({data.vatRate}%):</h2>
+						<h2 class="text-[28px]">{t('cart.vat')} ({vat.rate}%):</h2>
 						<p class="text-sm">
-							{t('cart.vatRate', { country: countryName(data.vatCountry) })}.
-							{#if data.vatSingleCountry}
+							{t('cart.vatRate', { country: countryName(vat.country) })}.
+							{#if priceInfo.singleVatCountry}
 								{t('cart.vatSellerCountry')}
 							{:else}
 								<Trans key="cart.vatIpCountry">
@@ -228,34 +215,39 @@
 						</p>
 					</div>
 					<div class="flex flex-col items-end">
-						<PriceTag amount={partialVat} currency={UNDERLYING_CURRENCY} main class="text-[28px]" />
+						<PriceTag
+							amount={vat.partialPrice.amount}
+							currency={vat.partialPrice.currency}
+							main
+							class="text-[28px]"
+						/>
 						<PriceTag
 							class="text-base"
-							amount={partialVat}
-							currency={UNDERLYING_CURRENCY}
+							amount={vat.partialPrice.amount}
+							currency={vat.partialPrice.currency}
 							secondary
 						/>
 					</div>
 				</div>
-			{/if}
+			{/each}
 			<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 				<h2 class="text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={partialPriceWithVat}
-						currency={UNDERLYING_CURRENCY}
+						amount={priceInfo.partialPriceWithVat}
+						currency={priceInfo.currency}
 						main
 						class="text-[32px]"
 					/>
 					<PriceTag
 						class="text-base"
-						amount={partialPriceWithVat}
-						currency={UNDERLYING_CURRENCY}
+						amount={priceInfo.partialPriceWithVat}
+						currency={priceInfo.currency}
 						secondary
 					/>
 				</div>
 			</div>
-			{#if totalPriceWithVat !== partialPriceWithVat}
+			{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 				<div class="flex justify-end border-b border-gray-300 pb-6 gap-6">
 					<div class="flex flex-col">
 						<h2 class="text-[32px]">{t('cart.remaining')}:</h2>
@@ -263,14 +255,14 @@
 					</div>
 					<div class="flex flex-col items-end">
 						<PriceTag
-							amount={totalPriceWithVat - partialPriceWithVat}
+							amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							main
 							class="text-[32px]"
 						/>
 						<PriceTag
 							class="text-base"
-							amount={totalPriceWithVat - partialPriceWithVat}
+							amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							secondary
 						/>

@@ -4,6 +4,7 @@ import { isOrderFullyPaid } from '$lib/server/orders';
 import { picturesForProducts } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { isSumupEnabled } from '$lib/server/sumup';
+import { FAKE_ORDER_INVOICE_NUMBER } from '$lib/types/Order';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
@@ -46,6 +47,11 @@ export async function fetchOrderForUser(orderId: string) {
 			if (checkout.status === 'PAID') {
 				payment.status = 'paid';
 
+				payment.invoice = {
+					number: FAKE_ORDER_INVOICE_NUMBER,
+					createdAt: new Date()
+				};
+
 				if (isOrderFullyPaid(order) && order.status === 'pending') {
 					order.status = 'paid';
 				}
@@ -87,6 +93,7 @@ export async function fetchOrderForUser(orderId: string) {
 				availableDate: item.product.availableDate,
 				shipping: item.product.shipping
 			},
+			vatRate: item.vatRate,
 			...(item.customPrice && { customPrice: item.customPrice }),
 			picture: pictures.find((picture) => picture.productId === item.product._id),
 			digitalFiles: digitalFiles.filter(
@@ -100,14 +107,14 @@ export async function fetchOrderForUser(orderId: string) {
 			currency: order.shippingPrice.currency
 		},
 		sellerIdentity: order.sellerIdentity,
-		vat: order.vat && {
-			country: order.vat.country,
+		vat: order.vat?.map((item) => ({
+			country: item.country,
 			price: {
-				amount: order.vat.price.amount,
-				currency: order.vat.price.currency
+				amount: item.price.amount,
+				currency: item.price.currency
 			},
-			rate: order.vat.rate
-		},
+			rate: item.rate
+		})),
 		shippingAddress: order.shippingAddress,
 		billingAddress: order.billingAddress,
 		notifications: order.notifications,
