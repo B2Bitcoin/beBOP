@@ -6,7 +6,6 @@ P2P BeBOP for merch, subscribers and crowdfunding
 
 - A S3-compatible object storage. There are hundreds of solutions, including https://min.io/, an open source solution that can be run inside docker, or paid services like AWS, Scaleway, ...
 - SMTP credentials, for sending emails
-- A BTCPayServer instance. You can run it inside docker, or use paid services like Nodl.it, LunaNode or Voltage.cloud.
 - A MongoDB replica set. You can run it inside docker or use MongoDB Atlas.
 - A bitcoin node, and lnd
 - Node version 18+, corepack enabled with `corepack enable`
