@@ -28,7 +28,7 @@
 			>
 		</div>
 		<div class="tagWidget tagWidget-main m-2 p-4">
-			<p class="min-h-[36.2em] mt-2">
+			<p class="min-h-[39em] mt-2">
 				{gallery.principal.content}
 			</p>
 		</div>
@@ -43,7 +43,7 @@
 			</div>
 
 			<div class="m-2 tagWidget tagWidget-main p-4 text-center">
-				<h2 class="text-xl body-title pb-2 uppercase">{secondary.title}</h2>
+				<h2 class="text-xl body-title pb-2 uppercase min-h-[4em]">{secondary.title}</h2>
 			</div>
 			<div class="m-2 tagWidget tagWidget-main p-4 text-center">
 				<p class="min-h-[12em] mt-2">
