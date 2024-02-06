@@ -28,7 +28,7 @@
 			>
 		</div>
 		<div class="tagWidget tagWidget-main m-2 p-4">
-			<p class="min-h-[39em] mt-2">
+			<p class="min-h-[37em] mt-2">
 				{gallery.principal.content}
 			</p>
 		</div>
