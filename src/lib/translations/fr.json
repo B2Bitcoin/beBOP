@@ -69,6 +69,8 @@
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
 		"isProBilling": "Ceci est une commande professionnelle",
+		"multiplePaymentMethods": "Utiliser plusieurs méthodes de paiements",
+		"multiplePaymentMethodsHelpText": "Vous pourrez définir les méthodes de paiement à l'étape suivante",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"note": {
 			"label": "Laissez un message au vendeur",

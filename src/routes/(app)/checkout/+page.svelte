@@ -31,6 +31,7 @@
 	let addDiscount = false;
 	let discountAmount: number;
 	let discountType: DiscountType;
+	let multiplePaymentMethods = false;
 
 	const { t, locale, countryName, sortedCountryCodes } = useI18n();
 
@@ -333,30 +334,47 @@
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.payment.title')}</h2>
 
-				<label class="form-label">
-					{t('checkout.payment.method')}
+				{#if data.roleId === POS_ROLE_ID}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							name="multiplePaymentMethods"
+							class="form-checkbox"
+							bind:checked={multiplePaymentMethods}
+						/>
+						{t('checkout.multiplePaymentMethods')}
+					</label>
+				{/if}
 
-					<div class="grid grid-cols-2 gap-4 items-center">
-						<select
-							name="paymentMethod"
-							class="form-input"
-							bind:value={paymentMethod}
-							disabled={paymentMethods.length === 0}
-							required
-						>
-							{#each paymentMethods as paymentMethod}
-								<option value={paymentMethod}>{t('checkout.paymentMethod.' + paymentMethod)}</option
-								>
-							{/each}
-						</select>
-						{#if paymentMethods.length === 0}
-							<p class="text-red-400">{t('checkout.paymentMethod.unavailable')}</p>
-						{/if}
-						{#if 0}
-							<a href="/connect" class="underline body-hyperlink"> Connect another wallet </a>
-						{/if}
-					</div>
-				</label>
+				{#if multiplePaymentMethods}
+					<p>{t('checkout.multiplePaymentMethodsHelpText')}</p>
+				{:else}
+					<label class="form-label">
+						{t('checkout.payment.method')}
+
+						<div class="grid grid-cols-2 gap-4 items-center">
+							<select
+								name="paymentMethod"
+								class="form-input"
+								bind:value={paymentMethod}
+								disabled={paymentMethods.length === 0}
+								required
+							>
+								{#each paymentMethods as paymentMethod}
+									<option value={paymentMethod}
+										>{t('checkout.paymentMethod.' + paymentMethod)}</option
+									>
+								{/each}
+							</select>
+							{#if paymentMethods.length === 0}
+								<p class="text-red-400">{t('checkout.paymentMethod.unavailable')}</p>
+							{/if}
+							{#if 0}
+								<a href="/connect" class="underline body-hyperlink"> Connect another wallet </a>
+							{/if}
+						</div>
+					</label>
+				{/if}
 			</section>
 
 			<section class="gap-4 flex flex-col">
