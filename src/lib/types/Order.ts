@@ -233,6 +233,25 @@ export function orderAmountWithNoPaymentsCreated(
 	]);
 }
 
+export function orderRemainingToPay(
+	order: Pick<Order, 'currencySnapshot'> & {
+		payments: Pick<OrderPayment, 'currencySnapshot' | 'status'>[];
+	}
+): number {
+	return sumCurrency(order.currencySnapshot.main.totalPrice.currency, [
+		{
+			amount: order.currencySnapshot.main.totalPrice.amount,
+			currency: order.currencySnapshot.main.totalPrice.currency
+		},
+		...order.payments
+			.filter((payment) => payment.status === 'paid')
+			.map((payment) => ({
+				amount: -payment.currencySnapshot.main.price.amount,
+				currency: payment.currencySnapshot.main.price.currency
+			}))
+	]);
+}
+
 export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
 	'bank-transfer': '🏦',
 	card: '💳',

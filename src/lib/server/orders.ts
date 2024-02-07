@@ -6,7 +6,7 @@ import {
 	type OrderPaymentStatus,
 	type Price
 } from '$lib/types/Order';
-import { ObjectId, type WithId } from 'mongodb';
+import { ClientSession, ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
 import { add, addMinutes, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
@@ -22,7 +22,6 @@ import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
 import { MININUM_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
-import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
 import { userQuery } from './user';
@@ -415,7 +414,8 @@ export async function createOrder(
 		customPrice?: { amount: number; currency: Currency };
 		depositPercentage?: number;
 	}>,
-	paymentMethod: PaymentMethod,
+	// null when point of sale want to use multiple payment methods
+	paymentMethod: PaymentMethod | null,
 	params: {
 		locale: LanguageKey;
 		user: UserIdentifier;
@@ -450,7 +450,7 @@ export async function createOrder(
 
 	const canBeNotified = !!(npubAddress || (emailsEnabled && email));
 
-	if (!canBeNotified && paymentMethod !== 'point-of-sale') {
+	if (!canBeNotified && paymentMethod !== 'point-of-sale' && paymentMethod !== null) {
 		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
 	}
 
@@ -614,228 +614,58 @@ export async function createOrder(
 		throw error(400, 'Missing billing address for deliveryless order');
 	}
 
-	const paymentId = new ObjectId();
 	await withTransaction(async (session) => {
-		const expiresAt = paymentMethodExpiration(paymentMethod);
-
-		await collections.orders.insertOne(
-			{
-				_id: orderId,
-				locale: params.locale,
-				number: orderNumber,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-				status: 'pending',
-				sellerIdentity: runtimeConfig.sellerIdentity,
-				items: items.map((item, i) => ({
-					quantity: item.quantity,
-					product: item.product,
-					customPrice: item.customPrice,
-					depositPercentage: item.depositPercentage,
-					vatRate: priceInfo.vatRates[i],
-					currencySnapshot: {
-						main: {
-							price: {
-								amount: toCurrency(
-									runtimeConfig.mainCurrency,
-									item.product.price.amount,
-									item.product.price.currency
-								),
-								currency: runtimeConfig.mainCurrency
-							},
-							...(item.customPrice && {
-								customPrice: {
-									amount: toCurrency(
-										runtimeConfig.mainCurrency,
-										item.customPrice.amount,
-										item.customPrice.currency
-									),
-									currency: runtimeConfig.mainCurrency
-								}
-							})
-						},
-						...(runtimeConfig.secondaryCurrency && {
-							secondary: {
-								price: {
-									amount: toCurrency(
-										runtimeConfig.secondaryCurrency,
-										item.product.price.amount,
-										item.product.price.currency
-									),
-									currency: runtimeConfig.secondaryCurrency
-								},
-								...(item.customPrice && {
-									customPrice: {
-										amount: toCurrency(
-											runtimeConfig.secondaryCurrency,
-											item.customPrice.amount,
-											item.customPrice.currency
-										),
-										currency: runtimeConfig.secondaryCurrency
-									}
-								})
-							}
-						}),
-						priceReference: {
-							price: {
-								amount: toCurrency(
-									runtimeConfig.priceReferenceCurrency,
-									item.product.price.amount,
-									item.product.price.currency
-								),
-								currency: runtimeConfig.priceReferenceCurrency
-							},
-							...(item.customPrice && {
-								customPrice: {
-									amount: toCurrency(
-										runtimeConfig.priceReferenceCurrency,
-										item.customPrice.amount,
-										item.customPrice.currency
-									),
-									currency: runtimeConfig.priceReferenceCurrency
-								}
-							})
-						}
-					}
-				})),
-				...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
-				...(billingAddress && { billingAddress: billingAddress }),
-				...(priceInfo.vat.length && { vat: priceInfo.vat }),
-				...(shippingPrice
-					? {
-							shippingPrice
-					  }
-					: undefined),
-				payments: [
-					{
-						_id: paymentId,
-						method: paymentMethod,
-						price: paymentPrice(paymentMethod, { currency: 'SAT', amount: partialSatoshis }),
-						currencySnapshot: {
-							main: {
-								price: {
-									amount: toCurrency(runtimeConfig.mainCurrency, partialSatoshis, 'SAT'),
-									currency: runtimeConfig.mainCurrency
-								}
-							},
-							...(runtimeConfig.secondaryCurrency && {
-								secondary: {
-									price: {
-										amount: toCurrency(runtimeConfig.secondaryCurrency, partialSatoshis, 'SAT'),
-										currency: runtimeConfig.secondaryCurrency
-									}
-								}
-							}),
-							priceReference: {
-								price: {
-									amount: toCurrency(runtimeConfig.priceReferenceCurrency, partialSatoshis, 'SAT'),
-									currency: runtimeConfig.priceReferenceCurrency
-								}
-							}
-						},
-						status: 'pending',
-						...(await generatePaymentInfo({
-							method: paymentMethod,
-							orderId,
-							orderNumber,
-							toPay: paymentPrice(paymentMethod, { currency: 'SAT', amount: partialSatoshis }),
-							paymentId,
-							expiresAt
-						})),
-						expiresAt
-					}
-				],
-				notifications: {
-					paymentStatus: {
-						...(npubAddress && { npub: npubAddress }),
-						...(email && { email })
-					}
-				},
-				user: {
-					...params.user,
-					// In case the user didn't authenticate with an email/npub but only added them as notification address
-					// We still add them add orders for the specified email/npub
-					// Mini-downside: if the user put a dummy npub / email, the owner of the npub / email will be able to see the order
-					...(!params.user.email && email && { email }),
-					...(!params.user.npub && npubAddress && { npub: npubAddress })
-				},
-				...(vatExemptedReason && {
-					vatFree: {
-						reason: vatExemptedReason
-					}
-				}),
-				...(discount &&
-					params.discount && {
-						discount: {
-							price: discount,
-							justification: params.discount.justification,
-							type: params.discount.type
-						}
-					}),
-				...(params.clientIp && { clientIp: params.clientIp }),
+		const order: Order = {
+			_id: orderId,
+			locale: params.locale,
+			number: orderNumber,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			status: 'pending',
+			sellerIdentity: runtimeConfig.sellerIdentity,
+			items: items.map((item, i) => ({
+				quantity: item.quantity,
+				product: item.product,
+				customPrice: item.customPrice,
+				depositPercentage: item.depositPercentage,
+				vatRate: priceInfo.vatRates[i],
 				currencySnapshot: {
 					main: {
-						totalPrice: {
-							amount: toCurrency(runtimeConfig.mainCurrency, totalSatoshis, 'SAT'),
+						price: {
+							amount: toCurrency(
+								runtimeConfig.mainCurrency,
+								item.product.price.amount,
+								item.product.price.currency
+							),
 							currency: runtimeConfig.mainCurrency
 						},
-						...(shippingPrice && {
-							shippingPrice: {
+						...(item.customPrice && {
+							customPrice: {
 								amount: toCurrency(
 									runtimeConfig.mainCurrency,
-									shippingPrice.amount,
-									shippingPrice.currency
+									item.customPrice.amount,
+									item.customPrice.currency
 								),
-								currency: runtimeConfig.mainCurrency
-							}
-						}),
-						...(priceInfo.totalVat && {
-							vat: priceInfo.vat.map(({ price }) => ({
-								amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
-								currency: runtimeConfig.mainCurrency
-							}))
-						}),
-						...(discount && {
-							discount: {
-								amount: toCurrency(runtimeConfig.mainCurrency, discount.amount, discount.currency),
 								currency: runtimeConfig.mainCurrency
 							}
 						})
 					},
 					...(runtimeConfig.secondaryCurrency && {
 						secondary: {
-							totalPrice: {
-								amount: toCurrency(runtimeConfig.secondaryCurrency, totalSatoshis, 'SAT'),
+							price: {
+								amount: toCurrency(
+									runtimeConfig.secondaryCurrency,
+									item.product.price.amount,
+									item.product.price.currency
+								),
 								currency: runtimeConfig.secondaryCurrency
 							},
-							...(shippingPrice && {
-								shippingPrice: {
+							...(item.customPrice && {
+								customPrice: {
 									amount: toCurrency(
 										runtimeConfig.secondaryCurrency,
-										shippingPrice.amount,
-										shippingPrice.currency
-									),
-									currency: runtimeConfig.secondaryCurrency
-								}
-							}),
-							...(priceInfo.totalVat && {
-								vat: priceInfo.vat.map(({ price }) => ({
-									amount: toCurrency(
-										// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-										runtimeConfig.secondaryCurrency!,
-										price.amount,
-										price.currency
-									),
-									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-									currency: runtimeConfig.secondaryCurrency!
-								}))
-							}),
-							...(discount && {
-								discount: {
-									amount: toCurrency(
-										runtimeConfig.secondaryCurrency,
-										discount.amount,
-										discount.currency
+										item.customPrice.amount,
+										item.customPrice.currency
 									),
 									currency: runtimeConfig.secondaryCurrency
 								}
@@ -843,62 +673,200 @@ export async function createOrder(
 						}
 					}),
 					priceReference: {
-						totalPrice: {
-							amount: toCurrency(runtimeConfig.priceReferenceCurrency, totalSatoshis, 'SAT'),
+						price: {
+							amount: toCurrency(
+								runtimeConfig.priceReferenceCurrency,
+								item.product.price.amount,
+								item.product.price.currency
+							),
 							currency: runtimeConfig.priceReferenceCurrency
 						},
-						...(shippingPrice && {
-							shippingPrice: {
+						...(item.customPrice && {
+							customPrice: {
 								amount: toCurrency(
 									runtimeConfig.priceReferenceCurrency,
-									shippingPrice.amount,
-									shippingPrice.currency
-								),
-								currency: runtimeConfig.priceReferenceCurrency
-							}
-						}),
-						...(priceInfo.totalVat && {
-							vat: priceInfo.vat.map(({ price }) => ({
-								amount: toCurrency(
-									runtimeConfig.priceReferenceCurrency,
-									price.amount,
-									price.currency
-								),
-								currency: runtimeConfig.priceReferenceCurrency
-							}))
-						}),
-						...(discount && {
-							discount: {
-								amount: toCurrency(
-									runtimeConfig.priceReferenceCurrency,
-									discount.amount,
-									discount.currency
+									item.customPrice.amount,
+									item.customPrice.currency
 								),
 								currency: runtimeConfig.priceReferenceCurrency
 							}
 						})
 					}
-				},
-				...(params.note && {
-					notes: [
-						{
-							content: params.note,
-							createdAt: new Date(),
-							role: params.user.userRoleId || CUSTOMER_ROLE_ID,
-							...(params.user && { userId: params.user.userId }),
-							...(npubAddress && { npub: npubAddress }),
-							...(email && { email })
-						}
-					]
-				}),
-				...(params.reasonOfferDeliveryFees && {
-					deliveryFeesFree: {
-						reason: params.reasonOfferDeliveryFees
-					}
-				})
+				}
+			})),
+			...(params.shippingAddress && { shippingAddress: params.shippingAddress }),
+			...(billingAddress && { billingAddress: billingAddress }),
+			...(priceInfo.vat.length && { vat: priceInfo.vat }),
+			...(shippingPrice
+				? {
+						shippingPrice
+				  }
+				: undefined),
+			payments: [],
+			notifications: {
+				paymentStatus: {
+					...(npubAddress && { npub: npubAddress }),
+					...(email && { email })
+				}
 			},
-			{ session }
-		);
+			user: {
+				...params.user,
+				// In case the user didn't authenticate with an email/npub but only added them as notification address
+				// We still add them add orders for the specified email/npub
+				// Mini-downside: if the user put a dummy npub / email, the owner of the npub / email will be able to see the order
+				...(!params.user.email && email && { email }),
+				...(!params.user.npub && npubAddress && { npub: npubAddress })
+			},
+			...(vatExemptedReason && {
+				vatFree: {
+					reason: vatExemptedReason
+				}
+			}),
+			...(discount &&
+				params.discount && {
+					discount: {
+						price: discount,
+						justification: params.discount.justification,
+						type: params.discount.type
+					}
+				}),
+			...(params.clientIp && { clientIp: params.clientIp }),
+			currencySnapshot: {
+				main: {
+					totalPrice: {
+						amount: toCurrency(runtimeConfig.mainCurrency, totalSatoshis, 'SAT'),
+						currency: runtimeConfig.mainCurrency
+					},
+					...(shippingPrice && {
+						shippingPrice: {
+							amount: toCurrency(
+								runtimeConfig.mainCurrency,
+								shippingPrice.amount,
+								shippingPrice.currency
+							),
+							currency: runtimeConfig.mainCurrency
+						}
+					}),
+					...(priceInfo.totalVat && {
+						vat: priceInfo.vat.map(({ price }) => ({
+							amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
+							currency: runtimeConfig.mainCurrency
+						}))
+					}),
+					...(discount && {
+						discount: {
+							amount: toCurrency(runtimeConfig.mainCurrency, discount.amount, discount.currency),
+							currency: runtimeConfig.mainCurrency
+						}
+					})
+				},
+				...(runtimeConfig.secondaryCurrency && {
+					secondary: {
+						totalPrice: {
+							amount: toCurrency(runtimeConfig.secondaryCurrency, totalSatoshis, 'SAT'),
+							currency: runtimeConfig.secondaryCurrency
+						},
+						...(shippingPrice && {
+							shippingPrice: {
+								amount: toCurrency(
+									runtimeConfig.secondaryCurrency,
+									shippingPrice.amount,
+									shippingPrice.currency
+								),
+								currency: runtimeConfig.secondaryCurrency
+							}
+						}),
+						...(priceInfo.totalVat && {
+							vat: priceInfo.vat.map(({ price }) => ({
+								amount: toCurrency(
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									runtimeConfig.secondaryCurrency!,
+									price.amount,
+									price.currency
+								),
+								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+								currency: runtimeConfig.secondaryCurrency!
+							}))
+						}),
+						...(discount && {
+							discount: {
+								amount: toCurrency(
+									runtimeConfig.secondaryCurrency,
+									discount.amount,
+									discount.currency
+								),
+								currency: runtimeConfig.secondaryCurrency
+							}
+						})
+					}
+				}),
+				priceReference: {
+					totalPrice: {
+						amount: toCurrency(runtimeConfig.priceReferenceCurrency, totalSatoshis, 'SAT'),
+						currency: runtimeConfig.priceReferenceCurrency
+					},
+					...(shippingPrice && {
+						shippingPrice: {
+							amount: toCurrency(
+								runtimeConfig.priceReferenceCurrency,
+								shippingPrice.amount,
+								shippingPrice.currency
+							),
+							currency: runtimeConfig.priceReferenceCurrency
+						}
+					}),
+					...(priceInfo.totalVat && {
+						vat: priceInfo.vat.map(({ price }) => ({
+							amount: toCurrency(
+								runtimeConfig.priceReferenceCurrency,
+								price.amount,
+								price.currency
+							),
+							currency: runtimeConfig.priceReferenceCurrency
+						}))
+					}),
+					...(discount && {
+						discount: {
+							amount: toCurrency(
+								runtimeConfig.priceReferenceCurrency,
+								discount.amount,
+								discount.currency
+							),
+							currency: runtimeConfig.priceReferenceCurrency
+						}
+					})
+				}
+			},
+			...(params.note && {
+				notes: [
+					{
+						content: params.note,
+						createdAt: new Date(),
+						role: params.user.userRoleId || CUSTOMER_ROLE_ID,
+						...(params.user && { userId: params.user.userId }),
+						...(npubAddress && { npub: npubAddress }),
+						...(email && { email })
+					}
+				]
+			}),
+			...(params.reasonOfferDeliveryFees && {
+				deliveryFeesFree: {
+					reason: params.reasonOfferDeliveryFees
+				}
+			})
+		};
+		await collections.orders.insertOne(order, { session });
+
+		if (paymentMethod) {
+			const expiresAt = paymentMethodExpiration(paymentMethod);
+
+			await addOrderPayment(
+				order,
+				paymentMethod,
+				{ currency: 'SAT', amount: partialSatoshis },
+				{ session, expiresAt }
+			);
+		}
 
 		if (params.cart) {
 			/** Also delete "old" carts with partial user info */
@@ -1059,11 +1027,11 @@ function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 export async function addOrderPayment(
 	order: Order,
 	paymentMethod: PaymentMethod,
-	amount: number,
+	price: Price,
 	/**
 	 * `null` expiresAt means the payment method has no expiration
 	 */
-	opts?: { expiresAt?: Date | null }
+	opts?: { expiresAt?: Date | null; session?: ClientSession }
 ) {
 	if (order.status !== 'pending') {
 		throw error(400, 'Order is not pending');
@@ -1078,13 +1046,14 @@ export async function addOrderPayment(
 	const secondaryCurrency = order.currencySnapshot.secondary?.totalPrice.currency;
 	const priceReferenceCurrency = order.currencySnapshot.priceReference.totalPrice.currency;
 
-	const priceToPay = {
-		amount: fixCurrencyRounding(
-			Math.min(amount, orderAmountWithNoPaymentsCreated(order)),
-			mainCurrency
-		),
-		currency: mainCurrency
-	};
+	const priceToPay =
+		toCurrency(mainCurrency, price.amount, price.currency) <=
+		orderAmountWithNoPaymentsCreated(order)
+			? price
+			: {
+					amount: orderAmountWithNoPaymentsCreated(order),
+					currency: mainCurrency
+			  };
 
 	if (priceToPay.amount < MININUM_PER_CURRENCY[priceToPay.currency]) {
 		throw error(400, 'Order already fully paid with pending payments');
@@ -1138,6 +1107,7 @@ export async function addOrderPayment(
 			$push: {
 				payments: payment
 			}
-		}
+		},
+		{ session: opts?.session }
 	);
 }

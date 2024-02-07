@@ -46,7 +46,15 @@ export const actions = {
 			throw error(400, 'Amount is greater than the remaining amount to pay');
 		}
 
-		await addOrderPayment(order, parsed.method, amount, { expiresAt: null });
+		await addOrderPayment(
+			order,
+			parsed.method,
+			{
+				amount,
+				currency: order.currencySnapshot.main.totalPrice.currency
+			},
+			{ expiresAt: null }
+		);
 
 		throw redirect(303, `/order/${order._id}`);
 	},

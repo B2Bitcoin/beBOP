@@ -7,7 +7,7 @@
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { useI18n } from '$lib/i18n';
 	import { computePriceInfo } from '$lib/types/Cart.js';
-	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order.js';
+	import { orderRemainingToPay } from '$lib/types/Order.js';
 	import Trans from '$lib/components/Trans.svelte';
 
 	interface CustomEventSource {
@@ -172,49 +172,45 @@
 	{/if}
 
 	{#if order && view === 'pending'}
+		{@const payment = order.payments.find((p) => p.status === 'pending')}
+		{@const remainingAmount = orderRemainingToPay(order)}
 		<div class="flex justify-between flex-col p-2 gap-2 bg-gray-300 fixed left-0 right-0 bottom-0">
-			{#if order.payments.length > 1 || order.payments[0].price.amount !== order.totalPrice.amount}
-				{@const payment = order.payments.find((p) => p.status === 'pending')}
-				{@const remainingAmount = orderAmountWithNoPaymentsCreated(order)}
-				{#if payment}
-					<div class="flex justify-between">
-						<h3 class="text-gray-800 text-[28px]">{t('pos.pendingPayment')}:</h3>
-						<div class="flex flex-col items-end">
-							<PriceTag
-								amount={payment?.price.amount || 0}
-								currency={payment?.price.currency || UNDERLYING_CURRENCY}
-								main
-								class="text-[28px] text-gray-800"
-							/>
-							<PriceTag
-								class="text-base text-gray-600"
-								amount={payment?.price.amount || 0}
-								currency={UNDERLYING_CURRENCY}
-								secondary
-							/>
-						</div>
+			{#if payment}
+				<div class="flex justify-between">
+					<h3 class="text-gray-800 text-[28px]">{t('pos.pendingPayment')}:</h3>
+					<div class="flex flex-col items-end">
+						<PriceTag
+							amount={payment?.price.amount || 0}
+							currency={payment?.price.currency || UNDERLYING_CURRENCY}
+							main
+							class="text-[28px] text-gray-800"
+						/>
+						<PriceTag
+							class="text-base text-gray-600"
+							amount={payment?.price.amount || 0}
+							currency={UNDERLYING_CURRENCY}
+							secondary
+						/>
 					</div>
-				{/if}
-				{#if remainingAmount > 0}
-					<div class="flex justify-between">
-						<h3 class="text-gray-800 text-[28px]">{t('order.restToPay')}:</h3>
-						<div class="flex flex-col items-end">
-							<PriceTag
-								amount={remainingAmount}
-								currency={order.totalPrice.currency}
-								main
-								class="text-[28px] text-gray-800"
-							/>
-							<PriceTag
-								class="text-base text-gray-600"
-								amount={remainingAmount}
-								currency={order.totalPrice.currency}
-								secondary
-							/>
-						</div>
-					</div>
-				{/if}
+				</div>
 			{/if}
+			<div class="flex justify-between">
+				<h3 class="text-gray-800 text-[28px]">{t('order.restToPay')}:</h3>
+				<div class="flex flex-col items-end">
+					<PriceTag
+						amount={remainingAmount}
+						currency={order.totalPrice.currency}
+						main
+						class="text-[28px] text-gray-800"
+					/>
+					<PriceTag
+						class="text-base text-gray-600"
+						amount={remainingAmount}
+						currency={order.totalPrice.currency}
+						secondary
+					/>
+				</div>
+			</div>
 			<div class="flex justify-between">
 				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">

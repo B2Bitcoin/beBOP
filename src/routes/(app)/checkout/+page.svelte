@@ -31,6 +31,7 @@
 	let addDiscount = false;
 	let discountAmount: number;
 	let discountType: DiscountType;
+	let multiplePaymentMethods = false;
 
 	const { t, locale, countryName, sortedCountryCodes } = useI18n();
 
@@ -333,30 +334,47 @@
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.payment.title')}</h2>
 
-				<label class="form-label">
-					{t('checkout.payment.method')}
+				{#if data.roleId === POS_ROLE_ID}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							name="multiplePaymentMethods"
+							class="form-checkbox"
+							bind:checked={multiplePaymentMethods}
+						/>
+						{t('checkout.multiplePaymentMethods')}
+					</label>
+				{/if}
 
-					<div class="grid grid-cols-2 gap-4 items-center">
-						<select
-							name="paymentMethod"
-							class="form-input"
-							bind:value={paymentMethod}
-							disabled={paymentMethods.length === 0}
-							required
-						>
-							{#each paymentMethods as paymentMethod}
-								<option value={paymentMethod}>{t('checkout.paymentMethod.' + paymentMethod)}</option
-								>
-							{/each}
-						</select>
-						{#if paymentMethods.length === 0}
-							<p class="text-red-400">{t('checkout.paymentMethod.unavailable')}</p>
-						{/if}
-						{#if 0}
-							<a href="/connect" class="underline body-hyperlink"> Connect another wallet </a>
-						{/if}
-					</div>
-				</label>
+				{#if multiplePaymentMethods}
+					<p>{t('checkout.multiplePaymentMethodsHelpText')}</p>
+				{:else}
+					<label class="form-label">
+						{t('checkout.payment.method')}
+
+						<div class="grid grid-cols-2 gap-4 items-center">
+							<select
+								name="paymentMethod"
+								class="form-input"
+								bind:value={paymentMethod}
+								disabled={paymentMethods.length === 0}
+								required
+							>
+								{#each paymentMethods as paymentMethod}
+									<option value={paymentMethod}
+										>{t('checkout.paymentMethod.' + paymentMethod)}</option
+									>
+								{/each}
+							</select>
+							{#if paymentMethods.length === 0}
+								<p class="text-red-400">{t('checkout.paymentMethod.unavailable')}</p>
+							{/if}
+							{#if 0}
+								<a href="/connect" class="underline body-hyperlink"> Connect another wallet </a>
+							{/if}
+						</div>
+					</label>
+				{/if}
 			</section>
 
 			<section class="gap-4 flex flex-col">
@@ -394,7 +412,8 @@
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus' &&
 										!emails[key] &&
-										paymentMethod !== 'point-of-sale'}
+										paymentMethod !== 'point-of-sale' &&
+										!multiplePaymentMethods}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
@@ -678,125 +697,6 @@
 					</span>
 				</label>
 
-				{#if data.roleId === POS_ROLE_ID}
-					{#if !data.vatExempted}
-						<label class="checkbox-label">
-							<input
-								type="checkbox"
-								class="form-checkbox"
-								bind:checked={isFreeVat}
-								name="isFreeVat"
-								form="checkout"
-							/>
-							<span>
-								<Trans key="pos.vatFree"
-									><a
-										href="/terms"
-										target="_blank"
-										class="body-hyperlink hover:underline"
-										slot="0"
-										let:translation
-									>
-										{translation}
-									</a></Trans
-								>
-							</span>
-						</label>
-					{/if}
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							bind:checked={addDiscount}
-							name="addDiscount"
-							form="checkout"
-						/>
-						<span>
-							<Trans key="pos.applyGiftDiscount">
-								<a
-									href="/gift-discount"
-									target="_blank"
-									class="body-hyperlink hover:underline"
-									slot="0"
-									let:translation
-								>
-									{translation}
-								</a>
-							</Trans>
-						</span>
-					</label>
-					{#if data.deliveryFees.allowFreeForPOS}
-						<label class="checkbox-label">
-							<input
-								type="checkbox"
-								class="form-checkbox"
-								name="offerDeliveryFees"
-								form="checkout"
-								bind:checked={offerDeliveryFees}
-							/>
-							{t('pos.offerDeliveryFees')}
-						</label>
-					{/if}
-				{/if}
-
-				{#if isFreeVat}
-					<label class="form-label col-span-3">
-						{t('pos.vatFreeReason')}:
-						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" required />
-					</label>
-				{/if}
-				{#if offerDeliveryFees}
-					<label class="form-label col-span-3">
-						{t('pos.discountJustification')}
-						<input
-							type="text"
-							class="form-input"
-							form="checkout"
-							name="reasonOfferDeliveryFees"
-							required
-						/></label
-					>
-				{/if}
-				{#if addDiscount}
-					<input
-						type="number"
-						class="form-input"
-						name="discountAmount"
-						placeholder="Ex: 10"
-						form="checkout"
-						step="any"
-						bind:value={discountAmount}
-						min="0"
-						required
-					/>
-
-					<select
-						name="discountType"
-						bind:value={discountType}
-						class="form-input"
-						form="checkout"
-						required
-					>
-						<option value="fiat">{data.currencies.main}</option>
-						<option value="percentage">%</option>
-					</select>
-
-					{#if discountAmount && !isDiscountValid}
-						<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
-					{/if}
-
-					<label class="form-label col-span-3">
-						{t('pos.discountJustification')}
-						<input
-							type="text"
-							class="form-input"
-							form="checkout"
-							name="discountJustification"
-							required
-						/>
-					</label>
-				{/if}
-
 				{#if data.collectIPOnDeliverylessOrders && isDigital}
 					<label class="checkbox-label">
 						<input
@@ -863,6 +763,133 @@
 							>
 						</span>
 					</label>
+				{/if}
+
+				{#if data.roleId === POS_ROLE_ID}
+					{#if !data.vatExempted}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								bind:checked={isFreeVat}
+								name="isFreeVat"
+								form="checkout"
+							/>
+							<span>
+								<Trans key="pos.vatFree"
+									><a
+										href="/terms"
+										target="_blank"
+										class="body-hyperlink hover:underline"
+										slot="0"
+										let:translation
+									>
+										{translation}
+									</a></Trans
+								>
+							</span>
+						</label>
+
+						{#if isFreeVat}
+							<label class="form-label col-span-3">
+								{t('pos.vatFreeReason')}:
+								<input
+									type="text"
+									class="form-input"
+									form="checkout"
+									name="reasonFreeVat"
+									required
+								/>
+							</label>
+						{/if}
+					{/if}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							bind:checked={addDiscount}
+							name="addDiscount"
+							form="checkout"
+						/>
+						<span>
+							<Trans key="pos.applyGiftDiscount">
+								<a
+									href="/gift-discount"
+									target="_blank"
+									class="body-hyperlink hover:underline"
+									slot="0"
+									let:translation
+								>
+									{translation}
+								</a>
+							</Trans>
+						</span>
+					</label>
+
+					{#if addDiscount}
+						<input
+							type="number"
+							class="form-input"
+							name="discountAmount"
+							placeholder="Ex: 10"
+							form="checkout"
+							step="any"
+							bind:value={discountAmount}
+							min="0"
+							required
+						/>
+
+						<select
+							name="discountType"
+							bind:value={discountType}
+							class="form-input"
+							form="checkout"
+							required
+						>
+							<option value="fiat">{data.currencies.main}</option>
+							<option value="percentage">%</option>
+						</select>
+
+						{#if discountAmount && !isDiscountValid}
+							<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
+						{/if}
+
+						<label class="form-label col-span-3">
+							{t('pos.discountJustification')}
+							<input
+								type="text"
+								class="form-input"
+								form="checkout"
+								name="discountJustification"
+								required
+							/>
+						</label>
+					{/if}
+					{#if data.deliveryFees.allowFreeForPOS && deliveryFees}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								name="offerDeliveryFees"
+								form="checkout"
+								bind:checked={offerDeliveryFees}
+							/>
+							{t('pos.offerDeliveryFees')}
+						</label>
+
+						{#if offerDeliveryFees}
+							<label class="form-label col-span-3">
+								{t('pos.discountJustification')}
+								<input
+									type="text"
+									class="form-input"
+									form="checkout"
+									name="reasonOfferDeliveryFees"
+									required
+								/></label
+							>
+						{/if}
+					{/if}
 				{/if}
 
 				<input
