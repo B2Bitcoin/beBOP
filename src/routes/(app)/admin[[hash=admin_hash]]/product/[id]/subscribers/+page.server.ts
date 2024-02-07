@@ -13,6 +13,12 @@ export const load = async ({ params }) => {
 
 	return {
 		product,
-		subscriptions
+		subscriptions: subscriptions.map((subscription) => ({
+			...subscription,
+			notifications: subscription.notifications.map((notification) => ({
+				...notification,
+				_id: notification._id.toString()
+			}))
+		}))
 	};
 };

@@ -3,12 +3,11 @@
 	import type { PaidSubscription } from '$lib/types/PaidSubscription.js';
 
 	export let data;
-	function subscriptionStatus(subscription: PaidSubscription) {
-		if (subscription.updatedAt.getTime() + subscription.paidUntil.getTime() >= Date.now()) {
-			// if( subscription.updatedAt.getTime() + subscription.paidUntil.getTime() - subscription.notifications. )
+	function subscriptionStatus(subscriptionUpdatedAt: Date, subscriptionPaidUntil: Date) {
+		if (subscriptionUpdatedAt.getTime() + subscriptionPaidUntil.getTime() >= Date.now()) {
 			return 'active';
 		} else {
-			subscription.updatedAt.getTime() + subscription.paidUntil.getTime() < Date.now();
+			subscriptionUpdatedAt.getTime() + subscriptionPaidUntil.getTime() < Date.now();
 		}
 		return 'expired';
 	}
@@ -88,17 +87,13 @@
 					<tr>
 						<td class="px-6 py-4 whitespace-no-wrap"> {subscription._id}</td>
 						<td class="px-6 py-4 whitespace-no-wrap">
-							{subscriptionStatus(subscription)}
+							{subscriptionStatus(subscription.updatedAt, subscription.paidUntil)}
 						</td>
 						<td class="px-6 py-4 whitespace-no-wrap">
 							{subscription.updatedAt.toLocaleDateString($locale)}</td
 						>
-						<td class="px-6 py-4 whitespace-no-wrap">
-							{subscription.user.npub ? subscription.user.npub : ''}</td
-						>
-						<td class="px-6 py-4 whitespace-no-wrap">
-							{subscription.user.email ? subscription.user.email : ''}</td
-						>
+						<td class="px-6 py-4 whitespace-no-wrap"> {subscription.user?.npub ?? ''}</td>
+						<td class="px-6 py-4 whitespace-no-wrap"> {subscription.user?.email ?? ''}</td>
 					</tr>
 				{/each}
 			{:else}
