@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
-	import type { PaidSubscription } from '$lib/types/PaidSubscription.js';
 
 	export let data;
 	function subscriptionStatus(subscriptionUpdatedAt: Date, subscriptionPaidUntil: Date) {
