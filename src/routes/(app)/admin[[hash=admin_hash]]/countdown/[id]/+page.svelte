@@ -5,7 +5,6 @@
 		MAX_NAME_LIMIT,
 		MAX_SHORT_DESCRIPTION_LIMIT
 	} from '$lib/types/Product';
-	import { addHours } from 'date-fns';
 
 	export let data;
 	let name = data.countdown.name;
