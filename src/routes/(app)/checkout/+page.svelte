@@ -697,125 +697,6 @@
 					</span>
 				</label>
 
-				{#if data.roleId === POS_ROLE_ID}
-					{#if !data.vatExempted}
-						<label class="checkbox-label">
-							<input
-								type="checkbox"
-								class="form-checkbox"
-								bind:checked={isFreeVat}
-								name="isFreeVat"
-								form="checkout"
-							/>
-							<span>
-								<Trans key="pos.vatFree"
-									><a
-										href="/terms"
-										target="_blank"
-										class="body-hyperlink hover:underline"
-										slot="0"
-										let:translation
-									>
-										{translation}
-									</a></Trans
-								>
-							</span>
-						</label>
-					{/if}
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							bind:checked={addDiscount}
-							name="addDiscount"
-							form="checkout"
-						/>
-						<span>
-							<Trans key="pos.applyGiftDiscount">
-								<a
-									href="/gift-discount"
-									target="_blank"
-									class="body-hyperlink hover:underline"
-									slot="0"
-									let:translation
-								>
-									{translation}
-								</a>
-							</Trans>
-						</span>
-					</label>
-					{#if data.deliveryFees.allowFreeForPOS}
-						<label class="checkbox-label">
-							<input
-								type="checkbox"
-								class="form-checkbox"
-								name="offerDeliveryFees"
-								form="checkout"
-								bind:checked={offerDeliveryFees}
-							/>
-							{t('pos.offerDeliveryFees')}
-						</label>
-					{/if}
-				{/if}
-
-				{#if isFreeVat}
-					<label class="form-label col-span-3">
-						{t('pos.vatFreeReason')}:
-						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" required />
-					</label>
-				{/if}
-				{#if offerDeliveryFees}
-					<label class="form-label col-span-3">
-						{t('pos.discountJustification')}
-						<input
-							type="text"
-							class="form-input"
-							form="checkout"
-							name="reasonOfferDeliveryFees"
-							required
-						/></label
-					>
-				{/if}
-				{#if addDiscount}
-					<input
-						type="number"
-						class="form-input"
-						name="discountAmount"
-						placeholder="Ex: 10"
-						form="checkout"
-						step="any"
-						bind:value={discountAmount}
-						min="0"
-						required
-					/>
-
-					<select
-						name="discountType"
-						bind:value={discountType}
-						class="form-input"
-						form="checkout"
-						required
-					>
-						<option value="fiat">{data.currencies.main}</option>
-						<option value="percentage">%</option>
-					</select>
-
-					{#if discountAmount && !isDiscountValid}
-						<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
-					{/if}
-
-					<label class="form-label col-span-3">
-						{t('pos.discountJustification')}
-						<input
-							type="text"
-							class="form-input"
-							form="checkout"
-							name="discountJustification"
-							required
-						/>
-					</label>
-				{/if}
-
 				{#if data.collectIPOnDeliverylessOrders && isDigital}
 					<label class="checkbox-label">
 						<input
@@ -882,6 +763,133 @@
 							>
 						</span>
 					</label>
+				{/if}
+
+				{#if data.roleId === POS_ROLE_ID}
+					{#if !data.vatExempted}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								bind:checked={isFreeVat}
+								name="isFreeVat"
+								form="checkout"
+							/>
+							<span>
+								<Trans key="pos.vatFree"
+									><a
+										href="/terms"
+										target="_blank"
+										class="body-hyperlink hover:underline"
+										slot="0"
+										let:translation
+									>
+										{translation}
+									</a></Trans
+								>
+							</span>
+						</label>
+
+						{#if isFreeVat}
+							<label class="form-label col-span-3">
+								{t('pos.vatFreeReason')}:
+								<input
+									type="text"
+									class="form-input"
+									form="checkout"
+									name="reasonFreeVat"
+									required
+								/>
+							</label>
+						{/if}
+					{/if}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							bind:checked={addDiscount}
+							name="addDiscount"
+							form="checkout"
+						/>
+						<span>
+							<Trans key="pos.applyGiftDiscount">
+								<a
+									href="/gift-discount"
+									target="_blank"
+									class="body-hyperlink hover:underline"
+									slot="0"
+									let:translation
+								>
+									{translation}
+								</a>
+							</Trans>
+						</span>
+					</label>
+
+					{#if addDiscount}
+						<input
+							type="number"
+							class="form-input"
+							name="discountAmount"
+							placeholder="Ex: 10"
+							form="checkout"
+							step="any"
+							bind:value={discountAmount}
+							min="0"
+							required
+						/>
+
+						<select
+							name="discountType"
+							bind:value={discountType}
+							class="form-input"
+							form="checkout"
+							required
+						>
+							<option value="fiat">{data.currencies.main}</option>
+							<option value="percentage">%</option>
+						</select>
+
+						{#if discountAmount && !isDiscountValid}
+							<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
+						{/if}
+
+						<label class="form-label col-span-3">
+							{t('pos.discountJustification')}
+							<input
+								type="text"
+								class="form-input"
+								form="checkout"
+								name="discountJustification"
+								required
+							/>
+						</label>
+					{/if}
+					{#if data.deliveryFees.allowFreeForPOS && deliveryFees}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								name="offerDeliveryFees"
+								form="checkout"
+								bind:checked={offerDeliveryFees}
+							/>
+							{t('pos.offerDeliveryFees')}
+						</label>
+
+						{#if offerDeliveryFees}
+							<label class="form-label col-span-3">
+								{t('pos.discountJustification')}
+								<input
+									type="text"
+									class="form-input"
+									form="checkout"
+									name="reasonOfferDeliveryFees"
+									required
+								/></label
+							>
+						{/if}
+					{/if}
 				{/if}
 
 				<input
