@@ -70,7 +70,7 @@
 		"invalidNpub": "Invalid Nostr public address",
 		"isProBilling": "This is a professional order",
 		"multiplePaymentMethods": "Use several payment methods",
-		"multiplePaymentMethodsHelpText": "You can set payment methods at the next step",
+		"multiplePaymentMethodsHelpText": "You can set payment methods at the next step.",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
 		"note": {
 			"label": "Leave a note for merchant",

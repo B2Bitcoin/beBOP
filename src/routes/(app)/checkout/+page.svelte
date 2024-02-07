@@ -412,7 +412,8 @@
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus' &&
 										!emails[key] &&
-										paymentMethod !== 'point-of-sale'}
+										paymentMethod !== 'point-of-sale' &&
+										!multiplePaymentMethods}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
