@@ -94,10 +94,10 @@
 							{subscription.updatedAt.toLocaleDateString($locale)}</td
 						>
 						<td class="px-6 py-4 whitespace-no-wrap">
-							{subscription.user.npub ? subscription.user.npub : ''}</td
+							{subscription.user?.npub ? subscription.user.npub : ''}</td
 						>
 						<td class="px-6 py-4 whitespace-no-wrap">
-							{subscription.user.email ? subscription.user.email : ''}</td
+							{subscription.user?.email ? subscription.user.email : ''}</td
 						>
 					</tr>
 				{/each}
