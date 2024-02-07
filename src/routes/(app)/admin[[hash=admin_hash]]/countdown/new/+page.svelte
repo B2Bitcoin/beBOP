@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import {
 		MAX_DESCRIPTION_LIMIT,
 		MAX_NAME_LIMIT,
@@ -8,6 +9,11 @@
 
 	let name: string;
 	let slug: string;
+	let endsAt = new Date().toISOString().slice(0, 16);
+
+	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
+	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
+	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
 </script>
 
 <h1 class="text-3xl">Add a specification</h1>
@@ -66,8 +72,8 @@
 	</label>
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
-			End At
-			<input class="form-input" type="datetime-local" required name="endsAt" />
+			End At {#if browser}(your browser's current zone is {timezoneString}){/if}
+			<input class="form-input" type="datetime-local" required name="endsAt" bind:value={endsAt} />
 		</label>
 	</div>
 	<input type="submit" class="btn btn-blue self-start text-white" value="Submit" />
