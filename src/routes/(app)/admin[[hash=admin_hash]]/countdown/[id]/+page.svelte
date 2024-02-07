@@ -15,12 +15,7 @@
 	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
 	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
 
-	let endsAt = addHours(
-		data.countdown.endsAt,
-		timezoneOffsetHours > 0 ? timezoneOffsetHours : Math.abs(timezoneOffsetHours)
-	)
-		.toISOString()
-		.slice(0, 16);
+	let endsAt = data.countdown.endsAt.toISOString().slice(0, 16);
 
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this countdown?')) {
