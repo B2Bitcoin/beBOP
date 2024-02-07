@@ -742,7 +742,7 @@
 				{#if isFreeVat}
 					<label class="form-label col-span-3">
 						{t('pos.vatFreeReason')}:
-						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" />
+						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" required />
 					</label>
 				{/if}
 				{#if offerDeliveryFees}
@@ -753,6 +753,7 @@
 							class="form-input"
 							form="checkout"
 							name="reasonOfferDeliveryFees"
+							required
 						/></label
 					>
 				{/if}
@@ -786,7 +787,13 @@
 
 					<label class="form-label col-span-3">
 						{t('pos.discountJustification')}
-						<input type="text" class="form-input" form="checkout" name="discountJustification" />
+						<input
+							type="text"
+							class="form-input"
+							form="checkout"
+							name="discountJustification"
+							required
+						/>
 					</label>
 				{/if}
 
