@@ -55,11 +55,11 @@
 				<PriceTag
 					amount={product.price.amount}
 					currency={product.price.currency}
-					class="text-2xl text-gray-800"
+					class="text-2xl"
 					main
 				/>
 				<PriceTag
-					class="text-base text-gray-600"
+					class="text-base"
 					amount={product.price.amount}
 					currency={product.price.currency}
 					secondary

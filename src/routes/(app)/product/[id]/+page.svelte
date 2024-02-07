@@ -142,6 +142,7 @@
 			brandName={data.brandName}
 			sessionEmail={data.email}
 			countdowns={data.productCMSBefore.countdowns}
+			galleries={data.productCMSBefore.galleries}
 		/>
 	{/if}
 
@@ -476,6 +477,7 @@
 			brandName={data.brandName}
 			sessionEmail={data.email}
 			countdowns={data.productCMSAfter.countdowns}
+			galleries={data.productCMSAfter.galleries}
 		/>
 	{/if}
 </main>

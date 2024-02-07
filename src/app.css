@@ -284,6 +284,12 @@
 	.tagWidget-hyperlink {
 		color: var(--tagWidget-hyperlink-color);
 	}
+
+	.prose {
+		--tw-prose-headings: var(--body-title-color);
+		--tw-prose-bold: inherit;
+		--tw-prose-links: var(--body-hyperlink-color);
+	}
 }
 
 /* TinyMCE upgrade button */

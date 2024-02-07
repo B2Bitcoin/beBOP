@@ -42,11 +42,11 @@
 				<PriceTag
 					amount={product.price.amount}
 					currency={product.price.currency}
-					class="text-2xl text-gray-800"
+					class="text-2xl"
 					main
 				/>
 				<PriceTag
-					class="text-base text-gray-600"
+					class="text-base"
 					amount={product.price.amount}
 					currency={product.price.currency}
 					secondary
@@ -55,7 +55,7 @@
 			</div>
 		</div>
 		<a href="/product/{product._id}" class="flex flex-col">
-			<p class="mt-2 text-gray-800 max-w-[500px]">
+			<p class="mt-2 max-w-[500px]">
 				{product.shortDescription}
 			</p>
 		</a>
