@@ -20,7 +20,7 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
-import { MININUM_PER_CURRENCY, type Currency } from '$lib/types/Currency';
+import { CURRENCY_UNIT, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
@@ -49,6 +49,11 @@ async function generateOrderNumber(): Promise<number> {
 }
 
 export function isOrderFullyPaid(order: Order, opts?: { includePendingOrders?: boolean }): boolean {
+	const unit = CURRENCY_UNIT[order.currencySnapshot.main.totalPrice.currency];
+	// Special case: no payments yet and order of 0.01€ => it's not fully paid
+	if (order.currencySnapshot.main.totalPrice.amount >= unit && order.payments.length === 0) {
+		return false;
+	}
 	return (
 		sumCurrency(
 			order.currencySnapshot.main.totalPrice.currency,
@@ -60,8 +65,7 @@ export function isOrderFullyPaid(order: Order, opts?: { includePendingOrders?: b
 				)
 				.map((payment) => payment.currencySnapshot.main.price)
 		) >=
-		order.currencySnapshot.main.totalPrice.amount -
-			MININUM_PER_CURRENCY[order.currencySnapshot.main.totalPrice.currency]
+		order.currencySnapshot.main.totalPrice.amount - unit
 	);
 }
 
@@ -1055,7 +1059,7 @@ export async function addOrderPayment(
 					currency: mainCurrency
 			  };
 
-	if (priceToPay.amount < MININUM_PER_CURRENCY[priceToPay.currency]) {
+	if (priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 

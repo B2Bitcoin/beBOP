@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
+	import { CURRENCIES, CURRENCY_UNIT } from '$lib/types/Currency';
 	import {
 		DEFAULT_MAX_QUANTITY_PER_ORDER,
 		MAX_NAME_LIMIT,
@@ -83,7 +83,7 @@
 		try {
 			if (
 				priceAmountElement.value &&
-				+priceAmountElement.value <= MININUM_PER_CURRENCY[product.price.currency] &&
+				+priceAmountElement.value <= CURRENCY_UNIT[product.price.currency] &&
 				!product.payWhatYouWant &&
 				!product.free
 			) {
@@ -93,7 +93,7 @@
 				) {
 					priceAmountElement.setCustomValidity(
 						'Price must be greater than or equal to ' +
-							MININUM_PER_CURRENCY[product.price.currency] +
+							CURRENCY_UNIT[product.price.currency] +
 							' ' +
 							product.price.currency +
 							' or might be free'

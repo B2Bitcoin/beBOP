@@ -19,7 +19,7 @@
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
-	import { FRACTION_DIGITS_PER_CURRENCY, MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
+	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
 
 	export let data;
 
@@ -81,11 +81,11 @@
 		if (!PWYWInput) {
 			return true;
 		}
-		if (customAmount > 0 && customAmount < MININUM_PER_CURRENCY[PWYWCurrency]) {
+		if (customAmount > 0 && customAmount < CURRENCY_UNIT[PWYWCurrency]) {
 			PWYWInput.setCustomValidity(
 				t('product.minimumForCurrency', {
 					currency: PWYWCurrency,
-					minimum: MININUM_PER_CURRENCY[PWYWCurrency].toLocaleString($locale, {
+					minimum: CURRENCY_UNIT[PWYWCurrency].toLocaleString($locale, {
 						maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[PWYWCurrency]
 					})
 				})
