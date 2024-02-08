@@ -285,13 +285,16 @@ export async function onOrderPayment(
 				const items = productIds.size
 					? order.items.filter((item) => productIds.has(item.product._id))
 					: order.items;
-				const increase = sum(
-					items.map((item) =>
-						challenge.mode === 'moneyAmount'
-							? toSatoshis(item.product.price.amount * item.quantity, item.product.price.currency)
-							: item.quantity
-					)
-				);
+				const increase =
+					challenge.mode === 'totalProducts'
+						? sum(items.map((item) => item.quantity))
+						: sumCurrency(
+								challenge.goal.currency,
+								items.map((item) => ({
+									amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
+									currency: item.product.price.currency
+								}))
+						  );
 
 				await collections.challenges.updateOne(
 					{ _id: challenge._id },
