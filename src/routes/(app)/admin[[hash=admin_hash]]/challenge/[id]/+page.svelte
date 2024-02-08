@@ -73,7 +73,7 @@
 	{#if data.challenge.mode === 'moneyAmount'}
 		<label class="form-label w-full">
 			Currency
-			<select name="currency" class="form-input" bind:value={data.challenge.goal.currency}>
+			<select name="currency" class="form-input" value={data.challenge.goal.currency} disabled>
 				{#each CURRENCIES as currency}
 					<option value={currency}>{currency}</option>
 				{/each}
