@@ -7,9 +7,8 @@ export async function load() {
 		orders: orders.map((order) => ({
 			_id: order._id,
 			payments: order.payments.map((payment) => ({
-				id: payment._id.toString(),
-				status: payment.status,
-				method: payment.method
+				...payment,
+				_id: payment._id.toString()
 			})),
 			number: order.number,
 			createdAt: order.createdAt,
@@ -19,7 +18,8 @@ export async function load() {
 					content: note.content,
 					createdAt: note.createdAt
 				})) || [],
-			status: order.status
+			status: order.status,
+			items: order.items
 		}))
 	};
 }
