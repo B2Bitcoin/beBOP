@@ -56,7 +56,6 @@ export const actions = {
 					(x: { value: string }) => x.value
 				),
 				goalAmount: data.get('goalAmount'),
-				currency: data.get('currency') || 'SAT',
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
