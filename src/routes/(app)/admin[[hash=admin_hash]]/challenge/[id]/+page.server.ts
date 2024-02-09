@@ -1,6 +1,6 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
-import { CURRENCIES } from '$lib/types/Currency';
+import { parsePriceAmount } from '$lib/types/Currency';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -46,7 +46,10 @@ export const actions = {
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				productIds: z.string().array(),
-				goalAmount: z.number({ coerce: true }).int().positive(),
+				goalAmount: z
+					.string()
+					.regex(/^\d+(\.\d+)?$/)
+					.default('0'),
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
@@ -60,6 +63,15 @@ export const actions = {
 				endsAt: data.get('endsAt')
 			});
 
+		const amount =
+			challenge.mode === 'moneyAmount' && challenge.goal.currency
+				? parsePriceAmount(goalAmount, challenge.goal.currency)
+				: parseInt(goalAmount);
+
+		if (amount < 0 || isNaN(amount)) {
+			throw error(400, 'Invalid amount');
+		}
+
 		await collections.challenges.updateOne(
 			{
 				_id: challenge._id
@@ -68,7 +80,7 @@ export const actions = {
 				$set: {
 					name,
 					productIds,
-					'goal.amount': goalAmount,
+					'goal.amount': amount,
 					beginsAt,
 					endsAt,
 					updatedAt: new Date()

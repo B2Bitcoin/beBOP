@@ -1,22 +1,12 @@
 import type { Currency } from './Currency';
 import type { Timestamps } from './Timestamps';
 
-export interface Challenge extends Timestamps {
+export type Challenge = Timestamps & {
 	_id: string;
 	name: string;
 
 	/* If empty, works on all products */
 	productIds: string[];
-
-	goal: {
-		currency?: Currency;
-		amount: number;
-	};
-
-	/**
-	 * totalProducts: The goal is to sell a certain number of products
-	 */
-	mode: 'totalProducts' | 'moneyAmount';
 
 	recurring: false | 'monthly';
 
@@ -24,4 +14,27 @@ export interface Challenge extends Timestamps {
 
 	beginsAt: Date;
 	endsAt: Date;
-}
+} & (
+		| {
+				goal: {
+					amount: number;
+					currency?: undefined;
+				};
+
+				/**
+				 * totalProducts: The goal is to sell a certain number of products
+				 */
+				mode: 'totalProducts';
+		  }
+		| {
+				goal: {
+					currency: Currency;
+					amount: number;
+				};
+
+				/**
+				 * moneyAmount: The goal is to earn a certain amount of money
+				 */
+				mode: 'moneyAmount';
+		  }
+	);
