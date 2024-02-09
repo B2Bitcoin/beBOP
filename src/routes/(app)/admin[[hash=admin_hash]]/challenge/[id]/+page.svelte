@@ -67,6 +67,7 @@
 			min="0"
 			value={data.challenge.goal.amount}
 			placeholder={data.challenge.mode === 'moneyAmount' ? 'Amount' : 'Quantity'}
+			step={data.challenge.mode === 'moneyAmount' ? 'any' : '1'}
 			required
 		/>
 	</label>

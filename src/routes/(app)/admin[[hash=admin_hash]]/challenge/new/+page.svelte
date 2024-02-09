@@ -55,6 +55,7 @@
 			name="goalAmount"
 			min="0"
 			placeholder={mode === 'moneyAmount' ? 'Amount' : 'Quantity'}
+			step={mode === 'moneyAmount' ? 'any' : '1'}
 			required
 		/>
 	</label>
