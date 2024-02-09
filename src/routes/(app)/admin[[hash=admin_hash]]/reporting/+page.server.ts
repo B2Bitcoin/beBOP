@@ -1,7 +1,8 @@
 import { collections } from '$lib/server/database';
+import { sum } from '$lib/utils/sum';
 
 export async function load() {
-	const orders = await collections.orders.find().limit(100).sort({ createdAt: -1 }).toArray();
+	const orders = await collections.orders.find().sort({ createdAt: -1 }).toArray();
 
 	return {
 		orders: orders.map((order) => ({
@@ -19,7 +20,10 @@ export async function load() {
 					createdAt: note.createdAt
 				})) || [],
 			status: order.status,
-			items: order.items
+			items: order.items,
+			quantityOrder: sum(order.items.map((items) => items.quantity)),
+			billingAddress: order.billingAddress,
+			shippingAddress: order.shippingAddress
 		}))
 	};
 }
