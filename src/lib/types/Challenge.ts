@@ -18,6 +18,7 @@ export type Challenge = Timestamps & {
 		| {
 				goal: {
 					amount: number;
+					currency?: undefined;
 				};
 
 				/**

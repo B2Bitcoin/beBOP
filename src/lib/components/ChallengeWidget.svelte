@@ -7,7 +7,7 @@
 
 	let className = '';
 	export { className as class };
-	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>;
+	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt' | 'mode'>;
 
 	const { t, locale } = useI18n();
 </script>
@@ -30,7 +30,7 @@
 	</div>
 	<GoalProgress
 		class="font-bold mt-3 body-title"
-		text={challenge.goal.currency
+		text={challenge.mode === 'moneyAmount'
 			? Number(Math.max(0, challenge.progress))
 					.toLocaleString($locale, {
 						style: 'currency',
@@ -47,7 +47,7 @@
 		<p />
 		{#if challenge.progress === challenge.goal.amount}
 			<p>{t('challenge.goalMet')}</p>
-		{:else if challenge.progress > challenge.goal.amount && challenge.goal.currency}
+		{:else if challenge.progress > challenge.goal.amount && challenge.mode === 'moneyAmount' && challenge.goal.currency}
 			<div class="flex flex-row body-secondaryText gap-1">
 				<Trans key="challenge.moneyAmount.goalOvershot">
 					<PriceTag
