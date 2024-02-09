@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
 	import { sum } from '$lib/utils/sum.js';
-	import { find, groupBy } from 'lodash-es';
-	import { number } from 'zod';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
