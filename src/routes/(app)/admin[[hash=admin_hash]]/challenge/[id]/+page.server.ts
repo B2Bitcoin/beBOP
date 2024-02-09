@@ -1,6 +1,6 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
-import { CURRENCIES } from '$lib/types/Currency';
+import { parsePriceAmount } from '$lib/types/Currency';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -41,12 +41,15 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { name, goalAmount, productIds, currency, beginsAt, endsAt } = z
+		// We don't allow changing the currency, or the mode
+		const { name, goalAmount, productIds, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				productIds: z.string().array(),
-				goalAmount: z.number({ coerce: true }).int().positive(),
-				currency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
+				goalAmount: z
+					.string()
+					.regex(/^\d+(\.\d+)?$/)
+					.default('0'),
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
@@ -56,10 +59,18 @@ export const actions = {
 					(x: { value: string }) => x.value
 				),
 				goalAmount: data.get('goalAmount'),
-				currency: data.get('currency') || 'SAT',
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
+
+		const amount =
+			challenge.mode === 'moneyAmount' && challenge.goal.currency
+				? parsePriceAmount(goalAmount, challenge.goal.currency)
+				: parseInt(goalAmount);
+
+		if (amount < 0 || isNaN(amount)) {
+			throw error(400, 'Invalid amount');
+		}
 
 		await collections.challenges.updateOne(
 			{
@@ -69,8 +80,7 @@ export const actions = {
 				$set: {
 					name,
 					productIds,
-					'goal.amount': goalAmount,
-					...(challenge.mode === 'moneyAmount' && { 'goal.currency': currency }),
+					'goal.amount': amount,
 					beginsAt,
 					endsAt,
 					updatedAt: new Date()

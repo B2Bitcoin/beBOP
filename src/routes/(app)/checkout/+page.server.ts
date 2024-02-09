@@ -163,9 +163,23 @@ export const actions = {
 					.parse(json)
 			: null;
 
-		const { paymentMethod, discountAmount, discountType, discountJustification } = z
+		const multiplePaymentMethods =
+			locals.user?.roleId === POS_ROLE_ID
+				? z
+						.object({ multiplePaymentMethods: z.coerce.boolean().optional() })
+						.parse(Object.fromEntries(formData)).multiplePaymentMethods
+				: false;
+
+		const paymentMethod = multiplePaymentMethods
+			? null
+			: z
+					.object({
+						paymentMethod: z.enum([methods[0], ...methods.slice(1)])
+					})
+					.parse(Object.fromEntries(formData)).paymentMethod;
+
+		const { discountAmount, discountType, discountJustification } = z
 			.object({
-				paymentMethod: z.enum([methods[0], ...methods.slice(1)]),
 				discountAmount: z.coerce.number().optional(),
 				discountType: z.enum(['fiat', 'percentage']).optional(),
 				discountJustification: z.string().optional()

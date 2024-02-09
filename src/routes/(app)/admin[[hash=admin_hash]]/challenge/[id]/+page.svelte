@@ -66,43 +66,47 @@
 			name="goalAmount"
 			min="0"
 			value={data.challenge.goal.amount}
-			placeholder={data.challenge.mode === 'moneyAmount' ? 'Amount (SAT)' : 'Quantity'}
+			placeholder={data.challenge.mode === 'moneyAmount' ? 'Amount' : 'Quantity'}
+			step={data.challenge.mode === 'moneyAmount' ? 'any' : '1'}
 			required
 		/>
 	</label>
 	{#if data.challenge.mode === 'moneyAmount'}
 		<label class="form-label w-full">
 			Currency
-			<select name="currency" class="form-input" bind:value={data.challenge.goal.currency}>
+			<select name="currency" class="form-input" value={data.challenge.goal.currency} disabled>
 				{#each CURRENCIES as currency}
 					<option value={currency}>{currency}</option>
 				{/each}
 			</select>
 		</label>
 	{/if}
-	<div class="flex flex-wrap gap-4">
-		<label class="form-label">
-			Beginning date
 
-			<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
-		</label>
-	</div>
+	<label class="form-label">
+		Progress
 
-	<div class="flex flex-wrap gap-4">
-		<label class="form-label">
-			Ending date
+		<input class="form-input" type="number" readonly value={data.challenge.progress} step="any" />
+	</label>
 
-			<input
-				class="form-input"
-				type="date"
-				required
-				name="endsAt"
-				bind:value={endsAt}
-				bind:this={endsAtElement}
-				on:input={() => endsAtElement?.setCustomValidity('')}
-			/>
-		</label>
-	</div>
+	<label class="form-label">
+		Beginning date
+
+		<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
+	</label>
+
+	<label class="form-label">
+		Ending date
+
+		<input
+			class="form-input"
+			type="date"
+			required
+			name="endsAt"
+			bind:value={endsAt}
+			bind:this={endsAtElement}
+			on:input={() => endsAtElement?.setCustomValidity('')}
+		/>
+	</label>
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">

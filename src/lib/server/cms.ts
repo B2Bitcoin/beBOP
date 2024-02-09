@@ -303,11 +303,12 @@ export async function cmsFromContent(
 		.find({
 			_id: { $in: [...challengeSlugs] }
 		})
-		.project<Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>>({
+		.project<Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt' | 'mode'>>({
 			name: 1,
 			goal: 1,
 			progress: 1,
-			endsAt: 1
+			endsAt: 1,
+			mode: 1
 		})
 		.toArray();
 	const sliders = await collections.sliders
