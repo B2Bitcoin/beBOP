@@ -81,29 +81,32 @@
 			</select>
 		</label>
 	{/if}
-	<div class="flex flex-wrap gap-4">
-		<label class="form-label">
-			Beginning date
 
-			<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
-		</label>
-	</div>
+	<label class="form-label">
+		Progress
 
-	<div class="flex flex-wrap gap-4">
-		<label class="form-label">
-			Ending date
+		<input class="form-input" type="number" readonly value={data.challenge.progress} step="any" />
+	</label>
 
-			<input
-				class="form-input"
-				type="date"
-				required
-				name="endsAt"
-				bind:value={endsAt}
-				bind:this={endsAtElement}
-				on:input={() => endsAtElement?.setCustomValidity('')}
-			/>
-		</label>
-	</div>
+	<label class="form-label">
+		Beginning date
+
+		<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
+	</label>
+
+	<label class="form-label">
+		Ending date
+
+		<input
+			class="form-input"
+			type="date"
+			required
+			name="endsAt"
+			bind:value={endsAt}
+			bind:this={endsAtElement}
+			on:input={() => endsAtElement?.setCustomValidity('')}
+		/>
+	</label>
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">
