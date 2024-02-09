@@ -54,7 +54,7 @@
 			type="number"
 			name="goalAmount"
 			min="0"
-			placeholder={mode === 'moneyAmount' ? 'Amount (SAT)' : 'Quantity'}
+			placeholder={mode === 'moneyAmount' ? 'Amount' : 'Quantity'}
 			required
 		/>
 	</label>
