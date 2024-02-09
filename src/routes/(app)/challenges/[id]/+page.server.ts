@@ -4,7 +4,7 @@ import type { Challenge } from '$lib/types/Challenge';
 
 export const load = async ({ params }) => {
 	const challenge = await collections.challenges.findOne<
-		Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt'>
+		Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt' | 'mode'>
 	>(
 		{ _id: params.id },
 		{
@@ -13,7 +13,8 @@ export const load = async ({ params }) => {
 				name: 1,
 				goal: 1,
 				progress: 1,
-				endsAt: 1
+				endsAt: 1,
+				mode: 1
 			}
 		}
 	);
