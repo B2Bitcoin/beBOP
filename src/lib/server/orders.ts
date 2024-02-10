@@ -919,9 +919,20 @@ async function generatePaymentInfo(params: {
 					...(params.expiresAt && {
 						expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date())
 					}),
-					label: runtimeConfig.includeOrderUrlInQRCode
-						? `${ORIGIN}/order/${params.orderId}`
-						: undefined
+					label: (() => {
+						switch (runtimeConfig.lightningQrCodeDescription) {
+							case 'brand':
+								return runtimeConfig.brandName;
+							case 'orderUrl':
+								return `${ORIGIN}/order/${params.orderId}`;
+							case 'brandAndOrderNumber':
+								return `${runtimeConfig.brandName} - Order #${params.orderNumber.toLocaleString(
+									'en'
+								)}`;
+							default:
+								return undefined;
+						}
+					})()
 				}
 			);
 
