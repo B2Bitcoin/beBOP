@@ -11,7 +11,6 @@ import { redirect } from '@sveltejs/kit';
 export async function load(event) {
 	return {
 		ip: event.locals.clientIp,
-		enableCashSales: runtimeConfig.enableCashSales,
 		isMaintenance: runtimeConfig.isMaintenance,
 		maintenanceIps: runtimeConfig.maintenanceIps,
 		checkoutButtonOnProductPage: runtimeConfig.checkoutButtonOnProductPage,
@@ -38,7 +37,6 @@ export const actions = {
 		const result = z
 			.object({
 				isMaintenance: z.boolean({ coerce: true }),
-				enableCashSales: z.boolean({ coerce: true }),
 				maintenanceIps: z.string(),
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),

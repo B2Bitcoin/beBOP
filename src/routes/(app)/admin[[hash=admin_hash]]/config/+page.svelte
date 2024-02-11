@@ -97,15 +97,6 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
-			name="enableCashSales"
-			class="form-checkbox"
-			checked={data.enableCashSales}
-		/>
-		enableCashSales
-	</label>
-	<label class="checkbox-label">
-		<input
-			type="checkbox"
 			name="isMaintenance"
 			class="form-checkbox"
 			checked={data.isMaintenance}
