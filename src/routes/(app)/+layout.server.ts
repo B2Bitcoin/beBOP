@@ -7,6 +7,7 @@ import { userIdentifier } from '$lib/server/user.js';
 import { locales } from '$lib/translations/index.js';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
+import type { VatProfile } from '$lib/types/VatProfile.js';
 import { filterUndef } from '$lib/utils/filterUndef';
 import { error, redirect } from '@sveltejs/kit';
 
@@ -27,65 +28,28 @@ export async function load(params) {
 
 	depends(UrlDependency.Cart);
 
-	const cart = await getCartFromDb({ user: userIdentifier(locals) });
-	const logoPicture = runtimeConfig.logo.pictureId
-		? (await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })) || undefined
-		: undefined;
-	const logoPictureDark = runtimeConfig.logo.darkModePictureId
-		? (await collections.pictures.findOne({ _id: runtimeConfig.logo.darkModePictureId })) ||
-		  logoPicture
-		: logoPicture;
-	const footerPicture = runtimeConfig.footerLogoId
-		? (await collections.pictures.findOne({ _id: runtimeConfig.footerLogoId })) || undefined
-		: undefined;
-	return {
-		isMaintenance: runtimeConfig.isMaintenance,
-		vatExempted: runtimeConfig.vatExempted,
-		exchangeRate: runtimeConfig.exchangeRate,
-		countryCode: locals.countryCode,
-		email: locals.email || locals.sso?.find((sso) => sso.email)?.email,
-		roleId: locals.user?.roleId,
-		emailFromSso: !locals.email && locals.sso?.some((sso) => sso.email),
-		npub: locals.npub,
-		sso: locals.sso,
-		userId: locals.user?._id.toString(),
-		vatSingleCountry: runtimeConfig.vatSingleCountry,
-		vatCountry: runtimeConfig.vatCountry,
-		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
-		currencies: {
-			main: runtimeConfig.mainCurrency,
-			secondary: runtimeConfig.secondaryCurrency,
-			priceReference: runtimeConfig.priceReferenceCurrency
-		},
-		brandName:
-			runtimeConfig[`translations.${locals.language}.config`]?.brandName || runtimeConfig.brandName,
-		locales,
-		logoPicture,
-		logoPictureDark,
-		logo: runtimeConfig.logo,
-		footerLogoId: runtimeConfig.footerLogoId,
-		footerPicture,
-		usersDarkDefaultTheme: runtimeConfig.usersDarkDefaultTheme,
-		employeesDarkefaulTheme: runtimeConfig.employeesDarkDefaultTheme,
-		displayPoweredBy: runtimeConfig.displayPoweredBy,
-		displayCompanyInfo: runtimeConfig.displayCompanyInfo,
-		links: {
-			footer:
-				runtimeConfig[`translations.${locals.language}.config`]?.footerLinks ??
-				runtimeConfig.footerLinks,
-			navbar:
-				runtimeConfig[`translations.${locals.language}.config`]?.navbarLinks ??
-				runtimeConfig.navbarLinks,
-			topbar:
-				runtimeConfig[`translations.${locals.language}.config`]?.topbarLinks ??
-				runtimeConfig.topbarLinks,
-			socialNetworkIcons: runtimeConfig.socialNetworkIcons
-		},
-		sellerIdentity: runtimeConfig.sellerIdentity,
-		deliveryFees: runtimeConfig.deliveryFees,
-		websiteLink: ORIGIN,
-		cart: cart
-			? Promise.all(
+	const [cart, logoPicture] = await Promise.all([
+		getCartFromDb({ user: userIdentifier(locals) }),
+		runtimeConfig.logo.pictureId
+			? (await collections.pictures.findOne({ _id: runtimeConfig.logo.pictureId })) || undefined
+			: undefined
+	]);
+
+	const [logoPictureDark, footerPicture, vatProfiles, cartData] = await Promise.all([
+		runtimeConfig.logo.darkModePictureId
+			? (await collections.pictures.findOne({ _id: runtimeConfig.logo.darkModePictureId })) ||
+			  logoPicture
+			: logoPicture,
+		runtimeConfig.footerLogoId
+			? (await collections.pictures.findOne({ _id: runtimeConfig.footerLogoId })) || undefined
+			: undefined,
+		await collections.vatProfiles
+			.find({})
+			.project<Pick<VatProfile, '_id' | 'name' | 'rates'>>({ _id: 1, name: 1, rates: 1 })
+			.map((p) => ({ _id: p._id.toString(), name: p.name, rates: p.rates }))
+			.toArray(),
+		cart
+			? await Promise.all(
 					cart.items.map(async (item) => {
 						const productDoc = await collections.products.findOne<
 							Pick<
@@ -154,7 +118,57 @@ export async function load(params) {
 						}
 					})
 			  ).then((res) => filterUndef(res))
-			: null,
+			: null
+	]);
+
+	return {
+		isMaintenance: runtimeConfig.isMaintenance,
+		vatExempted: runtimeConfig.vatExempted,
+		exchangeRate: runtimeConfig.exchangeRate,
+		countryCode: locals.countryCode,
+		vatProfiles,
+		email: locals.email || locals.sso?.find((sso) => sso.email)?.email,
+		roleId: locals.user?.roleId,
+		emailFromSso: !locals.email && locals.sso?.some((sso) => sso.email),
+		npub: locals.npub,
+		sso: locals.sso,
+		userId: locals.user?._id.toString(),
+		vatSingleCountry: runtimeConfig.vatSingleCountry,
+		vatCountry: runtimeConfig.vatCountry,
+		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
+		currencies: {
+			main: runtimeConfig.mainCurrency,
+			secondary: runtimeConfig.secondaryCurrency,
+			priceReference: runtimeConfig.priceReferenceCurrency
+		},
+		brandName:
+			runtimeConfig[`translations.${locals.language}.config`]?.brandName || runtimeConfig.brandName,
+		locales,
+		logoPicture,
+		logoPictureDark,
+		logo: runtimeConfig.logo,
+		footerLogoId: runtimeConfig.footerLogoId,
+		footerPicture,
+		usersDarkDefaultTheme: runtimeConfig.usersDarkDefaultTheme,
+		employeesDarkefaulTheme: runtimeConfig.employeesDarkDefaultTheme,
+		displayPoweredBy: runtimeConfig.displayPoweredBy,
+		displayCompanyInfo: runtimeConfig.displayCompanyInfo,
+		links: {
+			footer:
+				runtimeConfig[`translations.${locals.language}.config`]?.footerLinks ??
+				runtimeConfig.footerLinks,
+			navbar:
+				runtimeConfig[`translations.${locals.language}.config`]?.navbarLinks ??
+				runtimeConfig.navbarLinks,
+			topbar:
+				runtimeConfig[`translations.${locals.language}.config`]?.topbarLinks ??
+				runtimeConfig.topbarLinks,
+			socialNetworkIcons: runtimeConfig.socialNetworkIcons
+		},
+		sellerIdentity: runtimeConfig.sellerIdentity,
+		deliveryFees: runtimeConfig.deliveryFees,
+		websiteLink: ORIGIN,
+		cart: cartData,
 		confirmationBlocksThresholds: runtimeConfig.confirmationBlocksThresholds
 	};
 }

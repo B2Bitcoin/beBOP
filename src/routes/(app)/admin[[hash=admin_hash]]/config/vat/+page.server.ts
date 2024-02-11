@@ -5,17 +5,6 @@ import { ObjectId } from 'mongodb';
 import type { JsonObject } from 'type-fest';
 import { z } from 'zod';
 
-export async function load() {
-	const vatProfiles = await collections.vatProfiles.find({}).toArray();
-
-	return {
-		vatProfiles: vatProfiles.map((profile) => ({
-			...profile,
-			_id: profile._id.toString()
-		}))
-	};
-}
-
 export const actions = {
 	createProfile: async function ({ request }) {
 		const data = await request.formData();
