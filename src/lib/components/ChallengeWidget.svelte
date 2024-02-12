@@ -4,10 +4,14 @@
 	import PriceTag from './PriceTag.svelte';
 	import { useI18n } from '$lib/i18n';
 	import Trans from './Trans.svelte';
+	import { floor } from 'lodash-es';
 
 	let className = '';
 	export { className as class };
-	export let challenge: Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt' | 'mode'>;
+	export let challenge: Pick<
+		Challenge,
+		'_id' | 'name' | 'goal' | 'progress' | 'endsAt' | 'mode' | 'beginsAt'
+	>;
 
 	const { t, locale } = useI18n();
 </script>
@@ -18,14 +22,24 @@
 			{challenge.name}
 		</h3>
 		<span class="text-base font-light body-secondaryText"
-			><Trans key="challenge.endsAt"
-				><time
-					datetime={challenge.endsAt.toJSON()}
-					slot="0"
-					title={challenge.endsAt.toLocaleString($locale)}
-					>{challenge.endsAt.toLocaleDateString($locale)}</time
-				></Trans
-			>
+			>{#if challenge.beginsAt > new Date()}
+				{t('challenge.beginsAt', {
+					days: Math.floor(
+						(challenge.beginsAt.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+					)
+				})}
+			{:else if challenge.endsAt < new Date()}
+				{t('challenge.ended')}
+			{:else}
+				<Trans key="challenge.endsAt"
+					><time
+						datetime={challenge.endsAt.toJSON()}
+						slot="0"
+						title={challenge.endsAt.toLocaleString($locale)}
+						>{challenge.endsAt.toLocaleDateString($locale)}</time
+					></Trans
+				>
+			{/if}
 		</span>
 	</div>
 	<GoalProgress

@@ -36,6 +36,8 @@
 		"vatSellerCountry": "The country is the seller's country."
 	},
 	"challenge": {
+		"beginsAt": "Begins in {days} days",
+		"ended": "finished !",
 		"endsAt": "Ends <0></0>",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
