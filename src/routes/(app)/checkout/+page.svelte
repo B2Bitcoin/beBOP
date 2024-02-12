@@ -741,7 +741,7 @@
 						</span>
 					</label>
 				{/if}
-				{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+				{#if data.vatCountry !== country && priceInfo.physicalVatAtCustoms && !isDigital}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"

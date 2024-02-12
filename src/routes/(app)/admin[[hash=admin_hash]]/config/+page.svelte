@@ -91,15 +91,6 @@
 		checkoutButtonOnProductPage
 	</label>
 	<label class="checkbox-label">
-		<input
-			type="checkbox"
-			name="includeOrderUrlInQRCode"
-			class="form-checkbox"
-			checked={data.includeOrderUrlInQRCode}
-		/>
-		includeOrderUrlInQRCode
-	</label>
-	<label class="checkbox-label">
 		<input type="checkbox" name="discovery" class="form-checkbox" checked={data.discovery} />
 		discovery
 	</label>
