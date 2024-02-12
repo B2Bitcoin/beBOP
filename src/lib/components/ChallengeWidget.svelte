@@ -4,7 +4,6 @@
 	import PriceTag from './PriceTag.svelte';
 	import { useI18n } from '$lib/i18n';
 	import Trans from './Trans.svelte';
-	import { floor } from 'lodash-es';
 
 	let className = '';
 	export { className as class };
