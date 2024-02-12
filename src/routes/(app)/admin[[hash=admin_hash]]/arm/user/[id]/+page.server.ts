@@ -32,6 +32,7 @@ export const actions = {
 		const parsed = z
 			.object({
 				login: z.string(),
+				alias: z.string().optional(),
 				recoveryEmail: z.string().email().optional(),
 				recoveryNpub: zodNpub().optional(),
 				status: z.enum(['enabled', 'disabled']),
@@ -52,6 +53,7 @@ export const actions = {
 			{
 				$set: {
 					login: parsed.login,
+					...(parsed.alias && { alias: parsed.alias }),
 					recovery: {
 						...(parsed.recoveryEmail && { email: parsed.recoveryEmail }),
 						...(parsed.recoveryNpub && { npub: parsed.recoveryNpub })

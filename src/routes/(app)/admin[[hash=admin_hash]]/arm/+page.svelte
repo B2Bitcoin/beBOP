@@ -119,9 +119,12 @@
 
 <a href="{data.adminPrefix}/arm/user/new" class="underline">Create a user</a>
 
-<ul class="grid grid-cols-[auto_auto_auto_auto_auto_min-content_min-content_min-content] gap-2">
+<ul
+	class="grid grid-cols-[auto_auto_auto_auto_auto_auto_min-content_min-content_min-content] gap-2"
+>
 	<li class="contents">
 		<span>Login</span>
+		<span>Alias</span>
 		<span>Recovery Email</span>
 		<span>Recovery Npub</span>
 		<span>Role</span>
@@ -161,6 +164,13 @@
 					name="login"
 					class="form-input"
 					value={user.login}
+					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
+				/>
+				<input
+					type="text"
+					name="alias"
+					class="form-input"
+					value={user.alias ?? ''}
 					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
 				/>
 				<input
