@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
 	import { sum } from '$lib/utils/sum.js';
+	import { toCurrency } from '$lib/utils/toCurrency';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
@@ -39,22 +40,49 @@
 
 	function getOrderByMonthYear(month: number, year: number) {
 		return data.orders.filter(
-			(order) =>
-				order.status === 'paid' &&
-				order.createdAt.getMonth() === month &&
-				order.createdAt.getFullYear() === year
+			(order) => order.createdAt.getMonth() === month && order.createdAt.getFullYear() === year
 		);
 	}
 	$: orderByMonthYear = getOrderByMonthYear(monthValue - 1, yearValue);
 	$: orderSynthesis = {
 		orderQuantity: sum(orderByMonthYear.map((order) => order.quantityOrder)),
-		orderTotal: sum(orderByMonthYear.map((order) => order.currencySnapshot.main.totalPrice.amount)),
-		currency: 'SAT',
+		orderTotal: sum(
+			orderByMonthYear.map((order) =>
+				toCurrency(
+					data.currencies.main,
+					order.currencySnapshot.main.totalPrice.amount,
+					order.currencySnapshot.main.totalPrice.currency
+				)
+			)
+		),
 		averageCart: 0
 	};
+	function quantityOfProduct() {
+		const productQuantities: Record<string, number> = {};
+		orderByMonthYear.forEach((order) => {
+			order.items.forEach((item) => {
+				if (productQuantities[item.product._id]) {
+					productQuantities[item.product._id] += item.quantity;
+				} else {
+					productQuantities[item.product._id] = item.quantity;
+				}
+			});
+		});
+		return productQuantities;
+	}
+	function fetchProductById(productId: string) {
+		for (const order of orderByMonthYear) {
+			for (const item of order.items) {
+				if (item.product._id === productId) {
+					return item.product;
+				}
+			}
+		}
+		return null;
+	}
 </script>
 
-<h1 class="text-3xl">Reporting{monthValue}</h1>
+<h1 class="text-3xl">Reporting</h1>
 
 <div class="gap-4 grid grid-cols-12 mx-auto">
 	<div class="col-span-6">
@@ -95,8 +123,14 @@
 								<td class="border border-gray-300 px-4 py-2"
 									>{order.items.map((item) => item.product.name).join('|')}</td
 								>
-								<td class="border border-gray-300 px-4 py-2">{payment.price.currency}</td>
-								<td class="border border-gray-300 px-4 py-2">{payment.price.amount}</td>
+								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{toCurrency(
+										data.currencies.main,
+										payment.currencySnapshot.main.price.amount,
+										payment.currencySnapshot.main.price.currency
+									)}</td
+								>
 								<td class="border border-gray-300 px-4 py-2">{payment.expiresAt ?? ''}</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{order.billingAddress
@@ -146,11 +180,13 @@
 									>{order.createdAt.toLocaleDateString($locale)}</td
 								>
 
+								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 								<td class="border border-gray-300 px-4 py-2"
-									>{item.currencySnapshot.main.price.currency}</td
-								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{item.currencySnapshot.main.price.amount}</td
+									>{toCurrency(
+										data.currencies.main,
+										item.product.price.amount,
+										item.product.price.currency
+									)}</td
 								>
 							</tr>
 						{/each}
@@ -213,7 +249,7 @@
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderQuantity}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderTotal}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.averageCart}</td>
-						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.currency}</td>
+						<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -244,19 +280,21 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each orderByMonthYear as order}
-						{#each order.items as item}
-							<tr class="hover:bg-gray-100">
-								<td class="border border-gray-300 px-4 py-2"
-									>{order.createdAt.toLocaleDateString($locale)}</td
-								>
-								<td class="border border-gray-300 px-4 py-2">{item.product._id}</td>
-								<td class="border border-gray-300 px-4 py-2">{item.product.name}</td>
-								<td class="border border-gray-300 px-4 py-2">{item.quantity}</td>
-								<td class="border border-gray-300 px-4 py-2">{item.product.price.currency}</td>
-								<td class="border border-gray-300 px-4 py-2">{item.product.price.amount}</td>
-							</tr>
-						{/each}
+					{#each Object.entries(quantityOfProduct()) as [productId, quantity]}
+						<tr class="hover:bg-gray-100">
+							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
+							<td class="border border-gray-300 px-4 py-2">{productId}</td>
+							<td class="border border-gray-300 px-4 py-2">{fetchProductById(productId)?.name}</td>
+							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
+							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+							<td class="border border-gray-300 px-4 py-2"
+								>{toCurrency(
+									data.currencies.main,
+									fetchProductById(productId)?.price.amount || 0 * quantity,
+									fetchProductById(productId)?.price.currency || 'BTC'
+								)}</td
+							>
+						</tr>
 					{/each}
 				</tbody>
 			</table>
