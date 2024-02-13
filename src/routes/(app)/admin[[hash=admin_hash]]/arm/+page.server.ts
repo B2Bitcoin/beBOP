@@ -11,6 +11,7 @@ export async function load() {
 		users: nonCustomers.map((user) => ({
 			_id: user._id.toString(),
 			login: user.login,
+			alias: user.alias,
 			roleId: user.roleId,
 			disabled: user.disabled,
 			recovery: user.recovery,

@@ -14,9 +14,10 @@ export const actions = {
 			(role) => role._id !== SUPER_ADMIN_ROLE_ID
 		);
 
-		const { login, email, npub, roleId } = z
+		const { login, alias, email, npub, roleId } = z
 			.object({
 				login: z.string(),
+				alias: z.string().optional(),
 				email: z.string().email().optional(),
 				npub: zodNpub().optional(),
 				roleId: z.enum([allowedRoles[0]._id, ...allowedRoles.map((role) => role._id)])
@@ -34,6 +35,7 @@ export const actions = {
 		const user = {
 			_id: new ObjectId(),
 			login,
+			...(alias && { alias }),
 			recovery: {
 				...(email && { email }),
 				...(npub && { npub })
