@@ -78,6 +78,7 @@ export const actions = {
 						createdAt: new Date(),
 						role: SUPER_ADMIN_ROLE_ID,
 						...(locals.user && { userId: locals.user._id }),
+						...(locals.user && { userAlias: locals.user.alias }),
 						...(userIdentifier(locals).npub && { npub: userIdentifier(locals).npub }),
 						...(userIdentifier(locals).email && { email: userIdentifier(locals).email })
 					}

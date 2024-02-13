@@ -126,7 +126,8 @@ export async function fetchOrderForUser(orderId: string) {
 			order.notes?.map((note) => ({
 				content: note.content,
 				createdAt: note.createdAt,
-				isEmployee: note.role !== CUSTOMER_ROLE_ID
+				isEmployee: note.role !== CUSTOMER_ROLE_ID,
+				alias: note.userAlias
 			})) || []
 	};
 }
