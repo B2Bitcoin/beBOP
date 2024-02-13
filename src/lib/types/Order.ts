@@ -23,6 +23,7 @@ export interface Note {
 	npub?: string;
 	email?: string;
 	userId?: User['_id'];
+	userAlias?: string;
 	role: string; // CUSTOMER_ROLE_ID or other
 	content: string;
 	createdAt: Date;
