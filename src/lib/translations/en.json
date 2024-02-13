@@ -37,7 +37,7 @@
 	},
 	"challenge": {
 		"beginsAt": "Begins in {days} days",
-		"ended": "finished !",
+		"ended": "Finished !",
 		"endsAt": "Ends <0></0>",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",

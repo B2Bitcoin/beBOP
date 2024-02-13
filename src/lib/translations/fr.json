@@ -37,7 +37,7 @@
 	},
 	"challenge": {
 		"beginsAt": "Débute dans {days} jours",
-		"ended": "términé !",
+		"ended": "Terminé !",
 		"endsAt": "Termine le <0></0>",
 		"goalMet": "Merci à tous ! \n👏👏",
 		"goalOvershot": "Vous êtes incroyables ! \n🤭",
