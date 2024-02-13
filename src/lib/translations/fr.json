@@ -36,6 +36,8 @@
 		"vatSellerCountry": "La TVA est celle du pays du vendeur."
 	},
 	"challenge": {
+		"beginsAt": "Débute dans {days} jours",
+		"ended": "Terminé !",
 		"endsAt": "Termine le <0></0>",
 		"goalMet": "Merci à tous ! \n👏👏",
 		"goalOvershot": "Vous êtes incroyables ! \n🤭",
