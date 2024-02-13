@@ -46,6 +46,7 @@
 	$: orderByMonthYear = getOrderByMonthYear(monthValue - 1, yearValue);
 	$: orderSynthesis = {
 		orderQuantity: sum(orderByMonthYear.map((order) => order.quantityOrder)),
+		orderNumber: orderByMonthYear.length,
 		orderTotal: sum(
 			orderByMonthYear.map((order) =>
 				toCurrency(
@@ -269,7 +270,7 @@
 				<tbody>
 					<tr class="hover:bg-gray-100">
 						<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
-						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderQuantity}</td>
+						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderNumber}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderTotal}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.averageCart}</td>
 						<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
