@@ -18,6 +18,7 @@ export interface User extends Timestamps {
 		token: string;
 		expiresAt: Date;
 	};
+	alias?: string;
 }
 
 export const SUPER_ADMIN_ROLE_ID = 'super-admin';

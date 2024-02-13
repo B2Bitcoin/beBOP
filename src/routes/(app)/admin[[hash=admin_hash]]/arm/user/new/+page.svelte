@@ -23,6 +23,10 @@
 		<input class="form-input" type="text" name="login" placeholder="user" required />
 	</label>
 	<label class="form-label">
+		Alias
+		<input class="form-input" type="text" name="alias" placeholder="alias" />
+	</label>
+	<label class="form-label">
 		Recovery Email
 		<input
 			class="form-input"
