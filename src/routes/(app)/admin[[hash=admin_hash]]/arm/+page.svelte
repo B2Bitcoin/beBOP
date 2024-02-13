@@ -166,13 +166,7 @@
 					value={user.login}
 					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
 				/>
-				<input
-					type="text"
-					name="alias"
-					class="form-input"
-					value={user.alias ?? ''}
-					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
-				/>
+				<input type="text" name="alias" class="form-input" value={user.alias ?? ''} />
 				<input
 					type="email"
 					name="recoveryEmail"
@@ -202,12 +196,7 @@
 					<option value="enabled" selected={!user.disabled}>Enabled</option>
 					<option value="disabled" selected={!!user.disabled}>Disabled</option>
 				</select>
-				<button
-					type="submit"
-					class="btn btn-black self-start"
-					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
-					title="Save"
-				>
+				<button type="submit" class="btn btn-black self-start" title="Save">
 					<IconSave />
 				</button>
 				<button

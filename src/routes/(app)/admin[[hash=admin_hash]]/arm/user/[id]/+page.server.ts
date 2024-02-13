@@ -10,13 +10,16 @@ import { z } from 'zod';
 export const actions = {
 	update: async function ({ params, request }) {
 		const user = await collections.users.findOne({ _id: new ObjectId(params.id) });
-
+		const data = await request.formData();
+		const parsedAdmin = z
+			.object({
+				alias: z.string().optional()
+			})
+			.parse({
+				...Object.fromEntries(data)
+			});
 		if (!user) {
 			throw error(404, 'User not found');
-		}
-
-		if (user.roleId === SUPER_ADMIN_ROLE_ID) {
-			throw error(403, 'You cannot update a super admin');
 		}
 
 		if (user.roleId === CUSTOMER_ROLE_ID) {
@@ -27,16 +30,14 @@ export const actions = {
 			(role) => role._id !== SUPER_ADMIN_ROLE_ID
 		);
 
-		const data = await request.formData();
-
 		const parsed = z
 			.object({
-				login: z.string(),
+				login: z.string().optional(),
 				alias: z.string().optional(),
 				recoveryEmail: z.string().email().optional(),
 				recoveryNpub: zodNpub().optional(),
-				status: z.enum(['enabled', 'disabled']),
-				roleId: z.enum([allowedRoles[0]._id, ...allowedRoles.map((role) => role._id)])
+				status: z.enum(['enabled', 'disabled']).optional(),
+				roleId: z.enum([allowedRoles[0]._id, ...allowedRoles.map((role) => role._id)]).optional()
 			})
 			.parse({
 				...Object.fromEntries(data),
@@ -44,27 +45,39 @@ export const actions = {
 				recoveryNpub: data.get('recoveryNpub')?.toString() || undefined
 			});
 
-		if (!parsed.recoveryEmail && !parsed.recoveryNpub) {
+		if (user.roleId !== SUPER_ADMIN_ROLE_ID && !parsed.recoveryEmail && !parsed.recoveryNpub) {
 			throw error(400, 'You must provide a recovery email or npub');
 		}
-
-		await collections.users.updateOne(
-			{ _id: user._id },
-			{
-				$set: {
-					login: parsed.login,
-					...(parsed.alias && { alias: parsed.alias }),
-					recovery: {
-						...(parsed.recoveryEmail && { email: parsed.recoveryEmail }),
-						...(parsed.recoveryNpub && { npub: parsed.recoveryNpub })
-					},
-					disabled: parsed.status === 'disabled',
-					roleId: parsed.roleId
+		if (user.roleId === SUPER_ADMIN_ROLE_ID) {
+			await collections.users.updateOne(
+				{ _id: user._id },
+				{
+					$set: {
+						...(parsed.alias && { alias: parsed.alias })
+					}
 				}
-			}
-		);
+			);
 
-		throw redirect(303, `${adminPrefix()}/arm`);
+			throw redirect(303, `${adminPrefix()}/arm`);
+		} else {
+			await collections.users.updateOne(
+				{ _id: user._id },
+				{
+					$set: {
+						login: parsed.login,
+						...(parsed.alias && { alias: parsed.alias }),
+						recovery: {
+							...(parsed.recoveryEmail && { email: parsed.recoveryEmail }),
+							...(parsed.recoveryNpub && { npub: parsed.recoveryNpub })
+						},
+						disabled: parsed.status === 'disabled',
+						roleId: parsed.roleId
+					}
+				}
+			);
+
+			throw redirect(303, `${adminPrefix()}/arm`);
+		}
 	},
 	resetPassword: async function ({ params }) {
 		const user = await collections.users.findOne({ _id: new ObjectId(params.id) });
