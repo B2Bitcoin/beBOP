@@ -36,7 +36,7 @@
 		const csvData = `${csvTitle}  ${csvRows}`;
 		downloadCSV(csvData, filename);
 	}
-	const { locale, textAddress } = useI18n();
+	const { locale, textAddress, countryName } = useI18n();
 
 	function getOrderByMonthYear(month: number, year: number) {
 		return data.orders.filter(
@@ -100,11 +100,13 @@
 						<th class="border border-gray-300 px-4 py-2">Order Status</th>
 						<th class="border border-gray-300 px-4 py-2">Payment mean</th>
 						<th class="border border-gray-300 px-4 py-2">Payment Status</th>
+						<th class="border border-gray-300 px-4 py-2">Payment Info</th>
 						<th class="border border-gray-300 px-4 py-2">Cart</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
-						<th class="border border-gray-300 px-4 py-2">Expire Date</th>
+						<th class="border border-gray-300 px-4 py-2">Billing Country</th>
 						<th class="border border-gray-300 px-4 py-2">Billing Info</th>
+						<th class="border border-gray-300 px-4 py-2">Shipping Country</th>
 						<th class="border border-gray-300 px-4 py-2">Shipping Info</th>
 					</tr>
 				</thead>
@@ -121,6 +123,13 @@
 								<td class="border border-gray-300 px-4 py-2">{payment.method}</td>
 								<td class="border border-gray-300 px-4 py-2">{payment.status}</td>
 								<td class="border border-gray-300 px-4 py-2"
+									>{payment.method === 'lightning'
+										? payment.invoiceId
+										: payment.method === 'bank-transfer'
+										? payment.bankTransferNumber
+										: payment.detail || ''}</td
+								>
+								<td class="border border-gray-300 px-4 py-2"
 									>{order.items.map((item) => item.product.name).join('|')}</td
 								>
 								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
@@ -131,11 +140,16 @@
 										payment.currencySnapshot.main.price.currency
 									)}</td
 								>
-								<td class="border border-gray-300 px-4 py-2">{payment.expiresAt ?? ''}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{countryName(order.billingAddress?.country ?? '')}</td
+								>
 								<td class="border border-gray-300 px-4 py-2"
 									>{order.billingAddress
 										? textAddress(order.billingAddress).replace(',', '/')
 										: ''}</td
+								>
+								<td class="border border-gray-300 px-4 py-2"
+									>{countryName(order.shippingAddress?.country ?? '')}</td
 								>
 								<td class="border border-gray-300 px-4 py-2"
 									>{order.shippingAddress
@@ -158,10 +172,12 @@
 			<table class="min-w-full table-auto border border-gray-300 bg-white" bind:this={tableProduct}>
 				<thead class="bg-gray-200">
 					<tr>
-						<th class="border border-gray-300 px-4 py-2">Product ID</th>
+						<th class="border border-gray-300 px-4 py-2">Product URL</th>
 						<th class="border border-gray-300 px-4 py-2">Product Name</th>
 						<th class="border border-gray-300 px-4 py-2">Quantity</th>
+						<th class="border border-gray-300 px-4 py-2">Deposit</th>
 						<th class="border border-gray-300 px-4 py-2">Order ID</th>
+						<th class="border border-gray-300 px-4 py-2">Order URL</th>
 						<th class="border border-gray-300 px-4 py-2">Order Date</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
@@ -172,14 +188,21 @@
 					{#each data.orders as order}
 						{#each order.items as item}
 							<tr class="hover:bg-gray-100">
-								<td class="border border-gray-300 px-4 py-2">{item.product._id}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{data.websiteLink + '/product/' + item.product._id}</td
+								>
 								<td class="border border-gray-300 px-4 py-2">{item.product.name}</td>
 								<td class="border border-gray-300 px-4 py-2">{item.quantity}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{item.product.deposit?.percentage ?? 100}</td
+								>
 								<td class="border border-gray-300 px-4 py-2">{order.number}</td><td
 									class="border border-gray-300 px-4 py-2"
 									>{order.createdAt.toLocaleDateString($locale)}</td
 								>
-
+								<td class="border border-gray-300 px-4 py-2"
+									>{data.websiteLink + '/order/' + order._id}</td
+								>
 								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{toCurrency(
