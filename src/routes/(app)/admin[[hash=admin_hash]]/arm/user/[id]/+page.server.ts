@@ -53,7 +53,7 @@ export const actions = {
 				{ _id: user._id },
 				{
 					$set: {
-						...(parsed.alias && { alias: parsed.alias })
+						...(parsedAdmin.alias && { alias: parsedAdmin.alias })
 					}
 				}
 			);
