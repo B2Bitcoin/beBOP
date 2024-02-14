@@ -75,11 +75,17 @@ export async function addToCartInDb(
 	if (
 		params.customPrice &&
 		product.payWhatYouWant &&
-		product.hasMaximumPrice &&
-		product.maximumPrice?.amount &&
-		params.customPrice.amount > product.maximumPrice?.amount
+		product.maximumPrice &&
+		toCurrency(
+			params.customPrice.currency,
+			product.maximumPrice.amount,
+			product.maximumPrice.currency
+		) < params.customPrice.amount
 	) {
-		throw error(400, `Product price must be less than ${product.maximumPrice?.amount}`);
+		throw error(
+			400,
+			`Product price must be less than ${product.maximumPrice.amount} ${product.maximumPrice.currency}`
+		);
 	}
 
 	if (params.customPrice && product.type === 'subscription') {

@@ -41,10 +41,9 @@
 		data.product.price.amount,
 		data.product.price.currency
 	);
-	const PWYWMaximum =
-		data.product.hasMaximumPrice && data.product.maximumPrice?.amount
-			? toCurrency(PWYWCurrency, data.product.maximumPrice?.amount, data.product.price.currency)
-			: Infinity;
+	const PWYWMaximum = data.product.maximumPrice
+		? toCurrency(PWYWCurrency, data.product.maximumPrice.amount, data.product.maximumPrice.currency)
+		: Infinity;
 	let customAmount = PWYWMinimum;
 
 	$: currentPicture =

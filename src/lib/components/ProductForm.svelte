@@ -37,7 +37,6 @@
 		_id: '',
 		payWhatYouWant: false,
 		standalone: false,
-		hasMaximumPrice: false,
 		type: 'resource',
 		preorder: false,
 		name: '',
@@ -134,7 +133,7 @@
 			submitting = false;
 		}
 	}
-
+	let hasMaximumPrice = !!product.maximumPrice;
 	let availableDateStr = product.availableDate?.toJSON().slice(0, 10);
 
 	$: changedDate = availableDateStr !== product.availableDate?.toJSON().slice(0, 10);
@@ -265,14 +264,14 @@
 				<input
 					class="form-checkbox"
 					type="checkbox"
-					bind:checked={product.hasMaximumPrice}
+					bind:checked={hasMaximumPrice}
 					name="hasMaximumPrice"
 					disabled={product.type === 'subscription'}
 				/>
 				This article has a maximum price
 			</label>
 		{/if}
-		{#if product.hasMaximumPrice}
+		{#if hasMaximumPrice}
 			<div class="gap-4 flex flex-col md:flex-row">
 				<label class="w-full">
 					Maximum price amount
