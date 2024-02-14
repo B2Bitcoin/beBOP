@@ -36,7 +36,7 @@
 		const csvData = `${csvTitle}  ${csvRows}`;
 		downloadCSV(csvData, filename);
 	}
-	const { locale, textAddress, countryName } = useI18n();
+	const { t, locale, textAddress, countryName } = useI18n();
 
 	function getOrderByMonthYear(month: number, year: number) {
 		return data.orders.filter(
@@ -131,7 +131,7 @@
 										: payment.detail || ''}</td
 								>
 								<td class="border border-gray-300 px-4 py-2"
-									>{order.items.map((item) => item.product.name).join('|')}</td
+									>{order.items.map((item) => item.product.name.replace).join('|')}</td
 								>
 								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 								<td class="border border-gray-300 px-4 py-2"
@@ -206,11 +206,13 @@
 								>
 								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 								<td class="border border-gray-300 px-4 py-2"
-									>{toCurrency(
+									>{(toCurrency(
 										data.currencies.main,
 										item.product.price.amount,
 										item.product.price.currency
-									)}</td
+									) *
+										(item.product.deposit?.percentage ?? 100)) /
+										100}</td
 								>
 							</tr>
 						{/each}
@@ -312,7 +314,14 @@
 						<tr class="hover:bg-gray-100">
 							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
-							<td class="border border-gray-300 px-4 py-2">{fetchProductById(productId)?.name}</td>
+							<td class="border border-gray-300 px-4 py-2"
+								>{fetchProductById(productId)?.name.replace(
+									t('product.type.deposit'),
+									fetchProductById(productId)?.deposit?.percentage
+										? fetchProductById(productId)?.deposit?.percentage.toString() + '%'
+										: ''
+								)}</td
+							>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
 							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 							<td class="border border-gray-300 px-4 py-2"
