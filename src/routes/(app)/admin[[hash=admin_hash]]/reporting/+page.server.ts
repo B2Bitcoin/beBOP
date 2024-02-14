@@ -2,10 +2,7 @@ import { collections } from '$lib/server/database';
 import { sum } from '$lib/utils/sum';
 
 export async function load() {
-	const orders = await collections.orders
-		.find({ status: { $eq: 'paid' } })
-		.sort({ createdAt: -1 })
-		.toArray();
+	const orders = await collections.orders.find().sort({ createdAt: -1 }).toArray();
 
 	return {
 		orders: orders.map((order) => ({

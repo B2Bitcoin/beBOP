@@ -9,8 +9,38 @@
 	let tableOrderSynthesis: HTMLTableElement;
 	let monthValue = 1;
 	let yearValue = 2023;
-
 	let tableProductSynthesis: HTMLTableElement;
+	let includePending = false;
+	let includeExpired = false;
+	let includeCanceled = false;
+	let includePartiallyPaid = false;
+
+	const { locale, textAddress, countryName } = useI18n();
+
+	$: orderFiltered = data.orders.filter(
+		(order) =>
+			order.status === 'paid' ||
+			(includePending && order.status === 'pending') ||
+			(includeExpired && order.status === 'expired') ||
+			(includeCanceled && order.status === 'canceled') ||
+			(includePartiallyPaid && order.payments.find((payment) => payment.status === 'paid'))
+	);
+	$: orderByMonthYear = getOrderByMonthYear(monthValue - 1, yearValue);
+	$: orderSynthesis = {
+		orderQuantity: sum(orderByMonthYear.map((order) => order.quantityOrder)),
+		orderNumber: orderByMonthYear.length,
+		orderTotal: sum(
+			orderByMonthYear.map((order) =>
+				toCurrency(
+					data.currencies.main,
+					order.currencySnapshot.main.totalPrice.amount,
+					order.currencySnapshot.main.totalPrice.currency
+				)
+			)
+		),
+		averageCart: 0
+	};
+
 	function downloadCSV(csvData: string, filename: string) {
 		const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvData);
 		const link = document.createElement('a');
@@ -36,28 +66,16 @@
 		const csvData = `${csvTitle}  ${csvRows}`;
 		downloadCSV(csvData, filename);
 	}
-	const { t, locale, textAddress, countryName } = useI18n();
 
 	function getOrderByMonthYear(month: number, year: number) {
 		return data.orders.filter(
-			(order) => order.createdAt.getMonth() === month && order.createdAt.getFullYear() === year
+			(order) =>
+				order.status === 'paid' &&
+				order.createdAt.getMonth() === month &&
+				order.createdAt.getFullYear() === year
 		);
 	}
-	$: orderByMonthYear = getOrderByMonthYear(monthValue - 1, yearValue);
-	$: orderSynthesis = {
-		orderQuantity: sum(orderByMonthYear.map((order) => order.quantityOrder)),
-		orderNumber: orderByMonthYear.length,
-		orderTotal: sum(
-			orderByMonthYear.map((order) =>
-				toCurrency(
-					data.currencies.main,
-					order.currencySnapshot.main.totalPrice.amount,
-					order.currencySnapshot.main.totalPrice.currency
-				)
-			)
-		),
-		averageCart: 0
-	};
+
 	function quantityOfProduct() {
 		const productQuantities: Record<string, number> = {};
 		orderByMonthYear.forEach((order) => {
@@ -84,7 +102,21 @@
 </script>
 
 <h1 class="text-3xl">Reporting</h1>
-
+<div class="gap-4 grid grid-cols-3">
+	<label class="col-span-3 checkbox-label">
+		<input class="form-checkbox" type="checkbox" bind:checked={includePending} /> include pending orders
+	</label>
+	<label class="col-span-3 checkbox-label">
+		<input class="form-checkbox" type="checkbox" bind:checked={includeExpired} /> include expired orders
+	</label>
+	<label class="col-span-3 checkbox-label">
+		<input class="form-checkbox" type="checkbox" bind:checked={includeCanceled} /> include canceled orders
+	</label>
+	<label class="col-span-3 checkbox-label">
+		<input class="form-checkbox" type="checkbox" bind:checked={includePartiallyPaid} /> include partially
+		paid orders
+	</label>
+</div>
 <div class="gap-4 grid grid-cols-12 mx-auto">
 	<div class="col-span-6">
 		<h1 class="text-2xl font-bold mb-4">Order detail</h1>
@@ -113,7 +145,7 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each data.orders as order}
+					{#each orderFiltered as order}
 						{#each order.payments as payment}
 							<tr class="hover:bg-gray-100 whitespace-nowrap">
 								<td class="border border-gray-300 px-4 py-2">{order.number}</td>
@@ -131,7 +163,7 @@
 										: payment.detail || ''}</td
 								>
 								<td class="border border-gray-300 px-4 py-2"
-									>{order.items.map((item) => item.product.name.replace).join('|')}</td
+									>{order.items.map((item) => item.product.name).join('|')}</td
 								>
 								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 								<td class="border border-gray-300 px-4 py-2"
@@ -186,7 +218,7 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each data.orders as order}
+					{#each orderFiltered as order}
 						{#each order.items as item}
 							<tr class="hover:bg-gray-100">
 								<td class="border border-gray-300 px-4 py-2"
@@ -194,9 +226,7 @@
 								>
 								<td class="border border-gray-300 px-4 py-2">{item.product.name}</td>
 								<td class="border border-gray-300 px-4 py-2">{item.quantity}</td>
-								<td class="border border-gray-300 px-4 py-2"
-									>{item.product.deposit?.percentage ?? 100}</td
-								>
+								<td class="border border-gray-300 px-4 py-2">{item.depositPercentage ?? 100}</td>
 								<td class="border border-gray-300 px-4 py-2">{order.number}</td><td
 									class="border border-gray-300 px-4 py-2"
 									>{order.createdAt.toLocaleDateString($locale)}</td
@@ -314,14 +344,7 @@
 						<tr class="hover:bg-gray-100">
 							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
-							<td class="border border-gray-300 px-4 py-2"
-								>{fetchProductById(productId)?.name.replace(
-									t('product.type.deposit'),
-									fetchProductById(productId)?.deposit?.percentage
-										? fetchProductById(productId)?.deposit?.percentage.toString() + '%'
-										: ''
-								)}</td
-							>
+							<td class="border border-gray-300 px-4 py-2">{fetchProductById(productId)?.name}</td>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
 							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 							<td class="border border-gray-300 px-4 py-2"
