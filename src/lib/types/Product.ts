@@ -57,7 +57,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 	free: boolean;
 	actionSettings: ProductActionSettings;
 	tagIds?: Tag['_id'][];
-	hasMaximumPrice: boolean;
+	hasMaximumPrice?: boolean;
 	maximumPrice?: {
 		amount: number;
 	};
