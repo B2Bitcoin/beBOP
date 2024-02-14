@@ -274,17 +274,18 @@ export const actions = {
 				delete billingInfo.billing.vatNumber;
 			}
 		}
+
 		const vatCountry =
 			shippingInfo?.shipping?.country ??
 			locals.countryCode ??
 			(runtimeConfig.vatCountry || undefined);
-		if (
-			!agreements.isVATNullForeigner &&
-			runtimeConfig.vatNullOutsideSellerCountry &&
-			runtimeConfig.vatCountry !== vatCountry
-		) {
-			throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
-		}
+
+		// Trust the frontend on this.
+		// Otherwise would have to move the check to createOrder or compute priceInfo here
+		//
+		// if (!agreements.isVATNullForeigner && pricenfo.physicalVatAtCustoms) {
+		// 	throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
+		// }
 
 		if (
 			!agreements.isOnlyDeposit &&

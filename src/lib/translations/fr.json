@@ -442,7 +442,7 @@
 			"title": "Liste de vos commandes"
 		},
 		"note": {
-			"author": "Employé",
+			"author": "{alias} (Employé)",
 			"authorCustomer": "Client",
 			"backToOrder": "Aller à la commande",
 			"label": "Note de l'employé",
