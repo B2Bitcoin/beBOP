@@ -178,8 +178,8 @@
 						<th class="border border-gray-300 px-4 py-2">Quantity</th>
 						<th class="border border-gray-300 px-4 py-2">Deposit</th>
 						<th class="border border-gray-300 px-4 py-2">Order ID</th>
-						<th class="border border-gray-300 px-4 py-2">Order URL</th>
 						<th class="border border-gray-300 px-4 py-2">Order Date</th>
+						<th class="border border-gray-300 px-4 py-2">Order URL</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
 					</tr>
@@ -272,7 +272,11 @@
 						<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderNumber}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderTotal}</td>
-						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.averageCart}</td>
+						<td class="border border-gray-300 px-4 py-2"
+							>{orderSynthesis.orderNumber
+								? orderSynthesis.orderTotal / orderSynthesis.orderNumber
+								: 0}</td
+						>
 						<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 					</tr>
 				</tbody>
