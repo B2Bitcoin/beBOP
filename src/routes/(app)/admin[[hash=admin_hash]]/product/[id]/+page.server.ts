@@ -115,6 +115,13 @@ export const actions: Actions = {
 					preorder: parsed.preorder,
 					...(parsed.customPreorderText && { customPreorderText: parsed.customPreorderText }),
 					payWhatYouWant: parsed.payWhatYouWant,
+					hasMaximumPrice: parsed.hasMaximumPrice,
+					...(parsed.hasMaximumPrice &&
+						parsed.maxPriceAmount && {
+							maximumPrice: {
+								amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency)
+							}
+						}),
 					standalone: parsed.payWhatYouWant || parsed.standalone,
 					free: parsed.free,
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),

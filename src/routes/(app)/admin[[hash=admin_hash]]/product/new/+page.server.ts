@@ -140,6 +140,13 @@ export const actions: Actions = {
 						...(parsed.customPreorderText && { customPreorderText: parsed.customPreorderText }),
 						shipping: parsed.shipping,
 						payWhatYouWant: parsed.payWhatYouWant,
+						hasMaximumPrice: parsed.hasMaximumPrice,
+						...(parsed.hasMaximumPrice &&
+							parsed.maxPriceAmount && {
+								maximumPrice: {
+									amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency)
+								}
+							}),
 						standalone: parsed.payWhatYouWant || parsed.standalone,
 						free: parsed.free,
 						displayShortDescription: parsed.displayShortDescription,
@@ -260,6 +267,13 @@ export const actions: Actions = {
 					preorder: parsed.preorder,
 					shipping: parsed.shipping,
 					payWhatYouWant: parsed.payWhatYouWant,
+					hasMaximumPrice: parsed.hasMaximumPrice,
+					...(parsed.hasMaximumPrice &&
+						parsed.maxPriceAmount && {
+							maximumPrice: {
+								amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency)
+							}
+						}),
 					standalone: parsed.standalone,
 					free: parsed.free,
 					...(parsed.stock !== undefined && {
