@@ -72,6 +72,22 @@ export async function addToCartInDb(
 		throw error(400, 'Product is not pay what you want');
 	}
 
+	if (
+		params.customPrice &&
+		product.payWhatYouWant &&
+		product.maximumPrice &&
+		toCurrency(
+			params.customPrice.currency,
+			product.maximumPrice.amount,
+			product.maximumPrice.currency
+		) < params.customPrice.amount
+	) {
+		throw error(
+			400,
+			`Product price must be less than ${product.maximumPrice.amount} ${product.maximumPrice.currency}`
+		);
+	}
+
 	if (params.customPrice && product.type === 'subscription') {
 		throw error(400, 'Product is a subscription, cannot set custom price');
 	}

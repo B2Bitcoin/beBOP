@@ -41,6 +41,9 @@
 		data.product.price.amount,
 		data.product.price.currency
 	);
+	const PWYWMaximum = data.product.maximumPrice
+		? toCurrency(PWYWCurrency, data.product.maximumPrice.amount, data.product.maximumPrice.currency)
+		: Infinity;
 	let customAmount = PWYWMinimum;
 
 	$: currentPicture =
@@ -347,6 +350,7 @@
 											class="form-input"
 											type="number"
 											min={PWYWMinimum}
+											max={PWYWMaximum}
 											name="customPriceAmount"
 											bind:value={customAmount}
 											bind:this={PWYWInput}
