@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { applyAction, enhance } from '$app/forms';
 	import { goto, invalidate } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
@@ -13,6 +14,7 @@
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
+	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
 
@@ -42,6 +44,27 @@
 </script>
 
 <main class="mx-auto max-w-7xl flex flex-col gap-2 px-6 py-10 body-mainPlan">
+	{#if data.cmsBasketTop && data.cmsBasketTopData}
+		<CmsDesign
+			challenges={data.cmsBasketTopData.challenges}
+			tokens={data.cmsBasketTopData.tokens}
+			sliders={data.cmsBasketTopData.sliders}
+			products={data.cmsBasketTopData.products}
+			pictures={data.cmsBasketTopData.pictures}
+			tags={data.cmsBasketTopData.tags}
+			digitalFiles={data.cmsBasketTopData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsBasketTopData.specifications}
+			contactForms={data.cmsBasketTopData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsBasketTop?.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsBasketTopData.countdowns}
+			galleries={data.cmsBasketTopData.galleries}
+		/>
+	{/if}
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 body-mainPlan border-gray-300">
 		<h1 class="page-title body-title">{t('cart.items')}</h1>
 
@@ -276,4 +299,25 @@
 			<p>{t('cart.empty')}</p>
 		{/if}
 	</div>
+	{#if data.cmsBasketBottom && data.cmsBasketBottomData}
+		<CmsDesign
+			challenges={data.cmsBasketBottomData.challenges}
+			tokens={data.cmsBasketBottomData.tokens}
+			sliders={data.cmsBasketBottomData.sliders}
+			products={data.cmsBasketBottomData.products}
+			pictures={data.cmsBasketBottomData.pictures}
+			tags={data.cmsBasketBottomData.tags}
+			digitalFiles={data.cmsBasketBottomData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsBasketBottomData.specifications}
+			contactForms={data.cmsBasketBottomData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsBasketBottom?.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsBasketBottomData.countdowns}
+			galleries={data.cmsBasketBottomData.galleries}
+		/>
+	{/if}
 </main>
