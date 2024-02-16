@@ -213,7 +213,17 @@
 				disabled={!isNew}
 			/>
 		</label>
-
+		<label class="w-full">
+			alias
+			<input
+				class="form-input"
+				type="text"
+				name="alias"
+				placeholder="alias"
+				step="any"
+				value={product.alias ?? ''}
+			/>
+		</label>
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Price amount

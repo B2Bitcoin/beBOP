@@ -103,6 +103,7 @@ export const actions: Actions = {
 			{
 				$set: {
 					name: parsed.name,
+					...(parsed.alias && { alias: parsed.alias }),
 					description: parsed.description,
 					shortDescription: parsed.shortDescription,
 					price: {
