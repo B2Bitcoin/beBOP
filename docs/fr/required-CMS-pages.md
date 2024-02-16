@@ -14,6 +14,12 @@ Les slugs de ces pages sont :
 - /why-vat-customs
 - /why-collect-ip
 - /why-pay-reminder
+- /order-top
+- /order-bottom
+- /checkout-top
+- /checkout-bottom
+- /basket-top
+- /basket-bottom
 
 ## /home - Homepage
 Cette page est affichée lors de l'accès à la racine de votre site (/).
@@ -75,3 +81,6 @@ Le lien de cette option renvoie vers /why-collect-ip , où il est préférable d
 Voir [order-with-deposit.md](/doc/fr/order-with-deposit.md)
 Lorsque vous activez le paiement sur acompte pour l'un de vos articles, la première commande réalisée n'inclut que l'acompte, mais le client s'engage auprès du vendeur à payer, sous conditions présentées, le reste du montant de commande.
 Si votre commande inclut une réservation d'article sur acompte, le lien est affiché dans le tunnel (/checkout) avec l'option obligatoire à cocher **I agree that I need to pay the remainder in the future (why?)** (*Je comprends que je dois m'acquitter du solde hors-acompte (pourquoi ?)*)
+
+## /order-top, /order-bottom, /checkout-top, /checkout-bottom,  /basket-top, /basket-bottom
+TBD, for basket, checkout & order stuff
