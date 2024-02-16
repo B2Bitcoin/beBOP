@@ -34,11 +34,11 @@ export const actions = {
 		await collections.orders.updateOne(
 			{
 				_id: params.id,
-				'payment.status': 'pending'
+				status: 'pending'
 			},
 			{
 				$set: {
-					'payment.status': 'canceled'
+					status: 'canceled'
 				}
 			}
 		);
