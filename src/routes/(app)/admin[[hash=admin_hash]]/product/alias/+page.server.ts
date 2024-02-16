@@ -2,7 +2,6 @@ import { collections } from '$lib/server/database';
 import { z } from 'zod';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
-import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 
 export const load = async () => {
