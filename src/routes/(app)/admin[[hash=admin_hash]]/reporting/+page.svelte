@@ -6,7 +6,9 @@
 	export let data;
 	let tableOrder: HTMLTableElement;
 	let tableProduct: HTMLTableElement;
+	let tablePayment: HTMLTableElement;
 	let tableOrderSynthesis: HTMLTableElement;
+	let tablePaymentSynthesis: HTMLTableElement;
 	let monthValue = 1;
 	let yearValue = 2023;
 	let tableProductSynthesis: HTMLTableElement;
@@ -118,9 +120,9 @@
 	</label>
 </div>
 <div class="gap-4 grid grid-cols-12 mx-auto">
-	<div class="col-span-6">
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order detail</h1>
-		<button on:click={() => exportcsv(tableOrder, 'order.csv')} class="btn btn-blue mb-2">
+		<button on:click={() => exportcsv(tableOrder, 'order-detail.csv')} class="btn btn-blue mb-2">
 			Export CSV
 		</button>
 
@@ -131,9 +133,7 @@
 						<th class="border border-gray-300 px-4 py-2">Order ID</th>
 						<th class="border border-gray-300 px-4 py-2">Order Date</th>
 						<th class="border border-gray-300 px-4 py-2">Order Status</th>
-						<th class="border border-gray-300 px-4 py-2">Payment mean</th>
-						<th class="border border-gray-300 px-4 py-2">Payment Status</th>
-						<th class="border border-gray-300 px-4 py-2">Payment Info</th>
+
 						<th class="border border-gray-300 px-4 py-2">Cart</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
@@ -146,51 +146,40 @@
 				<tbody>
 					<!-- Order rows -->
 					{#each orderFiltered as order}
-						{#each order.payments as payment}
-							<tr class="hover:bg-gray-100 whitespace-nowrap">
-								<td class="border border-gray-300 px-4 py-2">{order.number}</td>
-								<td class="border border-gray-300 px-4 py-2"
-									>{order.createdAt.toLocaleDateString($locale)}</td
-								>
-								<td class="border border-gray-300 px-4 py-2">{order.status}</td>
-								<td class="border border-gray-300 px-4 py-2">{payment.method}</td>
-								<td class="border border-gray-300 px-4 py-2">{payment.status}</td>
-								<td class="border border-gray-300 px-4 py-2"
-									>{payment.method === 'lightning'
-										? payment.invoiceId
-										: payment.method === 'bank-transfer'
-										? payment.bankTransferNumber
-										: payment.detail || ''}</td
-								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{order.items.map((item) => item.product.name).join('|')}</td
-								>
-								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
-								<td class="border border-gray-300 px-4 py-2"
-									>{toCurrency(
-										data.currencies.main,
-										payment.currencySnapshot.main.price.amount,
-										payment.currencySnapshot.main.price.currency
-									)}</td
-								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{countryName(order.billingAddress?.country ?? '')}</td
-								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{order.billingAddress
-										? textAddress(order.billingAddress).replace(',', '/')
-										: ''}</td
-								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{countryName(order.shippingAddress?.country ?? '')}</td
-								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{order.shippingAddress
-										? textAddress(order.shippingAddress).replace(',', '/')
-										: ''}</td
-								>
-							</tr>
-						{/each}
+						<tr class="hover:bg-gray-100 whitespace-nowrap">
+							<td class="border border-gray-300 px-4 py-2">{order.number}</td>
+							<td class="border border-gray-300 px-4 py-2"
+								>{order.createdAt.toLocaleDateString($locale)}</td
+							>
+							<td class="border border-gray-300 px-4 py-2">{order.status}</td>
+							<td class="border border-gray-300 px-4 py-2"
+								>{order.items.map((item) => item.product.name).join('|')}</td
+							>
+							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+							<td class="border border-gray-300 px-4 py-2"
+								>{toCurrency(
+									data.currencies.main,
+									order.currencySnapshot.main.totalPrice.amount,
+									order.currencySnapshot.main.totalPrice.currency
+								)}</td
+							>
+							<td class="border border-gray-300 px-4 py-2"
+								>{countryName(order.billingAddress?.country ?? '')}</td
+							>
+							<td class="border border-gray-300 px-4 py-2"
+								>{order.billingAddress
+									? textAddress(order.billingAddress).replace(',', '/')
+									: ''}</td
+							>
+							<td class="border border-gray-300 px-4 py-2"
+								>{countryName(order.shippingAddress?.country ?? '')}</td
+							>
+							<td class="border border-gray-300 px-4 py-2"
+								>{order.shippingAddress
+									? textAddress(order.shippingAddress).replace(',', '/')
+									: ''}</td
+							>
+						</tr>
 					{/each}
 				</tbody>
 			</table>
@@ -198,7 +187,10 @@
 	</div>
 	<div class="col-span-6">
 		<h1 class="text-2xl font-bold mb-4">Product detail</h1>
-		<button on:click={() => exportcsv(tableProduct, 'productExport.csv')} class="btn btn-blue mb-2">
+		<button
+			on:click={() => exportcsv(tableProduct, 'product-detail.csv')}
+			class="btn btn-blue mb-2"
+		>
 			Export CSV
 		</button>
 		<div class="overflow-x-auto max-h-[500px]">
@@ -252,6 +244,70 @@
 		</div>
 	</div>
 	<div class="col-span-6">
+		<h1 class="text-2xl font-bold mb-4">Payment Detail</h1>
+		<button
+			on:click={() => exportcsv(tablePayment, 'payment-detail.csv')}
+			class="btn btn-blue mb-2"
+		>
+			Export CSV
+		</button>
+
+		<div class="overflow-x-auto max-h-[500px]">
+			<table class="min-w-full table-auto border border-gray-300 bg-white" bind:this={tablePayment}>
+				<thead class="bg-gray-200">
+					<tr>
+						<th class="border border-gray-300 px-4 py-2">Order ID</th>
+						<th class="border border-gray-300 px-4 py-2">Payment Date</th>
+						<th class="border border-gray-300 px-4 py-2">Order Status</th>
+						<th class="border border-gray-300 px-4 py-2">Payment mean</th>
+						<th class="border border-gray-300 px-4 py-2">Payment Status</th>
+						<th class="border border-gray-300 px-4 py-2">Payment Info</th>
+						<th class="border border-gray-300 py-2">Currency</th>
+						<th class="border border-gray-300 px-4 py-2">Amount</th>
+						<th class="border border-gray-300 px-4 py-2">Billing Country</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Order rows -->
+					{#each data.orders.filter((order) => order.status === 'paid') as order}
+						{#each order.payments as payment}
+							<tr class="hover:bg-gray-100 whitespace-nowrap">
+								<td class="border border-gray-300 px-4 py-2">{order.number}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{payment.paidAt?.toLocaleDateString($locale)}</td
+								>
+								<td class="border border-gray-300 px-4 py-2">{order.status}</td>
+								<td class="border border-gray-300 px-4 py-2">{payment.method}</td>
+								<td class="border border-gray-300 px-4 py-2">{payment.status}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{payment.method === 'lightning'
+										? payment.invoiceId
+										: payment.method === 'bank-transfer'
+										? payment.bankTransferNumber
+										: payment.detail || ''}</td
+								>
+
+								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{toCurrency(
+										data.currencies.main,
+										payment.currencySnapshot.main.price.amount,
+										payment.currencySnapshot.main.price.currency
+									)}</td
+								>
+								<td class="border border-gray-300 px-4 py-2"
+									>{countryName(
+										order.billingAddress?.country ?? order.shippingAddress?.country ?? ''
+									)}</td
+								>
+							</tr>
+						{/each}
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-span-6">
 		<label class="form-label">
 			Month
 			<input
@@ -277,7 +333,7 @@
 			/>
 		</label>
 	</div>
-	<div class="col-span-6">
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order synthesis</h1>
 		<button
 			on:click={() => exportcsv(tableOrderSynthesis, 'orderSythesisExport.csv')}
@@ -354,6 +410,48 @@
 									fetchProductById(productId)?.price.currency || 'BTC'
 								)}</td
 							>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-span-6">
+		<h1 class="text-2xl font-bold mb-4">Payment synthesis</h1>
+		<button
+			on:click={() => exportcsv(tablePaymentSynthesis, 'orderPaymentSythesis.csv')}
+			class="btn btn-blue mb-2"
+		>
+			Export CSV
+		</button>
+		<div class="overflow-x-auto max-h-[500px]">
+			<table
+				class="min-w-full table-auto border border-gray-300 bg-white"
+				bind:this={tablePaymentSynthesis}
+			>
+				<thead class="bg-gray-200">
+					<tr>
+						<th class="border border-gray-300 px-4 py-2">Period</th>
+						<th class="border border-gray-300 px-4 py-2">Payment Mean </th>
+						<th class="border border-gray-300 px-4 py-2">Payment Quantity</th>
+						<th class="border border-gray-300 px-4 py-2">Total price</th>
+						<th class="border border-gray-300 px-4 py-2">Currency</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Order rows -->
+					{#each Object.entries(quantityOfProduct()) as [productId, quantity]}
+						<tr class="hover:bg-gray-100">
+							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
+							<td class="border border-gray-300 px-4 py-2">{productId}</td>
+							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
+							<td class="border border-gray-300 px-4 py-2"
+								>{toCurrency(
+									data.currencies.main,
+									(fetchProductById(productId)?.price.amount || 0) * quantity,
+									fetchProductById(productId)?.price.currency || 'BTC'
+								)}</td
+							> <td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 						</tr>
 					{/each}
 				</tbody>
