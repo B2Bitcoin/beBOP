@@ -95,7 +95,7 @@ export function computeDeliveryFees(
 
 export function computePriceInfo(
 	items: Array<{
-		product: { shipping: boolean; price: Price };
+		product: { shipping: boolean; price: Price; vatProfileId?: string | ObjectId };
 		quantity: number;
 		customPrice?: Price;
 		depositPercentage?: number;
@@ -107,6 +107,10 @@ export function computePriceInfo(
 		bebopCountry: CountryAlpha2 | undefined;
 		vatSingleCountry: boolean;
 		deliveryFees: Price;
+		vatProfiles: Array<{
+			_id: string | ObjectId;
+			rates: Partial<Record<CountryAlpha2, number>>;
+		}>;
 		discount?: {
 			amount: number;
 			type: DiscountType;

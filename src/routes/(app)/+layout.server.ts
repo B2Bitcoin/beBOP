@@ -2,6 +2,7 @@ import { ORIGIN } from '$env/static/private';
 import { adminPrefix } from '$lib/server/admin.js';
 import { getCartFromDb } from '$lib/server/cart.js';
 import { collections } from '$lib/server/database';
+import { pojo } from '$lib/server/pojo.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier } from '$lib/server/user.js';
 import { locales } from '$lib/translations/index.js';
@@ -69,6 +70,7 @@ export async function load(params) {
 								| 'standalone'
 								| 'maxQuantityPerOrder'
 								| 'stock'
+								| 'vatProfileId'
 							>
 						>(
 							{ _id: item.productId },
@@ -93,7 +95,8 @@ export async function load(params) {
 									payWhatYouWant: 1,
 									standalone: 1,
 									maxQuantityPerOrder: 1,
-									stock: 1
+									stock: 1,
+									vatProfileId: 1
 								}
 							}
 						);
@@ -102,7 +105,7 @@ export async function load(params) {
 								delete productDoc.deliveryFees;
 							}
 							return {
-								product: productDoc,
+								product: pojo(productDoc),
 								picture: await collections.pictures.findOne(
 									{ productId: item.productId },
 									{ sort: { createdAt: 1 } }

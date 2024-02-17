@@ -37,7 +37,8 @@ export const TEST_DIGITAL_PRODUCT = {
 			visible: true,
 			canBeAddedToBasket: true
 		}
-	}
+	},
+	vatProfileId: undefined
 } satisfies Product;
 
 export const TEST_PHYSICAL_PRODUCT = {
@@ -75,7 +76,8 @@ export const TEST_PHYSICAL_PRODUCT = {
 			visible: true,
 			canBeAddedToBasket: true
 		}
-	}
+	},
+	vatProfileId: undefined
 } satisfies Product;
 
 export const TEST_DIGITAL_PRODUCT_UNLIMITED = {

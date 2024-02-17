@@ -112,7 +112,8 @@ describe('cart', () => {
 						currency: 'EUR'
 					},
 					vatNullOutsideSellerCountry: false,
-					vatSingleCountry: false
+					vatSingleCountry: false,
+					vatProfiles: []
 				});
 				expect(priceInfo.totalPriceWithVat).toBe(
 					toCurrency(
@@ -141,7 +142,8 @@ describe('cart', () => {
 							currency: 'EUR'
 						},
 						vatNullOutsideSellerCountry: true,
-						vatSingleCountry: false
+						vatSingleCountry: false,
+						vatProfiles: []
 					});
 					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
 					expect(priceInfo.totalVat).toBeGreaterThan(0);
@@ -164,7 +166,8 @@ describe('cart', () => {
 							currency: 'EUR'
 						},
 						vatNullOutsideSellerCountry: true,
-						vatSingleCountry: false
+						vatSingleCountry: false,
+						vatProfiles: []
 					});
 
 					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
@@ -184,7 +187,8 @@ describe('cart', () => {
 							currency: 'EUR'
 						},
 						vatNullOutsideSellerCountry: true,
-						vatSingleCountry: false
+						vatSingleCountry: false,
+						vatProfiles: []
 					});
 					expect(priceInfo.totalPriceWithVat).toBe(
 						toCurrency(
