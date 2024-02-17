@@ -1,30 +1,13 @@
+import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database.js';
 import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country.js';
+import { redirect } from '@sveltejs/kit';
 import { set } from 'lodash-es';
 import { ObjectId } from 'mongodb';
 import type { JsonObject } from 'type-fest';
 import { z } from 'zod';
 
 export const actions = {
-	createProfile: async function ({ request }) {
-		const data = await request.formData();
-		const { name } = z
-			.object({
-				name: z.string().min(1)
-			})
-			.parse({
-				name: data.get('name')
-			});
-
-		await collections.vatProfiles.insertOne({
-			name,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			_id: new ObjectId(),
-			rates: {}
-		});
-	},
-
 	saveProfile: async function ({ request }) {
 		const formData = await request.formData();
 		const json: JsonObject = {};
@@ -47,18 +30,29 @@ export const actions = {
 			})
 			.parse(json);
 
+		const objectId = params.profileId === 'new' ? new ObjectId() : new ObjectId(params.profileId);
+
 		await collections.vatProfiles.updateOne(
 			{
-				_id: new ObjectId(params.profileId)
+				_id: objectId
 			},
 			{
 				$set: {
 					name: params.name,
 					rates: params.rates,
 					updatedAt: new Date()
+				},
+				$setOnInsert: {
+					createdAt: new Date(),
+					_id: objectId
 				}
+			},
+			{
+				upsert: true
 			}
 		);
+
+		throw redirect(303, `${adminPrefix()}/config/vat/${objectId}`);
 	},
 
 	deleteProfile: async function ({ request }) {
@@ -72,5 +66,7 @@ export const actions = {
 		await collections.vatProfiles.deleteOne({
 			_id: new ObjectId(params.profileId)
 		});
+
+		throw redirect(303, `${adminPrefix()}/config/vat`);
 	}
 };

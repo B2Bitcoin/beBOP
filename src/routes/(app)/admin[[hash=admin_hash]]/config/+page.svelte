@@ -265,7 +265,7 @@
 		<p class="text-sm">The cart's reservation is extended each time the cart is updated.</p>
 	</label>
 	<h2 class="text-2xl">Admin</h2>
-	<p>Configured site URL: <a href={data.origin} class="text-link">{data.origin}</a></p>
+	<p>Configured site URL: <a href={data.origin} class="body-hyperlink">{data.origin}</a></p>
 
 	<label class="checkbox-label">
 		<input type="checkbox" name="discovery" class="form-checkbox" checked={data.discovery} />
