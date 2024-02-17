@@ -4,15 +4,13 @@ import { z } from 'zod';
 import { set } from 'lodash-es';
 import type { Actions } from './$types';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import { pojo } from '$lib/server/pojo';
 
 export const load = async () => {
 	const products = await collections.products.find({}).toArray();
 
 	return {
-		products: products.map((product) => ({
-			...product,
-			vatProfileId: product.vatProfileId?.toString()
-		})),
+		products: products.map((product) => pojo(product)),
 		pictures: await collections.pictures
 			.find({ productId: { $exists: true } })
 			.sort({ createdAt: 1 })

@@ -17,38 +17,39 @@ import { generateId } from '$lib/utils/generateId';
 import { CopyObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
+import { pojo } from '$lib/server/pojo';
 
 export const load = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
-	let product;
-	let pictures;
-	let digitalFiles;
+
 	const tags = await collections.tags
 		.find({})
 		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 
 	if (productId) {
-		product = await collections.products.findOne({ _id: productId });
+		const product = await collections.products.findOne({ _id: productId });
 
-		pictures = await collections.pictures
-			.find({ productId: productId })
-			.sort({ createdAt: 1 })
-			.toArray();
+		if (product) {
+			const pictures = await collections.pictures
+				.find({ productId: productId })
+				.sort({ createdAt: 1 })
+				.toArray();
 
-		digitalFiles = await collections.digitalFiles
-			.find({ productId: productId })
-			.sort({ createdAt: 1 })
-			.toArray();
+			const digitalFiles = await collections.digitalFiles
+				.find({ productId: productId })
+				.sort({ createdAt: 1 })
+				.toArray();
 
-		return {
-			product,
-			productId,
-			pictures,
-			digitalFiles,
-			tags,
-			currency: runtimeConfig.priceReferenceCurrency
-		};
+			return {
+				product: pojo(product),
+				productId,
+				pictures,
+				digitalFiles,
+				tags,
+				currency: runtimeConfig.priceReferenceCurrency
+			};
+		}
 	}
 	return {
 		tags
