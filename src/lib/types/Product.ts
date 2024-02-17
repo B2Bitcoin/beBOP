@@ -2,6 +2,7 @@ import type { LanguageKey } from '$lib/translations';
 import type { ObjectId } from 'mongodb';
 import type { Currency } from './Currency';
 import type { DeliveryFees } from './DeliveryFees';
+import type { Price } from './Order';
 import type { ProductActionSettings } from './ProductActionSettings';
 import type { Tag } from './Tag';
 import type { Timestamps } from './Timestamps';
@@ -59,7 +60,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 	free: boolean;
 	actionSettings: ProductActionSettings;
 	tagIds?: Tag['_id'][];
-
+	maximumPrice?: Price;
 	translations?: Partial<Record<LanguageKey, Partial<ProductTranslatableFields>>>;
 }
 

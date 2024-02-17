@@ -13,6 +13,7 @@ import { zodNpub } from '$lib/server/nostr.js';
 import type { JsonObject } from 'type-fest';
 import { omit, set } from 'lodash-es';
 import { rateLimit } from '$lib/server/rateLimit.js';
+import { cmsFromContent } from '$lib/server/cms';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -28,6 +29,38 @@ export async function load({ parent, locals }) {
 		userQuery(userIdentifier(locals)),
 		{
 			sort: { _id: -1 }
+		}
+	);
+	const cmsCheckoutTop = await collections.cmsPages.findOne(
+		{
+			_id: 'checkout-top'
+		},
+		{
+			projection: {
+				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+				shortDescription: {
+					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+				},
+				fullScreen: 1,
+				maintenanceDisplay: 1
+			}
+		}
+	);
+	const cmsCheckoutBottom = await collections.cmsPages.findOne(
+		{
+			_id: 'checkout-bottom'
+		},
+		{
+			projection: {
+				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+				shortDescription: {
+					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+				},
+				fullScreen: 1,
+				maintenanceDisplay: 1
+			}
 		}
 	);
 	return {
@@ -46,7 +79,15 @@ export async function load({ parent, locals }) {
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
 		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
-		vatExempted: runtimeConfig.vatExempted
+		vatExempted: runtimeConfig.vatExempted,
+		...(cmsCheckoutTop && {
+			cmsCheckoutTop,
+			cmsCheckoutTopData: cmsFromContent(cmsCheckoutTop.content, locals)
+		}),
+		...(cmsCheckoutBottom && {
+			cmsCheckoutBottom,
+			cmsCheckoutBottomData: cmsFromContent(cmsCheckoutBottom.content, locals)
+		})
 	};
 }
 
@@ -274,17 +315,18 @@ export const actions = {
 				delete billingInfo.billing.vatNumber;
 			}
 		}
+
 		const vatCountry =
 			shippingInfo?.shipping?.country ??
 			locals.countryCode ??
 			(runtimeConfig.vatCountry || undefined);
-		if (
-			!agreements.isVATNullForeigner &&
-			runtimeConfig.vatNullOutsideSellerCountry &&
-			runtimeConfig.vatCountry !== vatCountry
-		) {
-			throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
-		}
+
+		// Trust the frontend on this.
+		// Otherwise would have to move the check to createOrder or compute priceInfo here
+		//
+		// if (!agreements.isVATNullForeigner && pricenfo.physicalVatAtCustoms) {
+		// 	throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
+		// }
 
 		if (
 			!agreements.isOnlyDeposit &&

@@ -207,7 +207,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 					event.locals.user = {
 						_id: user._id,
 						login: user.login ? user.login : '',
-						roleId: user.roleId
+						roleId: user.roleId,
+						alias: user.alias
 					};
 				}
 			}

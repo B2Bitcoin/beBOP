@@ -36,6 +36,8 @@
 		"vatSellerCountry": "The country is the seller's country."
 	},
 	"challenge": {
+		"beginsAt": "Begins in {days} days",
+		"ended": "Finished !",
 		"endsAt": "Ends <0></0>",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
@@ -440,7 +442,7 @@
 			"title": "List of your orders"
 		},
 		"note": {
-			"author": "Employee",
+			"author": "{alias} (Employee)",
 			"authorCustomer": "Customer",
 			"backToOrder": "Go to order",
 			"label": "Employee note",

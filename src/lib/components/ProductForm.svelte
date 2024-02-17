@@ -133,7 +133,7 @@
 			submitting = false;
 		}
 	}
-
+	let hasMaximumPrice = !!product.maximumPrice;
 	let availableDateStr = product.availableDate?.toJSON().slice(0, 10);
 
 	$: changedDate = availableDateStr !== product.availableDate?.toJSON().slice(0, 10);
@@ -259,6 +259,51 @@
 			/>
 			This is a pay-what-you-want product
 		</label>
+		{#if product.payWhatYouWant}
+			<label class="checkbox-label">
+				<input
+					class="form-checkbox"
+					type="checkbox"
+					bind:checked={hasMaximumPrice}
+					name="hasMaximumPrice"
+					disabled={product.type === 'subscription'}
+				/>
+				This article has a maximum price
+			</label>
+		{/if}
+		{#if hasMaximumPrice}
+			<div class="gap-4 flex flex-col md:flex-row">
+				<label class="w-full">
+					Maximum price amount
+					<input
+						class="form-input"
+						type="number"
+						name="maxPriceAmount"
+						placeholder="Price"
+						step="any"
+						min={product.price.amount}
+						value={product.maximumPrice?.amount
+							.toLocaleString('en', { maximumFractionDigits: 8 })
+							.replace(/,/g, '')}
+						required
+					/>
+				</label>
+
+				<label class="w-full">
+					Price currency
+					<select
+						name="maxPriceCurrency"
+						class="form-input"
+						bind:value={product.price.currency}
+						disabled
+					>
+						{#each CURRENCIES as currency}
+							<option value={currency}>{currency}</option>
+						{/each}
+					</select>
+				</label>
+			</div>
+		{/if}
 		<label class="checkbox-label">
 			<input
 				class="form-checkbox"
