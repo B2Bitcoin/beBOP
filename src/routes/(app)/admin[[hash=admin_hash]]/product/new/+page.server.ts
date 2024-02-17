@@ -179,7 +179,8 @@ export const actions: Actions = {
 							}
 						},
 						tagIds: parsed.tagIds,
-						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href)
+						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+						...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 					},
 					{ session }
 				);
@@ -302,7 +303,9 @@ export const actions: Actions = {
 							visible: parsed.googleShoppingVisible
 						}
 					},
-					tagIds: product.tagIds
+					tagIds: product.tagIds,
+					cta: product.cta,
+					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 				},
 				{ session }
 			);

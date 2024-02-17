@@ -32,6 +32,7 @@
 	export let reserved = 0;
 	export let globalDeliveryFees: LayoutServerData['deliveryFees'];
 	export let adminPrefix: string;
+	export let vatProfiles: LayoutServerData['vatProfiles'];
 	export let defaultActionSettings: ProductActionSettings;
 	export let product: WithId<Product> = {
 		_id: '',
@@ -45,6 +46,7 @@
 			amount: 0,
 			currency: $currencies.priceReference
 		},
+		vatProfileId: undefined,
 		availableDate: undefined,
 		displayShortDescription: false,
 		free: false,
@@ -248,6 +250,17 @@
 				</select>
 			</label>
 		</div>
+		{#if vatProfiles.length}
+			<label class="form-label">
+				VAT profile
+				<select name="vatProfileId" class="form-input" bind:value={product.vatProfileId}>
+					<option value="">No custom VAT profile</option>
+					{#each vatProfiles as profile}
+						<option value={profile._id}>{profile.name}</option>
+					{/each}
+				</select>
+			</label>
+		{/if}
 		<label class="checkbox-label">
 			<input
 				class="form-checkbox"

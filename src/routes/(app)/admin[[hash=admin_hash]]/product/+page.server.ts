@@ -9,7 +9,10 @@ export const load = async () => {
 	const products = await collections.products.find({}).toArray();
 
 	return {
-		products,
+		products: products.map((product) => ({
+			...product,
+			vatProfileId: product.vatProfileId?.toString()
+		})),
 		pictures: await collections.pictures
 			.find({ productId: { $exists: true } })
 			.sort({ createdAt: 1 })

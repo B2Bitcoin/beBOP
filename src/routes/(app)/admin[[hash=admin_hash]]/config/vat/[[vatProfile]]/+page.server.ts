@@ -1,5 +1,6 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database.js';
+import { zodObjectId } from '$lib/server/zod.js';
 import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country.js';
 import { redirect } from '@sveltejs/kit';
 import { set } from 'lodash-es';
@@ -19,7 +20,7 @@ export const actions = {
 
 		const params = z
 			.object({
-				profileId: z.string(),
+				profileId: zodObjectId().or(z.literal('new')),
 				name: z.string().min(1),
 				rates: z
 					.record(
@@ -59,7 +60,7 @@ export const actions = {
 		const formData = await request.formData();
 		const params = z
 			.object({
-				profileId: z.string()
+				profileId: zodObjectId().optional()
 			})
 			.parse(Object.fromEntries(formData));
 

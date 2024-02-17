@@ -15,6 +15,7 @@
 	tags={data.tags}
 	product={data.product ?? undefined}
 	defaultActionSettings={data.productActionSettings}
+	vatProfiles={data.vatProfiles}
 />
 
 {#if data.pictures?.length}
