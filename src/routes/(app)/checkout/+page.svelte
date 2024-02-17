@@ -17,6 +17,8 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
+	import { page } from '$app/stores';
+	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
 
@@ -113,6 +115,27 @@
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
+	{#if data.cmsCheckoutTop && data.cmsCheckoutTopData}
+		<CmsDesign
+			challenges={data.cmsCheckoutTopData.challenges}
+			tokens={data.cmsCheckoutTopData.tokens}
+			sliders={data.cmsCheckoutTopData.sliders}
+			products={data.cmsCheckoutTopData.products}
+			pictures={data.cmsCheckoutTopData.pictures}
+			tags={data.cmsCheckoutTopData.tags}
+			digitalFiles={data.cmsCheckoutTopData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsCheckoutTopData.specifications}
+			contactForms={data.cmsCheckoutTopData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsCheckoutTop.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsCheckoutTopData.countdowns}
+			galleries={data.cmsCheckoutTopData.galleries}
+		/>
+	{/if}
 	<div
 		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
 	>
@@ -902,4 +925,25 @@
 			</article>
 		</div>
 	</div>
+	{#if data.cmsCheckoutBottom && data.cmsCheckoutBottomData}
+		<CmsDesign
+			challenges={data.cmsCheckoutBottomData.challenges}
+			tokens={data.cmsCheckoutBottomData.tokens}
+			sliders={data.cmsCheckoutBottomData.sliders}
+			products={data.cmsCheckoutBottomData.products}
+			pictures={data.cmsCheckoutBottomData.pictures}
+			tags={data.cmsCheckoutBottomData.tags}
+			digitalFiles={data.cmsCheckoutBottomData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsCheckoutBottomData.specifications}
+			contactForms={data.cmsCheckoutBottomData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsCheckoutBottom.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsCheckoutBottomData.countdowns}
+			galleries={data.cmsCheckoutBottomData.galleries}
+		/>
+	{/if}
 </main>
