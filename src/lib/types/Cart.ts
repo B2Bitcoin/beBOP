@@ -117,20 +117,14 @@ export function computePriceInfo(
 		} | null;
 	}
 ): {
-	digitalVatRate: number;
-	physicalVatRate: number;
 	physicalVatAtCustoms: boolean;
 	partialPrice: number;
 	partialVat: number;
-	partialPhysicalVat: number;
-	partialDigitalVat: number;
 	totalPrice: number;
 	totalVat: number;
 	totalPriceWithVat: number;
 	partialPriceWithVat: number;
 	discount: number;
-	physicalVatCountry: CountryAlpha2 | undefined;
-	digitalVatCountry: CountryAlpha2 | undefined;
 	singleVatCountry: boolean;
 	currency: Currency;
 	/** Aggregate physical vat & digital vat when rates are the same or one is null */
@@ -146,19 +140,40 @@ export function computePriceInfo(
 	const isPhysicalVatExempted =
 		params.vatNullOutsideSellerCountry && params.bebopCountry !== params.userCountry;
 	const singleVatCountry = params.vatSingleCountry && !!params.bebopCountry;
-	const physicalVatCountry =
-		params.vatExempted || isPhysicalVatExempted
-			? undefined
-			: params.vatSingleCountry
+
+	const vatForItem = (item: (typeof items)[0]) => {
+		if (params.vatExempted) {
+			return undefined;
+		}
+		if (item.product.shipping && isPhysicalVatExempted) {
+			return undefined;
+		}
+		const country = params.vatSingleCountry
 			? params.bebopCountry
 			: params.userCountry ?? params.bebopCountry;
-	const digitalVatCountry = params.vatExempted
-		? undefined
-		: params.vatSingleCountry
-		? params.bebopCountry
-		: params.userCountry ?? params.bebopCountry;
-	const digitalVatRate = vatRate(digitalVatCountry);
-	const physicalVatRate = vatRate(physicalVatCountry);
+		if (!country) {
+			return undefined;
+		}
+		const vatProfile = item.product.vatProfileId
+			? params.vatProfiles.find(
+					(profile) => profile._id.toString() === item.product.vatProfileId?.toString()
+			  )
+			: undefined;
+		const rate = vatProfile?.rates[country] ?? vatRate(country);
+		const price = (item.customPrice || item.product.price).amount * item.quantity;
+		const partialPrice = price * (item.depositPercentage ?? 100);
+		const vat = price * (rate / 100);
+		const partialVat = partialPrice * (rate / 100);
+		return {
+			price: { amount: vat, currency: UNDERLYING_CURRENCY satisfies Currency as Currency },
+			partialPrice: {
+				amount: partialVat,
+				currency: UNDERLYING_CURRENCY satisfies Currency as Currency
+			},
+			rate,
+			country
+		};
+	};
 
 	const partialPrice = sumCurrency(UNDERLYING_CURRENCY, [
 		...items.map((item) => ({
@@ -171,52 +186,19 @@ export function computePriceInfo(
 		})),
 		params.deliveryFees
 	]);
-	const partialVat = sumCurrency(UNDERLYING_CURRENCY, [
-		...items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount:
-				((item.customPrice || item.product.price).amount *
-					item.quantity *
-					(item.depositPercentage ?? 100) *
-					((item.product.shipping ? physicalVatRate : digitalVatRate) / 100)) /
-				100
-		})),
-		{
-			amount: (params.deliveryFees.amount * physicalVatRate) / 100,
-			currency: params.deliveryFees.currency
-		}
-	]);
-	const partialPhysicalVat = sumCurrency(UNDERLYING_CURRENCY, [
-		...items
-			.filter((item) => item.product.shipping)
-			.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					((item.customPrice || item.product.price).amount *
-						item.quantity *
-						(item.depositPercentage ?? 100) *
-						(physicalVatRate / 100)) /
-					100
-			})),
-		{
-			amount: (params.deliveryFees.amount * physicalVatRate) / 100,
-			currency: params.deliveryFees.currency
-		}
-	]);
-	const vatRates = items.map((item) => (item.product.shipping ? physicalVatRate : digitalVatRate));
-	const partialDigitalVat = sumCurrency(
+	const vat = items.map(vatForItem);
+	const deliveryFeeVat = vatForItem({
+		product: { shipping: true, price: params.deliveryFees },
+		quantity: 1
+	});
+
+	const partialVat = sumCurrency(
 		UNDERLYING_CURRENCY,
-		items
-			.filter((item) => !item.product.shipping)
-			.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					((item.customPrice || item.product.price).amount *
-						item.quantity *
-						(item.depositPercentage ?? 100) *
-						(digitalVatRate / 100)) /
-					100
-			}))
+		filterUndef([...vat, deliveryFeeVat]).map((vat) => vat.partialPrice)
+	);
+	const totalVat = sumCurrency(
+		UNDERLYING_CURRENCY,
+		filterUndef([...vat, deliveryFeeVat]).map((vat) => vat.price)
 	);
 	const totalPrice = sumCurrency(UNDERLYING_CURRENCY, [
 		...items.map((item) => ({
@@ -224,42 +206,6 @@ export function computePriceInfo(
 			amount: (item.customPrice || item.product.price).amount * item.quantity
 		})),
 		params.deliveryFees
-	]);
-	const totalVat = sumCurrency(UNDERLYING_CURRENCY, [
-		...items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount:
-				(item.customPrice || item.product.price).amount *
-				item.quantity *
-				((item.product.shipping ? physicalVatRate : digitalVatRate) / 100)
-		})),
-		{
-			amount: (params.deliveryFees.amount * physicalVatRate) / 100,
-			currency: params.deliveryFees.currency
-		}
-	]);
-	const digitalVat = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items
-			.filter((item) => !item.product.shipping)
-			.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					(item.customPrice || item.product.price).amount * item.quantity * (digitalVatRate / 100)
-			}))
-	);
-	const physicalVat = sumCurrency(UNDERLYING_CURRENCY, [
-		...items
-			.filter((item) => item.product.shipping)
-			.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					(item.customPrice || item.product.price).amount * item.quantity * (physicalVatRate / 100)
-			})),
-		{
-			amount: (params.deliveryFees.amount * physicalVatRate) / 100,
-			currency: params.deliveryFees.currency
-		}
 	]);
 
 	let totalPriceWithVat = totalPrice + totalVat;
@@ -295,72 +241,49 @@ export function computePriceInfo(
 		}
 	}
 
-	const vat: Array<{
-		price: Price;
-		rate: number;
+	const vatRates = vat.map((vat) => vat?.rate ?? 0);
+	const reducedVat: Array<{
 		country: CountryAlpha2;
+		rate: number;
+		price: Price;
 		partialPrice: Price;
-	}> = filterUndef([
-		physicalVatCountry
-			? {
-					price: {
-						amount: physicalVat,
-						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
-					},
-					partialPrice: {
-						amount: partialPhysicalVat,
-						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
-					},
-					rate: physicalVatRate,
-					country: physicalVatCountry
-			  }
-			: undefined,
-		digitalVatCountry
-			? {
-					price: {
-						amount: digitalVat,
-						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
-					},
-					partialPrice: {
-						amount: partialDigitalVat,
-						currency: UNDERLYING_CURRENCY satisfies Currency as Currency
-					},
-					rate: digitalVatRate,
-					country: digitalVatCountry
-			  }
-			: undefined
-	]).filter((vat) => vat.price.amount > 0);
+	}> = [];
 
-	if (
-		vat.length === 2 &&
-		vat[0].rate === vat[1].rate &&
-		vat[0].country === vat[1].country &&
-		vat[0].price.currency === vat[1].price.currency &&
-		vat[0].partialPrice.currency === vat[1].partialPrice.currency
-	) {
-		vat[0].price.amount += vat[1].price.amount;
-		vat[0].partialPrice.amount += vat[1].partialPrice.amount;
-		vat.pop();
+	for (const vatItem of vat) {
+		if (!vatItem) {
+			continue;
+		}
+		const existing = reducedVat.find(
+			(v) => v.rate === vatItem.rate && v.country === vatItem.country
+		);
+		if (existing) {
+			if (existing.price.currency !== vatItem.price.currency) {
+				throw new Error('Currency mismatch during vat computation');
+			}
+			existing.price.amount += vatItem.price.amount;
+			existing.partialPrice.amount += vatItem.partialPrice.amount;
+		} else {
+			reducedVat.push({
+				country: vatItem.country,
+				rate: vatItem.rate,
+				price: vatItem.price,
+				partialPrice: vatItem.partialPrice
+			});
+		}
 	}
 
 	return {
-		digitalVatRate,
-		physicalVatRate,
 		physicalVatAtCustoms: isPhysicalVatExempted,
 		partialPrice,
 		partialVat,
-		partialPhysicalVat,
-		partialDigitalVat,
 		totalPrice,
 		totalVat,
 		totalPriceWithVat,
 		partialPriceWithVat,
-		digitalVatCountry,
-		physicalVatCountry,
 		singleVatCountry,
 		currency: UNDERLYING_CURRENCY,
 		discount: discountAmount,
-		vat,
+		vat: reducedVat.sort((a, b) => a.rate - b.rate),
 		vatRates
 	};
 }

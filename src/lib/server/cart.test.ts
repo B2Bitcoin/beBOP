@@ -124,8 +124,6 @@ describe('cart', () => {
 				);
 				expect(priceInfo.totalPrice).toBe(priceInfo.totalPriceWithVat);
 				expect(priceInfo.totalVat).toBe(0);
-				expect(priceInfo.partialDigitalVat).toBe(0);
-				expect(priceInfo.partialPhysicalVat).toBe(0);
 				expect(priceInfo.vat.length).toBe(0);
 			});
 		});
@@ -147,11 +145,8 @@ describe('cart', () => {
 					});
 					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
 					expect(priceInfo.totalVat).toBeGreaterThan(0);
-					expect(priceInfo.partialDigitalVat).toBe(0);
-					expect(priceInfo.partialPhysicalVat).toBeGreaterThan(0);
 					expect(priceInfo.vat.length).toBe(1);
 					expect(priceInfo.vat[0].price.amount).toBe(priceInfo.totalVat);
-					expect(priceInfo.vat[0].price.amount).toBe(priceInfo.partialPhysicalVat);
 				});
 			});
 
@@ -172,8 +167,6 @@ describe('cart', () => {
 
 					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
 					expect(priceInfo.totalVat).toBeGreaterThan(0);
-					expect(priceInfo.partialDigitalVat).toBeGreaterThan(0);
-					expect(priceInfo.partialPhysicalVat).toBe(0);
 					expect(priceInfo.vat.length).toBe(1);
 				});
 
@@ -199,8 +192,6 @@ describe('cart', () => {
 					);
 					expect(priceInfo.totalPrice).toBe(priceInfo.totalPriceWithVat);
 					expect(priceInfo.totalVat).toBe(0);
-					expect(priceInfo.partialDigitalVat).toBe(0);
-					expect(priceInfo.partialPhysicalVat).toBe(0);
 					expect(priceInfo.vat.length).toBe(0);
 				});
 			});
