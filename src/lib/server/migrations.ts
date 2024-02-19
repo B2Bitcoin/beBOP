@@ -377,11 +377,13 @@ const migrations = [
 				{
 					alias: { $exists: false }
 				},
-				{
-					$set: {
-						alias: ['$_id']
+				[
+					{
+						$set: {
+							alias: ['$_id']
+						}
 					}
-				},
+				],
 				{ session }
 			);
 		}
