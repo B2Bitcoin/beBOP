@@ -28,6 +28,8 @@
 			(includePartiallyPaid && order.payments.find((payment) => payment.status === 'paid'))
 	);
 	$: orderByMonthYear = getOrderByMonthYear(monthValue - 1, yearValue);
+	$: quantityOfPaymentMeanMonthYear = quantityOfPaymentMean(monthValue, yearValue);
+	$: quantityOfProductMonthYear = quantityOfProduct(monthValue, yearValue);
 	$: orderSynthesis = {
 		orderQuantity: sum(orderByMonthYear.map((order) => order.quantityOrder)),
 		orderNumber: orderByMonthYear.length,
@@ -78,9 +80,9 @@
 		);
 	}
 
-	function quantityOfProduct() {
+	function quantityOfProduct(month: number, year: number) {
 		const productQuantities: Record<string, number> = {};
-		orderByMonthYear.forEach((order) => {
+		getOrderByMonthYear(month - 1, year).forEach((order) => {
 			order.items.forEach((item) => {
 				if (productQuantities[item.product._id]) {
 					productQuantities[item.product._id] += item.quantity;
@@ -91,9 +93,9 @@
 		});
 		return productQuantities;
 	}
-	function quantityOfPaymeanMean() {
+	function quantityOfPaymentMean(month: number, year: number) {
 		const paymentMeanQuantities: Record<string, { quantity: number; total: number }> = {};
-		orderByMonthYear.forEach((order) => {
+		getOrderByMonthYear(month - 1, year).forEach((order) => {
 			order.payments.forEach((payment) => {
 				if (paymentMeanQuantities[payment.method]) {
 					paymentMeanQuantities[payment.method].quantity += 1;
@@ -145,7 +147,7 @@
 	</label>
 </div>
 <div class="gap-4 grid grid-cols-12 mx-auto">
-	<div class="col-span-4">
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order detail</h1>
 		<button on:click={() => exportcsv(tableOrder, 'order-detail.csv')} class="btn btn-blue mb-2">
 			Export CSV
@@ -156,16 +158,16 @@
 				<thead class="bg-gray-200">
 					<tr class="whitespace-nowrap">
 						<th class="border border-gray-300 px-4 py-2">Order ID</th>
+						<th class="border border-gray-300 px-4 py-2">Order URL</th>
 						<th class="border border-gray-300 px-4 py-2">Order Date</th>
 						<th class="border border-gray-300 px-4 py-2">Order Status</th>
-
-						<th class="border border-gray-300 px-4 py-2">Cart</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
 						<th class="border border-gray-300 px-4 py-2">Billing Country</th>
 						<th class="border border-gray-300 px-4 py-2">Billing Info</th>
 						<th class="border border-gray-300 px-4 py-2">Shipping Country</th>
 						<th class="border border-gray-300 px-4 py-2">Shipping Info</th>
+						<th class="border border-gray-300 px-4 py-2">Cart</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -174,12 +176,13 @@
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">{order.number}</td>
 							<td class="border border-gray-300 px-4 py-2"
+								>{data.websiteLink + '/order/' + order._id}</td
+							>
+							<td class="border border-gray-300 px-4 py-2"
 								>{order.createdAt.toLocaleDateString($locale)}</td
 							>
 							<td class="border border-gray-300 px-4 py-2">{order.status}</td>
-							<td class="border border-gray-300 px-4 py-2"
-								>{order.items.map((item) => item.product.name).join('|')}</td
-							>
+
 							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 							<td class="border border-gray-300 px-4 py-2"
 								>{toCurrency(
@@ -204,13 +207,16 @@
 									? textAddress(order.shippingAddress).replace(',', '/')
 									: ''}</td
 							>
+							<td class="border border-gray-300 px-4 py-2"
+								>{order.items.map((item) => item.product.name).join('|')}</td
+							>
 						</tr>
 					{/each}
 				</tbody>
 			</table>
 		</div>
 	</div>
-	<div class="col-span-4">
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Product detail</h1>
 		<button
 			on:click={() => exportcsv(tableProduct, 'product-detail.csv')}
@@ -228,7 +234,6 @@
 						<th class="border border-gray-300 px-4 py-2">Deposit</th>
 						<th class="border border-gray-300 px-4 py-2">Order ID</th>
 						<th class="border border-gray-300 px-4 py-2">Order Date</th>
-						<th class="border border-gray-300 px-4 py-2">Order URL</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
 					</tr>
@@ -248,9 +253,6 @@
 									class="border border-gray-300 px-4 py-2"
 									>{order.createdAt.toLocaleDateString($locale)}</td
 								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{data.websiteLink + '/order/' + order._id}</td
-								>
 								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{(toCurrency(
@@ -258,7 +260,8 @@
 										item.product.price.amount,
 										item.product.price.currency
 									) *
-										(item.product.deposit?.percentage ?? 100)) /
+										(item.product.deposit?.percentage ?? 100) *
+										item.quantity) /
 										100}</td
 								>
 							</tr>
@@ -268,7 +271,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="col-span-4">
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Payment Detail</h1>
 		<button
 			on:click={() => exportcsv(tablePayment, 'payment-detail.csv')}
@@ -358,7 +361,7 @@
 			/>
 		</label>
 	</div>
-	<div class="col-span-4">
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order synthesis</h1>
 		<button
 			on:click={() => exportcsv(tableOrderSynthesis, 'orderSythesisExport.csv')}
@@ -396,7 +399,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="col-span-4">
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Product synthesis</h1>
 		<button
 			on:click={() => exportcsv(tableProductSynthesis, 'orderItemsSythesisExport.csv')}
@@ -421,7 +424,7 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each Object.entries(quantityOfProduct()) as [productId, quantity]}
+					{#each Object.entries(quantityOfProductMonthYear) as [productId, quantity]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
@@ -441,7 +444,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="col-span-4">
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Payment synthesis</h1>
 		<button
 			on:click={() => exportcsv(tablePaymentSynthesis, 'orderPaymentSythesis.csv')}
@@ -465,7 +468,7 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each Object.entries(quantityOfPaymeanMean()) as [method, { quantity, total }]}
+					{#each Object.entries(quantityOfPaymentMeanMonthYear) as [method, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 							<td class="border border-gray-300 px-4 py-2">{method}</td>
