@@ -24,6 +24,7 @@
 	import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 	import { uploadPicture } from '$lib/types/Picture';
 	import { currencies } from '$lib/stores/currencies';
+	import type { Pojo } from '$lib/server/pojo';
 
 	export let tags: Pick<Tag, '_id' | 'name'>[];
 	export let isNew = false;
@@ -32,8 +33,9 @@
 	export let reserved = 0;
 	export let globalDeliveryFees: LayoutServerData['deliveryFees'];
 	export let adminPrefix: string;
+	export let vatProfiles: LayoutServerData['vatProfiles'];
 	export let defaultActionSettings: ProductActionSettings;
-	export let product: WithId<Product> = {
+	export let product: WithId<Pojo<Product>> = {
 		_id: '',
 		payWhatYouWant: false,
 		standalone: false,
@@ -45,6 +47,7 @@
 			amount: 0,
 			currency: $currencies.priceReference
 		},
+		vatProfileId: undefined,
 		availableDate: undefined,
 		displayShortDescription: false,
 		free: false,
@@ -57,6 +60,7 @@
 		description: ''
 	};
 
+	let vatProfileId = product.vatProfileId || '';
 	let formElement: HTMLFormElement;
 	let priceAmountElement: HTMLInputElement;
 	let disableDateChange = !isNew;
@@ -258,6 +262,17 @@
 				</select>
 			</label>
 		</div>
+		{#if vatProfiles.length}
+			<label class="form-label">
+				VAT profile
+				<select name="vatProfileId" class="form-input" bind:value={vatProfileId}>
+					<option>No custom VAT profile</option>
+					{#each vatProfiles as profile}
+						<option value={profile._id}>{profile.name}</option>
+					{/each}
+				</select>
+			</label>
+		{/if}
 		<label class="checkbox-label">
 			<input
 				class="form-checkbox"

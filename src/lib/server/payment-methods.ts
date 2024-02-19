@@ -22,7 +22,5 @@ export const paymentMethods = (role?: string) =>
 				...(runtimeConfig.sellerIdentity?.bank ? (['bank-transfer'] as const) : []),
 				...(isBitcoinConfigured ? (['bitcoin'] as const) : []),
 				...(isLightningConfigured ? (['lightning'] as const) : []),
-				...(runtimeConfig.enableCashSales && role === POS_ROLE_ID
-					? (['point-of-sale'] as const)
-					: [])
+				...(role === POS_ROLE_ID ? (['point-of-sale'] as const) : [])
 		  ];

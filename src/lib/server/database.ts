@@ -38,17 +38,21 @@ import type { Specification } from '$lib/types/Specification';
 import type { ContactForm } from '$lib/types/ContactForm';
 import type { Countdown } from '$lib/types/Countdown';
 import type { Gallery } from '$lib/types/Gallery';
+import type { VatProfile } from '$lib/types/VatProfile';
 
 const client = building
 	? (null as unknown as MongoClient)
-	: new MongoClient(env.VITEST ? 'mongodb://127.0.0.1:27017' : MONGODB_URL, {
-			directConnection: !!env.VITEST,
-			...(MONGODB_IP_FAMILY === '4'
-				? { family: 4 }
-				: MONGODB_IP_FAMILY === '6'
-				? { family: 6 }
-				: {})
-	  });
+	: new MongoClient(
+			env.VITEST ? env.MONGODB_TEST_URL || 'mongodb://127.0.0.1:27017' : MONGODB_URL,
+			{
+				directConnection: !!env.VITEST,
+				...(MONGODB_IP_FAMILY === '4'
+					? { family: 4 }
+					: MONGODB_IP_FAMILY === '6'
+					? { family: 6 }
+					: {})
+			}
+	  );
 
 export const connectPromise = building ? Promise.resolve() : client.connect().catch(console.error);
 
@@ -84,6 +88,7 @@ const genCollection = () => ({
 	contactForms: db.collection<ContactForm>('contactForms'),
 	countdowns: db.collection<Countdown>('countdowns'),
 	galleries: db.collection<Gallery>('galleries'),
+	vatProfiles: db.collection<VatProfile>('vatProfiles'),
 
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });

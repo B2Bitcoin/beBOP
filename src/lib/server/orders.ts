@@ -33,6 +33,7 @@ import type { PaymentMethod } from './payment-methods';
 import type { CountryAlpha2 } from '$lib/types/Country';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { LanguageKey } from '$lib/translations';
+import { filterNullish } from '$lib/utils/fillterNullish';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -511,6 +512,12 @@ export async function createOrder(
 	const discountInfo =
 		params.user.userRoleId === POS_ROLE_ID && params?.discount?.amount ? params.discount : null;
 
+	const vatProfiles = products.some((p) => p.vatProfileId)
+		? await collections.vatProfiles
+				.find({ _id: { $in: filterNullish(products.map((p) => p.vatProfileId)) } })
+				.toArray()
+		: [];
+
 	const vatExempted = runtimeConfig.vatExempted || !!params.reasonFreeVat;
 	const priceInfo = computePriceInfo(items, {
 		deliveryFees: shippingPrice,
@@ -519,7 +526,8 @@ export async function createOrder(
 		bebopCountry: runtimeConfig.vatCountry || undefined,
 		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
 		vatSingleCountry: runtimeConfig.vatSingleCountry,
-		discount: discountInfo
+		discount: discountInfo,
+		vatProfiles: vatProfiles
 	});
 	const vatExemptedReason = vatExempted
 		? params.reasonFreeVat || runtimeConfig.vatExemptionReason
