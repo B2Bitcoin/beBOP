@@ -10,7 +10,7 @@
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Current slug
-				<input class="form-input" type="text" placeholder="slug" value={product._id} readonly />
+				<input class="form-input" type="text" placeholder="slug" value={product._id} disabled />
 			</label>
 
 			<label class="w-full">
