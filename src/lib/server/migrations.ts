@@ -379,7 +379,7 @@ const migrations = [
 				},
 				{
 					$set: {
-						alias: []
+						alias: ['$_id']
 					}
 				},
 				{ session }
