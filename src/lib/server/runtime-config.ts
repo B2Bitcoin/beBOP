@@ -34,7 +34,6 @@ const baseConfig = {
 	orderNumber: 0,
 	subscriptionNumber: 0,
 	themeChangeNumber: 0,
-	enableCashSales: false,
 	isMaintenance: false,
 	lightningQrCodeDescription: 'brand' as 'orderUrl' | 'brand' | 'brandAndOrderNumber' | 'none',
 	maintenanceIps: '',

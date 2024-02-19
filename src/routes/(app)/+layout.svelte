@@ -63,7 +63,8 @@
 		deliveryFees: {
 			amount: deliveryFees || 0,
 			currency: UNDERLYING_CURRENCY
-		}
+		},
+		vatProfiles: data.vatProfiles
 	});
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 

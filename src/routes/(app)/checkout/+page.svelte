@@ -96,7 +96,8 @@
 		deliveryFees: {
 			amount: deliveryFees || 0,
 			currency: UNDERLYING_CURRENCY
-		}
+		},
+		vatProfiles: data.vatProfiles
 	});
 
 	$: isDigital = items.every((item) => !item.product.shipping);

@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database';
+import { pojo } from '$lib/server/pojo.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
@@ -7,7 +8,5 @@ export const load = async ({ params }) => {
 	if (!product) {
 		throw error(404, 'Product not found');
 	}
-	return {
-		product
-	};
+	return { product: pojo(product) };
 };

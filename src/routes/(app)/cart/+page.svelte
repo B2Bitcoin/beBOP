@@ -37,7 +37,8 @@
 		deliveryFees: {
 			amount: deliveryFees || 0,
 			currency: UNDERLYING_CURRENCY
-		}
+		},
+		vatProfiles: data.vatProfiles
 	});
 
 	const { t, locale, countryName } = useI18n();

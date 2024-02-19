@@ -10,6 +10,7 @@ import { productBaseSchema } from '../product-schema';
 import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
+import { ObjectId } from 'mongodb';
 
 export const load = async ({ params }) => {
 	const pictures = await collections.pictures
@@ -158,7 +159,8 @@ export const actions: Actions = {
 					cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
 					contentBefore: parsed.contentBefore,
 					contentAfter: parsed.contentAfter,
-					updatedAt: new Date()
+					updatedAt: new Date(),
+					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 				},
 				$unset: {
 					...(!parsed.customPreorderText && { customPreorderText: '' }),
@@ -166,7 +168,8 @@ export const actions: Actions = {
 					...(!parsed.deliveryFees && { deliveryFees: '' }),
 					...(parsed.stock === undefined && { stock: '' }),
 					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' }),
-					...(!parsed.depositPercentage && { deposit: '' })
+					...(!parsed.depositPercentage && { deposit: '' }),
+					...(!parsed.vatProfileId && { vatProfileId: '' })
 				}
 			}
 		);

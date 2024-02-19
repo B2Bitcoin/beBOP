@@ -11,25 +11,29 @@ import { filterUndef } from '$lib/utils/filterUndef';
 import { groupBy } from 'lodash-es';
 import { differenceInSeconds } from 'date-fns';
 import type { WithId } from 'mongodb';
+import { pojo, type Pojo } from '$lib/server/pojo';
 
 type FormattedCartItem = {
-	product: Pick<
-		Product,
-		| 'stock'
-		| '_id'
-		| 'name'
-		| 'maxQuantityPerOrder'
-		| 'deliveryFees'
-		| 'price'
-		| 'shortDescription'
-		| 'type'
-		| 'availableDate'
-		| 'shipping'
-		| 'preorder'
-		| 'applyDeliveryFeesOnlyOnce'
-		| 'requireSpecificDeliveryFee'
-		| 'payWhatYouWant'
-		| 'standalone'
+	product: Pojo<
+		Pick<
+			Product,
+			| 'stock'
+			| '_id'
+			| 'name'
+			| 'maxQuantityPerOrder'
+			| 'deliveryFees'
+			| 'price'
+			| 'shortDescription'
+			| 'type'
+			| 'availableDate'
+			| 'shipping'
+			| 'preorder'
+			| 'applyDeliveryFeesOnlyOnce'
+			| 'requireSpecificDeliveryFee'
+			| 'payWhatYouWant'
+			| 'standalone'
+			| 'vatProfileId'
+		>
 	>;
 	picture: Picture | null;
 	digitalFiles: WithId<DigitalFile>[];
@@ -65,6 +69,7 @@ export async function formatCart(
 					| 'standalone'
 					| 'maxQuantityPerOrder'
 					| 'stock'
+					| 'vatProfileId'
 				>
 			>(
 				{ _id: { $in: cart.items.map((item) => item.productId) } },
@@ -86,7 +91,8 @@ export async function formatCart(
 						payWhatYouWant: 1,
 						standalone: 1,
 						maxQuantityPerOrder: 1,
-						stock: 1
+						stock: 1,
+						vatProfileId: 1
 					}
 				}
 			)
@@ -111,7 +117,7 @@ export async function formatCart(
 						delete productDoc.deliveryFees;
 					}
 					return {
-						product: productDoc,
+						product: pojo(productDoc),
 						picture: pictureByProductId[item.productId] || null,
 						digitalFiles: digitalFilesByProductId[item.productId] || [],
 						quantity: item.quantity,
