@@ -32,7 +32,7 @@ export const actions = {
 				{ _id: key },
 				{
 					$set: {
-						alias: alias,
+						...(alias && { alias: [alias, key] }),
 						updatedAt: new Date()
 					}
 				}

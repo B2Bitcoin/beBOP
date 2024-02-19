@@ -368,6 +368,23 @@ const migrations = [
 				{ session }
 			);
 		}
+	},
+	{
+		name: 'Add alias to products',
+		_id: new ObjectId('657dbb1bd2af2256e82c928c'),
+		run: async (session: ClientSession) => {
+			await collections.products.updateMany(
+				{
+					alias: { $exists: false }
+				},
+				{
+					$set: {
+						alias: []
+					}
+				},
+				{ session }
+			);
+		}
 	}
 	// Todo:
 	// - convert vat to array in orders
