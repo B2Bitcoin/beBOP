@@ -23,6 +23,7 @@ export interface ProductTranslatableFields {
 
 export interface Product extends Timestamps, ProductTranslatableFields {
 	_id: string;
+	alias: string[];
 	price: {
 		amount: number;
 		currency: Currency;

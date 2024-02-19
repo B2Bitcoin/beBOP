@@ -137,7 +137,8 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
 	[collections.sessions, { sessionId: 1 }, { unique: true }],
 	[collections.discounts, { endAt: 1 }],
-	[collections.personalInfo, { 'user.**': 1 }]
+	[collections.personalInfo, { 'user.**': 1 }],
+	[collections.products, { alias: 1 }, { sparse: true, unique: true }]
 ];
 
 export async function createIndexes() {

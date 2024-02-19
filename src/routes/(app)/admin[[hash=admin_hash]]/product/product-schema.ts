@@ -7,6 +7,7 @@ import { zodObjectId } from '$lib/server/zod';
 
 export const productBaseSchema = {
 	name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+	alias: z.string().trim().max(MAX_NAME_LIMIT).optional(),
 	description: z.string().trim().max(10_000),
 	shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
 	priceAmount: z

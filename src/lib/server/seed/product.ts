@@ -5,6 +5,7 @@ export const TEST_PRODUCT_STOCK = 5;
 export const TEST_DIGITAL_PRODUCT = {
 	_id: 'test-product',
 	name: 'Test product',
+	alias: ['test-product'],
 	description: 'Test product description',
 	shortDescription: 'Test product short description',
 	type: 'resource',
@@ -44,6 +45,7 @@ export const TEST_DIGITAL_PRODUCT = {
 export const TEST_PHYSICAL_PRODUCT = {
 	_id: 'test-physical-product',
 	name: 'Test product',
+	alias: ['test-physical-product'],
 	description: 'Test product description',
 	shortDescription: 'Test product short description',
 	type: 'resource',
@@ -83,6 +85,7 @@ export const TEST_PHYSICAL_PRODUCT = {
 export const TEST_DIGITAL_PRODUCT_UNLIMITED = {
 	_id: 'test-product-unlimited',
 	name: 'Test product',
+	alias: ['test-product-unlimited'],
 	description: 'Test product description',
 	shortDescription: 'Test product short description',
 	type: 'resource',

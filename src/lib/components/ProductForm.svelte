@@ -47,6 +47,7 @@
 			amount: 0,
 			currency: $currencies.priceReference
 		},
+		alias: [],
 		vatProfileId: undefined,
 		availableDate: undefined,
 		displayShortDescription: false,
@@ -217,7 +218,17 @@
 				disabled={!isNew}
 			/>
 		</label>
-
+		<label class="w-full">
+			alias
+			<input
+				class="form-input"
+				type="text"
+				name="alias"
+				placeholder="alias"
+				step="any"
+				value={product.alias?.[1] ?? ''}
+			/>
+		</label>
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Price amount
