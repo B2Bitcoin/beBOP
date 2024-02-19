@@ -256,7 +256,7 @@
 			<label class="form-label">
 				VAT profile
 				<select name="vatProfileId" class="form-input" bind:value={vatProfileId}>
-					<option>No custom VAT profile</option>
+					<option value="">No custom VAT profile</option>
 					{#each vatProfiles as profile}
 						<option value={profile._id}>{profile.name}</option>
 					{/each}
