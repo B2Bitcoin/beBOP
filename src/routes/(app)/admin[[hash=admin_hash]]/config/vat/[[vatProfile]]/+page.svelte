@@ -3,6 +3,7 @@
 	import { typedEntries } from '$lib/utils/typedEntries.js';
 	import type { CountryAlpha2 } from '$lib/types/Country.js';
 	import { page } from '$app/stores';
+	import IconDelete from '~icons/ant-design/delete-outlined';
 
 	export let data;
 
@@ -39,7 +40,7 @@
 		<input class="form-input" type="text" name="name" value={profile?.name ?? ''} required />
 	</label>
 
-	<div class="grid grid-cols-2 gap-2">
+	<div class="grid gap-2" style="grid-template-columns: 1fr 1fr auto;">
 		{#each rates as item, i}
 			<label class="form-label">
 				Country
@@ -64,6 +65,12 @@
 					required
 				/>
 			</label>
+			<button
+				class="btn btn-red self-end last:hidden"
+				type="button"
+				on:click={() => (rates = [...rates.slice(0, i), ...rates.slice(i + 1)])}
+				><IconDelete /></button
+			>
 		{/each}
 	</div>
 	<div class="flex items-center">
