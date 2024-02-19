@@ -47,6 +47,7 @@
 			amount: 0,
 			currency: $currencies.priceReference
 		},
+		alias: [],
 		vatProfileId: undefined,
 		availableDate: undefined,
 		displayShortDescription: false,
@@ -225,7 +226,7 @@
 				name="alias"
 				placeholder="alias"
 				step="any"
-				value={product.alias ?? ''}
+				value={product.alias?.[1] ?? ''}
 			/>
 		</label>
 		<div class="gap-4 flex flex-col md:flex-row">

@@ -126,7 +126,7 @@ export const actions: Actions = {
 				await collections.products.insertOne(
 					{
 						_id: parsed.slug,
-						...(parsed.alias && { alias: [parsed.slug, parsed.alias] }),
+						alias: parsed.alias ? [parsed.slug, parsed.alias] : [parsed.slug],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 						description: parsed.description.replaceAll('\r', ''),
@@ -256,7 +256,7 @@ export const actions: Actions = {
 			await collections.products.insertOne(
 				{
 					_id: parsed.slug,
-					...(parsed.alias && { alias: [parsed.slug, parsed.alias] }),
+					alias: parsed.alias ? [parsed.slug, parsed.alias] : [parsed.slug],
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					description: parsed.description.replaceAll('\r', ''),

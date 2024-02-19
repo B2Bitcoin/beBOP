@@ -20,8 +20,7 @@
 					type="text"
 					name="{product._id}.alias"
 					placeholder="alias"
-					step="any"
-					value={product.alias ?? ''}
+					value={product.alias?.[1] ?? ''}
 				/>
 			</label>
 		</div>
