@@ -9,12 +9,12 @@
 		<h2 class="text-2xl">{product.name}</h2>
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
-				current slug
+				Current slug
 				<input class="form-input" type="text" placeholder="slug" value={product._id} readonly />
 			</label>
 
 			<label class="w-full">
-				alias
+				Alias
 				<input
 					class="form-input"
 					type="text"
