@@ -42,14 +42,17 @@ import type { VatProfile } from '$lib/types/VatProfile';
 
 const client = building
 	? (null as unknown as MongoClient)
-	: new MongoClient(env.VITEST ? 'mongodb://127.0.0.1:27017' : MONGODB_URL, {
-			directConnection: !!env.VITEST,
-			...(MONGODB_IP_FAMILY === '4'
-				? { family: 4 }
-				: MONGODB_IP_FAMILY === '6'
-				? { family: 6 }
-				: {})
-	  });
+	: new MongoClient(
+			env.VITEST ? env.MONGODB_TEST_URL || 'mongodb://127.0.0.1:27017' : MONGODB_URL,
+			{
+				directConnection: !!env.VITEST,
+				...(MONGODB_IP_FAMILY === '4'
+					? { family: 4 }
+					: MONGODB_IP_FAMILY === '6'
+					? { family: 6 }
+					: {})
+			}
+	  );
 
 export const connectPromise = building ? Promise.resolve() : client.connect().catch(console.error);
 

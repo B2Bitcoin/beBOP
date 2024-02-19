@@ -160,15 +160,22 @@ export function computePriceInfo(
 			  )
 			: undefined;
 		const rate = vatProfile?.rates[country] ?? vatRate(country);
-		const price = (item.customPrice || item.product.price).amount * item.quantity;
-		const partialPrice = price * (item.depositPercentage ?? 100);
-		const vat = price * (rate / 100);
-		const partialVat = partialPrice * (rate / 100);
+		const currency = (item.customPrice || item.product.price).currency;
+		const price = fixCurrencyRounding(
+			(item.customPrice || item.product.price).amount * item.quantity,
+			currency
+		);
+		const partialPrice = fixCurrencyRounding(
+			(price * (item.depositPercentage ?? 100)) / 100,
+			currency
+		);
+		const vat = fixCurrencyRounding(price * (rate / 100), currency);
+		const partialVat = fixCurrencyRounding(partialPrice * (rate / 100), currency);
 		return {
-			price: { amount: vat, currency: UNDERLYING_CURRENCY satisfies Currency as Currency },
+			price: { amount: vat, currency },
 			partialPrice: {
 				amount: partialVat,
-				currency: UNDERLYING_CURRENCY satisfies Currency as Currency
+				currency
 			},
 			rate,
 			country

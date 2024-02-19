@@ -146,7 +146,16 @@ describe('cart', () => {
 					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
 					expect(priceInfo.totalVat).toBeGreaterThan(0);
 					expect(priceInfo.vat.length).toBe(1);
-					expect(priceInfo.vat[0].price.amount).toBe(priceInfo.totalVat);
+					expect(
+						toCurrency(
+							priceInfo.currency,
+							priceInfo.vat[0].price.amount,
+							priceInfo.vat[0].price.currency
+						)
+					).toBe(priceInfo.totalVat);
+					expect(priceInfo.vat[0].rate).toBe(20);
+					expect(priceInfo.totalPrice).toBe(333333);
+					expect(priceInfo.totalPriceWithVat).toBe(400000);
 				});
 			});
 
