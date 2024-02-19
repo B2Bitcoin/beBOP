@@ -1,6 +1,6 @@
 # BeBOP
 
-P2P BeBOP for merch, subscribers and crowdfunding
+P2P BeBOP for merch, subscribers and peerfunding
 
 ## Requirements
 
