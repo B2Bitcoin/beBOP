@@ -137,6 +137,12 @@
 											{t('order.paymentAddress')}:
 											<code class="break-words body-secondaryText break-all">{payment.address}</code
 											>
+											<button
+												class="mt-2 btn btn-blue"
+												type="button"
+												on:click={() => window.navigator.clipboard.writeText(payment.address ?? '')}
+												>{t('order.copyAddress')}</button
+											>
 										{/if}
 									</li>
 								{/if}
