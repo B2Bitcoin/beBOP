@@ -428,6 +428,7 @@
 			"cta": "Envoyer un appel à paiement",
 			"currency": "Monnaie de paiement"
 		},
+		"copyAddress": "Copier l'adresse de paiement",
 		"createdAt": "Date de la commande : <0></0>",
 		"depositCancelled": "Demande d'acompte annulée",
 		"depositExpired": "Demande d'acompte expirée",
