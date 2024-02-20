@@ -193,7 +193,7 @@
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2"
 								><a
-									href="#tab"
+									href="#exportJson"
 									class="underline text-blue-500"
 									on:click={() => downloadJSON(order._id)}>{order.number}</a
 								></td
