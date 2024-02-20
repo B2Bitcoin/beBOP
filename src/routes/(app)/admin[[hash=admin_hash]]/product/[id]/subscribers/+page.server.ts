@@ -13,7 +13,7 @@ export const load = async ({ params }) => {
 	}
 
 	return {
-		product,
+		product: pojo(product),
 		subscriptions: subscriptions.map((subscription) => ({
 			...subscription,
 			notifications: subscription.notifications.map(pojo)
