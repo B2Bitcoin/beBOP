@@ -10,6 +10,7 @@ import { S3_BUCKET } from '$env/static/private';
 import { generatePicture } from '$lib/server/picture';
 import type { TagType } from '$lib/types/Picture';
 import { adminPrefix } from '$lib/server/admin';
+import { zodSlug } from '$lib/server/zod';
 
 export const load = async () => {};
 
@@ -22,7 +23,7 @@ export const actions: Actions = {
 		}
 		const parsed = z
 			.object({
-				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				slug: zodSlug(),
 				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				content: z.string().trim().max(10_000),
 				shortContent: z.string().trim().max(1_000),

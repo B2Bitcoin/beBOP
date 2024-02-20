@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { ORIGIN, S3_BUCKET } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
+import type { Product } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { getPrivateS3DownloadLink, s3ProductPrefix, s3client } from '$lib/server/s3';
@@ -18,6 +18,7 @@ import { CopyObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
 import { pojo } from '$lib/server/pojo';
+import { zodSlug } from '$lib/server/zod';
 
 export const load = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
@@ -67,7 +68,7 @@ export const actions: Actions = {
 
 		const parsed = z
 			.object({
-				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				slug: zodSlug(),
 				pictureId: z.string().trim().min(1).max(500),
 				type: z.enum(['resource', 'donation', 'subscription']),
 				tagIds: z.string().array(),
@@ -225,7 +226,7 @@ export const actions: Actions = {
 
 		const parsed = z
 			.object({
-				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				slug: zodSlug(),
 				...productBaseSchema
 			})
 			.parse({
