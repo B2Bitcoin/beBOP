@@ -192,7 +192,7 @@
 								)}</td
 							>
 							<td class="border border-gray-300 px-4 py-2"
-								>{countryName(order.billingAddress?.country ?? '')}</td
+								>{countryName(order.billingAddress?.country ?? order.ipCountry ?? '')}</td
 							>
 							<td class="border border-gray-300 px-4 py-2"
 								>{order.billingAddress
@@ -200,7 +200,7 @@
 									: ''}</td
 							>
 							<td class="border border-gray-300 px-4 py-2"
-								>{countryName(order.shippingAddress?.country ?? '')}</td
+								>{countryName(order.shippingAddress?.country ?? order.ipCountry ?? '')}</td
 							>
 							<td class="border border-gray-300 px-4 py-2"
 								>{order.shippingAddress
@@ -312,6 +312,10 @@
 										? payment.invoiceId
 										: payment.method === 'bank-transfer'
 										? payment.bankTransferNumber
+										: payment.method === 'card'
+										? payment.transactions?.[0].transaction_code
+										: payment.method === 'bitcoin'
+										? payment.transactions?.[0].txid
 										: payment.detail || ''}</td
 								>
 
@@ -325,7 +329,10 @@
 								>
 								<td class="border border-gray-300 px-4 py-2"
 									>{countryName(
-										order.billingAddress?.country ?? order.shippingAddress?.country ?? ''
+										order.billingAddress?.country ??
+											order.shippingAddress?.country ??
+											order.ipCountry ??
+											''
 									)}</td
 								>
 							</tr>

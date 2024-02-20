@@ -68,7 +68,13 @@ export interface OrderPayment {
 	/**
 	 * There are also additional fields for sumup, they are stored but not documented here.
 	 */
-	transactions?: Array<{ id: string; amount: number; currency: Currency }>;
+	transactions?: Array<{
+		id: string;
+		amount: number;
+		currency: Currency;
+		transaction_code?: string;
+		txid?: string;
+	}>;
 
 	/**
 	 * The invoice number, set when the order is paid.

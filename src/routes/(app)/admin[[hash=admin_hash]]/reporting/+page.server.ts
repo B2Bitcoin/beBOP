@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database';
+import { countryFromIp } from '$lib/server/geoip';
 import { sum } from '$lib/utils/sum';
 
 export async function load() {
@@ -23,7 +24,8 @@ export async function load() {
 			items: order.items,
 			quantityOrder: sum(order.items.map((items) => items.quantity)),
 			billingAddress: order.billingAddress,
-			shippingAddress: order.shippingAddress
+			shippingAddress: order.shippingAddress,
+			ipCountry: countryFromIp(order.clientIp ?? '')
 		}))
 	};
 }
