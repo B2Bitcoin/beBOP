@@ -298,7 +298,7 @@ export async function cmsFromContent(
 			stock: 1,
 			tagIds: 1
 		})
-		.sort({ 'alias.0': 1, 'alias.1': 1 })
+		.sort({ 'alias.1': 1, 'alias.0': 1 })
 		.toArray();
 	const challenges = await collections.challenges
 		.find({
