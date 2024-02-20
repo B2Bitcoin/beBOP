@@ -28,7 +28,7 @@ export const CUSTOMER_ROLE_ID = 'customer';
 export const MIN_PASSWORD_LENGTH = 8;
 
 export async function checkPasswordPwnedTimes(password: string): Promise<number> {
-	if (browser && !crypto.subtle) {
+	if (browser && !crypto?.subtle) {
 		// Don't block if the browser blocks the crypto API due to non-secure context
 		return 0;
 	}
