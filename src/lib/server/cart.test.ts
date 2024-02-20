@@ -112,7 +112,8 @@ describe('cart', () => {
 						currency: 'EUR'
 					},
 					vatNullOutsideSellerCountry: false,
-					vatSingleCountry: false
+					vatSingleCountry: false,
+					vatProfiles: []
 				});
 				expect(priceInfo.totalPriceWithVat).toBe(
 					toCurrency(
@@ -123,8 +124,6 @@ describe('cart', () => {
 				);
 				expect(priceInfo.totalPrice).toBe(priceInfo.totalPriceWithVat);
 				expect(priceInfo.totalVat).toBe(0);
-				expect(priceInfo.partialDigitalVat).toBe(0);
-				expect(priceInfo.partialPhysicalVat).toBe(0);
 				expect(priceInfo.vat.length).toBe(0);
 			});
 		});
@@ -141,15 +140,22 @@ describe('cart', () => {
 							currency: 'EUR'
 						},
 						vatNullOutsideSellerCountry: true,
-						vatSingleCountry: false
+						vatSingleCountry: false,
+						vatProfiles: []
 					});
 					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
 					expect(priceInfo.totalVat).toBeGreaterThan(0);
-					expect(priceInfo.partialDigitalVat).toBe(0);
-					expect(priceInfo.partialPhysicalVat).toBeGreaterThan(0);
 					expect(priceInfo.vat.length).toBe(1);
-					expect(priceInfo.vat[0].price.amount).toBe(priceInfo.totalVat);
-					expect(priceInfo.vat[0].price.amount).toBe(priceInfo.partialPhysicalVat);
+					expect(
+						toCurrency(
+							priceInfo.currency,
+							priceInfo.vat[0].price.amount,
+							priceInfo.vat[0].price.currency
+						)
+					).toBe(priceInfo.totalVat);
+					expect(priceInfo.vat[0].rate).toBe(20);
+					expect(priceInfo.totalPrice).toBe(333333);
+					expect(priceInfo.totalPriceWithVat).toBe(400000);
 				});
 			});
 
@@ -164,13 +170,12 @@ describe('cart', () => {
 							currency: 'EUR'
 						},
 						vatNullOutsideSellerCountry: true,
-						vatSingleCountry: false
+						vatSingleCountry: false,
+						vatProfiles: []
 					});
 
 					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
 					expect(priceInfo.totalVat).toBeGreaterThan(0);
-					expect(priceInfo.partialDigitalVat).toBeGreaterThan(0);
-					expect(priceInfo.partialPhysicalVat).toBe(0);
 					expect(priceInfo.vat.length).toBe(1);
 				});
 
@@ -184,7 +189,8 @@ describe('cart', () => {
 							currency: 'EUR'
 						},
 						vatNullOutsideSellerCountry: true,
-						vatSingleCountry: false
+						vatSingleCountry: false,
+						vatProfiles: []
 					});
 					expect(priceInfo.totalPriceWithVat).toBe(
 						toCurrency(
@@ -195,8 +201,6 @@ describe('cart', () => {
 					);
 					expect(priceInfo.totalPrice).toBe(priceInfo.totalPriceWithVat);
 					expect(priceInfo.totalVat).toBe(0);
-					expect(priceInfo.partialDigitalVat).toBe(0);
-					expect(priceInfo.partialPhysicalVat).toBe(0);
 					expect(priceInfo.vat.length).toBe(0);
 				});
 			});

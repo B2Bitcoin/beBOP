@@ -428,6 +428,7 @@
 			"cta": "Send a call for payment",
 			"currency": "Payment currency"
 		},
+		"copyAddress": "Copy payment address",
 		"createdAt": "Created at <0></0>",
 		"depositCancelled": "Deposit request cancelled",
 		"depositExpired": "Deposit request expired",

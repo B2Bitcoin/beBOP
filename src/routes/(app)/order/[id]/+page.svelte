@@ -12,6 +12,7 @@
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
 	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
+	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	let currentDate = new Date();
 	export let data;
@@ -48,6 +49,27 @@
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
+	{#if data.cmsOrderTop && data.cmsOrderTopData}
+		<CmsDesign
+			challenges={data.cmsOrderTopData.challenges}
+			tokens={data.cmsOrderTopData.tokens}
+			sliders={data.cmsOrderTopData.sliders}
+			products={data.cmsOrderTopData.products}
+			pictures={data.cmsOrderTopData.pictures}
+			tags={data.cmsOrderTopData.tags}
+			digitalFiles={data.cmsOrderTopData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsOrderTopData.specifications}
+			contactForms={data.cmsOrderTopData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsOrderTop.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsOrderTopData.countdowns}
+			galleries={data.cmsOrderTopData.galleries}
+		/>
+	{/if}
 	<div
 		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid flex md:grid-cols-3 sm:flex-wrap gap-2"
 	>
@@ -114,6 +136,12 @@
 										{:else}
 											{t('order.paymentAddress')}:
 											<code class="break-words body-secondaryText break-all">{payment.address}</code
+											>
+											<button
+												class="mt-2 btn btn-blue"
+												type="button"
+												on:click={() => window.navigator.clipboard.writeText(payment.address ?? '')}
+												>{t('order.copyAddress')}</button
 											>
 										{/if}
 									</li>
@@ -347,4 +375,25 @@
 			<OrderSummary class="sticky top-4 -mr-2 -mt-2" order={data.order} />
 		</div>
 	</div>
+	{#if data.cmsOrderBottom && data.cmsOrderBottomData}
+		<CmsDesign
+			challenges={data.cmsOrderBottomData.challenges}
+			tokens={data.cmsOrderBottomData.tokens}
+			sliders={data.cmsOrderBottomData.sliders}
+			products={data.cmsOrderBottomData.products}
+			pictures={data.cmsOrderBottomData.pictures}
+			tags={data.cmsOrderBottomData.tags}
+			digitalFiles={data.cmsOrderBottomData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsOrderBottomData.specifications}
+			contactForms={data.cmsOrderBottomData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsOrderBottom.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsOrderBottomData.countdowns}
+			galleries={data.cmsOrderBottomData.galleries}
+		/>
+	{/if}
 </main>

@@ -1,4 +1,5 @@
 import type { LanguageKey } from '$lib/translations';
+import type { ObjectId } from 'mongodb';
 import type { Currency } from './Currency';
 import type { DeliveryFees } from './DeliveryFees';
 import type { Price } from './Order';
@@ -22,6 +23,7 @@ export interface ProductTranslatableFields {
 
 export interface Product extends Timestamps, ProductTranslatableFields {
 	_id: string;
+	alias: string[];
 	price: {
 		amount: number;
 		currency: Currency;
@@ -31,6 +33,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 		total: number;
 		reserved: number;
 	};
+	vatProfileId?: ObjectId;
 	maxQuantityPerOrder?: number;
 	type: 'subscription' | 'resource' | 'donation';
 	shipping: boolean;
