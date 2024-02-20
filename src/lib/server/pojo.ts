@@ -1,11 +1,7 @@
 import { ObjectId } from 'mongodb';
 
 export type Pojo<T> = {
-	[K in keyof T]: T[K] extends ObjectId
-		? string
-		: T[K] extends ObjectId | infer Y
-		? string | Y
-		: T[K];
+	[K in keyof T]: ObjectId extends T[K] ? Exclude<T[K], ObjectId> | string : T[K];
 };
 
 /**
