@@ -130,7 +130,7 @@ Make sure to have a fairly recent version of docker & docker compose.
 # Optional: update dependencies
 docker compose pull
 # --build will rebuild the docker image when you change the code. Use --force-recreate to force a rebuild (eg after updating dependencies).
-docker compose up --build -d
+docker compose --env-file .env.local up --build -d
 ```
 
 It will still use the `.env.local` file for the environment variables if present, overriding the values for MongoDB and S3.
