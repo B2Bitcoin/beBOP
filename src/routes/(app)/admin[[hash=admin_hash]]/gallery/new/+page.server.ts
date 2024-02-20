@@ -10,6 +10,7 @@ import { adminPrefix } from '$lib/server/admin';
 import { getPrivateS3DownloadLink, s3client } from '$lib/server/s3';
 import { generatePicture } from '$lib/server/picture';
 import { S3_BUCKET } from '$env/static/private';
+import { zodSlug } from '$lib/server/zod';
 
 export const load = async () => {};
 
@@ -22,7 +23,7 @@ export const actions: Actions = {
 		}
 		const parsed = z
 			.object({
-				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				slug: zodSlug(),
 				name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				principal: z.object({
 					title: z.string(),
