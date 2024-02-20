@@ -50,7 +50,7 @@ services:
       MINIO_SECRET_KEY: ${S3_KEY_SECRET:-minio123}
       MINIO_SERVER_URL: ${S3_ENDPOINT_URL:-http://localhost:9000}
     volumes:
-      - minio_data:/data
+      - minio-data:/data
     command: server /data
     env_file:
       - path: .env
@@ -59,4 +59,4 @@ services:
         required: true
 volumes:
   mongo-data:
-  minio_data:
+  minio-data:
