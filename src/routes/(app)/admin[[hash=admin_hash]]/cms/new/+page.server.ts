@@ -1,5 +1,6 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
+import { zodSlug } from '$lib/server/zod.js';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
@@ -11,7 +12,7 @@ export const actions = {
 
 		const { slug, title, content, shortDescription, fullScreen, maintenanceDisplay } = z
 			.object({
-				slug: z.string().max(MAX_NAME_LIMIT).min(1),
+				slug: zodSlug(),
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
 				content: z.string().max(MAX_CONTENT_LIMIT),
 				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { adminPrefix } from '$lib/server/admin';
+import { zodSlug } from '$lib/server/zod';
 
 export const load = async () => {};
 
@@ -14,7 +15,7 @@ export const actions: Actions = {
 
 		const parsed = z
 			.object({
-				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				slug: zodSlug(),
 				title: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				target: z.string().trim().min(1).max(100),
 				subject: z.string().trim().min(1).max(100),
