@@ -1,5 +1,6 @@
 import { collections } from '$lib/server/database';
 import { countryFromIp } from '$lib/server/geoip';
+import { pojo } from '$lib/server/pojo';
 import { sum } from '$lib/utils/sum';
 
 export async function load() {
@@ -8,18 +9,10 @@ export async function load() {
 	return {
 		orders: orders.map((order) => ({
 			_id: order._id,
-			payments: order.payments.map((payment) => ({
-				...payment,
-				_id: payment._id.toString()
-			})),
+			payments: order.payments.map(pojo),
 			number: order.number,
 			createdAt: order.createdAt,
 			currencySnapshot: order.currencySnapshot,
-			notes:
-				order.notes?.map((note) => ({
-					content: note.content,
-					createdAt: note.createdAt
-				})) || [],
 			status: order.status,
 			items: order.items,
 			quantityOrder: sum(order.items.map((items) => items.quantity)),
