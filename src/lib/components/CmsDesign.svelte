@@ -5,7 +5,7 @@
 	import type { Picture } from '$lib/types/Picture';
 	import ProductWidget from './ProductWidget.svelte';
 	import { POS_ROLE_ID } from '$lib/types/User';
-	import { groupBy } from 'lodash-es';
+	import { groupBy, sortBy } from 'lodash-es';
 	import type { SetRequired } from 'type-fest';
 	import TagWidget from './TagWidget.svelte';
 	import type {
@@ -102,7 +102,10 @@
 	$: countdownById = Object.fromEntries(countdowns.map((countdown) => [countdown._id, countdown]));
 
 	function productsByTag(searchTag: string) {
-		return products.filter((product) => product.tagIds?.includes(searchTag));
+		return sortBy(
+			products.filter((product) => product.tagIds?.includes(searchTag)),
+			['alias.1', 'alias.0']
+		);
 	}
 	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
 </script>

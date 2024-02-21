@@ -283,6 +283,7 @@ export async function cmsFromContent(
 				| 'actionSettings'
 				| 'stock'
 				| 'tagIds'
+				| 'alias'
 			>
 		>({
 			price: 1,
@@ -296,7 +297,8 @@ export async function cmsFromContent(
 			shipping: 1,
 			actionSettings: 1,
 			stock: 1,
-			tagIds: 1
+			tagIds: 1,
+			alias: 1
 		})
 		.toArray();
 	const challenges = await collections.challenges
