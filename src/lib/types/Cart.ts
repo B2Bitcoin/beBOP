@@ -275,6 +275,9 @@ export function computePriceInfo(
 					{ amount: vatItem.partialPrice.amount, currency: vatItem.partialPrice.currency }
 				]);
 				existing.partialPrice.currency = UNDERLYING_CURRENCY;
+			} else {
+				existing.price.amount += vatItem.price.amount;
+				existing.partialPrice.amount += vatItem.partialPrice.amount;
 			}
 		} else {
 			reducedVat.push({
