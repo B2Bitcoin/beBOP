@@ -15,7 +15,7 @@
 	import { oneMaxPerLine } from '$lib/types/Product.js';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
-	import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+	import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 	export let data;
 
@@ -43,6 +43,7 @@
 	});
 	let alias = '';
 	let formAlias: HTMLFormElement;
+
 	const { t, locale, countryName } = useI18n();
 </script>
 
@@ -70,12 +71,13 @@
 	{/if}
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 body-mainPlan border-gray-300">
 		<h1 class="page-title body-title">{t('cart.items')}</h1>
-		{#if data.roleId === POS_ROLE_ID || data.roleId === SUPER_ADMIN_ROLE_ID}
+		{#if data.roleId && data.roleId !== CUSTOMER_ROLE_ID}
 			<form
 				action="/product/{alias}?/addToCart"
 				method="post"
 				class="flex flex-col gap-2"
 				bind:this={formAlias}
+				use:enhance
 			>
 				<div class="gap-4 flex flex-col md:flex-row">
 					<label class="form-label w-[20em]">

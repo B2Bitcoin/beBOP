@@ -150,21 +150,19 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			alias: formData.get('alias') || undefined
 		});
 	if (!product && alias) {
-		throw redirect(303, request.headers.get('referer') || 'cart');
+		return { errorNotExistingAlias: true };
 	}
-	if (product && product.availableDate && !product.preorder && product.availableDate > new Date()) {
-		throw redirect(303, request.headers.get('referer') || 'cart');
-	}
+
 	const cart = await getCartFromDb({ user: userIdentifier(locals) });
 	if (product) {
 		const availableAmount = await computeAvailableAmount(product, cart);
 		if (availableAmount <= 0) {
-			throw redirect(303, request.headers.get('referer') || 'cart');
+			return { errorOutOfStock: true };
 		}
 	}
 
 	if (product && product.availableDate && !product.preorder && product.availableDate > new Date()) {
-		throw redirect(303, request.headers.get('referer') || 'cart');
+		return { errorAvailableDate: true };
 	}
 	if (!product) {
 		throw error(404, 'Product not found');
