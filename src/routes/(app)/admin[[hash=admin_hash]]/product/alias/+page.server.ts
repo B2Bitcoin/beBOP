@@ -3,12 +3,13 @@ import { z } from 'zod';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
+import { pojo } from '$lib/server/pojo.js';
 
 export const load = async () => {
 	const products = await collections.products.find({}).toArray();
 
 	return {
-		products
+		products: products.map(pojo)
 	};
 };
 
