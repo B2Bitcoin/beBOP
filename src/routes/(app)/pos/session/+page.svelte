@@ -96,6 +96,9 @@
 	const { t, locale, countryName } = useI18n();
 </script>
 
+<svelte:head>
+	<meta name="viewport" content="width=500" />
+</svelte:head>
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
 	{#if view === 'updateCart'}
 		{#if cart.length}
