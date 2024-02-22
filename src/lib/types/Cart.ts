@@ -265,10 +265,17 @@ export function computePriceInfo(
 		);
 		if (existing) {
 			if (existing.price.currency !== vatItem.price.currency) {
-				throw new Error('Currency mismatch during vat computation');
+				existing.price.amount = sumCurrency(UNDERLYING_CURRENCY, [
+					{ amount: existing.price.amount, currency: existing.price.currency },
+					{ amount: vatItem.price.amount, currency: vatItem.price.currency }
+				]);
+				existing.price.currency = UNDERLYING_CURRENCY;
+				existing.partialPrice.amount = sumCurrency(UNDERLYING_CURRENCY, [
+					{ amount: existing.partialPrice.amount, currency: existing.partialPrice.currency },
+					{ amount: vatItem.partialPrice.amount, currency: vatItem.partialPrice.currency }
+				]);
+				existing.partialPrice.currency = UNDERLYING_CURRENCY;
 			}
-			existing.price.amount += vatItem.price.amount;
-			existing.partialPrice.amount += vatItem.partialPrice.amount;
 		} else {
 			reducedVat.push({
 				country: vatItem.country,
