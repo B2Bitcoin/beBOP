@@ -4,11 +4,13 @@ import type { RequestEvent } from './$types';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { addToCartInDb } from '$lib/server/cart';
+import { addToCartInDb, getCartFromDb } from '$lib/server/cart';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
+import { amountOfProductReserved } from '$lib/server/product';
+import type { Cart } from '$lib/types/Cart';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -122,32 +124,51 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	const product = await collections.products.findOne({
 		$or: [{ _id: params.id }, { 'alias.0': params.id }, { 'alias.1': params.id }]
 	});
-	if (!product) {
-		throw error(404, 'Product not found');
-	}
 
 	const formData = await request.formData();
-	const { quantity, customPriceAmount, customPriceCurrency, deposit } = z
+	const { quantity, customPriceAmount, customPriceCurrency, deposit, alias } = z
 		.object({
 			quantity: z
 				.number({ coerce: true })
 				.int()
 				.min(1)
-				.max(product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER)
+				.max((product && product.maxQuantityPerOrder) || DEFAULT_MAX_QUANTITY_PER_ORDER)
 				.default(1),
 			customPriceAmount: z
 				.string()
 				.regex(/^\d+(\.\d+)?$/)
 				.optional(),
 			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
-			deposit: z.enum(['partial', 'full']).optional()
+			deposit: z.enum(['partial', 'full']).optional(),
+			alias: z.string().optional()
 		})
 		.parse({
 			quantity: formData.get('quantity') || undefined,
 			customPriceAmount: formData.get('customPriceAmount') || undefined,
 			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
-			deposit: formData.get('deposit') || undefined
+			deposit: formData.get('deposit') || undefined,
+			alias: formData.get('alias') || undefined
 		});
+	if (!product && alias) {
+		throw redirect(303, request.headers.get('referer') || 'cart');
+	}
+	if (product && product.availableDate && !product.preorder && product.availableDate > new Date()) {
+		throw redirect(303, request.headers.get('referer') || 'cart');
+	}
+	const cart = await getCartFromDb({ user: userIdentifier(locals) });
+	if (product) {
+		const availableAmount = await computeAvailableAmount(product, cart);
+		if (availableAmount <= 0) {
+			throw redirect(303, request.headers.get('referer') || 'cart');
+		}
+	}
+
+	if (product && product.availableDate && !product.preorder && product.availableDate > new Date()) {
+		throw redirect(303, request.headers.get('referer') || 'cart');
+	}
+	if (!product) {
+		throw error(404, 'Product not found');
+	}
 	const customPrice =
 		customPriceAmount && customPriceCurrency
 			? {
@@ -172,3 +193,15 @@ export const actions = {
 
 	addToCart
 };
+
+async function computeAvailableAmount(product: Product, cart: Cart): Promise<number> {
+	return !product.stock
+		? Infinity
+		: product.stock.total -
+				(await amountOfProductReserved(product._id, {
+					exclude: {
+						sessionId: cart.user.sessionId,
+						npub: cart.user.npub
+					}
+				}));
+}
