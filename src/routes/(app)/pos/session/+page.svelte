@@ -158,7 +158,7 @@
 				<img
 					src="/order/{order?._id}/payment/{payment?.id}/qrcode"
 					alt="QR code"
-					class="max-w-[600px] h-[600px]"
+					class="h-96 w-96"
 				/>
 			</div>
 		{/if}
