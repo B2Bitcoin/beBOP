@@ -2,10 +2,13 @@ import { collections } from '$lib/server/database';
 import { z } from 'zod';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
-import { MAX_NAME_LIMIT } from '$lib/types/Product';
+import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 
 export const load = async () => {
-	const products = await collections.products.find({}).toArray();
+	const products = await collections.products
+		.find({})
+		.project<Pick<Product, '_id' | 'name' | 'alias'>>({ _id: 1, name: 1, alias: 1 })
+		.toArray();
 
 	return {
 		products

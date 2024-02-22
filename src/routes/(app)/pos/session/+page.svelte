@@ -96,6 +96,9 @@
 	const { t, locale, countryName } = useI18n();
 </script>
 
+<svelte:head>
+	<meta name="viewport" content="width=500" />
+</svelte:head>
 <main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
 	{#if view === 'updateCart'}
 		{#if cart.length}
@@ -152,7 +155,11 @@
 		{:else if payment}
 			<div class="flex flex-col items-center gap-3">
 				<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
-				<img src="/order/{order?._id}/payment/{payment?.id}/qrcode" alt="QR code" />
+				<img
+					src="/order/{order?._id}/payment/{payment?.id}/qrcode"
+					alt="QR code"
+					class="h-96 w-96"
+				/>
 			</div>
 		{/if}
 	{:else if view === 'canceled'}
