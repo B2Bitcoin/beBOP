@@ -280,14 +280,6 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			throw error(403, 'You are not allowed to access this page, only point-of-sale accounts are.');
 		}
 	}
-	if (event.url.pathname.endsWith('/notes')) {
-		if (!event.locals.user) {
-			throw redirect(303, '/admin/login');
-		}
-		if (event.locals.user.roleId === CUSTOMER_ROLE_ID) {
-			throw error(403, 'You are not allowed to access this page, only employee accounts are.');
-		}
-	}
 
 	let transformed = false;
 	const response = await resolve(event, {
