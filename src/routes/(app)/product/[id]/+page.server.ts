@@ -141,8 +141,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 				.regex(/^\d+(\.\d+)?$/)
 				.optional(),
 			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
-			deposit: z.enum(['partial', 'full']).optional(),
-			alias: z.string().optional()
+			deposit: z.enum(['partial', 'full']).optional()
 		})
 		.parse({
 			quantity: formData.get('quantity') || undefined,
@@ -163,7 +162,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		...(product.payWhatYouWant && { customPrice }),
 		deposit: deposit === 'partial'
 	});
-	throw redirect(303, request.headers.get('referer') || 'cart');
+	throw redirect(303, request.headers.get('referer') || '/cart');
 }
 
 export const actions = {
