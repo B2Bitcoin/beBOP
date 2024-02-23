@@ -271,7 +271,11 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	if (event.url.pathname.startsWith('/pos/') || event.url.pathname === '/pos') {
+	if (
+		event.url.pathname.startsWith('/pos/') ||
+		event.url.pathname === '/pos' ||
+		event.url.pathname.endsWith('/notes')
+	) {
 		if (!event.locals.user) {
 			throw redirect(303, '/admin/login');
 		}
