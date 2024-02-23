@@ -524,8 +524,8 @@
 					</div>
 				{:else if data.displayPoweredBy}
 					<div class="flex w-full">
-						<a class="flex items-center gap-4" href="https://github.com/B2Bitcoin/beBOP"
-							><span class="font-light">{t('footer.poweredBy')} </span>
+						<a class="flex items-center gap-4" href="https://be-bop.io" target="_blank">
+							<span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO_DARK} alt="" />
 							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
 						</a>
