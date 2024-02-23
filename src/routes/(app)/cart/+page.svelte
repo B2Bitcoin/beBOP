@@ -43,7 +43,6 @@
 	});
 	let alias = '';
 	let formAlias: HTMLFormElement;
-
 	const { t, locale, countryName } = useI18n();
 </script>
 
