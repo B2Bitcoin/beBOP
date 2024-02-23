@@ -271,17 +271,21 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	if (
-		event.url.pathname.startsWith('/pos/') ||
-		event.url.pathname === '/pos' ||
-		event.url.pathname.endsWith('/notes')
-	) {
+	if (event.url.pathname.startsWith('/pos/') || event.url.pathname === '/pos') {
 		if (!event.locals.user) {
 			throw redirect(303, '/admin/login');
 		}
 
 		if (event.locals.user.roleId !== POS_ROLE_ID) {
 			throw error(403, 'You are not allowed to access this page, only point-of-sale accounts are.');
+		}
+	}
+	if (event.url.pathname.endsWith('/notes')) {
+		if (!event.locals.user) {
+			throw redirect(303, '/admin/login');
+		}
+		if (event.locals.user.roleId === CUSTOMER_ROLE_ID) {
+			throw error(403, 'You are not allowed to access this page, only employee accounts are.');
 		}
 	}
 
