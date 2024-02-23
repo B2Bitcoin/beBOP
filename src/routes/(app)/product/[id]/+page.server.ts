@@ -159,7 +159,6 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		...(product.payWhatYouWant && { customPrice }),
 		deposit: deposit === 'partial'
 	});
-	throw redirect(303, request.headers.get('referer') || '/cart');
 }
 
 export const actions = {
