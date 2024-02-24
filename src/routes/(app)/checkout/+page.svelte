@@ -385,9 +385,9 @@
 								required
 							>
 								{#each paymentMethods as paymentMethod}
-									<option value={paymentMethod}
-										>{t('checkout.paymentMethod.' + paymentMethod)}</option
-									>
+									<option value={paymentMethod}>
+										{t('checkout.paymentMethod.' + paymentMethod)}
+									</option>
 								{/each}
 							</select>
 							{#if paymentMethods.length === 0}
