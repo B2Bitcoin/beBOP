@@ -51,7 +51,7 @@
 				</p>
 			</div>
 			<div class="btn tagWidget-cta text-xl text-center w-auto p-4 m-2">
-				<a class="tagWidget-hyperlink" href={secondary.cta.href}>{secondary.cta.label}</a>
+				<a class="tagWidget-hyperlink" target="_blank" href={secondary.cta.href}>{secondary.cta.label}</a>
 			</div>
 		</div>
 	{/each}
