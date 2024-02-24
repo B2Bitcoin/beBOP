@@ -7,6 +7,8 @@ import { typedKeys } from '$lib/utils/typedKeys.js';
 import { adminPrefix } from '$lib/server/admin';
 import { z } from 'zod';
 import { redirect } from '@sveltejs/kit';
+import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
+import { POS_ROLE_ID } from '$lib/types/User.js';
 
 export async function load(event) {
 	return {
@@ -20,6 +22,8 @@ export async function load(event) {
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
 		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
+		allPaymentMethods: paymentMethods(POS_ROLE_ID, true),
+		disabledPaymentMethods: runtimeConfig.paymentMethods.disabled,
 		origin: ORIGIN,
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		adminHash: runtimeConfig.adminHash,
@@ -56,6 +60,9 @@ export const actions = {
 					.int()
 					.min(0)
 					.max(24 * 60 * 60 * 7),
+				paymentMethods: z.array(
+					z.enum(paymentMethods(POS_ROLE_ID, true) as [PaymentMethod, ...PaymentMethod[]])
+				),
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
 				plausibleScriptUrl: z.string(),
@@ -64,9 +71,12 @@ export const actions = {
 				isBillingAddressMandatory: z.boolean({ coerce: true }),
 				displayNewsletterCommercialProspection: z.boolean({ coerce: true })
 			})
-			.parse(Object.fromEntries(formData));
+			.parse({
+				...Object.fromEntries(formData),
+				paymentMethods: formData.getAll('paymentMethods')
+			});
 
-		const { ...runtimeConfigUpdates } = {
+		const { paymentMethods: orderedPaymentMethods, ...runtimeConfigUpdates } = {
 			...result,
 			secondaryCurrency: result.secondaryCurrency || null
 		};
@@ -83,6 +93,25 @@ export const actions = {
 					{ upsert: true }
 				);
 			}
+		}
+
+		const newPaymentMethods = {
+			order: orderedPaymentMethods,
+			disabled: paymentMethods(POS_ROLE_ID, true).filter(
+				(method) => !orderedPaymentMethods.includes(method)
+			)
+		};
+
+		if (JSON.stringify(runtimeConfig.paymentMethods) !== JSON.stringify(newPaymentMethods)) {
+			runtimeConfig.paymentMethods = newPaymentMethods;
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'paymentMethods' },
+				{
+					$set: { data: newPaymentMethods, updatedAt: new Date() },
+					$setOnInsert: { createdAt: new Date() }
+				},
+				{ upsert: true }
+			);
 		}
 
 		if (oldAdminHash !== result.adminHash) {
