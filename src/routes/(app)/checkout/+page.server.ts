@@ -87,7 +87,6 @@ export async function load({ parent, locals }) {
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
 		noProBilling: runtimeConfig.noProBilling,
-		vatExempted: runtimeConfig.vatExempted,
 		...(cmsCheckoutTop && {
 			cmsCheckoutTop,
 			cmsCheckoutTopData: cmsFromContent(cmsCheckoutTop.content, locals)
