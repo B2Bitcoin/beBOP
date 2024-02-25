@@ -72,7 +72,7 @@ export const actions: Actions = {
 				pictureId: z.string().trim().min(1).max(500),
 				type: z.enum(['resource', 'donation', 'subscription']),
 				tagIds: z.string().array(),
-				...productBaseSchema
+				...productBaseSchema()
 			})
 			.parse({
 				...json,
@@ -168,6 +168,9 @@ export const actions: Actions = {
 						...(parsed.maxQuantityPerOrder && {
 							maxQuantityPerOrder: parsed.maxQuantityPerOrder
 						}),
+						...(parsed.restrictPaymentMethods && {
+							paymentMethods: parsed.paymentMethods ?? []
+						}),
 						actionSettings: {
 							eShop: {
 								visible: parsed.eshopVisible,
@@ -227,7 +230,7 @@ export const actions: Actions = {
 		const parsed = z
 			.object({
 				slug: zodSlug(),
-				...productBaseSchema
+				...productBaseSchema()
 			})
 			.parse({
 				...json,
@@ -307,6 +310,9 @@ export const actions: Actions = {
 							visible: parsed.googleShoppingVisible
 						}
 					},
+					...(parsed.restrictPaymentMethods && {
+						paymentMethods: parsed.paymentMethods ?? []
+					}),
 					tagIds: product.tagIds,
 					cta: product.cta,
 					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })

@@ -6,6 +6,7 @@ import type { Price } from './Order';
 import type { ProductActionSettings } from './ProductActionSettings';
 import type { Tag } from './Tag';
 import type { Timestamps } from './Timestamps';
+import type { PaymentMethod } from '$lib/server/payment-methods';
 
 export interface ProductTranslatableFields {
 	name: string;
@@ -63,6 +64,10 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 	tagIds?: Tag['_id'][];
 	maximumPrice?: Price;
 	translations?: Partial<Record<LanguageKey, Partial<ProductTranslatableFields>>>;
+	/**
+	 * The product can only be bought with the specified payment methods
+	 */
+	paymentMethods?: PaymentMethod[];
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;

@@ -29,8 +29,8 @@ export const actions = {
 		const parsed = z
 			.object({
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
-				...mapObject(pick(productBaseSchema, keys), (val) => val.optional()),
-				cta: productBaseSchema.cta.optional()
+				...mapObject(pick(productBaseSchema(), keys), (val) => val.optional()),
+				cta: productBaseSchema().cta.optional()
 			})
 			.parse(json);
 

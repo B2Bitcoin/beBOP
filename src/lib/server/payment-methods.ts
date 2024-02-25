@@ -14,12 +14,16 @@ const ALL_PAYMENT_METHODS = [
 ] as const;
 export type PaymentMethod = (typeof ALL_PAYMENT_METHODS)[number];
 
-export const paymentMethods = (role?: string, includePOSAndDisabled?: boolean) =>
+export const paymentMethods = (opts?: {
+	role?: string;
+	includePOS?: boolean;
+	includeDisabled?: boolean;
+}) =>
 	env.VITEST
-		? ALL_PAYMENT_METHODS
+		? [...ALL_PAYMENT_METHODS]
 		: [...new Set([...runtimeConfig.paymentMethods.order, ...ALL_PAYMENT_METHODS])].filter(
 				(method) => {
-					if (!includePOSAndDisabled && runtimeConfig.paymentMethods.disabled.includes(method)) {
+					if (!opts?.includeDisabled && runtimeConfig.paymentMethods.disabled.includes(method)) {
 						return false;
 					}
 					switch (method) {
@@ -32,7 +36,7 @@ export const paymentMethods = (role?: string, includePOSAndDisabled?: boolean) =
 						case 'lightning':
 							return isLightningConfigured;
 						case 'point-of-sale':
-							return role === POS_ROLE_ID || includePOSAndDisabled;
+							return opts?.role === POS_ROLE_ID || opts?.includePOS;
 					}
 				}
 		  );
