@@ -64,7 +64,7 @@ export async function load({ parent, locals }) {
 		}
 	);
 	return {
-		paymentMethods: paymentMethods(locals.user?.roleId),
+		paymentMethods: paymentMethods({ role: locals.user?.roleId }),
 		emailsEnabled,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		personalInfoConnected: {
@@ -93,9 +93,9 @@ export async function load({ parent, locals }) {
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const methods = paymentMethods(locals.user?.roleId);
+		const methods = paymentMethods({ role: locals.user?.roleId });
 		if (!methods.length) {
-			throw error(500, 'No payment methods configured for the beBOP');
+			throw error(400, 'No payment methods available');
 		}
 		const cart = await getCartFromDb({ user: userIdentifier(locals) });
 

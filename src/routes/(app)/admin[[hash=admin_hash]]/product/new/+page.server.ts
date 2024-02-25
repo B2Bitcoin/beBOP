@@ -65,6 +65,7 @@ export const actions: Actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+		json.paymentMethods = formData.getAll('paymentMethods')?.map(String);
 
 		const parsed = z
 			.object({
@@ -214,6 +215,7 @@ export const actions: Actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+		json.paymentMethods = formData.getAll('paymentMethods')?.map(String);
 
 		const { duplicateFromId } = z
 			.object({ duplicateFromId: z.string() })

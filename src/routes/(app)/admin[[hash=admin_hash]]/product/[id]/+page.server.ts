@@ -43,6 +43,7 @@ export const actions: Actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+		json.paymentMethods = formData.getAll('paymentMethods')?.map(String);
 
 		const product = await collections.products.findOne({ _id: params.id });
 

@@ -50,7 +50,7 @@ export async function load({ params, depends, locals }) {
 	);
 	return {
 		order,
-		paymentMethods: paymentMethods(locals.user?.roleId),
+		paymentMethods: paymentMethods({ role: locals.user?.roleId }),
 		digitalFiles: Promise.all(
 			digitalFiles.map(async (file) => ({
 				name: file.name,
