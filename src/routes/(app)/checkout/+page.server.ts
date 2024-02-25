@@ -63,8 +63,16 @@ export async function load({ parent, locals }) {
 			}
 		}
 	);
+
+	let methods = paymentMethods({ role: locals.user?.roleId });
+
+	for (const item of parentData.cart ?? []) {
+		if (item.product.paymentMethods) {
+			methods = methods.filter((method) => item.product.paymentMethods?.includes(method));
+		}
+	}
 	return {
-		paymentMethods: paymentMethods(locals.user?.roleId),
+		paymentMethods: methods,
 		emailsEnabled,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		personalInfoConnected: {
@@ -93,10 +101,6 @@ export async function load({ parent, locals }) {
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const methods = paymentMethods(locals.user?.roleId);
-		if (!methods.length) {
-			throw error(500, 'No payment methods configured for the beBOP');
-		}
 		const cart = await getCartFromDb({ user: userIdentifier(locals) });
 
 		if (!cart?.items.length) {
@@ -112,6 +116,18 @@ export const actions = {
 				Object.assign(omit(product, 'translations'), product.translations?.[locals.language] ?? {})
 			)
 			.toArray();
+
+		let methods = paymentMethods({ role: locals.user?.roleId });
+
+		for (const product of products) {
+			if (product.paymentMethods) {
+				methods = methods.filter((method) => product.paymentMethods?.includes(method));
+			}
+		}
+
+		if (!methods.length) {
+			throw error(400, 'No payment methods available');
+		}
 
 		const byId = Object.fromEntries(products.map((product) => [product._id, product]));
 

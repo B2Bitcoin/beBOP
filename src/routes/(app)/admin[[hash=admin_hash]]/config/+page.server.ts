@@ -8,7 +8,6 @@ import { adminPrefix } from '$lib/server/admin';
 import { z } from 'zod';
 import { redirect } from '@sveltejs/kit';
 import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
-import { POS_ROLE_ID } from '$lib/types/User.js';
 
 export async function load(event) {
 	return {
@@ -22,7 +21,7 @@ export async function load(event) {
 		vatExemptionReason: runtimeConfig.vatExemptionReason,
 		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout,
 		reserveStockInMinutes: runtimeConfig.reserveStockInMinutes,
-		allPaymentMethods: paymentMethods(POS_ROLE_ID, true),
+		allPaymentMethods: paymentMethods({ includeDisabled: true, includePOS: true }),
 		disabledPaymentMethods: runtimeConfig.paymentMethods.disabled,
 		origin: ORIGIN,
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
@@ -61,7 +60,12 @@ export const actions = {
 					.min(0)
 					.max(24 * 60 * 60 * 7),
 				paymentMethods: z.array(
-					z.enum(paymentMethods(POS_ROLE_ID, true) as [PaymentMethod, ...PaymentMethod[]])
+					z.enum(
+						paymentMethods({ includeDisabled: true, includePOS: true }) as [
+							PaymentMethod,
+							...PaymentMethod[]
+						]
+					)
 				),
 				desiredPaymentTimeout: z.number({ coerce: true }).int().min(0),
 				reserveStockInMinutes: z.number({ coerce: true }).int().min(0),
@@ -97,7 +101,7 @@ export const actions = {
 
 		const newPaymentMethods = {
 			order: orderedPaymentMethods,
-			disabled: paymentMethods(POS_ROLE_ID, true).filter(
+			disabled: paymentMethods({ includeDisabled: true, includePOS: true }).filter(
 				(method) => !orderedPaymentMethods.includes(method)
 			)
 		};

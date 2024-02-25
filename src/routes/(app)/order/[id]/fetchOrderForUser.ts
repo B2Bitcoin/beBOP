@@ -91,7 +91,8 @@ export async function fetchOrderForUser(orderId: string) {
 				type: item.product.type,
 				preorder: item.product.preorder,
 				availableDate: item.product.availableDate,
-				shipping: item.product.shipping
+				shipping: item.product.shipping,
+				paymentMethods: item.product.paymentMethods
 			},
 			vatRate: item.vatRate,
 			...(item.customPrice && { customPrice: item.customPrice }),

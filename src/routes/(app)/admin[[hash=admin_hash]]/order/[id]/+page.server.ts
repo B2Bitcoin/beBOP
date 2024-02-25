@@ -27,11 +27,24 @@ export const actions = {
 		if (remainingAmount <= 0) {
 			throw error(400, 'Order has no remaining amount to pay');
 		}
+
+		let methods = paymentMethods({ role: locals.user?.roleId });
+
+		for (const item of order.items) {
+			if (item.product.paymentMethods) {
+				methods = methods.filter((method) => item.product.paymentMethods?.includes(method));
+			}
+		}
+
+		if (!methods.length) {
+			throw error(400, 'No payment methods available');
+		}
+
 		const formData = await request.formData();
 		const parsed = z
 			.object({
 				amount: z.string().regex(/^\d+(\.\d+)?$/),
-				method: z.enum(paymentMethods(locals.user?.roleId) as [PaymentMethod, ...PaymentMethod[]])
+				method: z.enum(methods as [PaymentMethod, ...PaymentMethod[]])
 			})
 			.parse({
 				amount: formData.get('amount'),
