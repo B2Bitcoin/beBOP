@@ -48,9 +48,17 @@ export async function load({ params, depends, locals }) {
 			}
 		}
 	);
+	let methods = paymentMethods({ role: locals.user?.roleId });
+
+	for (const item of order.items) {
+		if (item.product.paymentMethods) {
+			methods = methods.filter((method) => item.product.paymentMethods?.includes(method));
+		}
+	}
+
 	return {
 		order,
-		paymentMethods: paymentMethods({ role: locals.user?.roleId }),
+		paymentMethods: methods,
 		digitalFiles: Promise.all(
 			digitalFiles.map(async (file) => ({
 				name: file.name,
