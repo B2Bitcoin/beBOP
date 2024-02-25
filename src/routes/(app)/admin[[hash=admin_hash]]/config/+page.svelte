@@ -135,6 +135,11 @@
 		Mandatory billing address
 	</label>
 
+	<label class="checkbox-label">
+		<input type="checkbox" name="noProBilling" class="form-checkbox" checked={data.noProBilling} />
+		Only allow non-business customers (no pro-billing option)
+	</label>
+
 	<h2 class="text-2xl">VAT</h2>
 
 	<label class="checkbox-label">

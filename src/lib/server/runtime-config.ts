@@ -37,6 +37,7 @@ const baseConfig = {
 	subscriptionNumber: 0,
 	themeChangeNumber: 0,
 	isMaintenance: false,
+	noProBilling: false,
 	lightningQrCodeDescription: 'brand' as 'orderUrl' | 'brand' | 'brandAndOrderNumber' | 'none',
 	maintenanceIps: '',
 	brandName: 'My beBOP',

@@ -86,7 +86,7 @@ export async function load({ parent, locals }) {
 		},
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
-		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
+		noProBilling: runtimeConfig.noProBilling,
 		vatExempted: runtimeConfig.vatExempted,
 		...(cmsCheckoutTop && {
 			cmsCheckoutTop,
@@ -182,6 +182,12 @@ export const actions = {
 					})
 					.parse(json)
 			: null;
+
+		if (runtimeConfig.noProBilling) {
+			if (billingInfo) {
+				billingInfo.billing.isCompany = false;
+			}
+		}
 
 		const notifications = z
 			.object({
