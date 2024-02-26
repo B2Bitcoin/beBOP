@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import IconRefresh from '$lib/components/icons/IconRefresh.svelte';
+	import IconUpArrow from '~icons/ant-design/arrow-up-outlined';
+	import IconDownArrow from '~icons/ant-design/arrow-down-outlined';
+
 	import { CURRENCIES } from '$lib/types/Currency';
 	import { formatDistance } from 'date-fns';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
@@ -20,7 +23,9 @@
 		}
 	}
 
-	const { countryName, sortedCountryCodes, locale } = useI18n();
+	let allPaymentMethods = data.allPaymentMethods;
+
+	const { countryName, sortedCountryCodes, locale, t } = useI18n();
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -130,6 +135,11 @@
 		Mandatory billing address
 	</label>
 
+	<label class="checkbox-label">
+		<input type="checkbox" name="noProBilling" class="form-checkbox" checked={data.noProBilling} />
+		Only allow non-business customers (no pro-billing option)
+	</label>
+
 	<h2 class="text-2xl">VAT</h2>
 
 	<label class="checkbox-label">
@@ -179,6 +189,55 @@
 	{/if}
 
 	<a href="{data.adminPrefix}/config/vat" class="underline">Manage custom VAT rates</a>
+
+	<h2 class="text-2xl">Payment methods</h2>
+
+	<div class="grid gap-4" style="grid-template-columns: max-content max-content max-content;">
+		{#each allPaymentMethods as paymentMethod, i (paymentMethod)}
+			<label class="checkbox-label">
+				<input
+					type="checkbox"
+					name="paymentMethods"
+					class="form-checkbox"
+					value={paymentMethod}
+					checked={!data.disabledPaymentMethods.includes(paymentMethod)}
+				/>
+				{t('checkout.paymentMethod.' + paymentMethod)}
+				{paymentMethod === 'point-of-sale' ? ' (only for users with POS role)' : ''}
+			</label>
+			<button
+				type="button"
+				title="Move down"
+				class:invisible={i === allPaymentMethods.length - 1}
+				on:click={() => {
+					allPaymentMethods = [
+						...allPaymentMethods.slice(0, i),
+						allPaymentMethods[i + 1],
+						allPaymentMethods[i],
+						...allPaymentMethods.slice(i + 2)
+					];
+				}}
+			>
+				<IconDownArrow />
+			</button>
+			<button
+				type="button"
+				title="Move up"
+				class:invisible={i === 0}
+				on:click={() => {
+					allPaymentMethods = [
+						...allPaymentMethods.slice(0, i - 1),
+						allPaymentMethods[i],
+						allPaymentMethods[i - 1],
+						...allPaymentMethods.slice(i + 1)
+					];
+				}}
+			>
+				<IconUpArrow />
+			</button>
+		{/each}
+	</div>
+
 	<h2 class="text-2xl">Timing</h2>
 	<label class="form-label">
 		Subscription duration
