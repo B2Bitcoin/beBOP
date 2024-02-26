@@ -111,7 +111,7 @@ export async function addToCartInDb(
 		runtimeConfig.cartMaxSeparateItems &&
 		cart.items.length >= runtimeConfig.cartMaxSeparateItems
 	) {
-		throw error(400, 'Cart has maximum product');
+		throw error(400, 'Cart has too many items');
 	}
 
 	const existingItem = cart.items.find(
