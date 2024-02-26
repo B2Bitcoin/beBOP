@@ -108,8 +108,8 @@ export async function addToCartInDb(
 
 	let cart = await getCartFromDb({ user: params.user });
 	if (
-		runtimeConfig.hasCartLimitProductLine &&
-		cart.items.length >= runtimeConfig.maxProductLinePerCart
+		runtimeConfig.cartMaxSeparateItems &&
+		cart.items.length >= runtimeConfig.cartMaxSeparateItems
 	) {
 		throw error(400, 'Cart has maximum product');
 	}

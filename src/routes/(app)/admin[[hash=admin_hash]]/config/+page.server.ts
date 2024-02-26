@@ -30,8 +30,7 @@ export async function load(event) {
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
 		noProBilling: runtimeConfig.noProBilling,
-		hasCartLimitProductLine: runtimeConfig.hasCartLimitProductLine,
-		maxProductLinePerCart: runtimeConfig.maxProductLinePerCart
+		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems
 	};
 }
 
@@ -78,8 +77,7 @@ export const actions = {
 				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)]),
 				isBillingAddressMandatory: z.boolean({ coerce: true }),
 				displayNewsletterCommercialProspection: z.boolean({ coerce: true }),
-				hasCartLimitProductLine: z.boolean({ coerce: true }),
-				maxProductLinePerCart: z.number({ coerce: true }).int().min(0)
+				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0)
 			})
 			.parse({
 				...Object.fromEntries(formData),

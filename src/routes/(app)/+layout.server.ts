@@ -175,7 +175,6 @@ export async function load(params) {
 		websiteLink: ORIGIN,
 		cart: cartData,
 		confirmationBlocksThresholds: runtimeConfig.confirmationBlocksThresholds,
-		maxProductLinePerCart: runtimeConfig.maxProductLinePerCart,
-		hasCartLimitProductLine: runtimeConfig.hasCartLimitProductLine
+		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems
 	};
 }

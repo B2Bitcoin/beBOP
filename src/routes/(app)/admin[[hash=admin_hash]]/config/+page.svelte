@@ -16,7 +16,7 @@
 	let vatExempted = data.vatExempted;
 	let vatSingleCountry = data.vatSingleCountry;
 	let priceReferenceCurrency = data.currencies.priceReference;
-	let hasCartLimitProductLine = data.hasCartLimitProductLine;
+	let hasCartLimitProductLine = !!data.cartMaxSeparateItems;
 	async function onOverwrite(event: Event) {
 		if (!confirm('Do you want to overwrite current product currencies with this one?')) {
 			event.preventDefault();
@@ -154,9 +154,9 @@
 			Set maximum product line per cart (minimum 1)
 			<input
 				type="number"
-				name="maxProductLinePerCart"
+				name="cartMaxSeparateItems"
 				class="form-input max-w-[25rem]"
-				value={data.maxProductLinePerCart}
+				value={data.cartMaxSeparateItems}
 				min="1"
 			/>
 		</label>

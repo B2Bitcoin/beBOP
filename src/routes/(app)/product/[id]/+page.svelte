@@ -408,23 +408,21 @@
 									<br />
 									{t('product.checkBackLater')}
 								</p>
+							{:else if data.cartMaxSeparateItems && data.cart?.length === data.cartMaxSeparateItems}
+								<p class="text-red-500">
+									{t('cart.reachedMaxPerLine')}
+								</p>
 							{:else if data.showCheckoutButton}
 								<button class="btn body-cta body-mainCTA" disabled={loading}
 									>{t(`product.cta.${verb}`)}</button
 								>
-								{#if data.hasCartLimitProductLine && data.cart?.length === data.maxProductLinePerCart}
-									<p class="text-red-500">
-										{t('cart.reachedMaxPerLine')}
-									</p>
-								{:else}
-									<button
-										formaction="?/addToCart"
-										disabled={loading}
-										class="btn body-cta body-secondaryCTA"
-									>
-										{t('product.cta.add')}
-									</button>
-								{/if}
+								<button
+									formaction="?/addToCart"
+									disabled={loading}
+									class="btn body-cta body-secondaryCTA"
+								>
+									{t('product.cta.add')}
+								</button>
 							{:else}
 								<button
 									formaction="?/addToCart"

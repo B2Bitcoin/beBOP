@@ -19,7 +19,7 @@
 		"empty": "Le panier est vide",
 		"items": "Produits",
 		"quantity": "Quantité",
-		"reachedMaxPerLine": "Vous avez atteint la taille maximale d'article par panier configurée par le vendeur. \nVeuillez supprimer le contenu de votre panier pour ajouter plus d'articles",
+		"reachedMaxPerLine": "Votre panier a atteint la taille maximale. Veuillez supprimer des lignes de votre panier pour ajouter plus d'articles.",
 		"remaining": "Reste après commande",
 		"remainingHelpText": "Pour les articles sur acompte, la commande actuelle est un dépôt partiel.\nPour finaliser l'achat, la somme suivante devra être payée ultérieurement.\n(La TVA est déjà incluse dans le montant)",
 		"remainingShort": "Plus tard",
