@@ -25,6 +25,10 @@
 	import { uploadPicture } from '$lib/types/Picture';
 	import { currencies } from '$lib/stores/currencies';
 	import type { Pojo } from '$lib/server/pojo';
+	import type { PaymentMethod } from '$lib/server/payment-methods';
+	import { useI18n } from '$lib/i18n';
+
+	const { t } = useI18n();
 
 	export let tags: Pick<Tag, '_id' | 'name'>[];
 	export let isNew = false;
@@ -35,6 +39,7 @@
 	export let adminPrefix: string;
 	export let vatProfiles: LayoutServerData['vatProfiles'];
 	export let defaultActionSettings: ProductActionSettings;
+	export let availablePaymentMethods: PaymentMethod[];
 	export let product: WithId<Pojo<Product>> = {
 		_id: '',
 		payWhatYouWant: false,
@@ -61,6 +66,8 @@
 		description: ''
 	};
 
+	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
+	let restrictPaymentMethods = !!product.paymentMethods;
 	let vatProfileId = product.vatProfileId || '';
 	let formElement: HTMLFormElement;
 	let priceAmountElement: HTMLInputElement;
@@ -381,6 +388,33 @@
 				Enforce deposit - prevent customer from paying the full price immediately
 			</label>
 		{/if}
+
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={restrictPaymentMethods}
+				name="restrictPaymentMethods"
+			/>
+			Restrict payment methods
+		</label>
+
+		{#if restrictPaymentMethods}
+			{#each availablePaymentMethods as method}
+				<label class="checkbox-label">
+					<input
+						class="form-checkbox"
+						type="checkbox"
+						name="paymentMethods"
+						value={method}
+						checked={paymentMethods?.includes(method)}
+					/>
+					{t('checkout.paymentMethod.' + method)}
+					{method === 'point-of-sale' ? '(only available for POS employees)' : ''}
+				</label>
+			{/each}
+		{/if}
+
 		<label class="form-label">
 			Short description
 			<textarea
@@ -660,6 +694,7 @@
 				</tr>
 			</tbody>
 		</table>
+
 		<h3 class="text-xl">Add custom CTA</h3>
 		{#each [...(product.cta || []), ...Array(3).fill( { href: '', label: '', fallback: false } )].slice(0, 3) as link, i}
 			<div class="flex gap-4">
