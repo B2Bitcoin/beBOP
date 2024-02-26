@@ -43,6 +43,7 @@
 	});
 	let alias = '';
 	let formAlias: HTMLFormElement;
+	let loading = false;
 	const { t, locale, countryName } = useI18n();
 </script>
 
@@ -76,7 +77,20 @@
 				method="post"
 				class="flex flex-col gap-2"
 				bind:this={formAlias}
-				use:enhance
+				use:enhance={() => {
+					errorMessage = '';
+					return async ({ result }) => {
+						loading = false;
+
+						if (result.type === 'error') {
+							errorMessage = result.error.message;
+							return;
+						}
+						await invalidate(UrlDependency.Cart);
+						document.body.scrollIntoView();
+					};
+				}}
+				on:submit|preventDefault={() => (loading = true)}
 			>
 				<div class="gap-4 flex flex-col md:flex-row">
 					<label class="form-label w-[20em]">
@@ -86,14 +100,14 @@
 							type="text"
 							name="alias"
 							bind:value={alias}
-							on:change={() => formAlias.submit()}
+							disabled={loading}
 						/>
 					</label>
 				</div>
 			</form>
 		{/if}
 		{#if errorMessage && !errorProductId}
-			<p class="text-red-600">{errorMessage}</p>
+			<p class="text-red-500">{errorMessage}</p>
 		{/if}
 
 		{#if items.length}
