@@ -119,7 +119,9 @@ export const load = async ({ params, locals }) => {
 };
 
 async function addToCart({ params, request, locals }: RequestEvent) {
-	const product = await collections.products.findOne({ _id: params.id });
+	const product = await collections.products.findOne({
+		alias: params.id
+	});
 
 	if (!product) {
 		throw error(404, 'Product not found');
@@ -147,6 +149,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
 			deposit: formData.get('deposit') || undefined
 		});
+
 	const customPrice =
 		customPriceAmount && customPriceCurrency
 			? {
@@ -159,6 +162,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		...(product.payWhatYouWant && { customPrice }),
 		deposit: deposit === 'partial'
 	});
+	throw redirect(303, request.headers.get('referer') || '/cart');
 }
 
 export const actions = {
