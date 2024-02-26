@@ -71,6 +71,7 @@ export async function load(params) {
 								| 'maxQuantityPerOrder'
 								| 'stock'
 								| 'vatProfileId'
+								| 'paymentMethods'
 							>
 						>(
 							{ _id: item.productId },
@@ -96,7 +97,8 @@ export async function load(params) {
 									standalone: 1,
 									maxQuantityPerOrder: 1,
 									stock: 1,
-									vatProfileId: 1
+									vatProfileId: 1,
+									paymentMethods: 1
 								}
 							}
 						);

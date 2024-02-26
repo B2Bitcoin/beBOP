@@ -240,16 +240,18 @@
 						{t('checkout.differentBillingAddress')}
 					</label>
 				{/if}
-				<label class="col-span-6 checkbox-label">
-					<input
-						type="checkbox"
-						class="form-checkbox"
-						form="checkout"
-						name="billing.isCompany"
-						bind:checked={isProfessionalOrder}
-					/>
-					{t('checkout.isProBilling')}
-				</label>
+				{#if !data.noProBilling}
+					<label class="col-span-6 checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							form="checkout"
+							name="billing.isCompany"
+							bind:checked={isProfessionalOrder}
+						/>
+						{t('checkout.isProBilling')}
+					</label>
+				{/if}
 			</section>
 
 			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory) || isProfessionalOrder}
@@ -385,9 +387,9 @@
 								required
 							>
 								{#each paymentMethods as paymentMethod}
-									<option value={paymentMethod}
-										>{t('checkout.paymentMethod.' + paymentMethod)}</option
-									>
+									<option value={paymentMethod}>
+										{t('checkout.paymentMethod.' + paymentMethod)}
+									</option>
 								{/each}
 							</select>
 							{#if paymentMethods.length === 0}

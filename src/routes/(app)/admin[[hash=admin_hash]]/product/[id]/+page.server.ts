@@ -43,6 +43,7 @@ export const actions: Actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+		json.paymentMethods = formData.getAll('paymentMethods')?.map(String);
 
 		const product = await collections.products.findOne({ _id: params.id });
 
@@ -61,7 +62,7 @@ export const actions: Actions = {
 		const parsed = z
 			.object({
 				tagIds: z.string().array(),
-				...productBaseSchema,
+				...productBaseSchema(),
 				changedDate: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
@@ -161,7 +162,10 @@ export const actions: Actions = {
 					contentBefore: parsed.contentBefore,
 					contentAfter: parsed.contentAfter,
 					updatedAt: new Date(),
-					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
+					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) }),
+					...(parsed.restrictPaymentMethods && {
+						paymentMethods: parsed.paymentMethods ?? []
+					})
 				},
 				$unset: {
 					...(!parsed.customPreorderText && { customPreorderText: '' }),
@@ -170,7 +174,8 @@ export const actions: Actions = {
 					...(parsed.stock === undefined && { stock: '' }),
 					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' }),
 					...(!parsed.depositPercentage && { deposit: '' }),
-					...(!parsed.vatProfileId && { vatProfileId: '' })
+					...(!parsed.vatProfileId && { vatProfileId: '' }),
+					...(!parsed.restrictPaymentMethods && { paymentMethods: '' })
 				}
 			}
 		);

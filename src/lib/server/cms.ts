@@ -16,7 +16,16 @@ import type { Countdown } from '$lib/types/Countdown';
 import type { Gallery } from '$lib/types/Gallery';
 
 const window = new JSDOM('').window;
+
 const purify = DOMPurify(window);
+
+purify.addHook('afterSanitizeAttributes', function (node) {
+	// set all elements owning target to target=_blank
+	if ('target' in node) {
+		node.setAttribute('target', '_blank');
+		node.setAttribute('rel', 'noopener');
+	}
+});
 
 export async function cmsFromContent(
 	content: string,
@@ -150,7 +159,7 @@ export async function cmsFromContent(
 		const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
 		tokens.push({
 			type: 'html',
-			raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html)
+			raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html, { ADD_ATTR: ['target'] })
 		});
 		if (match.groups?.slug) {
 			switch (match.type) {

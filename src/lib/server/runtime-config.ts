@@ -20,6 +20,7 @@ import { enhancedLanguages, languages, locales, type LanguageKey } from '$lib/tr
 import { merge } from 'lodash-es';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import type { CountryAlpha2 } from '$lib/types/Country';
+import type { PaymentMethod } from './payment-methods';
 
 const baseConfig = {
 	adminHash: '',
@@ -32,9 +33,11 @@ const baseConfig = {
 	 */
 	priceReferenceCurrency: 'SAT' as Currency,
 	orderNumber: 0,
+	paymentMethods: { order: [] as PaymentMethod[], disabled: [] as PaymentMethod[] },
 	subscriptionNumber: 0,
 	themeChangeNumber: 0,
 	isMaintenance: false,
+	noProBilling: false,
 	lightningQrCodeDescription: 'brand' as 'orderUrl' | 'brand' | 'brandAndOrderNumber' | 'none',
 	maintenanceIps: '',
 	brandName: 'My beBOP',
