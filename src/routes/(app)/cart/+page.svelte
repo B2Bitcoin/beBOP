@@ -86,8 +86,6 @@
 							errorMessage = result.error.message;
 							return;
 						}
-						await invalidate(UrlDependency.Cart);
-						document.body.scrollIntoView();
 					};
 				}}
 				on:submit|preventDefault={() => (loading = true)}
