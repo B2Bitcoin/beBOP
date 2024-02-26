@@ -174,6 +174,8 @@ export async function load(params) {
 		deliveryFees: runtimeConfig.deliveryFees,
 		websiteLink: ORIGIN,
 		cart: cartData,
-		confirmationBlocksThresholds: runtimeConfig.confirmationBlocksThresholds
+		confirmationBlocksThresholds: runtimeConfig.confirmationBlocksThresholds,
+		maxProductLinePerCart: runtimeConfig.maxProductLinePerCart,
+		hasCartLimitProductLine: runtimeConfig.hasCartLimitProductLine
 	};
 }

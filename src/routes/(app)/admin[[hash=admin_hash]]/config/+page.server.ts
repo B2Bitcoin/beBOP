@@ -29,7 +29,9 @@ export async function load(event) {
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
-		noProBilling: runtimeConfig.noProBilling
+		noProBilling: runtimeConfig.noProBilling,
+		hasCartLimitProductLine: runtimeConfig.hasCartLimitProductLine,
+		maxProductLinePerCart: runtimeConfig.maxProductLinePerCart
 	};
 }
 
@@ -75,7 +77,9 @@ export const actions = {
 				collectIPOnDeliverylessOrders: z.boolean({ coerce: true }),
 				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)]),
 				isBillingAddressMandatory: z.boolean({ coerce: true }),
-				displayNewsletterCommercialProspection: z.boolean({ coerce: true })
+				displayNewsletterCommercialProspection: z.boolean({ coerce: true }),
+				hasCartLimitProductLine: z.boolean({ coerce: true }),
+				maxProductLinePerCart: z.number({ coerce: true }).int().min(0)
 			})
 			.parse({
 				...Object.fromEntries(formData),

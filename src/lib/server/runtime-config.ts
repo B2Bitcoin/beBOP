@@ -123,7 +123,8 @@ const baseConfig = {
 	displayPoweredBy: false,
 	displayCompanyInfo: false,
 	displayNewsletterCommercialProspection: false,
-
+	hasCartLimitProductLine: false,
+	maxProductLinePerCart: 1,
 	websiteTitle: 'B2Bitcoin beBOP',
 	websiteShortDescription: "B2Bitcoin's beBOP store",
 	emailTemplates: {

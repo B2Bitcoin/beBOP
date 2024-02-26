@@ -412,13 +412,19 @@
 								<button class="btn body-cta body-mainCTA" disabled={loading}
 									>{t(`product.cta.${verb}`)}</button
 								>
-								<button
-									formaction="?/addToCart"
-									disabled={loading}
-									class="btn body-cta body-secondaryCTA"
-								>
-									{t('product.cta.add')}
-								</button>
+								{#if data.hasCartLimitProductLine && data.cart?.length === data.maxProductLinePerCart}
+									<p class="text-red-500">
+										{t('cart.reachedMaxPerLine')}
+									</p>
+								{:else}
+									<button
+										formaction="?/addToCart"
+										disabled={loading}
+										class="btn body-cta body-secondaryCTA"
+									>
+										{t('product.cta.add')}
+									</button>
+								{/if}
 							{:else}
 								<button
 									formaction="?/addToCart"

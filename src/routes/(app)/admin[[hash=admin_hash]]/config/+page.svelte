@@ -16,7 +16,7 @@
 	let vatExempted = data.vatExempted;
 	let vatSingleCountry = data.vatSingleCountry;
 	let priceReferenceCurrency = data.currencies.priceReference;
-
+	let hasCartLimitProductLine = data.hasCartLimitProductLine;
 	async function onOverwrite(event: Event) {
 		if (!confirm('Do you want to overwrite current product currencies with this one?')) {
 			event.preventDefault();
@@ -140,6 +140,27 @@
 		Only allow non-business customers (no pro-billing option)
 	</label>
 
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="hasCartLimitProductLine"
+			class="form-checkbox"
+			bind:checked={hasCartLimitProductLine}
+		/>
+		Limit product line per cart (for law purpose and small business )
+	</label>
+	{#if hasCartLimitProductLine}
+		<label class="form-label">
+			Set maximum product line per cart (minimum 1)
+			<input
+				type="number"
+				name="maxProductLinePerCart"
+				class="form-input max-w-[25rem]"
+				value={data.maxProductLinePerCart}
+				min="1"
+			/>
+		</label>
+	{/if}
 	<h2 class="text-2xl">VAT</h2>
 
 	<label class="checkbox-label">

@@ -19,6 +19,7 @@
 		"empty": "Cart is empty",
 		"items": "Products",
 		"quantity": "Quantity",
+		"reachedMaxPerLine": "You have reached the maximum item size per cart configured by the seller. Please delete the contents of your cart to add more articles",
 		"remaining": "Remaining after checkout",
 		"remainingHelpText": "For items with deposits, the current order is a partial payment.\nTo complete the purchase, you will need to make another payment with the following amount.\n(VAT is already included in the amount)",
 		"remainingShort": "Later",
