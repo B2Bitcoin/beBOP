@@ -28,7 +28,8 @@ export async function load(event) {
 		adminHash: runtimeConfig.adminHash,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
-		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection
+		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
+		noProBilling: runtimeConfig.noProBilling
 	};
 }
 
@@ -42,6 +43,7 @@ export const actions = {
 				isMaintenance: z.boolean({ coerce: true }),
 				maintenanceIps: z.string(),
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
+				noProBilling: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),
 				subscriptionDuration: z.enum(['month', 'day', 'hour']),
 				mainCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT')]),

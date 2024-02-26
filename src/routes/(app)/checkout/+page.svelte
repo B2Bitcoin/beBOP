@@ -240,16 +240,18 @@
 						{t('checkout.differentBillingAddress')}
 					</label>
 				{/if}
-				<label class="col-span-6 checkbox-label">
-					<input
-						type="checkbox"
-						class="form-checkbox"
-						form="checkout"
-						name="billing.isCompany"
-						bind:checked={isProfessionalOrder}
-					/>
-					{t('checkout.isProBilling')}
-				</label>
+				{#if !data.noProBilling}
+					<label class="col-span-6 checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							form="checkout"
+							name="billing.isCompany"
+							bind:checked={isProfessionalOrder}
+						/>
+						{t('checkout.isProBilling')}
+					</label>
+				{/if}
 			</section>
 
 			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory) || isProfessionalOrder}
