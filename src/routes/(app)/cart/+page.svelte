@@ -86,6 +86,7 @@
 							errorMessage = result.error.message;
 							return;
 						}
+						await invalidate(UrlDependency.Cart);
 					};
 				}}
 				on:submit|preventDefault={() => (loading = true)}
