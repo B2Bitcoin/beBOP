@@ -43,7 +43,7 @@
 
 <div class="mt-4 text-right">
 	{#if data.order.notifications.paymentStatus.email}
-		<p>{data.order.notifications.paymentStatus.email}</p>
+		<!-- <p>{data.order.notifications.paymentStatus.email}</p> -->
 	{/if}
 	{#if data.order.billingAddress}
 		{#if differentAddress}
