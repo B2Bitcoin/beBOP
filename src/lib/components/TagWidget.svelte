@@ -32,7 +32,7 @@
 			pictureType: 'full'
 		},
 		'var-1-noBG': {
-			component: TagWidgetVariation1noBG.svelte,
+			component: TagWidgetVariation1noBG,
 			pictureType: 'full'
 		},
 		'var-2': {
