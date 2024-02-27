@@ -107,6 +107,12 @@ export async function addToCartInDb(
 		: undefined;
 
 	let cart = await getCartFromDb({ user: params.user });
+	if (
+		runtimeConfig.cartMaxSeparateItems &&
+		cart.items.length >= runtimeConfig.cartMaxSeparateItems
+	) {
+		throw error(400, 'Cart has too many items');
+	}
 
 	const existingItem = cart.items.find(
 		(item) =>

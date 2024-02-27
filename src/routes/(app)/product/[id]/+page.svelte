@@ -408,6 +408,10 @@
 									<br />
 									{t('product.checkBackLater')}
 								</p>
+							{:else if data.cartMaxSeparateItems && data.cart?.length === data.cartMaxSeparateItems}
+								<p class="text-red-500">
+									{t('cart.reachedMaxPerLine')}
+								</p>
 							{:else if data.showCheckoutButton}
 								<button class="btn body-cta body-mainCTA" disabled={loading}
 									>{t(`product.cta.${verb}`)}</button
