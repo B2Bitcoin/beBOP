@@ -14,5 +14,6 @@
 		<TagWidget tag={data.tag} displayOption="var-4" pictures={data.pictures} />
 		<TagWidget tag={data.tag} displayOption="var-5" pictures={data.pictures} />
 		<TagWidget tag={data.tag} displayOption="var-6" pictures={data.pictures} />
+		<TagWidget tag={data.tag} displayOption="var-1-noBG" pictures={data.pictures} />
 	</article>
 </main>
