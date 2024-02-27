@@ -135,10 +135,7 @@
 							>
 							<PriceTag
 								class="text-base text-gray-600 truncate"
-								amount={(item.quantity *
-									item.product.price.amount *
-									(item.depositPercentage ?? 100)) /
-									100}
+								amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
 								currency={price.currency}
 								secondary
 							/>
