@@ -23,8 +23,12 @@
 			<h2 class="text-2xl body-title pb-2 uppercase">{gallery.principal.title}</h2>
 		</div>
 		<div class="btn tagWidget-cta text-xl text-center w-auto m-2 p-4">
-			<a class="tagWidget-hyperlink" href={gallery.principal.cta.href}
-				>{gallery.principal.cta.label}</a
+			<a
+				class="tagWidget-hyperlink"
+				href={gallery.principal.cta.href}
+				target={gallery.principal.cta.href.startsWith('http') || gallery.principal.cta.openNewTab
+					? '_blank'
+					: '_self'}>{gallery.principal.cta.label}</a
 			>
 		</div>
 		<div class="tagWidget tagWidget-main m-2 p-4">
@@ -51,7 +55,13 @@
 				</p>
 			</div>
 			<div class="btn tagWidget-cta text-xl text-center w-auto p-4 m-2">
-				<a class="tagWidget-hyperlink" href={secondary.cta.href}>{secondary.cta.label}</a>
+				<a
+					class="tagWidget-hyperlink"
+					href={secondary.cta.href}
+					target={secondary.cta.href.startsWith('http') || secondary.cta.openNewTab
+						? '_blank'
+						: '_self'}>{secondary.cta.label}</a
+				>
 			</div>
 		</div>
 	{/each}

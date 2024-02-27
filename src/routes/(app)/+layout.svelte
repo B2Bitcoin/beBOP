@@ -166,7 +166,12 @@
 				class="header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
 			>
 				{#each data.links.topbar as link}
-					<a class="py-4" href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
+					<a
+						class="py-4"
+						href={link.href}
+						target={link.href.startsWith('http') ? '_blank' : '_self'}
+						data-sveltekit-preload-data="off">{link.label}</a
+					>
 				{/each}
 			</nav>
 		{/if}
@@ -184,8 +189,11 @@
 						<a href="/categories" class="flex gap-2 items-center">Categories <IconDownArrow /></a>
 					{/if}
 					{#each data.links.navbar as link}
-						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off"
-							>{link.label}</a
+						<a
+							href={link.href}
+							class="hidden sm:inline"
+							target={link.href.startsWith('http') ? '_blank' : '_self'}
+							data-sveltekit-preload-data="off">{link.label}</a
 						>
 					{/each}
 				</nav>
@@ -506,7 +514,11 @@
 				<div class="flex flex-col gap-4 items-center">
 					<div class="flex flex-row gap-2">
 						{#each data.links.footer as link}
-							<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
+							<a
+								href={link.href}
+								target={link.href.startsWith('http') ? '_blank' : '_self'}
+								data-sveltekit-preload-data="off">{link.label}</a
+							>
 						{/each}
 					</div>
 					<div class="flex flex-row gap-1">

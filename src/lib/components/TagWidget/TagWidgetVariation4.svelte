@@ -25,7 +25,12 @@
 		<PictureComponent {picture} class="w-[15em]" />
 		{#if tag.cta.length}
 			<div class="btn tagWidget-cta text-xl absolute bottom-0 left-0 text-center p-2 m-2">
-				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
+				<a
+					class="tagWidget-hyperlink"
+					href={tag.cta[0].href}
+					target={tag.cta[0].href.startsWith('http') || tag.cta[0].openNewTab ? '_blank' : '_self'}
+					>{tag.cta[0].label}</a
+				>
 			</div>
 		{/if}
 	</div>

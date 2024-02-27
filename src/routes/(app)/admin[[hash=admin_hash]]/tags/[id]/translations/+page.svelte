@@ -72,7 +72,7 @@
 					type="text"
 					name="cta[{i}].label"
 					class="form-input"
-					value={data.tag.translations?.[language]?.cta?.[i]?.label ?? ''}
+					value={data.tag.translations?.[language]?.cta?.[i]?.label ?? data.tag.cta[i]?.label ?? ''}
 					placeholder={data.tag.cta[i]?.label || ''}
 				/>
 			</label>
@@ -82,37 +82,49 @@
 					type="text"
 					name="cta[{i}].href"
 					class="form-input"
-					value={data.tag.translations?.[language]?.cta?.[i]?.href ?? ''}
+					value={data.tag.translations?.[language]?.cta?.[i]?.href ?? data.tag.cta[i]?.href ?? ''}
 					placeholder={data.tag.cta[i]?.href || ''}
 				/>
 			</label>
-		</div>
-	{/each}
-	<h3 class="text-xl">Links menu</h3>
-	{#each [0, 1, 2, 3, 4] as i}
-		<div class="flex gap-4">
-			<label class="form-label">
-				Text
+			<label class="checkbox-label mt-4">
 				<input
-					type="text"
-					name="menu[{i}].label"
-					class="form-input"
-					placeholder={data.tag.menu[i]?.label || ''}
-					value={data.tag.translations?.[language]?.menu?.[i]?.label ?? ''}
+					class="form-checkbox"
+					type="checkbox"
+					name="cta[{i}].openNewTab"
+					checked={data.tag.translations?.[language]?.cta?.[i]?.openNewTab ??
+						data.tag.cta[i]?.openNewTab}
 				/>
-			</label>
-			<label class="form-label">
-				Url
-				<input
-					type="text"
-					name="menu[{i}].href"
-					class="form-input"
-					placeholder={data.tag.menu[i]?.href || ''}
-					value={data.tag.translations?.[language]?.menu?.[i]?.href ?? ''}
-				/>
+				Open in new tab
 			</label>
 		</div>
 	{/each}
+	{#if 0}
+		<h3 class="text-xl">Links menu</h3>
+		{#each [0, 1, 2, 3, 4] as i}
+			<div class="flex gap-4">
+				<label class="form-label">
+					Text
+					<input
+						type="text"
+						name="menu[{i}].label"
+						class="form-input"
+						placeholder={data.tag.menu[i]?.label || ''}
+						value={data.tag.translations?.[language]?.menu?.[i]?.label ?? ''}
+					/>
+				</label>
+				<label class="form-label">
+					Url
+					<input
+						type="text"
+						name="menu[{i}].href"
+						class="form-input"
+						placeholder={data.tag.menu[i]?.href || ''}
+						value={data.tag.translations?.[language]?.menu?.[i]?.href ?? ''}
+					/>
+				</label>
+			</div>
+		{/each}
+	{/if}
 
 	<button class="btn btn-black self-start" type="submit">Save</button>
 </form>

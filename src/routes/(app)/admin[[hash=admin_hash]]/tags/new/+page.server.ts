@@ -38,11 +38,17 @@ export const actions: Actions = {
 				wideBannerId: z.string().trim().max(500),
 				slimBannerId: z.string().trim().max(500),
 				avatarId: z.string().trim().max(500),
-				ctaLinks: z
-					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
+				cta: z
+					.array(
+						z.object({
+							href: z.string().trim(),
+							label: z.string().trim(),
+							openNewTab: z.boolean({ coerce: true }).default(false)
+						})
+					)
 					.optional()
 					.default([]),
-				menuLinks: z
+				menu: z
 					.array(z.object({ href: z.string().trim(), label: z.string().trim() }))
 					.optional()
 					.default([]),
@@ -111,8 +117,8 @@ export const actions: Actions = {
 			widgetUseOnly: parsed.widgetUseOnly,
 			productTagging: parsed.productTagging,
 			useLightDark: parsed.useLightDark,
-			cta: parsed.ctaLinks?.filter((ctaLink) => ctaLink.label && ctaLink.href),
-			menu: parsed.menuLinks?.filter((menuLink) => menuLink.label && menuLink.href)
+			cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+			menu: parsed.menu?.filter((menuLink) => menuLink.label && menuLink.href)
 		});
 		throw redirect(303, `${adminPrefix()}/tags/${parsed.slug}`);
 	}
