@@ -42,7 +42,16 @@ export const actions = {
 		const data = await request.formData();
 
 		// We don't allow changing the currency, or the mode
-		const { name, goalAmount, progress, productIds, beginsAt, endsAt } = z
+		const {
+			name,
+			goalAmount,
+			progress,
+			productIds,
+			beginsAt,
+			endsAt,
+			progressChanged,
+			oldProgress
+		} = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				productIds: z.string().array(),
@@ -54,6 +63,11 @@ export const actions = {
 					.string()
 					.regex(/^\d+(\.\d+)?$/)
 					.default('0'),
+				oldProgress: z
+					.string()
+					.regex(/^\d+(\.\d+)?$/)
+					.default('0'),
+				progressChanged: z.boolean({ coerce: true }),
 				beginsAt: z.date({ coerce: true }),
 				endsAt: z.date({ coerce: true })
 			})
@@ -65,7 +79,9 @@ export const actions = {
 				goalAmount: data.get('goalAmount'),
 				progress: data.get('progress'),
 				beginsAt: data.get('beginsAt'),
-				endsAt: data.get('endsAt')
+				endsAt: data.get('endsAt'),
+				progressChanged: data.get('progressChanged'),
+				oldProgress: data.get('oldProgress')
 			});
 
 		const amount =
@@ -76,13 +92,18 @@ export const actions = {
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
 				? parsePriceAmount(progress, challenge.goal.currency)
 				: parseInt(goalAmount);
+		const parsedOldProgress =
+			challenge.mode === 'moneyAmount' && challenge.goal.currency
+				? parsePriceAmount(oldProgress, challenge.goal.currency)
+				: parseInt(goalAmount);
 		if (amount < 0 || isNaN(amount)) {
 			throw error(400, 'Invalid amount');
 		}
 
-		await collections.challenges.updateOne(
+		const updateResult = await collections.challenges.updateOne(
 			{
-				_id: challenge._id
+				_id: challenge._id,
+				...(progressChanged && { progress: parsedOldProgress })
 			},
 			{
 				$set: {
@@ -96,6 +117,13 @@ export const actions = {
 				}
 			}
 		);
+
+		if (!updateResult.matchedCount && progressChanged) {
+			throw error(
+				409,
+				"A new order was made in parallel which updated the challenge's progress. Please try again"
+			);
+		}
 	},
 
 	delete: async function ({ params }) {
