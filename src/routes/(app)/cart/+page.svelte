@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { applyAction, enhance } from '$app/forms';
-	import { goto, invalidate } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
@@ -84,8 +84,13 @@
 
 						if (result.type === 'error') {
 							errorMessage = result.error.message;
+							alias = '';
 							return;
 						}
+						if (result.type === 'redirect') {
+							alias = '';
+						}
+
 						await invalidate(UrlDependency.Cart);
 					};
 				}}
