@@ -86,7 +86,8 @@ export const actions = {
 
 		const { paymentMethods: orderedPaymentMethods, ...runtimeConfigUpdates } = {
 			...result,
-			secondaryCurrency: result.secondaryCurrency || null
+			secondaryCurrency: result.secondaryCurrency || null,
+			cartMaxSeparateItems: result.cartMaxSeparateItems === 0 ? null : result.cartMaxSeparateItems
 		};
 
 		for (const key of typedKeys(runtimeConfigUpdates)) {
