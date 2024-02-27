@@ -233,7 +233,7 @@
 				name="alias"
 				placeholder="alias"
 				step="any"
-				value={product.alias?.[1] ?? ''}
+				value={duplicateFromId ? '' : product.alias?.[1] ?? ''}
 			/>
 		</label>
 		<div class="gap-4 flex flex-col md:flex-row">
