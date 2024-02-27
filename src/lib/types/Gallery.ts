@@ -7,6 +7,7 @@ export interface GalleryBase {
 	cta: {
 		label: string;
 		href: string;
+		openNewTab?: boolean;
 	};
 	pictureId?: string;
 }

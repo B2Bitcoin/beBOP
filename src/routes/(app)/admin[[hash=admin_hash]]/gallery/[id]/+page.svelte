@@ -52,13 +52,7 @@
 	}
 </script>
 
-<form
-	method="post"
-	class="flex flex-col gap-4"
-	action="?/update"
-	bind:this={formElement}
-	on:submit|preventDefault={handleSubmit}
->
+<form method="post" class="flex flex-col gap-4" action="?/update" bind:this={formElement}>
 	<label class="form-label">
 		Gallery name
 		<input
@@ -124,6 +118,15 @@
 				class="form-input"
 				value={data.gallery.principal.cta.href}
 			/>
+		</label>
+		<label class="checkbox-label mt-4">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="principal.cta.openNewTab"
+				checked={data.gallery.principal.cta.openNewTab}
+			/>
+			Open in new tab
 		</label>
 	</div>
 
@@ -198,6 +201,15 @@
 					value={data.gallery.secondary[i]?.cta.href || ''}
 				/>
 			</label>
+			<label class="checkbox-label mt-4">
+				<input
+					class="form-checkbox"
+					type="checkbox"
+					name="secondary[{i}].cta.openNewTab"
+					checked={data.gallery.secondary[i]?.cta.openNewTab}
+				/>
+				Open in new tab
+			</label>
 		</div>
 	{/each}
 
@@ -207,6 +219,7 @@
 			class="btn btn-blue self-start text-white"
 			value="Update"
 			disabled={submitting}
+			on:click|preventDefault={handleSubmit}
 		/>
 		<a href="/gallery/{data.gallery._id}" class="btn btn-gray">View</a>
 

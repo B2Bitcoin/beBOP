@@ -193,27 +193,33 @@
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text
-				<input type="text" name="ctaLinks[{i}].label" class="form-input" />
+				<input type="text" name="cta[{i}].label" class="form-input" />
 			</label>
 			<label class="form-label">
 				Url
-				<input type="text" name="ctaLinks[{i}].href" class="form-input" />
+				<input type="text" name="cta[{i}].href" class="form-input" />
+			</label>
+			<label class="checkbox-label mt-4">
+				<input class="form-checkbox" type="checkbox" name="cta[{i}].openNewTab" />
+				Open in new tab
 			</label>
 		</div>
 	{/each}
-	<h3 class="text-xl">Links menu</h3>
-	{#each [0, 1, 2, 3, 4] as i}
-		<div class="flex gap-4">
-			<label class="form-label">
-				Text
-				<input type="text" name="menuLinks[{i}].label" class="form-input" />
-			</label>
-			<label class="form-label">
-				Url
-				<input type="text" name="menuLinks[{i}].href" class="form-input" />
-			</label>
-		</div>
-	{/each}
+	{#if 0}
+		<h3 class="text-xl">Links menu</h3>
+		{#each [0, 1, 2, 3, 4] as i}
+			<div class="flex gap-4">
+				<label class="form-label">
+					Text
+					<input type="text" name="menu[{i}].label" class="form-input" />
+				</label>
+				<label class="form-label">
+					Url
+					<input type="text" name="menu[{i}].href" class="form-input" />
+				</label>
+			</div>
+		{/each}
+	{/if}
 	<label class="form-label">
 		CSS override
 		<textarea name="cssOverride" cols="30" rows="10" maxlength="10000" class="form-input" />

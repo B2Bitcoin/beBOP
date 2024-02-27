@@ -95,6 +95,10 @@
 			Url
 			<input type="text" name="principal.cta.href" class="form-input" />
 		</label>
+		<label class="checkbox-label mt-4">
+			<input class="form-checkbox" type="checkbox" name="principal.cta.openNewTab" />
+			Open in new tab
+		</label>
 	</div>
 
 	<h3 class="text-xl">Secondary Gallery</h3>
@@ -138,6 +142,10 @@
 			<label class="form-label">
 				Url
 				<input type="text" name="secondary[{i}].cta.href" class="form-input" />
+			</label>
+			<label class="checkbox-label mt-4">
+				<input class="form-checkbox" type="checkbox" name="secondary[{i}].cta.openNewTab" />
+				Open in new tab
 			</label>
 		</div>
 	{/each}
