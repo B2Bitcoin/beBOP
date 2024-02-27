@@ -42,11 +42,15 @@ export const actions = {
 		const data = await request.formData();
 
 		// We don't allow changing the currency, or the mode
-		const { name, goalAmount, productIds, beginsAt, endsAt } = z
+		const { name, goalAmount, progress, productIds, beginsAt, endsAt } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				productIds: z.string().array(),
 				goalAmount: z
+					.string()
+					.regex(/^\d+(\.\d+)?$/)
+					.default('0'),
+				progress: z
 					.string()
 					.regex(/^\d+(\.\d+)?$/)
 					.default('0'),
@@ -59,6 +63,7 @@ export const actions = {
 					(x: { value: string }) => x.value
 				),
 				goalAmount: data.get('goalAmount'),
+				progress: data.get('progress'),
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
@@ -67,7 +72,10 @@ export const actions = {
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
 				? parsePriceAmount(goalAmount, challenge.goal.currency)
 				: parseInt(goalAmount);
-
+		const parsedProgress =
+			challenge.mode === 'moneyAmount' && challenge.goal.currency
+				? parsePriceAmount(progress, challenge.goal.currency)
+				: parseInt(goalAmount);
 		if (amount < 0 || isNaN(amount)) {
 			throw error(400, 'Invalid amount');
 		}
@@ -81,6 +89,7 @@ export const actions = {
 					name,
 					productIds,
 					'goal.amount': amount,
+					progress: parsedProgress,
 					beginsAt,
 					endsAt,
 					updatedAt: new Date()

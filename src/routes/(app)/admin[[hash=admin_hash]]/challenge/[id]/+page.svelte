@@ -84,8 +84,13 @@
 
 	<label class="form-label">
 		Progress
-
-		<input class="form-input" type="number" readonly value={data.challenge.progress} step="any" />
+		<input
+			class="form-input"
+			name="progress"
+			type="number"
+			value={data.challenge.progress}
+			step="any"
+		/>
 	</label>
 
 	<label class="form-label">
