@@ -20,8 +20,11 @@ export async function load() {
 			shippingAddress: order.shippingAddress,
 			notes: order.notes?.map(pojo),
 			user: {
-				...order.user,
-				...(order.user && { userId: order.user.userId?.toString() })
+				...(order.user && {
+					userId: order.user.userId?.toString(),
+					npub: order.user.npub,
+					email: order.user.email
+				})
 			},
 			ipCountry: countryFromIp(order.clientIp ?? '')
 		}))
