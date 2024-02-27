@@ -84,8 +84,13 @@
 
 						if (result.type === 'error') {
 							errorMessage = result.error.message;
+							alias = '';
 							return;
 						}
+						if (result.type === 'redirect') {
+							alias = '';
+						}
+
 						await invalidate(UrlDependency.Cart);
 					};
 				}}
