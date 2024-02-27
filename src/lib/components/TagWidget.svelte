@@ -11,7 +11,7 @@
 	import TagWidgetVariation6 from './TagWidget/TagWidgetVariation6.svelte';
 	import TagWidgetVariation1CtAless from './TagWidget/TagWidgetVariation1CTAless.svelte';
 	import TagWidgetVariation4Reverse from './TagWidget/TagWidgetVariation4Reverse.svelte';
-	import TagWidgetVariation4Reverse from './TagWidget/TagWidgetVariation1noBG.svelte';
+	import TagWidgetVariation1noBG from './TagWidget/TagWidgetVariation1noBG.svelte';
 
 	let className = '';
 	export { className as class };
