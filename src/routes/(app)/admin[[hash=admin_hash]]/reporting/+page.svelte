@@ -98,13 +98,25 @@
 	}
 
 	function quantityOfProduct(month: number, year: number) {
-		const productQuantities: Record<string, number> = {};
+		const productQuantities: Record<string, { quantity: number; total: number }> = {};
 		getOrderByMonthYear(month - 1, year).forEach((order) => {
 			order.items.forEach((item) => {
 				if (productQuantities[item.product._id]) {
-					productQuantities[item.product._id] += item.quantity;
+					productQuantities[item.product._id].quantity += item.quantity;
+					productQuantities[item.product._id].total += toCurrency(
+						data.currencies.main,
+						item.customPrice?.amount ?? item.product.price.amount,
+						item.product.price.currency
+					);
 				} else {
-					productQuantities[item.product._id] = item.quantity;
+					productQuantities[item.product._id] = {
+						quantity: item.quantity,
+						total: toCurrency(
+							data.currencies.main,
+							item.customPrice?.amount ?? item.product.price.amount,
+							item.product.price.currency
+						)
+					};
 				}
 			});
 		});
@@ -281,7 +293,7 @@
 									>{(toCurrency(
 										data.currencies.main,
 										item.product.price.amount,
-										item.product.price.currency
+										item.customPrice?.currency ?? item.product.price.currency
 									) *
 										(item.product.deposit?.percentage ?? 100) *
 										item.quantity) /
@@ -454,20 +466,14 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each Object.entries(quantityOfProductMonthYear) as [productId, quantity]}
+					{#each Object.entries(quantityOfProductMonthYear) as [productId, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
 							<td class="border border-gray-300 px-4 py-2">{fetchProductById(productId)?.name}</td>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
 							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
-							<td class="border border-gray-300 px-4 py-2"
-								>{toCurrency(
-									data.currencies.main,
-									(fetchProductById(productId)?.price.amount || 0) * quantity,
-									fetchProductById(productId)?.price.currency || 'BTC'
-								)}</td
-							>
+							<td class="border border-gray-300 px-4 py-2">{total}</td>
 						</tr>
 					{/each}
 				</tbody>
