@@ -102,7 +102,7 @@ Le régime de TVA de votre entreprise peut dépendre :
 
 Le plus sur est de consulter votre comptable, avocat ou service aux entreprises compétent afin de connaître votre régime de TVA cible et le configurer dans beBOP.
 
-### Gesttion des profils de TVA réduite
+## Gesttion des profils de TVA réduite
 
 Selon les pays, certains pays bénéficient d'un taux de TVA réduit (produits culturels, dons à associations ou financement de campagne politique, etc).
 Pour cela, il faut créer des **Custom VAT Rates**.
