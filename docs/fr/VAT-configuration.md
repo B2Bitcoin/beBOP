@@ -13,11 +13,12 @@ Il existe 3 grands régimes de TVA, dont une variation :
 
 Pour contrôle fiscal, respect de la loi et comptabilité, il est parfois nécessaire recueillir des données liées au client, pour justifier une éventuelle exonération de TVA.
 Ces points sont abordés dans le [privacy-management.md](/docs/fr/privacy-management.md).
-
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/c5363c2c-22cf-4d01-8a9e-d0d3e204bef9)
 ## Cas 1 : exemption de TVA sur sous justification
 
 Dans /admin/config se trouve l'option **Disable VAT for my beBOP** (*Désactiver la TVA pour mon beBOP*).
 Une fois la case activée, **une TVA de 0% est appliquée sur l'ensemble des futures commandes**.
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/a86a4edd-e70d-466d-b573-ed0ef9e56025)
 
 L'activation de cette option active la sous-option **VAT exemption reason (appears on the invoice)** (*Raison d'exemption de TVA (apparaît sur les factures)*).
 Il s'agit du texte légal à renseigner pour justifier de l'absence de TVA à votre client.
@@ -28,6 +29,7 @@ Par exemple, en France :
 - *Exonération de TVA, article 283-2 du Code général des impôts".* (prestation de service inter-communautaire)
 
 Le motif renseigné sera alors indiqué sur chacune de vos factures.
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/e062d151-e141-42a2-88b8-7fffc1a7c0ec)
 
 ## Cas 2A : vente au taux de TVA du pays du vendeur
 
