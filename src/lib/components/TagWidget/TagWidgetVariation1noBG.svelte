@@ -21,7 +21,7 @@
 		<div class="mx-auto tagWidget flex rounded sm:gap-2 {className}">
 			<div class="flex flex-col w-[50%] m-2">
 				<h2 class="text-6xl body-title pb-2 uppercase">{tag.title}</h2>
-				<h2 class="text-md md:text-xl">
+				<h2 class="text-md md:text-xl prose">
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html marked(tag.content.replaceAll('<', '&lt;'))}
 				</h2>
