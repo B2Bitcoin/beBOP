@@ -1,5 +1,7 @@
 # beBOP Manifesto
 
+https://be-bop.io/bebop-manifesto
+
 ## La priorité d’une personne qui veut partager du contenu devrait être la création de ce dernier et son partage.
 
 Si nous acceptons volontiers qu’un certain pragmatisme doit être présent (sur la préparation, le travail à fournir, la communication et la régulation économique et fiscale des gains), nous pensons en revanche que les processus qui permettent actuellement aux personnes qui veulent partager du contenu sont au mieux biaisées, au pire bloquante.
