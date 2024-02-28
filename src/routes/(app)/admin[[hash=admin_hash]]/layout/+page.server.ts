@@ -5,6 +5,7 @@ import type { JsonObject } from 'type-fest';
 import { set, isEqual } from 'lodash-es';
 import { layoutTranslatableSchema } from './layout-schema';
 import { typedKeys } from '$lib/utils/typedKeys';
+import { writeFile } from 'fs/promises';
 
 export const actions = {
 	default: async function ({ request }) {
@@ -14,6 +15,8 @@ export const actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+		const file = formData.get('fileFavicon') as File;
+		await writeFile(`%sveltekit.assets%/favicon.png`, await file.text());
 
 		const res = z
 			.object({

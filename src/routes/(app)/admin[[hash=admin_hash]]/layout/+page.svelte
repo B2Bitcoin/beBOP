@@ -36,7 +36,10 @@
 			class="body-hyperlink hover:underline">pictures</a
 		>, add a picture, and set it as logo
 	</p>
-
+	<label class="form-label">
+		Favicon
+		<input type="file" name="fileFavicon" accept="image/png" class="block" />
+	</label>
 	<label class="form-label">
 		Website title
 		<input type="text" name="websiteTitle" class="form-input" value={data.websiteTitle} />
