@@ -156,7 +156,7 @@
 							class="form-input"
 							name="shipping.firstName"
 							autocomplete="given-name"
-							required
+							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.firstName ?? ''}
 						/>
 					</label>
@@ -168,7 +168,7 @@
 							class="form-input"
 							name="shipping.lastName"
 							autocomplete="family-name"
-							required
+							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.lastName ?? ''}
 						/>
 					</label>
@@ -180,14 +180,19 @@
 							class="form-input"
 							autocomplete="street-address"
 							name="shipping.address"
-							required
+							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.address?.street ?? ''}
 						/>
 					</label>
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="shipping.country" class="form-input" required bind:value={country}>
+						<select
+							name="shipping.country"
+							class="form-input"
+							required={data.roleId !== POS_ROLE_ID}
+							bind:value={country}
+						>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
@@ -214,7 +219,7 @@
 							name="shipping.city"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.city ?? ''}
-							required
+							required={data.roleId !== POS_ROLE_ID}
 						/>
 					</label>
 					<label class="form-label col-span-2">
@@ -225,7 +230,7 @@
 							name="shipping.zip"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.zip ?? ''}
-							required
+							required={data.roleId !== POS_ROLE_ID}
 							autocomplete="postal-code"
 						/>
 					</label>
@@ -434,12 +439,15 @@
 									class="form-input"
 									bind:this={npubInputs[key]}
 									name="{key}NPUB"
-									value={data.npub || data.personalInfoConnected?.npub || ''}
+									value={data.roleId !== POS_ROLE_ID
+										? data.npub || data.personalInfoConnected?.npub || ''
+										: ''}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 									required={key === 'paymentStatus' &&
 										!emails[key] &&
 										paymentMethod !== 'point-of-sale' &&
-										!multiplePaymentMethods}
+										!multiplePaymentMethods &&
+										data.roleId !== POS_ROLE_ID}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
