@@ -83,4 +83,4 @@ Lorsque vous activez le paiement sur acompte pour l'un de vos articles, la premi
 Si votre commande inclut une réservation d'article sur acompte, le lien est affiché dans le tunnel (/checkout) avec l'option obligatoire à cocher **I agree that I need to pay the remainder in the future (why?)** (*Je comprends que je dois m'acquitter du solde hors-acompte (pourquoi ?)*)
 
 ## /order-top, /order-bottom, /checkout-top, /checkout-bottom,  /basket-top, /basket-bottom
-See [customise-cart-checkout-order-with-CMS to customise-product-page-with-CMS.md](customise-cart-checkout-order-with-CMS to customise-product-page-with-CMS.md)
+See [customise-cart-checkout-order-with-CMS.md](customise-cart-checkout-order-with-CMS.md)
