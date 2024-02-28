@@ -152,12 +152,12 @@ export const actions = {
 			: z
 					.object({
 						shipping: z.object({
-							firstName: z.string().min(1),
-							lastName: z.string().min(1),
-							address: z.string().min(1),
-							city: z.string().min(1),
+							firstName: z.string().min(1).optional(),
+							lastName: z.string().min(1).optional(),
+							address: z.string().min(1).optional(),
+							city: z.string().min(1).optional(),
 							state: z.string().optional(),
-							zip: z.string().min(1),
+							zip: z.string().min(1).optional(),
 							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
 						})
 					})
