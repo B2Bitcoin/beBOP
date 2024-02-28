@@ -31,7 +31,12 @@
 		></script>
 	{/if}
 	{#if data.plausibleScriptUrl}
-		<script defer data-domain={$page.url.host} src={data.plausibleScriptUrl}>
+		<script
+			defer
+			data-domain={$page.url.host}
+			src={data.plausibleScriptUrl.replace(/\.js$/, 'exclusion.js')}
+			data-exclude="/admin/*, /admin-*"
+		>
 		</script>
 	{/if}
 </svelte:head>
