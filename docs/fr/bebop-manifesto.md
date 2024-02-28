@@ -1,3 +1,5 @@
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/533af93b-00c9-4d04-82db-599d4de59cf2)
+
 # beBOP Manifesto
 
 https://be-bop.io/bebop-manifesto
