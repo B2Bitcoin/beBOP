@@ -187,12 +187,7 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select
-							name="shipping.country"
-							class="form-input"
-							required={data.roleId !== POS_ROLE_ID}
-							bind:value={country}
-						>
+						<select name="shipping.country" class="form-input" required bind:value={country}>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
