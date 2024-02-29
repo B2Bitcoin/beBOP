@@ -16,7 +16,7 @@ export const actions = {
 			set(json, key, value);
 		}
 		const file = formData.get('fileFavicon') as File;
-		await writeFile(`%sveltekit.assets%/favicon.png`, await file.text());
+		await writeFile(`static/favicon.png`, new Uint8Array(await file.arrayBuffer()));
 
 		const res = z
 			.object({

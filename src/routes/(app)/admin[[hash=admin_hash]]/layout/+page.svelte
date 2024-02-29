@@ -4,7 +4,7 @@
 	export let data;
 </script>
 
-<form method="post" class="flex flex-col gap-4">
+<form method="post" class="flex flex-col gap-4" enctype="multipart/form-data">
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
