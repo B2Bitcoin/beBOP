@@ -2,6 +2,7 @@
 	import type { Picture } from '$lib/types/Picture';
 	import type { Gallery } from '$lib/types/Gallery';
 	import PictureComponent from '../Picture.svelte';
+	import { marked } from 'marked';
 
 	export let pictures: Picture[];
 	export let gallery: Pick<Gallery, '_id' | 'name' | 'principal' | 'secondary'>;
@@ -33,7 +34,8 @@
 		</div>
 		<div class="tagWidget tagWidget-main m-2 p-4">
 			<p class="min-h-[37em] mt-2">
-				{gallery.principal.content}
+				<!-- eslint-disable svelte/no-at-html-tags -->
+				{@html marked(gallery.principal.content.replaceAll('<', '&lt;'))}
 			</p>
 		</div>
 	</div>
@@ -51,7 +53,8 @@
 			</div>
 			<div class="m-2 tagWidget tagWidget-main p-4 text-center">
 				<p class="min-h-[12em] mt-2">
-					{secondary.content}
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					{@html marked(secondary.content.replaceAll('<', '&lt;'))}
 				</p>
 			</div>
 			<div class="btn tagWidget-cta text-xl text-center w-auto p-4 m-2">
