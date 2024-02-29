@@ -16,7 +16,9 @@ export const actions = {
 			set(json, key, value);
 		}
 		const file = formData.get('fileFavicon') as File;
-		await writeFile(`static/favicon.png`, new Uint8Array(await file.arrayBuffer()));
+		if (file) {
+			await writeFile(`static/favicon.png`, new Uint8Array(await file.arrayBuffer()));
+		}
 
 		const res = z
 			.object({

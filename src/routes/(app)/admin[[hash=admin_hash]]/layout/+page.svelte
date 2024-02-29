@@ -37,7 +37,7 @@
 		>, add a picture, and set it as logo
 	</p>
 	<label class="form-label">
-		Favicon
+		Upload a favicon
 		<input type="file" name="fileFavicon" accept="image/png" class="block" />
 	</label>
 	<label class="form-label">
