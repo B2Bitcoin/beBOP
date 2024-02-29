@@ -16,38 +16,40 @@ export async function load({ params, depends, locals }) {
 		order.items.flatMap((item) => item.digitalFiles),
 		(file) => file._id
 	);
-	const cmsOrderTop = await collections.cmsPages.findOne(
-		{
-			_id: 'order-top'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+	const [cmsOrderTop, cmsOrderBottom] = await Promise.all([
+		collections.cmsPages.findOne(
+			{
+				_id: 'order-top'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
-	const cmsOrderBottom = await collections.cmsPages.findOne(
-		{
-			_id: 'order-bottom'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+		),
+		collections.cmsPages.findOne(
+			{
+				_id: 'order-bottom'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
+		)
+	]);
 	let methods = paymentMethods({ role: locals.user?.roleId });
 
 	for (const item of order.items) {
