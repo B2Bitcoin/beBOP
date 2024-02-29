@@ -56,9 +56,9 @@
 		<select name="secondaryCurrency" class="form-input max-w-[25rem]">
 			<option value="" selected={!data.currencies.secondary} />
 			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
-				<option value={currency} selected={data.currencies.secondary === currency}
-					>{currency}</option
-				>
+				<option value={currency} selected={data.currencies.secondary === currency}>
+					{currency}
+				</option>
 			{/each}
 		</select>
 	</label>
@@ -81,6 +81,22 @@
 				<IconRefresh />
 			</button>
 		</div>
+	</label>
+
+	<label class="form-label">
+		Accounting currency
+		<select name="accountingCurrency" class="form-input max-w-[25rem]">
+			<option value="" selected={!data.accountingCurrency} />
+			{#each CURRENCIES.filter((c) => c !== 'SAT') as currency}
+				<option value={currency} selected={data.accountingCurrency === currency}>
+					{currency}
+				</option>
+			{/each}
+		</select>
+		<p class="text-sm">
+			Payment amounts will also be stored in this currency. Useful for a full-crypto shop but you
+			still want to keep track of fiat values at time of payment.
+		</p>
 	</label>
 
 	<div class="flex items-center gap-2">
