@@ -49,6 +49,11 @@ export interface OrderPayment {
 			previouslyPaid?: Price;
 			remainingToPay?: Price;
 		};
+		accounting?: {
+			price: Price;
+			previouslyPaid?: Price;
+			remainingToPay?: Price;
+		};
 	};
 	method: PaymentMethod;
 	/**
@@ -131,6 +136,10 @@ export interface Order extends Timestamps {
 				price: Price;
 				customPrice?: Price;
 			};
+			accounting?: {
+				price: Price;
+				customPrice?: Price;
+			};
 		};
 		vatRate: number;
 	}>;
@@ -171,6 +180,13 @@ export interface Order extends Timestamps {
 			discount?: Price;
 		};
 		secondary?: {
+			totalPrice: Price;
+			totalReceived?: Price;
+			vat?: Price[];
+			shippingPrice?: Price;
+			discount?: Price;
+		};
+		accounting?: {
 			totalPrice: Price;
 			totalReceived?: Price;
 			vat?: Price[];
