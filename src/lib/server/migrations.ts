@@ -387,10 +387,39 @@ const migrations = [
 				{ session }
 			);
 		}
+	},
+	{
+		name: 'Move basket-top & basket-bottom to cart-top & cart-bottom',
+		_id: new ObjectId('65e0861038ba23d6e0eb8c32'),
+		run: async (session: ClientSession) => {
+			const basketTop = await collections.cmsPages.findOneAndDelete(
+				{ _id: 'basket-top' },
+				{ session }
+			);
+			if (basketTop.value) {
+				await collections.cmsPages.insertOne(
+					{
+						...basketTop.value,
+						_id: 'cart-top'
+					},
+					{ session }
+				);
+			}
+			const basketBottom = await collections.cmsPages.findOneAndDelete(
+				{ _id: 'basket-bottom' },
+				{ session }
+			);
+			if (basketBottom.value) {
+				await collections.cmsPages.insertOne(
+					{
+						...basketBottom.value,
+						_id: 'cart-bottom'
+					},
+					{ session }
+				);
+			}
+		}
 	}
-	// Todo:
-	// - convert vat to array in orders
-	// - add vat rate for each item in orders
 ];
 
 export async function runMigrations() {

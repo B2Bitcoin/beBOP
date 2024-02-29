@@ -23,38 +23,40 @@ export async function load({ parent, locals }) {
 			}
 		}
 	}
-	const cmsBasketTop = await collections.cmsPages.findOne(
-		{
-			_id: 'basket-top'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+	const [cmsBasketTop, cmsBasketBottom] = await Promise.all([
+		collections.cmsPages.findOne(
+			{
+				_id: 'cart-top'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
-	const cmsBasketBottom = await collections.cmsPages.findOne(
-		{
-			_id: 'basket-bottom'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+		),
+		collections.cmsPages.findOne(
+			{
+				_id: 'cart-bottom'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
+		)
+	]);
 	return {
 		...(cmsBasketTop && {
 			cmsBasketTop,
