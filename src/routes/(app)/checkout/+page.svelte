@@ -424,6 +424,7 @@
 										autocomplete="email"
 										name="{key}Email"
 										bind:value={emails[key]}
+										required={data.roleId !== POS_ROLE_ID}
 									/>
 								</label>
 							{/if}
