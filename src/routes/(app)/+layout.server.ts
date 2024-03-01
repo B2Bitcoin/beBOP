@@ -1,4 +1,4 @@
-import { ORIGIN, S3_ENDPOINT_URL } from '$env/static/private';
+import { ORIGIN } from '$env/static/private';
 import { adminPrefix } from '$lib/server/admin.js';
 import { getCartFromDb } from '$lib/server/cart.js';
 import { collections } from '$lib/server/database';
