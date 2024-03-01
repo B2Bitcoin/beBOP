@@ -52,7 +52,8 @@
 	};
 
 	const emails: Record<FeedKey, string> = {
-		paymentStatus: data.email || data.personalInfoConnected?.email || ''
+		paymentStatus:
+			data.roleId === POS_ROLE_ID ? '' : data.email || data.personalInfoConnected?.email || ''
 	};
 
 	function checkForm(event: SubmitEvent) {
