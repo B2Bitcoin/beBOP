@@ -21,10 +21,7 @@
 	<meta name="description" content={data.websiteShortDescription} />
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
 	{#if data.faviconPictureId}
-		<link
-			rel="icon"
-			href="/favicon/{data.faviconPictureId}?v={PUBLIC_VERSION}-{data.languageUpdatedAt.getTime()}"
-		/>
+		<link rel="icon" href="/favicon/{data.faviconPictureId}" />
 	{:else}
 		<link rel="icon" href="/favicon.png" />
 	{/if}
