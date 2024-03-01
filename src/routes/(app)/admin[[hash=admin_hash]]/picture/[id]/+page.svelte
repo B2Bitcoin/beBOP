@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import Picture from '$lib/components/Picture.svelte';
 
 	export let data;
 	let darkPicture = 'light';
 </script>
 
-<form method="post" action="?/update" use:enhance class="flex flex-col gap-4">
+<form method="post" action="?/update" class="flex flex-col gap-4">
 	{#if data.picture.productId}
 		<a
 			href="{data.adminPrefix}/product/{data.picture.productId}"
