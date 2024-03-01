@@ -458,7 +458,12 @@ export async function createOrder(
 
 	const canBeNotified = !!(npubAddress || (emailsEnabled && email));
 
-	if (!canBeNotified && paymentMethod !== 'point-of-sale' && paymentMethod !== null) {
+	if (
+		!canBeNotified &&
+		paymentMethod !== 'point-of-sale' &&
+		paymentMethod !== null &&
+		params.user.userRoleId !== POS_ROLE_ID
+	) {
 		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
 	}
 

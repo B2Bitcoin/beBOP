@@ -153,15 +153,27 @@ export const actions = {
 			? null
 			: z
 					.object({
-						shipping: z.object({
-							firstName: z.string().min(1),
-							lastName: z.string().min(1),
-							address: z.string().min(1),
-							city: z.string().min(1),
-							state: z.string().optional(),
-							zip: z.string().min(1),
-							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
-						})
+						shipping: z.object(
+							locals.user?.roleId === POS_ROLE_ID
+								? {
+										firstName: z.string().default(''),
+										lastName: z.string().default(''),
+										address: z.string().default(''),
+										city: z.string().default(''),
+										state: z.string().optional(),
+										zip: z.string().default(''),
+										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+								  }
+								: {
+										firstName: z.string().min(1),
+										lastName: z.string().min(1),
+										address: z.string().min(1),
+										city: z.string().min(1),
+										state: z.string().optional(),
+										zip: z.string().min(1),
+										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+								  }
+						)
 					})
 					.parse(json);
 
