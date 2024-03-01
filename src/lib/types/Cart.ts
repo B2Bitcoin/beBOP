@@ -256,7 +256,7 @@ export function computePriceInfo(
 		partialPrice: Price;
 	}> = [];
 
-	for (const vatItem of vat) {
+	for (const vatItem of [...vat, deliveryFeeVat]) {
 		if (!vatItem) {
 			continue;
 		}
