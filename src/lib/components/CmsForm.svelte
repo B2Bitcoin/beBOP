@@ -16,7 +16,7 @@
 		content: string;
 	} | null;
 
-	let slug = cmsPage?._id || '';
+	export let slug = cmsPage?._id || '';
 	let pageContent = cmsPage?.content || '';
 	let title = cmsPage?.title || '';
 	let shortDescription = cmsPage?.shortDescription || '';

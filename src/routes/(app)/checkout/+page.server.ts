@@ -31,38 +31,40 @@ export async function load({ parent, locals }) {
 			sort: { _id: -1 }
 		}
 	);
-	const cmsCheckoutTop = await collections.cmsPages.findOne(
-		{
-			_id: 'checkout-top'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+	const [cmsCheckoutTop, cmsCheckoutBottom] = await Promise.all([
+		collections.cmsPages.findOne(
+			{
+				_id: 'checkout-top'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
-	const cmsCheckoutBottom = await collections.cmsPages.findOne(
-		{
-			_id: 'checkout-bottom'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+		),
+		collections.cmsPages.findOne(
+			{
+				_id: 'checkout-bottom'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
+		)
+	]);
 
 	let methods = paymentMethods({ role: locals.user?.roleId });
 

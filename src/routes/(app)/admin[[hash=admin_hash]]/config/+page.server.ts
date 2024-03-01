@@ -30,7 +30,8 @@ export async function load(event) {
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
 		noProBilling: runtimeConfig.noProBilling,
-		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems
+		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems,
+		accountingCurrency: runtimeConfig.accountingCurrency
 	};
 }
 
@@ -49,6 +50,9 @@ export const actions = {
 				subscriptionDuration: z.enum(['month', 'day', 'hour']),
 				mainCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT')]),
 				secondaryCurrency: z
+					.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT'), ''])
+					.optional(),
+				accountingCurrency: z
 					.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT'), ''])
 					.optional(),
 				priceReferenceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
@@ -87,6 +91,7 @@ export const actions = {
 		const { paymentMethods: orderedPaymentMethods, ...runtimeConfigUpdates } = {
 			...result,
 			secondaryCurrency: result.secondaryCurrency || null,
+			accountingCurrency: result.accountingCurrency || null,
 			cartMaxSeparateItems: result.cartMaxSeparateItems || null
 		};
 

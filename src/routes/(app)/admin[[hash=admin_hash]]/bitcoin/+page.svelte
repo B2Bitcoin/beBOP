@@ -170,7 +170,7 @@
 					? 'btc-testnet'
 					: 'btc'}/{transaction.txid}">{transaction.txid}</a
 			>
-			{#if transaction.label.startsWith('order:') && orderById[transaction.label.slice('order:'.length)]}
+			{#if transaction.label?.startsWith('order:') && orderById[transaction.label.slice('order:'.length)]}
 				{@const orderCreatedAt = orderById[transaction.label.slice('order:'.length)].createdAt}
 				/
 				<a class="underline body-hyperlink" href="/order/{transaction.label.slice('order:'.length)}"
