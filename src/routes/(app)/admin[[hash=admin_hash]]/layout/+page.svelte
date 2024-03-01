@@ -36,7 +36,12 @@
 			class="body-hyperlink hover:underline">pictures</a
 		>, add a picture, and set it as logo
 	</p>
-
+	<p>
+		To change the favicon, go to <a
+			href="{data.adminPrefix}/picture"
+			class="body-hyperlink hover:underline">pictures</a
+		>, add a picture, and set it as favicon
+	</p>
 	<label class="form-label">
 		Website title
 		<input type="text" name="websiteTitle" class="form-input" value={data.websiteTitle} />
