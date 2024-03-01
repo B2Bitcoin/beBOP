@@ -79,6 +79,21 @@
 					class="btn btn-gray"
 				/>
 			{/if}
+			{#if data.faviconPictureId === data.picture._id}
+				<input
+					type="submit"
+					value="Remove from favicon"
+					formaction="?/removeFavicon"
+					class="btn btn-gray"
+				/>
+			{:else}
+				<input
+					type="submit"
+					value="Set as favicon"
+					formaction="?/setAsFavicon"
+					class="btn btn-gray"
+				/>
+			{/if}
 		{/if}
 		<input type="submit" value="Delete" formaction="?/delete" class="btn btn-red ml-auto" />
 	</div>

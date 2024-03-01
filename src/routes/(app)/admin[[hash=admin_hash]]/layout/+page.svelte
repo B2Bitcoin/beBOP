@@ -4,7 +4,7 @@
 	export let data;
 </script>
 
-<form method="post" class="flex flex-col gap-4" enctype="multipart/form-data">
+<form method="post" class="flex flex-col gap-4">
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
@@ -36,10 +36,12 @@
 			class="body-hyperlink hover:underline">pictures</a
 		>, add a picture, and set it as logo
 	</p>
-	<label class="form-label">
-		Upload a favicon
-		<input type="file" name="fileFavicon" accept="image/png" class="block" />
-	</label>
+	<p>
+		To change the favicon, go to <a
+			href="{data.adminPrefix}/picture"
+			class="body-hyperlink hover:underline">pictures</a
+		>, add a picture, and set it as favicon
+	</p>
 	<label class="form-label">
 		Website title
 		<input type="text" name="websiteTitle" class="form-input" value={data.websiteTitle} />
