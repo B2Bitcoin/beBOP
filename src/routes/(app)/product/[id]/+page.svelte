@@ -457,7 +457,7 @@
 							<a href={cta.href} class="btn body-cta body-secondaryCTA">
 								{cta.label}
 							</a>
-						{:else if !canBuy || amountAvailable <= 0}
+						{:else if !canBuy || amountAvailable <= 0 || (data.cartMaxSeparateItems && data.cart?.length === data.cartMaxSeparateItems)}
 							<a href={cta.href} class="btn body-cta body-secondaryCTA">
 								{cta.label}
 							</a>
