@@ -16,37 +16,30 @@ export const GET = async ({ params }) => {
 		return new Response(cachedFavicon, { headers: { 'Content-Type': 'image/png' } });
 	}
 
-	try {
-		const favicon = runtimeConfig.faviconPictureId
-			? await collections.pictures.findOne({ _id: runtimeConfig.faviconPictureId })
-			: null;
+	const favicon = runtimeConfig.faviconPictureId
+		? await collections.pictures.findOne({ _id: runtimeConfig.faviconPictureId })
+		: null;
 
-		const format =
-			favicon?.storage.formats.find((f) => f.width === 256) || favicon?.storage.formats.at(-1);
+	const format =
+		favicon?.storage.formats.find((f) => f.width === 256) || favicon?.storage.formats.at(-1);
 
-		if (!format) {
-			throw error(500, "Error when finding picture's format");
-		}
-
-		const rawPicture = format
-			? await fetch(await getPrivateS3DownloadLink(format.key)).then((r) =>
-					r.ok ? r.blob() : null
-			  )
-			: null;
-
-		if (!rawPicture) {
-			throw error(500, "Error when fetching picture's raw data");
-		}
-
-		cachedFavicon = await sharp(await rawPicture.arrayBuffer())
-			.png()
-			.toBuffer();
-
-		cachedFaviconPictureId = runtimeConfig.faviconPictureId;
-	} catch (err) {
-		console.error('Error getting picture for favicon:', err);
-		throw error(500, 'Error getting picture for favicon');
+	if (!format) {
+		throw error(500, "Error when finding picture's format");
 	}
+
+	const rawPicture = format
+		? await fetch(await getPrivateS3DownloadLink(format.key)).then((r) => (r.ok ? r.blob() : null))
+		: null;
+
+	if (!rawPicture) {
+		throw error(500, "Error when fetching picture's raw data");
+	}
+
+	cachedFavicon = await sharp(await rawPicture.arrayBuffer())
+		.png()
+		.toBuffer();
+
+	cachedFaviconPictureId = runtimeConfig.faviconPictureId;
 
 	return new Response(cachedFavicon, { headers: { 'Content-Type': 'image/png' } });
 };
