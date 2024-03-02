@@ -277,3 +277,77 @@ Une fois le montant complet atteint, la commande sera notée comme "validée"
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/331e9423-b47a-4bf2-b184-53c020ea0b6c)
 
 ## Affichage côté client
+
+Pendant que vous êtes derrière votre PC de caisse, vous pouvez mettre à disposition un dispositif d'affichage côté client pour qu'il ou elle puisse suivre sa commande.
+Cela peut être au choix :
+- un écran supplémentaire connecté en HDMI : il faut dans ce cas ouvrir un onglet sur l'url /pos/session depuis le compte de caisse, puis afficher l'écran en pleine page (souvent F11) pour retirer le header du navigateur
+- un périphérique autre avec un navigateur internet, type tablette ou téléphone ; dans ce cas, il faut :
+  - se rendre sur /admin/login (avec l'URL admin sécurisée)
+  - se loguer avec le même compte POS
+  - afficher la page /pos/session
+  - désactiver la veille de l'appareil
+  - voir (selon périphérique) pour passer la page web en plein écran
+
+Lorsqu'un panier est vide et qu'une commande n'est pas en attente, un écran d'attente et d'accueil sera affiché :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/fe5bec3d-295e-4cdf-8ebc-d79a6ce1e62e)
+
+Dès qu'un article est ajouté au panier depuis le poste de caisse, l'affichage se met à jour et montre son panier à la personne qui achète :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/1fd03a7b-e7bb-4820-9725-7c12115732d2)
+
+### Lors d'un paiement Lightning
+
+Le QR Code est affiché pour scan et paiement.
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/e1e2933b-876b-442c-8964-24bba4390488)
+
+### Lors d'un paiement Bitcoin on-chain
+
+(Nous déconseillons l'usage du paiement on-chain en magasin, sauf si vous avez un faible nombre de vérifications, ou si vous avez le temps d'occuper votre client 15 minutes avec un café le temps que les validations se fassent)
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/b7efdde9-8049-43d3-a1c4-83579908b8d7)
+
+### Lors d'un paiement carte bancaire Sum Up hors TPE
+
+Si votre TPE physique est en panne, votre client peut scanner un QR Code avec son téléphone pour avoir un formulaire de CB sur son propre appareil (ce qui est plus pratique que de lui faire taper ses informations de CB sur votre PC de caisse...).
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/15a3bd1a-26c9-4ac3-b10b-1bd713544157)
+
+### Lorsqu'un paiement Lightning / Bitcoin on-chain / CB Sum Up par QR Code est validé
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/43f192a5-30ab-44bd-87f3-c60c1d5fad14)
+
+L'affichage revient ensuite vers l'affichage d'accueil / attente, avec le message de bienvenue et le logo du beBOP.
+
+### Lorsqu'un paiement Point of Sale est réalisé
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/2e30fcac-32b1-4b11-ae6f-3f28e0a8abcd)
+
+Une fois la commande validée manuellement en caisse :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/bece3fd9-e599-4a11-b4ab-5a1f62c6055c)
+
+### En cas de paiement multiple en caisse :
+
+Tant qu'aucune saisie n'a été faite :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/f2800284-3858-4a42-a4d8-c86cce0b08e4)
+
+Si j'effectue un premier paiement (Point of sale, pour cash) :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/806f8042-2fae-4c01-a3b8-f4e23123f0fb)
+
+Au lieu d'avoir la page de confirmation, on retourne sur la page avec le reste à payer qui a été mis à jour :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/f2472cdb-40a4-412f-a66e-39d9b80d7ba4)
+
+Et continuer avec les paiements suivants (ici Lightning) :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/fdde5aad-cd65-4953-ae29-a46a79e018a7)
+
+Une fois l'intégralité de la commande payée :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/50b230b7-a539-40f4-98ff-244ef46e0bb7)
+
+
