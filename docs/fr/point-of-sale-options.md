@@ -167,6 +167,7 @@ En temps normal, en mode eshop, il est nécessaire de laisser soit une adresse e
 En mode POS, ces champs sont facultatifs si un client refuse de laisser ses coordonnées :
 - Indiquez cependant au client, dans ce cas, qu'il sera obligé de passer par le support de la boutique pour retrouver l'URL de son récapitulatif de commande, ses factures et ses fichiers téléchargeables
 - Prévoyez une imprimante pour imprimer la facture après achat
+- Si le panier inclut un souscription (abonnement), expliquez à la personne qu'il ne s'agit pas d'un renouvellement automatique mais qu'à chaque fois un appel à paiement est réalisé sur les coordonnées laissées (voir [subscription-management.md](subscription-management.md) ) ; et donc, sans coordonnées, la souscription ne pourra jamais être renouvellée, donc autant la retirer du panier
 
 ### Autres checkbox clients
 
@@ -204,8 +205,83 @@ Activer ces options sans obtenir l'aval explicite du client est de votre respons
 
 ### Paiement Point of Sale
 
+En attendant la création de sous-types de paiement Point of Sale, le paiement Point of Sale inclut tous les paiements hors-beBOP :
+- l'utilisation d'un TPE physique (nous ne faisons pas encore de réconciliation automatique avec les TPE Sum UP, même si le compte du site et le compte du TPE sont partagés)
+- cash
+- chèque (pour les pays qui l'utilisent encore)
+- twint (pour l'instant, l'intégration sera possible un jour)
+- lingot d'or
+- etc
+
+Le compte POS dispose donc d'une validation (ou annulation) manuelle de la commande, avec un justificatif obligatoire :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/9df68cc3-aaac-42b4-9ecc-84a764faa97b)
+
+Le détail est stocké dans l'objet commande et doit permettre la réconciliation comptable plus facilement.
+
+Ainsi, vous pouvez y indiquer :
+- "Cash : donné 350€, rendu 43.53€"
+- "Chèque n° XXXXX, justificatif stocké dans le dossier B2"
+- "Twint : transaction XXX"
+- "Sum Up : transaction XXX"
+
+Pour récupérer le n° de transaction Sum Up lors d'un paiement TPE physique, vous pouvez le trouver ici dans l'appli liée au TPE en consultant la transaction :
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/72e820aa-5782-4f5d-ab5a-ffbfc163cd55)
+
+Une fois l'encaissement réalisé, vous pouvez renseigner et valider le champ et accéder à la facture :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/cd33e420-456a-43fb-bd00-dfd1628d3bb9)
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/e99ab058-f739-47f7-8082-0c5580c7fc08)
+
+💡 Si vous souhaitez exporter la facture en PDF, vous pouvez choisir en destination d'impression "Enregistrer au format PDF" (beBOP ne permet nativement pas la génération d'un document PDF pour le moment)
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/92822dc4-291f-4acd-9bd2-726ef3cab469)
+
+💡 Si vous imprimez la facture et voulez ne voulez pas des libellés liés au navigateur à l'impression, vous pouvez désactiver l'option "En-tête et pieds de page" dans les Options des paramètres d'impression
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/dd41316b-8d1a-4fff-8782-7752dc921609)
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/f923a91b-fe26-42ad-9a17-a40dbf028f76)
 
 ### Paiement multiple
+
+Si vous avez choisi cette option au /checkout :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/7c2fcf01-adf5-46d4-9188-1dc3a8e5b216)
+
+Vous pourrez utiliser la fonction "Envoyer un appel à paiement" pour scinder en plusieurs paiements.
+
+Imaginons que sur cette commande, 30€ sont payés en carte bleue via TPE, 20€ en lightning, et 6.42€ en liquide :
+
+1/ Encaisser les 30€ en carte bleue via TPE puis valider le paiement
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/cff968d5-8256-44b4-ad76-9ae0f17dd207)
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/f658ca90-4369-479a-a292-1f870f65023f)
+
+Puis les 20€ en Lightning :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/e1e31ff7-1b16-4c03-a57b-f0955e652e7d)
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/2d5b22b5-8f01-4391-aa1d-4df9d4694195)
+
+Et enfin, une fois la transaction validée, le reste en cash :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/51b9a402-11df-4ec7-90f0-1ae8beee4558)
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/4ed71a88-0028-4890-97f7-8e5dc4d0dd5c)
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/e5bf9423-deab-43a0-a0b3-1504cdd6153f)
+
+
+Une fois le montant complet atteint, la commande sera notée comme "validée"
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/90a1c403-a9e3-44de-b5b3-7b2fb263e27f)
+
+
+
+
 
 
 ## Affichage côté client
