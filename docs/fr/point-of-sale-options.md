@@ -270,18 +270,10 @@ Et enfin, une fois la transaction validée, le reste en cash :
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/51b9a402-11df-4ec7-90f0-1ae8beee4558)
 
-![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/4ed71a88-0028-4890-97f7-8e5dc4d0dd5c)
-
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/e5bf9423-deab-43a0-a0b3-1504cdd6153f)
-
 
 Une fois le montant complet atteint, la commande sera notée comme "validée"
 
-![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/90a1c403-a9e3-44de-b5b3-7b2fb263e27f)
-
-
-
-
-
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/331e9423-b47a-4bf2-b184-53c020ea0b6c)
 
 ## Affichage côté client
