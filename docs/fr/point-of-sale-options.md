@@ -4,6 +4,8 @@
 
 beBOP vous permet à la fois d'interagir avec votre communauté sur internet, mais également d'être utilisé comme logiciel de caisse (en stand ou magasin).
 
+POS : Point Of Sale (point de vente)
+
 En utilsant le rôle POS et en l'affectant à un profil [team-access-management.md](team-access-management.md), vous pouvez donner à un profil de caisse des options supplémentaires pour des options d'achat spécifique.
 L'utilisation du compte POS permet également d'avoir un affichage client pour afficher :
 - une page d'accueil
@@ -85,6 +87,36 @@ En cas d'erreur d'ajout panier, l'erreur sera notifiée et le champ Alias sera v
 A noter qu'en cas d'ajout d'article PWYW via alias, le montant du produit sera le montant minimum configuré sur le produit.
 
 ## Spécificités du tunnel (/checkout)
+
+### Livraison
+
+Le formulaire d'adresse est optionnel, tant qu'un pays (selon de la boutique) est sélectionné, tous les autres champs sont facultatifs (dans le cas d'un client qui achète, retire directement en magasin et ne requiert pas de facture nomminative).
+- Si le client souhaite être livré, le formulaire d'adresse peut être renseigné.
+- Si le client souhaite une facture, l'option "Mon adresse de livraison et mon adresse de facturation sont différentes" peut être utilisée pour renseigner la facture.
+
+### Offrir les frais de port
+Par défaut, toute commande avec des articles ayant une contrepartie physique sont considérées comme en livraison.
+L'administrateur (ou toute autre personne avec accès en écriture à /admin/config ) peut activer cette option dans /admin/config/delivery (voir [delivery-management.md](delivery-management.md) ).
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/812301c5-99c6-4bcb-8976-474fd15c22d4)
+
+Si l'option "Allow voiding delivery fees on POS sale" est activée, cette option sera disponible sur la page /checkout pour le compte POS :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/02e50a5e-e60e-4648-85e8-78026d07b4cc)
+
+En cas d'activation de l'option, une justification obligatoire sera à renseignée, pour suivi managérial :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/13d841c0-0d41-47b2-a25d-b5e3015b3873)
+
+La somme (frais de port + tva liée) sera déduite à la page suivante (les prix de la page /checkout ne sont pas encore mis à jour en temps réel en fonction des options POS appliquée).
+
+### Exemption de TVA
+
+
+### Application d'une remise cadeau
+
+
+### Autres checkbox clients
 
 
 ## Spécificités de la commande (/order)
