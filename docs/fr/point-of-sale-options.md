@@ -64,7 +64,7 @@ Au panier, le compte POS dispose d'une option pas affichée chez un utilisateur 
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/de6a9a3d-6dd5-48dd-97b3-c78cbcc65673)
 
-Après validation via "entrée" :
+Après validation via "entrée" :__
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/15b641e4-62ea-4a6b-9971-853933aa7a91)
 
@@ -328,6 +328,10 @@ Une fois la commande validée manuellement en caisse :
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/bece3fd9-e599-4a11-b4ab-5a1f62c6055c)
 
+Et enfin, l'écran d'accueil / d'attente :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/9f155163-4d06-4d66-a2b8-f029a3d9884c)
+
 ### En cas de paiement multiple en caisse :
 
 Tant qu'aucune saisie n'a été faite :
@@ -350,4 +354,6 @@ Une fois l'intégralité de la commande payée :
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/50b230b7-a539-40f4-98ff-244ef46e0bb7)
 
+Et enfin, l'écran d'accueil / d'attente :
 
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/9f155163-4d06-4d66-a2b8-f029a3d9884c)
