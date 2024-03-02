@@ -4,7 +4,7 @@
 
 beBOP vous permet à la fois d'interagir avec votre communauté sur internet, mais également d'être utilisé comme logiciel de caisse (en stand ou magasin).
 
-POS : Point Of Sale (point de vente)
+POS : Point Of Sale (point de vente, pour avoir un comportement de caisse de magasin)
 
 En utilsant le rôle POS et en l'affectant à un profil [team-access-management.md](team-access-management.md), vous pouvez donner à un profil de caisse des options supplémentaires pour des options d'achat spécifique.
 L'utilisation du compte POS permet également d'avoir un affichage client pour afficher :
@@ -88,6 +88,10 @@ A noter qu'en cas d'ajout d'article PWYW via alias, le montant du produit sera l
 
 ## Spécificités du tunnel (/checkout)
 
+Le compte POS dispose d'options supplémentaires :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/f5ee032d-80ab-4ce9-b7d8-69fa778071c4)
+
 ### Livraison
 
 Le formulaire d'adresse est optionnel, tant qu'un pays (selon de la boutique) est sélectionné, tous les autres champs sont facultatifs (dans le cas d'un client qui achète, retire directement en magasin et ne requiert pas de facture nomminative).
@@ -110,15 +114,62 @@ En cas d'activation de l'option, une justification obligatoire sera à renseign�
 
 La somme (frais de port + tva liée) sera déduite à la page suivante (les prix de la page /checkout ne sont pas encore mis à jour en temps réel en fonction des options POS appliquée).
 
+### Paiement multiple ou paiement magasin
+
+Le compte POS permet d'utiliser :
+- les paiements classiques proposés sur le site qui ont été activés et sont éligibles ( [payment-management.md](payment-management.md ) pour l'ensemble des produits du panier 
+- le paiement Point of Sale, qui inclut tout paiement extérieur au système beBOP
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/23185560-a3bf-4aab-8268-dd93fbbea47c)
+
+En cas d'activation de "Utiliser plusieurs modes de paiement", le choix du paiement n'est plus nécessaire (voir "Spécificités de la commande (/order)" ci-après).
+
+En cas d'utilisation d'un paiement classique (CB Sum Up, Lightning ou Bitcoin on-chain), le QR code de paiement sera affiché sur le périphérique client (voir "Affichage côté client" ci-après).
+En cas d'utilisation du virement bancaire, la commande sera en suspens et validée une fois le virement reçu manuellement (déconseillé lors d'un paiement en magasin)
+
+En cas d'utilisation du mode de paiement "Point of sale" (paiement unique), le mode d'encaissement sera à renseigner manuellement (voir "Spécificités de la commande (/order)" ci-après).
+
 ### Exemption de TVA
 
+Un compte POS peut choisir de facturer sans TVA à un client (par exemple, en France, à une clientèle professionnelle).
+⚖️ Votre loi locale doit autoriser l'utilisation de cette option, dont vous êtes responsable.
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/7936ed4a-8d80-4e4d-bd1a-0090348236d8)
+
+En cas d'activation de l'option, une justification obligatoire sera à renseignée, pour suivi managérial :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/f5187336-265e-4b6b-ad2b-8a637b6e46de)
+
+La somme (TVA globale) sera déduite à la page suivante (les prix de la page /checkout ne sont pas encore mis à jour en temps réel en fonction des options POS appliquée).
 
 ### Application d'une remise cadeau
 
+Un compte POS peut choisir d'appliquer une réduction à un client :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/d0b86f91-5b8b-4059-b909-a4b43cd55abb)
+
+En cas d'activation de l'option, une justification obligatoire sera à renseignée, pour suivi managérial :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/92e8c899-f1bd-4afa-ab0f-54e26180324f)
+
+Il faut également choisir le type de réduction :
+- en %age (un message d'erreur sera affiché en cas d'entrée invalide, ou de réduction de 100%)
+- en montant correspondance à la devise principale du beBOP ( voir [currency-management.md](currency-management.md) ) (un message d'erreur sera affiché en cas d'entrée invalide, ou de réduction de correspondant au total de la commande)
+
+⚖️ Votre loi locale doit autoriser l'utilisation de cette option et ses montants maximum, dont vous êtes responsable (par exemple : loi du prix unique en France)
+
+⚠️ En attendant que les montants soient mis à jour en temps réel sur la page /checkout, attention au cumul réduciton + exemption de TVA + retrait des frais de port.
+Le cumul des fonctions, si pas déconseillé, demande un minimum d'attention.
 
 ### Autres checkbox clients
 
 
 ## Spécificités de la commande (/order)
+
+### Paiement Point of Sale
+
+
+### Paiement multiple
+
 
 ## Affichage côté client
