@@ -161,8 +161,44 @@ Il faut également choisir le type de réduction :
 ⚠️ En attendant que les montants soient mis à jour en temps réel sur la page /checkout, attention au cumul réduciton + exemption de TVA + retrait des frais de port.
 Le cumul des fonctions, si pas déconseillé, demande un minimum d'attention.
 
+### Contact client facultatif
+
+En temps normal, en mode eshop, il est nécessaire de laisser soit une adresse email, soit une npub Nostr pour recevoir les notifications de sa commande et en conserver l'URL d'accès.
+En mode POS, ces champs sont facultatifs si un client refuse de laisser ses coordonnées :
+- Indiquez cependant au client, dans ce cas, qu'il sera obligé de passer par le support de la boutique pour retrouver l'URL de son récapitulatif de commande, ses factures et ses fichiers téléchargeables
+- Prévoyez une imprimante pour imprimer la facture après achat
+
 ### Autres checkbox clients
 
+Lors de la validation d'une commande POS, les checkbox obligagoires du parcours client restent à valider :
+- l'acceptation des conditions générales de vente et d'utilisation
+- (si l'option a été activée - voir [privacy-management.md](privacy-management.md) ) l'acceptation du stockage d'IP dans le cadre d'un panier sans adresse de livraison
+- (si la commande inclus un article payé sur acomte - voir [payment-on-deposit.md](payment-on-deposit.md) ) l'engagement à payer le reste de la commande à terme
+- (si la commande inclus une livraison à l'étranger à 0% avec détaxe et déclaration douanière obligatoire à posteriori - voir [VAT-configuration.md](VAT-configuration.md) ) l'engagement au respect des déclarations douanières
+
+Les liens de ces différentes options renvoient vers des pages CMS décrites ici : [required-CMS-pages.md](required-CMS-pages.md).
+La personne achetant en magasin n'aura évidemment pas le temps de consulter ces documents dans leur intégralité, les alternatives proposées sont :
+- avoir une version imprimée de chacune de ces pages imprimée et consultable en boutique :
+  /terms
+  /privacy
+  /why-vat-customs
+  /why-collect-ip
+  /why-pay-reminder
+- renvoyer la personne vers le site pour consultation exhautive à posteriori
+- poser oralement la question au client à la validation de chaque option requise :
+  - "Est-ce que vous acceptez les conditions générales de ventes ?"
+  - "Est-ce que pour des raisons comptables vous acceptez l'enregistrement de votre adresse IP dans nos bases ?"
+  - "Comme vous payez sur acompte, est-ce que vous vous engagez à payer le rester de la commande à terme quand notre équipe vous recontactera ?"
+  - "Comme vous vous faites livrer à l'étranger, vous ne payez pas la TVA aujourd'hui, est-ce que vous êtes bien au courant que vous devrez vous acquitter de la TVA lors de la livraison ?"
+
+### Optin
+
+Si l'option "Display newsletter + commercial prospection option (disabled by default)" a été activée dans /admin/config (voir [KYC.md](KYC.md) ), ce formulaire sera affiché au /checkout :
+
+![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/43b728b3-a201-443b-aaa3-d1ff81043819)
+
+Ces options ne sont à activer que 1/ si le client vous laisse son adresse email ou sa npub Nostr 2/ vous lui posez la question et obtenez formellement son accord, en lui précisant les incidences de chaque option.
+Activer ces options sans obtenir l'aval explicite du client est de votre responsabilité, et la plupart du temps hors-la-loi (en plus d'être un manque de respect intégral sur la récolte de donnée personnelle de client à usage commercial sans son accord).
 
 ## Spécificités de la commande (/order)
 
