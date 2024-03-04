@@ -111,7 +111,12 @@ async function maintainOrders() {
 							});
 
 							if (!response.ok) {
-								throw new Error('Failed to fetch checkout status');
+								throw new Error(
+									'Failed to fetch checkout status for order ' +
+										order._id +
+										', checkout ' +
+										checkoutId
+								);
 							}
 
 							const checkout = await response.json();

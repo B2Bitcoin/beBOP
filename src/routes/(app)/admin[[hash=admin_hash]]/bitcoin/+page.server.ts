@@ -13,6 +13,7 @@ import {
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Order } from '$lib/types/Order.js';
+import { filterUndef } from '$lib/utils/filterUndef.js';
 import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 
@@ -24,9 +25,9 @@ export async function load() {
 	const orders = collections.orders
 		.find({
 			_id: {
-				$in: transactions
-					.filter((item) => item.label.startsWith('order:'))
-					.map((item) => item.label.slice('order:'.length))
+				$in: filterUndef(transactions.map((item) => item.label))
+					.filter((label) => label.startsWith('order:'))
+					.map((label) => label.slice('order:'.length))
 			}
 		})
 		.project<Omit<Order, 'user'>>({ user: 0, 'payments._id': 0 });

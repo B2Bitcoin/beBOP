@@ -20,6 +20,11 @@
 	<title>{data.websiteTitle}</title>
 	<meta name="description" content={data.websiteShortDescription} />
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
+	{#if data.faviconPictureId}
+		<link rel="icon" href="/favicon/{data.faviconPictureId}" />
+	{:else}
+		<link rel="icon" href="/favicon.png" />
+	{/if}
 	<script
 		lang="javascript"
 		src="/script/language/en.js?v={PUBLIC_VERSION}-{data.enUpdatedAt.getTime()}"
@@ -31,7 +36,12 @@
 		></script>
 	{/if}
 	{#if data.plausibleScriptUrl}
-		<script defer data-domain={$page.url.host} src={data.plausibleScriptUrl}>
+		<script
+			defer
+			data-domain={$page.url.host}
+			src={data.plausibleScriptUrl.replace(/\.js$/, 'exclusion.js')}
+			data-exclude="/admin/*, /admin-*"
+		>
 		</script>
 	{/if}
 </svelte:head>

@@ -458,7 +458,12 @@ export async function createOrder(
 
 	const canBeNotified = !!(npubAddress || (emailsEnabled && email));
 
-	if (!canBeNotified && paymentMethod !== 'point-of-sale' && paymentMethod !== null) {
+	if (
+		!canBeNotified &&
+		paymentMethod !== 'point-of-sale' &&
+		paymentMethod !== null &&
+		params.user.userRoleId !== POS_ROLE_ID
+	) {
 		throw error(400, emailsEnabled ? 'Missing npub address or email' : 'Missing npub address');
 	}
 
@@ -687,6 +692,28 @@ export async function createOrder(
 							})
 						}
 					}),
+					...(runtimeConfig.accountingCurrency && {
+						accounting: {
+							price: {
+								amount: toCurrency(
+									runtimeConfig.accountingCurrency,
+									item.product.price.amount,
+									item.product.price.currency
+								),
+								currency: runtimeConfig.accountingCurrency
+							},
+							...(item.customPrice && {
+								customPrice: {
+									amount: toCurrency(
+										runtimeConfig.accountingCurrency,
+										item.customPrice.amount,
+										item.customPrice.currency
+									),
+									currency: runtimeConfig.accountingCurrency
+								}
+							})
+						}
+					}),
 					priceReference: {
 						price: {
 							amount: toCurrency(
@@ -811,6 +838,46 @@ export async function createOrder(
 									discount.currency
 								),
 								currency: runtimeConfig.secondaryCurrency
+							}
+						})
+					}
+				}),
+				...(runtimeConfig.accountingCurrency && {
+					accounting: {
+						totalPrice: {
+							amount: toCurrency(runtimeConfig.accountingCurrency, totalSatoshis, 'SAT'),
+							currency: runtimeConfig.accountingCurrency
+						},
+						...(shippingPrice && {
+							shippingPrice: {
+								amount: toCurrency(
+									runtimeConfig.accountingCurrency,
+									shippingPrice.amount,
+									shippingPrice.currency
+								),
+								currency: runtimeConfig.accountingCurrency
+							}
+						}),
+						...(priceInfo.totalVat && {
+							vat: priceInfo.vat.map(({ price }) => ({
+								amount: toCurrency(
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									runtimeConfig.accountingCurrency!,
+									price.amount,
+									price.currency
+								),
+								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+								currency: runtimeConfig.accountingCurrency!
+							}))
+						}),
+						...(discount && {
+							discount: {
+								amount: toCurrency(
+									runtimeConfig.accountingCurrency,
+									discount.amount,
+									discount.currency
+								),
+								currency: runtimeConfig.accountingCurrency
 							}
 						})
 					}
@@ -1071,6 +1138,7 @@ export async function addOrderPayment(
 	const mainCurrency = order.currencySnapshot.main.totalPrice.currency;
 	const secondaryCurrency = order.currencySnapshot.secondary?.totalPrice.currency;
 	const priceReferenceCurrency = order.currencySnapshot.priceReference.totalPrice.currency;
+	const accountingCurrency = order.currencySnapshot.accounting?.totalPrice.currency;
 
 	const priceToPay =
 		toCurrency(mainCurrency, price.amount, price.currency) <=
@@ -1106,6 +1174,14 @@ export async function addOrderPayment(
 					price: {
 						amount: toCurrency(secondaryCurrency, priceToPay.amount, priceToPay.currency),
 						currency: secondaryCurrency
+					}
+				}
+			}),
+			...(accountingCurrency && {
+				accounting: {
+					price: {
+						amount: toCurrency(accountingCurrency, priceToPay.amount, priceToPay.currency),
+						currency: accountingCurrency
 					}
 				}
 			}),

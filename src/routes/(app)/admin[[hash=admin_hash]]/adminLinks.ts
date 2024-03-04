@@ -15,10 +15,6 @@ export const adminLinks = [
 				label: 'Pictures'
 			},
 			{
-				href: '/admin/challenge',
-				label: 'Challenges'
-			},
-			{
 				href: '/admin/cms',
 				label: 'CMS'
 			},
@@ -27,32 +23,8 @@ export const adminLinks = [
 				label: 'Discount'
 			},
 			{
-				href: '/admin/tags',
-				label: 'Tags'
-			},
-			{
-				href: '/admin/slider',
-				label: 'Sliders'
-			},
-			{
 				href: '/admin/theme',
 				label: 'Themes'
-			},
-			{
-				href: '/admin/specification',
-				label: 'Specifications'
-			},
-			{
-				href: '/admin/form',
-				label: 'Forms'
-			},
-			{
-				href: '/admin/countdown',
-				label: 'Countdowns'
-			},
-			{
-				href: '/admin/gallery',
-				label: 'Galleries'
 			}
 		]
 	},
@@ -129,6 +101,39 @@ export const adminLinks = [
 			{
 				href: '/admin/reporting',
 				label: 'Reporting'
+			}
+		]
+	},
+	{
+		section: 'Widgets',
+		links: [
+			{
+				href: '/admin/challenge',
+				label: 'Challenges'
+			},
+			{
+				href: '/admin/tags',
+				label: 'Tags'
+			},
+			{
+				href: '/admin/slider',
+				label: 'Sliders'
+			},
+			{
+				href: '/admin/specification',
+				label: 'Specifications'
+			},
+			{
+				href: '/admin/form',
+				label: 'Forms'
+			},
+			{
+				href: '/admin/countdown',
+				label: 'Countdowns'
+			},
+			{
+				href: '/admin/gallery',
+				label: 'Galleries'
 			}
 		]
 	}

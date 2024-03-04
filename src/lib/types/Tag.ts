@@ -9,6 +9,7 @@ export interface TagTranslatableFields {
 	cta: {
 		label: string;
 		href: string;
+		openNewTab?: boolean;
 	}[];
 	menu: {
 		label: string;

@@ -47,7 +47,9 @@
 				name="principal.cta.label"
 				class="form-input"
 				placeholder={data.gallery.principal.cta.label}
-				value={data.gallery.translations?.[language]?.principal?.cta?.label ?? ''}
+				value={data.gallery.principal.cta.label ??
+					data.gallery.translations?.[language]?.principal?.cta?.label ??
+					''}
 			/>
 		</label>
 		<label class="form-label">
@@ -57,8 +59,20 @@
 				name="principal.cta.href"
 				class="form-input"
 				placeholder={data.gallery.principal.cta.href}
-				value={data.gallery.translations?.[language]?.principal?.cta?.href ?? ''}
+				value={data.gallery.principal.cta.href ??
+					data.gallery.translations?.[language]?.principal?.cta?.href ??
+					''}
 			/>
+		</label>
+		<label class="checkbox-label mt-4">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="principal.cta.openNewTab"
+				checked={data.gallery.principal.cta.openNewTab ??
+					data.gallery.translations?.[language]?.principal?.cta?.openNewTab}
+			/>
+			Open in new tab
 		</label>
 	</div>
 
@@ -102,7 +116,9 @@
 					name="secondary[{i}].cta.label"
 					class="form-input"
 					placeholder={data.gallery.secondary[i]?.cta.label || ''}
-					value={data.gallery.translations?.[language]?.secondary?.[i]?.cta?.label || ''}
+					value={data.gallery.secondary[i]?.cta.label ??
+						data.gallery.translations?.[language]?.secondary?.[i]?.cta?.label ??
+						''}
 				/>
 			</label>
 			<label class="form-label">
@@ -112,8 +128,20 @@
 					name="secondary[{i}].cta.href"
 					class="form-input"
 					placeholder={data.gallery.secondary[i]?.cta.href || ''}
-					value={data.gallery.translations?.[language]?.secondary?.[i]?.cta?.href || ''}
+					value={data.gallery.secondary[i]?.cta.href ??
+						data.gallery.translations?.[language]?.secondary?.[i]?.cta?.href ??
+						''}
 				/>
+			</label>
+			<label class="checkbox-label mt-4">
+				<input
+					class="form-checkbox"
+					type="checkbox"
+					name="secondary[{i}].cta.openNewTab"
+					checked={data.gallery.secondary[i]?.cta.openNewTab ??
+						data.gallery.translations?.[language]?.secondary?.[i]?.cta?.openNewTab}
+				/>
+				Open in new tab
 			</label>
 		</div>
 	{/each}

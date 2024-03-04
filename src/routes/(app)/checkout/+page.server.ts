@@ -31,38 +31,40 @@ export async function load({ parent, locals }) {
 			sort: { _id: -1 }
 		}
 	);
-	const cmsCheckoutTop = await collections.cmsPages.findOne(
-		{
-			_id: 'checkout-top'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+	const [cmsCheckoutTop, cmsCheckoutBottom] = await Promise.all([
+		collections.cmsPages.findOne(
+			{
+				_id: 'checkout-top'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
-	const cmsCheckoutBottom = await collections.cmsPages.findOne(
-		{
-			_id: 'checkout-bottom'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+		),
+		collections.cmsPages.findOne(
+			{
+				_id: 'checkout-bottom'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
+		)
+	]);
 
 	let methods = paymentMethods({ role: locals.user?.roleId });
 
@@ -151,15 +153,27 @@ export const actions = {
 			? null
 			: z
 					.object({
-						shipping: z.object({
-							firstName: z.string().min(1),
-							lastName: z.string().min(1),
-							address: z.string().min(1),
-							city: z.string().min(1),
-							state: z.string().optional(),
-							zip: z.string().min(1),
-							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
-						})
+						shipping: z.object(
+							locals.user?.roleId === POS_ROLE_ID
+								? {
+										firstName: z.string().default(''),
+										lastName: z.string().default(''),
+										address: z.string().default(''),
+										city: z.string().default(''),
+										state: z.string().optional(),
+										zip: z.string().default(''),
+										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+								  }
+								: {
+										firstName: z.string().min(1),
+										lastName: z.string().min(1),
+										address: z.string().min(1),
+										city: z.string().min(1),
+										state: z.string().optional(),
+										zip: z.string().min(1),
+										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+								  }
+						)
 					})
 					.parse(json);
 

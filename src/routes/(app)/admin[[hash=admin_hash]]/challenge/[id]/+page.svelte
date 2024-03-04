@@ -9,7 +9,7 @@
 	let beginsAt = data.beginsAt;
 	let endsAt = data.endsAt;
 	let endsAtElement: HTMLInputElement;
-
+	let progressChanged = false;
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
 			endsAtElement.setCustomValidity('End date must be after beginning date');
@@ -81,11 +81,26 @@
 			</select>
 		</label>
 	{/if}
-
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="progressChanged"
+			class="form-checkbox"
+			bind:checked={progressChanged}
+		/>
+		Edit progress
+	</label>
+	<input type="hidden" name="oldProgress" value={data.challenge.progress} />
 	<label class="form-label">
 		Progress
-
-		<input class="form-input" type="number" readonly value={data.challenge.progress} step="any" />
+		<input
+			class="form-input"
+			name="progress"
+			type="number"
+			value={data.challenge.progress}
+			readonly={!progressChanged}
+			step="any"
+		/>
 	</label>
 
 	<label class="form-label">

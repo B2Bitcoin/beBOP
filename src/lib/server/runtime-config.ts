@@ -32,6 +32,7 @@ const baseConfig = {
 	 * Prices are defined in this currency in the database
 	 */
 	priceReferenceCurrency: 'SAT' as Currency,
+	accountingCurrency: null as Currency | null,
 	orderNumber: 0,
 	paymentMethods: { order: [] as PaymentMethod[], disabled: [] as PaymentMethod[] },
 	subscriptionNumber: 0,
@@ -52,6 +53,7 @@ const baseConfig = {
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logo: { isWide: false, pictureId: '', darkModePictureId: '' },
+	faviconPictureId: '',
 	footerLogoId: '',
 	lnurlPayMetadataJwtSigningKey: '',
 	authLinkJwtSigningKey: '',
