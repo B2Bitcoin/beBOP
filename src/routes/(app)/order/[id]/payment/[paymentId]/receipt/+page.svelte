@@ -3,7 +3,9 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
+	import { exchangeRate } from '$lib/stores/exchangeRate.js';
 	import { sum } from '$lib/utils/sum.js';
+	import { get } from 'svelte/store';
 
 	export let data;
 
@@ -201,9 +203,15 @@
 	{:else if data.payment.method === 'card'}
 		{t('order.receipt.cardMean')}
 	{:else if data.payment.method === 'bitcoin'}
-		{t('order.receipt.bitcoinMean')}
+		{t('order.receipt.bitcoinMean', {
+			number: data.currencies.main === 'BTC' ? 1 : get(exchangeRate)[data.currencies.main],
+			currency: data.currencies.main
+		})}
 	{:else if data.payment.method === 'lightning'}
-		{t('order.receipt.lightningMean')}
+		{t('order.receipt.lightningMean', {
+			number: data.currencies.main === 'BTC' ? 1 : get(exchangeRate)[data.currencies.main],
+			currency: data.currencies.main
+		})}
 	{:else}
 		{t('orer.receipt.POSmean')}
 	{/if}
