@@ -17,6 +17,16 @@ export type Pojo<T> = ObjectId extends T
 	? Exclude<Pojo<T>, ObjectId> | string
 	: T extends UnknownArray
 	? PojoList<T>
+	: T extends Date
+	? Date
+	: T extends RegExp
+	? RegExp
+	: T extends Set<infer U>
+	? Set<U>
+	: T extends Map<infer K, infer V>
+	? Map<K, V>
+	: T extends null
+	? null
 	: T extends object
 	? PojoObject<T>
 	: T;
