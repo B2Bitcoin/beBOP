@@ -3,16 +3,15 @@
 
 	export let data;
 
-	let id = data.sellerIdentity;
-	let mainShopInfo = data.shopInformation;
-	let issuerInfo = id?.invoice?.issuerInfo;
+	let id = data.shopInformation;
+
 	let iban = id?.bank?.iban ?? '';
 	let bic = id?.bank?.bic ?? '';
 
 	const { sortedCountryCodes, countryName } = useI18n();
 </script>
 
-<h1 class="text-3xl">Seller identity</h1>
+<h1 class="text-3xl">Shop Information</h1>
 
 <form class="contents" method="post">
 	<h2 class="text-2xl">Legal information</h2>
@@ -144,12 +143,6 @@
 	</label>
 
 	<h2 class="text-2xl">Invoice Information</h2>
-	<button
-		type="button"
-		class="btn btn-blue self-start"
-		on:click={() => (issuerInfo = mainShopInfo?.invoice?.issuerInfo)}
-		>Fill with main shop informations</button
-	>
 
 	<label class="form-label">
 		Very-top-right issuer information
@@ -157,11 +150,12 @@
 			name="invoice.issuerInfo"
 			class="form-input max-w-[25rem]"
 			rows="5"
-			value={issuerInfo ?? ''}
+			value={id?.invoice?.issuerInfo ?? ''}
 		/>
 		<p class="text-sm">
 			This is completely optional. It will be printed on the top-right corner of the invoice.
 		</p>
 	</label>
+
 	<button type="submit" class="btn btn-black self-start">Update</button>
 </form>
