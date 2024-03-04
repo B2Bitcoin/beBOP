@@ -11,10 +11,10 @@ import { filterUndef } from '$lib/utils/filterUndef';
 import { groupBy } from 'lodash-es';
 import { differenceInSeconds } from 'date-fns';
 import type { WithId } from 'mongodb';
-import { pojo, type Pojo } from '$lib/server/pojo';
+import { pojo, type PojoObject } from '$lib/server/pojo';
 
 type FormattedCartItem = {
-	product: Pojo<
+	product: PojoObject<
 		Pick<
 			Product,
 			| 'stock'
