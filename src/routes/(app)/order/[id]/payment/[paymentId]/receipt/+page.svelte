@@ -3,7 +3,9 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
+	import { defaultExchangeRate, exchangeRate } from '$lib/stores/exchangeRate.js';
 	import { sum } from '$lib/utils/sum.js';
+	import { pick } from 'lodash-es';
 
 	export let data;
 
@@ -195,7 +197,19 @@
 		{t('order.receipt.vatFreeReason', { reason: data.order.vatFree.reason })}
 	</div>
 {/if}
-
+<div class="mt-4">
+	{#if data.payment.method === 'bank-transfer'}
+		Paid with: verified bank transfer
+	{:else if data.payment.method === 'card'}
+		Paid with: bank card via Sum UP
+	{:else if data.payment.method === 'bitcoin'}
+		Paid with: Bitcoin on-chain payment (1 BTC = xxx at the time of the order)
+	{:else if data.payment.method === 'lightning'}
+		Paid with: Lightning transaction (1 BTC = xxx at the time of the order)
+	{:else}
+		Paid in store
+	{/if}
+</div>
 <div class="mt-4">
 	<Trans key="order.receipt.endMessage" params={{ businessName: identity.businessName }}>
 		<br slot="0" />
