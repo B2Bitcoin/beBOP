@@ -97,9 +97,6 @@ dependencies:
   ts-node:
     specifier: ^10.9.1
     version: 10.9.1(@types/node@20.9.0)(typescript@5.0.4)
-  type-fest:
-    specifier: ^4.8.1
-    version: 4.8.1
   undici:
     specifier: ^5.22.1
     version: 5.22.1
@@ -210,6 +207,9 @@ devDependencies:
   tslib:
     specifier: ^2.5.0
     version: 2.5.0
+  type-fest:
+    specifier: ^4.11.0
+    version: 4.11.0
   typescript:
     specifier: ^5.0.4
     version: 5.0.4
@@ -5045,10 +5045,10 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /type-fest@4.8.1:
-    resolution: {integrity: sha512-ShaaYnjf+0etG8W/FumARKMjjIToy/haCaTjN2dvcewOSoNqCQzdgG7m2JVOlM5qndGTHjkvsrWZs+k/2Z7E0Q==}
+  /type-fest@4.11.0:
+    resolution: {integrity: sha512-DPsoHKtnCUqqoB5Y4OPyat7ObSLz1XOkhHTmz+gOkz2p1xs+BBneTvHWriTwc313eozfBWh8b45EpaV3ZrrPPQ==}
     engines: {node: '>=16'}
-    dev: false
+    dev: true
 
   /typescript@5.0.4:
     resolution: {integrity: sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==}
