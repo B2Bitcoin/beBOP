@@ -158,6 +158,7 @@ export async function load(params) {
 		employeesDarkefaulTheme: runtimeConfig.employeesDarkDefaultTheme,
 		displayPoweredBy: runtimeConfig.displayPoweredBy,
 		displayCompanyInfo: runtimeConfig.displayCompanyInfo,
+		displayMainShopInfo: runtimeConfig.displayMainShopInfo,
 		links: {
 			footer:
 				runtimeConfig[`translations.${locals.language}.config`]?.footerLinks ??
@@ -171,6 +172,7 @@ export async function load(params) {
 			socialNetworkIcons: runtimeConfig.socialNetworkIcons
 		},
 		sellerIdentity: runtimeConfig.sellerIdentity,
+		shopInformation: runtimeConfig.shopInformation,
 		deliveryFees: runtimeConfig.deliveryFees,
 		websiteLink: ORIGIN,
 		cart: cartData,

@@ -111,6 +111,15 @@
 		/>
 		Display company identity & company contact
 	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="displayMainShopInfo"
+			class="form-checkbox"
+			checked={data.displayMainShopInfo}
+		/>
+		Display main shop informations
+	</label>
 
 	<h3 class="text-xl">Links</h3>
 

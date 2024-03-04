@@ -48,6 +48,10 @@ export const adminLinks = [
 				label: 'Identity'
 			},
 			{
+				href: '/admin/physical-shop',
+				label: 'Physical Shop'
+			},
+			{
 				href: '/admin/backup',
 				label: 'Backup'
 			},
