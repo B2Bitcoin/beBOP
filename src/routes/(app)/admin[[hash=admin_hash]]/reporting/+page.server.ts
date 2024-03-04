@@ -26,7 +26,8 @@ export async function load() {
 					email: order.user.email
 				})
 			},
-			ipCountry: countryFromIp(order.clientIp ?? '')
+			ipCountry: countryFromIp(order.clientIp ?? ''),
+			jsonOrder: JSON.stringify(order)
 		}))
 	};
 }

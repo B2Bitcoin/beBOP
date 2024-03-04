@@ -48,7 +48,7 @@
 	function downloadJSON(orderId: string) {
 		const order = orderFiltered.find((order) => order._id === orderId);
 		if (order) {
-			const jsonData = JSON.stringify(order);
+			const jsonData = order.jsonOrder;
 			const jsonContent = 'data:text/json;charset=utf-8,' + encodeURIComponent(jsonData);
 			const link = document.createElement('a');
 			link.setAttribute('href', jsonContent);
