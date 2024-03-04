@@ -199,15 +199,15 @@
 {/if}
 <div class="mt-4">
 	{#if data.payment.method === 'bank-transfer'}
-		Paid with: verified bank transfer
+		{t('order.receipt.bankTranfertMean')}
 	{:else if data.payment.method === 'card'}
-		Paid with: bank card via Sum UP
+		{t('order.receipt.cardMean')}
 	{:else if data.payment.method === 'bitcoin'}
-		Paid with: Bitcoin on-chain payment (1 BTC = xxx at the time of the order)
+		{t('order.receipt.bitcoinMean')}
 	{:else if data.payment.method === 'lightning'}
-		Paid with: Lightning transaction (1 BTC = xxx at the time of the order)
+		{t('order.receipt.lightningMean')}
 	{:else}
-		Paid in store
+		{t('orer.receipt.POSmean')}
 	{/if}
 </div>
 <div class="mt-4">
