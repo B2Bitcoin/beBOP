@@ -3,9 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
-	import { defaultExchangeRate, exchangeRate } from '$lib/stores/exchangeRate.js';
 	import { sum } from '$lib/utils/sum.js';
-	import { pick } from 'lodash-es';
 
 	export let data;
 
