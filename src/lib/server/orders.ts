@@ -1201,7 +1201,7 @@ export async function addOrderPayment(
 			paymentId,
 			expiresAt: expiresAt ?? undefined
 		})),
-		requestedAt: new Date()
+		createdAt: new Date()
 	};
 
 	await collections.orders.updateOne(

@@ -63,7 +63,7 @@ export interface OrderPayment {
 	/** Bitcoin / LN address, payment link */
 	address?: string;
 	paidAt?: Date;
-	requestedAt?: Date;
+	createdAt?: Date;
 	/** For lightning addresses, contains the hash to look up the invoice */
 	invoiceId?: string;
 	/** For card transactions */

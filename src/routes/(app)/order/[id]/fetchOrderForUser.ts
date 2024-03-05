@@ -72,7 +72,7 @@ export async function fetchOrderForUser(orderId: string) {
 			address: payment.address,
 			expiresAt: payment.expiresAt,
 			paidAt: payment.paidAt,
-			requestedAt: payment.requestedAt,
+			createdAt: payment.createdAt,
 			checkoutId: payment.checkoutId,
 			invoice: payment.invoice,
 			price: payment.price,

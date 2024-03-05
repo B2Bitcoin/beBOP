@@ -66,11 +66,11 @@
 			{data.order.createdAt.toLocaleDateString($locale)}
 		</time>
 	</Trans><br />
-	{#if data.payment.requestedAt}
+	{#if data.payment.createdAt}
 		<Trans key="order.requestedAt">
 			{t('order.requestedAt')}:
-			<time datetime={data.payment.requestedAt?.toJSON()} slot="0">
-				{data.payment.requestedAt?.toLocaleDateString($locale)}
+			<time datetime={data.payment.createdAt?.toJSON()} slot="0">
+				{data.payment.createdAt?.toLocaleDateString($locale)}
 			</time>
 		</Trans><br />
 	{/if}
