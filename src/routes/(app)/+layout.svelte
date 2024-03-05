@@ -519,6 +519,7 @@
 									{data.sellerIdentity.contact.email}
 								</a>
 							{/if}
+							<br />
 							{#if data.sellerIdentity.contact.phone}
 								<a href="tel:{data.sellerIdentity.contact.phone}">
 									{data.sellerIdentity.contact.phone}
