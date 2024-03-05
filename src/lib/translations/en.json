@@ -455,6 +455,7 @@
 			"seeText": "See order notes",
 			"title": "Order notes #{number}"
 		},
+		"paidAt": "Paid at <0></0>",
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
 			"one": "Payment will be confirmed after 1 confirmation.",
@@ -495,6 +496,7 @@
 			"vatFreeReason": "Vat exempted: {reason}"
 		},
 		"restToPay": "Remaining to pay",
+		"requestedAt": "Payment requested at <0></0>",
 		"shippingAddress": {
 			"title": "Shipping address"
 		},

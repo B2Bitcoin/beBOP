@@ -455,6 +455,7 @@
 			"seeText": "Voir notes commande",
 			"title": "Notes de la commande #{number}"
 		},
+		"paidAt": "Date de paiement : <0></0>",
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
 			"one": "Le paiement sera validé après 1 confirmation.",
@@ -495,6 +496,7 @@
 			"vatFreeReason": "Exempt de TVA: {reason}"
 		},
 		"restToPay": "Reste à payer",
+		"requestedAt": "Date de demande de paiement: <0></0>",
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},
