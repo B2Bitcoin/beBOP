@@ -88,11 +88,11 @@ export const adminLinks = [
 			{
 				href: '/admin/sumup',
 				label: 'SumUp'
-			},
-			{
-				href: '/admin/bity',
-				label: 'Bity'
 			}
+			// {
+			// 	href: '/admin/bity',
+			// 	label: 'Bity'
+			// }
 		]
 	},
 	{
