@@ -496,6 +496,7 @@
 			"vatFreeReason": "Vat exempted: {reason}"
 		},
 		"restToPay": "Remaining to pay",
+		"requestedAt": "Payment requested at <0></0>",
 		"shippingAddress": {
 			"title": "Shipping address"
 		},

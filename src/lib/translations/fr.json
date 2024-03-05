@@ -496,6 +496,7 @@
 			"vatFreeReason": "Exempt de TVA: {reason}"
 		},
 		"restToPay": "Reste à payer",
+		"requestedAt": "Date de demande de paiement: <0></0>",
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},
