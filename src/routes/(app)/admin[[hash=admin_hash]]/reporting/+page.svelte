@@ -259,6 +259,7 @@
 						<th class="border border-gray-300 px-4 py-2">Order Date</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
+						<th class="border border-gray-300 px-4 py-2">Vat Rate</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -287,6 +288,7 @@
 										item.quantity) /
 										100}</td
 								>
+								<td class="border border-gray-300 px-4 py-2">{item.vatRate}</td>
 							</tr>
 						{/each}
 					{/each}
