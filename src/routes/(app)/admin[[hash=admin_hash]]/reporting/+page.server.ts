@@ -24,8 +24,7 @@ export async function load() {
 				npub: order.user.npub,
 				email: order.user.email
 			},
-			ipCountry: countryFromIp(order.clientIp ?? ''),
-			jsonOrder: JSON.stringify(order)
+			ipCountry: countryFromIp(order.clientIp ?? '')
 		}))
 	};
 }
