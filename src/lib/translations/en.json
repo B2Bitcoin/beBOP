@@ -456,11 +456,11 @@
 			"title": "Order notes #{number}"
 		},
 		"paidWith": {
-			"bankTranfert": "Paid with: verified bank transfer",
+			"bank-transfer": "Paid with: verified bank transfer",
 			"bitcoin": "Paid with: Bitcoin on-chain payment (1 BTC = {exchangeRate} {mainCurrency} at the time of the order)",
 			"card": "Paid with: bank card via Sum UP",
 			"lightning": "Paid with: Lightning transaction (1 BTC = {exchangeRate} {mainCurrency} at the time of the order)",
-			"POS": "Paid in store"
+			"point-of-sale": "Paid in store"
 		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
