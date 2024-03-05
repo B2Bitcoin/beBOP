@@ -45,22 +45,6 @@
 		averageCart: 0
 	};
 
-	function downloadJSON(orderId: string) {
-		const order = orderFiltered.find((order) => order._id === orderId);
-		if (order) {
-			const jsonData = order.jsonOrder;
-			const jsonContent = 'data:text/json;charset=utf-8,' + encodeURIComponent(jsonData);
-			const link = document.createElement('a');
-			link.setAttribute('href', jsonContent);
-			link.setAttribute('download', `order${orderId}.json`);
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
-		} else {
-			console.error(`Order with ID ${orderId} not found.`);
-		}
-	}
-
 	function downloadCSV(csvData: string, filename: string) {
 		const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvData);
 		const link = document.createElement('a');
@@ -204,10 +188,8 @@
 					{#each orderFiltered as order}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2"
-								><a
-									href="#exportJson"
-									class="underline text-blue-500"
-									on:click={() => downloadJSON(order._id)}>{order.number}</a
+								><a href="/admin/order/{order._id}/json" class="underline text-blue-500"
+									>{order.number}</a
 								></td
 							>
 							<td class="border border-gray-300 px-4 py-2"
