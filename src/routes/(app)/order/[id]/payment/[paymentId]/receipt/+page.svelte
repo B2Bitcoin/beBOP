@@ -197,8 +197,9 @@
 {/if}
 <div class="mt-4">
 	{t('order.paidWith.' + data.payment.method, {
-		currency: data.payment.price.currency,
-		number: data.payment.price.amount / data.payment.currencySnapshot.main.price.amount
+		paymentCurrency: data.payment.price.currency,
+		mainCurrency: data.payment.currencySnapshot.main.price.currency,
+		exchangeRate: data.payment.price.amount / data.payment.currencySnapshot.main.price.amount
 	})}
 </div>
 <div class="mt-4">

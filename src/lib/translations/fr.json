@@ -457,9 +457,9 @@
 		},
 		"paidWith": {
 			"bankTranfert": "Payé avec : virement bancaire vérifié",
-			"bitcoin": "Payé avec : Paiement Bitcoin on-chain (1 BTC = {number} {currency} au moment de la commande)",
+			"bitcoin": "Payé avec : Paiement Bitcoin on-chain (1 BTC = {exchangeRate} {mainCurrency} au moment de la commande)",
 			"card": "Payé avec : carte bancaire via Sum UP",
-			"lightning": "Payé avec : Transaction Lightning (1 BTC = {number} {currency} au moment de la commande)",
+			"lightning": "Payé avec : Transaction Lightning (1 BTC = {exchangeRate} {mainCurrency} au moment de la commande)",
 			"POS": "Payé en magasin"
 		},
 		"payToComplete": "Payez pour finaliser la commande.",
