@@ -18,12 +18,6 @@ export async function load() {
 			quantityOrder: sum(order.items.map((items) => items.quantity)),
 			billingAddress: order.billingAddress,
 			shippingAddress: order.shippingAddress,
-			notes: order.notes?.map(pojo),
-			user: order.user && {
-				userId: order.user.userId?.toString(),
-				npub: order.user.npub,
-				email: order.user.email
-			},
 			ipCountry: countryFromIp(order.clientIp ?? '')
 		}))
 	};

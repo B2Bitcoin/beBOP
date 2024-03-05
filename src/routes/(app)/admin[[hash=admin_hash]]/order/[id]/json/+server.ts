@@ -8,7 +8,6 @@ export const GET = async ({ params }) => {
 	if (!order) {
 		throw error(404, 'Order not found');
 	}
-	const ordeJson = JSON.stringify(order);
 
-	return new Response(ordeJson, { headers: { 'Content-Type': 'application/json' } });
+	return new Response(JSON.stringify(order), { headers: { 'Content-Type': 'application/json' } });
 };
