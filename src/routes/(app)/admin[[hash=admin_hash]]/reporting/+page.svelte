@@ -494,6 +494,7 @@
 						<th class="border border-gray-300 px-4 py-2">Payment Quantity</th>
 						<th class="border border-gray-300 px-4 py-2">Total price</th>
 						<th class="border border-gray-300 px-4 py-2">Currency</th>
+						<th class="border border-gray-300 px-4 py-2">Average</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -505,6 +506,7 @@
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
 							<td class="border border-gray-300 px-4 py-2">{total}</td>
 							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+							<td class="border border-gray-300 px-4 py-2">{total / quantity}</td>
 						</tr>
 					{/each}
 				</tbody>
