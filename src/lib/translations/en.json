@@ -455,6 +455,13 @@
 			"seeText": "See order notes",
 			"title": "Order notes #{number}"
 		},
+		"paidWith": {
+			"bankTranfert": "Paid with: verified bank transfer",
+			"bitcoin": "Paid with: Bitcoin on-chain payment (1 BTC = {number} {currency} at the time of the order)",
+			"card": "Paid with: bank card via Sum UP",
+			"lightning": "Paid with: Lightning transaction (1 BTC = {number} {currency} at the time of the order)",
+			"POS": "Paid in store"
+		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
 			"one": "Payment will be confirmed after 1 confirmation.",
@@ -481,14 +488,10 @@
 		"receipt": {
 			"alreadyPaidAmount": "Amount previously paid",
 			"bankInfo": "Bank details",
-			"bankTranfertMean": "Paid with: verified bank transfer",
-			"bitcoinMean": "Paid with: Bitcoin on-chain payment (1 BTC = {number} {currency} at the time of the order)",
-			"cardMean": "Paid with: bank card via Sum UP",
 			"create": "Create invoice",
 			"endMessage": "We stay at your disposal for any further information. <0></0> Best regards, <1></1> {businessName}",
 			"invoice": "Invoice",
 			"itemName": "Nature",
-			"lightningMean": "Paid with: Lightning transaction (1 BTC = {number} {currency} at the time of the order)",
 			"partialAmount": "Amount paid (partial payment)",
 			"quantity": "Qty",
 			"remainingAmount": "Remaining amount to pay",
@@ -505,11 +508,6 @@
 		"singleTitle": "Order #{number}",
 		"timeRemaining": "Time remaining: {minutes} minutes",
 		"vatFree": "This order is free of VAT. Reason: {reason}"
-	},
-	"orer": {
-		"receipt": {
-			"POSmean": "Paid in store"
-		}
 	},
 	"pos": {
 		"applyGiftDiscount": "As a POS user I apply a <0>gift discount</0>",

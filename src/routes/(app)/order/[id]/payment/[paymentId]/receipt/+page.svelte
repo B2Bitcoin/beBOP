@@ -199,21 +199,21 @@
 {/if}
 <div class="mt-4">
 	{#if data.payment.method === 'bank-transfer'}
-		{t('order.receipt.bankTranfertMean')}
+		{t('order.paidWith.bankTranfert')}
 	{:else if data.payment.method === 'card'}
-		{t('order.receipt.cardMean')}
+		{t('order.paidWith.card')}
 	{:else if data.payment.method === 'bitcoin'}
-		{t('order.receipt.bitcoinMean', {
+		{t('order.paidWith.bitcoin', {
 			number: data.currencies.main === 'BTC' ? 1 : get(exchangeRate)[data.currencies.main],
 			currency: data.currencies.main
 		})}
 	{:else if data.payment.method === 'lightning'}
-		{t('order.receipt.lightningMean', {
+		{t('order.paidWith.lightning', {
 			number: data.currencies.main === 'BTC' ? 1 : get(exchangeRate)[data.currencies.main],
 			currency: data.currencies.main
 		})}
 	{:else}
-		{t('orer.receipt.POSmean')}
+		{t('order.paidWith.POS')}
 	{/if}
 </div>
 <div class="mt-4">
