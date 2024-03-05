@@ -65,6 +65,12 @@
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
 			{data.order.createdAt.toLocaleDateString($locale)}
 		</time>
+	</Trans><br />
+	<Trans key="order.paidAt">
+		{t('order.paidAt')}:
+		<time datetime={data.payment.paidAt?.toJSON()} slot="0">
+			{data.payment.paidAt?.toLocaleDateString($locale)}
+		</time>
 	</Trans>
 </div>
 

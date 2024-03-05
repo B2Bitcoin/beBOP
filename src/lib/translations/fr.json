@@ -455,6 +455,7 @@
 			"seeText": "Voir notes commande",
 			"title": "Notes de la commande #{number}"
 		},
+		"paidAt": "Date de paiement : <0></0>",
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
 			"one": "Le paiement sera validé après 1 confirmation.",

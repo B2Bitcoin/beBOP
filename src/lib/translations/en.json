@@ -455,6 +455,7 @@
 			"seeText": "See order notes",
 			"title": "Order notes #{number}"
 		},
+		"paidAt": "Paid at <0></0>",
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
 			"one": "Payment will be confirmed after 1 confirmation.",
