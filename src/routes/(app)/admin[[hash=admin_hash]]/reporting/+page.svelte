@@ -45,22 +45,6 @@
 		averageCart: 0
 	};
 
-	function downloadJSON(orderId: string) {
-		const order = orderFiltered.find((order) => order._id === orderId);
-		if (order) {
-			const jsonData = JSON.stringify(order);
-			const jsonContent = 'data:text/json;charset=utf-8,' + encodeURIComponent(jsonData);
-			const link = document.createElement('a');
-			link.setAttribute('href', jsonContent);
-			link.setAttribute('download', `order${orderId}.json`);
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
-		} else {
-			console.error(`Order with ID ${orderId} not found.`);
-		}
-	}
-
 	function downloadCSV(csvData: string, filename: string) {
 		const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvData);
 		const link = document.createElement('a');
@@ -98,13 +82,25 @@
 	}
 
 	function quantityOfProduct(month: number, year: number) {
-		const productQuantities: Record<string, number> = {};
+		const productQuantities: Record<string, { quantity: number; total: number }> = {};
 		getOrderByMonthYear(month - 1, year).forEach((order) => {
 			order.items.forEach((item) => {
 				if (productQuantities[item.product._id]) {
-					productQuantities[item.product._id] += item.quantity;
+					productQuantities[item.product._id].quantity += item.quantity;
+					productQuantities[item.product._id].total += toCurrency(
+						data.currencies.main,
+						item.customPrice?.amount ?? item.product.price.amount,
+						item.product.price.currency
+					);
 				} else {
-					productQuantities[item.product._id] = item.quantity;
+					productQuantities[item.product._id] = {
+						quantity: item.quantity,
+						total: toCurrency(
+							data.currencies.main,
+							item.customPrice?.amount ?? item.product.price.amount,
+							item.product.price.currency
+						)
+					};
 				}
 			});
 		});
@@ -193,9 +189,9 @@
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2"
 								><a
-									href="#exportJson"
-									class="underline text-blue-500"
-									on:click={() => downloadJSON(order._id)}>{order.number}</a
+									href="/admin/order/{order._id}/json"
+									target="_blank"
+									class="underline text-blue-500">{order.number}</a
 								></td
 							>
 							<td class="border border-gray-300 px-4 py-2"
@@ -282,7 +278,7 @@
 									>{(toCurrency(
 										data.currencies.main,
 										item.product.price.amount,
-										item.product.price.currency
+										item.customPrice?.currency ?? item.product.price.currency
 									) *
 										(item.product.deposit?.percentage ?? 100) *
 										item.quantity) /
@@ -456,20 +452,14 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each Object.entries(quantityOfProductMonthYear) as [productId, quantity]}
+					{#each Object.entries(quantityOfProductMonthYear) as [productId, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
 							<td class="border border-gray-300 px-4 py-2">{fetchProductById(productId)?.name}</td>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
 							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
-							<td class="border border-gray-300 px-4 py-2"
-								>{toCurrency(
-									data.currencies.main,
-									(fetchProductById(productId)?.price.amount || 0) * quantity,
-									fetchProductById(productId)?.price.currency || 'BTC'
-								)}</td
-							>
+							<td class="border border-gray-300 px-4 py-2">{total}</td>
 						</tr>
 					{/each}
 				</tbody>
