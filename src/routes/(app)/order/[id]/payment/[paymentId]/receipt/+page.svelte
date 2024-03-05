@@ -198,23 +198,10 @@
 	</div>
 {/if}
 <div class="mt-4">
-	{#if data.payment.method === 'bank-transfer'}
-		{t('order.paidWith.bankTranfert')}
-	{:else if data.payment.method === 'card'}
-		{t('order.paidWith.card')}
-	{:else if data.payment.method === 'bitcoin'}
-		{t('order.paidWith.bitcoin', {
-			number: data.currencies.main === 'BTC' ? 1 : get(exchangeRate)[data.currencies.main],
-			currency: data.currencies.main
-		})}
-	{:else if data.payment.method === 'lightning'}
-		{t('order.paidWith.lightning', {
-			number: data.currencies.main === 'BTC' ? 1 : get(exchangeRate)[data.currencies.main],
-			currency: data.currencies.main
-		})}
-	{:else}
-		{t('order.paidWith.POS')}
-	{/if}
+	{t('order.paidWith.' + data.payment.method, {
+		currency: data.payment.price.currency,
+		number: data.payment.price.amount / data.payment.currencySnapshot.main.price.amount
+	})}
 </div>
 <div class="mt-4">
 	<Trans key="order.receipt.endMessage" params={{ businessName: identity.businessName }}>
