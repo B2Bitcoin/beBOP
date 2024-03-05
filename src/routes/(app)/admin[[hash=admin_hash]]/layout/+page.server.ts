@@ -26,7 +26,8 @@ export const actions = {
 					)
 					.optional(),
 				displayPoweredBy: z.boolean({ coerce: true }),
-				displayCompanyInfo: z.boolean({ coerce: true })
+				displayCompanyInfo: z.boolean({ coerce: true }),
+				displayMainShopInfo: z.boolean({ coerce: true })
 			})
 			.parse(json);
 

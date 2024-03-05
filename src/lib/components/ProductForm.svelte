@@ -24,7 +24,7 @@
 	import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 	import { uploadPicture } from '$lib/types/Picture';
 	import { currencies } from '$lib/stores/currencies';
-	import type { Pojo } from '$lib/server/pojo';
+	import type { PojoObject } from '$lib/server/pojo';
 	import type { PaymentMethod } from '$lib/server/payment-methods';
 	import { useI18n } from '$lib/i18n';
 
@@ -40,7 +40,7 @@
 	export let vatProfiles: LayoutServerData['vatProfiles'];
 	export let defaultActionSettings: ProductActionSettings;
 	export let availablePaymentMethods: PaymentMethod[];
-	export let product: WithId<Pojo<Product>> = {
+	export let product: WithId<PojoObject<Product>> = {
 		_id: '',
 		payWhatYouWant: false,
 		standalone: false,
