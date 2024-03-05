@@ -112,6 +112,7 @@ const baseConfig = {
 	} satisfies ProductActionSettings as ProductActionSettings,
 	mainThemeId: '',
 	sellerIdentity: null as SellerIdentity | null,
+	shopInformation: null as SellerIdentity | null,
 	sumUp: {
 		apiKey: '',
 		merchantCode: '',
@@ -124,6 +125,7 @@ const baseConfig = {
 	employeesDarkDefaultTheme: false,
 	displayPoweredBy: false,
 	displayCompanyInfo: false,
+	displayMainShopInfo: false,
 	displayNewsletterCommercialProspection: false,
 	cartMaxSeparateItems: null as null | number,
 	websiteTitle: 'B2Bitcoin beBOP',

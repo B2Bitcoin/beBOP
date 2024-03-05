@@ -380,7 +380,10 @@
 			"contact": "Contact entreprise",
 			"identity": "Identité entreprise"
 		},
-		"poweredBy": "Alimenté par"
+		"poweredBy": "Alimenté par",
+		"shop": {
+			"info": "notre boutique"
+		}
 	},
 	"identity": {
 		"cta": {

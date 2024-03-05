@@ -477,7 +477,6 @@
 				class="mx-auto max-w-7xl px-6 py-6 flex items-start justify-between gap-2 gap-y-8 w-full flex-wrap"
 			>
 				{#if data.displayCompanyInfo && data.sellerIdentity}
-					<!-- First column -->
 					<div>
 						<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.identity')}</h3>
 						<p class="whitespace-pre-line">
@@ -492,8 +491,26 @@
 							})}
 						</p>
 					</div>
+				{/if}
 
-					<!-- Second column -->
+				{#if data.displayMainShopInfo && data.shopInformation}
+					<div>
+						<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.shop.info')}</h3>
+						<p class="whitespace-pre-line">
+							{textAddress({
+								firstName: data.shopInformation.businessName,
+								lastName: '',
+								address: data.shopInformation.address.street,
+								zip: data.shopInformation.address.zip,
+								city: data.shopInformation.address.city,
+								country: data.shopInformation.address.country,
+								state: data.shopInformation.address.state
+							})}
+						</p>
+					</div>
+				{/if}
+
+				{#if data.displayCompanyInfo && data.sellerIdentity}
 					{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
 						<div>
 							<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.contact')}</h3>
