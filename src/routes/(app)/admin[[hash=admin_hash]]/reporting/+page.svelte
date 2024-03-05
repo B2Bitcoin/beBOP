@@ -188,8 +188,10 @@
 					{#each orderFiltered as order}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2"
-								><a href="/admin/order/{order._id}/json" class="underline text-blue-500"
-									>{order.number}</a
+								><a
+									href="/admin/order/{order._id}/json"
+									target="_blank"
+									class="underline text-blue-500">{order.number}</a
 								></td
 							>
 							<td class="border border-gray-300 px-4 py-2"
