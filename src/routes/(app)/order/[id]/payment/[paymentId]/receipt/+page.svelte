@@ -3,9 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
-	import { exchangeRate } from '$lib/stores/exchangeRate.js';
 	import { sum } from '$lib/utils/sum.js';
-	import { get } from 'svelte/store';
 
 	export let data;
 
