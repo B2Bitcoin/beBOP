@@ -340,7 +340,7 @@
 										: payment.method === 'card'
 										? payment.transactions?.[0].transaction_code
 										: payment.method === 'bitcoin'
-										? payment.transactions?.[0].txid
+										? payment.transactions?.[0].id ?? ''
 										: payment.detail || ''}</td
 								>
 
