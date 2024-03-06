@@ -315,6 +315,8 @@
 						<th class="border border-gray-300 px-4 py-2">Payment Info</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
+						<th class="border border-gray-300 py-2">Cashed Currency</th>
+						<th class="border border-gray-300 px-4 py-2">Cashed Amount</th>
 						<th class="border border-gray-300 px-4 py-2">Billing Country</th>
 					</tr>
 				</thead>
@@ -342,6 +344,14 @@
 										: payment.detail || ''}</td
 								>
 
+								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{toCurrency(
+										data.currencies.main,
+										payment.currencySnapshot.main.price.amount,
+										payment.currencySnapshot.main.price.currency
+									)}</td
+								>
 								<td class="border border-gray-300 px-4 py-2"
 									>{payment.currencySnapshot.main.price.currency}</td
 								>
