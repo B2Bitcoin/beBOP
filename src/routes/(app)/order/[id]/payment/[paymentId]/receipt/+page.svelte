@@ -4,6 +4,7 @@
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
 	import { sum } from '$lib/utils/sum.js';
+	import { marked } from 'marked';
 
 	export let data;
 
@@ -229,7 +230,10 @@
 
 {#if data.order.receiptNote}
 	<div class="mt-4 text-center">
-		<p>{data.order.receiptNote.replaceAll('<', '&lt;')}</p>
+		<p>
+			<!-- eslint-disable svelte/no-at-html-tags -->
+			{@html marked(data.order.receiptNote.replaceAll('<', '&lt;'))}
+		</p>
 	</div>
 {/if}
 
