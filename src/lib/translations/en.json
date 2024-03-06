@@ -104,6 +104,9 @@
 			"unavailable": "No payment methods available."
 		},
 		"paymentStatus": "Payment status",
+		"receiptNote": {
+			"label": "Provide additional information on the invoice"
+		},
 		"shipmentInfo": "Shipment info",
 		"title": "Checkout",
 		"tosAgree": "I agree to the <0>terms of service</0>",
@@ -495,8 +498,8 @@
 			"unitPrice": "Unit price",
 			"vatFreeReason": "Vat exempted: {reason}"
 		},
-		"restToPay": "Remaining to pay",
 		"requestedAt": "Payment requested at <0></0>",
+		"restToPay": "Remaining to pay",
 		"shippingAddress": {
 			"title": "Shipping address"
 		},

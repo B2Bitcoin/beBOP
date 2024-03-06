@@ -451,6 +451,7 @@ export async function createOrder(
 		};
 		clientIp?: string;
 		note?: string;
+		receiptNote?: string;
 	}
 ): Promise<Order['_id']> {
 	const npubAddress = params.notifications?.paymentStatus?.npub;
@@ -931,6 +932,7 @@ export async function createOrder(
 					}
 				]
 			}),
+			...(params.receiptNote && { receiptNote: params.receiptNote }),
 			...(params.reasonOfferDeliveryFees && {
 				deliveryFeesFree: {
 					reason: params.reasonOfferDeliveryFees

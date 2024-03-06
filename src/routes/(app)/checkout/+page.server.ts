@@ -238,6 +238,13 @@ export const actions = {
 					})
 					.parse(json)
 			: null;
+		const receiptNote = json.receiptNoteContent
+			? z
+					.object({
+						receiptNoteContent: z.string().min(1)
+					})
+					.parse(json)
+			: null;
 
 		const multiplePaymentMethods =
 			locals.user?.roleId === POS_ROLE_ID
@@ -423,7 +430,8 @@ export const actions = {
 				...(agreements.allowCollectIP && { clientIp: locals.clientIp }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
 					runtimeConfig.deliveryFees.allowFreeForPOS &&
-					offerDeliveryFees && { reasonOfferDeliveryFees })
+					offerDeliveryFees && { reasonOfferDeliveryFees }),
+				...(receiptNote && { receiptNote: receiptNote.receiptNoteContent })
 			}
 		);
 

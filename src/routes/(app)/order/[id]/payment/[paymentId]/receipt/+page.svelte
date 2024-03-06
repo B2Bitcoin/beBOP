@@ -227,6 +227,12 @@
 	</div>
 {/if}
 
+{#if data.order.receiptNote}
+	<div class="mt-4 text-center">
+		<p>{data.order.receiptNote.replaceAll('<', '&lt;')}</p>
+	</div>
+{/if}
+
 <style global>
 	@page {
 		size: portrait;

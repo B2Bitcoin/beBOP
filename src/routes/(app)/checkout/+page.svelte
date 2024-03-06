@@ -479,7 +479,13 @@
 					<div class="pl-4 py-2 body-mainPlan border-b border-gray-300 text-xl font-light">
 						{t('checkout.note.title')}
 					</div>
-
+					{#if data.roleId === POS_ROLE_ID}
+						<div class="p-4 flex flex-col gap-3">
+							<label class="form-label text-xl">
+								{t('checkout.receiptNote.label')}
+								<textarea name="receiptNoteContent" cols="30" rows="2" class="form-input" />
+							</label>
+						</div>{/if}
 					<div class="p-4 flex flex-col gap-3">
 						<label class="form-label text-xl">
 							{t('checkout.note.label')}
