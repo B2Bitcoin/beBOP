@@ -455,11 +455,12 @@
 			"seeText": "Voir notes commande",
 			"title": "Notes de la commande #{number}"
 		},
+		"paidAt": "Date de paiement : <0></0>",
 		"paidWith": {
 			"bank-transfer": "Payé avec : virement bancaire vérifié",
-			"bitcoin": "Payé avec : Paiement Bitcoin on-chain (1 BTC = {exchangeRate} {mainCurrency} au moment de la commande)",
+			"bitcoin": "Payé avec : Paiement Bitcoin on-chain (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
 			"card": "Payé avec : carte bancaire via Sum UP",
-			"lightning": "Payé avec : Transaction Lightning (1 BTC = {exchangeRate} {mainCurrency} au moment de la commande)",
+			"lightning": "Payé avec : Transaction Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
 			"point-of-sale": "Payé en magasin"
 		},
 		"payToComplete": "Payez pour finaliser la commande.",
@@ -502,6 +503,7 @@
 			"vatFreeReason": "Exempt de TVA: {reason}"
 		},
 		"restToPay": "Reste à payer",
+		"requestedAt": "Date de demande de paiement: <0></0>",
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},

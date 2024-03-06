@@ -65,6 +65,20 @@
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
 			{data.order.createdAt.toLocaleDateString($locale)}
 		</time>
+	</Trans><br />
+	{#if data.payment.createdAt}
+		<Trans key="order.requestedAt">
+			{t('order.requestedAt')}:
+			<time datetime={data.payment.createdAt?.toJSON()} slot="0">
+				{data.payment.createdAt?.toLocaleDateString($locale)}
+			</time>
+		</Trans><br />
+	{/if}
+	<Trans key="order.paidAt">
+		{t('order.paidAt')}:
+		<time datetime={data.payment.paidAt?.toJSON()} slot="0">
+			{data.payment.paidAt?.toLocaleDateString($locale)}
+		</time>
 	</Trans>
 </div>
 
@@ -199,7 +213,7 @@
 	{t('order.paidWith.' + data.payment.method, {
 		paymentCurrency: data.payment.price.currency,
 		mainCurrency: data.payment.currencySnapshot.main.price.currency,
-		exchangeRate: data.payment.price.amount / data.payment.currencySnapshot.main.price.amount
+		exchangeRate: 1 / (data.payment.price.amount / data.payment.currencySnapshot.main.price.amount)
 	})}
 </div>
 <div class="mt-4">
