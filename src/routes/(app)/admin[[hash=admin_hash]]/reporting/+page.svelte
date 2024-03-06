@@ -352,12 +352,8 @@
 										payment.currencySnapshot.main.price.currency
 									)}</td
 								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{payment.currencySnapshot.main.price.currency}</td
-								>
-								<td class="border border-gray-300 px-4 py-2"
-									>{payment.currencySnapshot.main.price.amount}</td
-								>
+								<td class="border border-gray-300 px-4 py-2">{payment.price.currency}</td>
+								<td class="border border-gray-300 px-4 py-2">{payment.price.amount}</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{countryName(
 										order.billingAddress?.country ??
