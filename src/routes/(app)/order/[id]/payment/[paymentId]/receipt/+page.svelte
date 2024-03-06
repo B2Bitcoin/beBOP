@@ -213,7 +213,7 @@
 	{t('order.paidWith.' + data.payment.method, {
 		paymentCurrency: data.payment.price.currency,
 		mainCurrency: data.payment.currencySnapshot.main.price.currency,
-		exchangeRate: 1 / (data.payment.price.amount / data.payment.currencySnapshot.main.price.amount)
+		exchangeRate: data.payment.currencySnapshot.main.price.amount / data.payment.price.amount
 	})}
 </div>
 <div class="mt-4">
