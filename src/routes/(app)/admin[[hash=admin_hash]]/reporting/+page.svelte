@@ -313,6 +313,8 @@
 						<th class="border border-gray-300 px-4 py-2">Payment Info</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
+						<th class="border border-gray-300 py-2">Cashed Currency</th>
+						<th class="border border-gray-300 px-4 py-2">Cashed Amount</th>
 						<th class="border border-gray-300 px-4 py-2">Billing Country</th>
 					</tr>
 				</thead>
@@ -336,7 +338,7 @@
 										: payment.method === 'card'
 										? payment.transactions?.[0].transaction_code
 										: payment.method === 'bitcoin'
-										? payment.transactions?.[0].txid
+										? payment.transactions?.[0].id ?? ''
 										: payment.detail || ''}</td
 								>
 
@@ -348,6 +350,8 @@
 										payment.currencySnapshot.main.price.currency
 									)}</td
 								>
+								<td class="border border-gray-300 px-4 py-2">{payment.price.currency}</td>
+								<td class="border border-gray-300 px-4 py-2">{payment.price.amount}</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{countryName(
 										order.billingAddress?.country ??
