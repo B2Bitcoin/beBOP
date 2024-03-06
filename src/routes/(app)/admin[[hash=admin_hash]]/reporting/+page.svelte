@@ -277,7 +277,7 @@
 								<td class="border border-gray-300 px-4 py-2"
 									>{(toCurrency(
 										data.currencies.main,
-										item.product.price.amount,
+										item.customPrice?.amount ?? item.product.price.amount,
 										item.customPrice?.currency ?? item.product.price.currency
 									) *
 										(item.product.deposit?.percentage ?? 100) *
