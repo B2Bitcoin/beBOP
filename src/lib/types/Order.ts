@@ -224,6 +224,12 @@ export interface Order extends Timestamps {
 	clientIp?: string;
 	notes?: Note[];
 	receiptNote?: string;
+	engagements?: {
+		acceptedTermsOfUse?: boolean;
+		acceptedIPCollect?: boolean;
+		acceptedDepositConditionsAndFullPayment?: boolean;
+		acceptedExportationAndVATObligation?: boolean;
+	};
 }
 interface SimplifiedOrderPayment {
 	id: string;

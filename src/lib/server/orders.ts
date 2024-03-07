@@ -452,6 +452,12 @@ export async function createOrder(
 		clientIp?: string;
 		note?: string;
 		receiptNote?: string;
+		engagements?: {
+			acceptedTermsOfUse?: boolean;
+			acceptedIPCollect?: boolean;
+			acceptedDepositConditionsAndFullPayment?: boolean;
+			acceptedExportationAndVATObligation?: boolean;
+		};
 	}
 ): Promise<Order['_id']> {
 	const npubAddress = params.notifications?.paymentStatus?.npub;
@@ -937,7 +943,8 @@ export async function createOrder(
 				deliveryFeesFree: {
 					reason: params.reasonOfferDeliveryFees
 				}
-			})
+			}),
+			...(params.engagements && { engagements: params.engagements })
 		};
 		await collections.orders.insertOne(order, { session });
 
