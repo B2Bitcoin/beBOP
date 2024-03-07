@@ -245,14 +245,6 @@
 									{/if}
 									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
 								</form>
-								<form
-									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-										._id}/payment/{payment.id}?/cancel"
-									method="post"
-									class="contents"
-								>
-									<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
-								</form>
 							</div>
 						{/if}
 					</div>
