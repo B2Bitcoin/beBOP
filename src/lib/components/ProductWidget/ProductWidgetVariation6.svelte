@@ -52,7 +52,7 @@
 				<PictureComponent picture={pictures[pictureId]} class="h-[280px] mr-auto object-contain" />
 			</a>
 		</div>
-		<div class="p-4 grow-[2]">
+		<div class="p-4 grow-[2] w-2/3">
 			<a href="/product/{product._id}">
 				<h2 class="text-2xl font-bold body-title mb-2">{product.name}</h2>
 			</a>
