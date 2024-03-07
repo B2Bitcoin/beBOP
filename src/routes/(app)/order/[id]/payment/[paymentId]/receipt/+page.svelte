@@ -4,6 +4,7 @@
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
 	import { sum } from '$lib/utils/sum.js';
+	import { marked } from 'marked';
 
 	export let data;
 
@@ -230,6 +231,15 @@
 			<tr><td class="px-2">IBAN</td><td>{identity.bank.iban}</td></tr>
 			<tr><td class="px-2">BIC</td><td>{identity.bank.bic}</td></tr>
 		</table>
+	</div>
+{/if}
+
+{#if data.order.receiptNote}
+	<div class="mt-4 text-center">
+		<p>
+			<!-- eslint-disable svelte/no-at-html-tags -->
+			{@html marked(data.order.receiptNote.replaceAll('<', '&lt;'))}
+		</p>
 	</div>
 {/if}
 

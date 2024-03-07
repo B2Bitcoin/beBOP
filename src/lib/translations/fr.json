@@ -104,6 +104,9 @@
 			"unavailable": "Aucun mode de paiement disponible."
 		},
 		"paymentStatus": "Statut de paiement",
+		"receiptNote": {
+			"label": "Renseignez une mention additionnelle sur la facture"
+		},
 		"shipmentInfo": "Informations d'expédition",
 		"title": "Livraison et paiement",
 		"tosAgree": "J'accepte les <0>conditions d'utilisation</0>",
@@ -502,8 +505,8 @@
 			"unitPrice": "Prix ​​unit. HT",
 			"vatFreeReason": "Exempt de TVA: {reason}"
 		},
-		"restToPay": "Reste à payer",
 		"requestedAt": "Date de demande de paiement: <0></0>",
+		"restToPay": "Reste à payer",
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},

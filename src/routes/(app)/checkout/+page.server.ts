@@ -238,6 +238,13 @@ export const actions = {
 					})
 					.parse(json)
 			: null;
+		const receiptNote = json.receiptNoteContent
+			? z
+					.object({
+						receiptNoteContent: z.string().min(1)
+					})
+					.parse(json)
+			: null;
 
 		const multiplePaymentMethods =
 			locals.user?.roleId === POS_ROLE_ID
@@ -327,11 +334,13 @@ export const actions = {
 
 		const agreements = z
 			.object({
+				teecees: z.boolean({ coerce: true }).default(false),
 				allowCollectIP: z.boolean({ coerce: true }).default(false),
 				isOnlyDeposit: z.boolean({ coerce: true }).default(false),
 				isVATNullForeigner: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
+				teecees: formData.get('teecees'),
 				allowCollectIP: formData.get('allowCollectIP'),
 				isOnlyDeposit: formData.get('isOnlyDeposit'),
 				isVATNullForeigner: formData.get('isVATNullForeigner')
@@ -423,7 +432,18 @@ export const actions = {
 				...(agreements.allowCollectIP && { clientIp: locals.clientIp }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
 					runtimeConfig.deliveryFees.allowFreeForPOS &&
-					offerDeliveryFees && { reasonOfferDeliveryFees })
+					offerDeliveryFees && { reasonOfferDeliveryFees }),
+				...(receiptNote && { receiptNote: receiptNote.receiptNoteContent }),
+				engagements: {
+					...(agreements.allowCollectIP && { acceptedIPCollect: agreements.allowCollectIP }),
+					...(agreements.teecees && { acceptedTermsOfUse: agreements.teecees }),
+					...(agreements.isOnlyDeposit && {
+						acceptedDepositConditionsAndFullPayment: agreements.isOnlyDeposit
+					}),
+					...(agreements.isVATNullForeigner && {
+						acceptedExportationAndVATObligation: agreements.isVATNullForeigner
+					})
+				}
 			}
 		);
 
