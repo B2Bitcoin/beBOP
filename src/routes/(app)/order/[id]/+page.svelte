@@ -204,6 +204,18 @@
 									</a>
 								{/if}
 							{/if}
+							{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+								<div class="grid grid-cols-4 gap-2 mt-2">
+									<form
+										action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+											._id}/payment/{payment.id}?/cancel"
+										method="post"
+										class="contents"
+									>
+										<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
+									</form>
+								</div>
+							{/if}
 						{/if}
 						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
 							<div class="flex flex-wrap gap-2">
