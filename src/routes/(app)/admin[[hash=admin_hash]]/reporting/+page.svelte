@@ -457,7 +457,7 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each Object.entries(quantityOfProductMonthYear) as [productId, { quantity, total }]}
+					{#each Object.entries(quantityOfProductMonthYear).sort((a, b) => b[1].quantity - a[1].quantity) as [productId, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
@@ -496,7 +496,7 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each Object.entries(quantityOfPaymentMeanMonthYear) as [method, { quantity, total }]}
+					{#each Object.entries(quantityOfPaymentMeanMonthYear).sort((a, b) => b[1].quantity - a[1].quantity) as [method, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
 							<td class="border border-gray-300 px-4 py-2">{method}</td>
