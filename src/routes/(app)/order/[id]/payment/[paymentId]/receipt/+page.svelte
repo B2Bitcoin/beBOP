@@ -228,13 +228,15 @@
 		{t('order.receipt.vatFreeReason', { reason: data.order.vatFree.reason })}
 	</div>
 {/if}
-<div class="mt-4">
-	{t('order.paidWith.' + data.payment.method, {
-		paymentCurrency: data.payment.price.currency,
-		mainCurrency: data.payment.currencySnapshot.main.price.currency,
-		exchangeRate: data.payment.currencySnapshot.main.price.amount / data.payment.price.amount
-	})}
-</div>
+{#if finalInvoice}
+	<div class="mt-4">
+		{t('order.paidWith.' + data.payment.method, {
+			paymentCurrency: data.payment.price.currency,
+			mainCurrency: data.payment.currencySnapshot.main.price.currency,
+			exchangeRate: data.payment.currencySnapshot.main.price.amount / data.payment.price.amount
+		})}
+	</div>
+{/if}
 <div class="mt-4">
 	<Trans key="order.receipt.endMessage" params={{ businessName: identity.businessName }}>
 		<br slot="0" />
