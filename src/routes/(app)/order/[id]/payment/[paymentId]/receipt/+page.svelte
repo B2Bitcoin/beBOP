@@ -8,6 +8,13 @@
 
 	export let data;
 
+	const finalInvoice = data.payment.status === 'paid';
+	const proformaInvoiceNumber = `PROFORMA-${data.order.number}-${
+		data.order.payments.findIndex((p) => p.id === data.payment.id) + 1
+	}`;
+	const invoiceNumber = finalInvoice
+		? data.payment.invoice?.number?.toString()
+		: proformaInvoiceNumber;
 	const identity = data.sellerIdentity;
 
 	const { t, locale, textAddress } = useI18n();
@@ -60,27 +67,36 @@
 </div>
 
 <div class="mt-4">
-	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {data.payment.invoice?.number}</h2>
+	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {invoiceNumber}</h2>
 	<Trans key="order.createdAt">
-		{t('order.createdAt')}:
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
 			{data.order.createdAt.toLocaleDateString($locale)}
 		</time>
 	</Trans><br />
 	{#if data.payment.createdAt}
 		<Trans key="order.requestedAt">
-			{t('order.requestedAt')}:
 			<time datetime={data.payment.createdAt?.toJSON()} slot="0">
 				{data.payment.createdAt?.toLocaleDateString($locale)}
 			</time>
 		</Trans><br />
 	{/if}
-	<Trans key="order.paidAt">
-		{t('order.paidAt')}:
-		<time datetime={data.payment.paidAt?.toJSON()} slot="0">
-			{data.payment.paidAt?.toLocaleDateString($locale)}
-		</time>
-	</Trans>
+	{#if finalInvoice}
+		<Trans key="order.paidAt">
+			<time datetime={data.payment.paidAt?.toJSON()} slot="0">
+				{data.payment.paidAt?.toLocaleDateString($locale)}
+			</time>
+		</Trans>
+		{t('order.receipt.proformaAssociated', { proformaInvoiceNumber })}
+	{:else}
+		{t('order.receipt.proforma')}
+		{#if data.payment.expiresAt}
+			<Trans key="order.paymentExpiresAt">
+				<time datetime={data.payment.expiresAt.toJSON()} slot="0">
+					{data.payment.expiresAt.toLocaleDateString($locale)}
+				</time>
+			</Trans>
+		{/if}
+	{/if}
 </div>
 
 <table class="mt-4 border-collapse">
@@ -181,7 +197,9 @@
 	{/if}
 	{#if data.payment.currencySnapshot.main.price.amount !== data.order.currencySnapshot.main.totalPrice.amount}
 		<tr style:background-color="#aeaaaa" class="text-white font-bold">
-			<td class="border border-white px-2 text-right">{t('order.receipt.partialAmount')}</td>
+			<td class="border border-white px-2 text-right"
+				>{finalInvoice ? t('order.receipt.partialAmount') : t('order.receipt.partialAmountPre')}</td
+			>
 			<td class="border border-white px-2 whitespace-nowrap text-right">
 				<PriceTag
 					amount={data.payment.currencySnapshot.main.price.amount}

@@ -163,6 +163,22 @@
 							</ul>
 						{/if}
 
+						{#if payment.status === 'pending'}
+							<button
+								class="body-hyperlink self-start"
+								type="button"
+								disabled={!receiptReady[payment.id]}
+								on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
+								>{t('order.receipt.createProforma')}</button
+							>
+							<iframe
+								src="/order/{data.order._id}/payment/{payment.id}/receipt"
+								style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+								title=""
+								on:load={() => (receiptReady = { ...receiptReady, [payment.id]: true })}
+								bind:this={receiptIFrame[payment.id]}
+							/>
+						{/if}
 						{#if payment.status === 'paid' && payment.invoice?.number}
 							<button
 								class="btn btn-black self-start"
