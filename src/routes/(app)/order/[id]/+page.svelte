@@ -113,7 +113,7 @@
 					<div class="flex flex-col gap-2 mt-2">
 						{#if payment.method !== 'point-of-sale'}
 							<ul>
-								{#if payment.status === 'pending'}
+								{#if payment.status !== 'paid' && payment.status !== 'expired'}
 									<li>
 										{#if payment.method === 'card'}
 											<a href={trimOrigin(payment.address ?? '')} class="body-hyperlink">
