@@ -14,7 +14,13 @@ export async function load() {
 			createdAt: order.createdAt,
 			currencySnapshot: order.currencySnapshot,
 			status: order.status,
-			items: order.items,
+			items: order.items.map((item) => ({
+				...item,
+				product: {
+					...item.product,
+					vatProfileId: item.product.vatProfileId?.toString()
+				}
+			})),
 			quantityOrder: sum(order.items.map((items) => items.quantity)),
 			billingAddress: order.billingAddress,
 			shippingAddress: order.shippingAddress,
