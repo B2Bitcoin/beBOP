@@ -313,6 +313,7 @@
 						<th class="border border-gray-300 px-4 py-2">Payment mean</th>
 						<th class="border border-gray-300 px-4 py-2">Payment Status</th>
 						<th class="border border-gray-300 px-4 py-2">Payment Info</th>
+						<th class="border border-gray-300 px-4 py-2">Invoice</th>
 						<th class="border border-gray-300 py-2">Currency</th>
 						<th class="border border-gray-300 px-4 py-2">Amount</th>
 						<th class="border border-gray-300 py-2">Cashed Currency</th>
@@ -343,7 +344,7 @@
 										? payment.transactions?.[0].id ?? ''
 										: payment.detail || ''}</td
 								>
-
+								<td class="border border-gray-300 px-4 py-2">{payment.invoice?.number ?? ''}</td>
 								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{toCurrency(
