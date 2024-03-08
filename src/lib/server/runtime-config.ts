@@ -65,7 +65,8 @@ const baseConfig = {
 	],
 	navbarLinks: [
 		{ label: 'Challenges', href: '/challenges' },
-		{ label: 'Rewards', href: '/rewards' }
+		{ label: 'Rewards', href: '/rewards' },
+		{ label: 'Orders', href: '/orders' }
 	],
 	footerLinks: [
 		{ label: 'Terms of Service', href: '/terms' },
