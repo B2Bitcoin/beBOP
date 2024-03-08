@@ -388,6 +388,9 @@
 			"info": "notre boutique"
 		}
 	},
+	"general": {
+		"copied": "Copié"
+	},
 	"identity": {
 		"cta": {
 			"update": "Mettre à jour"

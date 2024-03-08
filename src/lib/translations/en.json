@@ -388,6 +388,9 @@
 			"info": "our shop"
 		}
 	},
+	"general": {
+		"copied": "Copied"
+	},
 	"identity": {
 		"cta": {
 			"update": "Update"
