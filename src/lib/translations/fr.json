@@ -505,6 +505,7 @@
 			"partialAmountPre": "Montant à payer (paiement partiel)",
 			"proforma": "Ceci est une facture proforma. Aucun paiement n'a été effectué. La facture finale sera émise \t\taprès le paiement.",
 			"proformaAssociated": "Facture proforma associée : {proformaInvoiceNumber}",
+			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Qté",
 			"remainingAmount": "Montant restant à payer",
 			"totalExcVat": "Total HT",

@@ -505,6 +505,7 @@
 			"partialAmountPre": "Amount to pay (partial payment)",
 			"proforma": "This is a proforma invoice. No payment has been made yet. The final invoice will be generated when payment is made.",
 			"proformaAssociated": "Associated proforma invoice: {proformaInvoiceNumber}",
+			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Qty",
 			"remainingAmount": "Remaining amount to pay",
 			"totalExcVat": "Total Excl. VAT",
