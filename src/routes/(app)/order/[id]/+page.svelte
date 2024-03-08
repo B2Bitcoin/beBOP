@@ -4,6 +4,8 @@
 	import OrderSummary from '$lib/components/OrderSummary.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
+	import IconCopy from '~icons/ant-design/copy-outlined';
+	import IconCheckmark from '~icons/ant-design/check-outlined';
 	import { useI18n } from '$lib/i18n';
 	import { FAKE_ORDER_INVOICE_NUMBER, orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 	import { UrlDependency } from '$lib/types/UrlDependency';
@@ -18,6 +20,7 @@
 	export let data;
 
 	let count = 0;
+	let copiedPaymentAddress = -1;
 
 	onMount(() => {
 		const interval = setInterval(() => {
@@ -95,7 +98,7 @@
 				</div>
 			{/if}
 
-			{#each data.order.payments as payment}
+			{#each data.order.payments as payment, i}
 				<details class="border border-gray-300 rounded-xl p-4" open={payment.status === 'pending'}>
 					<summary class="text-xl cursor-pointer">
 						<!-- Extra span to keep the "arrow" for the details -->
@@ -138,11 +141,21 @@
 											<code class="break-words body-secondaryText break-all">{payment.address}</code
 											>
 											<button
-												class="mt-2 btn btn-blue"
+												class="inline-block body-secondaryText"
 												type="button"
-												on:click={() => window.navigator.clipboard.writeText(payment.address ?? '')}
-												>{t('order.copyAddress')}</button
+												title={t('order.copyAddress')}
+												on:click={() => {
+													window.navigator.clipboard.writeText(payment.address ?? '');
+													copiedPaymentAddress = i;
+												}}
 											>
+												{#if copiedPaymentAddress === i}
+													<IconCheckmark class="inline-block mb-1" />
+													{t('general.copied')}
+												{:else}
+													<IconCopy class="inline-block mb-1" />
+												{/if}
+											</button>
 										{/if}
 									</li>
 								{/if}
@@ -163,6 +176,22 @@
 							</ul>
 						{/if}
 
+						{#if payment.status === 'pending'}
+							<button
+								class="body-hyperlink self-start"
+								type="button"
+								disabled={!receiptReady[payment.id]}
+								on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
+								>{t('order.receipt.createProforma')}</button
+							>
+							<iframe
+								src="/order/{data.order._id}/payment/{payment.id}/receipt"
+								style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+								title=""
+								on:load={() => (receiptReady = { ...receiptReady, [payment.id]: true })}
+								bind:this={receiptIFrame[payment.id]}
+							/>
+						{/if}
 						{#if payment.status === 'paid' && payment.invoice?.number}
 							<button
 								class="btn btn-black self-start"

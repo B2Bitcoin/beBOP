@@ -388,6 +388,9 @@
 			"info": "notre boutique"
 		}
 	},
+	"general": {
+		"copied": "Copié"
+	},
 	"identity": {
 		"cta": {
 			"update": "Mettre à jour"
@@ -475,6 +478,7 @@
 		"paymentAddress": "Adresse de paiement ",
 		"paymentAmount": "Montant de la transaction (hors frais)",
 		"paymentBic": "BIC",
+		"paymentExpiresAt": "Date limite de paiement: <0></0>",
 		"paymentIban": "IBAN de paiement",
 		"paymentLink": "Cliquez pour payer par carte avec",
 		"paymentPaidAt": "Paiement effectué le {date}",
@@ -492,11 +496,16 @@
 		"receipt": {
 			"alreadyPaidAmount": "Montant déjà payé",
 			"bankInfo": "Coordonnées bancaires",
-			"create": "Générer la facture",
+			"create": "Télécharger la facture",
+			"createProforma": "Télécharger la pré-facture",
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
 			"invoice": "Facture",
 			"itemName": "Nature",
 			"partialAmount": "Montant payé (paiement partiel)",
+			"partialAmountPre": "Montant à payer (paiement partiel)",
+			"proforma": "Ceci est une facture proforma. Aucun paiement n'a été effectué. La facture finale sera émise \t\taprès le paiement.",
+			"proformaAssociated": "Facture proforma associée : {proformaInvoiceNumber}",
+			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Qté",
 			"remainingAmount": "Montant restant à payer",
 			"totalExcVat": "Total HT",

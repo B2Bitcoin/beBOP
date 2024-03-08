@@ -56,6 +56,11 @@
 			data.roleId === POS_ROLE_ID ? '' : data.email || data.personalInfoConnected?.email || ''
 	};
 
+	const npubs: Record<FeedKey, string> = {
+		paymentStatus:
+			data.roleId === POS_ROLE_ID ? '' : data.npub || data.personalInfoConnected?.npub || ''
+	};
+
 	function checkForm(event: SubmitEvent) {
 		for (const input of typedValues(npubInputs)) {
 			if (!input) {
@@ -425,7 +430,7 @@
 										autocomplete="email"
 										name="{key}Email"
 										bind:value={emails[key]}
-										required={data.roleId !== POS_ROLE_ID && !npubInputs[key]}
+										required={key === 'paymentStatus' && data.roleId !== POS_ROLE_ID && !npubs[key]}
 									/>
 								</label>
 							{/if}
@@ -435,16 +440,10 @@
 									type="text"
 									class="form-input"
 									bind:this={npubInputs[key]}
+									bind:value={npubs[key]}
 									name="{key}NPUB"
-									value={data.roleId !== POS_ROLE_ID
-										? data.npub || data.personalInfoConnected?.npub || ''
-										: ''}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus' &&
-										!emails[key] &&
-										paymentMethod !== 'point-of-sale' &&
-										!multiplePaymentMethods &&
-										data.roleId !== POS_ROLE_ID}
+									required={key === 'paymentStatus' && !emails[key] && data.roleId !== POS_ROLE_ID}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
