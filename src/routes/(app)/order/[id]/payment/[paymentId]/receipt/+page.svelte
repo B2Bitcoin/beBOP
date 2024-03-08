@@ -86,7 +86,9 @@
 				{data.payment.paidAt?.toLocaleDateString($locale)}
 			</time>
 		</Trans>
-		{t('order.receipt.proformaAssociated', { proformaInvoiceNumber })}
+		{#if 0}
+			{t('order.receipt.proformaAssociated', { proformaInvoiceNumber })}
+		{/if}
 	{:else}
 		{t('order.receipt.proforma')}
 		{#if data.payment.expiresAt}
