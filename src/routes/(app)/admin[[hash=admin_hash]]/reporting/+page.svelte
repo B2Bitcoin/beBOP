@@ -2,8 +2,6 @@
 	import { useI18n } from '$lib/i18n.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
-	import { sortBy } from 'lodash-es';
-	import { sort } from 'semver';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
