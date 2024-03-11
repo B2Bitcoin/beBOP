@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
-	import { FAKE_ORDER_INVOICE_NUMBER } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
 
@@ -142,9 +141,6 @@
 		}
 		return null;
 	}
-	let receiptIFrame: Record<string, HTMLIFrameElement | null> = Object.fromEntries(
-		data.orders.map((order) => order.payments.map((payment) => [payment._id, null]))
-	);
 </script>
 
 <h1 class="text-3xl">Reporting</h1>
@@ -195,7 +191,7 @@
 								><a
 									href="/admin/order/{order._id}/json"
 									target="_blank"
-									class="underline text-blue-500">{order.number}</a
+									class="underline body-hyperlink">{order.number}</a
 								></td
 							>
 							<td class="border border-gray-300 px-4 py-2"
@@ -335,20 +331,11 @@
 								<td class="border border-gray-300 px-4 py-2">{order.status}</td>
 								<td class="border border-gray-300 px-4 py-2">{payment.method}</td>
 								<td class="border border-gray-300 px-4 py-2">
-									<button
+									<a
 										class="body-hyperlink underline"
-										type="button"
-										on:click={() => receiptIFrame[payment._id]?.contentWindow?.print()}
-										>{payment.status}</button
+										target="_blank"
+										href="/order/{order._id}/payment/{payment._id}/receipt">{payment.status}</a
 									>
-									{#if payment.invoice?.number !== FAKE_ORDER_INVOICE_NUMBER}
-										<iframe
-											src="/order/{order._id}/payment/{payment._id}/receipt"
-											style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
-											title=""
-											bind:this={receiptIFrame[payment._id]}
-										/>
-									{/if}
 								</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{payment.method === 'lightning'
