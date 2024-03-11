@@ -13,7 +13,7 @@
 	export let picture: Picture | undefined;
 </script>
 
-<div class="mx-auto tagWidget tagWidget-main flex rounded sm:gap-2 {className}">
+<div class="mx-auto tagWidget tagWidget-main flex rounded sm:gap-2 my-4 {className}">
 	<div class="relative shrink-0">
 		<PictureComponent {picture} class="w-[15em]" />
 		{#if tag.cta.length}

@@ -26,7 +26,7 @@
 	let pictureId = 0;
 </script>
 
-<div class="flex flex-row gap-4 {className}">
+<div class="flex flex-row gap-4 {className} my-4">
 	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4 grow pr-5">
 		<div class="p-4 grow-[2] w-2/3">
 			<a href="/product/{product._id}">

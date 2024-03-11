@@ -179,8 +179,10 @@
 					: ''}{token.height ? `height: ${token.height}px;` : ''}"
 			/>
 		{:else if token.type === 'html'}
-			<!-- eslint-disable svelte/no-at-html-tags -->
-			{@html token.raw}
+			<div class="my-5">
+				<!-- eslint-disable svelte/no-at-html-tags -->
+				{@html token.raw}
+			</div>
 		{/if}
 	{/each}
 </div>

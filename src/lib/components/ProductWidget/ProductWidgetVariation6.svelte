@@ -27,7 +27,7 @@
 	let pictureId = 0;
 </script>
 
-<div class="flex flex-row gap-4 {className}">
+<div class="flex flex-row gap-4 my-4 {className}">
 	{#if pictures.length > 1}
 		<div class="grow-[1] flex-col hidden sm:inline">
 			<div class="flex flex-col items-start">
