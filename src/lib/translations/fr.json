@@ -496,6 +496,7 @@
 		"receipt": {
 			"alreadyPaidAmount": "Montant déjà payé",
 			"bankInfo": "Coordonnées bancaires",
+			"cancelledOrPending": "Cet appel de paiement n'a pas été honoré et est expiré ou a été annulé",
 			"create": "Télécharger la facture",
 			"createProforma": "Télécharger la pré-facture",
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
