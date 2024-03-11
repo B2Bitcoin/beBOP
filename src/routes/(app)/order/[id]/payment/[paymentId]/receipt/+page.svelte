@@ -70,6 +70,11 @@
 
 <div class="mt-4">
 	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {invoiceNumber}</h2>
+	{#if !data.payment.currencySnapshot.main.remainingToPay?.amount}
+		<h2 class="text-xl font-bold text-green-500">
+			{t('order.receipt.fullyPaid.message', { invoiceNumber: invoiceNumber })}
+		</h2>
+	{/if}
 	<Trans key="order.createdAt">
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
 			{data.order.createdAt.toLocaleDateString($locale)}

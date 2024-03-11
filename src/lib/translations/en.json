@@ -499,6 +499,9 @@
 			"create": "Download invoice",
 			"createProforma": "Download pre-invoice",
 			"endMessage": "We stay at your disposal for any further information. <0></0> Best regards, <1></1> {businessName}",
+			"fullyPaid": {
+				"message": "With this payment, the order {invoiceNumber} is now fully paid"
+			},
 			"invoice": "Invoice",
 			"itemName": "Nature",
 			"partialAmount": "Amount paid (partial payment)",
