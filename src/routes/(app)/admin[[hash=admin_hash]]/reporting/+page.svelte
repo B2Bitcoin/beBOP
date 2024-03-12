@@ -191,7 +191,7 @@
 								><a
 									href="/admin/order/{order._id}/json"
 									target="_blank"
-									class="underline text-blue-500">{order.number}</a
+									class="underline body-hyperlink">{order.number}</a
 								></td
 							>
 							<td class="border border-gray-300 px-4 py-2"
@@ -330,7 +330,13 @@
 								>
 								<td class="border border-gray-300 px-4 py-2">{order.status}</td>
 								<td class="border border-gray-300 px-4 py-2">{payment.method}</td>
-								<td class="border border-gray-300 px-4 py-2">{payment.status}</td>
+								<td class="border border-gray-300 px-4 py-2">
+									<a
+										class="body-hyperlink underline"
+										target="_blank"
+										href="/order/{order._id}/payment/{payment._id}/receipt">{payment.status}</a
+									>
+								</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{payment.method === 'lightning'
 										? payment.invoiceId
