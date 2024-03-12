@@ -15,7 +15,7 @@
 	import { onMount } from 'svelte';
 	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
-	import { paymentQrCodeString } from '$lib/utils/paymentQr.js';
+	import { bitcoinPaymentQrCodeString } from '$lib/utils/bitcoinPaymentQr.js';
 
 	let currentDate = new Date();
 	export let data;
@@ -218,10 +218,10 @@
 								alt="QR code"
 							/>
 						{/if}
-						{#if payment.status === 'pending' && payment.method === 'bitcoin'}
+						{#if payment.status === 'pending' && payment.method === 'bitcoin' && payment.address}
 							<span class="body-hyperlink font-light italic">{t('order.clickQR')}</span>
 							<a
-								href={paymentQrCodeString(
+								href={bitcoinPaymentQrCodeString(
 									payment.address,
 									payment.price.amount,
 									payment.price.currency
