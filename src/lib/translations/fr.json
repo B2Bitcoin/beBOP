@@ -500,7 +500,7 @@
 			"createProforma": "Télécharger la pré-facture",
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
 			"fullyPaid": {
-				"message": "Avec ce paiement, la commande {invoiceNumber} est désormais entièrement payée"
+				"message": "Avec ce paiement, la commande {orderNumber} est désormais entièrement payée"
 			},
 			"invoice": "Facture",
 			"itemName": "Nature",

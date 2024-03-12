@@ -72,7 +72,7 @@
 	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {invoiceNumber}</h2>
 	{#if data.payment.status === 'paid' && !data.payment.currencySnapshot.main.remainingToPay?.amount && data.order.payments.slice(-1)[0]?.id === data.payment.id}
 		<h2 class="text-xl font-bold text-green-500">
-			{t('order.receipt.fullyPaid.message', { invoiceNumber: invoiceNumber })}
+			{t('order.receipt.fullyPaid.message', { orderNumber: data.order.number })}
 		</h2>
 	{/if}
 	<Trans key="order.createdAt">
