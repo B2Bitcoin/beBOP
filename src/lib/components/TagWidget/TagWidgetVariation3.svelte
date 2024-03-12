@@ -12,7 +12,7 @@
 	export let picture: Picture | undefined;
 </script>
 
-<div class="mx-auto tagWidget tagWidget-main gap-4 rounded {className} relative my-4">
+<div class="mx-auto tagWidget tagWidget-main gap-4 rounded {className} relative">
 	<PictureComponent {picture} class="w-full h-auto" />
 	<div
 		class="mt-[100px] md:mt-[300px] lg:mt-[400px] pb-6 absolute inset-0 flex flex-col items-center justify-center"

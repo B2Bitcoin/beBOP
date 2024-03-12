@@ -12,7 +12,7 @@
 	export let picture: Picture | undefined;
 </script>
 
-<div class="mx-auto tagWidget tagWidget-main rounded {className} my-4">
+<div class="mx-auto tagWidget tagWidget-main rounded {className}">
 	<div>
 		<PictureComponent {picture} class="w-full" />
 

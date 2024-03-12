@@ -18,7 +18,7 @@
 	});
 </script>
 
-<div class="flex flex-row gap-4 my-4 {className}">
+<div class="flex flex-row gap-4 {className}">
 	<div class="flex flex-row w-full tagWidget tagWidget-main grow pr-5">
 		<div class="p-4 grow">
 			<h2 class="text-2xl font-bold mb-2 body-title">
