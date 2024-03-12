@@ -176,7 +176,7 @@
 							</ul>
 						{/if}
 
-						{#if payment.status === 'pending'}
+						{#if payment.status !== 'paid'}
 							<button
 								class="body-hyperlink self-start"
 								type="button"

@@ -12,6 +12,7 @@ on:
 
 jobs:
   deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.DEFAULT_ENV }}
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event.inputs.environment || vars.DEFAULT_ENV }}
