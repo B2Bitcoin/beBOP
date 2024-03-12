@@ -91,7 +91,7 @@
 		{#if 0}
 			{t('order.receipt.proformaAssociated', { proformaInvoiceNumber })}
 		{/if}
-	{:else}
+	{:else if data.payment.status === 'pending'}
 		{t('order.receipt.proforma')}
 		{#if data.payment.expiresAt}
 			<Trans key="order.paymentExpiresAt">
@@ -100,6 +100,10 @@
 				</time>
 			</Trans>
 		{/if}
+	{:else}
+		<h2 class="text-xl text-red-500 font-bold">
+			{t('order.receipt.cancelledOrPending')}
+		</h2>
 	{/if}
 </div>
 

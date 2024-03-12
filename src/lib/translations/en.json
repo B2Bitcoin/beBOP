@@ -496,6 +496,7 @@
 		"receipt": {
 			"alreadyPaidAmount": "Amount previously paid",
 			"bankInfo": "Bank details",
+			"cancelledOrPending": "This call for payment has not been honored and has expired or been canceled",
 			"create": "Download invoice",
 			"createProforma": "Download pre-invoice",
 			"endMessage": "We stay at your disposal for any further information. <0></0> Best regards, <1></1> {businessName}",
