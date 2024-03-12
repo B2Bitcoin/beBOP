@@ -438,6 +438,7 @@
 			"cta": "Send a call for payment",
 			"currency": "Payment currency"
 		},
+		"clickQR": "Click on the QR code to pay with your wallet",
 		"copyAddress": "Copy payment address",
 		"createdAt": "Created at <0></0>",
 		"depositCancelled": "Deposit request cancelled",
