@@ -15,7 +15,6 @@
 	import { onMount } from 'svelte';
 	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
-	import { address } from 'ip';
 
 	let currentDate = new Date();
 	export let data;
