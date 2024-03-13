@@ -515,6 +515,8 @@
 			"unitPrice": "Prix ​​unit. HT",
 			"vatFreeReason": "Exempt de TVA: {reason}"
 		},
+		"receiptFullyPaid": "Générer un reçu (entièrement payé)",
+		"receiptPending": "Générer un reçu (en attente de paiement)",
 		"requestedAt": "Date de demande de paiement: <0></0>",
 		"restToPay": "Reste à payer",
 		"shippingAddress": {
