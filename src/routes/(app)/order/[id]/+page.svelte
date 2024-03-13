@@ -258,7 +258,12 @@
 										method="post"
 										class="contents"
 									>
-										<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
+										<button
+											type="submit"
+											class="btn btn-red"
+											on:click={() => confirm(t('order.confirmCancel'))}
+											>{t('pos.cta.cancelOrder')}</button
+										>
 									</form>
 								</div>
 							{/if}

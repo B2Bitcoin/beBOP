@@ -439,6 +439,7 @@
 			"currency": "Payment currency"
 		},
 		"clickQR": "Click on the QR code to pay with your wallet",
+		"confirmCancel": "Are you sure ? If this is your only pending payment and there is no paid payment on the order, the order will be cancelled. In case of mistake, first create a payment, then delete this one.",
 		"copyAddress": "Copy payment address",
 		"createdAt": "Created at <0></0>",
 		"depositCancelled": "Deposit request cancelled",
