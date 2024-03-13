@@ -513,6 +513,7 @@
 			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Qty",
 			"remainingAmount": "Remaining amount to pay",
+			"summaryTitle": "Summary of order #{number}",
 			"totalExcVat": "Total Excl. VAT",
 			"totalInclVat": "Total Incl. VAT",
 			"totalVat": "Total VAT",
@@ -522,7 +523,7 @@
 		"receiptFullyPaid": "Generate receipt(fully paid)",
 		"receiptPending": "Generate receipt(pending payment)",
 		"related": {
-			"invoice": "✅ Invoice n°{number}"
+			"invoice": "✅ Invoice n°{invoiceNumber}"
 		},
 		"requestedAt": "Payment requested at <0></0>",
 		"restToPay": "Remaining to pay",

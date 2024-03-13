@@ -69,17 +69,29 @@
 </div>
 
 <div class="mt-4 mx-4">
-	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {invoiceNumber}</h2>
-	{#if data.payment.status === 'paid' && !data.payment.currencySnapshot.main.remainingToPay?.amount}
-		<h2 class="text-xl font-bold text-green-500">
-			{t('order.receipt.fullyPaid.message', { orderNumber: data.order.number })}
-		</h2>
-	{/if}
+	<h2 class="text-2xl">{t('order.receipt.summaryTitle', { number: data.order.number })}</h2>
 	<Trans key="order.createdAt">
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
 			{data.order.createdAt.toLocaleDateString($locale)}
 		</time>
 	</Trans><br />
+	{#if data.payment.status === 'paid'}
+		<Trans key="order.paidAt">
+			<time datetime={data.payment.paidAt?.toJSON()} slot="0">
+				{data.payment.paidAt?.toLocaleDateString($locale)}
+			</time>
+		</Trans>
+	{/if}
+	{#if data.payment.currencySnapshot.main.remainingToPay?.amount}
+		<h2 class="text-xl font-bold text-orange-500">
+			{t('order.receipt.remainingAmount')}
+			<PriceTag
+				amount={data.payment.currencySnapshot.main.remainingToPay.amount}
+				currency={data.payment.currencySnapshot.main.remainingToPay.currency}
+				inline
+			/>
+		</h2>
+	{/if}
 </div>
 
 <table class="mt-4 mx-4 border-collapse">
@@ -196,11 +208,11 @@
 <div class="mt-4 mx-4">
 	<h2 class="text-2xl">Related Invoice</h2>
 	{#each data.order.payments as payment}
-		<div class="flex flex-row">
+		<div>
 			{payment.invoice
-				? t('order.receipt.invoice') + ' n°' + payment.invoice.number
+				? t('order.related.invoice', { invoiceNumber: payment.invoice.number })
 				: payment.status === 'pending'
-				? '🕰️' +
+				? '⏲' +
 				  t('order.receipt.proformaInvoiceNumber', {
 						orderNumber: data.order.number,
 						paymentIndex: data.order.payments.findIndex((p) => p.id === payment.id) + 1
@@ -240,15 +252,7 @@
 		{t('order.receipt.vatFreeReason', { reason: data.order.vatFree.reason })}
 	</div>
 {/if}
-{#if finalInvoice}
-	<div class="mt-4 mx-4">
-		{t('order.paidWith.' + data.payment.method, {
-			paymentCurrency: data.payment.price.currency,
-			mainCurrency: data.payment.currencySnapshot.main.price.currency,
-			exchangeRate: data.payment.currencySnapshot.main.price.amount / data.payment.price.amount
-		})}
-	</div>
-{/if}
+
 <div class="mt-4 mx-4">
 	<Trans key="order.receipt.endMessage" params={{ businessName: identity.businessName }}>
 		<br slot="0" />
