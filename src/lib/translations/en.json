@@ -470,6 +470,13 @@
 			"lightning": "Paid with: Lightning transaction (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
 			"point-of-sale": "Paid in store"
 		},
+		"paidWithSummary": {
+			"bank-transfer": "Paid with: verified bank transfer",
+			"bitcoin": "Paid with: Bitcoin on-chain payment",
+			"card": "Paid with: bank card via Sum UP",
+			"lightning": "Paid with: Lightning transaction",
+			"point-of-sale": "Paid in store"
+		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
 			"one": "Payment will be confirmed after 1 confirmation.",
@@ -513,11 +520,18 @@
 			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Qty",
 			"remainingAmount": "Remaining amount to pay",
+			"summaryTitle": "Summary of order #{number}",
 			"totalExcVat": "Total Excl. VAT",
 			"totalInclVat": "Total Incl. VAT",
 			"totalVat": "Total VAT",
 			"unitPrice": "Unit price",
 			"vatFreeReason": "Vat exempted: {reason}"
+		},
+		"receiptFullyPaid": "Generate receipt(fully paid)",
+		"receiptPending": "Generate receipt(pending payment)",
+		"related": {
+			"invoice": "✅ Invoice n°{invoiceNumber}",
+			"title": "Related Invoices"
 		},
 		"requestedAt": "Payment requested at <0></0>",
 		"restToPay": "Remaining to pay",
@@ -525,6 +539,11 @@
 			"title": "Shipping address"
 		},
 		"singleTitle": "Order #{number}",
+		"summary": {
+			"fullyPaid": {
+				"title": "Order fully paid, outstanding amount zero"
+			}
+		},
 		"timeRemaining": "Time remaining: {minutes} minutes",
 		"vatFree": "This order is free of VAT. Reason: {reason}"
 	},
