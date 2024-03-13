@@ -16,7 +16,7 @@
 	<div>
 		<PictureComponent {picture} class="w-full" />
 
-		<div class="flex flex-col my-[-25px] text-center justify-center">
+		<div class="flex flex-col p-2 text-center justify-center">
 			<div class="mx-auto text-center">
 				<h2 class="text-md bg-[rgba(243,240,240,0.5)] uppercase md:text-6xl lg:text-6xl body-title">
 					{tag.title}

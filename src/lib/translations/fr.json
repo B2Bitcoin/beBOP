@@ -438,6 +438,7 @@
 			"cta": "Envoyer un appel à paiement",
 			"currency": "Monnaie de paiement"
 		},
+		"clickQR": "Cliquez sur le QR code pour payer avec votre portefeuille",
 		"copyAddress": "Copier l'adresse de paiement",
 		"createdAt": "Date de la commande : <0></0>",
 		"depositCancelled": "Demande d'acompte annulée",
@@ -500,6 +501,9 @@
 			"create": "Télécharger la facture",
 			"createProforma": "Télécharger la pré-facture",
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
+			"fullyPaid": {
+				"message": "Avec ce paiement, la commande {orderNumber} est désormais entièrement payée"
+			},
 			"invoice": "Facture",
 			"itemName": "Nature",
 			"partialAmount": "Montant payé (paiement partiel)",
