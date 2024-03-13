@@ -38,7 +38,7 @@
 	</h2>
 </div>
 
-<div class="mt-4">
+<div class="mt-4 mx-4">
 	<p>{identity.businessName}</p>
 	{#if identity.vatNumber}
 		<p>VAT Number: {identity.vatNumber}</p>
@@ -51,7 +51,7 @@
 	{/if}
 </div>
 
-<div class="mt-4 text-right">
+<div class="mt-4 mx-4 text-right">
 	{#if data.order.notifications.paymentStatus.email}
 		<!-- <p>{data.order.notifications.paymentStatus.email}</p> -->
 	{/if}
@@ -68,7 +68,7 @@
 	{/if}
 </div>
 
-<div class="mt-4">
+<div class="mt-4 mx-4">
 	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {invoiceNumber}</h2>
 	<Trans key="order.createdAt">
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
@@ -107,7 +107,7 @@
 	{/if}
 </div>
 
-<table class="mt-4 border-collapse">
+<table class="mt-4 mx-4 border-collapse">
 	<thead style:background-color="#aeaaaa" class="text-white">
 		<tr>
 			<th class="text-center border border-white">N°</th>
@@ -150,7 +150,7 @@
 	</tbody>
 </table>
 
-<table class="mt-4 border-collapse">
+<table class="mt-4 mx-4 border-collapse">
 	<tr style:background-color="#fef2cc">
 		<td class="border border-white px-2 text-right" style="width: 70%"
 			>{t('order.receipt.totalExcVat')}</td
@@ -231,7 +231,7 @@
 	{/if}
 </table>
 
-<div class="mt-4">
+<div class="mt-4 mx-4">
 	<h2 class="text-2xl">Related Invoice</h2>
 	{#each data.order.payments as payment}
 		<div class="flex flex-row">
@@ -247,12 +247,12 @@
 </div>
 
 {#if data.order.vatFree?.reason}
-	<div class="mt-4">
+	<div class="mt-4 mx-4">
 		{t('order.receipt.vatFreeReason', { reason: data.order.vatFree.reason })}
 	</div>
 {/if}
 {#if finalInvoice}
-	<div class="mt-4">
+	<div class="mt-4 mx-4">
 		{t('order.paidWith.' + data.payment.method, {
 			paymentCurrency: data.payment.price.currency,
 			mainCurrency: data.payment.currencySnapshot.main.price.currency,
@@ -260,7 +260,7 @@
 		})}
 	</div>
 {/if}
-<div class="mt-4">
+<div class="mt-4 mx-4">
 	<Trans key="order.receipt.endMessage" params={{ businessName: identity.businessName }}>
 		<br slot="0" />
 		<br slot="1" />
@@ -268,7 +268,7 @@
 </div>
 
 {#if identity.bank}
-	<div class="mt-4 text-right">
+	<div class="mt-4 mx-4 text-right">
 		<h2 class="text-xl">{t('order.receipt.bankInfo')} :</h2>
 		<table class="ml-auto">
 			<tr><td class="px-2">IBAN</td><td>{identity.bank.iban}</td></tr>
@@ -278,7 +278,7 @@
 {/if}
 
 {#if data.order.receiptNote}
-	<div class="mt-4 text-center">
+	<div class="mt-4 mx-4 text-center">
 		<p>
 			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html marked(data.order.receiptNote.replaceAll('<', '&lt;'))}
