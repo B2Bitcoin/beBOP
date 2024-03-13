@@ -201,7 +201,9 @@
 				amount={payment.currencySnapshot.main.price.amount}
 				currency={payment.currencySnapshot.main.price.currency}
 				inline
-			/> &nbsp;- {t('order.paidWithSummary.' + payment.method)} - {payment.status}
+			/> &nbsp;- {t('order.paidWithSummary.' + payment.method)} - {t(
+				`order.paymentStatus.${payment.status}`
+			)}
 		</div>
 	{/each}
 </div>
