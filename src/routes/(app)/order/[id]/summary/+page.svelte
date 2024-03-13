@@ -3,6 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
+	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { marked } from 'marked';
 
@@ -77,12 +78,13 @@
 			</time>
 		</Trans>
 	{/if}
-	{#if lastPayment && lastPayment.currencySnapshot.main.remainingToPay?.amount}
+	{#if orderAmountWithNoPaymentsCreated(data.order)}
+		{@const remaining = orderAmountWithNoPaymentsCreated(data.order)}
 		<h2 class="text-xl font-bold text-orange-500">
 			{t('order.receipt.remainingAmount')}
 			<PriceTag
-				amount={lastPayment.currencySnapshot.main.remainingToPay.amount}
-				currency={lastPayment.currencySnapshot.main.remainingToPay.currency}
+				amount={remaining}
+				currency={data.order.currencySnapshot.main.totalPrice.currency}
 				inline
 			/>
 		</h2>
