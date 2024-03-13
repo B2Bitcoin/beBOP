@@ -201,20 +201,7 @@
 				amount={payment.currencySnapshot.main.price.amount}
 				currency={payment.currencySnapshot.main.price.currency}
 				inline
-			/> &nbsp;- {t('order.paidWithSummary.' + payment.method)} - {payment.status} -
-			{#if payment.paidAt}
-				<Trans key="order.paidAt">
-					<time datetime={payment.paidAt?.toJSON()} slot="0">
-						{payment.paidAt?.toLocaleDateString($locale)}
-					</time>
-				</Trans>
-			{:else}
-				<Trans key="order.requestedAt">
-					<time datetime={payment.createdAt?.toJSON()} slot="0">
-						{payment.createdAt?.toLocaleDateString($locale)}
-					</time>
-				</Trans>
-			{/if}
+			/> &nbsp;- {t('order.paidWithSummary.' + payment.method)} - {payment.status}
 		</div>
 	{/each}
 </div>
