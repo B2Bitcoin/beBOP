@@ -3,7 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
-	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order.js';
+	import { orderAmountWithNoPaymentsCreated, orderRemainingToPay } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { marked } from 'marked';
 
@@ -78,8 +78,8 @@
 			</time>
 		</Trans>
 	{/if}
-	{#if orderAmountWithNoPaymentsCreated(data.order)}
-		{@const remaining = orderAmountWithNoPaymentsCreated(data.order)}
+	{#if orderRemainingToPay(data.order)}
+		{@const remaining = orderRemainingToPay(data.order)}
 		<h2 class="text-xl font-bold text-orange-500">
 			{t('order.receipt.remainingAmount')}
 			<PriceTag
@@ -87,6 +87,10 @@
 				currency={data.order.currencySnapshot.main.totalPrice.currency}
 				inline
 			/>
+		</h2>
+	{:else}
+		<h2 class="text-xl font-bold text-green-500">
+			{t('order.summary.fullyPaid.title')}
 		</h2>
 	{/if}
 </div>
@@ -178,7 +182,7 @@
 </table>
 
 <div class="mt-4 mx-4">
-	<h2 class="text-2xl">Related Invoice</h2>
+	<h2 class="text-2xl">{t('order.related.title')}</h2>
 	{#each data.order.payments as payment}
 		<div>
 			{payment.invoice
@@ -197,11 +201,7 @@
 				amount={payment.currencySnapshot.main.price.amount}
 				currency={payment.currencySnapshot.main.price.currency}
 				inline
-			/> &nbsp;- {t('order.paidWith.' + payment.method, {
-				paymentCurrency: payment.price.currency,
-				mainCurrency: payment.currencySnapshot.main.price.currency,
-				exchangeRate: payment.currencySnapshot.main.price.amount / payment.price.amount
-			})} - {payment.status} -
+			/> &nbsp;- {t('order.paidWithSummary.' + payment.method)} - {payment.status} -
 			{#if payment.paidAt}
 				<Trans key="order.paidAt">
 					<time datetime={payment.paidAt?.toJSON()} slot="0">

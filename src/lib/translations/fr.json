@@ -470,6 +470,13 @@
 			"lightning": "Payé avec : Transaction Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
 			"point-of-sale": "Payé en magasin"
 		},
+		"paidWithSummary": {
+			"bank-transfer": "Payé avec : virement bancaire vérifié",
+			"bitcoin": "Payé avec : Paiement Bitcoin on-chain",
+			"card": "Payé avec : carte bancaire via Sum UP",
+			"lightning": "Payé avec : Transaction Lightning",
+			"point-of-sale": "Payé en magasin"
+		},
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
 			"one": "Le paiement sera validé après 1 confirmation.",
@@ -523,7 +530,8 @@
 		"receiptFullyPaid": "Générer un reçu (entièrement payé)",
 		"receiptPending": "Générer un reçu (en attente de paiement)",
 		"related": {
-			"invoice": "✅ Facture n°{invoiceNumber}"
+			"invoice": "✅ Facture n°{invoiceNumber}",
+			"title": "Facture associée"
 		},
 		"requestedAt": "Date de demande de paiement: <0></0>",
 		"restToPay": "Reste à payer",
@@ -531,6 +539,11 @@
 			"title": "Adresse de livraison"
 		},
 		"singleTitle": "Commande #{number}",
+		"summary": {
+			"fullyPaid": {
+				"title": "Commande entièrement payée, montant restant dû zéro"
+			}
+		},
 		"timeRemaining": "Temps restant avant expiration du paiement dans nos systèmes : {minutes} minutes",
 		"vatFree": "Cette commande n'est pas assujettie TVA. \nMotif : {reason}"
 	},
