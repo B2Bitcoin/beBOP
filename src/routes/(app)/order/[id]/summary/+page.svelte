@@ -3,7 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
-	import { orderAmountWithNoPaymentsCreated, orderRemainingToPay } from '$lib/types/Order.js';
+	import { orderRemainingToPay } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { marked } from 'marked';
 
