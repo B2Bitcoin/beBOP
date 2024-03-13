@@ -21,6 +21,9 @@
 		currency: data.order.currencySnapshot.main.totalPrice.currency,
 		amount: sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0])
 	};
+	const lastPayment = data.order.payments.find(
+		(payment) => !payment.currencySnapshot.main.remainingToPay?.amount
+	);
 </script>
 
 <div class="flex justify-between">
@@ -67,19 +70,19 @@
 			{data.order.createdAt.toLocaleDateString($locale)}
 		</time>
 	</Trans><br />
-	{#if data.payment.status === 'paid'}
+	{#if lastPayment && lastPayment.status === 'paid'}
 		<Trans key="order.paidAt">
-			<time datetime={data.payment.paidAt?.toJSON()} slot="0">
-				{data.payment.paidAt?.toLocaleDateString($locale)}
+			<time datetime={lastPayment.paidAt?.toJSON()} slot="0">
+				{lastPayment.paidAt?.toLocaleDateString($locale)}
 			</time>
 		</Trans>
 	{/if}
-	{#if data.payment.currencySnapshot.main.remainingToPay?.amount}
+	{#if lastPayment && lastPayment.currencySnapshot.main.remainingToPay?.amount}
 		<h2 class="text-xl font-bold text-orange-500">
 			{t('order.receipt.remainingAmount')}
 			<PriceTag
-				amount={data.payment.currencySnapshot.main.remainingToPay.amount}
-				currency={data.payment.currencySnapshot.main.remainingToPay.currency}
+				amount={lastPayment.currencySnapshot.main.remainingToPay.amount}
+				currency={lastPayment.currencySnapshot.main.remainingToPay.currency}
 				inline
 			/>
 		</h2>
@@ -170,31 +173,6 @@
 			/>
 		</td>
 	</tr>
-	{#if data.payment.currencySnapshot.main.previouslyPaid?.amount}
-		<tr style:background-color="#aeaaaa" class="text-white font-bold">
-			<td class="border border-white px-2 text-right">{t('order.receipt.alreadyPaidAmount')}</td>
-			<td class="border border-white px-2 whitespace-nowrap text-right">
-				<PriceTag
-					amount={data.payment.currencySnapshot.main.previouslyPaid.amount}
-					currency={data.payment.currencySnapshot.main.previouslyPaid.currency}
-					inline
-				/>
-			</td>
-		</tr>
-	{/if}
-
-	{#if data.payment.currencySnapshot.main.remainingToPay?.amount}
-		<tr style:background-color="#aeaaaa" class="text-white font-bold">
-			<td class="border border-white px-2 text-right">{t('order.receipt.remainingAmount')}</td>
-			<td class="border border-white px-2 whitespace-nowrap text-right">
-				<PriceTag
-					amount={data.payment.currencySnapshot.main.remainingToPay.amount}
-					currency={data.payment.currencySnapshot.main.remainingToPay.currency}
-					inline
-				/>
-			</td>
-		</tr>
-	{/if}
 </table>
 
 <div class="mt-4 mx-4">
@@ -217,21 +195,21 @@
 				amount={payment.currencySnapshot.main.price.amount}
 				currency={payment.currencySnapshot.main.price.currency}
 				inline
-			/> &nbsp;- {t('order.paidWith.' + data.payment.method, {
-				paymentCurrency: data.payment.price.currency,
-				mainCurrency: data.payment.currencySnapshot.main.price.currency,
-				exchangeRate: data.payment.currencySnapshot.main.price.amount / data.payment.price.amount
+			/> &nbsp;- {t('order.paidWith.' + payment.method, {
+				paymentCurrency: payment.price.currency,
+				mainCurrency: payment.currencySnapshot.main.price.currency,
+				exchangeRate: payment.currencySnapshot.main.price.amount / payment.price.amount
 			})} - {payment.status} -
 			{#if payment.paidAt}
 				<Trans key="order.paidAt">
-					<time datetime={data.payment.paidAt?.toJSON()} slot="0">
-						{data.payment.paidAt?.toLocaleDateString($locale)}
+					<time datetime={payment.paidAt?.toJSON()} slot="0">
+						{payment.paidAt?.toLocaleDateString($locale)}
 					</time>
 				</Trans>
 			{:else}
 				<Trans key="order.requestedAt">
-					<time datetime={data.payment.createdAt?.toJSON()} slot="0">
-						{data.payment.createdAt?.toLocaleDateString($locale)}
+					<time datetime={payment.createdAt?.toJSON()} slot="0">
+						{payment.createdAt?.toLocaleDateString($locale)}
 					</time>
 				</Trans>
 			{/if}
