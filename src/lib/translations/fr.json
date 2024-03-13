@@ -521,6 +521,9 @@
 		},
 		"receiptFullyPaid": "Générer un reçu (entièrement payé)",
 		"receiptPending": "Générer un reçu (en attente de paiement)",
+		"related": {
+			"invoice": "✅ Facture n°{numéro}"
+		},
 		"requestedAt": "Date de demande de paiement: <0></0>",
 		"restToPay": "Reste à payer",
 		"shippingAddress": {

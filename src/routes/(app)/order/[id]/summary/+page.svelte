@@ -70,41 +70,16 @@
 
 <div class="mt-4 mx-4">
 	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {invoiceNumber}</h2>
+	{#if data.payment.status === 'paid' && !data.payment.currencySnapshot.main.remainingToPay?.amount}
+		<h2 class="text-xl font-bold text-green-500">
+			{t('order.receipt.fullyPaid.message', { orderNumber: data.order.number })}
+		</h2>
+	{/if}
 	<Trans key="order.createdAt">
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
 			{data.order.createdAt.toLocaleDateString($locale)}
 		</time>
 	</Trans><br />
-	{#if data.payment.createdAt}
-		<Trans key="order.requestedAt">
-			<time datetime={data.payment.createdAt?.toJSON()} slot="0">
-				{data.payment.createdAt?.toLocaleDateString($locale)}
-			</time>
-		</Trans><br />
-	{/if}
-	{#if finalInvoice}
-		<Trans key="order.paidAt">
-			<time datetime={data.payment.paidAt?.toJSON()} slot="0">
-				{data.payment.paidAt?.toLocaleDateString($locale)}
-			</time>
-		</Trans>
-		{#if 0}
-			{t('order.receipt.proformaAssociated', { proformaInvoiceNumber })}
-		{/if}
-	{:else if data.payment.status === 'pending'}
-		{t('order.receipt.proforma')}
-		{#if data.payment.expiresAt}
-			<Trans key="order.paymentExpiresAt">
-				<time datetime={data.payment.expiresAt.toJSON()} slot="0">
-					{data.payment.expiresAt.toLocaleDateString($locale)}
-				</time>
-			</Trans>
-		{/if}
-	{:else}
-		<h2 class="text-xl text-red-500 font-bold">
-			{t('order.receipt.cancelledOrPending')}
-		</h2>
-	{/if}
 </div>
 
 <table class="mt-4 mx-4 border-collapse">
@@ -203,20 +178,7 @@
 			</td>
 		</tr>
 	{/if}
-	{#if data.payment.currencySnapshot.main.price.amount !== data.order.currencySnapshot.main.totalPrice.amount}
-		<tr style:background-color="#aeaaaa" class="text-white font-bold">
-			<td class="border border-white px-2 text-right"
-				>{finalInvoice ? t('order.receipt.partialAmount') : t('order.receipt.partialAmountPre')}</td
-			>
-			<td class="border border-white px-2 whitespace-nowrap text-right">
-				<PriceTag
-					amount={data.payment.currencySnapshot.main.price.amount}
-					currency={data.payment.currencySnapshot.main.price.currency}
-					inline
-				/>
-			</td>
-		</tr>
-	{/if}
+
 	{#if data.payment.currencySnapshot.main.remainingToPay?.amount}
 		<tr style:background-color="#aeaaaa" class="text-white font-bold">
 			<td class="border border-white px-2 text-right">{t('order.receipt.remainingAmount')}</td>
@@ -236,14 +198,39 @@
 	{#each data.order.payments as payment}
 		<div class="flex flex-row">
 			{payment.invoice
-				? '✅ Invoice n°' + payment.invoice.number
+				? t('order.receipt.invoice') + ' n°' + payment.invoice.number
 				: payment.status === 'pending'
-				? '🕰️ No invoice number'
-				: '❌ No invoice number'}-<PriceTag
+				? '🕰️' +
+				  t('order.receipt.proformaInvoiceNumber', {
+						orderNumber: data.order.number,
+						paymentIndex: data.order.payments.findIndex((p) => p.id === payment.id) + 1
+				  })
+				: '❌' +
+				  t('order.receipt.proformaInvoiceNumber', {
+						orderNumber: data.order.number,
+						paymentIndex: data.order.payments.findIndex((p) => p.id === payment.id) + 1
+				  })} - &nbsp; <PriceTag
 				amount={payment.currencySnapshot.main.price.amount}
 				currency={payment.currencySnapshot.main.price.currency}
 				inline
-			/>-{payment.method}-{payment.status}
+			/> &nbsp;- {t('order.paidWith.' + data.payment.method, {
+				paymentCurrency: data.payment.price.currency,
+				mainCurrency: data.payment.currencySnapshot.main.price.currency,
+				exchangeRate: data.payment.currencySnapshot.main.price.amount / data.payment.price.amount
+			})} - {payment.status} -
+			{#if payment.paidAt}
+				<Trans key="order.paidAt">
+					<time datetime={data.payment.paidAt?.toJSON()} slot="0">
+						{data.payment.paidAt?.toLocaleDateString($locale)}
+					</time>
+				</Trans>
+			{:else}
+				<Trans key="order.requestedAt">
+					<time datetime={data.payment.createdAt?.toJSON()} slot="0">
+						{data.payment.createdAt?.toLocaleDateString($locale)}
+					</time>
+				</Trans>
+			{/if}
 		</div>
 	{/each}
 </div>
