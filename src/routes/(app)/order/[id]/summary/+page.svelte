@@ -285,18 +285,3 @@
 		</p>
 	</div>
 {/if}
-
-<style global>
-	@page {
-		size: portrait;
-	}
-	:global(html) {
-		print-color-adjust: exact;
-		/** 
-			Margin for pdf generation. Some printers automatically add margin, some not. We add margin
-			just in case, but later we should print the pdfs ourselves for standardized margins. 
-		*/
-		padding: 0.5cm;
-		width: 21cm;
-	}
-</style>

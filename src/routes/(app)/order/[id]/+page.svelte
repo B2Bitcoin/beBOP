@@ -394,13 +394,11 @@
 
 			{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
 				{#if data.order.status === 'paid'}
-					<a
-						class="btn bg-green-600 text-white self-start"
-						href="/order/{data.order._id}/summary"
-						target="_blank">{t('order.receiptFullyPaid')}</a
+					<a class="btn bg-green-600 text-white self-start" href="/order/{data.order._id}/summary"
+						>{t('order.receiptFullyPaid')}</a
 					>
 				{:else}
-					<a class="btn btn-blue self-start" href="/order/{data.order._id}/summary" target="_blank"
+					<a class="btn btn-blue self-start" href="/order/{data.order._id}/summary"
 						>{t('order.receiptPending')}</a
 					>
 				{/if}
