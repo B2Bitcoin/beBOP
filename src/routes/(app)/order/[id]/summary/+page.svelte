@@ -10,14 +10,6 @@
 
 	const { t, locale, textAddress } = useI18n();
 
-	const finalInvoice = data.payment.status === 'paid';
-	const proformaInvoiceNumber = t('order.receipt.proformaInvoiceNumber', {
-		orderNumber: data.order.number,
-		paymentIndex: data.order.payments.findIndex((p) => p.id === data.payment.id) + 1
-	});
-	const invoiceNumber = finalInvoice
-		? data.payment.invoice?.number?.toString()
-		: proformaInvoiceNumber;
 	const identity = data.sellerIdentity;
 
 	const differentAddress =
