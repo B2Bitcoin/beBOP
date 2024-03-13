@@ -237,6 +237,8 @@
 		<div class="flex flex-row">
 			{payment.invoice
 				? '✅ Invoice n°' + payment.invoice.number
+				: payment.status === 'pending'
+				? '🕰️ No invoice number'
 				: '❌ No invoice number'}-<PriceTag
 				amount={payment.currencySnapshot.main.price.amount}
 				currency={payment.currencySnapshot.main.price.currency}
