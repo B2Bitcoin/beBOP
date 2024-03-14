@@ -75,5 +75,43 @@ export const actions = {
 		await onOrderPaymentFailed(order, payment, 'canceled');
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
+	},
+	updatePaiementDetail: async ({ params, request }) => {
+		const order = await collections.orders.findOne({
+			_id: params.id
+		});
+
+		if (!order) {
+			throw error(404, 'Order not found');
+		}
+
+		const payment = order.payments.find((payment) => payment._id.equals(params.paymentId));
+
+		if (!payment) {
+			throw error(404, 'Payment not found');
+		}
+
+		if (payment.status !== 'paid') {
+			throw error(400, 'Payment is not paid');
+		}
+		const formData = await request.formData();
+		const informationUpdate = z
+			.object({
+				paymentDetail: z.string().trim().min(1).max(100)
+			})
+			.parse({
+				paymentDetail: formData.get('paymentDetail')
+			});
+
+		await onOrderPayment(order, payment, payment.price, {
+			...(informationUpdate &&
+				payment.method === 'bank-transfer' && {
+					bankTransferNumber: informationUpdate.paymentDetail
+				}),
+			...(informationUpdate &&
+				payment.method === 'point-of-sale' && { detail: informationUpdate.paymentDetail })
+		});
+
+		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
 	}
 };

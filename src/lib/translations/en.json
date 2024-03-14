@@ -551,7 +551,8 @@
 		"applyGiftDiscount": "As a POS user I apply a <0>gift discount</0>",
 		"cta": {
 			"cancelOrder": "Cancel",
-			"markOrderPaid": "Mark paid"
+			"markOrderPaid": "Mark paid",
+			"updatePaymentInfo": "Update payment information"
 		},
 		"discountJustification": "Justification",
 		"invalidDiscount": "Discount is not valid!",
