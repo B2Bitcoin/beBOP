@@ -18,6 +18,8 @@ Un accès à une mauvaise URL admin renverra vers cette page :
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/8634fef8-2296-4f6e-8f89-05246e991b74)
 
+Un employé avec accès lecture / écriture à /admin/arm pourra vous renvoyer un lien de réinitialisation de mot de passe, qui contient l'URL incluant /admins-secret
+
 Lorsqu'un utilisateur ou qu'une utilisatrice est loguée, l'url /admin renvoie automatiquement vers le bon lien.
 
 ## Connexion employée
