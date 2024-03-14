@@ -98,7 +98,9 @@
 			<li>
 				To include products, add a paragraph with only <code class="font-mono">[Product=slug]</code
 				>, where
-				<code class="font-mono">slug</code> is the slug of your product
+				<code class="font-mono">slug</code> is the slug of your product. You can specify the display
+				option like this:
+				<code class="font-mono">[Product=slug?display=img-1]</code>
 			</li>
 			<li>
 				To include pictures, add a paragraph with only <code class="font-mono">[Picture=slug]</code
@@ -117,7 +119,7 @@
 				where
 				<code class="font-mono">slug</code> is the slug of your slider. You can specify the autoplay
 				duration in milliseconds like this:
-				<code class="font-mono">[Slider=slug autoplay=3000]</code>
+				<code class="font-mono">[Slider=slug?autoplay=3000]</code>
 			</li>
 			<li>
 				To include a specification widget, add a paragraph with only <code class="font-mono"
@@ -127,7 +129,43 @@
 			<li>
 				To include a tag widget, add a paragraph with only <code class="font-mono">[Tag=slug]</code
 				>, where
-				<code class="font-mono">slug</code> is the slug of your tag.
+				<code class="font-mono">slug</code> is the slug of your tag. You can specify the display
+				option like this:
+				<code class="font-mono">[Tag=slug?display=var-1]</code>
+			</li>
+			<li>
+				To include a tagProducts widget, add a paragraph with only <code class="font-mono"
+					>[TagProducts=slug]</code
+				>, where
+				<code class="font-mono">slug</code> is the slug of your tag. You can specify the display
+				option like this:
+				<code class="font-mono">[TagProducts=slug?display=img-3]</code>
+			</li>
+			<li>
+				To include a form widget, add a paragraph with only <code class="font-mono"
+					>[Form=slug]</code
+				>, where
+				<code class="font-mono">slug</code> is the slug of your form.
+			</li>
+			<li>
+				To include a countdown widget, add a paragraph with only <code class="font-mono"
+					>[Countdown=slug]</code
+				>, where
+				<code class="font-mono">slug</code> is the slug of your countdown.
+			</li>
+			<li>
+				To include a specification widget, add a paragraph with only <code class="font-mono"
+					>[Specification=slug]</code
+				>, where
+				<code class="font-mono">slug</code> is the slug of your specification.
+			</li>
+			<li>
+				To include a gallery widget, add a paragraph with only <code class="font-mono"
+					>[Gallery=slug]</code
+				>, where
+				<code class="font-mono">slug</code> is the slug of your gallery. You can specify the display
+				option like this:
+				<code class="font-mono">[Gallery=slug?display=var-1]</code>
 			</li>
 		</ul>
 
