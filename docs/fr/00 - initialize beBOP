@@ -1,1 +1,59 @@
+# Initialize your beBOP
 
+Quick dirty summary before cleaner documentation
+
+Once your bebop is up :
+
+## Super-admin account
+
+- Go to your-site/admin/login
+- create your superadmin account & password
+
+## admin/config
+
+### Protect your back-office access
+
+Go to /admin/config, go to "Admin hash", define a hash, and save.
+Now, the backoffice address is /admin-yourhash
+
+### Make your beBOP into maintenance mode
+
+Go to /admin/config, check "Enable maintenance mode".
+You can an any IPv4 comma-separated to allow access to the front-office.
+The back-office will always be open.
+
+### Define your currencies
+Go to /admin/config :
+- main currency is used to be displayed on front & invoices
+- second currency is optional and is used to be displayed on front
+- price reference currency is the default currency you'll create your price on, but you'll be able to change that product per product
+  - by clicking the red button and confirming, your product currencies will be overwritten to the chosen selection, but the price won't be updated
+- accounting currency allows for full BTC currency beBOp to save the exchange rate of Bitcoin at the time of the order.
+
+### Timing
+
+Subscription duration is used for subscription product, you can choose month, week or day.
+Subscription reminder is the delay between the sent of the new invoice proposal and the and of the subscription.
+
+### Confirmation blocks
+
+For Bitcoin on-chain payments, you can either define a standard number of verification for transaction.
+But with "Manage confirmation thresholds", you'll be able to do that depending of the price, for example :
+- < 100€ : 0 confirmation
+- 100€ to 1000€ : 1 confirmation
+- 1000€ to 9999999999999€ : 2 confirmations
+etc
+
+### Order expiration
+
+"Set desired timeout for payment (in minute)" allows to cancel an order on beBOP system if the transaction wasn't paid or verified enough.
+It's only for Bitcoin-onchain, Lightning and Credit card by sum up.
+A too short time will oblige you to have short / null onchain confirmation block target.
+A too long time will block your products stock while the order is pending.
+
+### Stock reservation
+To avoid stock squatting, you can set "How much time a cart reserves the stock (in minutes)".
+When I add a product to my cart, if it's the last, no one will be able to.
+But, if I don't process my order and if I wait more than the define time, the product will be available again, and removed from my basket if someone else buys it.
+
+### TBD
