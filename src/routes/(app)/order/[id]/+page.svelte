@@ -50,6 +50,7 @@
 	);
 
 	$: remainingAmount = orderAmountWithNoPaymentsCreated(data.order);
+	let disableInfoChange = true;
 	function confirmCancel(event: Event) {
 		if (!confirm(t('order.confirmCancel'))) {
 			event.preventDefault();
@@ -299,6 +300,33 @@
 									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
 								</form>
 							</div>
+						{/if}
+						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'paid'}
+							<form
+								action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+									._id}/payment/{payment.id}?/updatePaymentDetail"
+								method="post"
+								class="contents"
+							>
+								<input
+									class="form-input w-auto"
+									type="text"
+									name="paymentDetail"
+									disabled={disableInfoChange}
+									placeholder="bank transfer number / Detail (card transaction ID, or point-of-sale payment method)"
+									value={payment.bankTransferNumber ?? payment.detail}
+									required
+								/>
+								<div class="flex gap-2">
+									<button type="submit" class="btn btn-blue" disabled={disableInfoChange}
+										>{t('pos.cta.updatePaymentInfo')}</button
+									>
+									<label class="checkbox-label">
+										<input class="form-checkbox" type="checkbox" bind:checked={disableInfoChange} />
+										🔐
+									</label>
+								</div>
+							</form>
 						{/if}
 					</div>
 				</details>
