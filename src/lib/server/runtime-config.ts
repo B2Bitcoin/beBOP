@@ -66,6 +66,11 @@ const baseConfig = {
 	navbarLinks: [
 		{ label: 'Products', href: '/catalog' }
 	],
+	navbarLinks: [
+		{ label: 'Products', href: '/catalog' },
+		{ label: 'Challenges', href: '/challenges' },
+		{ label: 'Rewards', href: '/rewards' }
+	],
 	footerLinks: [
 		{ label: 'Terms of Service', href: '/terms' },
 		{ label: 'Privacy Policy', href: '/privacy' }
