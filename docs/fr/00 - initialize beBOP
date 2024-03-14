@@ -82,3 +82,11 @@ Currency is the currency of your Sum Up account (in general, from the country yo
 # The rest
 
 For now, and thinkgs outside the back-office, don't forget the readme.md.
+
+Governant chart will be published soon, but, tl;dr, each pull request will be reviewed by :
+- coyote (CTO)
+- tirodem (CPO / QA)
+- ludom (CEO)
+And if we're OK, we'll merge.
+
+We'll refuse ultra-specific needs and go for genetic features that can be used by the largest number of people.
