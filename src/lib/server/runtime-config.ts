@@ -54,13 +54,12 @@ const baseConfig = {
 	authLinkJwtSigningKey: '',
 	ssoSecret: '',
 	topbarLinks: [
-		{ label: 'Blog', href: '/blog' },
-		{ label: 'Store', href: '/store' },
-		{ label: 'Admin', href: '/admin' }
+		{ label: 'Session', href: '/login' },
+		{ label: 'My space', href: '/identity' },
+		{ label: 'History', href: '/orders' }
 	],
 	navbarLinks: [
-		{ label: 'Challenges', href: '/challenges' },
-		{ label: 'Rewards', href: '/rewards' }
+		{ label: 'Products', href: '/catalog' }
 	],
 	footerLinks: [
 		{ label: 'Terms of Service', href: '/terms' },
