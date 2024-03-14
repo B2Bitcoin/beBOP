@@ -50,6 +50,11 @@
 	);
 
 	$: remainingAmount = orderAmountWithNoPaymentsCreated(data.order);
+	function confirmCancel(event: Event) {
+		if (!confirm(t('order.confirmCancel'))) {
+			event.preventDefault();
+		}
+	}
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -258,10 +263,7 @@
 										method="post"
 										class="contents"
 									>
-										<button
-											type="submit"
-											class="btn btn-red"
-											on:click={() => confirm(t('order.confirmCancel'))}
+										<button type="submit" class="btn btn-red" on:click={confirmCancel}
 											>{t('pos.cta.cancelOrder')}</button
 										>
 									</form>
