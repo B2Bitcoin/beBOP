@@ -76,7 +76,7 @@ export const actions = {
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
 	},
-	updatePaiementDetail: async ({ params, request }) => {
+	updatePaymentDetail: async ({ params, request }) => {
 		const order = await collections.orders.findOne({
 			_id: params.id
 		});
@@ -103,14 +103,19 @@ export const actions = {
 				paymentDetail: formData.get('paymentDetail')
 			});
 
-		await onOrderPayment(order, payment, payment.price, {
-			...(informationUpdate &&
-				payment.method === 'bank-transfer' && {
-					bankTransferNumber: informationUpdate.paymentDetail
-				}),
-			...(informationUpdate &&
-				payment.method === 'point-of-sale' && { detail: informationUpdate.paymentDetail })
-		});
+		await collections.orders.updateOne(
+			{ _id: order._id, 'payments._id': payment._id },
+			{
+				$set: {
+					...(payment.method === 'bank-transfer' && {
+						'payments.$.bankTransferNumber': informationUpdate.paymentDetail
+					}),
+					...(payment.method === 'point-of-sale' && {
+						'payments.$.detail': informationUpdate.paymentDetail
+					})
+				}
+			}
+		);
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
 	}

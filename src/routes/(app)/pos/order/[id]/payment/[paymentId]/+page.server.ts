@@ -51,7 +51,7 @@ export const actions = {
 		return cancel(event);
 	},
 
-	updatePaiementDetail: async (event) => {
+	updatePaymentDetail: async (event) => {
 		const { id, paymentId } = event.params;
 		const order = await collections.orders.findOne({ _id: id });
 
@@ -68,9 +68,9 @@ export const actions = {
 			}
 		}
 
-		const updatePaiementDetail = adminOrderActions.updatePaiementDetail;
+		const updatePaymentDetail = adminOrderActions.updatePaymentDetail;
 
 		// @ts-expect-error different route but compatible
-		return updatePaiementDetail(event);
+		return updatePaymentDetail(event);
 	}
 };

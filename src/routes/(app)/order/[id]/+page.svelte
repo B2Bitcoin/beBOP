@@ -297,7 +297,7 @@
 						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'paid'}
 							<form
 								action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-									._id}/payment/{payment.id}?/updatePaiementDetail"
+									._id}/payment/{payment.id}?/updatePaymentDetail"
 								method="post"
 								class="contents"
 							>
