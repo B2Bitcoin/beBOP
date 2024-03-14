@@ -90,6 +90,9 @@ export const actions = {
 		if (!payment) {
 			throw error(404, 'Payment not found');
 		}
+		if (payment.method !== 'bank-transfer' && payment.method !== 'point-of-sale') {
+			throw error(400, 'Payment method must be bank transfer or point of sale');
+		}
 
 		if (payment.status !== 'paid') {
 			throw error(400, 'Payment is not paid');
