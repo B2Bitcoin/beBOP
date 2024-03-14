@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 
 export async function load() {
-	const orders = await collections.orders.find().limit(100).sort({ createdAt: -1 }).toArray();
+	const orders = await collections.orders.find().sort({ createdAt: -1 }).toArray();
 
 	return {
 		orders: orders.map((order) => ({
