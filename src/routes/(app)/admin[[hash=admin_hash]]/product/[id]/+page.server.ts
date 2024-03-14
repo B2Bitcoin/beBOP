@@ -10,6 +10,7 @@ import { productBaseSchema } from '../product-schema';
 import { amountOfProductReserved, amountOfProductSold } from '$lib/server/product';
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
+import { ObjectId } from 'mongodb';
 
 export const load = async ({ params }) => {
 	const pictures = await collections.pictures
@@ -42,6 +43,7 @@ export const actions: Actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+		json.paymentMethods = formData.getAll('paymentMethods')?.map(String);
 
 		const product = await collections.products.findOne({ _id: params.id });
 
@@ -60,7 +62,7 @@ export const actions: Actions = {
 		const parsed = z
 			.object({
 				tagIds: z.string().array(),
-				...productBaseSchema,
+				...productBaseSchema(),
 				changedDate: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
@@ -103,6 +105,7 @@ export const actions: Actions = {
 			{
 				$set: {
 					name: parsed.name,
+					alias: parsed.alias ? [params.id, parsed.alias] : [params.id],
 					description: parsed.description,
 					shortDescription: parsed.shortDescription,
 					price: {
@@ -115,6 +118,13 @@ export const actions: Actions = {
 					preorder: parsed.preorder,
 					...(parsed.customPreorderText && { customPreorderText: parsed.customPreorderText }),
 					payWhatYouWant: parsed.payWhatYouWant,
+					...(parsed.hasMaximumPrice &&
+						parsed.maxPriceAmount && {
+							maximumPrice: {
+								amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency),
+								currency: parsed.priceCurrency
+							}
+						}),
 					standalone: parsed.payWhatYouWant || parsed.standalone,
 					free: parsed.free,
 					...(parsed.deliveryFees && { deliveryFees: parsed.deliveryFees }),
@@ -151,7 +161,11 @@ export const actions: Actions = {
 					cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
 					contentBefore: parsed.contentBefore,
 					contentAfter: parsed.contentAfter,
-					updatedAt: new Date()
+					updatedAt: new Date(),
+					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) }),
+					...(parsed.restrictPaymentMethods && {
+						paymentMethods: parsed.paymentMethods ?? []
+					})
 				},
 				$unset: {
 					...(!parsed.customPreorderText && { customPreorderText: '' }),
@@ -159,7 +173,9 @@ export const actions: Actions = {
 					...(!parsed.deliveryFees && { deliveryFees: '' }),
 					...(parsed.stock === undefined && { stock: '' }),
 					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' }),
-					...(!parsed.depositPercentage && { deposit: '' })
+					...(!parsed.depositPercentage && { deposit: '' }),
+					...(!parsed.vatProfileId && { vatProfileId: '' }),
+					...(!parsed.restrictPaymentMethods && { paymentMethods: '' })
 				}
 			}
 		);

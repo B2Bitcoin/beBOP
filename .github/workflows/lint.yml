@@ -1,4 +1,4 @@
-name: Lint and test
+name: Lint
 on:
   pull_request:
   # push:
@@ -58,11 +58,3 @@ jobs:
       - name: 'Checking type errors'
         run: |
           pnpm run check
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.10.0
-        with:
-          mongodb-version: '6.0'
-          mongodb-replica-set: test-rs
-      - name: 'Test'
-        run: |
-          pnpm run test:unit

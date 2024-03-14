@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { cleanDb } from './test-utils';
 import { collections } from './database';
-import { TEST_PRODUCT, TEST_PRODUCT_UNLIMITED } from './seed/product';
+import { TEST_DIGITAL_PRODUCT, TEST_DIGITAL_PRODUCT_UNLIMITED } from './seed/product';
 import { addOrderPayment, createOrder, lastInvoiceNumber, onOrderPayment } from './orders';
 import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 
 describe('order', () => {
 	beforeEach(async () => {
 		await cleanDb();
-		await collections.products.insertMany([TEST_PRODUCT, TEST_PRODUCT_UNLIMITED]);
+		await collections.products.insertMany([TEST_DIGITAL_PRODUCT, TEST_DIGITAL_PRODUCT_UNLIMITED]);
 	});
 
 	describe('onOrderPaid', () => {
@@ -16,7 +16,7 @@ describe('order', () => {
 			const orderId = await createOrder(
 				[
 					{
-						product: TEST_PRODUCT,
+						product: TEST_DIGITAL_PRODUCT,
 						quantity: 1
 					}
 				],
@@ -27,7 +27,7 @@ describe('order', () => {
 						sessionId: 'test-session-id'
 					},
 					shippingAddress: null,
-					vatCountry: 'FR'
+					userVatCountry: 'FR'
 				}
 			);
 
@@ -51,7 +51,7 @@ describe('order', () => {
 			const order1Id = await createOrder(
 				[
 					{
-						product: TEST_PRODUCT,
+						product: TEST_DIGITAL_PRODUCT,
 						quantity: 1
 					}
 				],
@@ -62,14 +62,14 @@ describe('order', () => {
 						sessionId: 'test-session-id'
 					},
 					shippingAddress: null,
-					vatCountry: 'FR'
+					userVatCountry: 'FR'
 				}
 			);
 
 			const order2Id = await createOrder(
 				[
 					{
-						product: TEST_PRODUCT,
+						product: TEST_DIGITAL_PRODUCT,
 						quantity: 1
 					}
 				],
@@ -80,7 +80,7 @@ describe('order', () => {
 						sessionId: 'test-session-id'
 					},
 					shippingAddress: null,
-					vatCountry: 'FR'
+					userVatCountry: 'FR'
 				}
 			);
 
@@ -108,7 +108,7 @@ describe('order', () => {
 			const order3Id = await createOrder(
 				[
 					{
-						product: TEST_PRODUCT,
+						product: TEST_DIGITAL_PRODUCT,
 						quantity: 1
 					}
 				],
@@ -119,7 +119,7 @@ describe('order', () => {
 						sessionId: 'test-session-id'
 					},
 					shippingAddress: null,
-					vatCountry: 'FR'
+					userVatCountry: 'FR'
 				}
 			);
 
@@ -141,7 +141,7 @@ describe('order', () => {
 		const order1Id = await createOrder(
 			[
 				{
-					product: TEST_PRODUCT,
+					product: TEST_DIGITAL_PRODUCT,
 					quantity: 1,
 					depositPercentage: 50
 				}
@@ -153,14 +153,14 @@ describe('order', () => {
 					sessionId: 'test-session-id'
 				},
 				shippingAddress: null,
-				vatCountry: 'FR'
+				userVatCountry: 'FR'
 			}
 		);
 
 		const order2Id = await createOrder(
 			[
 				{
-					product: TEST_PRODUCT,
+					product: TEST_DIGITAL_PRODUCT,
 					quantity: 1
 				}
 			],
@@ -171,7 +171,7 @@ describe('order', () => {
 					sessionId: 'test-session-id'
 				},
 				shippingAddress: null,
-				vatCountry: 'FR'
+				userVatCountry: 'FR'
 			}
 		);
 
@@ -180,7 +180,10 @@ describe('order', () => {
 			throw new Error('Order 1 not found');
 		}
 
-		await addOrderPayment(order1, 'point-of-sale', orderAmountWithNoPaymentsCreated(order1));
+		await addOrderPayment(order1, 'point-of-sale', {
+			amount: orderAmountWithNoPaymentsCreated(order1),
+			currency: order1.currencySnapshot.main.totalPrice.currency
+		});
 
 		let order2 = await collections.orders.findOne({ _id: order2Id });
 		if (!order2) {
@@ -196,9 +199,9 @@ describe('order', () => {
 		order1 = await collections.orders.findOne({ _id: order1Id });
 		expect(order1?.payments[0].invoice?.number).toBe(1);
 		expect(order1?.payments[0].currencySnapshot.main.previouslyPaid?.amount).toBe(0);
-		expect(order1?.payments[0].currencySnapshot.main.remainingToPay?.amount).toBe(
-			(order1?.currencySnapshot.main.totalPrice.amount ?? 0) / 2
-		);
+		expect(order1?.currencySnapshot.main.totalPrice.amount).toBe(0.004);
+		// 50% of 0.004
+		expect(order1?.payments[0].currencySnapshot.main.remainingToPay?.amount).toBe(0.002);
 		order2 = await collections.orders.findOne({ _id: order2Id });
 		expect(order2?.payments[0].invoice?.number).toBe(2);
 

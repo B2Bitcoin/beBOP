@@ -13,6 +13,7 @@ import { zodNpub } from '$lib/server/nostr.js';
 import type { JsonObject } from 'type-fest';
 import { omit, set } from 'lodash-es';
 import { rateLimit } from '$lib/server/rateLimit.js';
+import { cmsFromContent } from '$lib/server/cms';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -30,8 +31,50 @@ export async function load({ parent, locals }) {
 			sort: { _id: -1 }
 		}
 	);
+	const [cmsCheckoutTop, cmsCheckoutBottom] = await Promise.all([
+		collections.cmsPages.findOne(
+			{
+				_id: 'checkout-top'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
+			}
+		),
+		collections.cmsPages.findOne(
+			{
+				_id: 'checkout-bottom'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
+			}
+		)
+	]);
+
+	let methods = paymentMethods({ role: locals.user?.roleId });
+
+	for (const item of parentData.cart ?? []) {
+		if (item.product.paymentMethods) {
+			methods = methods.filter((method) => item.product.paymentMethods?.includes(method));
+		}
+	}
 	return {
-		paymentMethods: paymentMethods(locals.user?.roleId),
+		paymentMethods: methods,
 		emailsEnabled,
 		collectIPOnDeliverylessOrders: runtimeConfig.collectIPOnDeliverylessOrders,
 		personalInfoConnected: {
@@ -45,17 +88,20 @@ export async function load({ parent, locals }) {
 		},
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
-		vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
-		vatExempted: runtimeConfig.vatExempted
+		noProBilling: runtimeConfig.noProBilling,
+		...(cmsCheckoutTop && {
+			cmsCheckoutTop,
+			cmsCheckoutTopData: cmsFromContent(cmsCheckoutTop.content, locals)
+		}),
+		...(cmsCheckoutBottom && {
+			cmsCheckoutBottom,
+			cmsCheckoutBottomData: cmsFromContent(cmsCheckoutBottom.content, locals)
+		})
 	};
 }
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const methods = paymentMethods(locals.user?.roleId);
-		if (!methods.length) {
-			throw error(500, 'No payment methods configured for the beBOP');
-		}
 		const cart = await getCartFromDb({ user: userIdentifier(locals) });
 
 		if (!cart?.items.length) {
@@ -71,6 +117,18 @@ export const actions = {
 				Object.assign(omit(product, 'translations'), product.translations?.[locals.language] ?? {})
 			)
 			.toArray();
+
+		let methods = paymentMethods({ role: locals.user?.roleId });
+
+		for (const product of products) {
+			if (product.paymentMethods) {
+				methods = methods.filter((method) => product.paymentMethods?.includes(method));
+			}
+		}
+
+		if (!methods.length) {
+			throw error(400, 'No payment methods available');
+		}
 
 		const byId = Object.fromEntries(products.map((product) => [product._id, product]));
 
@@ -95,15 +153,27 @@ export const actions = {
 			? null
 			: z
 					.object({
-						shipping: z.object({
-							firstName: z.string().min(1),
-							lastName: z.string().min(1),
-							address: z.string().min(1),
-							city: z.string().min(1),
-							state: z.string().optional(),
-							zip: z.string().min(1),
-							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
-						})
+						shipping: z.object(
+							locals.user?.roleId === POS_ROLE_ID
+								? {
+										firstName: z.string().default(''),
+										lastName: z.string().default(''),
+										address: z.string().default(''),
+										city: z.string().default(''),
+										state: z.string().optional(),
+										zip: z.string().default(''),
+										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+								  }
+								: {
+										firstName: z.string().min(1),
+										lastName: z.string().min(1),
+										address: z.string().min(1),
+										city: z.string().min(1),
+										state: z.string().optional(),
+										zip: z.string().min(1),
+										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+								  }
+						)
 					})
 					.parse(json);
 
@@ -117,11 +187,20 @@ export const actions = {
 							city: z.string().min(1),
 							state: z.string().optional(),
 							zip: z.string().min(1),
-							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+							isCompany: z.boolean({ coerce: true }).default(false),
+							vatNumber: z.string().optional(),
+							companyName: z.string().optional()
 						})
 					})
 					.parse(json)
 			: null;
+
+		if (runtimeConfig.noProBilling) {
+			if (billingInfo) {
+				billingInfo.billing.isCompany = false;
+			}
+		}
 
 		const notifications = z
 			.object({
@@ -159,10 +238,31 @@ export const actions = {
 					})
 					.parse(json)
 			: null;
+		const receiptNote = json.receiptNoteContent
+			? z
+					.object({
+						receiptNoteContent: z.string().min(1)
+					})
+					.parse(json)
+			: null;
 
-		const { paymentMethod, discountAmount, discountType, discountJustification } = z
+		const multiplePaymentMethods =
+			locals.user?.roleId === POS_ROLE_ID
+				? z
+						.object({ multiplePaymentMethods: z.coerce.boolean().optional() })
+						.parse(Object.fromEntries(formData)).multiplePaymentMethods
+				: false;
+
+		const paymentMethod = multiplePaymentMethods
+			? null
+			: z
+					.object({
+						paymentMethod: z.enum([methods[0], ...methods.slice(1)])
+					})
+					.parse(Object.fromEntries(formData)).paymentMethod;
+
+		const { discountAmount, discountType, discountJustification } = z
 			.object({
-				paymentMethod: z.enum([methods[0], ...methods.slice(1)]),
 				discountAmount: z.coerce.number().optional(),
 				discountType: z.enum(['fiat', 'percentage']).optional(),
 				discountJustification: z.string().optional()
@@ -176,6 +276,9 @@ export const actions = {
 		let isFreeVat: boolean | undefined;
 		let reasonFreeVat: string | undefined;
 
+		let offerDeliveryFees: boolean | undefined;
+		let reasonOfferDeliveryFees: string | undefined;
+
 		if (locals.user?.roleId === POS_ROLE_ID) {
 			const vatDetails = z
 				.object({
@@ -186,11 +289,26 @@ export const actions = {
 
 			isFreeVat = vatDetails.isFreeVat;
 			reasonFreeVat = vatDetails.reasonFreeVat;
+
+			if (runtimeConfig.deliveryFees.allowFreeForPOS) {
+				const feesDetails = z
+					.object({
+						offerDeliveryFees: z.coerce.boolean().optional(),
+						reasonOfferDeliveryFees: z.string().optional()
+					})
+					.parse(Object.fromEntries(formData));
+				offerDeliveryFees = feesDetails.offerDeliveryFees;
+				reasonOfferDeliveryFees = feesDetails.reasonOfferDeliveryFees;
+			}
 		}
 
 		if (isFreeVat && !reasonFreeVat) {
 			throw error(400, 'Reason for free VAT is required');
 		}
+		if (offerDeliveryFees && !reasonOfferDeliveryFees) {
+			throw error(400, 'You must acknowledge that you offer delivery fees and add a justification');
+		}
+
 		if (
 			runtimeConfig.displayNewsletterCommercialProspection &&
 			newsletterProspection &&
@@ -216,11 +334,13 @@ export const actions = {
 
 		const agreements = z
 			.object({
+				teecees: z.boolean({ coerce: true }).default(false),
 				allowCollectIP: z.boolean({ coerce: true }).default(false),
 				isOnlyDeposit: z.boolean({ coerce: true }).default(false),
 				isVATNullForeigner: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
+				teecees: formData.get('teecees'),
 				allowCollectIP: formData.get('allowCollectIP'),
 				isOnlyDeposit: formData.get('isOnlyDeposit'),
 				isVATNullForeigner: formData.get('isVATNullForeigner')
@@ -229,15 +349,28 @@ export const actions = {
 		if (!agreements.allowCollectIP && runtimeConfig.collectIPOnDeliverylessOrders && isDigital) {
 			throw error(400, 'You must allow the collection of your IP address');
 		}
-		const vatCountry =
-			shippingInfo?.shipping?.country ?? locals.countryCode ?? runtimeConfig.vatCountry;
-		if (
-			!agreements.isVATNullForeigner &&
-			runtimeConfig.vatNullOutsideSellerCountry &&
-			runtimeConfig.vatCountry !== vatCountry
-		) {
-			throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
+		if (billingInfo?.billing.isCompany) {
+			if (!billingInfo?.billing.companyName) {
+				throw error(400, 'The company name is required for professional order ');
+			}
+		} else {
+			if (billingInfo?.billing) {
+				delete billingInfo.billing.companyName;
+				delete billingInfo.billing.vatNumber;
+			}
 		}
+
+		const vatCountry =
+			shippingInfo?.shipping?.country ??
+			locals.countryCode ??
+			(runtimeConfig.vatCountry || undefined);
+
+		// Trust the frontend on this.
+		// Otherwise would have to move the check to createOrder or compute priceInfo here
+		//
+		// if (!agreements.isVATNullForeigner && pricenfo.physicalVatAtCustoms) {
+		// 	throw error(400, 'You must acknowledge that you will have to pay VAT upon delivery');
+		// }
 
 		if (
 			!agreements.isOnlyDeposit &&
@@ -254,7 +387,6 @@ export const actions = {
 				'You must acknowledge that you are only paying a deposit and will have to pay the rest later'
 			);
 		}
-
 		rateLimit(locals.clientIp, 'email', 10, { minutes: 1 });
 
 		const orderId = await createOrder(
@@ -284,7 +416,7 @@ export const actions = {
 				cart,
 				shippingAddress: shippingInfo?.shipping,
 				billingAddress: billingInfo?.billing || shippingInfo?.shipping,
-				vatCountry: vatCountry,
+				userVatCountry: vatCountry,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
 					discountAmount &&
@@ -297,7 +429,21 @@ export const actions = {
 						}
 					}),
 				...(note && { note: note.noteContent }),
-				...(agreements.allowCollectIP && { clientIp: locals.clientIp })
+				...(agreements.allowCollectIP && { clientIp: locals.clientIp }),
+				...(locals.user?.roleId === POS_ROLE_ID &&
+					runtimeConfig.deliveryFees.allowFreeForPOS &&
+					offerDeliveryFees && { reasonOfferDeliveryFees }),
+				...(receiptNote && { receiptNote: receiptNote.receiptNoteContent }),
+				engagements: {
+					...(agreements.allowCollectIP && { acceptedIPCollect: agreements.allowCollectIP }),
+					...(agreements.teecees && { acceptedTermsOfUse: agreements.teecees }),
+					...(agreements.isOnlyDeposit && {
+						acceptedDepositConditionsAndFullPayment: agreements.isOnlyDeposit
+					}),
+					...(agreements.isVATNullForeigner && {
+						acceptedExportationAndVATObligation: agreements.isVATNullForeigner
+					})
+				}
 			}
 		);
 

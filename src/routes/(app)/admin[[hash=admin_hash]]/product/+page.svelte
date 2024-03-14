@@ -34,10 +34,13 @@
 
 <a href="{data.adminPrefix}/product/new" class="underline block">Add product</a>
 <a href="{data.adminPrefix}/product/prices" class="underline block">Products price</a>
-<button on:click={exportData} class="btn btn-black self-start">Export catalog</button>
-<a href="{data.adminPrefix}/backup/import?type=catalog" class="btn btn-black self-start"
-	>Import catalog</a
->
+<a href="{data.adminPrefix}/product/alias" class="underline block">Products aliases</a>
+{#if 0}
+	<button on:click={exportData} class="btn btn-black self-start">Export catalog</button>
+	<a href="{data.adminPrefix}/backup/import?type=catalog" class="btn btn-black self-start"
+		>Import catalog</a
+	>
+{/if}
 
 <form method="post" class="flex flex-col gap-4" action="?/update">
 	<h3 class="text-xl">Default action settings</h3>

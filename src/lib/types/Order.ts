@@ -23,6 +23,7 @@ export interface Note {
 	npub?: string;
 	email?: string;
 	userId?: User['_id'];
+	userAlias?: string;
 	role: string; // CUSTOMER_ROLE_ID or other
 	content: string;
 	createdAt: Date;
@@ -48,6 +49,11 @@ export interface OrderPayment {
 			previouslyPaid?: Price;
 			remainingToPay?: Price;
 		};
+		accounting?: {
+			price: Price;
+			previouslyPaid?: Price;
+			remainingToPay?: Price;
+		};
 	};
 	method: PaymentMethod;
 	/**
@@ -57,6 +63,7 @@ export interface OrderPayment {
 	/** Bitcoin / LN address, payment link */
 	address?: string;
 	paidAt?: Date;
+	createdAt?: Date;
 	/** For lightning addresses, contains the hash to look up the invoice */
 	invoiceId?: string;
 	/** For card transactions */
@@ -67,7 +74,13 @@ export interface OrderPayment {
 	/**
 	 * There are also additional fields for sumup, they are stored but not documented here.
 	 */
-	transactions?: Array<{ id: string; amount: number; currency: Currency }>;
+	transactions?: Array<{
+		id: string;
+		amount: number;
+		currency: Currency;
+		transaction_code?: string;
+		txid?: string;
+	}>;
 
 	/**
 	 * The invoice number, set when the order is paid.
@@ -82,6 +95,8 @@ export interface OrderPayment {
 	detail?: string;
 }
 
+export const FAKE_ORDER_INVOICE_NUMBER = -1;
+
 export interface OrderAddress {
 	firstName: string;
 	lastName: string;
@@ -90,6 +105,9 @@ export interface OrderAddress {
 	state?: string;
 	zip: string;
 	country: CountryAlpha2;
+	isCompany?: boolean;
+	companyName?: string;
+	vatNumber?: string;
 }
 
 export interface Order extends Timestamps {
@@ -119,7 +137,12 @@ export interface Order extends Timestamps {
 				price: Price;
 				customPrice?: Price;
 			};
+			accounting?: {
+				price: Price;
+				customPrice?: Price;
+			};
 		};
+		vatRate: number;
 	}>;
 
 	shippingAddress?: OrderAddress;
@@ -129,13 +152,16 @@ export interface Order extends Timestamps {
 		currency: Currency;
 	};
 
-	vat?: {
+	vat?: Array<{
 		price: Price;
 		rate: number;
-		country: string;
-	};
+		country: CountryAlpha2;
+	}>;
 
 	vatFree?: {
+		reason: string;
+	};
+	deliveryFeesFree?: {
 		reason: string;
 	};
 
@@ -143,21 +169,28 @@ export interface Order extends Timestamps {
 		main: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};
 		priceReference: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};
 		secondary?: {
 			totalPrice: Price;
 			totalReceived?: Price;
-			vat?: Price;
+			vat?: Price[];
+			shippingPrice?: Price;
+			discount?: Price;
+		};
+		accounting?: {
+			totalPrice: Price;
+			totalReceived?: Price;
+			vat?: Price[];
 			shippingPrice?: Price;
 			discount?: Price;
 		};
@@ -190,6 +223,13 @@ export interface Order extends Timestamps {
 
 	clientIp?: string;
 	notes?: Note[];
+	receiptNote?: string;
+	engagements?: {
+		acceptedTermsOfUse?: boolean;
+		acceptedIPCollect?: boolean;
+		acceptedDepositConditionsAndFullPayment?: boolean;
+		acceptedExportationAndVATObligation?: boolean;
+	};
 }
 interface SimplifiedOrderPayment {
 	id: string;
@@ -210,15 +250,37 @@ export function orderAmountWithNoPaymentsCreated(
 		payments: Pick<OrderPayment, 'currencySnapshot' | 'status'>[];
 	}
 ): number {
-	return (
-		order.currencySnapshot.main.totalPrice.amount -
-		sumCurrency(
-			order.currencySnapshot.main.totalPrice.currency,
-			order.payments
-				.filter((payment) => payment.status === 'pending' || payment.status === 'paid')
-				.map((payment) => payment.currencySnapshot.main.price)
-		)
-	);
+	return sumCurrency(order.currencySnapshot.main.totalPrice.currency, [
+		{
+			amount: order.currencySnapshot.main.totalPrice.amount,
+			currency: order.currencySnapshot.main.totalPrice.currency
+		},
+		...order.payments
+			.filter((payment) => payment.status === 'pending' || payment.status === 'paid')
+			.map((payment) => ({
+				amount: -payment.currencySnapshot.main.price.amount,
+				currency: payment.currencySnapshot.main.price.currency
+			}))
+	]);
+}
+
+export function orderRemainingToPay(
+	order: Pick<Order, 'currencySnapshot'> & {
+		payments: Pick<OrderPayment, 'currencySnapshot' | 'status'>[];
+	}
+): number {
+	return sumCurrency(order.currencySnapshot.main.totalPrice.currency, [
+		{
+			amount: order.currencySnapshot.main.totalPrice.amount,
+			currency: order.currencySnapshot.main.totalPrice.currency
+		},
+		...order.payments
+			.filter((payment) => payment.status === 'paid')
+			.map((payment) => ({
+				amount: -payment.currencySnapshot.main.price.amount,
+				currency: payment.currencySnapshot.main.price.currency
+			}))
+	]);
 }
 
 export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {

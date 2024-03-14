@@ -11,25 +11,29 @@ import { filterUndef } from '$lib/utils/filterUndef';
 import { groupBy } from 'lodash-es';
 import { differenceInSeconds } from 'date-fns';
 import type { WithId } from 'mongodb';
+import { pojo, type PojoObject } from '$lib/server/pojo';
 
 type FormattedCartItem = {
-	product: Pick<
-		Product,
-		| 'stock'
-		| '_id'
-		| 'name'
-		| 'maxQuantityPerOrder'
-		| 'deliveryFees'
-		| 'price'
-		| 'shortDescription'
-		| 'type'
-		| 'availableDate'
-		| 'shipping'
-		| 'preorder'
-		| 'applyDeliveryFeesOnlyOnce'
-		| 'requireSpecificDeliveryFee'
-		| 'payWhatYouWant'
-		| 'standalone'
+	product: PojoObject<
+		Pick<
+			Product,
+			| 'stock'
+			| '_id'
+			| 'name'
+			| 'maxQuantityPerOrder'
+			| 'deliveryFees'
+			| 'price'
+			| 'shortDescription'
+			| 'type'
+			| 'availableDate'
+			| 'shipping'
+			| 'preorder'
+			| 'applyDeliveryFeesOnlyOnce'
+			| 'requireSpecificDeliveryFee'
+			| 'payWhatYouWant'
+			| 'standalone'
+			| 'vatProfileId'
+		>
 	>;
 	picture: Picture | null;
 	digitalFiles: WithId<DigitalFile>[];
@@ -38,6 +42,7 @@ type FormattedCartItem = {
 		amount: number;
 		currency: Currency;
 	};
+	depositPercentage?: number;
 };
 
 export async function formatCart(
@@ -64,6 +69,7 @@ export async function formatCart(
 					| 'standalone'
 					| 'maxQuantityPerOrder'
 					| 'stock'
+					| 'vatProfileId'
 				>
 			>(
 				{ _id: { $in: cart.items.map((item) => item.productId) } },
@@ -85,7 +91,8 @@ export async function formatCart(
 						payWhatYouWant: 1,
 						standalone: 1,
 						maxQuantityPerOrder: 1,
-						stock: 1
+						stock: 1,
+						vatProfileId: 1
 					}
 				}
 			)
@@ -110,10 +117,11 @@ export async function formatCart(
 						delete productDoc.deliveryFees;
 					}
 					return {
-						product: productDoc,
+						product: pojo(productDoc),
 						picture: pictureByProductId[item.productId] || null,
 						digitalFiles: digitalFilesByProductId[item.productId] || [],
 						quantity: item.quantity,
+						depositPercentage: item.depositPercentage,
 						...(item.customPrice && { customPrice: item.customPrice })
 					};
 				})
@@ -132,10 +140,12 @@ export function formatOrder(order: Order) {
 		number: order.number,
 		payments: order.payments.map((payment) => ({
 			id: payment._id.toString(),
-			price: payment.price,
+			price: payment.currencySnapshot.main.price,
 			status: payment.status,
-			method: payment.method
+			method: payment.method,
+			currencySnapshot: payment.currencySnapshot
 		})),
+		currencySnapshot: order.currencySnapshot,
 		status: order.status,
 		vat: order.vat,
 		totalPrice: order.currencySnapshot.main.totalPrice

@@ -24,7 +24,12 @@
 			<div
 				class="btn text-sm tagWidget-cta absolute bottom-0 right-0 md:text-xl lg:text-xl text-center w-auto p-2 m-2"
 			>
-				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
+				<a
+					class="tagWidget-hyperlink"
+					href={tag.cta[0].href}
+					target={tag.cta[0].href.startsWith('http') || tag.cta[0].openNewTab ? '_blank' : '_self'}
+					>{tag.cta[0].label}</a
+				>
 			</div>
 		{/if}
 	</div>

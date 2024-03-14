@@ -2,10 +2,12 @@
 	"address": {
 		"address": "Adresse",
 		"city": "Ville",
+		"companyName": "Nom d'entreprise",
 		"country": "Pays",
 		"firstName": "Prénom",
 		"lastName": "Nom",
 		"state": "Canton / Région",
+		"vatNumber": "Numéro TVA",
 		"zipCode": "Code postal"
 	},
 	"cart": {
@@ -17,6 +19,7 @@
 		"empty": "Le panier est vide",
 		"items": "Produits",
 		"quantity": "Quantité",
+		"reachedMaxPerLine": "Votre panier a atteint la taille maximale. Veuillez supprimer des lignes de votre panier pour ajouter plus d'articles.",
 		"remaining": "Reste après commande",
 		"remainingHelpText": "Pour les articles sur acompte, la commande actuelle est un dépôt partiel.\nPour finaliser l'achat, la somme suivante devra être payée ultérieurement.\n(La TVA est déjà incluse dans le montant)",
 		"remainingShort": "Plus tard",
@@ -29,11 +32,13 @@
 		"vat": "TVA",
 		"vatIpCountry": "Déterminé par votre adresse IP et grâce aux données de <0></0>",
 		"vatIpCountryText": "Déterminé par votre adresse IP et grâce aux données de {link}",
-		"vatNullOutsideSellerCountry": "La TVA devra être acquitée par le client aux douanes lors de la livraison",
+		"vatNullOutsideSellerCountry": "La TVA sur les produits physiques devra être acquitée par le client aux douanes lors de la livraison",
 		"vatRate": "Taux de TVA : {country}",
 		"vatSellerCountry": "La TVA est celle du pays du vendeur."
 	},
 	"challenge": {
+		"beginsAt": "Débute dans {days} jours",
+		"ended": "Terminé !",
 		"endsAt": "Termine le <0></0>",
 		"goalMet": "Merci à tous ! \n👏👏",
 		"goalOvershot": "Vous êtes incroyables ! \n🤭",
@@ -66,6 +71,9 @@
 		"differentBillingAddress": "Mon adresse de livraison et mon adresse de facturation sont différentes",
 		"digitalNoShippingNeeded": "Tous les produits de votre panier sont des produits numériques. \nVous n'avez pas besoin de fournir d'adresse de livraison.",
 		"invalidNpub": "Adresse publique Nostr invalide",
+		"isProBilling": "Ceci est une commande professionnelle",
+		"multiplePaymentMethods": "Utiliser plusieurs méthodes de paiements",
+		"multiplePaymentMethodsHelpText": "Vous pourrez définir les méthodes de paiement à l'étape suivante.",
 		"noDeliveryInCountry": "La livraison n'est pas disponible dans votre pays pour certains articles de votre panier.",
 		"note": {
 			"label": "Laissez un message au vendeur",
@@ -96,6 +104,9 @@
 			"unavailable": "Aucun mode de paiement disponible."
 		},
 		"paymentStatus": "Statut de paiement",
+		"receiptNote": {
+			"label": "Renseignez une mention additionnelle sur la facture"
+		},
 		"shipmentInfo": "Informations d'expédition",
 		"title": "Livraison et paiement",
 		"tosAgree": "J'accepte les <0>conditions d'utilisation</0>",
@@ -372,7 +383,13 @@
 			"contact": "Contact entreprise",
 			"identity": "Identité entreprise"
 		},
-		"poweredBy": "Alimenté par"
+		"poweredBy": "Alimenté par",
+		"shop": {
+			"info": "notre boutique"
+		}
+	},
+	"general": {
+		"copied": "Copié"
 	},
 	"identity": {
 		"cta": {
@@ -421,6 +438,9 @@
 			"cta": "Envoyer un appel à paiement",
 			"currency": "Monnaie de paiement"
 		},
+		"clickQR": "Cliquez sur le QR code pour payer avec votre portefeuille",
+		"confirmCancel": "Êtes-vous sûr ? \nS'il s'agit de votre seul paiement en attente et qu'il n'y a aucun paiement payé sur la commande, la commande sera annulée. \nEn cas d'erreur, créez d'abord un paiement, puis supprimez celui-ci.",
+		"copyAddress": "Copier l'adresse de paiement",
 		"createdAt": "Date de la commande : <0></0>",
 		"depositCancelled": "Demande d'acompte annulée",
 		"depositExpired": "Demande d'acompte expirée",
@@ -435,13 +455,28 @@
 			"title": "Liste de vos commandes"
 		},
 		"note": {
-			"author": "Employé",
+			"author": "{alias} (Employé)",
 			"authorCustomer": "Client",
 			"backToOrder": "Aller à la commande",
 			"label": "Note de l'employé",
 			"saveText": "Enregistrer la note",
 			"seeText": "Voir notes commande",
 			"title": "Notes de la commande #{number}"
+		},
+		"paidAt": "Date de paiement : <0></0>",
+		"paidWith": {
+			"bank-transfer": "Payé avec : virement bancaire vérifié",
+			"bitcoin": "Payé avec : Paiement Bitcoin on-chain (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
+			"card": "Payé avec : carte bancaire via Sum UP",
+			"lightning": "Payé avec : Transaction Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
+			"point-of-sale": "Payé en magasin"
+		},
+		"paidWithSummary": {
+			"bank-transfer": "Payé avec : virement bancaire vérifié",
+			"bitcoin": "Payé avec : Paiement Bitcoin on-chain",
+			"card": "Payé avec : carte bancaire via Sum UP",
+			"lightning": "Payé avec : Transaction Lightning",
+			"point-of-sale": "Payé en magasin"
 		},
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
@@ -452,6 +487,7 @@
 		"paymentAddress": "Adresse de paiement ",
 		"paymentAmount": "Montant de la transaction (hors frais)",
 		"paymentBic": "BIC",
+		"paymentExpiresAt": "Date limite de paiement: <0></0>",
 		"paymentIban": "IBAN de paiement",
 		"paymentLink": "Cliquez pour payer par carte avec",
 		"paymentPaidAt": "Paiement effectué le {date}",
@@ -469,23 +505,46 @@
 		"receipt": {
 			"alreadyPaidAmount": "Montant déjà payé",
 			"bankInfo": "Coordonnées bancaires",
-			"create": "Générer la facture",
+			"cancelledOrPending": "Cet appel de paiement n'a pas été honoré et est expiré ou a été annulé",
+			"create": "Télécharger la facture",
+			"createProforma": "Télécharger la pré-facture",
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
+			"fullyPaid": {
+				"message": "Avec ce paiement, la commande {orderNumber} est désormais entièrement payée"
+			},
 			"invoice": "Facture",
 			"itemName": "Nature",
 			"partialAmount": "Montant payé (paiement partiel)",
+			"partialAmountPre": "Montant à payer (paiement partiel)",
+			"proforma": "Ceci est une facture proforma. Aucun paiement n'a été effectué. La facture finale sera émise \t\taprès le paiement.",
+			"proformaAssociated": "Facture proforma associée : {proformaInvoiceNumber}",
+			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Qté",
 			"remainingAmount": "Montant restant à payer",
+			"summaryTitle": "Récapitulatif de la commande #{number}",
 			"totalExcVat": "Total HT",
 			"totalInclVat": "Total TTC",
 			"totalVat": "TVA totale",
-			"unitPrice": "Prix ​​unit. HT"
+			"unitPrice": "Prix ​​unit. HT",
+			"vatFreeReason": "Exempt de TVA: {reason}"
 		},
+		"receiptFullyPaid": "Générer un reçu (entièrement payé)",
+		"receiptPending": "Générer un reçu (en attente de paiement)",
+		"related": {
+			"invoice": "✅ Facture n°{invoiceNumber}",
+			"title": "Factures associées"
+		},
+		"requestedAt": "Date de demande de paiement: <0></0>",
 		"restToPay": "Reste à payer",
 		"shippingAddress": {
 			"title": "Adresse de livraison"
 		},
 		"singleTitle": "Commande #{number}",
+		"summary": {
+			"fullyPaid": {
+				"title": "Commande entièrement payée, montant restant dû zéro"
+			}
+		},
 		"timeRemaining": "Temps restant avant expiration du paiement dans nos systèmes : {minutes} minutes",
 		"vatFree": "Cette commande n'est pas assujettie TVA. \nMotif : {reason}"
 	},
@@ -493,20 +552,23 @@
 		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique une <0>remise cadeau</0>",
 		"cta": {
 			"cancelOrder": "Annuler",
-			"markOrderPaid": "Marquer comme payée"
+			"markOrderPaid": "Marquer comme payée",
+			"updatePaymentInfo": "Mettre à jour les informations de paiement"
 		},
 		"discountJustification": "Justification",
 		"invalidDiscount": "La réduction n'est pas valable !",
 		"lastOrders": {
 			"title": "Dernières commandes"
 		},
+		"offerDeliveryFees": "Enlever les frais de port pour cette commande",
 		"order": {
 			"satReceived": "reçu"
 		},
+		"pendingPayment": "Paiement en cours",
 		"session": {
 			"waitingPaymentConfirmation": "En attente de confirmation",
 			"welcomeMessage": "Nous sommes heureux de vous voir",
-			"welcomeTitle": "Accueillir"
+			"welcomeTitle": "Bienvenue"
 		},
 		"sessionLink": "Session point de vente",
 		"vatFree": "Il s'agit d'une commande sans TVA (<0>conditions</0>)",

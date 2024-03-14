@@ -5,7 +5,7 @@
 	import type { Picture } from '$lib/types/Picture';
 	import ProductWidget from './ProductWidget.svelte';
 	import { POS_ROLE_ID } from '$lib/types/User';
-	import { groupBy } from 'lodash-es';
+	import { groupBy, sortBy } from 'lodash-es';
 	import type { SetRequired } from 'type-fest';
 	import TagWidget from './TagWidget.svelte';
 	import type {
@@ -18,12 +18,14 @@
 		CmsTag,
 		CmsToken,
 		CmsContactForm,
-		CmsCountdown
+		CmsCountdown,
+		CmsGallery
 	} from '$lib/server/cms';
 	import SpecificationWidget from './SpecificationWidget.svelte';
 	import ContactForm from './ContactForm.svelte';
 	import { mapKeys } from '$lib/utils/mapKeys';
 	import CountdownWidget from './CountdownWidget.svelte';
+	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -41,6 +43,8 @@
 	export let pageLink: string | undefined;
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
+	export let galleries: CmsGallery[];
+
 	let classNames = '';
 	export { classNames as class };
 
@@ -73,6 +77,10 @@
 		pictures.filter((picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId),
 		'productId'
 	);
+	$: picturesByGallery = groupBy(
+		pictures.filter((picture): picture is SetRequired<Picture, 'galleryId'> => !!picture.galleryId),
+		'galleryId'
+	);
 	$: pictureById = Object.fromEntries(pictures.map((picture) => [picture._id, picture]));
 	$: specificationById = Object.fromEntries(
 		specifications.map((specification) => [specification._id, specification])
@@ -94,8 +102,12 @@
 	$: countdownById = Object.fromEntries(countdowns.map((countdown) => [countdown._id, countdown]));
 
 	function productsByTag(searchTag: string) {
-		return products.filter((product) => product.tagIds?.includes(searchTag));
+		return sortBy(
+			products.filter((product) => product.tagIds?.includes(searchTag)),
+			['alias.1', 'alias.0']
+		);
 	}
+	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
 </script>
 
 <div class="prose max-w-full {classNames}">
@@ -149,6 +161,13 @@
 			/>
 		{:else if token.type === 'countdownWidget' && countdownById[token.slug]}
 			<CountdownWidget countdown={countdownById[token.slug]} class="not-prose my-5" />
+		{:else if token.type === 'galleryWidget' && galleryById[token.slug]}
+			<GalleryWidget
+				gallery={galleryById[token.slug]}
+				pictures={picturesByGallery[token.slug]}
+				displayOption={token.display}
+				class="not-prose my-5"
+			/>
 		{:else if token.type === 'pictureWidget'}
 			<PictureComponent
 				picture={pictureById[token.slug]}
@@ -160,8 +179,10 @@
 					: ''}{token.height ? `height: ${token.height}px;` : ''}"
 			/>
 		{:else if token.type === 'html'}
-			<!-- eslint-disable svelte/no-at-html-tags -->
-			{@html token.raw}
+			<div class="my-5">
+				<!-- eslint-disable svelte/no-at-html-tags -->
+				{@html token.raw}
+			</div>
 		{/if}
 	{/each}
 </div>

@@ -64,21 +64,24 @@ export const actions = {
 
 		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
 
-		const { quantity } = z
+		const { quantity, deposit } = z
 			.object({
 				quantity: z
 					.number({ coerce: true })
 					.int()
 					.min(1)
-					.max(max - 1)
+					.max(max - 1),
+				deposit: z.boolean({ coerce: true }).optional()
 			})
 			.parse({
-				quantity: formData.get('quantity')
+				quantity: formData.get('quantity'),
+				deposit: formData.get('deposit')
 			});
 
 		await addToCartInDb(product, quantity + 1, {
 			user: userIdentifier(locals),
-			totalQuantity: true
+			totalQuantity: true,
+			deposit
 		});
 
 		throw redirect(303, request.headers.get('referer') || '/cart');

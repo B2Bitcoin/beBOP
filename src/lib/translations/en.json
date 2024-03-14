@@ -2,10 +2,12 @@
 	"address": {
 		"address": "Address",
 		"city": "City",
+		"companyName": "Company name",
 		"country": "Country",
 		"firstName": "First name",
 		"lastName": "Last name",
 		"state": "State",
+		"vatNumber": "VAT number",
 		"zipCode": "Zip code"
 	},
 	"cart": {
@@ -17,6 +19,7 @@
 		"empty": "Cart is empty",
 		"items": "Products",
 		"quantity": "Quantity",
+		"reachedMaxPerLine": "Your cart reached the maximum size. To add more articles, remove items from your cart",
 		"remaining": "Remaining after checkout",
 		"remainingHelpText": "For items with deposits, the current order is a partial payment.\nTo complete the purchase, you will need to make another payment with the following amount.\n(VAT is already included in the amount)",
 		"remainingShort": "Later",
@@ -34,6 +37,8 @@
 		"vatSellerCountry": "The country is the seller's country."
 	},
 	"challenge": {
+		"beginsAt": "Begins in {days} days",
+		"ended": "Finished !",
 		"endsAt": "Ends <0></0>",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
@@ -66,6 +71,9 @@
 		"differentBillingAddress": "My shipping address and my billing address are different",
 		"digitalNoShippingNeeded": "All products in your cart are digital products. You don't need to provide any shipping information.",
 		"invalidNpub": "Invalid Nostr public address",
+		"isProBilling": "This is a professional order",
+		"multiplePaymentMethods": "Use several payment methods",
+		"multiplePaymentMethodsHelpText": "You can set payment methods at the next step.",
 		"noDeliveryInCountry": "Delivery is not available in your country for some of the items of your cart.",
 		"note": {
 			"label": "Leave a note for merchant",
@@ -96,6 +104,9 @@
 			"unavailable": "No payment methods available."
 		},
 		"paymentStatus": "Payment status",
+		"receiptNote": {
+			"label": "Provide additional information on the invoice"
+		},
 		"shipmentInfo": "Shipment info",
 		"title": "Checkout",
 		"tosAgree": "I agree to the <0>terms of service</0>",
@@ -372,7 +383,13 @@
 			"contact": "Company contact",
 			"identity": "Company identity"
 		},
-		"poweredBy": "Powered by"
+		"poweredBy": "Powered by",
+		"shop": {
+			"info": "our shop"
+		}
+	},
+	"general": {
+		"copied": "Copied"
 	},
 	"identity": {
 		"cta": {
@@ -421,6 +438,9 @@
 			"cta": "Send a call for payment",
 			"currency": "Payment currency"
 		},
+		"clickQR": "Click on the QR code to pay with your wallet",
+		"confirmCancel": "Are you sure ? If this is your only pending payment and there is no paid payment on the order, the order will be cancelled. In case of mistake, first create a payment, then delete this one.",
+		"copyAddress": "Copy payment address",
 		"createdAt": "Created at <0></0>",
 		"depositCancelled": "Deposit request cancelled",
 		"depositExpired": "Deposit request expired",
@@ -435,13 +455,28 @@
 			"title": "List of your orders"
 		},
 		"note": {
-			"author": "Employee",
+			"author": "{alias} (Employee)",
 			"authorCustomer": "Customer",
 			"backToOrder": "Go to order",
 			"label": "Employee note",
 			"saveText": "Save note",
 			"seeText": "See order notes",
 			"title": "Order notes #{number}"
+		},
+		"paidAt": "Paid at <0></0>",
+		"paidWith": {
+			"bank-transfer": "Paid with: verified bank transfer",
+			"bitcoin": "Paid with: Bitcoin on-chain payment (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
+			"card": "Paid with: bank card via Sum UP",
+			"lightning": "Paid with: Lightning transaction (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
+			"point-of-sale": "Paid in store"
+		},
+		"paidWithSummary": {
+			"bank-transfer": "Paid with: verified bank transfer",
+			"bitcoin": "Paid with: Bitcoin on-chain payment",
+			"card": "Paid with: bank card via Sum UP",
+			"lightning": "Paid with: Lightning transaction",
+			"point-of-sale": "Paid in store"
 		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
@@ -452,6 +487,7 @@
 		"paymentAddress": "Payment address",
 		"paymentAmount": "Payment amount",
 		"paymentBic": "BIC",
+		"paymentExpiresAt": "Payment deadline: <0></0>",
 		"paymentIban": "IBAN to send the wire transfer to",
 		"paymentLink": "Click here to pay by card with",
 		"paymentPaidAt": "Payment done on {date}",
@@ -469,23 +505,46 @@
 		"receipt": {
 			"alreadyPaidAmount": "Amount previously paid",
 			"bankInfo": "Bank details",
-			"create": "Create invoice",
+			"cancelledOrPending": "This call for payment has not been honored and has expired or been canceled",
+			"create": "Download invoice",
+			"createProforma": "Download pre-invoice",
 			"endMessage": "We stay at your disposal for any further information. <0></0> Best regards, <1></1> {businessName}",
+			"fullyPaid": {
+				"message": "With this payment, the order {orderNumber} is now fully paid"
+			},
 			"invoice": "Invoice",
 			"itemName": "Nature",
 			"partialAmount": "Amount paid (partial payment)",
+			"partialAmountPre": "Amount to pay (partial payment)",
+			"proforma": "This is a proforma invoice. No payment has been made yet. The final invoice will be generated when payment is made.",
+			"proformaAssociated": "Associated proforma invoice: {proformaInvoiceNumber}",
+			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Qty",
 			"remainingAmount": "Remaining amount to pay",
+			"summaryTitle": "Summary of order #{number}",
 			"totalExcVat": "Total Excl. VAT",
 			"totalInclVat": "Total Incl. VAT",
 			"totalVat": "Total VAT",
-			"unitPrice": "Unit price"
+			"unitPrice": "Unit price",
+			"vatFreeReason": "Vat exempted: {reason}"
 		},
+		"receiptFullyPaid": "Generate receipt(fully paid)",
+		"receiptPending": "Generate receipt(pending payment)",
+		"related": {
+			"invoice": "✅ Invoice n°{invoiceNumber}",
+			"title": "Related Invoices"
+		},
+		"requestedAt": "Payment requested at <0></0>",
 		"restToPay": "Remaining to pay",
 		"shippingAddress": {
 			"title": "Shipping address"
 		},
 		"singleTitle": "Order #{number}",
+		"summary": {
+			"fullyPaid": {
+				"title": "Order fully paid, outstanding amount zero"
+			}
+		},
 		"timeRemaining": "Time remaining: {minutes} minutes",
 		"vatFree": "This order is free of VAT. Reason: {reason}"
 	},
@@ -493,16 +552,19 @@
 		"applyGiftDiscount": "As a POS user I apply a <0>gift discount</0>",
 		"cta": {
 			"cancelOrder": "Cancel",
-			"markOrderPaid": "Mark paid"
+			"markOrderPaid": "Mark paid",
+			"updatePaymentInfo": "Update payment information"
 		},
 		"discountJustification": "Justification",
 		"invalidDiscount": "Discount is not valid!",
 		"lastOrders": {
 			"title": "Last orders"
 		},
+		"offerDeliveryFees": "Void delivery fees for this order",
 		"order": {
 			"satReceived": "received"
 		},
+		"pendingPayment": "Ongoing payment",
 		"session": {
 			"waitingPaymentConfirmation": "Waiting confirmation",
 			"welcomeMessage": "We're happy to see you",

@@ -36,7 +36,12 @@
 			class="body-hyperlink hover:underline">pictures</a
 		>, add a picture, and set it as logo
 	</p>
-
+	<p>
+		To change the favicon, go to <a
+			href="{data.adminPrefix}/picture"
+			class="body-hyperlink hover:underline">pictures</a
+		>, add a picture, and set it as favicon
+	</p>
 	<label class="form-label">
 		Website title
 		<input type="text" name="websiteTitle" class="form-input" value={data.websiteTitle} />
@@ -105,6 +110,15 @@
 			checked={data.displayCompanyInfo}
 		/>
 		Display company identity & company contact
+	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="displayMainShopInfo"
+			class="form-checkbox"
+			checked={data.displayMainShopInfo}
+		/>
+		Display main shop informations
 	</label>
 
 	<h3 class="text-xl">Links</h3>

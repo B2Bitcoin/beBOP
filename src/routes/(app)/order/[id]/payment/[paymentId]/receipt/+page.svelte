@@ -3,16 +3,32 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
+	import { sum } from '$lib/utils/sum.js';
+	import { marked } from 'marked';
 
 	export let data;
 
+	const { t, locale, textAddress } = useI18n();
+
+	const finalInvoice = data.payment.status === 'paid';
+	const proformaInvoiceNumber = t('order.receipt.proformaInvoiceNumber', {
+		orderNumber: data.order.number,
+		paymentIndex: data.order.payments.findIndex((p) => p.id === data.payment.id) + 1
+	});
+	const invoiceNumber = finalInvoice
+		? data.payment.invoice?.number?.toString()
+		: proformaInvoiceNumber;
 	const identity = data.sellerIdentity;
 
-	const { t, locale, textAddress } = useI18n();
 	const differentAddress =
 		data.order.shippingAddress &&
 		data.order.billingAddress &&
 		textAddress(data.order.shippingAddress) !== textAddress(data.order.billingAddress);
+
+	const totalVat = {
+		currency: data.order.currencySnapshot.main.totalPrice.currency,
+		amount: sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0])
+	};
 </script>
 
 <div class="flex justify-between">
@@ -37,7 +53,7 @@
 
 <div class="mt-4 text-right">
 	{#if data.order.notifications.paymentStatus.email}
-		<p>{data.order.notifications.paymentStatus.email}</p>
+		<!-- <p>{data.order.notifications.paymentStatus.email}</p> -->
 	{/if}
 	{#if data.order.billingAddress}
 		{#if differentAddress}
@@ -53,13 +69,47 @@
 </div>
 
 <div class="mt-4">
-	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {data.payment.invoice?.number}</h2>
+	<h2 class="text-2xl">{t('order.receipt.invoice')} n° {invoiceNumber}</h2>
+	{#if data.payment.status === 'paid' && !data.payment.currencySnapshot.main.remainingToPay?.amount}
+		<h2 class="text-xl font-bold text-green-500">
+			{t('order.receipt.fullyPaid.message', { orderNumber: data.order.number })}
+		</h2>
+	{/if}
 	<Trans key="order.createdAt">
-		{t('order.createdAt')}:
 		<time datetime={data.order.createdAt.toJSON()} slot="0">
 			{data.order.createdAt.toLocaleDateString($locale)}
 		</time>
-	</Trans>
+	</Trans><br />
+	{#if data.payment.createdAt}
+		<Trans key="order.requestedAt">
+			<time datetime={data.payment.createdAt?.toJSON()} slot="0">
+				{data.payment.createdAt?.toLocaleDateString($locale)}
+			</time>
+		</Trans><br />
+	{/if}
+	{#if finalInvoice}
+		<Trans key="order.paidAt">
+			<time datetime={data.payment.paidAt?.toJSON()} slot="0">
+				{data.payment.paidAt?.toLocaleDateString($locale)}
+			</time>
+		</Trans>
+		{#if 0}
+			{t('order.receipt.proformaAssociated', { proformaInvoiceNumber })}
+		{/if}
+	{:else if data.payment.status === 'pending'}
+		{t('order.receipt.proforma')}
+		{#if data.payment.expiresAt}
+			<Trans key="order.paymentExpiresAt">
+				<time datetime={data.payment.expiresAt.toJSON()} slot="0">
+					{data.payment.expiresAt.toLocaleDateString($locale)}
+				</time>
+			</Trans>
+		{/if}
+	{:else}
+		<h2 class="text-xl text-red-500 font-bold">
+			{t('order.receipt.cancelledOrPending')}
+		</h2>
+	{/if}
 </div>
 
 <table class="mt-4 border-collapse">
@@ -89,17 +139,13 @@
 				<td class="text-center border border-white px-2">
 					<PriceTag amount={unitPrice} currency={priceCurrency} inline />
 				</td>
-				<td class="text-center border border-white px-2">{data.order.vat?.rate ?? 0}%</td>
+				<td class="text-center border border-white px-2">{item.vatRate ?? 0}%</td>
 				<td class="text-center border border-white px-2">
-					<PriceTag
-						amount={(price * (data.order.vat?.rate ?? 0)) / 100}
-						currency={priceCurrency}
-						inline
-					/>
+					<PriceTag amount={(price * (item.vatRate ?? 0)) / 100} currency={priceCurrency} inline />
 				</td>
 				<td class="text-right border border-white px-2">
 					<PriceTag
-						amount={price + (price * (data.order.vat?.rate ?? 0)) / 100}
+						amount={price + (price * (item.vatRate ?? 0)) / 100}
 						currency={priceCurrency}
 						inline
 					/>
@@ -116,28 +162,28 @@
 		>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
 			<PriceTag
-				amount={data.order.vat?.price.amount === 0
-					? data.order.currencySnapshot.main.totalPrice.amount
-					: data.order.currencySnapshot.main.totalPrice.currency ===
-					  data.order.currencySnapshot.main.vat?.currency
-					? data.order.currencySnapshot.main.totalPrice.amount -
-					  data.order.currencySnapshot.main.vat.amount
-					: data.order.currencySnapshot.main.totalPrice.amount /
-					  (1 + (data.order.vat?.rate ?? 0) / 100)}
+				amount={data.order.currencySnapshot.main.totalPrice.amount - totalVat.amount}
 				currency={data.order.currencySnapshot.main.totalPrice.currency}
 				inline
 			/>
 		</td>
 	</tr>
+	{#if data.order.shippingPrice && data.order.currencySnapshot.main.shippingPrice}
+		<tr style:background-color="#e7e6e6">
+			<td class="border border-white px-2 text-right">{t('checkout.deliveryFees')}</td>
+			<td class="border border-white px-2 text-right whitespace-nowrap">
+				<PriceTag
+					amount={data.order.currencySnapshot.main.shippingPrice.amount}
+					currency={data.order.currencySnapshot.main.shippingPrice.currency}
+					inline
+				/>
+			</td>
+		</tr>
+	{/if}
 	<tr style:background-color="#e7e6e6">
 		<td class="border border-white px-2 text-right">{t('order.receipt.totalVat')}</td>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
-			<PriceTag
-				amount={data.order.currencySnapshot.main.vat?.amount ?? 0}
-				currency={data.order.currencySnapshot.main.vat?.currency ??
-					data.order.currencySnapshot.main.totalPrice.currency}
-				inline
-			/>
+			<PriceTag amount={totalVat.amount} currency={totalVat.currency} inline />
 		</td>
 	</tr>
 	<tr style:background-color="#aeaaaa" class="text-white font-bold">
@@ -164,7 +210,9 @@
 	{/if}
 	{#if data.payment.currencySnapshot.main.price.amount !== data.order.currencySnapshot.main.totalPrice.amount}
 		<tr style:background-color="#aeaaaa" class="text-white font-bold">
-			<td class="border border-white px-2 text-right">{t('order.receipt.partialAmount')}</td>
+			<td class="border border-white px-2 text-right"
+				>{finalInvoice ? t('order.receipt.partialAmount') : t('order.receipt.partialAmountPre')}</td
+			>
 			<td class="border border-white px-2 whitespace-nowrap text-right">
 				<PriceTag
 					amount={data.payment.currencySnapshot.main.price.amount}
@@ -188,6 +236,20 @@
 	{/if}
 </table>
 
+{#if data.order.vatFree?.reason}
+	<div class="mt-4">
+		{t('order.receipt.vatFreeReason', { reason: data.order.vatFree.reason })}
+	</div>
+{/if}
+{#if finalInvoice}
+	<div class="mt-4">
+		{t('order.paidWith.' + data.payment.method, {
+			paymentCurrency: data.payment.price.currency,
+			mainCurrency: data.payment.currencySnapshot.main.price.currency,
+			exchangeRate: data.payment.currencySnapshot.main.price.amount / data.payment.price.amount
+		})}
+	</div>
+{/if}
 <div class="mt-4">
 	<Trans key="order.receipt.endMessage" params={{ businessName: identity.businessName }}>
 		<br slot="0" />
@@ -202,6 +264,15 @@
 			<tr><td class="px-2">IBAN</td><td>{identity.bank.iban}</td></tr>
 			<tr><td class="px-2">BIC</td><td>{identity.bank.bic}</td></tr>
 		</table>
+	</div>
+{/if}
+
+{#if data.order.receiptNote}
+	<div class="mt-4 text-center">
+		<p>
+			<!-- eslint-disable svelte/no-at-html-tags -->
+			{@html marked(data.order.receiptNote.replaceAll('<', '&lt;'))}
+		</p>
 	</div>
 {/if}
 

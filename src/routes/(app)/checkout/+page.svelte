@@ -8,10 +8,8 @@
 	import { typedValues } from '$lib/utils/typedValues';
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import ProductType from '$lib/components/ProductType.svelte';
-	import { computeDeliveryFees } from '$lib/types/Cart';
+	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { toCurrency } from '$lib/utils/toCurrency.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { POS_ROLE_ID } from '$lib/types/User.js';
@@ -19,20 +17,23 @@
 	import type { DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
-	import { vatRate, type CountryAlpha2 } from '$lib/types/Country.js';
+	import { page } from '$app/stores';
+	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
 
 	let actionCount = 0;
-	const defaultCountry =
-		(data.personalInfoConnected?.address?.country ?? (data.countryCode as CountryAlpha2)) ||
-		(data.vatCountry as CountryAlpha2);
-	let country = defaultCountry;
+	const defaultShippingCountry =
+		(data.personalInfoConnected?.address?.country ?? data.countryCode) || data.vatCountry || 'FR';
+	const digitalCountry = data.countryCode || data.vatCountry || 'FR';
+	let country = defaultShippingCountry;
 
 	let isFreeVat = false;
+	let offerDeliveryFees = false;
 	let addDiscount = false;
 	let discountAmount: number;
 	let discountType: DiscountType;
+	let multiplePaymentMethods = false;
 
 	const { t, locale, countryName, sortedCountryCodes } = useI18n();
 
@@ -51,7 +52,13 @@
 	};
 
 	const emails: Record<FeedKey, string> = {
-		paymentStatus: data.email || data.personalInfoConnected?.email || ''
+		paymentStatus:
+			data.roleId === POS_ROLE_ID ? '' : data.email || data.personalInfoConnected?.email || ''
+	};
+
+	const npubs: Record<FeedKey, string> = {
+		paymentStatus:
+			data.roleId === POS_ROLE_ID ? '' : data.npub || data.personalInfoConnected?.npub || ''
 	};
 
 	function checkForm(event: SubmitEvent) {
@@ -75,59 +82,67 @@
 		}
 	}
 
-	$: paymentMethods = data.paymentMethods.filter((method) =>
-		method === 'bitcoin' ? partialSatoshi >= 10_000 : true
-	);
-
 	let paymentMethod: (typeof paymentMethods)[0] | undefined = undefined;
 	$: paymentMethod = typedInclude(paymentMethods, paymentMethod)
 		? paymentMethod
 		: paymentMethods[0];
 
 	$: items = data.cart || [];
-	$: deliveryFees = computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
+	$: deliveryFees =
+		data.roleId === 'POS_ROLE_ID' && data.deliveryFees.allowFreeForPOS
+			? 0
+			: computeDeliveryFees(UNDERLYING_CURRENCY, country, items, data.deliveryFees);
+
+	$: priceInfo = computePriceInfo(items, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted || isFreeVat,
+		userCountry: isDigital ? digitalCountry : country,
+		deliveryFees: {
+			amount: deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		},
+		vatProfiles: data.vatProfiles
+	});
 
 	$: isDigital = items.every((item) => !item.product.shipping);
-	$: actualCountry = isDigital || data.vatSingleCountry ? data.vatCountry : country;
-	$: actualVatRate =
-		data.vatExempted || (data.vatCountry !== actualCountry && data.vatNullOutsideSellerCountry)
-			? 0
-			: vatRate(actualCountry);
 
-	$: partialPrice =
-		sumCurrency(
-			UNDERLYING_CURRENCY,
-			items.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount:
-					((item.customPrice || item.product.price).amount *
-						item.quantity *
-						(item.depositPercentage ?? 100)) /
-					100
-			}))
-		) + (deliveryFees || 0);
-	$: totalPrice =
-		sumCurrency(
-			UNDERLYING_CURRENCY,
-			items.map((item) => ({
-				currency: (item.customPrice || item.product.price).currency,
-				amount: (item.customPrice || item.product.price).amount * item.quantity
-			}))
-		) + (deliveryFees || 0);
-	$: totalPriceWithVat =
-		totalPrice + fixCurrencyRounding(totalPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
-
-	$: partialVat = fixCurrencyRounding(partialPrice * (actualVatRate / 100), UNDERLYING_CURRENCY);
-	$: partialPriceWithVat = partialPrice + partialVat;
-	$: partialSatoshi = toCurrency('SAT', partialPriceWithVat, UNDERLYING_CURRENCY);
+	$: paymentMethods = data.paymentMethods.filter((method) =>
+		method === 'bitcoin'
+			? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
+			: true
+	);
 	$: isDiscountValid =
 		(discountType === 'fiat' &&
-			totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
+			priceInfo.totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
 		(discountType === 'percentage' && discountAmount < 100);
 	let showBillingInfo = false;
+	let isProfessionalOrder = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
+	{#if data.cmsCheckoutTop && data.cmsCheckoutTopData}
+		<CmsDesign
+			challenges={data.cmsCheckoutTopData.challenges}
+			tokens={data.cmsCheckoutTopData.tokens}
+			sliders={data.cmsCheckoutTopData.sliders}
+			products={data.cmsCheckoutTopData.products}
+			pictures={data.cmsCheckoutTopData.pictures}
+			tags={data.cmsCheckoutTopData.tags}
+			digitalFiles={data.cmsCheckoutTopData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsCheckoutTopData.specifications}
+			contactForms={data.cmsCheckoutTopData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsCheckoutTop.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsCheckoutTopData.countdowns}
+			galleries={data.cmsCheckoutTopData.galleries}
+		/>
+	{/if}
 	<div
 		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
 	>
@@ -147,7 +162,7 @@
 							class="form-input"
 							name="shipping.firstName"
 							autocomplete="given-name"
-							required
+							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.firstName ?? ''}
 						/>
 					</label>
@@ -159,7 +174,7 @@
 							class="form-input"
 							name="shipping.lastName"
 							autocomplete="family-name"
-							required
+							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.lastName ?? ''}
 						/>
 					</label>
@@ -171,7 +186,7 @@
 							class="form-input"
 							autocomplete="street-address"
 							name="shipping.address"
-							required
+							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.address?.street ?? ''}
 						/>
 					</label>
@@ -205,7 +220,7 @@
 							name="shipping.city"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.city ?? ''}
-							required
+							required={data.roleId !== POS_ROLE_ID}
 						/>
 					</label>
 					<label class="form-label col-span-2">
@@ -216,7 +231,7 @@
 							name="shipping.zip"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.zip ?? ''}
-							required
+							required={data.roleId !== POS_ROLE_ID}
 							autocomplete="postal-code"
 						/>
 					</label>
@@ -231,9 +246,21 @@
 						{t('checkout.differentBillingAddress')}
 					</label>
 				{/if}
+				{#if !data.noProBilling}
+					<label class="col-span-6 checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							form="checkout"
+							name="billing.isCompany"
+							bind:checked={isProfessionalOrder}
+						/>
+						{t('checkout.isProBilling')}
+					</label>
+				{/if}
 			</section>
 
-			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory)}
+			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory) || isProfessionalOrder}
 				<section class="gap-4 grid grid-cols-6 w-4/5">
 					<h2 class="font-light text-2xl col-span-6">{t('checkout.billingInfo')}</h2>
 
@@ -275,7 +302,12 @@
 
 					<label class="form-label col-span-3">
 						{t('address.country')}
-						<select name="billing.country" class="form-input" required bind:value={country}>
+						<select
+							name="billing.country"
+							class="form-input"
+							required
+							value={defaultShippingCountry}
+						>
 							{#each sortedCountryCodes() as code}
 								<option value={code}>{countryName(code)}</option>
 							{/each}
@@ -317,36 +349,64 @@
 							autocomplete="postal-code"
 						/>
 					</label>
+					{#if isProfessionalOrder}
+						<label class="form-label col-span-3">
+							{t('address.companyName')}
+							<input type="text" class="form-input" name="billing.companyName" />
+						</label>
+
+						<label class="form-label col-span-3">
+							{t('address.vatNumber')}
+							<input type="text" class="form-input" name="billing.vatNumber" />
+						</label>
+					{/if}
 				</section>
 			{/if}
 
 			<section class="gap-4 flex flex-col">
 				<h2 class="font-light text-2xl">{t('checkout.payment.title')}</h2>
 
-				<label class="form-label">
-					{t('checkout.payment.method')}
+				{#if data.roleId === POS_ROLE_ID}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							name="multiplePaymentMethods"
+							class="form-checkbox"
+							bind:checked={multiplePaymentMethods}
+						/>
+						{t('checkout.multiplePaymentMethods')}
+					</label>
+				{/if}
 
-					<div class="grid grid-cols-2 gap-4 items-center">
-						<select
-							name="paymentMethod"
-							class="form-input"
-							bind:value={paymentMethod}
-							disabled={paymentMethods.length === 0}
-							required
-						>
-							{#each paymentMethods as paymentMethod}
-								<option value={paymentMethod}>{t('checkout.paymentMethod.' + paymentMethod)}</option
-								>
-							{/each}
-						</select>
-						{#if paymentMethods.length === 0}
-							<p class="text-red-400">{t('checkout.paymentMethod.unavailable')}</p>
-						{/if}
-						{#if 0}
-							<a href="/connect" class="underline body-hyperlink"> Connect another wallet </a>
-						{/if}
-					</div>
-				</label>
+				{#if multiplePaymentMethods}
+					<p>{t('checkout.multiplePaymentMethodsHelpText')}</p>
+				{:else}
+					<label class="form-label">
+						{t('checkout.payment.method')}
+
+						<div class="grid grid-cols-2 gap-4 items-center">
+							<select
+								name="paymentMethod"
+								class="form-input"
+								bind:value={paymentMethod}
+								disabled={paymentMethods.length === 0}
+								required
+							>
+								{#each paymentMethods as paymentMethod}
+									<option value={paymentMethod}>
+										{t('checkout.paymentMethod.' + paymentMethod)}
+									</option>
+								{/each}
+							</select>
+							{#if paymentMethods.length === 0}
+								<p class="text-red-400">{t('checkout.paymentMethod.unavailable')}</p>
+							{/if}
+							{#if 0}
+								<a href="/connect" class="underline body-hyperlink"> Connect another wallet </a>
+							{/if}
+						</div>
+					</label>
+				{/if}
 			</section>
 
 			<section class="gap-4 flex flex-col">
@@ -370,6 +430,7 @@
 										autocomplete="email"
 										name="{key}Email"
 										bind:value={emails[key]}
+										required={key === 'paymentStatus' && data.roleId !== POS_ROLE_ID && !npubs[key]}
 									/>
 								</label>
 							{/if}
@@ -379,12 +440,10 @@
 									type="text"
 									class="form-input"
 									bind:this={npubInputs[key]}
+									bind:value={npubs[key]}
 									name="{key}NPUB"
-									value={data.npub || data.personalInfoConnected?.npub || ''}
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus' &&
-										!emails[key] &&
-										paymentMethod !== 'point-of-sale'}
+									required={key === 'paymentStatus' && !emails[key] && data.roleId !== POS_ROLE_ID}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
@@ -419,7 +478,13 @@
 					<div class="pl-4 py-2 body-mainPlan border-b border-gray-300 text-xl font-light">
 						{t('checkout.note.title')}
 					</div>
-
+					{#if data.roleId === POS_ROLE_ID}
+						<div class="p-4 flex flex-col gap-3">
+							<label class="form-label text-xl">
+								{t('checkout.receiptNote.label')}
+								<textarea name="receiptNoteContent" cols="30" rows="2" class="form-input" />
+							</label>
+						</div>{/if}
 					<div class="p-4 flex flex-col gap-3">
 						<label class="form-label text-xl">
 							{t('checkout.note.label')}
@@ -557,7 +622,7 @@
 					</div>
 				{/if}
 
-				{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+				{#if !isDigital && priceInfo.physicalVatAtCustoms}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
@@ -568,19 +633,21 @@
 							</h3>
 						</div>
 					</div>
-				{:else if data.vatCountry && !data.vatExempted}
+				{/if}
+
+				{#each priceInfo.vat as vat}
 					<div class="flex justify-between items-center">
 						<div class="flex flex-col">
 							<h3 class="text-base flex flex-row gap-2 items-center">
-								{t('cart.vat')} ({actualVatRate}%)
+								{t('cart.vat')} ({vat.rate}%)
 								<div
 									title="{t('cart.vatRate', {
-										country: countryName(actualCountry)
-									})}. {data.vatSingleCountry
+										country: countryName(vat.country)
+									})}. {priceInfo.singleVatCountry
 										? t('cart.vatSellerCountry')
-										: isDigital
-										? `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`
-										: t('checkout.vatShippingAddress')}"
+										: !isDigital
+										? `${t('checkout.vatShippingAddress')}`
+										: `${t('cart.vatIpCountryText', { link: 'https://lite.ip2location.com' })}`}"
 								>
 									<IconInfo class="cursor-pointer" />
 								</div>
@@ -590,20 +657,20 @@
 						<div class="flex flex-col ml-auto items-end justify-center">
 							<PriceTag
 								class="text-2xl truncate"
-								amount={partialVat}
-								currency={UNDERLYING_CURRENCY}
+								amount={vat.partialPrice.amount}
+								currency={vat.partialPrice.currency}
 								main
 							/>
 							<PriceTag
-								amount={partialVat}
-								currency={UNDERLYING_CURRENCY}
+								amount={vat.partialPrice.amount}
+								currency={vat.partialPrice.currency}
 								class="text-base truncate"
 								secondary
 							/>
 						</div>
 					</div>
 					<div class="border-b border-gray-300 col-span-4" />
-				{/if}
+				{/each}
 
 				<span class="py-1" />
 
@@ -612,20 +679,20 @@
 						<span class="text-xl">{t('cart.total')}</span>
 						<PriceTag
 							class="text-2xl"
-							amount={partialPriceWithVat}
+							amount={priceInfo.partialPriceWithVat}
 							currency={UNDERLYING_CURRENCY}
 							main
 						/>
 					</div>
 					<PriceTag
 						class="self-end"
-						amount={partialPriceWithVat}
+						amount={priceInfo.partialPriceWithVat}
 						currency={UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
 
-				{#if totalPriceWithVat !== partialPriceWithVat}
+				{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 					<div class="-mx-3 p-3 flex flex-col">
 						<div class="flex justify-between">
 							<span class="text-xl flex gap-1 items-center flex-wrap"
@@ -635,15 +702,15 @@
 							>
 							<PriceTag
 								class="text-2xl"
-								amount={partialPriceWithVat}
-								currency={UNDERLYING_CURRENCY}
+								amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
+								currency={priceInfo.currency}
 								main
 							/>
 						</div>
 						<PriceTag
 							class="self-end"
-							amount={partialPriceWithVat}
-							currency={UNDERLYING_CURRENCY}
+							amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
+							currency={priceInfo.currency}
 							secondary
 						/>
 					</div>
@@ -665,93 +732,6 @@
 						>
 					</span>
 				</label>
-
-				{#if data.roleId === POS_ROLE_ID}
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							bind:checked={isFreeVat}
-							name="isFreeVat"
-							form="checkout"
-						/>
-						<span>
-							<Trans key="pos.vatFree"
-								><a
-									href="/terms"
-									target="_blank"
-									class="body-hyperlink hover:underline"
-									slot="0"
-									let:translation
-								>
-									{translation}
-								</a></Trans
-							>
-						</span>
-					</label>
-					<label class="checkbox-label">
-						<input
-							type="checkbox"
-							class="form-checkbox"
-							bind:checked={addDiscount}
-							name="addDiscount"
-							form="checkout"
-						/>
-						<span>
-							<Trans key="pos.applyGiftDiscount">
-								<a
-									href="/gift-discount"
-									target="_blank"
-									class="body-hyperlink hover:underline"
-									slot="0"
-									let:translation
-								>
-									{translation}
-								</a>
-							</Trans>
-						</span>
-					</label>
-				{/if}
-
-				{#if isFreeVat}
-					<label class="form-label col-span-3">
-						{t('pos.vatFreeReason')}:
-						<input type="text" class="form-input" form="checkout" name="reasonFreeVat" />
-					</label>
-				{/if}
-				{#if addDiscount}
-					<input
-						type="number"
-						class="form-input"
-						name="discountAmount"
-						placeholder="Ex: 10"
-						form="checkout"
-						step="any"
-						bind:value={discountAmount}
-						min="0"
-						required
-					/>
-
-					<select
-						name="discountType"
-						bind:value={discountType}
-						class="form-input"
-						form="checkout"
-						required
-					>
-						<option value="fiat">{data.currencies.main}</option>
-						<option value="percentage">%</option>
-					</select>
-
-					{#if discountAmount && !isDiscountValid}
-						<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
-					{/if}
-
-					<label class="form-label col-span-3">
-						{t('pos.discountJustification')}
-						<input type="text" class="form-input" form="checkout" name="discountJustification" />
-					</label>
-				{/if}
 
 				{#if data.collectIPOnDeliverylessOrders && isDigital}
 					<label class="checkbox-label">
@@ -775,7 +755,7 @@
 						</span>
 					</label>
 				{/if}
-				{#if totalPriceWithVat !== partialPriceWithVat}
+				{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"
@@ -797,7 +777,7 @@
 						</span>
 					</label>
 				{/if}
-				{#if data.vatCountry !== country && data.vatNullOutsideSellerCountry}
+				{#if data.vatCountry !== country && priceInfo.physicalVatAtCustoms && !isDigital}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"
@@ -821,6 +801,133 @@
 					</label>
 				{/if}
 
+				{#if data.roleId === POS_ROLE_ID}
+					{#if !data.vatExempted}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								bind:checked={isFreeVat}
+								name="isFreeVat"
+								form="checkout"
+							/>
+							<span>
+								<Trans key="pos.vatFree"
+									><a
+										href="/terms"
+										target="_blank"
+										class="body-hyperlink hover:underline"
+										slot="0"
+										let:translation
+									>
+										{translation}
+									</a></Trans
+								>
+							</span>
+						</label>
+
+						{#if isFreeVat}
+							<label class="form-label col-span-3">
+								{t('pos.vatFreeReason')}:
+								<input
+									type="text"
+									class="form-input"
+									form="checkout"
+									name="reasonFreeVat"
+									required
+								/>
+							</label>
+						{/if}
+					{/if}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							bind:checked={addDiscount}
+							name="addDiscount"
+							form="checkout"
+						/>
+						<span>
+							<Trans key="pos.applyGiftDiscount">
+								<a
+									href="/gift-discount"
+									target="_blank"
+									class="body-hyperlink hover:underline"
+									slot="0"
+									let:translation
+								>
+									{translation}
+								</a>
+							</Trans>
+						</span>
+					</label>
+
+					{#if addDiscount}
+						<input
+							type="number"
+							class="form-input"
+							name="discountAmount"
+							placeholder="Ex: 10"
+							form="checkout"
+							step="any"
+							bind:value={discountAmount}
+							min="0"
+							required
+						/>
+
+						<select
+							name="discountType"
+							bind:value={discountType}
+							class="form-input"
+							form="checkout"
+							required
+						>
+							<option value="fiat">{data.currencies.main}</option>
+							<option value="percentage">%</option>
+						</select>
+
+						{#if discountAmount && !isDiscountValid}
+							<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
+						{/if}
+
+						<label class="form-label col-span-3">
+							{t('pos.discountJustification')}
+							<input
+								type="text"
+								class="form-input"
+								form="checkout"
+								name="discountJustification"
+								required
+							/>
+						</label>
+					{/if}
+					{#if data.deliveryFees.allowFreeForPOS && deliveryFees}
+						<label class="checkbox-label">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								name="offerDeliveryFees"
+								form="checkout"
+								bind:checked={offerDeliveryFees}
+							/>
+							{t('pos.offerDeliveryFees')}
+						</label>
+
+						{#if offerDeliveryFees}
+							<label class="form-label col-span-3">
+								{t('pos.discountJustification')}
+								<input
+									type="text"
+									class="form-input"
+									form="checkout"
+									name="reasonOfferDeliveryFees"
+									required
+								/></label
+							>
+						{/if}
+					{/if}
+				{/if}
+
 				<input
 					type="submit"
 					class="btn body-cta body-mainCTA btn-xl -mx-1 -mb-1 mt-1"
@@ -831,4 +938,25 @@
 			</article>
 		</div>
 	</div>
+	{#if data.cmsCheckoutBottom && data.cmsCheckoutBottomData}
+		<CmsDesign
+			challenges={data.cmsCheckoutBottomData.challenges}
+			tokens={data.cmsCheckoutBottomData.tokens}
+			sliders={data.cmsCheckoutBottomData.sliders}
+			products={data.cmsCheckoutBottomData.products}
+			pictures={data.cmsCheckoutBottomData.pictures}
+			tags={data.cmsCheckoutBottomData.tags}
+			digitalFiles={data.cmsCheckoutBottomData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsCheckoutBottomData.specifications}
+			contactForms={data.cmsCheckoutBottomData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsCheckoutBottom.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsCheckoutBottomData.countdowns}
+			galleries={data.cmsCheckoutBottomData.galleries}
+		/>
+	{/if}
 </main>

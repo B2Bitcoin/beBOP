@@ -4,25 +4,33 @@
 	import OrderSummary from '$lib/components/OrderSummary.svelte';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
+	import IconCopy from '~icons/ant-design/copy-outlined';
+	import IconCheckmark from '~icons/ant-design/check-outlined';
 	import { useI18n } from '$lib/i18n';
-	import { orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
+	import { FAKE_ORDER_INVOICE_NUMBER, orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
 	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
+	import CmsDesign from '$lib/components/CmsDesign.svelte';
+	import { bitcoinPaymentQrCodeString } from '$lib/utils/bitcoinPaymentQr.js';
 
 	let currentDate = new Date();
 	export let data;
 
 	let count = 0;
+	let copiedPaymentAddress = -1;
 
 	onMount(() => {
 		const interval = setInterval(() => {
 			currentDate = new Date();
 
-			if (data.order.status === 'pending') {
+			if (
+				data.order.status === 'pending' ||
+				data.order.payments.some((p) => p.invoice?.number === FAKE_ORDER_INVOICE_NUMBER)
+			) {
 				count++;
 				if (count % 4 === 0) {
 					invalidate(UrlDependency.Order);
@@ -42,11 +50,38 @@
 	);
 
 	$: remainingAmount = orderAmountWithNoPaymentsCreated(data.order);
+	let disableInfoChange = true;
+	function confirmCancel(event: Event) {
+		if (!confirm(t('order.confirmCancel'))) {
+			event.preventDefault();
+		}
+	}
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
+	{#if data.cmsOrderTop && data.cmsOrderTopData}
+		<CmsDesign
+			challenges={data.cmsOrderTopData.challenges}
+			tokens={data.cmsOrderTopData.tokens}
+			sliders={data.cmsOrderTopData.sliders}
+			products={data.cmsOrderTopData.products}
+			pictures={data.cmsOrderTopData.pictures}
+			tags={data.cmsOrderTopData.tags}
+			digitalFiles={data.cmsOrderTopData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsOrderTopData.specifications}
+			contactForms={data.cmsOrderTopData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsOrderTop.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsOrderTopData.countdowns}
+			galleries={data.cmsOrderTopData.galleries}
+		/>
+	{/if}
 	<div
-		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 grid flex md:grid-cols-3 sm:flex-wrap gap-2"
+		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid flex md:grid-cols-3 sm:flex-wrap gap-2"
 	>
 		<div class="col-span-2 flex flex-col gap-2">
 			<h1 class="text-3xl body-title">{t('order.singleTitle', { number: data.order.number })}</h1>
@@ -70,7 +105,7 @@
 				</div>
 			{/if}
 
-			{#each data.order.payments as payment}
+			{#each data.order.payments as payment, i}
 				<details class="border border-gray-300 rounded-xl p-4" open={payment.status === 'pending'}>
 					<summary class="text-xl cursor-pointer">
 						<!-- Extra span to keep the "arrow" for the details -->
@@ -88,7 +123,7 @@
 					<div class="flex flex-col gap-2 mt-2">
 						{#if payment.method !== 'point-of-sale'}
 							<ul>
-								{#if payment.status !== 'paid'}
+								{#if payment.status === 'pending'}
 									<li>
 										{#if payment.method === 'card'}
 											<a href={trimOrigin(payment.address ?? '')} class="body-hyperlink">
@@ -112,6 +147,22 @@
 											{t('order.paymentAddress')}:
 											<code class="break-words body-secondaryText break-all">{payment.address}</code
 											>
+											<button
+												class="inline-block body-secondaryText"
+												type="button"
+												title={t('order.copyAddress')}
+												on:click={() => {
+													window.navigator.clipboard.writeText(payment.address ?? '');
+													copiedPaymentAddress = i;
+												}}
+											>
+												{#if copiedPaymentAddress === i}
+													<IconCheckmark class="inline-block mb-1" />
+													{t('general.copied')}
+												{:else}
+													<IconCopy class="inline-block mb-1" />
+												{/if}
+											</button>
 										{/if}
 									</li>
 								{/if}
@@ -132,13 +183,13 @@
 							</ul>
 						{/if}
 
-						{#if payment.status === 'paid' && payment.invoice?.number}
+						{#if payment.status !== 'paid'}
 							<button
-								class="btn btn-black self-start"
+								class="body-hyperlink self-start"
 								type="button"
 								disabled={!receiptReady[payment.id]}
 								on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
-								>{t('order.receipt.create')}</button
+								>{t('order.receipt.createProforma')}</button
 							>
 							<iframe
 								src="/order/{data.order._id}/payment/{payment.id}/receipt"
@@ -148,13 +199,47 @@
 								bind:this={receiptIFrame[payment.id]}
 							/>
 						{/if}
-						{#if payment.status === 'pending' && (payment.method === 'bitcoin' || payment.method === 'lightning' || payment.method === 'card')}
+						{#if payment.status === 'paid' && payment.invoice?.number}
+							<button
+								class="btn btn-black self-start"
+								type="button"
+								disabled={!receiptReady[payment.id]}
+								on:click={() => receiptIFrame[payment.id]?.contentWindow?.print()}
+								>{t('order.receipt.create')}</button
+							>
+							{#if payment.invoice.number !== FAKE_ORDER_INVOICE_NUMBER}
+								<iframe
+									src="/order/{data.order._id}/payment/{payment.id}/receipt"
+									style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+									title=""
+									on:load={() => (receiptReady = { ...receiptReady, [payment.id]: true })}
+									bind:this={receiptIFrame[payment.id]}
+								/>
+							{/if}
+						{/if}
+						{#if payment.status === 'pending' && (payment.method === 'lightning' || payment.method === 'card')}
 							<img
 								src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 								class="w-96 h-96"
 								alt="QR code"
 							/>
 						{/if}
+						{#if payment.status === 'pending' && payment.method === 'bitcoin' && payment.address}
+							<span class="body-hyperlink font-light italic">{t('order.clickQR')}</span>
+							<a
+								href={bitcoinPaymentQrCodeString(
+									payment.address,
+									payment.price.amount,
+									payment.price.currency
+								)}
+								><img
+									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+									class="w-96 h-96"
+									alt="QR code"
+								/></a
+							>
+						{/if}
+
 						{#if payment.status === 'pending' && payment.method !== 'point-of-sale'}
 							{t('order.payToComplete')}
 							{#if payment.method === 'bitcoin'}
@@ -170,6 +255,20 @@
 										{t('order.informSeller')}
 									</a>
 								{/if}
+							{/if}
+							{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+								<div class="grid grid-cols-4 gap-2 mt-2">
+									<form
+										action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+											._id}/payment/{payment.id}?/cancel"
+										method="post"
+										class="contents"
+									>
+										<button type="submit" class="btn btn-red" on:click={confirmCancel}
+											>{t('pos.cta.cancelOrder')}</button
+										>
+									</form>
+								</div>
 							{/if}
 						{/if}
 						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
@@ -200,15 +299,34 @@
 									{/if}
 									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
 								</form>
-								<form
-									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-										._id}/payment/{payment.id}?/cancel"
-									method="post"
-									class="contents"
-								>
-									<button type="submit" class="btn btn-red">{t('pos.cta.cancelOrder')}</button>
-								</form>
 							</div>
+						{/if}
+						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'paid'}
+							<form
+								action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+									._id}/payment/{payment.id}?/updatePaymentDetail"
+								method="post"
+								class="contents"
+							>
+								<input
+									class="form-input w-auto"
+									type="text"
+									name="paymentDetail"
+									disabled={disableInfoChange}
+									placeholder="bank transfer number / Detail (card transaction ID, or point-of-sale payment method)"
+									value={payment.bankTransferNumber ?? payment.detail}
+									required
+								/>
+								<div class="flex gap-2">
+									<button type="submit" class="btn btn-blue" disabled={disableInfoChange}
+										>{t('pos.cta.updatePaymentInfo')}</button
+									>
+									<label class="checkbox-label">
+										<input class="form-checkbox" type="checkbox" bind:checked={disableInfoChange} />
+										🔐
+									</label>
+								</div>
+							</form>
 						{/if}
 					</div>
 				</details>
@@ -310,6 +428,18 @@
 			{/if}
 
 			{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
+				{#if data.order.payments.length > 1 && data.order.status !== 'expired'}
+					{#if data.order.status === 'paid'}
+						<a class="btn bg-green-600 text-white self-start" href="/order/{data.order._id}/summary"
+							>{t('order.receiptFullyPaid')}</a
+						>
+					{:else}
+						<a class="btn btn-blue self-start" href="/order/{data.order._id}/summary"
+							>{t('order.receiptPending')}</a
+						>
+					{/if}
+				{/if}
+
 				<form
 					action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order._id}?/saveNote"
 					method="post"
@@ -342,4 +472,25 @@
 			<OrderSummary class="sticky top-4 -mr-2 -mt-2" order={data.order} />
 		</div>
 	</div>
+	{#if data.cmsOrderBottom && data.cmsOrderBottomData}
+		<CmsDesign
+			challenges={data.cmsOrderBottomData.challenges}
+			tokens={data.cmsOrderBottomData.tokens}
+			sliders={data.cmsOrderBottomData.sliders}
+			products={data.cmsOrderBottomData.products}
+			pictures={data.cmsOrderBottomData.pictures}
+			tags={data.cmsOrderBottomData.tags}
+			digitalFiles={data.cmsOrderBottomData.digitalFiles}
+			roleId={data.roleId ? data.roleId : ''}
+			specifications={data.cmsOrderBottomData.specifications}
+			contactForms={data.cmsOrderBottomData.contactForms}
+			pageLink={$page.url.toString()}
+			pageName={data.cmsOrderBottom.title}
+			websiteLink={data.websiteLink}
+			brandName={data.brandName}
+			sessionEmail={data.email}
+			countdowns={data.cmsOrderBottomData.countdowns}
+			galleries={data.cmsOrderBottomData.galleries}
+		/>
+	{/if}
 </main>

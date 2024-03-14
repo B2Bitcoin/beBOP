@@ -12,11 +12,15 @@ export async function load({ params }) {
 		throw error(404, 'Payment not found');
 	}
 	if (payment.status !== 'paid') {
-		throw error(400, 'Order is not paid');
+		if (payment.invoice?.number) {
+			throw error(400, 'Invoice already created on pending payment');
+		}
+	} else {
+		if (!payment.invoice?.number) {
+			throw error(400, 'Invoice not found');
+		}
 	}
-	if (!payment.invoice?.number) {
-		throw error(400, 'Invoice not found');
-	}
+
 	if (!runtimeConfig.sellerIdentity && !order.sellerIdentity) {
 		throw error(400, 'Seller identity is not set');
 	}

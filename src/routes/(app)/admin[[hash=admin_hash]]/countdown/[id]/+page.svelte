@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import {
 		MAX_DESCRIPTION_LIMIT,
 		MAX_NAME_LIMIT,
@@ -9,14 +10,20 @@
 	let name = data.countdown.name;
 	let slug = data.countdown._id;
 
+	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
+	const timezoneSign = timezoneOffsetHours > 0 ? '-' : '+';
+	const timezoneString = `GMT${timezoneSign}${Math.abs(timezoneOffsetHours)}`;
+
+	let endsAt = data.countdown.endsAt.toISOString().slice(0, 16);
+
 	function confirmDelete(event: Event) {
-		if (!confirm('Would you like to delete this specification?')) {
+		if (!confirm('Would you like to delete this countdown?')) {
 			event.preventDefault();
 		}
 	}
 </script>
 
-<form method="post" class="flex flex-col gap-4">
+<form method="post" class="flex flex-col gap-4" action="?/update">
 	<label class="form-label">
 		Name
 		<input
@@ -71,14 +78,8 @@
 
 	<div class="flex flex-wrap gap-4">
 		<label class="form-label">
-			End At
-			<input
-				class="form-input"
-				type="datetime-local"
-				required
-				name="endsAt"
-				value={data.countdown.endsAt.toISOString().slice(0, 16)}
-			/>
+			End At {#if browser}(your browser's current zone is {timezoneString}){/if}
+			<input class="form-input" type="datetime-local" required name="endsAt" bind:value={endsAt} />
 		</label>
 	</div>
 	<div class="flex flex-row justify-between gap-2">

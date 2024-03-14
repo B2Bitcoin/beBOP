@@ -19,6 +19,8 @@ import { trimPrefix } from '$lib/utils/trimPrefix';
 import { enhancedLanguages, languages, locales, type LanguageKey } from '$lib/translations';
 import { merge } from 'lodash-es';
 import { typedInclude } from '$lib/utils/typedIncludes';
+import type { CountryAlpha2 } from '$lib/types/Country';
+import type { PaymentMethod } from './payment-methods';
 
 const baseConfig = {
 	adminHash: '',
@@ -30,12 +32,14 @@ const baseConfig = {
 	 * Prices are defined in this currency in the database
 	 */
 	priceReferenceCurrency: 'SAT' as Currency,
+	accountingCurrency: null as Currency | null,
 	orderNumber: 0,
+	paymentMethods: { order: [] as PaymentMethod[], disabled: [] as PaymentMethod[] },
 	subscriptionNumber: 0,
 	themeChangeNumber: 0,
-	enableCashSales: false,
 	isMaintenance: false,
-	includeOrderUrlInQRCode: false,
+	noProBilling: false,
+	lightningQrCodeDescription: 'brand' as 'orderUrl' | 'brand' | 'brandAndOrderNumber' | 'none',
 	maintenanceIps: '',
 	brandName: 'My beBOP',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
@@ -49,6 +53,7 @@ const baseConfig = {
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logo: { isWide: false, pictureId: '', darkModePictureId: '' },
+	faviconPictureId: '',
 	footerLogoId: '',
 	lnurlPayMetadataJwtSigningKey: '',
 	authLinkJwtSigningKey: '',
@@ -70,7 +75,7 @@ const baseConfig = {
 	vatExempted: false,
 	vatExemptionReason: '',
 	vatSingleCountry: false,
-	vatCountry: '',
+	vatCountry: 'FR' satisfies CountryAlpha2 as CountryAlpha2,
 	vatNullOutsideSellerCountry: false,
 	collectIPOnDeliverylessOrders: false,
 	isBillingAddressMandatory: false,
@@ -82,6 +87,7 @@ const baseConfig = {
 		mode: 'flatFee' as 'flatFee' | 'perItem',
 		applyFlatFeeToEachItem: false,
 		onlyPayHighest: false,
+		allowFreeForPOS: false,
 		deliveryFees: {
 			default: {
 				amount: 0,
@@ -105,6 +111,7 @@ const baseConfig = {
 	} satisfies ProductActionSettings as ProductActionSettings,
 	mainThemeId: '',
 	sellerIdentity: null as SellerIdentity | null,
+	shopInformation: null as SellerIdentity | null,
 	sumUp: {
 		apiKey: '',
 		merchantCode: '',
@@ -117,11 +124,11 @@ const baseConfig = {
 	employeesDarkDefaultTheme: false,
 	displayPoweredBy: false,
 	displayCompanyInfo: false,
+	displayMainShopInfo: false,
 	displayNewsletterCommercialProspection: false,
-
+	cartMaxSeparateItems: null as null | number,
 	websiteTitle: 'B2Bitcoin beBOP',
 	websiteShortDescription: "B2Bitcoin's beBOP store",
-
 	emailTemplates: {
 		passwordReset: {
 			subject: 'Password reset',

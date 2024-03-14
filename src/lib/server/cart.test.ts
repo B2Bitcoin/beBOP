@@ -4,16 +4,23 @@ import { cleanDb } from './test-utils';
 import { addToCartInDb } from './cart';
 import { createOrder } from './orders';
 import { HttpError_1 } from '@sveltejs/kit';
-import { TEST_PRODUCT, TEST_PRODUCT_STOCK, TEST_PRODUCT_UNLIMITED } from './seed/product';
+import {
+	TEST_DIGITAL_PRODUCT,
+	TEST_PRODUCT_STOCK,
+	TEST_DIGITAL_PRODUCT_UNLIMITED,
+	TEST_PHYSICAL_PRODUCT
+} from './seed/product';
+import { computePriceInfo } from '$lib/types/Cart';
+import { toCurrency } from '$lib/utils/toCurrency';
 
 describe('cart', () => {
 	beforeEach(async () => {
 		await cleanDb();
-		await collections.products.insertMany([TEST_PRODUCT, TEST_PRODUCT_UNLIMITED]);
+		await collections.products.insertMany([TEST_DIGITAL_PRODUCT, TEST_DIGITAL_PRODUCT_UNLIMITED]);
 	});
 
 	it('should add a product to the cart', async () => {
-		await addToCartInDb(TEST_PRODUCT, 1, {
+		await addToCartInDb(TEST_DIGITAL_PRODUCT, 1, {
 			user: {
 				sessionId: 'test-session-id'
 			}
@@ -24,7 +31,7 @@ describe('cart', () => {
 
 	it('should fail to add a product to the cart when no stock', async () => {
 		await expect(
-			addToCartInDb(TEST_PRODUCT, 10, {
+			addToCartInDb(TEST_DIGITAL_PRODUCT, 10, {
 				user: {
 					sessionId: 'test-session-id'
 				}
@@ -33,13 +40,13 @@ describe('cart', () => {
 	});
 
 	it('should prevent adding a product when reserved by another user', async () => {
-		await addToCartInDb(TEST_PRODUCT, TEST_PRODUCT_STOCK, {
+		await addToCartInDb(TEST_DIGITAL_PRODUCT, TEST_PRODUCT_STOCK, {
 			user: {
 				sessionId: 'test-session-id'
 			}
 		});
 		await expect(
-			addToCartInDb(TEST_PRODUCT, TEST_PRODUCT_STOCK, {
+			addToCartInDb(TEST_DIGITAL_PRODUCT, TEST_PRODUCT_STOCK, {
 				user: {
 					sessionId: 'test-session-id2'
 				}
@@ -48,7 +55,7 @@ describe('cart', () => {
 	});
 
 	it('should allow checking out a product when the reservation is expired', async () => {
-		await addToCartInDb(TEST_PRODUCT, TEST_PRODUCT_STOCK, {
+		await addToCartInDb(TEST_DIGITAL_PRODUCT, TEST_PRODUCT_STOCK, {
 			user: {
 				sessionId: 'test-session-id'
 			}
@@ -57,13 +64,13 @@ describe('cart', () => {
 		assert(cart, 'Cart should exist');
 		cart.items[0].reservedUntil = new Date(0);
 		await collections.carts.updateOne({ _id: cart._id }, { $set: { items: cart.items } });
-		await addToCartInDb(TEST_PRODUCT, TEST_PRODUCT_STOCK, {
+		await addToCartInDb(TEST_DIGITAL_PRODUCT, TEST_PRODUCT_STOCK, {
 			user: {
 				sessionId: 'test-session-id2'
 			}
 		});
 		// Refresh first cart
-		await addToCartInDb(TEST_PRODUCT_UNLIMITED, 1, {
+		await addToCartInDb(TEST_DIGITAL_PRODUCT_UNLIMITED, 1, {
 			user: {
 				sessionId: 'test-session-id'
 			}
@@ -76,7 +83,7 @@ describe('cart', () => {
 				[
 					{
 						quantity: TEST_PRODUCT_STOCK,
-						product: TEST_PRODUCT
+						product: TEST_DIGITAL_PRODUCT
 					}
 				],
 				'point-of-sale',
@@ -86,10 +93,117 @@ describe('cart', () => {
 					user: {
 						sessionId: 'test-session-id2'
 					},
-					vatCountry: 'FR',
+					userVatCountry: 'FR',
 					shippingAddress: null
 				}
 			)
 		).resolves.toBeDefined();
+	});
+
+	describe('computePriceInfo', () => {
+		describe('when vatExempted is true', () => {
+			it('should return the price without VAT', () => {
+				const priceInfo = computePriceInfo([{ product: TEST_DIGITAL_PRODUCT, quantity: 1 }], {
+					vatExempted: true,
+					bebopCountry: 'FR',
+					userCountry: 'CH',
+					deliveryFees: {
+						amount: 0,
+						currency: 'EUR'
+					},
+					vatNullOutsideSellerCountry: false,
+					vatSingleCountry: false,
+					vatProfiles: []
+				});
+				expect(priceInfo.totalPriceWithVat).toBe(
+					toCurrency(
+						priceInfo.currency,
+						TEST_DIGITAL_PRODUCT.price.amount,
+						TEST_DIGITAL_PRODUCT.price.currency
+					)
+				);
+				expect(priceInfo.totalPrice).toBe(priceInfo.totalPriceWithVat);
+				expect(priceInfo.totalVat).toBe(0);
+				expect(priceInfo.vat.length).toBe(0);
+			});
+		});
+
+		describe('when vatNullOutsideSellerCountry is true', () => {
+			describe("when the user's country is the same as the seller's country", () => {
+				it('should return the price with VAT for physical products', () => {
+					const priceInfo = computePriceInfo([{ product: TEST_PHYSICAL_PRODUCT, quantity: 1 }], {
+						vatExempted: false,
+						bebopCountry: 'FR',
+						userCountry: 'FR',
+						deliveryFees: {
+							amount: 0,
+							currency: 'EUR'
+						},
+						vatNullOutsideSellerCountry: true,
+						vatSingleCountry: false,
+						vatProfiles: []
+					});
+					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
+					expect(priceInfo.totalVat).toBeGreaterThan(0);
+					expect(priceInfo.vat.length).toBe(1);
+					expect(
+						toCurrency(
+							priceInfo.currency,
+							priceInfo.vat[0].price.amount,
+							priceInfo.vat[0].price.currency
+						)
+					).toBe(priceInfo.totalVat);
+					expect(priceInfo.vat[0].rate).toBe(20);
+					expect(priceInfo.totalPrice).toBe(333333);
+					expect(priceInfo.totalPriceWithVat).toBe(400000);
+				});
+			});
+
+			describe("when the user's country is different from the seller's country", () => {
+				it('should return the price with VAT for digital products', () => {
+					const priceInfo = computePriceInfo([{ product: TEST_DIGITAL_PRODUCT, quantity: 1 }], {
+						vatExempted: false,
+						bebopCountry: 'FR',
+						userCountry: 'CH',
+						deliveryFees: {
+							amount: 0,
+							currency: 'EUR'
+						},
+						vatNullOutsideSellerCountry: true,
+						vatSingleCountry: false,
+						vatProfiles: []
+					});
+
+					expect(priceInfo.totalPriceWithVat).toBeGreaterThan(priceInfo.totalPrice);
+					expect(priceInfo.totalVat).toBeGreaterThan(0);
+					expect(priceInfo.vat.length).toBe(1);
+				});
+
+				it('should return the price without VAT for physical products', () => {
+					const priceInfo = computePriceInfo([{ product: TEST_PHYSICAL_PRODUCT, quantity: 1 }], {
+						vatExempted: false,
+						bebopCountry: 'FR',
+						userCountry: 'CH',
+						deliveryFees: {
+							amount: 0,
+							currency: 'EUR'
+						},
+						vatNullOutsideSellerCountry: true,
+						vatSingleCountry: false,
+						vatProfiles: []
+					});
+					expect(priceInfo.totalPriceWithVat).toBe(
+						toCurrency(
+							priceInfo.currency,
+							TEST_PHYSICAL_PRODUCT.price.amount,
+							TEST_PHYSICAL_PRODUCT.price.currency
+						)
+					);
+					expect(priceInfo.totalPrice).toBe(priceInfo.totalPriceWithVat);
+					expect(priceInfo.totalVat).toBe(0);
+					expect(priceInfo.vat.length).toBe(0);
+				});
+			});
+		});
 	});
 });

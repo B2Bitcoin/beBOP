@@ -4,7 +4,7 @@
 	export let data;
 </script>
 
-<h1 class="text-3xl">List of pictures with no associated product</h1>
+<h1 class="text-3xl">List of pictures with no associated product or widget</h1>
 
 <a href="{data.adminPrefix}/picture/new" class="block underline">New picture</a>
 

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import IconDownArrow from '$lib/components/icons/IconDownArrow.svelte';
 	import IconSearch from '$lib/components/icons/IconSearch.svelte';
 	import IconWallet from '$lib/components/icons/IconWallet.svelte';
@@ -24,13 +24,14 @@
 	import { slide } from 'svelte/transition';
 	import { exchangeRate } from '$lib/stores/exchangeRate';
 	import { currencies } from '$lib/stores/currencies';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
-	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { useI18n } from '$lib/i18n';
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
 	import theme from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
+	import { isAlpha2CountryCode } from '$lib/types/Country.js';
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 
 	export let data;
 
@@ -49,32 +50,26 @@
 	$: $currencies = data.currencies;
 
 	$: items = data.cart || [];
-	$: partialPrice = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount:
-				((item.customPrice || item.product.price).amount *
-					item.quantity *
-					(item.depositPercentage ?? 100)) /
-				100
-		}))
-	);
-	$: totalPrice = sumCurrency(
-		UNDERLYING_CURRENCY,
-		items.map((item) => ({
-			currency: (item.customPrice || item.product.price).currency,
-			amount: (item.customPrice || item.product.price).amount * item.quantity
-		}))
-	);
-	$: partialVat = fixCurrencyRounding(partialPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: totalPriceWithVat =
-		totalPrice + fixCurrencyRounding(totalPrice * (data.vatRate / 100), UNDERLYING_CURRENCY);
-	$: partialPriceWithVat = partialPrice + partialVat;
+	$: deliveryFees =
+		data.countryCode && isAlpha2CountryCode(data.countryCode)
+			? computeDeliveryFees(UNDERLYING_CURRENCY, data.countryCode, items, data.deliveryFees)
+			: NaN;
+	$: priceInfo = computePriceInfo(items, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted,
+		userCountry: data.countryCode,
+		deliveryFees: {
+			amount: deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		},
+		vatProfiles: data.vatProfiles
+	});
 	$: totalItems = sum(items.map((item) => item.quantity) ?? []);
 
 	onMount(() => {
-		// Refresh exchange rate every 5 minutes
+		// Refresh exchange rate every 5 minutescomputeCartPrices
 		const interval = setInterval(
 			() =>
 				fetch('/exchange-rate', {
@@ -171,7 +166,12 @@
 				class="header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
 			>
 				{#each data.links.topbar as link}
-					<a class="py-4" href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
+					<a
+						class="py-4"
+						href={link.href}
+						target={link.href.startsWith('http') ? '_blank' : '_self'}
+						data-sveltekit-preload-data="off">{link.label}</a
+					>
 				{/each}
 			</nav>
 		{/if}
@@ -189,8 +189,11 @@
 						<a href="/categories" class="flex gap-2 items-center">Categories <IconDownArrow /></a>
 					{/if}
 					{#each data.links.navbar as link}
-						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off"
-							>{link.label}</a
+						<a
+							href={link.href}
+							class="hidden sm:inline"
+							target={link.href.startsWith('http') ? '_blank' : '_self'}
+							data-sveltekit-preload-data="off">{link.label}</a
 						>
 					{/each}
 				</nav>
@@ -337,29 +340,59 @@
 											</div>
 										</form>
 									{/each}
-									{#if data.vatCountry !== data.countryCode && data.vatNullOutsideSellerCountry}
+									{#if deliveryFees}
 										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('product.vatExcluded')}
-										</div>
-									{:else if data.countryCode && !data.vatExempted}
-										<div class="flex gap-1 text-lg justify-end items-center">
-											{t('cart.vat')} ({data.vatRate}%) <PriceTag
+											{t('checkout.deliveryFees')}
+											<div
+												title={t('checkout.deliveryFeesEstimationTooltip')}
+												class="cursor-pointer"
+											>
+												<IconInfo />
+											</div>
+
+											<PriceTag
+												class="truncate"
+												amount={deliveryFees}
 												currency={UNDERLYING_CURRENCY}
-												amount={partialVat}
 												main
 											/>
 										</div>
+									{:else if isNaN(deliveryFees)}
+										<div class="alert-error mt-3">
+											{t('checkout.noDeliveryInCountry')}
+										</div>
 									{/if}
+									{#if items.some((item) => item.product.shipping) && priceInfo.physicalVatAtCustoms}
+										<div class="flex gap-1 text-lg justify-end items-center">
+											{t('product.vatExcluded')}
+											<div title={t('cart.vatNullOutsideSellerCountry')}>
+												<IconInfo class="cursor-pointer" />
+											</div>
+										</div>
+									{/if}
+									{#each priceInfo.vat as vat}
+										<div class="flex gap-1 text-lg justify-end items-center">
+											{t('cart.vat')} ({vat.rate}%) <PriceTag
+												currency={vat.partialPrice.currency}
+												amount={vat.partialPrice.amount}
+												main
+											/>
+										</div>
+									{/each}
 									<div class="flex gap-1 text-xl justify-end items-center">
 										{t('cart.total')}
-										<PriceTag currency={UNDERLYING_CURRENCY} amount={partialPriceWithVat} main />
+										<PriceTag
+											currency={priceInfo.currency}
+											amount={priceInfo.partialPriceWithVat}
+											main
+										/>
 									</div>
-									{#if totalPriceWithVat !== partialPriceWithVat}
+									{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 										<div class="flex gap-1 text-lg justify-end items-center">
 											{t('cart.remainingShort')}
 											<PriceTag
-												currency={UNDERLYING_CURRENCY}
-												amount={totalPriceWithVat - partialPriceWithVat}
+												currency={priceInfo.currency}
+												amount={priceInfo.totalPriceWithVat - priceInfo.partialPriceWithVat}
 												main
 											/>
 										</div>
@@ -444,7 +477,6 @@
 				class="mx-auto max-w-7xl px-6 py-6 flex items-start justify-between gap-2 gap-y-8 w-full flex-wrap"
 			>
 				{#if data.displayCompanyInfo && data.sellerIdentity}
-					<!-- First column -->
 					<div>
 						<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.identity')}</h3>
 						<p class="whitespace-pre-line">
@@ -459,8 +491,26 @@
 							})}
 						</p>
 					</div>
+				{/if}
 
-					<!-- Second column -->
+				{#if data.displayMainShopInfo && data.shopInformation}
+					<div>
+						<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.shop.info')}</h3>
+						<p class="whitespace-pre-line">
+							{textAddress({
+								firstName: data.shopInformation.businessName,
+								lastName: '',
+								address: data.shopInformation.address.street,
+								zip: data.shopInformation.address.zip,
+								city: data.shopInformation.address.city,
+								country: data.shopInformation.address.country,
+								state: data.shopInformation.address.state
+							})}
+						</p>
+					</div>
+				{/if}
+
+				{#if data.displayCompanyInfo && data.sellerIdentity}
 					{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
 						<div>
 							<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.contact')}</h3>
@@ -469,6 +519,7 @@
 									{data.sellerIdentity.contact.email}
 								</a>
 							{/if}
+							<br />
 							{#if data.sellerIdentity.contact.phone}
 								<a href="tel:{data.sellerIdentity.contact.phone}">
 									{data.sellerIdentity.contact.phone}
@@ -481,7 +532,11 @@
 				<div class="flex flex-col gap-4 items-center">
 					<div class="flex flex-row gap-2">
 						{#each data.links.footer as link}
-							<a href={link.href} data-sveltekit-preload-data="off">{link.label}</a>
+							<a
+								href={link.href}
+								target={link.href.startsWith('http') ? '_blank' : '_self'}
+								data-sveltekit-preload-data="off">{link.label}</a
+							>
 						{/each}
 					</div>
 					<div class="flex flex-row gap-1">
@@ -499,8 +554,8 @@
 					</div>
 				{:else if data.displayPoweredBy}
 					<div class="flex w-full">
-						<a class="flex items-center gap-4" href="https://github.com/B2Bitcoin/beBOP"
-							><span class="font-light">{t('footer.poweredBy')} </span>
+						<a class="flex items-center gap-4" href="https://be-bop.io" target="_blank">
+							<span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO_DARK} alt="" />
 							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
 						</a>

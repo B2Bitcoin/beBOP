@@ -13,6 +13,8 @@
 	reserved={data.reserved}
 	defaultActionSettings={data.productActionSettings}
 	sold={data.sold}
+	vatProfiles={data.vatProfiles}
+	availablePaymentMethods={data.availablePaymentMethods}
 />
 
 <h2 class="text-2xl my-4">Photos</h2>

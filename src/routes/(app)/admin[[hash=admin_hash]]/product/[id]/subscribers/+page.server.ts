@@ -1,4 +1,5 @@
 import { collections } from '$lib/server/database';
+import { pojo } from '$lib/server/pojo';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
@@ -12,7 +13,10 @@ export const load = async ({ params }) => {
 	}
 
 	return {
-		product,
-		subscriptions
+		product: pojo(product),
+		subscriptions: subscriptions.map((subscription) => ({
+			...subscription,
+			notifications: subscription.notifications.map(pojo)
+		}))
 	};
 };

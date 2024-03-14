@@ -9,7 +9,7 @@
 	let beginsAt = data.beginsAt;
 	let endsAt = data.endsAt;
 	let endsAtElement: HTMLInputElement;
-
+	let progressChanged = false;
 	function checkForm(event: SubmitEvent) {
 		if (endsAt < beginsAt) {
 			endsAtElement.setCustomValidity('End date must be after beginning date');
@@ -66,43 +66,62 @@
 			name="goalAmount"
 			min="0"
 			value={data.challenge.goal.amount}
-			placeholder={data.challenge.mode === 'moneyAmount' ? 'Amount (SAT)' : 'Quantity'}
+			placeholder={data.challenge.mode === 'moneyAmount' ? 'Amount' : 'Quantity'}
+			step={data.challenge.mode === 'moneyAmount' ? 'any' : '1'}
 			required
 		/>
 	</label>
 	{#if data.challenge.mode === 'moneyAmount'}
 		<label class="form-label w-full">
 			Currency
-			<select name="currency" class="form-input" bind:value={data.challenge.goal.currency}>
+			<select name="currency" class="form-input" value={data.challenge.goal.currency} disabled>
 				{#each CURRENCIES as currency}
 					<option value={currency}>{currency}</option>
 				{/each}
 			</select>
 		</label>
 	{/if}
-	<div class="flex flex-wrap gap-4">
-		<label class="form-label">
-			Beginning date
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="progressChanged"
+			class="form-checkbox"
+			bind:checked={progressChanged}
+		/>
+		Edit progress
+	</label>
+	<input type="hidden" name="oldProgress" value={data.challenge.progress} />
+	<label class="form-label">
+		Progress
+		<input
+			class="form-input"
+			name="progress"
+			type="number"
+			value={data.challenge.progress}
+			readonly={!progressChanged}
+			step="any"
+		/>
+	</label>
 
-			<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
-		</label>
-	</div>
+	<label class="form-label">
+		Beginning date
 
-	<div class="flex flex-wrap gap-4">
-		<label class="form-label">
-			Ending date
+		<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
+	</label>
 
-			<input
-				class="form-input"
-				type="date"
-				required
-				name="endsAt"
-				bind:value={endsAt}
-				bind:this={endsAtElement}
-				on:input={() => endsAtElement?.setCustomValidity('')}
-			/>
-		</label>
-	</div>
+	<label class="form-label">
+		Ending date
+
+		<input
+			class="form-input"
+			type="date"
+			required
+			name="endsAt"
+			bind:value={endsAt}
+			bind:this={endsAtElement}
+			on:input={() => endsAtElement?.setCustomValidity('')}
+		/>
+	</label>
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">

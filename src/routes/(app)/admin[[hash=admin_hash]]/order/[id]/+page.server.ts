@@ -27,11 +27,24 @@ export const actions = {
 		if (remainingAmount <= 0) {
 			throw error(400, 'Order has no remaining amount to pay');
 		}
+
+		let methods = paymentMethods({ role: locals.user?.roleId });
+
+		for (const item of order.items) {
+			if (item.product.paymentMethods) {
+				methods = methods.filter((method) => item.product.paymentMethods?.includes(method));
+			}
+		}
+
+		if (!methods.length) {
+			throw error(400, 'No payment methods available');
+		}
+
 		const formData = await request.formData();
 		const parsed = z
 			.object({
 				amount: z.string().regex(/^\d+(\.\d+)?$/),
-				method: z.enum(paymentMethods(locals.user?.roleId) as [PaymentMethod, ...PaymentMethod[]])
+				method: z.enum(methods as [PaymentMethod, ...PaymentMethod[]])
 			})
 			.parse({
 				amount: formData.get('amount'),
@@ -46,7 +59,15 @@ export const actions = {
 			throw error(400, 'Amount is greater than the remaining amount to pay');
 		}
 
-		await addOrderPayment(order, parsed.method, amount, { expiresAt: null });
+		await addOrderPayment(
+			order,
+			parsed.method,
+			{
+				amount,
+				currency: order.currencySnapshot.main.totalPrice.currency
+			},
+			{ expiresAt: null }
+		);
 
 		throw redirect(303, `/order/${order._id}`);
 	},
@@ -70,6 +91,7 @@ export const actions = {
 						createdAt: new Date(),
 						role: SUPER_ADMIN_ROLE_ID,
 						...(locals.user && { userId: locals.user._id }),
+						...(locals.user && { userAlias: locals.user.alias }),
 						...(userIdentifier(locals).npub && { npub: userIdentifier(locals).npub }),
 						...(userIdentifier(locals).email && { email: userIdentifier(locals).email })
 					}

@@ -118,7 +118,9 @@ const migrations = [
 						},
 						...(order.vat && {
 							vat: {
+								// @ts-expect-error migration stuff
 								currency: order.vat.price.currency,
+								// @ts-expect-error migration stuff
 								amount: order.vat.price.amount
 							}
 						})
@@ -142,7 +144,9 @@ const migrations = [
 						},
 						...(order.vat && {
 							vat: {
+								// @ts-expect-error migration stuff
 								currency: order.vat.price.currency,
+								// @ts-expect-error migration stuff
 								amount: order.vat.price.amount
 							}
 						})
@@ -298,6 +302,121 @@ const migrations = [
 				if (result.modifiedCount === 0) {
 					break;
 				}
+			}
+		}
+	},
+	{
+		name: 'Convert VAT rate to array in orders',
+		_id: new ObjectId('65bd8fc40914f6a599ede07d'),
+		run: async (session: ClientSession) => {
+			await collections.orders.updateMany(
+				{ 'vat.price.currency': { $type: 'string' } },
+				[
+					{
+						$set: {
+							vat: ['$vat'],
+							items: {
+								$map: {
+									input: '$items',
+									as: 'item',
+									in: {
+										$mergeObjects: [
+											'$$item',
+											{
+												vatRate: '$vat.rate'
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				],
+				{ session }
+			);
+			await collections.orders.updateMany(
+				{ 'currencySnapshot.main.vat.currency': { $type: 'string' } },
+				[
+					{
+						$set: {
+							'currencySnapshot.main.vat': ['$currencySnapshot.main.vat']
+						}
+					}
+				],
+				{ session }
+			);
+			await collections.orders.updateMany(
+				{ 'currencySnapshot.priceReference.vat.currency': { $type: 'string' } },
+				[
+					{
+						$set: {
+							'currencySnapshot.priceReference.vat': ['$currencySnapshot.priceReference.vat']
+						}
+					}
+				],
+				{ session }
+			);
+			await collections.orders.updateMany(
+				{ 'currencySnapshot.secondary.vat.currency': { $type: 'string' } },
+				[
+					{
+						$set: {
+							'currencySnapshot.secondary.vat': ['$currencySnapshot.secondary.vat']
+						}
+					}
+				],
+				{ session }
+			);
+		}
+	},
+	{
+		name: 'Add alias to products',
+		_id: new ObjectId('657dbb1bd2af2256e82c928c'),
+		run: async (session: ClientSession) => {
+			await collections.products.updateMany(
+				{
+					alias: { $exists: false }
+				},
+				[
+					{
+						$set: {
+							alias: ['$_id']
+						}
+					}
+				],
+				{ session }
+			);
+		}
+	},
+	{
+		name: 'Move basket-top & basket-bottom to cart-top & cart-bottom',
+		_id: new ObjectId('65e0861038ba23d6e0eb8c32'),
+		run: async (session: ClientSession) => {
+			const basketTop = await collections.cmsPages.findOneAndDelete(
+				{ _id: 'basket-top' },
+				{ session }
+			);
+			if (basketTop.value) {
+				await collections.cmsPages.insertOne(
+					{
+						...basketTop.value,
+						_id: 'cart-top'
+					},
+					{ session }
+				);
+			}
+			const basketBottom = await collections.cmsPages.findOneAndDelete(
+				{ _id: 'basket-bottom' },
+				{ session }
+			);
+			if (basketBottom.value) {
+				await collections.cmsPages.insertOne(
+					{
+						...basketBottom.value,
+						_id: 'cart-bottom'
+					},
+					{ session }
+				);
 			}
 		}
 	}

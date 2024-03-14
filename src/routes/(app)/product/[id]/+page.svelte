@@ -19,7 +19,7 @@
 	import { POS_ROLE_ID } from '$lib/types/User';
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
-	import { FRACTION_DIGITS_PER_CURRENCY, MININUM_PER_CURRENCY } from '$lib/types/Currency.js';
+	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
 
 	export let data;
 
@@ -41,6 +41,9 @@
 		data.product.price.amount,
 		data.product.price.currency
 	);
+	const PWYWMaximum = data.product.maximumPrice
+		? toCurrency(PWYWCurrency, data.product.maximumPrice.amount, data.product.maximumPrice.currency)
+		: Infinity;
 	let customAmount = PWYWMinimum;
 
 	$: currentPicture =
@@ -81,11 +84,11 @@
 		if (!PWYWInput) {
 			return true;
 		}
-		if (customAmount > 0 && customAmount < MININUM_PER_CURRENCY[PWYWCurrency]) {
+		if (customAmount > 0 && customAmount < CURRENCY_UNIT[PWYWCurrency]) {
 			PWYWInput.setCustomValidity(
 				t('product.minimumForCurrency', {
 					currency: PWYWCurrency,
-					minimum: MININUM_PER_CURRENCY[PWYWCurrency].toLocaleString($locale, {
+					minimum: CURRENCY_UNIT[PWYWCurrency].toLocaleString($locale, {
 						maximumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[PWYWCurrency]
 					})
 				})
@@ -142,6 +145,7 @@
 			brandName={data.brandName}
 			sessionEmail={data.email}
 			countdowns={data.productCMSBefore.countdowns}
+			galleries={data.productCMSBefore.galleries}
 		/>
 	{/if}
 
@@ -346,6 +350,7 @@
 											class="form-input"
 											type="number"
 											min={PWYWMinimum}
+											max={PWYWMaximum}
 											name="customPriceAmount"
 											bind:value={customAmount}
 											bind:this={PWYWInput}
@@ -403,6 +408,10 @@
 									<br />
 									{t('product.checkBackLater')}
 								</p>
+							{:else if data.cartMaxSeparateItems && data.cart?.length === data.cartMaxSeparateItems}
+								<p class="text-red-500">
+									{t('cart.reachedMaxPerLine')}
+								</p>
 							{:else if data.showCheckoutButton}
 								<button class="btn body-cta body-mainCTA" disabled={loading}
 									>{t(`product.cta.${verb}`)}</button
@@ -448,7 +457,7 @@
 							<a href={cta.href} class="btn body-cta body-secondaryCTA">
 								{cta.label}
 							</a>
-						{:else if !canBuy || amountAvailable <= 0}
+						{:else if !canBuy || amountAvailable <= 0 || (data.cartMaxSeparateItems && data.cart?.length === data.cartMaxSeparateItems)}
 							<a href={cta.href} class="btn body-cta body-secondaryCTA">
 								{cta.label}
 							</a>
@@ -476,6 +485,7 @@
 			brandName={data.brandName}
 			sessionEmail={data.email}
 			countdowns={data.productCMSAfter.countdowns}
+			galleries={data.productCMSAfter.galleries}
 		/>
 	{/if}
 </main>

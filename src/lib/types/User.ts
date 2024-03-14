@@ -1,5 +1,6 @@
 import type { ObjectId } from 'mongodb';
 import type { Timestamps } from './Timestamps';
+import { browser } from '$app/environment';
 
 export interface User extends Timestamps {
 	_id: ObjectId;
@@ -18,6 +19,7 @@ export interface User extends Timestamps {
 		token: string;
 		expiresAt: Date;
 	};
+	alias?: string;
 }
 
 export const SUPER_ADMIN_ROLE_ID = 'super-admin';
@@ -26,6 +28,10 @@ export const CUSTOMER_ROLE_ID = 'customer';
 export const MIN_PASSWORD_LENGTH = 8;
 
 export async function checkPasswordPwnedTimes(password: string): Promise<number> {
+	if (browser && !crypto?.subtle) {
+		// Don't block if the browser blocks the crypto API due to non-secure context
+		return 0;
+	}
 	const sha1 = crypto.subtle.digest('SHA-1', new TextEncoder().encode(password));
 	const sha1Hex = Array.from(new Uint8Array(await sha1))
 		.map((b) => b.toString(16).padStart(2, '0'))

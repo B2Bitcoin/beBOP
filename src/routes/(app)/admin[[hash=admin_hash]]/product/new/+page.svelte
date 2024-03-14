@@ -15,6 +15,8 @@
 	tags={data.tags}
 	product={data.product ?? undefined}
 	defaultActionSettings={data.productActionSettings}
+	vatProfiles={data.vatProfiles}
+	availablePaymentMethods={data.availablePaymentMethods}
 />
 
 {#if data.pictures?.length}

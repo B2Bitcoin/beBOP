@@ -4,6 +4,7 @@ import { isOrderFullyPaid } from '$lib/server/orders';
 import { picturesForProducts } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { isSumupEnabled } from '$lib/server/sumup';
+import { FAKE_ORDER_INVOICE_NUMBER } from '$lib/types/Order';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
@@ -46,6 +47,11 @@ export async function fetchOrderForUser(orderId: string) {
 			if (checkout.status === 'PAID') {
 				payment.status = 'paid';
 
+				payment.invoice = {
+					number: FAKE_ORDER_INVOICE_NUMBER,
+					createdAt: new Date()
+				};
+
 				if (isOrderFullyPaid(order) && order.status === 'pending') {
 					order.status = 'paid';
 				}
@@ -66,6 +72,7 @@ export async function fetchOrderForUser(orderId: string) {
 			address: payment.address,
 			expiresAt: payment.expiresAt,
 			paidAt: payment.paidAt,
+			createdAt: payment.createdAt,
 			checkoutId: payment.checkoutId,
 			invoice: payment.invoice,
 			price: payment.price,
@@ -73,7 +80,9 @@ export async function fetchOrderForUser(orderId: string) {
 			confirmationBlocksRequired:
 				payment.method === 'bitcoin'
 					? getConfirmationBlocks(toSatoshis(payment.price.amount, payment.price.currency))
-					: 0
+					: 0,
+			...(payment.bankTransferNumber && { bankTransferNumber: payment.bankTransferNumber }),
+			...(payment.detail && { detail: payment.detail })
 		})),
 		items: order.items.map((item) => ({
 			quantity: item.quantity,
@@ -85,8 +94,10 @@ export async function fetchOrderForUser(orderId: string) {
 				type: item.product.type,
 				preorder: item.product.preorder,
 				availableDate: item.product.availableDate,
-				shipping: item.product.shipping
+				shipping: item.product.shipping,
+				paymentMethods: item.product.paymentMethods
 			},
+			vatRate: item.vatRate,
 			...(item.customPrice && { customPrice: item.customPrice }),
 			picture: pictures.find((picture) => picture.productId === item.product._id),
 			digitalFiles: digitalFiles.filter(
@@ -100,14 +111,14 @@ export async function fetchOrderForUser(orderId: string) {
 			currency: order.shippingPrice.currency
 		},
 		sellerIdentity: order.sellerIdentity,
-		vat: order.vat && {
-			country: order.vat.country,
+		vat: order.vat?.map((item) => ({
+			country: item.country,
 			price: {
-				amount: order.vat.price.amount,
-				currency: order.vat.price.currency
+				amount: item.price.amount,
+				currency: item.price.currency
 			},
-			rate: order.vat.rate
-		},
+			rate: item.rate
+		})),
 		shippingAddress: order.shippingAddress,
 		billingAddress: order.billingAddress,
 		notifications: order.notifications,
@@ -119,7 +130,9 @@ export async function fetchOrderForUser(orderId: string) {
 			order.notes?.map((note) => ({
 				content: note.content,
 				createdAt: note.createdAt,
-				isEmployee: note.role !== CUSTOMER_ROLE_ID
-			})) || []
+				isEmployee: note.role !== CUSTOMER_ROLE_ID,
+				alias: note.userAlias
+			})) || [],
+		receiptNote: order.receiptNote
 	};
 }

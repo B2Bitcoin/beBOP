@@ -8,7 +8,11 @@ export const load = async () => {
 	const products = await collections.products.find({}).toArray();
 
 	return {
-		products
+		products: products.map((p) => ({
+			name: p.name,
+			price: p.price,
+			_id: p._id
+		}))
 	};
 };
 

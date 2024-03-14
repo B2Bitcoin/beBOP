@@ -15,10 +15,6 @@ export const adminLinks = [
 				label: 'Pictures'
 			},
 			{
-				href: '/admin/challenge',
-				label: 'Challenges'
-			},
-			{
 				href: '/admin/cms',
 				label: 'CMS'
 			},
@@ -27,28 +23,8 @@ export const adminLinks = [
 				label: 'Discount'
 			},
 			{
-				href: '/admin/tags',
-				label: 'Tags'
-			},
-			{
-				href: '/admin/slider',
-				label: 'Sliders'
-			},
-			{
 				href: '/admin/theme',
 				label: 'Themes'
-			},
-			{
-				href: '/admin/specification',
-				label: 'Specifications'
-			},
-			{
-				href: '/admin/form',
-				label: 'Forms'
-			},
-			{
-				href: '/admin/countdown',
-				label: 'Countdowns'
 			}
 		]
 	},
@@ -72,9 +48,13 @@ export const adminLinks = [
 				label: 'Identity'
 			},
 			{
-				href: '/admin/backup',
-				label: 'Backup'
+				href: '/admin/physical-shop',
+				label: 'Physical Shop'
 			},
+			// {
+			// 	href: '/admin/backup',
+			// 	label: 'Backup'
+			// },
 			{
 				href: '/admin/template',
 				label: 'Templates'
@@ -108,11 +88,11 @@ export const adminLinks = [
 			{
 				href: '/admin/sumup',
 				label: 'SumUp'
-			},
-			{
-				href: '/admin/bity',
-				label: 'Bity'
 			}
+			// {
+			// 	href: '/admin/bity',
+			// 	label: 'Bity'
+			// }
 		]
 	},
 	{
@@ -121,6 +101,43 @@ export const adminLinks = [
 			{
 				href: '/admin/order',
 				label: 'Orders'
+			},
+			{
+				href: '/admin/reporting',
+				label: 'Reporting'
+			}
+		]
+	},
+	{
+		section: 'Widgets',
+		links: [
+			{
+				href: '/admin/challenge',
+				label: 'Challenges'
+			},
+			{
+				href: '/admin/tags',
+				label: 'Tags'
+			},
+			{
+				href: '/admin/slider',
+				label: 'Sliders'
+			},
+			{
+				href: '/admin/specification',
+				label: 'Specifications'
+			},
+			{
+				href: '/admin/form',
+				label: 'Forms'
+			},
+			{
+				href: '/admin/countdown',
+				label: 'Countdowns'
+			},
+			{
+				href: '/admin/gallery',
+				label: 'Galleries'
 			}
 		]
 	}

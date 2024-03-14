@@ -24,6 +24,7 @@
 		websiteLink={data.websiteLink}
 		brandName={data.brandName}
 		countdowns={data.cmsData.countdowns}
+		galleries={data.cmsData.galleries}
 	/>
 {:else}
 	<Catalog {...data.catalog} />

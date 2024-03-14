@@ -1,12 +1,11 @@
 # BeBOP
 
-P2P BeBOP for merch, subscribers and crowdfunding
+P2P BeBOP for merch, subscribers and peerfunding
 
 ## Requirements
 
 - A S3-compatible object storage. There are hundreds of solutions, including https://min.io/, an open source solution that can be run inside docker, or paid services like AWS, Scaleway, ...
 - SMTP credentials, for sending emails
-- A BTCPayServer instance. You can run it inside docker, or use paid services like Nodl.it, LunaNode or Voltage.cloud.
 - A MongoDB replica set. You can run it inside docker or use MongoDB Atlas.
 - A bitcoin node, and lnd
 - Node version 18+, corepack enabled with `corepack enable`
@@ -131,7 +130,7 @@ Make sure to have a fairly recent version of docker & docker compose.
 # Optional: update dependencies
 docker compose pull
 # --build will rebuild the docker image when you change the code. Use --force-recreate to force a rebuild (eg after updating dependencies).
-docker compose up --build -d
+docker compose --env-file .env.local up --build -d
 ```
 
 It will still use the `.env.local` file for the environment variables if present, overriding the values for MongoDB and S3.

@@ -14,11 +14,16 @@
 </script>
 
 <div class="mx-auto tagWidget tagWidget-main flex rounded sm:gap-2 {className}">
-	<div class="relative">
-		<PictureComponent {picture} />
+	<div class="relative shrink-0">
+		<PictureComponent {picture} class="w-[15em]" />
 		{#if tag.cta.length}
 			<div class="btn tagWidget-cta text-xl absolute bottom-0 right-0 text-center p-2 m-2">
-				<a class="tagWidget-hyperlink" href={tag.cta[0].href}>{tag.cta[0].label}</a>
+				<a
+					class="tagWidget-hyperlink"
+					href={tag.cta[0].href}
+					target={tag.cta[0].href.startsWith('http') || tag.cta[0].openNewTab ? '_blank' : '_self'}
+					>{tag.cta[0].label}</a
+				>
 			</div>
 		{/if}
 	</div>

@@ -119,9 +119,12 @@
 
 <a href="{data.adminPrefix}/arm/user/new" class="underline">Create a user</a>
 
-<ul class="grid grid-cols-[auto_auto_auto_auto_auto_min-content_min-content_min-content] gap-2">
+<ul
+	class="grid grid-cols-[auto_auto_auto_auto_auto_auto_min-content_min-content_min-content] gap-2"
+>
 	<li class="contents">
 		<span>Login</span>
+		<span>Alias</span>
 		<span>Recovery Email</span>
 		<span>Recovery Npub</span>
 		<span>Role</span>
@@ -163,6 +166,7 @@
 					value={user.login}
 					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
 				/>
+				<input type="text" name="alias" class="form-input" value={user.alias ?? ''} />
 				<input
 					type="email"
 					name="recoveryEmail"
@@ -192,12 +196,7 @@
 					<option value="enabled" selected={!user.disabled}>Enabled</option>
 					<option value="disabled" selected={!!user.disabled}>Disabled</option>
 				</select>
-				<button
-					type="submit"
-					class="btn btn-black self-start"
-					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
-					title="Save"
-				>
+				<button type="submit" class="btn btn-black self-start" title="Save">
 					<IconSave />
 				</button>
 				<button

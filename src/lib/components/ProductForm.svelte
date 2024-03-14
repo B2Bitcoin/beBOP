@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CURRENCIES, MININUM_PER_CURRENCY } from '$lib/types/Currency';
+	import { CURRENCIES, CURRENCY_UNIT } from '$lib/types/Currency';
 	import {
 		DEFAULT_MAX_QUANTITY_PER_ORDER,
 		MAX_NAME_LIMIT,
@@ -24,6 +24,11 @@
 	import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 	import { uploadPicture } from '$lib/types/Picture';
 	import { currencies } from '$lib/stores/currencies';
+	import type { PojoObject } from '$lib/server/pojo';
+	import type { PaymentMethod } from '$lib/server/payment-methods';
+	import { useI18n } from '$lib/i18n';
+
+	const { t } = useI18n();
 
 	export let tags: Pick<Tag, '_id' | 'name'>[];
 	export let isNew = false;
@@ -32,8 +37,10 @@
 	export let reserved = 0;
 	export let globalDeliveryFees: LayoutServerData['deliveryFees'];
 	export let adminPrefix: string;
+	export let vatProfiles: LayoutServerData['vatProfiles'];
 	export let defaultActionSettings: ProductActionSettings;
-	export let product: WithId<Product> = {
+	export let availablePaymentMethods: PaymentMethod[];
+	export let product: WithId<PojoObject<Product>> = {
 		_id: '',
 		payWhatYouWant: false,
 		standalone: false,
@@ -45,6 +52,8 @@
 			amount: 0,
 			currency: $currencies.priceReference
 		},
+		alias: [],
+		vatProfileId: undefined,
 		availableDate: undefined,
 		displayShortDescription: false,
 		free: false,
@@ -57,6 +66,9 @@
 		description: ''
 	};
 
+	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
+	let restrictPaymentMethods = !!product.paymentMethods;
+	let vatProfileId = product.vatProfileId || '';
 	let formElement: HTMLFormElement;
 	let priceAmountElement: HTMLInputElement;
 	let disableDateChange = !isNew;
@@ -83,7 +95,7 @@
 		try {
 			if (
 				priceAmountElement.value &&
-				+priceAmountElement.value <= MININUM_PER_CURRENCY[product.price.currency] &&
+				+priceAmountElement.value <= CURRENCY_UNIT[product.price.currency] &&
 				!product.payWhatYouWant &&
 				!product.free
 			) {
@@ -93,7 +105,7 @@
 				) {
 					priceAmountElement.setCustomValidity(
 						'Price must be greater than or equal to ' +
-							MININUM_PER_CURRENCY[product.price.currency] +
+							CURRENCY_UNIT[product.price.currency] +
 							' ' +
 							product.price.currency +
 							' or might be free'
@@ -133,7 +145,7 @@
 			submitting = false;
 		}
 	}
-
+	let hasMaximumPrice = !!product.maximumPrice;
 	let availableDateStr = product.availableDate?.toJSON().slice(0, 10);
 
 	$: changedDate = availableDateStr !== product.availableDate?.toJSON().slice(0, 10);
@@ -213,7 +225,17 @@
 				disabled={!isNew}
 			/>
 		</label>
-
+		<label class="w-full">
+			alias
+			<input
+				class="form-input"
+				type="text"
+				name="alias"
+				placeholder="alias"
+				step="any"
+				value={duplicateFromId ? '' : product.alias?.[1] ?? ''}
+			/>
+		</label>
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Price amount
@@ -248,6 +270,17 @@
 				</select>
 			</label>
 		</div>
+		{#if vatProfiles.length}
+			<label class="form-label">
+				VAT profile
+				<select name="vatProfileId" class="form-input" bind:value={vatProfileId}>
+					<option value="">No custom VAT profile</option>
+					{#each vatProfiles as profile}
+						<option value={profile._id}>{profile.name}</option>
+					{/each}
+				</select>
+			</label>
+		{/if}
 		<label class="checkbox-label">
 			<input
 				class="form-checkbox"
@@ -259,6 +292,51 @@
 			/>
 			This is a pay-what-you-want product
 		</label>
+		{#if product.payWhatYouWant}
+			<label class="checkbox-label">
+				<input
+					class="form-checkbox"
+					type="checkbox"
+					bind:checked={hasMaximumPrice}
+					name="hasMaximumPrice"
+					disabled={product.type === 'subscription'}
+				/>
+				This article has a maximum price
+			</label>
+		{/if}
+		{#if hasMaximumPrice}
+			<div class="gap-4 flex flex-col md:flex-row">
+				<label class="w-full">
+					Maximum price amount
+					<input
+						class="form-input"
+						type="number"
+						name="maxPriceAmount"
+						placeholder="Price"
+						step="any"
+						min={product.price.amount}
+						value={product.maximumPrice?.amount
+							.toLocaleString('en', { maximumFractionDigits: 8 })
+							.replace(/,/g, '')}
+						required
+					/>
+				</label>
+
+				<label class="w-full">
+					Price currency
+					<select
+						name="maxPriceCurrency"
+						class="form-input"
+						bind:value={product.price.currency}
+						disabled
+					>
+						{#each CURRENCIES as currency}
+							<option value={currency}>{currency}</option>
+						{/each}
+					</select>
+				</label>
+			</div>
+		{/if}
 		<label class="checkbox-label">
 			<input
 				class="form-checkbox"
@@ -310,6 +388,33 @@
 				Enforce deposit - prevent customer from paying the full price immediately
 			</label>
 		{/if}
+
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={restrictPaymentMethods}
+				name="restrictPaymentMethods"
+			/>
+			Restrict payment methods
+		</label>
+
+		{#if restrictPaymentMethods}
+			{#each availablePaymentMethods as method}
+				<label class="checkbox-label">
+					<input
+						class="form-checkbox"
+						type="checkbox"
+						name="paymentMethods"
+						value={method}
+						checked={paymentMethods?.includes(method)}
+					/>
+					{t('checkout.paymentMethod.' + method)}
+					{method === 'point-of-sale' ? '(only available for POS employees)' : ''}
+				</label>
+			{/each}
+		{/if}
+
 		<label class="form-label">
 			Short description
 			<textarea
@@ -589,6 +694,7 @@
 				</tr>
 			</tbody>
 		</table>
+
 		<h3 class="text-xl">Add custom CTA</h3>
 		{#each [...(product.cta || []), ...Array(3).fill( { href: '', label: '', fallback: false } )].slice(0, 3) as link, i}
 			<div class="flex gap-4">

@@ -5,6 +5,14 @@ export const tagTranslatableSchema = {
 	shortContent: z.string().trim().max(1_000),
 	title: z.string(),
 	subtitle: z.string(),
-	cta: z.array(z.object({ href: z.string().trim(), label: z.string().trim() })).optional(),
+	cta: z
+		.array(
+			z.object({
+				href: z.string().trim(),
+				label: z.string().trim(),
+				openNewTab: z.boolean({ coerce: true }).default(false)
+			})
+		)
+		.optional(),
 	menu: z.array(z.object({ href: z.string().trim(), label: z.string().trim() })).optional()
 };

@@ -6,6 +6,7 @@ export async function load(event) {
 		language: event.locals.language,
 		themeChangeNumber: runtimeConfig.themeChangeNumber,
 		enUpdatedAt: runtimeConfigUpdatedAt[`translations.en`] ?? new Date(0),
+		faviconPictureId: runtimeConfig.faviconPictureId,
 		languageUpdatedAt:
 			runtimeConfigUpdatedAt[`translations.${event.locals.language}`] ?? new Date(0),
 		websiteTitle:

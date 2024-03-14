@@ -16,7 +16,7 @@
 	<div>
 		<PictureComponent {picture} class="w-full" />
 
-		<div class="flex flex-col my-[-25px] text-center justify-center">
+		<div class="flex flex-col p-2 text-center justify-center">
 			<div class="mx-auto text-center">
 				<h2 class="text-md bg-[rgba(243,240,240,0.5)] uppercase md:text-6xl lg:text-6xl body-title">
 					{tag.title}
@@ -28,7 +28,12 @@
 			<div class="flex text-centern justify-evenly mt-auto mb-2">
 				{#each tag.cta as cta}
 					<div class="btn tagWidget-cta text-xl text-center w-auto p-3">
-						<a class="tagWidget-hyperlink" href={cta.href}>{cta.label}</a>
+						<a
+							class="tagWidget-hyperlink"
+							href={cta.href}
+							target={cta.href.startsWith('http') || cta.openNewTab ? '_blank' : '_self'}
+							>{cta.label}</a
+						>
 					</div>
 				{/each}
 			</div>

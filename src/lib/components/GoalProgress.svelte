@@ -35,7 +35,7 @@
 		class="absolute inset-0 rounded-[3px] flex justify-end {percentage >= 100
 			? 'bg-green-500'
 			: ''}"
-		style="width: calc({Math.round(newPercentage)}%);"
+		style={percentage >= 100 ? `width: calc(${Math.round(newPercentage)}%);` : ''}
 	>
 		{#if percentage > 100}
 			<div

@@ -34,6 +34,7 @@ export const load = async ({ params, locals }) => {
 			| 'contentAfter'
 			| 'deposit'
 			| 'cta'
+			| 'maximumPrice'
 		>
 	>(
 		{ _id: params.id },
@@ -65,7 +66,8 @@ export const load = async ({ params, locals }) => {
 					$ifNull: [`$translations.${locals.language}.contentAfter`, '$contentAfter']
 				},
 				deposit: 1,
-				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] }
+				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] },
+				maximumPrice: 1
 			}
 		}
 	);
@@ -117,7 +119,9 @@ export const load = async ({ params, locals }) => {
 };
 
 async function addToCart({ params, request, locals }: RequestEvent) {
-	const product = await collections.products.findOne({ _id: params.id });
+	const product = await collections.products.findOne({
+		alias: params.id
+	});
 
 	if (!product) {
 		throw error(404, 'Product not found');
@@ -145,6 +149,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
 			deposit: formData.get('deposit') || undefined
 		});
+
 	const customPrice =
 		customPriceAmount && customPriceCurrency
 			? {
@@ -166,5 +171,9 @@ export const actions = {
 		throw redirect(303, '/checkout');
 	},
 
-	addToCart
+	addToCart: async (params) => {
+		await addToCart(params);
+
+		throw redirect(303, params.request.headers.get('referer') || '/cart');
+	}
 };

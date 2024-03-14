@@ -1,13 +1,16 @@
 <script lang="ts">
 	import type { Countdown } from '$lib/types/Countdown';
+	import { addHours, differenceInMilliseconds } from 'date-fns';
 	import { onMount } from 'svelte';
 
 	let className = '';
 	export { className as class };
 	export let countdown: Pick<Countdown, '_id' | 'title' | 'description' | 'endsAt'>;
-	$: distance = countdown.endsAt.getTime() - new Date().getTime();
+	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
+	let endsAt = addHours(countdown.endsAt, timezoneOffsetHours);
+	$: distance = differenceInMilliseconds(endsAt, new Date());
 	function updateCountdown() {
-		distance = Math.max(countdown.endsAt.getTime() - new Date().getTime(), 0);
+		distance = Math.max(differenceInMilliseconds(endsAt, new Date()), 0);
 	}
 	onMount(() => {
 		const interval = setInterval(updateCountdown, 1000);
@@ -16,9 +19,11 @@
 </script>
 
 <div class="flex flex-row gap-4 {className}">
-	<div class="flex flex-row w-full tagWidget tagWidget-main mb-4 grow pr-5">
+	<div class="flex flex-row w-full tagWidget tagWidget-main grow pr-5">
 		<div class="p-4 grow">
-			<h2 class="text-2xl font-bold mb-2 body-title">{countdown.title}</h2>
+			<h2 class="text-2xl font-bold mb-2 body-title">
+				{countdown.title}
+			</h2>
 
 			<p class="mb-4">{countdown.description}</p>
 		</div>

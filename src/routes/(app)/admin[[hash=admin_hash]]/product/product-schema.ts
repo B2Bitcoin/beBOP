@@ -3,9 +3,12 @@ import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product'
 import { z } from 'zod';
 import { deliveryFeesSchema } from '../config/delivery/schema';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
+import { zodObjectId } from '$lib/server/zod';
+import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods';
 
-export const productBaseSchema = {
+export const productBaseSchema = () => ({
 	name: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+	alias: z.string().trim().max(MAX_NAME_LIMIT).optional(),
 	description: z.string().trim().max(10_000),
 	shortDescription: z.string().trim().max(MAX_SHORT_DESCRIPTION_LIMIT),
 	priceAmount: z
@@ -19,9 +22,18 @@ export const productBaseSchema = {
 	shipping: z.boolean({ coerce: true }).default(false),
 	displayShortDescription: z.boolean({ coerce: true }).default(false),
 	deliveryFees: deliveryFeesSchema.optional(),
+	restrictPaymentMethods: z.boolean({ coerce: true }).default(false),
+	paymentMethods: z
+		.array(z.enum(paymentMethods({ includePOS: true }) as [PaymentMethod, ...PaymentMethod[]]))
+		.optional(),
 	applyDeliveryFeesOnlyOnce: z.boolean({ coerce: true }).default(false),
 	requireSpecificDeliveryFee: z.boolean({ coerce: true }).default(false),
 	payWhatYouWant: z.boolean({ coerce: true }).default(false),
+	hasMaximumPrice: z.boolean({ coerce: true }).default(false),
+	maxPriceAmount: z
+		.string()
+		.regex(/^\d+(\.\d+)?$/)
+		.optional(),
 	standalone: z.boolean({ coerce: true }).default(false),
 	free: z.boolean({ coerce: true }).default(false),
 	stock: z.number({ coerce: true }).int().min(0).optional(),
@@ -33,6 +45,7 @@ export const productBaseSchema = {
 	retailBasket: z.boolean({ coerce: true }).default(false),
 	depositPercentage: z.number({ coerce: true }).int().min(0).max(100).optional(),
 	enforceDeposit: z.boolean({ coerce: true }).default(false),
+	vatProfileId: zodObjectId().or(z.literal('')).optional(),
 	cta: z
 		.array(
 			z.object({
@@ -45,4 +58,4 @@ export const productBaseSchema = {
 		.default([]),
 	contentBefore: z.string().max(MAX_CONTENT_LIMIT).default(''),
 	contentAfter: z.string().max(MAX_CONTENT_LIMIT).default('')
-};
+});

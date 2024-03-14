@@ -485,6 +485,13 @@ export const VAT_RATES = {
 	PS: 16
 } satisfies Partial<Record<CountryAlpha2, number>>;
 
-export function vatRate(country: string): number {
+export function vatRate(country: CountryAlpha2 | undefined): number {
+	if (!country) {
+		return 0;
+	}
 	return VAT_RATES[country as keyof typeof VAT_RATES] || 0;
+}
+
+export function isAlpha2CountryCode(countryCode: string | undefined): countryCode is CountryAlpha2 {
+	return COUNTRY_ALPHA2S.has(countryCode as CountryAlpha2);
 }

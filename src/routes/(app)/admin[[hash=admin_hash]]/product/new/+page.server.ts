@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { ORIGIN, S3_BUCKET } from '$env/static/private';
 import { runtimeConfig } from '$lib/server/runtime-config';
-import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
+import type { Product } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { getPrivateS3DownloadLink, s3ProductPrefix, s3client } from '$lib/server/s3';
@@ -17,38 +17,40 @@ import { generateId } from '$lib/utils/generateId';
 import { CopyObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
+import { pojo } from '$lib/server/pojo';
+import { zodSlug } from '$lib/server/zod';
 
 export const load = async ({ url }) => {
 	const productId = url.searchParams.get('duplicate_from');
-	let product;
-	let pictures;
-	let digitalFiles;
+
 	const tags = await collections.tags
 		.find({})
 		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 
 	if (productId) {
-		product = await collections.products.findOne({ _id: productId });
+		const product = await collections.products.findOne({ _id: productId });
 
-		pictures = await collections.pictures
-			.find({ productId: productId })
-			.sort({ createdAt: 1 })
-			.toArray();
+		if (product) {
+			const pictures = await collections.pictures
+				.find({ productId: productId })
+				.sort({ createdAt: 1 })
+				.toArray();
 
-		digitalFiles = await collections.digitalFiles
-			.find({ productId: productId })
-			.sort({ createdAt: 1 })
-			.toArray();
+			const digitalFiles = await collections.digitalFiles
+				.find({ productId: productId })
+				.sort({ createdAt: 1 })
+				.toArray();
 
-		return {
-			product,
-			productId,
-			pictures,
-			digitalFiles,
-			tags,
-			currency: runtimeConfig.priceReferenceCurrency
-		};
+			return {
+				product: pojo(product),
+				productId,
+				pictures,
+				digitalFiles,
+				tags,
+				currency: runtimeConfig.priceReferenceCurrency
+			};
+		}
 	}
 	return {
 		tags
@@ -63,14 +65,15 @@ export const actions: Actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+		json.paymentMethods = formData.getAll('paymentMethods')?.map(String);
 
 		const parsed = z
 			.object({
-				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
+				slug: zodSlug(),
 				pictureId: z.string().trim().min(1).max(500),
 				type: z.enum(['resource', 'donation', 'subscription']),
 				tagIds: z.string().array(),
-				...productBaseSchema
+				...productBaseSchema()
 			})
 			.parse({
 				...json,
@@ -125,6 +128,7 @@ export const actions: Actions = {
 				await collections.products.insertOne(
 					{
 						_id: parsed.slug,
+						alias: parsed.alias ? [parsed.slug, parsed.alias] : [parsed.slug],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 						description: parsed.description.replaceAll('\r', ''),
@@ -140,6 +144,13 @@ export const actions: Actions = {
 						...(parsed.customPreorderText && { customPreorderText: parsed.customPreorderText }),
 						shipping: parsed.shipping,
 						payWhatYouWant: parsed.payWhatYouWant,
+						...(parsed.hasMaximumPrice &&
+							parsed.maxPriceAmount && {
+								maximumPrice: {
+									amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency),
+									currency: parsed.priceCurrency
+								}
+							}),
 						standalone: parsed.payWhatYouWant || parsed.standalone,
 						free: parsed.free,
 						displayShortDescription: parsed.displayShortDescription,
@@ -158,6 +169,9 @@ export const actions: Actions = {
 						...(parsed.maxQuantityPerOrder && {
 							maxQuantityPerOrder: parsed.maxQuantityPerOrder
 						}),
+						...(parsed.restrictPaymentMethods && {
+							paymentMethods: parsed.paymentMethods ?? []
+						}),
 						actionSettings: {
 							eShop: {
 								visible: parsed.eshopVisible,
@@ -172,7 +186,8 @@ export const actions: Actions = {
 							}
 						},
 						tagIds: parsed.tagIds,
-						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href)
+						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+						...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 					},
 					{ session }
 				);
@@ -200,6 +215,7 @@ export const actions: Actions = {
 		for (const [key, value] of formData) {
 			set(json, key, value);
 		}
+		json.paymentMethods = formData.getAll('paymentMethods')?.map(String);
 
 		const { duplicateFromId } = z
 			.object({ duplicateFromId: z.string() })
@@ -215,8 +231,8 @@ export const actions: Actions = {
 
 		const parsed = z
 			.object({
-				slug: z.string().trim().min(1).max(MAX_NAME_LIMIT),
-				...productBaseSchema
+				slug: zodSlug(),
+				...productBaseSchema()
 			})
 			.parse({
 				...json,
@@ -246,6 +262,7 @@ export const actions: Actions = {
 			await collections.products.insertOne(
 				{
 					_id: parsed.slug,
+					alias: parsed.alias ? [parsed.slug, parsed.alias] : [parsed.slug],
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					description: parsed.description.replaceAll('\r', ''),
@@ -260,6 +277,13 @@ export const actions: Actions = {
 					preorder: parsed.preorder,
 					shipping: parsed.shipping,
 					payWhatYouWant: parsed.payWhatYouWant,
+					...(parsed.hasMaximumPrice &&
+						parsed.maxPriceAmount && {
+							maximumPrice: {
+								amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency),
+								currency: parsed.priceCurrency
+							}
+						}),
 					standalone: parsed.standalone,
 					free: parsed.free,
 					...(parsed.stock !== undefined && {
@@ -288,7 +312,12 @@ export const actions: Actions = {
 							visible: parsed.googleShoppingVisible
 						}
 					},
-					tagIds: product.tagIds
+					...(parsed.restrictPaymentMethods && {
+						paymentMethods: parsed.paymentMethods ?? []
+					}),
+					tagIds: product.tagIds,
+					cta: product.cta,
+					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 				},
 				{ session }
 			);
