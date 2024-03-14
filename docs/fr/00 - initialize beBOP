@@ -2,14 +2,14 @@
 
 Quick dirty summary before cleaner documentation
 
-Once your bebop is up :
+Once your bebop is up (don't forget the readme.md) :
 
 ## Super-admin account
 
 - Go to your-site/admin/login
 - create your superadmin account & password
 
-## admin/config
+## /admin/config (via Admin / Config)
 
 ### Protect your back-office access
 
@@ -57,3 +57,28 @@ When I add a product to my cart, if it's the last, no one will be able to.
 But, if I don't process my order and if I wait more than the define time, the product will be available again, and removed from my basket if someone else buys it.
 
 ### TBD
+
+## /admin/identity (via Config / Identity)
+
+Here, every information about your company will be use for invoices and receipts.
+
+"Invoice Information" is optionnal and will be added on the top-right of the receipt.
+
+To allow "bank transfer" payment mean, you need to fill you "Bank account" IBAN and BIC.
+
+Contact information email will be used as "send as" for email and displayed on the footer.
+
+## /admin/nostr (through Node management / Nostr)
+
+Go do /admin/nostr (through Node managemen / Nostr) then clic on "Create nsec" if you don't have already one.
+Then, you can add it on the .env.local before (see readme.md)
+
+## /admin/sumup (through Payment partner / Sum Up)
+
+Once you have your Sum Up account, use their dev interface and copy he API key here.
+Merchand code can be found on your dashboard, or previous transactions receipts from you.
+Currency is the currency of your Sum Up account (in general, from the country your company is from).
+
+# The rest
+
+For now, and thinkgs outside the back-office, don't forget the readme.md.
