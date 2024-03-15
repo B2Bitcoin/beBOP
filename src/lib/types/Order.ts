@@ -291,4 +291,4 @@ export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
 	bitcoin: '₿'
 };
 
-export const ORDER_PAGINATION_LIMIT = 50;
+export const ORDER_PAGINATION_LIMIT = 10;
