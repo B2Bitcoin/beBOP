@@ -3,6 +3,7 @@
 	import PriceTag from './PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies';
 	import { useI18n } from '$lib/i18n';
+	import { Pagination } from 'flowbite-svelte';
 
 	export let orders:
 		| Pick<
@@ -13,6 +14,13 @@
 	export let adminPrefix: string | undefined = undefined;
 
 	const { t, locale } = useI18n();
+	let paginationOrders:
+		| Pick<
+				SimplifiedOrder,
+				'_id' | 'payments' | 'number' | 'createdAt' | 'currencySnapshot' | 'status' | 'notes'
+		  >[]
+		| [];
+	let next = 0;
 </script>
 
 <ul class="flex flex-col gap-4">
@@ -105,4 +113,12 @@
 	{:else}
 		<li>No orders yet</li>
 	{/each}
+	<div class="flex gap-2">
+		<a
+			class="btn btn-blue"
+			on:click={() => (next = Math.max(0, next - 50))}
+			href="/admin/order?page={next}">Previous</a
+		>
+		<a class="btn btn-blue" on:click={() => (next += 50)} href="/admin/order?page={next}">Next</a>
+	</div>
 </ul>
