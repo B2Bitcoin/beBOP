@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { PAYMENT_METHOD_EMOJI, type SimplifiedOrder } from '$lib/types/Order';
+	import {
+		ORDER_PAGINATION_LIMIT,
+		PAYMENT_METHOD_EMOJI,
+		type SimplifiedOrder
+	} from '$lib/types/Order';
 	import PriceTag from './PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies';
 	import { useI18n } from '$lib/i18n';
@@ -111,12 +115,16 @@
 		{#if Number($page.url.searchParams.get('skip'))}
 			<a
 				class="btn btn-blue"
-				on:click={() => (next = Math.max(0, next - 50))}
+				on:click={() => (next = Math.max(0, next - ORDER_PAGINATION_LIMIT))}
 				href="/admin/order?skip={next}">Previous</a
 			>
 		{/if}
-		{#if orders.length >= 50}
-			<a class="btn btn-blue" on:click={() => (next += 50)} href="/admin/order?skip={next}">Next</a>
+		{#if orders.length >= ORDER_PAGINATION_LIMIT}
+			<a
+				class="btn btn-blue"
+				on:click={() => (next += ORDER_PAGINATION_LIMIT)}
+				href="/admin/order?skip={next}">Next</a
+			>
 		{/if}
 	</div>
 </ul>
