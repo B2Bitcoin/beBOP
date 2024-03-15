@@ -1,7 +1,14 @@
 import { collections } from '$lib/server/database';
+import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
 
-export async function load() {
-	const orders = await collections.orders.find().sort({ createdAt: -1 }).toArray();
+export async function load({ url }) {
+	const skip = url.searchParams.get('skip');
+	const orders = await collections.orders
+		.find()
+		.skip(Number(skip))
+		.limit(ORDER_PAGINATION_LIMIT)
+		.sort({ createdAt: -1 })
+		.toArray();
 
 	return {
 		orders: orders.map((order) => ({
