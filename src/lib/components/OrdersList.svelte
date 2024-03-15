@@ -3,7 +3,6 @@
 	import PriceTag from './PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies';
 	import { useI18n } from '$lib/i18n';
-	import { Pagination } from 'flowbite-svelte';
 
 	export let orders:
 		| Pick<
