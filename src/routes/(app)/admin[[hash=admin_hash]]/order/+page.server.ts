@@ -6,7 +6,6 @@ export async function load({ url }) {
 	const orderNumber = url.searchParams.get('orderNumber');
 	let orders;
 	if (orderNumber) {
-		console.log(orderNumber);
 		orders = await collections.orders.find({ number: Number(orderNumber) }).toArray();
 	} else {
 		orders = await collections.orders
