@@ -3,6 +3,7 @@
 	import PriceTag from './PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies';
 	import { useI18n } from '$lib/i18n';
+	import { page } from '$app/stores';
 
 	export let orders:
 		| Pick<
@@ -107,11 +108,15 @@
 		<li>No orders yet</li>
 	{/each}
 	<div class="flex gap-2">
-		<a
-			class="btn btn-blue"
-			on:click={() => (next = Math.max(0, next - 50))}
-			href="/admin/order?page={next}">Previous</a
-		>
-		<a class="btn btn-blue" on:click={() => (next += 50)} href="/admin/order?page={next}">Next</a>
+		{#if Number($page.url.searchParams.get('page'))}
+			<a
+				class="btn btn-blue"
+				on:click={() => (next = Math.max(0, next - 50))}
+				href="/admin/order?page={next}">Previous</a
+			>
+		{/if}
+		{#if orders.length}
+			<a class="btn btn-blue" on:click={() => (next += 50)} href="/admin/order?page={next}">Next</a>
+		{/if}
 	</div>
 </ul>
