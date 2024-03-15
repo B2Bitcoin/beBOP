@@ -13,12 +13,6 @@
 	export let adminPrefix: string | undefined = undefined;
 
 	const { t, locale } = useI18n();
-	let paginationOrders:
-		| Pick<
-				SimplifiedOrder,
-				'_id' | 'payments' | 'number' | 'createdAt' | 'currencySnapshot' | 'status' | 'notes'
-		  >[]
-		| [];
 	let next = 0;
 </script>
 
