@@ -1,11 +1,12 @@
 import { collections } from '$lib/server/database';
+import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
 
 export async function load({ url }) {
-	const page = url.searchParams.get('page');
+	const skip = url.searchParams.get('skip');
 	const orders = await collections.orders
 		.find()
-		.skip(Number(page))
-		.limit(50)
+		.skip(Number(skip))
+		.limit(ORDER_PAGINATION_LIMIT)
 		.sort({ createdAt: -1 })
 		.toArray();
 

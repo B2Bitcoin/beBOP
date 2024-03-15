@@ -108,15 +108,15 @@
 		<li>No orders yet</li>
 	{/each}
 	<div class="flex gap-2">
-		{#if Number($page.url.searchParams.get('page'))}
+		{#if Number($page.url.searchParams.get('skip'))}
 			<a
 				class="btn btn-blue"
 				on:click={() => (next = Math.max(0, next - 50))}
-				href="/admin/order?page={next}">Previous</a
+				href="/admin/order?skip={next}">Previous</a
 			>
 		{/if}
-		{#if orders.length}
-			<a class="btn btn-blue" on:click={() => (next += 50)} href="/admin/order?page={next}">Next</a>
+		{#if orders.length >= 50}
+			<a class="btn btn-blue" on:click={() => (next += 50)} href="/admin/order?skip={next}">Next</a>
 		{/if}
 	</div>
 </ul>
