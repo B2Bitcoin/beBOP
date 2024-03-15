@@ -22,6 +22,21 @@
 </script>
 
 <ul class="flex flex-col gap-4">
+	{#if adminPrefix}
+		<form class="flex flex-col gap-2">
+			<div class="gap-4 flex flex-col md:flex-row">
+				<label class="form-label w-[30em]">
+					Search Order
+					<input
+						class="form-input"
+						type="number"
+						name="orderNumber"
+						placeholder="search order by number"
+					/>
+				</label>
+			</div>
+		</form>
+	{/if}
 	{#each orders as order}
 		{@const status =
 			order.status === 'pending'
@@ -111,20 +126,22 @@
 	{:else}
 		<li>No orders yet</li>
 	{/each}
-	<div class="flex gap-2">
-		{#if Number($page.url.searchParams.get('skip'))}
-			<a
-				class="btn btn-blue"
-				on:click={() => (next = Math.max(0, next - ORDER_PAGINATION_LIMIT))}
-				href="/admin/order?skip={next}">Previous</a
-			>
-		{/if}
-		{#if orders.length >= ORDER_PAGINATION_LIMIT}
-			<a
-				class="btn btn-blue"
-				on:click={() => (next += ORDER_PAGINATION_LIMIT)}
-				href="/admin/order?skip={next}">Next</a
-			>
-		{/if}
-	</div>
+	{#if adminPrefix}
+		<div class="flex gap-2">
+			{#if Number($page.url.searchParams.get('skip'))}
+				<a
+					class="btn btn-blue"
+					on:click={() => (next = Math.max(0, next - ORDER_PAGINATION_LIMIT))}
+					href="/admin/order?skip={next}">Previous</a
+				>
+			{/if}
+			{#if orders.length >= ORDER_PAGINATION_LIMIT}
+				<a
+					class="btn btn-blue"
+					on:click={() => (next += ORDER_PAGINATION_LIMIT)}
+					href="/admin/order?skip={next}">Next</a
+				>
+			{/if}
+		</div>
+	{/if}
 </ul>
