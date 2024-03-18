@@ -188,15 +188,15 @@
 			{payment.invoice
 				? t('order.related.invoice', invoiceNumberVariables(data.order, payment))
 				: payment.status === 'pending'
-				? '⏲' +
+				? '⏲ ' +
 				  t('order.receipt.proformaInvoiceNumber', invoiceNumberVariables(data.order, payment))
-				: '❌' +
-				  t('order.receipt.proformaInvoiceNumber', invoiceNumberVariables(data.order, payment))} - &nbsp;
+				: '❌ ' +
+				  t('order.receipt.proformaInvoiceNumber', invoiceNumberVariables(data.order, payment))} -
 			<PriceTag
 				amount={payment.currencySnapshot.main.price.amount}
 				currency={payment.currencySnapshot.main.price.currency}
 				inline
-			/> &nbsp;- {t('order.paidWithSummary.' + payment.method)} - {t(
+			/> - {t('order.paidWithSummary.' + payment.method)} - {t(
 				`order.paymentStatus.${payment.status}`
 			)}
 		</div>
