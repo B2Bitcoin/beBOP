@@ -321,9 +321,7 @@ export function invoiceNumberVariables(
 		).toString(),
 		dayOfWeek: (
 			(finalInvoice ? payment.paidAt?.getDay() ?? 0 : payment.createdAt?.getDay() ?? 0) + 1
-		)
-			.toString()
-			.padStart(2, '0'),
+		).toString(),
 		dayOfMonth: finalInvoice
 			? payment.paidAt?.getDate().toString().padStart(2, '0')
 			: payment.createdAt?.getDate().toString().padStart(2, '0')
