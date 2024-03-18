@@ -3,6 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
+	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { marked } from 'marked';
 
@@ -11,13 +12,10 @@
 	const { t, locale, textAddress } = useI18n();
 
 	const finalInvoice = data.payment.status === 'paid';
-	const proformaInvoiceNumber = t('order.receipt.proformaInvoiceNumber', {
-		orderNumber: data.order.number,
-		paymentIndex: data.order.payments.findIndex((p) => p.id === data.payment.id) + 1
-	});
-	const invoiceNumber = finalInvoice
-		? data.payment.invoice?.number?.toString()
-		: proformaInvoiceNumber;
+	const invoiceNumber = t(
+		finalInvoice ? 'order.receipt.invoiceNumber' : 'order.receipt.proformaInvoiceNumber',
+		invoiceNumberVariables(data.order, data.payment)
+	);
 	const identity = data.sellerIdentity;
 
 	const differentAddress =
@@ -93,9 +91,6 @@
 				{data.payment.paidAt?.toLocaleDateString($locale)}
 			</time>
 		</Trans>
-		{#if 0}
-			{t('order.receipt.proformaAssociated', { proformaInvoiceNumber })}
-		{/if}
 	{:else if data.payment.status === 'pending'}
 		{t('order.receipt.proforma')}
 		{#if data.payment.expiresAt}

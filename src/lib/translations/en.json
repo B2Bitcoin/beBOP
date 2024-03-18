@@ -513,11 +513,11 @@
 				"message": "With this payment, the order {orderNumber} is now fully paid"
 			},
 			"invoice": "Invoice",
+			"invoiceNumber": "{invoiceNumber}",
 			"itemName": "Nature",
 			"partialAmount": "Amount paid (partial payment)",
 			"partialAmountPre": "Amount to pay (partial payment)",
 			"proforma": "This is a proforma invoice. No payment has been made yet. The final invoice will be generated when payment is made.",
-			"proformaAssociated": "Associated proforma invoice: {proformaInvoiceNumber}",
 			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Qty",
 			"remainingAmount": "Remaining amount to pay",
