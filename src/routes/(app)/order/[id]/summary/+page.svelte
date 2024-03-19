@@ -3,7 +3,7 @@
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
-	import { orderRemainingToPay } from '$lib/types/Order.js';
+	import { invoiceNumberVariables, orderRemainingToPay } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { marked } from 'marked';
 
@@ -186,22 +186,17 @@
 	{#each data.order.payments as payment}
 		<div>
 			{payment.invoice
-				? t('order.related.invoice', { invoiceNumber: payment.invoice.number })
+				? t('order.related.invoice', invoiceNumberVariables(data.order, payment))
 				: payment.status === 'pending'
-				? '⏲' +
-				  t('order.receipt.proformaInvoiceNumber', {
-						orderNumber: data.order.number,
-						paymentIndex: data.order.payments.findIndex((p) => p.id === payment.id) + 1
-				  })
-				: '❌' +
-				  t('order.receipt.proformaInvoiceNumber', {
-						orderNumber: data.order.number,
-						paymentIndex: data.order.payments.findIndex((p) => p.id === payment.id) + 1
-				  })} - &nbsp; <PriceTag
+				? '⏲ ' +
+				  t('order.receipt.proformaInvoiceNumber', invoiceNumberVariables(data.order, payment))
+				: '❌ ' +
+				  t('order.receipt.proformaInvoiceNumber', invoiceNumberVariables(data.order, payment))} -
+			<PriceTag
 				amount={payment.currencySnapshot.main.price.amount}
 				currency={payment.currencySnapshot.main.price.currency}
 				inline
-			/> &nbsp;- {t('order.paidWithSummary.' + payment.method)} - {t(
+			/> - {t('order.paidWithSummary.' + payment.method)} - {t(
 				`order.paymentStatus.${payment.status}`
 			)}
 		</div>
