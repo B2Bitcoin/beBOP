@@ -1,13 +1,8 @@
 <script lang="ts">
-	import {
-		ORDER_PAGINATION_LIMIT,
-		PAYMENT_METHOD_EMOJI,
-		type SimplifiedOrder
-	} from '$lib/types/Order';
+	import { PAYMENT_METHOD_EMOJI, type SimplifiedOrder } from '$lib/types/Order';
 	import PriceTag from './PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies';
 	import { useI18n } from '$lib/i18n';
-	import { page } from '$app/stores';
 
 	export let orders:
 		| Pick<
@@ -18,7 +13,6 @@
 	export let adminPrefix: string | undefined = undefined;
 
 	const { t, locale } = useI18n();
-	let next = 0;
 </script>
 
 <ul class="flex flex-col gap-4">
@@ -111,20 +105,4 @@
 	{:else}
 		<li>No orders yet</li>
 	{/each}
-	<div class="flex gap-2">
-		{#if Number($page.url.searchParams.get('skip'))}
-			<a
-				class="btn btn-blue"
-				on:click={() => (next = Math.max(0, next - ORDER_PAGINATION_LIMIT))}
-				href="/admin/order?skip={next}">Previous</a
-			>
-		{/if}
-		{#if orders.length >= ORDER_PAGINATION_LIMIT}
-			<a
-				class="btn btn-blue"
-				on:click={() => (next += ORDER_PAGINATION_LIMIT)}
-				href="/admin/order?skip={next}">Next</a
-			>
-		{/if}
-	</div>
 </ul>
