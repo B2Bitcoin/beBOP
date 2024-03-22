@@ -30,7 +30,7 @@ Mon panier contient 4 lignes articles.
 Dans le cadre d'une configuration "Flat fees" de 10€, le prix des frais de port sera de 10€.
 Dans le cadre d'une configuration "Flat fees" de 10€ avec l'option "Apply flat fee for each item instead of once for the whole order", le prix des frais de port sera de 4 lignes articles * 10€, soit 40€.
 
-### Article Standalone
+### Article Indépendant
 Parfois, un article volumineux ou fragile justifie à lui seul un envoi à part, une assurance, un colis spécial, des protections d'envoi, etc.
 Lorsqu'on ajoute 2 fois un même article A au panier, le panier affiche une seule ligne avec "Article A qté 2".
 Si on active l'option "This is a standalone product" dans /admin/product/{id}, chaque ajout du produit se fait sur une unique ligne.

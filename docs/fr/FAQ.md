@@ -6,9 +6,9 @@
   - le e-commerce
   - l'encaissement en magasin
 - beBOP permet, au sein d'un même panier :
-  - la vente d'article physique
-  - la vente d'article numérique
-  - la gestion d'articles en pay-what-you-want / name-your-price, à prix minimum fixé ou non
+  - la vente d'articles physiques
+  - la vente d'articles numériques
+  - la gestion d'articles en prix libre, à prix minimum fixé ou non
   - la collecte de dons
   - la souscription à des abonnements périodiques
   tout en gérant des challenges de "peerfunding" (type collecte de fonds Kickstarter ou Ulule, sans tierce partie)
