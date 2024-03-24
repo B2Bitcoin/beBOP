@@ -532,6 +532,8 @@
 		"receiptPending": "Generate receipt(pending payment)",
 		"related": {
 			"invoice": "✅ Invoice n°{invoiceNumber}",
+			"invoiceFailed": "❌ Invoice n°{invoiceNumber}",
+			"invoicePending": "⏲ Invoice n°{invoiceNumber} (waiting for payment)",
 			"title": "Related Invoices"
 		},
 		"requestedAt": "Payment requested at <0></0>",
