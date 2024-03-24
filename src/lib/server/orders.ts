@@ -345,12 +345,12 @@ export async function onOrderPaymentFailed(
 			},
 			{
 				$set: {
-					'payments.$.status': 'expired',
+					'payments.$.status': reason,
 					...(order.payments.every(
 						(payment) => payment.status === 'canceled' || payment.status === 'expired'
 					) &&
 						order.status === 'pending' && {
-							status: 'expired'
+							status: reason
 						})
 				}
 			},

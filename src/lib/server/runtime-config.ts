@@ -122,6 +122,7 @@ const baseConfig = {
 	bity: {
 		clientId: ''
 	},
+	copyOrderEmailsToAdmin: true,
 	usersDarkDefaultTheme: false,
 	employeesDarkDefaultTheme: false,
 	displayPoweredBy: false,
