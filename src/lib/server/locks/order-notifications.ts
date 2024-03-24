@@ -233,11 +233,15 @@ async function handleOrderNotification(order: Order): Promise<void> {
 					if (email) {
 						await queueEmail(email, templateKey, vars, {
 							session,
-							...(!!runtimeConfig.sellerIdentity?.contact.email && {
-								bcc: runtimeConfig.sellerIdentity?.contact.email
-							})
+							...(!!runtimeConfig.sellerIdentity?.contact.email &&
+								runtimeConfig.copyOrderEmailsToAdmin && {
+									bcc: runtimeConfig.sellerIdentity?.contact.email
+								})
 						});
-					} else if (runtimeConfig.sellerIdentity?.contact.email) {
+					} else if (
+						runtimeConfig.sellerIdentity?.contact.email &&
+						runtimeConfig.copyOrderEmailsToAdmin
+					) {
 						await queueEmail(runtimeConfig.sellerIdentity?.contact.email, templateKey, vars, {
 							session
 						});
