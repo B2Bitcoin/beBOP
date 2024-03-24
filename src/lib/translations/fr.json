@@ -532,6 +532,8 @@
 		"receiptPending": "Générer un reçu (en attente de paiement)",
 		"related": {
 			"invoice": "✅ Facture n°{invoiceNumber}",
+			"invoiceFailed": "❌ Facture n°{invoiceNumber}",
+			"invoicePending": "⏲ Facture n°{invoiceNumber} (en attente de paiement)",
 			"title": "Factures associées"
 		},
 		"requestedAt": "Date de demande de paiement: <0></0>",
