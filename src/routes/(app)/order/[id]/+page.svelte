@@ -217,31 +217,34 @@
 								/>
 							{/if}
 						{/if}
-						{#if payment.status === 'pending' && (payment.method === 'lightning' || payment.method === 'card')}
-							<img
-								src="{$page.url.pathname}/payment/{payment.id}/qrcode"
-								class="w-96 h-96"
-								alt="QR code"
-							/>
-						{/if}
-						{#if payment.status === 'pending' && payment.method === 'bitcoin' && payment.address}
-							<span class="body-hyperlink font-light italic">{t('order.clickQR')}</span>
-							<a
-								href={bitcoinPaymentQrCodeString(
-									payment.address,
-									payment.price.amount,
-									payment.price.currency
-								)}
-								><img
+
+						{#if payment.status === 'pending'}
+							{#if payment.method === 'lightning' || payment.method === 'card'}
+								<img
 									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 									class="w-96 h-96"
 									alt="QR code"
-								/></a
-							>
-						{/if}
-
-						{#if payment.status === 'pending' && payment.method !== 'point-of-sale'}
-							{t('order.payToComplete')}
+								/>
+							{/if}
+							{#if payment.method === 'bitcoin' && payment.address}
+								<span class="body-hyperlink font-light italic">{t('order.clickQR')}</span>
+								<a
+									href={bitcoinPaymentQrCodeString(
+										payment.address,
+										payment.price.amount,
+										payment.price.currency
+									)}
+								>
+									<img
+										src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+										class="w-96 h-96"
+										alt="QR code"
+									/>
+								</a>
+							{/if}
+							{#if payment.method !== 'point-of-sale'}
+								{t('order.payToComplete')}
+							{/if}
 							{#if payment.method === 'bitcoin'}
 								{t('order.payToCompleteBitcoin', { count: payment.confirmationBlocksRequired })}
 							{/if}
@@ -256,26 +259,13 @@
 									</a>
 								{/if}
 							{/if}
+
 							{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
-								<form
-									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-										._id}/payment/{payment.id}?/cancel"
-									method="post"
-									class="contents"
-								>
-									<button type="submit" class="btn btn-red self-start" on:click={confirmCancel}
-										>{t('pos.cta.cancelOrder')}</button
-									>
-								</form>
-							{/if}
-						{/if}
-						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
-							<div class="flex flex-wrap gap-2">
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
 										._id}/payment/{payment.id}?/confirm"
 									method="post"
-									class="contents"
+									class="flex flex-wrap gap-2"
 								>
 									{#if payment.method === 'bank-transfer'}
 										<input
@@ -296,20 +286,22 @@
 										/>
 									{/if}
 
-									<form
-										action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-											._id}/payment/{payment.id}?/cancel"
-										method="post"
-										class="contents"
+									<button
+										type="submit"
+										class="btn btn-red"
+										on:click={confirmCancel}
+										formaction="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+											._id}/payment/{payment.id}?/cancel">{t('pos.cta.cancelOrder')}</button
 									>
-										<button type="submit" class="btn btn-red" on:click={confirmCancel}
-											>{t('pos.cta.cancelOrder')}</button
-										>
-									</form>
-									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
+									{#if payment.method === 'point-of-sale' || payment.method === 'bank-transfer'}
+										<button type="submit" class="btn btn-black">
+											{t('pos.cta.markOrderPaid')}
+										</button>
+									{/if}
 								</form>
-							</div>
+							{/if}
 						{/if}
+
 						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'paid'}
 							<form
 								action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
