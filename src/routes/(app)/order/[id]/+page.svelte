@@ -263,6 +263,12 @@
 							{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
 								<form
 									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+										._id}/payment/{payment.id}?/cancel"
+									method="post"
+									id="cancelForm"
+								></form>
+								<form
+									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
 										._id}/payment/{payment.id}?/confirm"
 									method="post"
 									class="flex flex-wrap gap-2"
@@ -290,9 +296,10 @@
 										type="submit"
 										class="btn btn-red"
 										on:click={confirmCancel}
-										formaction="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-											._id}/payment/{payment.id}?/cancel">{t('pos.cta.cancelOrder')}</button
+										form="cancelForm"
 									>
+										{t('pos.cta.cancelOrder')}
+									</button>
 									{#if payment.method === 'point-of-sale' || payment.method === 'bank-transfer'}
 										<button type="submit" class="btn btn-black">
 											{t('pos.cta.markOrderPaid')}
