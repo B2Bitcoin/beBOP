@@ -1,4 +1,4 @@
-# Option de point de vente (PoS)
+# Option de Point of Sale (PoS)
 
 ## Introduction
 
