@@ -14,7 +14,7 @@ Pour le panier (/cart]
 Pour le tunnel (/checkout)
 /checkout-top
 /checkout-bottom
-Pour la page commnde (/order)
+Pour la page de commande (/order)
   /order-top
   /order-bottom
 

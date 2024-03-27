@@ -42,7 +42,7 @@ Vous aurez ensuite accès à l'admin, en fonction des droits qui auront été at
 ### Protection du mot de passe
 
 Lors de la connexion employé.e, votre mot de passe est contrôlé.
-Les premiers et derniers caractères cryptés de la chaîne de votre mot de passe sont envoyés à [Have I Been Pawned](https://haveibeenpwned.com/), qui nous renvoie une série de chaines entières.
+Les premiers et derniers caractères chiffrés de la chaîne de votre mot de passe sont envoyés à [Have I Been Pawned](https://haveibeenpwned.com/), qui nous renvoie une série de chaines entières.
 beBOP contrôle ensuite localement si votre mot de passe est présent dans cette liste (ainsi, il n'est pas communiqué directement à Have I Been Pawned).
 Si le mot de passe y est présent, vous serez bloqué avec ce message de sécurité, vous invitant à changer de mot de passe :
 

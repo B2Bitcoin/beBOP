@@ -57,7 +57,7 @@ Cette page est usuellement affichée dans les liens du footer du site, et est é
 Le lien de cette option obligatoire dans le tunnel (/checkout) renvoie vers /terms, et permet à vos visiteurs de connaîtres toutes les conditions générales de ventes et d'utitilisation.
 Remplir cette page est fastidieux, mais néanmoins obligatoire !
 
-## /privacy - Respect de la vie privée
+## /privacy - Politique de confidentialité
 Voir [privacy-management.md](/docs/fr/privacy-management.md)
 Cette page est usuellement afichée dans les liens du footer du site.
 Elle permet à vos visiteurs de connaîtres toutes les conditions d'utilisations de leurs informations personnelles, du respect de la RGPD, de la collecte de cookies, etc.
@@ -83,4 +83,4 @@ Lorsque vous activez le paiement sur acompte pour l'un de vos articles, la premi
 Si votre commande inclut une réservation d'article sur acompte, le lien est affiché dans le tunnel (/checkout) avec l'option obligatoire à cocher **I agree that I need to pay the remainder in the future (why?)** (*Je comprends que je dois m'acquitter du solde hors-acompte (pourquoi ?)*)
 
 ## /order-top, /order-bottom, /checkout-top, /checkout-bottom,  /basket-top, /basket-bottom
-See [customise-cart-checkout-order-with-CMS.md](customise-cart-checkout-order-with-CMS.md)
+Voir [customise-cart-checkout-order-with-CMS.md](customise-cart-checkout-order-with-CMS.md)

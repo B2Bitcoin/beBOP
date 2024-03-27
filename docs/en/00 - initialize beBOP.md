@@ -2,7 +2,7 @@
 
 Quick dirty summary before cleaner documentation
 
-Once your bebop is up (don't forget the readme.md) :
+Once your beBOP is up (don't forget the readme.md) :
 
 ## Super-admin account
 

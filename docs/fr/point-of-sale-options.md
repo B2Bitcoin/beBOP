@@ -1,4 +1,4 @@
-# Point of Sale option
+# Option de Point of Sale (PoS)
 
 ## Introduction
 
@@ -84,7 +84,7 @@ En cas d'erreur d'ajout panier, l'erreur sera notifiée et le champ Alias sera v
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/376b83c9-29fd-485a-8b5d-dccfa1f97813)
 
-A noter qu'en cas d'ajout d'article PWYW via alias, le montant du produit sera le montant minimum configuré sur le produit.
+A noter qu'en cas d'ajout d'article prix libre (PWYW) via alias, le montant du produit sera le montant minimum configuré sur le produit.
 
 ## Spécificités du tunnel (/checkout)
 
@@ -238,7 +238,7 @@ Une fois l'encaissement réalisé, vous pouvez renseigner et valider le champ et
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/92822dc4-291f-4acd-9bd2-726ef3cab469)
 
-💡 Si vous imprimez la facture et voulez ne voulez pas des libellés liés au navigateur à l'impression, vous pouvez désactiver l'option "En-tête et pieds de page" dans les Options des paramètres d'impression
+💡 Si vous imprimez la facture et ne voulez pas des libellés liés au navigateur à l'impression, vous pouvez désactiver l'option "En-tête et pieds de page" dans les Options des paramètres d'impression
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/dd41316b-8d1a-4fff-8782-7752dc921609)
 
