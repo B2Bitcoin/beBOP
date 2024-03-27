@@ -84,7 +84,7 @@ En cas d'erreur d'ajout panier, l'erreur sera notifiée et le champ Alias sera v
 
 ![image](https://github.com/B2Bitcoin/beBOP/assets/50206014/376b83c9-29fd-485a-8b5d-dccfa1f97813)
 
-A noter qu'en cas d'ajout d'article prix libre via alias, le montant du produit sera le montant minimum configuré sur le produit.
+A noter qu'en cas d'ajout d'article prix libre (PWYW) via alias, le montant du produit sera le montant minimum configuré sur le produit.
 
 ## Spécificités du tunnel (/checkout)
 
