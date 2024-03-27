@@ -31,7 +31,8 @@ export async function load(event) {
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
 		noProBilling: runtimeConfig.noProBilling,
 		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems,
-		accountingCurrency: runtimeConfig.accountingCurrency
+		accountingCurrency: runtimeConfig.accountingCurrency,
+		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin
 	};
 }
 
@@ -47,6 +48,7 @@ export const actions = {
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
 				noProBilling: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),
+				copyOrderEmailsToAdmin: z.boolean({ coerce: true }),
 				subscriptionDuration: z.enum(['month', 'day', 'hour']),
 				mainCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1).filter((c) => c !== 'SAT')]),
 				secondaryCurrency: z

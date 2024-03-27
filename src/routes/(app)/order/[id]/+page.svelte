@@ -257,18 +257,16 @@
 								{/if}
 							{/if}
 							{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
-								<div class="grid grid-cols-4 gap-2 mt-2">
-									<form
-										action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
-											._id}/payment/{payment.id}?/cancel"
-										method="post"
-										class="contents"
+								<form
+									action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+										._id}/payment/{payment.id}?/cancel"
+									method="post"
+									class="contents"
+								>
+									<button type="submit" class="btn btn-red self-start" on:click={confirmCancel}
+										>{t('pos.cta.cancelOrder')}</button
 									>
-										<button type="submit" class="btn btn-red" on:click={confirmCancel}
-											>{t('pos.cta.cancelOrder')}</button
-										>
-									</form>
-								</div>
+								</form>
 							{/if}
 						{/if}
 						{#if (payment.method === 'point-of-sale' || payment.method === 'bank-transfer') && data.roleId !== CUSTOMER_ROLE_ID && data.roleId && payment.status === 'pending'}
@@ -297,6 +295,17 @@
 											placeholder="Detail (card transaction ID, or point-of-sale payment method)"
 										/>
 									{/if}
+
+									<form
+										action="/{data.roleId === POS_ROLE_ID ? 'pos' : 'admin'}/order/{data.order
+											._id}/payment/{payment.id}?/cancel"
+										method="post"
+										class="contents"
+									>
+										<button type="submit" class="btn btn-red" on:click={confirmCancel}
+											>{t('pos.cta.cancelOrder')}</button
+										>
+									</form>
 									<button type="submit" class="btn btn-black">{t('pos.cta.markOrderPaid')}</button>
 								</form>
 							</div>
@@ -428,7 +437,7 @@
 			{/if}
 
 			{#if data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
-				{#if data.order.payments.length > 1 && data.order.status !== 'expired'}
+				{#if data.order.payments.length > 1 && data.order.status !== 'expired' && data.order.status !== 'canceled'}
 					{#if data.order.status === 'paid'}
 						<a class="btn bg-green-600 text-white self-start" href="/order/{data.order._id}/summary"
 							>{t('order.receiptFullyPaid')}</a

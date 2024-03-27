@@ -1,10 +1,12 @@
 import type { LocalesDictionary } from '$lib/i18n.js';
 import { collections } from '$lib/server/database.js';
+import { parse, type ParseError } from 'jsonc-parser';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { locales, type LanguageKey } from '$lib/translations';
 import { typedEntries } from '$lib/utils/typedEntries.js';
 import { typedFromEntries } from '$lib/utils/typedFromEntries.js';
 import { z } from 'zod';
+import { error } from '@sveltejs/kit';
 
 export async function load() {
 	return {
@@ -40,9 +42,21 @@ export const actions = {
 			)
 			.parse(
 				typedFromEntries(
-					locales.map(
-						(locale) => [locale, JSON.parse(String(formData.get(locale)) || 'invalid')] as const
-					)
+					locales.map((locale) => {
+						const errors: ParseError[] = [];
+						const result = parse(String(formData.get(locale)) || 'invalid', errors, {
+							allowTrailingComma: true,
+							disallowComments: false
+						});
+
+						if (errors.length) {
+							throw error(
+								400,
+								`Invalid JSON: ${errors[0].error} for language ${locale} at offset ${errors[0].offset}, length: ${errors[0].length}`
+							);
+						}
+						return [locale, result] as const;
+					})
 				)
 			) as Record<string, LocalesDictionary>;
 

@@ -295,35 +295,56 @@ export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
 export const ORDER_PAGINATION_LIMIT = 50;
 
 export function invoiceNumberVariables(
-	order: Pick<Order, 'number'> & { payments: { id: string }[] },
+	order: Pick<Order, 'number' | 'createdAt'> & { payments: { id: string }[] },
 	payment: Pick<OrderPayment, 'createdAt' | 'paidAt' | 'status'> & {
 		id: string;
 		invoice?: { number: number };
 	}
 ) {
-	const finalInvoice =
-		payment.status === 'paid' &&
-		payment.invoice &&
-		payment.invoice.number !== FAKE_ORDER_INVOICE_NUMBER;
+	const dates = {
+		order: order.createdAt,
+		payment: payment.createdAt,
+		paymentPaid: payment.paidAt,
+		paymentPaidOrCreated: payment.paidAt ?? payment.createdAt
+	};
+
+	function dateVars<T extends string>(
+		prefix: T,
+		date: Date
+	): {
+		[P in
+			| `${T}Year`
+			| `${T}Month`
+			| `${T}Week`
+			| `${T}WeekOfMonth`
+			| `${T}DayOfWeek`
+			| `${T}DayOfMonth`]: string;
+	} {
+		return {
+			[`${prefix}Year`]: date.getFullYear().toString(),
+			[`${prefix}Month`]: String(date.getMonth() + 1).padStart(2, '0'),
+			[`${prefix}Week`]: getWeek(date).toString().padStart(2, '0'),
+			[`${prefix}WeekOfMonth`]: getWeekOfMonth(date).toString(),
+			[`${prefix}DayOfWeek`]: (date.getDay() + 1).toString(),
+			[`${prefix}DayOfMonth`]: date.getDate().toString().padStart(2, '0')
+		} as {
+			[P in
+				| `${T}Year`
+				| `${T}Month`
+				| `${T}Week`
+				| `${T}WeekOfMonth`
+				| `${T}DayOfWeek`
+				| `${T}DayOfMonth`]: string;
+		};
+	}
+
 	return {
 		orderNumber: order.number,
 		paymentIndex: order.payments.findIndex((p) => p.id === payment.id) + 1,
 		invoiceNumber: payment.invoice?.number?.toString(),
-		year: finalInvoice ? payment.paidAt?.getFullYear() : payment.createdAt?.getFullYear(),
-		month: finalInvoice
-			? ((payment.paidAt?.getMonth() ?? 0) + 1).toString().padStart(2, '0')
-			: String((payment.createdAt?.getMonth() ?? 0) + 1).padStart(2, '0'),
-		week: getWeek(finalInvoice ? payment.paidAt ?? new Date() : payment.createdAt ?? new Date())
-			.toString()
-			.padStart(2, '0'),
-		weekOfMonth: getWeekOfMonth(
-			finalInvoice ? payment.paidAt ?? new Date() : payment.createdAt ?? new Date()
-		).toString(),
-		dayOfWeek: (
-			(finalInvoice ? payment.paidAt?.getDay() ?? 0 : payment.createdAt?.getDay() ?? 0) + 1
-		).toString(),
-		dayOfMonth: finalInvoice
-			? payment.paidAt?.getDate().toString().padStart(2, '0')
-			: payment.createdAt?.getDate().toString().padStart(2, '0')
+		...(dates.order && dateVars('order', dates.order)),
+		...(dates.payment && dateVars('payment', dates.payment)),
+		...(dates.paymentPaid && dateVars('paymentPaid', dates.paymentPaid)),
+		...(dates.paymentPaidOrCreated && dateVars('paymentDynamic', dates.paymentPaidOrCreated))
 	};
 }

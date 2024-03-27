@@ -390,6 +390,18 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
+			name="copyOrderEmailsToAdmin"
+			class="form-checkbox"
+			checked={data.copyOrderEmailsToAdmin && !!data.sellerIdentity?.contact.email}
+			disabled={!data.sellerIdentity?.contact.email}
+		/>
+		Copy order emails to {data.sellerIdentity?.contact.email || '[no email address]'} (set in
+		<a href="{data.adminPrefix}/identity" class="body-hyperlink underline">identity</a> section)
+	</label>
+
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
 			name="isMaintenance"
 			class="form-checkbox"
 			checked={data.isMaintenance}
