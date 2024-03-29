@@ -9,7 +9,7 @@
 
 	export let data;
 
-	const { t, locale, textAddress } = useI18n();
+	const { t, locale, textAddress, countryName } = useI18n();
 
 	const finalInvoice = data.payment.status === 'paid';
 	const invoiceNumber = t(
@@ -44,8 +44,15 @@
 	{#if identity.address.street}
 		<p>{identity.address.street}</p>
 	{/if}
-	{#if identity.address.city || identity.address.zip}
-		<p>{identity.address.zip} {identity.address.city}</p>
+	{#if identity.address.city || identity.address.zip || identity.address.country}
+		<p>
+			{#if identity.address.city || identity.address.zip}
+				{identity.address.zip} {identity.address.city}{identity.address.country ? ', ' : ''}
+			{/if}
+			{#if identity.address.country}
+				{countryName(identity.address.country)}
+			{/if}
+		</p>
 	{/if}
 </div>
 
