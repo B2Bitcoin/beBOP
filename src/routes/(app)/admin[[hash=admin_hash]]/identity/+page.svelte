@@ -8,6 +8,8 @@
 	let issuerInfo = id?.invoice?.issuerInfo;
 	let iban = id?.bank?.iban ?? '';
 	let bic = id?.bank?.bic ?? '';
+	let bankAccountHolder = id?.bank?.accountHolder ?? '';
+	let bankAccountHolderAddress = id?.bank?.accountHolderAddress ?? '';
 
 	const { sortedCountryCodes, countryName } = useI18n();
 </script>
@@ -120,6 +122,28 @@
 	</label>
 
 	<h2 class="text-2xl">Bank account</h2>
+
+	<label class="form-label">
+		Account holder name
+		<input
+			type="text"
+			name="bank.accountHolder"
+			class="form-input max-w-[25rem]"
+			maxlength="100"
+			value={bankAccountHolder}
+		/>
+	</label>
+
+	<label class="form-label">
+		Account holder address
+		<input
+			type="text"
+			name="bank.accountHolderAddress"
+			class="form-input max-w-[25rem]"
+			maxlength="500"
+			value={bankAccountHolderAddress}
+		/>
+	</label>
 
 	<label class="form-label">
 		IBAN
