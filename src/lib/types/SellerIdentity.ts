@@ -20,6 +20,8 @@ export interface SellerIdentity {
 	bank?: {
 		iban: string;
 		bic: string;
+		accountHolder?: string;
+		accountHolderAddress?: string;
 	};
 
 	invoice?: {

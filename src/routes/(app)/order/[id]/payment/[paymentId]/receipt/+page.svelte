@@ -263,6 +263,20 @@
 	<div class="mt-4 text-right">
 		<h2 class="text-xl">{t('order.receipt.bankInfo')} :</h2>
 		<table class="ml-auto">
+			{#if identity.bank.accountHolder}
+				<tr>
+					<td class="px-2">{t('order.receipt.accountHolder')}</td>
+					<td>
+						{identity.bank.accountHolder}
+					</td>
+				</tr>
+			{/if}
+			{#if identity.bank.accountHolderAddress}
+				<tr>
+					<td class="px-2">{t('order.receipt.accountHolderAddress')}</td>
+					<td>{identity.bank.accountHolderAddress}</td>
+				</tr>
+			{/if}
 			<tr><td class="px-2">IBAN</td><td>{identity.bank.iban}</td></tr>
 			<tr><td class="px-2">BIC</td><td>{identity.bank.bic}</td></tr>
 		</table>

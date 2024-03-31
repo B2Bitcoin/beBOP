@@ -484,6 +484,8 @@
 			"other": "Payment will be confirmed after {count} confirmations.",
 			"zero": "Payment will be confirmed without waiting for confirmations."
 		},
+		"paymentAccountHolder": "Account holder",
+		"paymentAccountHolderAddress": "Address",
 		"paymentAddress": "Payment address",
 		"paymentAmount": "Payment amount",
 		"paymentBic": "BIC",
@@ -503,6 +505,8 @@
 		},
 		"paymentStatusNpub": "Nostr public address for payment status",
 		"receipt": {
+			"accountHolder": "Account holder",
+			"accountHolderAddress": "Address",
 			"alreadyPaidAmount": "Amount previously paid",
 			"bankInfo": "Bank details",
 			"cancelledOrPending": "This call for payment has not been honored and has expired or been canceled",

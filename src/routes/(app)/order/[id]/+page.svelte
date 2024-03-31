@@ -131,6 +131,22 @@
 												<IconSumupWide class="h-12" />
 											</a>
 										{:else if payment.method === 'bank-transfer'}
+											{#if data.sellerIdentity?.bank?.accountHolder}
+												<p>
+													{t('order.paymentAccountHolder')}:
+													<span class="break-words body-secondaryText break-all">
+														{data.sellerIdentity?.bank?.accountHolder}
+													</span>
+												</p>
+											{/if}
+											{#if data.sellerIdentity?.bank?.accountHolderAddress}
+												<p>
+													{t('order.paymentAccountHolderAddress')}:
+													<span class="break-words body-secondaryText break-all">
+														{data.sellerIdentity?.bank?.accountHolderAddress}
+													</span>
+												</p>
+											{/if}
 											<p>
 												{t('order.paymentIban')}:
 												<code class="break-words body-secondaryText break-all">

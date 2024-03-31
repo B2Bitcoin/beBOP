@@ -53,7 +53,9 @@ export const actions = {
 				bank: z
 					.object({
 						iban: z.string().min(1).max(100).trim(),
-						bic: z.string().min(1).max(100).trim()
+						bic: z.string().min(1).max(100).trim(),
+						accountHolder: z.string().min(1).max(100).trim().optional(),
+						accountHolderAddress: z.string().min(1).max(500).trim().optional()
 					})
 					.optional(),
 				invoice: z
