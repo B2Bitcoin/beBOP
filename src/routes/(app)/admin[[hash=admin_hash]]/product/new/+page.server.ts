@@ -134,6 +134,7 @@ export const actions: Actions = {
 						description: parsed.description.replaceAll('\r', ''),
 						shortDescription: parsed.shortDescription.replaceAll('\r', ''),
 						name: parsed.name,
+						isTicket: parsed.isTicket,
 						price: {
 							currency: parsed.priceCurrency,
 							amount: priceAmount
@@ -268,6 +269,7 @@ export const actions: Actions = {
 					description: parsed.description.replaceAll('\r', ''),
 					shortDescription: parsed.shortDescription.replaceAll('\r', ''),
 					name: parsed.name,
+					isTicket: parsed.isTicket,
 					price: {
 						currency: parsed.priceCurrency,
 						amount: parseFloat(parsed.priceAmount)

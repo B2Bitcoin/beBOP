@@ -39,6 +39,7 @@ import type { ContactForm } from '$lib/types/ContactForm';
 import type { Countdown } from '$lib/types/Countdown';
 import type { Gallery } from '$lib/types/Gallery';
 import type { VatProfile } from '$lib/types/VatProfile';
+import type { Ticket } from '$lib/types/Ticket';
 
 const client = building
 	? (null as unknown as MongoClient)
@@ -89,6 +90,7 @@ const genCollection = () => ({
 	countdowns: db.collection<Countdown>('countdowns'),
 	galleries: db.collection<Gallery>('galleries'),
 	vatProfiles: db.collection<VatProfile>('vatProfiles'),
+	tickets: db.collection<Ticket>('tickets'),
 
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
@@ -138,7 +140,9 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.sessions, { sessionId: 1 }, { unique: true }],
 	[collections.discounts, { endAt: 1 }],
 	[collections.personalInfo, { 'user.**': 1 }],
-	[collections.products, { alias: 1 }, { sparse: true, unique: true }]
+	[collections.products, { alias: 1 }, { sparse: true, unique: true }],
+	[collections.tickets, { orderId: 1 }],
+	[collections.tickets, { productId: 1 }]
 ];
 
 export async function createIndexes() {

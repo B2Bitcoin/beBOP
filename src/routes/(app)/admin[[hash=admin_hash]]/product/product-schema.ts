@@ -43,6 +43,7 @@ export const productBaseSchema = () => ({
 	googleShoppingVisible: z.boolean({ coerce: true }).default(false),
 	eshopBasket: z.boolean({ coerce: true }).default(false),
 	retailBasket: z.boolean({ coerce: true }).default(false),
+	isTicket: z.boolean({ coerce: true }).default(false),
 	depositPercentage: z.number({ coerce: true }).int().min(0).max(100).optional(),
 	enforceDeposit: z.boolean({ coerce: true }).default(false),
 	vatProfileId: zodObjectId().or(z.literal('')).optional(),
