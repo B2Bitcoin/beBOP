@@ -613,11 +613,12 @@
 			"deposit": "On deposit",
 			"digitalResource": "Digital Resource",
 			"donation": "Donation",
-			"phisical": "Physical",
+			"physical": "Physical",
 			"preorder": "Preorder",
 			"preview": "Preview",
 			"resource": "Resource",
-			"subscription": "Subscription"
+			"subscription": "Subscription",
+			"ticket": "Ticket"
 		},
 		"vatExcluded": "VAT excluded"
 	},

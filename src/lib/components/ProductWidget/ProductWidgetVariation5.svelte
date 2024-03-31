@@ -1,26 +1,14 @@
 <script lang="ts">
-	import type { Product } from '$lib/types/Product';
 	import type { Picture } from '$lib/types/Picture';
 	import PictureComponent from '../Picture.svelte';
 
 	import AddToCart from '../AddToCart.svelte';
+	import type { ProductWidgetProduct } from './ProductWidgetProduct';
 
 	let className = '';
 	export { className as class };
 
-	export let product: Pick<
-		Product,
-		| '_id'
-		| 'name'
-		| 'price'
-		| 'shortDescription'
-		| 'preorder'
-		| 'availableDate'
-		| 'shipping'
-		| 'type'
-		| 'actionSettings'
-		| 'stock'
-	>;
+	export let product: ProductWidgetProduct;
 	export let pictures: Picture[] | [];
 	export let canAddToCart: boolean;
 	let pictureId = 0;

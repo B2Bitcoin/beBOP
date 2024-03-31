@@ -6,8 +6,12 @@
 	import IconDownTo from './icons/IconDownTo.svelte';
 	import IconHandHeart from './icons/IconHandHeart.svelte';
 	import IconRotate from './icons/IconRotate.svelte';
+	import IconQRCode from '~icons/ant-design/qrcode-outlined';
 
-	export let product: Pick<Product, 'preorder' | 'availableDate' | 'type' | 'shipping'>;
+	export let product: Pick<
+		Product,
+		'preorder' | 'availableDate' | 'type' | 'shipping' | 'isTicket'
+	>;
 	export let hasDigitalFiles: boolean;
 	export let depositPercentage: number | undefined = undefined;
 
@@ -39,7 +43,7 @@
 	</span>
 {/if}
 
-{#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping}
+{#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping && !product.isTicket}
 	{#if product.type === 'resource' && !hasDigitalFiles}
 		<span
 			class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200 whitespace-nowrap"
@@ -56,6 +60,15 @@
 	{/if}
 {/if}
 
+{#if product.isTicket}
+	<span
+		class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200 whitespace-nowrap"
+	>
+		<IconQRCode />
+		{t('product.type.ticket')}
+	</span>
+{/if}
+
 {#if product.type === 'donation'}
 	<span
 		class="{baseClasses} {className} text-rosebudcherry-700 bg-rosebudcherry-200 whitespace-nowrap"
@@ -70,7 +83,7 @@
 		class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200 whitespace-nowrap hidden"
 	>
 		<IconBoxTaped />
-		{t('product.type.phisical')}
+		{t('product.type.physical')}
 	</span>
 {/if}
 

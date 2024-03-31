@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Product } from '$lib/types/Product';
 	import type { Picture } from '$lib/types/Picture';
 	import ProductWidgetVariation1 from './ProductWidget/ProductWidgetVariation1.svelte';
 	import ProductWidgetVariation2 from './ProductWidget/ProductWidgetVariation2.svelte';
@@ -10,21 +9,10 @@
 	import { typedInclude } from '$lib/utils/typedIncludes';
 	import { typedKeys } from '$lib/utils/typedKeys';
 	import ProductWidgetVariation0 from './ProductWidget/ProductWidgetVariation0.svelte';
+	import type { ProductWidgetProduct } from './ProductWidget/ProductWidgetProduct';
 
 	export let pictures: Picture[] | [];
-	export let product: Pick<
-		Product,
-		| '_id'
-		| 'name'
-		| 'price'
-		| 'shortDescription'
-		| 'preorder'
-		| 'availableDate'
-		| 'shipping'
-		| 'type'
-		| 'actionSettings'
-		| 'stock'
-	>;
+	export let product: ProductWidgetProduct;
 	export let hasDigitalFiles: boolean;
 	export let canBuy: boolean;
 

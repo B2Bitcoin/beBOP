@@ -22,6 +22,7 @@ export const TEST_DIGITAL_PRODUCT = {
 		total: TEST_PRODUCT_STOCK,
 		reserved: 0
 	},
+	isTicket: false,
 	displayShortDescription: true,
 	payWhatYouWant: false,
 	createdAt: new Date(),
@@ -79,6 +80,7 @@ export const TEST_PHYSICAL_PRODUCT = {
 			canBeAddedToBasket: true
 		}
 	},
+	isTicket: false,
 	vatProfileId: undefined
 } satisfies Product;
 
@@ -113,5 +115,6 @@ export const TEST_DIGITAL_PRODUCT_UNLIMITED = {
 			visible: true,
 			canBeAddedToBasket: true
 		}
-	}
+	},
+	isTicket: false
 } satisfies Product;

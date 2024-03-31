@@ -1,26 +1,14 @@
 <script lang="ts">
-	import type { Product } from '$lib/types/Product';
 	import type { Picture } from '$lib/types/Picture';
 	import PictureComponent from '../Picture.svelte';
 	import PriceTag from '../PriceTag.svelte';
 	import ProductType from '../ProductType.svelte';
 	import AddToCart from '../AddToCart.svelte';
 	import { useI18n } from '$lib/i18n';
+	import type { ProductWidgetProduct } from './ProductWidgetProduct';
 
 	export let pictures: Picture[] | [];
-	export let product: Pick<
-		Product,
-		| '_id'
-		| 'name'
-		| 'price'
-		| 'shortDescription'
-		| 'preorder'
-		| 'availableDate'
-		| 'shipping'
-		| 'type'
-		| 'actionSettings'
-		| 'stock'
-	>;
+	export let product: ProductWidgetProduct;
 	export let hasDigitalFiles: boolean;
 	export let canAddToCart: boolean;
 

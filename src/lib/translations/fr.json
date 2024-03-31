@@ -613,11 +613,12 @@
 			"deposit": "Sur acompte",
 			"digitalResource": "Ressource numérique",
 			"donation": "Don",
-			"phisical": "Physique",
+			"physical": "Physique",
 			"preorder": "Pré-commande",
 			"preview": "Aperçu",
 			"resource": "Ressource",
-			"subscription": "Abonnement"
+			"subscription": "Abonnement",
+			"ticket": "Ticket"
 		},
 		"vatExcluded": "Hors TVA"
 	},

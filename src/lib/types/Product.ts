@@ -41,7 +41,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 	deliveryFees?: DeliveryFees;
 	requireSpecificDeliveryFee?: boolean;
 	applyDeliveryFeesOnlyOnce?: boolean;
-	isTicket?: boolean;
+	isTicket: boolean;
 	availableDate?: Date;
 	preorder: boolean;
 	displayShortDescription: boolean;
