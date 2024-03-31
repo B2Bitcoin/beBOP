@@ -10,6 +10,7 @@ import { sumCurrency } from '$lib/utils/sumCurrency';
 import type { LanguageKey } from '$lib/translations';
 import type { User } from './User';
 import { getWeek, getWeekOfMonth } from 'date-fns';
+import type { Ticket } from './Ticket';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -144,6 +145,7 @@ export interface Order extends Timestamps {
 			};
 		};
 		vatRate: number;
+		tickets?: Array<Ticket['_id']>;
 	}>;
 
 	shippingAddress?: OrderAddress;

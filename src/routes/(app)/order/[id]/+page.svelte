@@ -16,6 +16,7 @@
 	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { bitcoinPaymentQrCodeString } from '$lib/utils/bitcoinPaymentQr.js';
+	import Picture from '$lib/components/Picture.svelte';
 
 	let currentDate = new Date();
 	export let data;
@@ -368,6 +369,27 @@
 				<p class="font-bold">{t('order.paymentStatus.canceledTemplate')}</p>
 			{/if}
 
+			{#if data.order.items.some((item) => item.tickets?.length)}
+				<h2 class="text-2xl">{t('order.tickets.title')}</h2>
+				{#each data.order.items as item}
+					{#if item.tickets?.length}
+						<h3 class="text-xl flex items-center gap-2">
+							<a class="contents" href="/product/{item.product._id}">
+								{#if item.picture}
+									<Picture picture={item.picture} class="w-8 h-8 object-cover rounded" />
+								{/if}
+								{item.product.name}
+							</a>
+						</h3>
+
+						{#each item.tickets as ticket, i}
+							<a href="/ticket/{ticket}" class="body-hyperlink hover:underline" target="_blank">
+								{t('order.tickets.ticket', { number: i + 1 })}
+							</a>
+						{/each}
+					{/if}
+				{/each}
+			{/if}
 			{#if data.digitalFiles.length}
 				<h2 class="text-2xl">{t('product.digitalFiles.title')}</h2>
 				<ul>

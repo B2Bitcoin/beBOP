@@ -551,6 +551,10 @@
 				"title": "Order fully paid, outstanding amount zero"
 			}
 		},
+		"tickets": {
+			"ticket": "Ticket #{number}",
+			"title": "Tickets"
+		},
 		"timeRemaining": "Time remaining: {minutes} minutes",
 		"vatFree": "This order is free of VAT. Reason: {reason}"
 	},

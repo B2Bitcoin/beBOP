@@ -551,6 +551,10 @@
 				"title": "Commande entièrement payée, montant restant dû zéro"
 			}
 		},
+		"tickets": {
+			"ticket": "Ticket #{number}",
+			"title": "Tickets"
+		},
 		"timeRemaining": "Temps restant avant expiration du paiement dans nos systèmes : {minutes} minutes",
 		"vatFree": "Cette commande n'est pas assujettie TVA. \nMotif : {reason}"
 	},

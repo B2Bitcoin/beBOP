@@ -105,7 +105,8 @@ export async function fetchOrderForUser(orderId: string) {
 				(digitalFile) => digitalFile.productId === item.product._id
 			),
 			currencySnapshot: item.currencySnapshot,
-			depositPercentage: item.depositPercentage
+			depositPercentage: item.depositPercentage,
+			tickets: item.tickets
 		})),
 		shippingPrice: order.shippingPrice && {
 			amount: order.shippingPrice.amount,
