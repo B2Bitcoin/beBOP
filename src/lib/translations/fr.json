@@ -438,6 +438,7 @@
 			"cta": "Envoyer un appel à paiement",
 			"currency": "Monnaie de paiement"
 		},
+		"backToOrder": "<< Retour à la commande",
 		"clickQR": "Cliquez sur le QR code pour payer avec votre portefeuille",
 		"confirmCancel": "Êtes-vous sûr ? \nS'il s'agit de votre seul paiement en attente et qu'il n'y a aucun paiement payé sur la commande, la commande sera annulée. \nEn cas d'erreur, créez d'abord un paiement, puis supprimez celui-ci.",
 		"copyAddress": "Copier l'adresse de paiement",
@@ -552,6 +553,8 @@
 			}
 		},
 		"tickets": {
+			"printAll": "Tout imprimer",
+			"seeAll": "Tout voir",
 			"ticket": "Ticket #{number}",
 			"title": "Tickets"
 		},

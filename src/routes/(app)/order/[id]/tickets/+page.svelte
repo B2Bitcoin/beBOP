@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import Picture from '$lib/components/Picture.svelte';
 	import ProductTypeTicket from '$lib/components/ProductType/ProductTypeTicket.svelte';
 	import { useI18n } from '$lib/i18n';
@@ -14,13 +15,17 @@
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 flex flex-col gap-4">
+	<a href="/order/{$page.params.id}" class="body-hyperlink hover:underline print:hidden">
+		{t('order.backToOrder')}
+	</a>
+
 	<h1 class="text-3xl flex gap-2 items-center print:hidden">{t('order.tickets.title')}</h1>
 
 	<button class="print:hidden self-start body-hyperlink" on:click={() => window.print()}>
 		{t('ticket.print')}
 	</button>
 
-	{#each data.tickets as ticket}
+	{#each data.tickets as ticket, i}
 		<article class="break-after-page flex flex-col gap-4" style="page-break-after: always;">
 			<h1 class="text-2xl print:text-3xl flex gap-2 items-center">
 				{#if pictureByProductId[ticket.productId]}
@@ -29,7 +34,7 @@
 						class="w-10 h-10 object-cover rounded"
 					/>
 				{/if}
-				{productById[ticket.productId]?.name}
+				{productById[ticket.productId]?.name} #{i + 1}
 			</h1>
 			<ProductTypeTicket class="hidden print:flex self-start" />
 			<p>

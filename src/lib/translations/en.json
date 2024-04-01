@@ -438,6 +438,7 @@
 			"cta": "Send a call for payment",
 			"currency": "Payment currency"
 		},
+		"backToOrder": "<< Back to order",
 		"clickQR": "Click on the QR code to pay with your wallet",
 		"confirmCancel": "Are you sure ? If this is your only pending payment and there is no paid payment on the order, the order will be cancelled. In case of mistake, first create a payment, then delete this one.",
 		"copyAddress": "Copy payment address",
@@ -552,6 +553,8 @@
 			}
 		},
 		"tickets": {
+			"printAll": "Print all",
+			"seeAll": "See all",
 			"ticket": "Ticket #{number}",
 			"title": "Tickets"
 		},
