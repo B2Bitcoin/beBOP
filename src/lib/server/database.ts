@@ -1,4 +1,9 @@
-import { MONGODB_URL, MONGODB_DB, MONGODB_IP_FAMILY } from '$env/static/private';
+import {
+	MONGODB_URL,
+	MONGODB_DB,
+	MONGODB_IP_FAMILY,
+	MONGODB_DIRECT_CONNECTION
+} from '$env/static/private';
 import {
 	MongoClient,
 	ObjectId,
@@ -46,7 +51,7 @@ const client = building
 	: new MongoClient(
 			env.VITEST ? env.MONGODB_TEST_URL || 'mongodb://127.0.0.1:27017' : MONGODB_URL,
 			{
-				directConnection: !!env.VITEST,
+				directConnection: !!env.VITEST || MONGODB_DIRECT_CONNECTION === 'true',
 				...(MONGODB_IP_FAMILY === '4'
 					? { family: 4 }
 					: MONGODB_IP_FAMILY === '6'
@@ -103,6 +108,7 @@ export const collections = building
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?]> = [
 	[collections.pictures, { productId: 1 }],
+	[collections.products, { stock: 1 }, { sparse: true }],
 	[collections.locks, { updatedAt: 1 }, { expireAfterSeconds: 60 }],
 	[collections.carts, { 'user.**': 1 }],
 	[collections.carts, { 'items.productId': 1 }],
@@ -115,6 +121,8 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.orders, { 'payments.invoice.number': 1 }, { unique: true, sparse: true }],
 	[collections.orders, { 'payments.status': 1 }],
 	[collections.digitalFiles, { productId: 1 }],
+	[collections.pendingDigitalFiles, { createdAt: 1 }],
+	[collections.pendingPictures, { createdAt: 1 }],
 	[collections.nostrReceivedMessages, { processedAt: 1 }],
 	[collections.nostrReceivedMessages, { createdAt: -1 }],
 	[collections.nostrNotifications, { dest: 1 }],
