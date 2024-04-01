@@ -383,7 +383,7 @@
 						</h3>
 
 						{#each item.tickets as ticket, i}
-							<a href="/ticket/{ticket}" class="body-hyperlink hover:underline" target="_blank">
+							<a href="/ticket/{ticket}" class="body-hyperlink hover:underline">
 								{t('order.tickets.ticket', { number: i + 1 })}
 							</a>
 						{/each}

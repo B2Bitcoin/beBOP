@@ -641,6 +641,10 @@
 			"expired": "expiré"
 		}
 	},
+	"ticket": {
+		"print": "Imprimer",
+		"scanned": "Ce billet a été scanné et n'est plus valable"
+	},
 	"widget": {
 		"specification": "Caractéristiques techniques"
 	}

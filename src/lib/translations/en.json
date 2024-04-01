@@ -641,6 +641,10 @@
 			"expired": "expired"
 		}
 	},
+	"ticket": {
+		"print": "Print",
+		"scanned": "This ticket has been scanned and is not valid anymore"
+	},
 	"widget": {
 		"specification": "Specifications"
 	}

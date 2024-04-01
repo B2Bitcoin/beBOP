@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n';
 	import { isPreorder, type Product } from '$lib/types/Product';
-	import IconBoxTaped from './icons/IconBoxTaped.svelte';
-	import IconDollar from './icons/IconDollar.svelte';
-	import IconDownTo from './icons/IconDownTo.svelte';
-	import IconHandHeart from './icons/IconHandHeart.svelte';
-	import IconRotate from './icons/IconRotate.svelte';
-	import IconQRCode from '~icons/ant-design/qrcode-outlined';
+	import ProductTypeDeposit from './ProductType/ProductTypeDeposit.svelte';
+	import ProductTypeDigitalResource from './ProductType/ProductTypeDigitalResource.svelte';
+	import ProductTypeDonation from './ProductType/ProductTypeDonation.svelte';
+	import ProductTypePhysical from './ProductType/ProductTypePhysical.svelte';
+	import ProductTypePreorder from './ProductType/ProductTypePreorder.svelte';
+	import ProductTypePreview from './ProductType/ProductTypePreview.svelte';
+	import ProductTypeResource from './ProductType/ProductTypeResource.svelte';
+	import ProductTypeSubscription from './ProductType/ProductTypeSubscription.svelte';
+	import ProductTypeTicket from './ProductType/ProductTypeTicket.svelte';
 
 	export let product: Pick<
 		Product,
@@ -17,79 +20,39 @@
 
 	let className = '';
 	export { className as class };
-
-	const { t } = useI18n();
-
-	$: baseClasses =
-		'pl-1 pr-3 flex gap-2 items-center uppercase ' +
-		(className.includes('rounded') ? '' : 'rounded-full');
 </script>
 
 {#if isPreorder(product.availableDate, product.preorder)}
-	<span class="{baseClasses} {className} text-blue-500 bg-blue-200 whitespace-nowrap">
-		<IconDollar />
-		{t('product.type.preorder')}
-	</span>
+	<ProductTypePreorder class={className} />
 {/if}
 {#if depositPercentage !== undefined && depositPercentage !== null && depositPercentage < 100}
-	<span class="{baseClasses} {className} text-blue-500 bg-blue-200 whitespace-nowrap">
-		<IconDollar />
-		{t('product.type.deposit')}
-	</span>
+	<ProductTypeDeposit class={className} />
 {/if}
 {#if !product.preorder && product.availableDate && product.availableDate > new Date()}
-	<span class="{baseClasses} {className} text-yellow-500 bg-yellow-100 whitespace-nowrap">
-		{t('product.type.preview')}
-	</span>
+	<ProductTypePreview class={className} />
 {/if}
 
 {#if !(product.preorder && product.availableDate && product.availableDate > new Date()) && !product.shipping && !product.isTicket}
 	{#if product.type === 'resource' && !hasDigitalFiles}
-		<span
-			class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200 whitespace-nowrap"
-		>
-			<IconDownTo />
-			{t('product.type.resource')}
-		</span>
+		<ProductTypeResource class={className} />
 	{/if}
 	{#if product.type === 'resource' && hasDigitalFiles}
-		<span class="{baseClasses} {className} text-green-700 bg-green-200 whitespace-nowrap">
-			<IconDownTo />
-			{t('product.type.digitalResource')}
-		</span>
+		<ProductTypeDigitalResource class={className} />
 	{/if}
 {/if}
 
 {#if product.isTicket}
-	<span
-		class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200 whitespace-nowrap"
-	>
-		<IconQRCode />
-		{t('product.type.ticket')}
-	</span>
+	<ProductTypeTicket class={className} />
 {/if}
 
 {#if product.type === 'donation'}
-	<span
-		class="{baseClasses} {className} text-rosebudcherry-700 bg-rosebudcherry-200 whitespace-nowrap"
-	>
-		<IconHandHeart />
-		{t('product.type.donation')}
-	</span>
+	<ProductTypeDonation class={className} />
 {/if}
 
 {#if product.shipping}
-	<span
-		class="{baseClasses} {className} text-roseofsharon-700 bg-roseofsharon-200 whitespace-nowrap hidden"
-	>
-		<IconBoxTaped />
-		{t('product.type.physical')}
-	</span>
+	<ProductTypePhysical class={className} />
 {/if}
 
 {#if product.type === 'subscription'}
-	<span class="{baseClasses} {className} text-jagger-700 bg-jagger-200 whitespace-nowrap">
-		<IconRotate />
-		{t('product.type.subscription')}
-	</span>
+	<ProductTypeSubscription class={className} />
 {/if}
