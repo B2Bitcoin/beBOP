@@ -145,7 +145,7 @@ export interface Order extends Timestamps {
 			};
 		};
 		vatRate: number;
-		tickets?: Array<Ticket['_id']>;
+		tickets?: Array<Ticket['ticketId']>;
 	}>;
 
 	shippingAddress?: OrderAddress;

@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 export async function load(event) {
 	const ticketId = event.params.id;
 
-	const ticket = await collections.tickets.findOne({ _id: ticketId });
+	const ticket = await collections.tickets.findOne({ ticketId });
 
 	if (!ticket) {
 		throw error(404, 'Ticket not found');
@@ -35,7 +35,7 @@ export async function load(event) {
 
 	return {
 		ticket: {
-			_id: ticket._id,
+			ticketId: ticket.ticketId,
 			createdAt: ticket.createdAt,
 			scanned: ticket.scanned && {
 				at: ticket.scanned.at

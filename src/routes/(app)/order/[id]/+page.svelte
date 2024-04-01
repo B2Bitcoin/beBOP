@@ -371,12 +371,15 @@
 
 			{#if data.order.items.some((item) => item.tickets?.length)}
 				<h2 class="text-2xl">{t('order.tickets.title')}</h2>
+
+				<button class="body-hyperlink self-start">Tout imprimer</button>
+
 				{#each data.order.items as item}
 					{#if item.tickets?.length}
 						<h3 class="text-xl flex items-center gap-2">
 							<a class="contents" href="/product/{item.product._id}">
 								{#if item.picture}
-									<Picture picture={item.picture} class="w-8 h-8 object-cover rounded" />
+									<Picture picture={item.picture} class="w-6 h-6 object-cover rounded" />
 								{/if}
 								{item.product.name}
 							</a>

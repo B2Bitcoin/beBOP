@@ -312,7 +312,8 @@ export async function onOrderPayment(
 			for (const item of order.items) {
 				if (item.product.isTicket) {
 					const tickets = Array.from({ length: item.quantity }).map(() => ({
-						_id: crypto.randomUUID(),
+						_id: new ObjectId(),
+						ticketId: crypto.randomUUID(),
 						createdAt: new Date(),
 						updatedAt: new Date(),
 						orderId: order._id,
@@ -327,7 +328,7 @@ export async function onOrderPayment(
 						},
 						{
 							$set: {
-								[`items.${i}.tickets`]: tickets.map((ticket) => ticket._id)
+								[`items.${i}.tickets`]: tickets.map((ticket) => ticket.ticketId)
 							}
 						},
 						{ session }

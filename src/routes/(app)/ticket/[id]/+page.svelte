@@ -22,7 +22,7 @@
 			time: new Date(data.ticket.createdAt).toLocaleTimeString()
 		})}
 	</p>
-	<img src="/ticket/{data.ticket._id}/qrcode" alt="QR code" class="h-96 w-96" />
+	<img src="/ticket/{data.ticket.ticketId}/qrcode" alt="QR code" class="h-96 w-96" />
 
 	<button class="print:hidden self-start body-hyperlink" on:click={() => window.print()}>
 		{t('ticket.print')}

@@ -142,7 +142,8 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.personalInfo, { 'user.**': 1 }],
 	[collections.products, { alias: 1 }, { sparse: true, unique: true }],
 	[collections.tickets, { orderId: 1 }],
-	[collections.tickets, { productId: 1 }]
+	[collections.tickets, { productId: 1 }],
+	[collections.tickets, { ticketId: 1 }, { unique: true }]
 ];
 
 export async function createIndexes() {
