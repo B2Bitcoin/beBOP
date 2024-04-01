@@ -122,7 +122,7 @@
 	{#if $page.data.layoutReset}
 		<slot />
 	{:else}
-		<header class="header items-center flex h-[100px]">
+		<header class="header items-center flex h-[100px] print:hidden">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
 				<a class="flex items-center gap-4" href="/">
 					{#if data.logoPicture}
@@ -163,7 +163,7 @@
 		{#if topMenuOpen}
 			<nav
 				transition:slide
-				class="header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
+				class="print:hidden header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
 			>
 				{#each data.links.topbar as link}
 					<a
@@ -175,7 +175,7 @@
 				{/each}
 			</nav>
 		{/if}
-		<header class="navbar h-[66px] items-center flex">
+		<header class="navbar h-[66px] items-center flex print:hidden">
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 				<nav class="flex gap-6 font-light items-center">
 					<button
@@ -448,7 +448,7 @@
 		{#if navMenuOpen}
 			<nav
 				transition:slide
-				class="bg-gray-240 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
+				class="bg-gray-240 print:hidden font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 			>
 				{#each data.links.navbar as link}
 					<a class="py-2 hover:underline" data-sveltekit-preload-data="off" href={link.href}
@@ -472,7 +472,7 @@
 			</div>
 		{/if}
 
-		<footer class="footer h-auto items-center flex">
+		<footer class="footer h-auto items-center flex print:hidden">
 			<div
 				class="mx-auto max-w-7xl px-6 py-6 flex items-start justify-between gap-2 gap-y-8 w-full flex-wrap"
 			>

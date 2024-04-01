@@ -642,6 +642,7 @@
 		}
 	},
 	"ticket": {
+		"boughtAt": "Bought {date} at {time}",
 		"print": "Print",
 		"scanned": "This ticket has been scanned and is not valid anymore"
 	},

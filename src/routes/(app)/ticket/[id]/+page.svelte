@@ -16,9 +16,17 @@
 		{data.product.name}
 	</h1>
 	<ProductTypeTicket class="self-start" />
+	<p>
+		{t('ticket.boughtAt', {
+			date: new Date(data.ticket.createdAt).toLocaleDateString(),
+			time: new Date(data.ticket.createdAt).toLocaleTimeString()
+		})}
+	</p>
 	<img src="/ticket/{data.ticket._id}/qrcode" alt="QR code" class="h-96 w-96" />
 
-	<button class="self-start body-hyperlink">{t('ticket.print')}</button>
+	<button class="print:hidden self-start body-hyperlink" on:click={() => window.print()}>
+		{t('ticket.print')}
+	</button>
 
 	{#if data.ticket.scanned}
 		<p>{t('ticket.scanned')}</p>

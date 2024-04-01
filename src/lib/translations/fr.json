@@ -642,6 +642,7 @@
 		}
 	},
 	"ticket": {
+		"boughtAt": "Acheté le {date} à {time}",
 		"print": "Imprimer",
 		"scanned": "Ce billet a été scanné et n'est plus valable"
 	},

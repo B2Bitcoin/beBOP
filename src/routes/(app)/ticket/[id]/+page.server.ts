@@ -36,6 +36,7 @@ export async function load(event) {
 	return {
 		ticket: {
 			_id: ticket._id,
+			createdAt: ticket.createdAt,
 			scanned: ticket.scanned && {
 				at: ticket.scanned.at
 			}

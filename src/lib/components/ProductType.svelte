@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { useI18n } from '$lib/i18n';
 	import { isPreorder, type Product } from '$lib/types/Product';
 	import ProductTypeDeposit from './ProductType/ProductTypeDeposit.svelte';
 	import ProductTypeDigitalResource from './ProductType/ProductTypeDigitalResource.svelte';
