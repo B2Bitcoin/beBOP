@@ -48,6 +48,7 @@
 		preorder: false,
 		name: '',
 		shipping: false,
+		isTicket: false,
 		price: {
 			amount: 0,
 			currency: $currencies.priceReference
@@ -210,32 +211,50 @@
 			/>
 		</label>
 
-		<label class="form-label" class:text-gray-450={!isNew}>
-			Slug
+		<div class="gap-4 flex flex-col md:flex-row">
+			<label class="form-label w-full" class:text-gray-450={!isNew}>
+				Slug
 
-			<input
+				<input
+					class="form-input"
+					class:text-gray-450={!isNew}
+					type="text"
+					name="slug"
+					placeholder="Slug"
+					bind:value={product._id}
+					title="Only lowercase letters, numbers and dashes are allowed"
+					required
+					disabled={!isNew}
+				/>
+			</label>
+			<label class="form-label w-full">
+				Alias
+				<input
+					class="form-input"
+					type="text"
+					name="alias"
+					placeholder="alias"
+					step="any"
+					value={duplicateFromId ? '' : product.alias?.[1] ?? ''}
+				/>
+			</label>
+		</div>
+
+		<label class:text-gray-450={!isNew} class="form-label">
+			Type
+			<select
 				class="form-input"
 				class:text-gray-450={!isNew}
-				type="text"
-				name="slug"
-				placeholder="Slug"
-				bind:value={product._id}
-				title="Only lowercase letters, numbers and dashes are allowed"
-				required
 				disabled={!isNew}
-			/>
+				value={product.type}
+				name="type"
+			>
+				{#each ['resource', 'subscription', 'donation'] as type}
+					<option value={type}>{upperFirst(type)}</option>
+				{/each}
+			</select>
 		</label>
-		<label class="w-full">
-			alias
-			<input
-				class="form-input"
-				type="text"
-				name="alias"
-				placeholder="alias"
-				step="any"
-				value={duplicateFromId ? '' : product.alias?.[1] ?? ''}
-			/>
-		</label>
+
 		<div class="gap-4 flex flex-col md:flex-row">
 			<label class="w-full">
 				Price amount
@@ -463,20 +482,6 @@
 				})) ?? []}
 			/>
 		</label>
-		<label class:text-gray-450={!isNew} class="form-label">
-			Type
-			<select
-				class="form-input"
-				class:text-gray-450={!isNew}
-				disabled={!isNew}
-				value={product.type}
-				name="type"
-			>
-				{#each ['resource', 'subscription', 'donation'] as type}
-					<option value={type}>{upperFirst(type)}</option>
-				{/each}
-			</select>
-		</label>
 
 		{#if product.type === 'resource'}
 			<div class="flex flex-wrap gap-4">
@@ -556,6 +561,17 @@
 		{/if}
 
 		{#if product.type === 'resource'}
+			<h3 class="text-xl">Ticket</h3>
+			<label class="checkbox-label">
+				<input
+					class="form-checkbox"
+					type="checkbox"
+					name="isTicket"
+					bind:checked={product.isTicket}
+				/>
+				The product is a ticket (e.g. for an event)
+			</label>
+
 			<h3 class="text-xl">Stock</h3>
 
 			<label class="checkbox-label">
@@ -707,8 +723,12 @@
 					<input type="text" name="cta[{i}].href" class="form-input" value={link.href} />
 				</label>
 				<label class="checkbox-label">
-					<input type="checkbox" name="cta[{i}].fallback" bind:checked={link.fallback} /> Show only if
-					Add to cart / Order button aren't available
+					<input
+						type="checkbox"
+						class="form-checkbox"
+						name="cta[{i}].fallback"
+						bind:checked={link.fallback}
+					/> Show only if Add to cart / Order button aren't available
 				</label>
 			</div>
 		{/each}

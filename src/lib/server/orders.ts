@@ -307,6 +307,37 @@ export async function onOrderPayment(
 			}
 			//#endregion
 
+			//#region tickets
+			let i = 0;
+			for (const item of order.items) {
+				if (item.product.isTicket) {
+					const tickets = Array.from({ length: item.quantity }).map(() => ({
+						_id: new ObjectId(),
+						ticketId: crypto.randomUUID(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
+						orderId: order._id,
+						productId: item.product._id,
+						user: order.user
+					}));
+
+					await collections.tickets.insertMany(tickets, { session });
+					await collections.orders.updateOne(
+						{
+							_id: order._id
+						},
+						{
+							$set: {
+								[`items.${i}.tickets`]: tickets.map((ticket) => ticket.ticketId)
+							}
+						},
+						{ session }
+					);
+				}
+				i++;
+			}
+			//#endregion
+
 			// Update product stock in DB
 			for (const item of order.items.filter((item) => item.product.stock)) {
 				await collections.products.updateOne(

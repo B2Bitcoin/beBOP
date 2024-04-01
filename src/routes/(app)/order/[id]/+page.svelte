@@ -16,6 +16,7 @@
 	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { bitcoinPaymentQrCodeString } from '$lib/utils/bitcoinPaymentQr.js';
+	import Picture from '$lib/components/Picture.svelte';
 
 	let currentDate = new Date();
 	export let data;
@@ -48,6 +49,8 @@
 	let receiptReady: Record<string, boolean> = Object.fromEntries(
 		data.order.payments.map((payment) => [payment.id, false])
 	);
+	let ticketIframe: HTMLIFrameElement | null = null;
+	let ticketReady = false;
 
 	$: remainingAmount = orderAmountWithNoPaymentsCreated(data.order);
 	let disableInfoChange = true;
@@ -56,6 +59,9 @@
 			event.preventDefault();
 		}
 	}
+
+	let tickets = data.order.items.flatMap((item) => item.tickets ?? []);
+	let ticketNumbers = Object.fromEntries(tickets.map((ticket, i) => [ticket, i + 1]));
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -368,6 +374,50 @@
 				<p class="font-bold">{t('order.paymentStatus.canceledTemplate')}</p>
 			{/if}
 
+			{#if data.order.items.some((item) => item.tickets?.length)}
+				<h2 class="text-2xl">{t('order.tickets.title')}</h2>
+
+				<iframe
+					src="/order/{data.order._id}/tickets"
+					style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+					title=""
+					on:load={() => (ticketReady = true)}
+					bind:this={ticketIframe}
+				/>
+
+				<p>
+					<button
+						class="body-hyperlink self-start"
+						disabled={!ticketReady}
+						on:click={() => ticketIframe?.contentWindow?.print()}
+					>
+						{t('order.tickets.printAll')}
+					</button>
+					-
+					<a href="/order/{data.order._id}/tickets" class="body-hyperlink hover:underline">
+						{t('order.tickets.seeAll')}
+					</a>
+				</p>
+
+				{#each data.order.items as item}
+					{#if item.tickets?.length}
+						<h3 class="text-xl flex items-center gap-2">
+							<a class="contents" href="/product/{item.product._id}">
+								{#if item.picture}
+									<Picture picture={item.picture} class="w-6 h-6 object-cover rounded" />
+								{/if}
+								{item.product.name}
+							</a>
+						</h3>
+
+						{#each item.tickets as ticket}
+							<a href="/ticket/{ticket}" class="body-hyperlink hover:underline">
+								{t('order.tickets.ticket', { number: ticketNumbers[ticket] })}
+							</a>
+						{/each}
+					{/if}
+				{/each}
+			{/if}
 			{#if data.digitalFiles.length}
 				<h2 class="text-2xl">{t('product.digitalFiles.title')}</h2>
 				<ul>

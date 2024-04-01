@@ -95,7 +95,8 @@ export async function fetchOrderForUser(orderId: string) {
 				preorder: item.product.preorder,
 				availableDate: item.product.availableDate,
 				shipping: item.product.shipping,
-				paymentMethods: item.product.paymentMethods
+				paymentMethods: item.product.paymentMethods,
+				isTicket: item.product.isTicket
 			},
 			vatRate: item.vatRate,
 			...(item.customPrice && { customPrice: item.customPrice }),
@@ -104,7 +105,8 @@ export async function fetchOrderForUser(orderId: string) {
 				(digitalFile) => digitalFile.productId === item.product._id
 			),
 			currencySnapshot: item.currencySnapshot,
-			depositPercentage: item.depositPercentage
+			depositPercentage: item.depositPercentage,
+			tickets: item.tickets
 		})),
 		shippingPrice: order.shippingPrice && {
 			amount: order.shippingPrice.amount,

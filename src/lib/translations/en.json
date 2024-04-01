@@ -438,6 +438,7 @@
 			"cta": "Send a call for payment",
 			"currency": "Payment currency"
 		},
+		"backToOrder": "<< Back to order",
 		"clickQR": "Click on the QR code to pay with your wallet",
 		"confirmCancel": "Are you sure ? If this is your only pending payment and there is no paid payment on the order, the order will be cancelled. In case of mistake, first create a payment, then delete this one.",
 		"copyAddress": "Copy payment address",
@@ -551,6 +552,12 @@
 				"title": "Order fully paid, outstanding amount zero"
 			}
 		},
+		"tickets": {
+			"printAll": "Print all",
+			"seeAll": "See all",
+			"ticket": "Ticket #{number}",
+			"title": "Tickets"
+		},
 		"timeRemaining": "Time remaining: {minutes} minutes",
 		"vatFree": "This order is free of VAT. Reason: {reason}"
 	},
@@ -613,11 +620,12 @@
 			"deposit": "On deposit",
 			"digitalResource": "Digital Resource",
 			"donation": "Donation",
-			"phisical": "Physical",
+			"physical": "Physical",
 			"preorder": "Preorder",
 			"preview": "Preview",
 			"resource": "Resource",
-			"subscription": "Subscription"
+			"subscription": "Subscription",
+			"ticket": "Ticket"
 		},
 		"vatExcluded": "VAT excluded"
 	},
@@ -635,6 +643,11 @@
 		"status": {
 			"expired": "expired"
 		}
+	},
+	"ticket": {
+		"boughtAt": "Bought {date} at {time}",
+		"print": "Print",
+		"scanned": "This ticket has been scanned and is not valid anymore"
 	},
 	"widget": {
 		"specification": "Specifications"

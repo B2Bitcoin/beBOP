@@ -22,7 +22,10 @@
 			Pick<Order['items'][0], 'currencySnapshot' | 'quantity' | 'depositPercentage'> & {
 				digitalFiles: Array<{ _id: string }>;
 				picture?: Picture;
-				product: Pick<Product, '_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping'>;
+				product: Pick<
+					Product,
+					'_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping' | 'isTicket'
+				>;
 			}
 		>;
 		payments: Array<Pick<OrderPayment, 'currencySnapshot' | 'status' | 'method'>>;
