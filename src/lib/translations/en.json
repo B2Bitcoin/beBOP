@@ -562,6 +562,7 @@
 		"vatFree": "This order is free of VAT. Reason: {reason}"
 	},
 	"pos": {
+		"adminInterface": "Admin interface",
 		"applyGiftDiscount": "As a POS user I apply a <0>gift discount</0>",
 		"cta": {
 			"cancelOrder": "Cancel",
