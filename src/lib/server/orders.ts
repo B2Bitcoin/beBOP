@@ -1170,7 +1170,7 @@ export async function addOrderPayment(
 		throw error(400, 'Order is not pending');
 	}
 
-	if (isOrderFullyPaid(order, { includePendingOrders: true })) {
+	if (!order.discount && isOrderFullyPaid(order, { includePendingOrders: true })) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 
@@ -1189,7 +1189,7 @@ export async function addOrderPayment(
 					currency: mainCurrency
 			  };
 
-	if (priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
+	if (!order.discount && priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 
