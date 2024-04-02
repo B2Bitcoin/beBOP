@@ -562,6 +562,7 @@
 		"vatFree": "Cette commande n'est pas assujettie TVA. \nMotif : {reason}"
 	},
 	"pos": {
+		"adminInterface": "Interface d'administration",
 		"applyGiftDiscount": "En tant qu'utilisateur de point de vente, j'applique une <0>remise cadeau</0>",
 		"cta": {
 			"cancelOrder": "Annuler",
