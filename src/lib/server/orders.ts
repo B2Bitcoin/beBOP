@@ -979,7 +979,11 @@ export async function createOrder(
 		};
 		await collections.orders.insertOne(order, { session });
 
-		if (paymentMethod) {
+		if (
+			paymentMethod &&
+			params?.discount?.type !== 'percentage' &&
+			params?.discount?.amount !== 100
+		) {
 			const expiresAt = paymentMethodExpiration(paymentMethod);
 
 			await addOrderPayment(
@@ -1170,7 +1174,7 @@ export async function addOrderPayment(
 		throw error(400, 'Order is not pending');
 	}
 
-	if (!order.discount && isOrderFullyPaid(order, { includePendingOrders: true })) {
+	if (isOrderFullyPaid(order, { includePendingOrders: true })) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 
@@ -1189,7 +1193,7 @@ export async function addOrderPayment(
 					currency: mainCurrency
 			  };
 
-	if (!order.discount && priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
+	if (priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 
