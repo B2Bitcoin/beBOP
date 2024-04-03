@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
+	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
 
@@ -17,7 +18,7 @@
 	let includeCanceled = false;
 	let includePartiallyPaid = false;
 
-	const { locale, textAddress, countryName } = useI18n();
+	const { locale, textAddress, countryName, t } = useI18n();
 
 	$: orderFiltered = data.orders.filter(
 		(order) =>
@@ -327,10 +328,12 @@
 							<tr class="hover:bg-gray-100 whitespace-nowrap">
 								<td class="border border-gray-300 px-4 py-2">{order.number}</td>
 								<td class="border border-gray-300 px-4 py-2"
-									>{payment.invoice?.number ??
-										`${order.number}-${
-											order.payments.findIndex((p) => p._id === payment._id) + 1
-										}`}</td
+									>{t(
+										payment.status === 'paid'
+											? 'order.receipt.invoiceNumber'
+											: 'order.receipt.proformaInvoiceNumber',
+										invoiceNumberVariables(order, payment)
+									)}</td
 								>
 
 								<td class="border border-gray-300 px-4 py-2"
@@ -342,7 +345,7 @@
 									<a
 										class="body-hyperlink underline"
 										target="_blank"
-										href="/order/{order._id}/payment/{payment._id}/receipt">{payment.status}</a
+										href="/order/{order._id}/payment/{payment.id}/receipt">{payment.status}</a
 									>
 								</td>
 								<td class="border border-gray-300 px-4 py-2"
