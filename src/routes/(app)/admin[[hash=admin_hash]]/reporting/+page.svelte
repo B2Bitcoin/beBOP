@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
+	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
+	import { number } from 'zod';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
@@ -306,6 +308,7 @@
 				<thead class="bg-gray-200">
 					<tr class="whitespace-nowrap">
 						<th class="border border-gray-300 px-4 py-2">Order ID</th>
+						<th class="border border-gray-300 px-4 py-2">Invoice ID</th>
 						<th class="border border-gray-300 px-4 py-2">Payment Date</th>
 						<th class="border border-gray-300 px-4 py-2">Order Status</th>
 						<th class="border border-gray-300 px-4 py-2">Payment mean</th>
@@ -325,6 +328,13 @@
 						{#each order.payments as payment}
 							<tr class="hover:bg-gray-100 whitespace-nowrap">
 								<td class="border border-gray-300 px-4 py-2">{order.number}</td>
+								<td class="border border-gray-300 px-4 py-2"
+									>{payment.invoice?.number ??
+										`${order.number}-${
+											order.payments.findIndex((p) => p._id === payment._id) + 1
+										}`}</td
+								>
+
 								<td class="border border-gray-300 px-4 py-2"
 									>{payment.paidAt?.toLocaleDateString($locale)}</td
 								>
