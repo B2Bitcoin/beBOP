@@ -1,7 +1,6 @@
 import { collections } from '$lib/server/database';
 import { countryFromIp } from '$lib/server/geoip';
 import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
-import { pojo } from '$lib/server/pojo';
 import { sum } from '$lib/utils/sum';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 
