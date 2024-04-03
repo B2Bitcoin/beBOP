@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
-	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
-	import { number } from 'zod';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
