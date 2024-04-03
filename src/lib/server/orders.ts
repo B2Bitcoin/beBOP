@@ -358,12 +358,42 @@ export async function onOrderPayment(
 }
 
 export async function onOrderPaymentFullDiscount(order: Order): Promise<Order> {
+	const paymentId = new ObjectId();
+	const payment: OrderPayment = {
+		_id: paymentId,
+		status: 'paid',
+		method: 'point-of-sale',
+		price: {
+			amount: 0,
+			currency: runtimeConfig.mainCurrency
+		},
+		currencySnapshot: {
+			main: {
+				price: {
+					amount: 0,
+					currency: runtimeConfig.mainCurrency
+				}
+			},
+
+			priceReference: {
+				price: {
+					amount: 0,
+					currency: runtimeConfig.mainCurrency
+				}
+			}
+		},
+		createdAt: new Date()
+	};
 	return await withTransaction(async (session) => {
 		const ret = await collections.orders.findOneAndUpdate(
 			{ _id: order._id },
 			{
 				$set: {
+					status: 'paid',
 					updatedAt: new Date()
+				},
+				$push: {
+					payments: payment
 				}
 			},
 			{ session, returnDocument: 'after' }
