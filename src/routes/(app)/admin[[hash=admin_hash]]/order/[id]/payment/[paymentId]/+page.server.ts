@@ -1,7 +1,10 @@
+import { ORIGIN, SMTP_USER } from '$env/static/private';
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
 import { onOrderPayment, onOrderPaymentFailed } from '$lib/server/orders';
+import { runtimeConfig } from '$lib/server/runtime-config';
 import { error, redirect } from '@sveltejs/kit';
+import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 
 export const actions = {
@@ -76,7 +79,7 @@ export const actions = {
 
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
 	},
-	updatePaymentDetail: async ({ params, request }) => {
+	updatePaymentDetail: async ({ params, request, locals }) => {
 		const order = await collections.orders.findOne({
 			_id: params.id
 		});
@@ -119,7 +122,19 @@ export const actions = {
 				}
 			}
 		);
-
+		const templateKey = `<p>This message was sent to you because payment information on order ${order.number} was updated.</p>
+		<p>Follow <a href="${ORIGIN}/order/">this link</a> to see the change.</p>
+		<p>The change was made by ${locals.user?.alias}.</p>`;
+		if (runtimeConfig.sellerIdentity?.contact.email) {
+			await collections.emailNotifications.insertOne({
+				_id: new ObjectId(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				subject: 'Update Payment Information',
+				htmlContent: templateKey,
+				dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
+			});
+		}
 		throw redirect(303, request.headers.get('referer') || `${adminPrefix()}/order`);
 	}
 };
