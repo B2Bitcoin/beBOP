@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
+	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
 
@@ -17,7 +18,7 @@
 	let includeCanceled = false;
 	let includePartiallyPaid = false;
 
-	const { locale, textAddress, countryName } = useI18n();
+	const { locale, textAddress, countryName, t } = useI18n();
 
 	$: orderFiltered = data.orders.filter(
 		(order) =>
@@ -306,6 +307,7 @@
 				<thead class="bg-gray-200">
 					<tr class="whitespace-nowrap">
 						<th class="border border-gray-300 px-4 py-2">Order ID</th>
+						<th class="border border-gray-300 px-4 py-2">Invoice ID</th>
 						<th class="border border-gray-300 px-4 py-2">Payment Date</th>
 						<th class="border border-gray-300 px-4 py-2">Order Status</th>
 						<th class="border border-gray-300 px-4 py-2">Payment mean</th>
@@ -326,6 +328,15 @@
 							<tr class="hover:bg-gray-100 whitespace-nowrap">
 								<td class="border border-gray-300 px-4 py-2">{order.number}</td>
 								<td class="border border-gray-300 px-4 py-2"
+									>{t(
+										payment.status === 'paid'
+											? 'order.receipt.invoiceNumber'
+											: 'order.receipt.proformaInvoiceNumber',
+										invoiceNumberVariables(order, payment)
+									)}</td
+								>
+
+								<td class="border border-gray-300 px-4 py-2"
 									>{payment.paidAt?.toLocaleDateString($locale)}</td
 								>
 								<td class="border border-gray-300 px-4 py-2">{order.status}</td>
@@ -334,7 +345,7 @@
 									<a
 										class="body-hyperlink underline"
 										target="_blank"
-										href="/order/{order._id}/payment/{payment._id}/receipt">{payment.status}</a
+										href="/order/{order._id}/payment/{payment.id}/receipt">{payment.status}</a
 									>
 								</td>
 								<td class="border border-gray-300 px-4 py-2"

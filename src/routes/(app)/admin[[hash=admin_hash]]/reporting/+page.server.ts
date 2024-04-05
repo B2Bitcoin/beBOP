@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import { countryFromIp } from '$lib/server/geoip';
-import { pojo } from '$lib/server/pojo';
 import { sum } from '$lib/utils/sum';
+import { pojo } from '$lib/server/pojo.js';
 
 export async function load() {
 	const orders = await collections.orders.find().sort({ createdAt: -1 }).toArray();
@@ -9,7 +9,10 @@ export async function load() {
 	return {
 		orders: orders.map((order) => ({
 			_id: order._id,
-			payments: order.payments.map(pojo),
+			payments: order.payments.map((payment) => ({
+				...pojo(payment),
+				id: payment._id.toString()
+			})),
 			number: order.number,
 			createdAt: order.createdAt,
 			currencySnapshot: order.currencySnapshot,
