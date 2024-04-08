@@ -103,7 +103,11 @@
 			amount: deliveryFees || 0,
 			currency: UNDERLYING_CURRENCY
 		},
-		vatProfiles: data.vatProfiles
+		vatProfiles: data.vatProfiles,
+		discount: {
+			amount: discountAmount,
+			type: discountType
+		}
 	});
 
 	$: isDigital = items.every((item) => !item.product.shipping);
