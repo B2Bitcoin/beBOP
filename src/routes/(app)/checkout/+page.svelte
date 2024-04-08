@@ -31,7 +31,7 @@
 	let isFreeVat = false;
 	let offerDeliveryFees = false;
 	let addDiscount = false;
-	let discountAmount: number;
+	let discountAmount: number = 0;
 	let discountType: DiscountType;
 	let multiplePaymentMethods = false;
 
