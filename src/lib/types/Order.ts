@@ -291,7 +291,8 @@ export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
 	card: '💳',
 	'point-of-sale': '🛒',
 	lightning: '⚡',
-	bitcoin: '₿'
+	bitcoin: '₿',
+	free: '🆓'
 };
 
 export const ORDER_PAGINATION_LIMIT = 50;

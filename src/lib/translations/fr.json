@@ -99,6 +99,7 @@
 			"bitcoin": "BTC on-chain",
 			"card": "Carte bancaire",
 			"cash": "Espèces",
+			"free": "Nothing to pay (free cart)",
 			"lightning": "Lightning",
 			"point-of-sale": "Point of sale",
 			"unavailable": "Aucun mode de paiement disponible."

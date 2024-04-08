@@ -221,136 +221,8 @@ export async function onOrderPayment(
 		}
 
 		order = ret.value;
-
 		if (order.status === 'paid') {
-			// #region subscriptions
-			const subscriptions = await collections.paidSubscriptions
-				.find({
-					...userQuery(order.user),
-					productId: { $in: order.items.map((item) => item.product._id) }
-				})
-				.toArray();
-			for (const subscription of order.items.filter(
-				(item) => item.product.type === 'subscription'
-			)) {
-				const existingSubscription = subscriptions.find(
-					(sub) => sub.productId === subscription.product._id
-				);
-
-				if (existingSubscription) {
-					const result = await collections.paidSubscriptions.updateOne(
-						{ _id: existingSubscription._id },
-						{
-							$set: {
-								paidUntil: add(max([existingSubscription.paidUntil, new Date()]), {
-									[`${runtimeConfig.subscriptionDuration}s`]: 1
-								}),
-								updatedAt: new Date(),
-								notifications: []
-							},
-							$unset: { cancelledAt: 1 }
-						},
-						{ session }
-					);
-
-					if (!result.modifiedCount) {
-						throw new Error('Failed to update subscription');
-					}
-				} else {
-					await collections.paidSubscriptions.insertOne(
-						{
-							_id: crypto.randomUUID(),
-							number: await generateSubscriptionNumber(),
-							user: order.user,
-							productId: subscription.product._id,
-							paidUntil: add(new Date(), { [`${runtimeConfig.subscriptionDuration}s`]: 1 }),
-							createdAt: new Date(),
-							updatedAt: new Date(),
-							notifications: []
-						},
-						{ session }
-					);
-				}
-			}
-			//#endregion
-
-			//#region challenges
-			const challenges = await collections.challenges
-				.find({
-					beginsAt: { $lt: new Date() },
-					endsAt: { $gt: new Date() }
-				})
-				.toArray();
-			for (const challenge of challenges) {
-				const productIds = new Set(challenge.productIds);
-				const items = productIds.size
-					? order.items.filter((item) => productIds.has(item.product._id))
-					: order.items;
-				const increase =
-					challenge.mode === 'totalProducts'
-						? sum(items.map((item) => item.quantity))
-						: sumCurrency(
-								challenge.goal.currency,
-								items.map((item) => ({
-									amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
-									currency: item.product.price.currency
-								}))
-						  );
-
-				await collections.challenges.updateOne(
-					{ _id: challenge._id },
-					{
-						$inc: { progress: increase }
-					},
-					{ session }
-				);
-			}
-			//#endregion
-
-			//#region tickets
-			let i = 0;
-			for (const item of order.items) {
-				if (item.product.isTicket) {
-					const tickets = Array.from({ length: item.quantity }).map(() => ({
-						_id: new ObjectId(),
-						ticketId: crypto.randomUUID(),
-						createdAt: new Date(),
-						updatedAt: new Date(),
-						orderId: order._id,
-						productId: item.product._id,
-						user: order.user
-					}));
-
-					await collections.tickets.insertMany(tickets, { session });
-					await collections.orders.updateOne(
-						{
-							_id: order._id
-						},
-						{
-							$set: {
-								[`items.${i}.tickets`]: tickets.map((ticket) => ticket.ticketId)
-							}
-						},
-						{ session }
-					);
-				}
-				i++;
-			}
-			//#endregion
-
-			// Update product stock in DB
-			for (const item of order.items.filter((item) => item.product.stock)) {
-				await collections.products.updateOne(
-					{
-						_id: item.product._id
-					},
-					{
-						$inc: { 'stock.total': -item.quantity, 'stock.available': -item.quantity },
-						$set: { updatedAt: new Date() }
-					},
-					{ session }
-				);
-			}
+			await updateAfterOrderPaid(order, session);
 		}
 
 		return ret.value;
@@ -679,7 +551,7 @@ export async function createOrder(
 			number: orderNumber,
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			status: 'pending',
+			status: paymentMethod === 'free' ? 'paid' : 'pending',
 			sellerIdentity: runtimeConfig.sellerIdentity,
 			items: items.map((item, i) => ({
 				quantity: item.quantity,
@@ -978,8 +850,10 @@ export async function createOrder(
 			...(params.engagements && { engagements: params.engagements })
 		};
 		await collections.orders.insertOne(order, { session });
-
-		if (paymentMethod) {
+		if (order.status === 'paid' && paymentMethod && paymentMethod === 'free') {
+			await updateAfterOrderPaid(order, session);
+		}
+		if (paymentMethod && paymentMethod !== 'free') {
 			const expiresAt = paymentMethodExpiration(paymentMethod);
 
 			await addOrderPayment(
@@ -1059,6 +933,9 @@ async function generatePaymentInfo(params: {
 		case 'point-of-sale': {
 			return {};
 		}
+		case 'free': {
+			return {};
+		}
 		case 'bank-transfer': {
 			return { address: runtimeConfig.sellerIdentity?.bank?.iban };
 		}
@@ -1134,6 +1011,7 @@ function paymentMethodExpiration(paymentMethod: PaymentMethod) {
 function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 	switch (paymentMethod) {
 		case 'point-of-sale':
+		case 'free':
 		case 'bank-transfer':
 			return {
 				amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
@@ -1253,4 +1131,133 @@ export async function addOrderPayment(
 		},
 		{ session: opts?.session }
 	);
+}
+
+export async function updateAfterOrderPaid(order: Order, session: ClientSession) {
+	// #region subscriptions
+	const subscriptions = await collections.paidSubscriptions
+		.find({
+			...userQuery(order.user),
+			productId: { $in: order.items.map((item) => item.product._id) }
+		})
+		.toArray();
+	for (const subscription of order.items.filter((item) => item.product.type === 'subscription')) {
+		const existingSubscription = subscriptions.find(
+			(sub) => sub.productId === subscription.product._id
+		);
+
+		if (existingSubscription) {
+			const result = await collections.paidSubscriptions.updateOne(
+				{ _id: existingSubscription._id },
+				{
+					$set: {
+						paidUntil: add(max([existingSubscription.paidUntil, new Date()]), {
+							[`${runtimeConfig.subscriptionDuration}s`]: 1
+						}),
+						updatedAt: new Date(),
+						notifications: []
+					},
+					$unset: { cancelledAt: 1 }
+				},
+				{ session }
+			);
+
+			if (!result.modifiedCount) {
+				throw new Error('Failed to update subscription');
+			}
+		} else {
+			await collections.paidSubscriptions.insertOne(
+				{
+					_id: crypto.randomUUID(),
+					number: await generateSubscriptionNumber(),
+					user: order.user,
+					productId: subscription.product._id,
+					paidUntil: add(new Date(), { [`${runtimeConfig.subscriptionDuration}s`]: 1 }),
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					notifications: []
+				},
+				{ session }
+			);
+		}
+	}
+	//#endregion
+
+	//#region challenges
+	const challenges = await collections.challenges
+		.find({
+			beginsAt: { $lt: new Date() },
+			endsAt: { $gt: new Date() }
+		})
+		.toArray();
+	for (const challenge of challenges) {
+		const productIds = new Set(challenge.productIds);
+		const items = productIds.size
+			? order.items.filter((item) => productIds.has(item.product._id))
+			: order.items;
+		const increase =
+			challenge.mode === 'totalProducts'
+				? sum(items.map((item) => item.quantity))
+				: sumCurrency(
+						challenge.goal.currency,
+						items.map((item) => ({
+							amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
+							currency: item.product.price.currency
+						}))
+				  );
+
+		await collections.challenges.updateOne(
+			{ _id: challenge._id },
+			{
+				$inc: { progress: increase }
+			},
+			{ session }
+		);
+	}
+	//#endregion
+
+	//#region tickets
+	let i = 0;
+	for (const item of order.items) {
+		if (item.product.isTicket) {
+			const tickets = Array.from({ length: item.quantity }).map(() => ({
+				_id: new ObjectId(),
+				ticketId: crypto.randomUUID(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				orderId: order._id,
+				productId: item.product._id,
+				user: order.user
+			}));
+
+			await collections.tickets.insertMany(tickets, { session });
+			await collections.orders.updateOne(
+				{
+					_id: order._id
+				},
+				{
+					$set: {
+						[`items.${i}.tickets`]: tickets.map((ticket) => ticket.ticketId)
+					}
+				},
+				{ session }
+			);
+		}
+		i++;
+	}
+	//#endregion
+
+	// Update product stock in DB
+	for (const item of order.items.filter((item) => item.product.stock)) {
+		await collections.products.updateOne(
+			{
+				_id: item.product._id
+			},
+			{
+				$inc: { 'stock.total': -item.quantity, 'stock.available': -item.quantity },
+				$set: { updatedAt: new Date() }
+			},
+			{ session }
+		);
+	}
 }

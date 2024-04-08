@@ -99,6 +99,7 @@
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",
+			"free": "Rien à payer (panier gratuit)",
 			"lightning": "Lightning",
 			"point-of-sale": "Point of sale",
 			"unavailable": "No payment methods available."
