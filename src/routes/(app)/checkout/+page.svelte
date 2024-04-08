@@ -108,15 +108,16 @@
 
 	$: isDigital = items.every((item) => !item.product.shipping);
 
-	$: paymentMethods = data.paymentMethods.filter((method) =>
-		method !== 'free' && priceInfo.totalPriceWithVat === 0
-			? false
-			: method === 'free' && priceInfo.totalPriceWithVat > 0
-			? false
-			: method === 'bitcoin'
-			? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
-			: true
-	);
+	$: paymentMethods =
+		priceInfo.totalPriceWithVat === 0
+			? ['free']
+			: data.paymentMethods.filter((method) =>
+					method === 'free'
+						? false
+						: method === 'bitcoin'
+						? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
+						: true
+			  );
 	$: isDiscountValid =
 		(discountType === 'fiat' &&
 			priceInfo.totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||

@@ -142,7 +142,6 @@ async function handleOrderNotification(order: Order): Promise<void> {
 		}
 
 		const { npub, email } = order.notifications.paymentStatus;
-
 		for (const payment of payments) {
 			await withTransaction(async (session) => {
 				if (npub) {
@@ -208,6 +207,7 @@ async function handleOrderNotification(order: Order): Promise<void> {
 								templateKey = 'order.payment.pending.bank-transfer';
 								break;
 							case 'point-of-sale':
+							case 'free':
 								// no email
 								break;
 						}

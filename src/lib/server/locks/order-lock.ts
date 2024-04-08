@@ -137,6 +137,7 @@ async function maintainOrders() {
 					// handled by admin
 					case 'bank-transfer':
 					case 'point-of-sale':
+					case 'free':
 						break;
 				}
 			}
