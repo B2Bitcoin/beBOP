@@ -111,12 +111,12 @@
 	$: paymentMethods =
 		priceInfo.totalPriceWithVat === 0
 			? ['free']
-			: data.paymentMethods.filter((method) =>
-					method === 'free'
-						? false
-						: method === 'bitcoin'
-						? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
-						: true
+			: data.paymentMethods.filter(
+					(method) =>
+						method !== 'free' &&
+						(method === 'bitcoin'
+							? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
+							: true)
 			  );
 	$: isDiscountValid =
 		(discountType === 'fiat' &&

@@ -222,7 +222,7 @@ export async function onOrderPayment(
 
 		order = ret.value;
 		if (order.status === 'paid') {
-			updateAfterOrderPaid(order, session);
+			await updateAfterOrderPaid(order, session);
 		}
 
 		return ret.value;
