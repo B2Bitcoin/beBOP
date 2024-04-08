@@ -109,7 +109,9 @@
 	$: isDigital = items.every((item) => !item.product.shipping);
 
 	$: paymentMethods = data.paymentMethods.filter((method) =>
-		method === 'bitcoin'
+		method !== 'free' && priceInfo.totalPriceWithVat === 0
+			? false
+			: method === 'bitcoin'
 			? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
 			: true
 	);

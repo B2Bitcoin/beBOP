@@ -31,6 +31,8 @@
 				<span title={t('checkout.paymentMethod.' + payment.method)}
 					>{PAYMENT_METHOD_EMOJI[payment.method]}</span
 				>
+			{:else}
+				<span title={t('checkout.paymentMethod.free')}>{PAYMENT_METHOD_EMOJI['free']}</span>
 			{/each} -
 			<time datetime={order.createdAt.toJSON()} title={order.createdAt.toLocaleString($locale)}
 				>{order.createdAt.toLocaleDateString($locale)}</time

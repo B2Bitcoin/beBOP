@@ -10,7 +10,8 @@ const ALL_PAYMENT_METHODS = [
 	'bank-transfer',
 	'bitcoin',
 	'lightning',
-	'point-of-sale'
+	'point-of-sale',
+	'free'
 ] as const;
 export type PaymentMethod = (typeof ALL_PAYMENT_METHODS)[number];
 
@@ -37,6 +38,8 @@ export const paymentMethods = (opts?: {
 							return isLightningConfigured;
 						case 'point-of-sale':
 							return opts?.role === POS_ROLE_ID || opts?.includePOS;
+						case 'free':
+							return true;
 					}
 				}
 		  );
