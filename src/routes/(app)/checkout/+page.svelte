@@ -111,7 +111,7 @@
 	$: paymentMethods = data.paymentMethods.filter((method) =>
 		method !== 'free' && priceInfo.totalPriceWithVat === 0
 			? false
-			: method === 'free' && priceInfo.totalPriceWithVat !== 0
+			: method === 'free' && priceInfo.totalPriceWithVat > 0
 			? false
 			: method === 'bitcoin'
 			? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
