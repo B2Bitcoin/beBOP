@@ -109,6 +109,8 @@ export const collections = building
 const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?]> = [
 	[collections.pictures, { productId: 1 }],
 	[collections.products, { stock: 1 }, { sparse: true }],
+	[collections.products, { 'actionSettings.eShop.visible': 1 }],
+	[collections.products, { 'actionSettings.retail.visible': 1 }],
 	[collections.locks, { updatedAt: 1 }, { expireAfterSeconds: 60 }],
 	[collections.carts, { 'user.**': 1 }],
 	[collections.carts, { 'items.productId': 1 }],
