@@ -853,7 +853,7 @@ export async function createOrder(
 		if (order.status === 'paid' && paymentMethod && paymentMethod === 'free') {
 			await updateAfterOrderPaid(order, session);
 		}
-		if (paymentMethod && paymentMethod !== 'free') {
+		if (paymentMethod) {
 			const expiresAt = paymentMethodExpiration(paymentMethod);
 
 			await addOrderPayment(
@@ -1044,11 +1044,11 @@ export async function addOrderPayment(
 	 */
 	opts?: { expiresAt?: Date | null; session?: ClientSession }
 ) {
-	if (order.status !== 'pending') {
+	if (paymentMethod !== 'free' && order.status !== 'pending') {
 		throw error(400, 'Order is not pending');
 	}
 
-	if (isOrderFullyPaid(order, { includePendingOrders: true })) {
+	if (paymentMethod !== 'free' && isOrderFullyPaid(order, { includePendingOrders: true })) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 
@@ -1067,17 +1067,18 @@ export async function addOrderPayment(
 					currency: mainCurrency
 			  };
 
-	if (priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
+	if (paymentMethod !== 'free' && priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 
 	const paymentId = new ObjectId();
 	const expiresAt =
 		opts?.expiresAt !== undefined ? opts.expiresAt : paymentMethodExpiration(paymentMethod);
+	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
 
 	const payment: OrderPayment = {
 		_id: paymentId,
-		status: 'pending',
+		status: paymentMethod === 'free' ? 'paid' : 'pending',
 		method: paymentMethod,
 		price: paymentPrice(paymentMethod, priceToPay),
 		currencySnapshot: {
@@ -1110,6 +1111,12 @@ export async function addOrderPayment(
 				}
 			}
 		},
+		...(paymentMethod === 'free' && {
+			invoice: {
+				number: invoiceNumber,
+				createdAt: new Date()
+			}
+		}),
 		...(expiresAt && { expiresAt }),
 		...(await generatePaymentInfo({
 			method: paymentMethod,
