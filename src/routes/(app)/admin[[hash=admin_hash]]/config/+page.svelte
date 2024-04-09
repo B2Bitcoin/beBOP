@@ -406,7 +406,7 @@
 			class="form-checkbox"
 			checked={data.disableLanguageSelector}
 		/>
-		Disable / Enable language selector
+		Disable language selector
 	</label>
 
 	<label class="checkbox-label">
