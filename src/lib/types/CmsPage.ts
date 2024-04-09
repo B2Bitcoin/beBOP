@@ -11,7 +11,7 @@ export interface CMSPage extends Timestamps, CMSPageTranslatableFields {
 	_id: string;
 	fullScreen: boolean;
 	maintenanceDisplay: boolean;
-
+	hideFromSEO?: boolean;
 	translations?: Partial<Record<LanguageKey, Partial<CMSPageTranslatableFields>>>;
 }
 

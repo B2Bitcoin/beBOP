@@ -12,6 +12,7 @@
 		title: string;
 		shortDescription: string;
 		fullScreen: boolean;
+		hideFromSEO?: boolean;
 		maintenanceDisplay: boolean;
 		content: string;
 	} | null;
@@ -22,6 +23,7 @@
 	let shortDescription = cmsPage?.shortDescription || '';
 	let fullScreen = cmsPage?.fullScreen || false;
 	let maintenanceDisplay = cmsPage?.maintenanceDisplay || false;
+	let hideFromSEO = cmsPage?.hideFromSEO || false;
 
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this CMS page?')) {
@@ -83,6 +85,10 @@
 			class="form-checkbox"
 		/>
 		Available even in Maintenance mode
+	</label>
+	<label class="checkbox-label">
+		<input type="checkbox" name="hideFromSEO" checked={hideFromSEO} class="form-checkbox" />
+		Hide this page from search engines
 	</label>
 
 	<label class="block w-full mt-4">
