@@ -426,21 +426,23 @@
 						>
 							<IconModeDark />
 						</button>
-						<select
-							class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none bg-transparent text-xl"
-							size="0"
-							bind:value={$locale}
-							on:change={() => {
-								document.cookie = `lang=${$locale};path=/;max-age=31536000`;
-								window.location.reload();
-							}}
-						>
-							{#each data.locales as locale}
-								<option style="background-color: var(--navbar-backgroundColor);" value={locale}>
-									{locale}
-								</option>
-							{/each}
-						</select>
+						{#if !data.disableLanguageSelector}
+							<select
+								class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none bg-transparent text-xl"
+								size="0"
+								bind:value={$locale}
+								on:change={() => {
+									document.cookie = `lang=${$locale};path=/;max-age=31536000`;
+									window.location.reload();
+								}}
+							>
+								{#each data.locales as locale}
+									<option style="background-color: var(--navbar-backgroundColor);" value={locale}>
+										{locale}
+									</option>
+								{/each}
+							</select>
+						{/if}
 					</div>
 				</div>
 			</div>
