@@ -31,7 +31,7 @@
 	let isFreeVat = false;
 	let offerDeliveryFees = false;
 	let addDiscount = false;
-	let discountAmount: number;
+	let discountAmount = 0;
 	let discountType: DiscountType;
 	let multiplePaymentMethods = false;
 
@@ -100,10 +100,14 @@
 		vatExempted: data.vatExempted || isFreeVat,
 		userCountry: isDigital ? digitalCountry : country,
 		deliveryFees: {
-			amount: deliveryFees || 0,
+			amount: offerDeliveryFees ? 0 : deliveryFees || 0,
 			currency: UNDERLYING_CURRENCY
 		},
-		vatProfiles: data.vatProfiles
+		vatProfiles: data.vatProfiles,
+		discount: {
+			amount: !addDiscount ? 0 : discountAmount,
+			type: discountType
+		}
 	});
 
 	$: isDigital = items.every((item) => !item.product.shipping);
