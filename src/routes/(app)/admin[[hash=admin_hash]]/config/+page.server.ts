@@ -32,7 +32,8 @@ export async function load(event) {
 		noProBilling: runtimeConfig.noProBilling,
 		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems,
 		accountingCurrency: runtimeConfig.accountingCurrency,
-		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin
+		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin,
+		disableLanguageSelector: runtimeConfig.disableLanguageSelector
 	};
 }
 
@@ -83,7 +84,8 @@ export const actions = {
 				adminHash: z.union([z.enum(['']), z.string().regex(/^[a-zA-Z0-9]+$/)]),
 				isBillingAddressMandatory: z.boolean({ coerce: true }),
 				displayNewsletterCommercialProspection: z.boolean({ coerce: true }),
-				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0)
+				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0),
+				disableLanguageSelector: z.boolean({ coerce: true })
 			})
 			.parse({
 				...Object.fromEntries(formData),

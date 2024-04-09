@@ -402,6 +402,16 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
+			name="disableLanguageSelector"
+			class="form-checkbox"
+			checked={data.disableLanguageSelector}
+		/>
+		Disable / Enable language selector
+	</label>
+
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
 			name="isMaintenance"
 			class="form-checkbox"
 			checked={data.isMaintenance}
