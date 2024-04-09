@@ -88,7 +88,7 @@
 	</label>
 	<label class="checkbox-label">
 		<input type="checkbox" name="hideFromSEO" checked={hideFromSEO} class="form-checkbox" />
-		Hide this from search engines
+		Hide this page from search engines
 	</label>
 
 	<label class="block w-full mt-4">
