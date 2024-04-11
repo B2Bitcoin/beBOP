@@ -14,7 +14,7 @@
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { POS_ROLE_ID } from '$lib/types/User.js';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
-	import type { DiscountType } from '$lib/types/Order.js';
+	import { MIN_SATOSHIS_FOR_BITCOIN_PAYMENT, type DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
 	import { page } from '$app/stores';
@@ -119,7 +119,8 @@
 					(method) =>
 						method !== 'free' &&
 						(method === 'bitcoin'
-							? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
+							? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >=
+							  MIN_SATOSHIS_FOR_BITCOIN_PAYMENT
 							: true)
 			  );
 	$: isDiscountValid =

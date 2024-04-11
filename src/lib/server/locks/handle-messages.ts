@@ -16,6 +16,8 @@ import { building } from '$app/environment';
 import { paymentMethods } from '../payment-methods';
 import { userQuery } from '../user';
 import { rateLimit } from '../rateLimit';
+import { computePriceInfo } from '$lib/types/Cart';
+import { filterNullish } from '$lib/utils/fillterNullish';
 
 const lock = new Lock('received-messages');
 
@@ -123,8 +125,9 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 
 					if (rawArgs.length < minArgs || rawArgs.length > maxArgs) {
 						await send(
-							`Invalid syntax. Usage: "${usage(
-								commandName
+							`Invalid syntax. Usage: "${await usage(
+								commandName,
+								senderNpub
 							)}". Between ${minArgs} and ${maxArgs} arguments expected.`
 						);
 						break;
@@ -138,7 +141,11 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 
 						if (!rawArg) {
 							if (!arg.default) {
-								await send(`Invalid syntax. Usage: "${usage(commandName)}", ${arg.name} expected.`);
+								await send(
+									`Invalid syntax. Usage: "${await usage(commandName, senderNpub)}", ${
+										arg.name
+									} expected.`
+								);
 								break out;
 							}
 							args[arg.name] = arg.default;
@@ -146,10 +153,11 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 						}
 
 						if (arg.enum) {
-							const enumVal = typeof arg.enum === 'function' ? arg.enum() : arg.enum;
+							const enumVal =
+								typeof arg.enum === 'function' ? await arg.enum(senderNpub) : arg.enum;
 							if (!enumVal.includes(rawArg)) {
 								await send(
-									`Invalid syntax. Usage: "${usage(commandName)}", ${
+									`Invalid syntax. Usage: "${await usage(commandName, senderNpub)}", ${
 										arg.name
 									} must be one of: ${enumVal.join(', ')}.`
 								);
@@ -217,7 +225,9 @@ const commands: Record<
 		description: string;
 		args?: Array<{
 			name: string;
-			enum?: Array<string> | (() => Readonly<Array<string>>);
+			enum?:
+				| Array<string>
+				| ((senderNpub: string) => Readonly<Array<string>> | Promise<Readonly<Array<string>>>);
 			default?: string;
 		}>;
 		execute: (
@@ -229,12 +239,17 @@ const commands: Record<
 > = {
 	help: {
 		description: 'Show the list of commands',
-		execute: async (send) => {
+		execute: async (send, params) => {
 			await send(
 				`Available commands\n\n` +
-					Object.entries(commands)
-						.map(([name, { description }]) => `- ${usage(name)}: ${description}`)
-						.join('\n')
+					(
+						await Promise.all(
+							Object.entries(commands).map(
+								async ([name, { description }]) =>
+									`- ${await usage(name, params.senderNpub)}: ${description}`
+							)
+						)
+					).join('\n')
 			);
 		}
 	},
@@ -441,7 +456,57 @@ const commands: Record<
 	checkout: {
 		description: 'Checkout your cart',
 		maintenanceBlocked: true,
-		args: [{ name: 'paymentMethod', enum: () => paymentMethods().filter((m) => m !== 'free') }],
+		args: [
+			{
+				name: 'paymentMethod',
+				enum: async (senderNpub) => {
+					try {
+						const cart = await getCartFromDb({ user: { npub: senderNpub } });
+
+						if (!cart) {
+							return paymentMethods();
+						}
+
+						const products = await collections.products
+							.find({ _id: { $in: cart.items.map((i) => i.productId) } })
+							.toArray();
+
+						const productById = Object.fromEntries(products.map((p) => [p._id, p]));
+
+						const items = cart.items
+							.filter((i) => productById[i.productId])
+							.map((i) => ({
+								quantity: i.quantity,
+								product: productById[i.productId],
+								depositPercentage: i.depositPercentage
+							}))
+							.filter((i) => !!i.product);
+
+						const vatProfiles = products.some((p) => p.vatProfileId)
+							? await collections.vatProfiles
+									.find({ _id: { $in: filterNullish(products.map((p) => p.vatProfileId)) } })
+									.toArray()
+							: [];
+
+						const totalPrice = computePriceInfo(items, {
+							deliveryFees: { amount: 0, currency: 'SAT' },
+							vatExempted: runtimeConfig.vatExempted,
+							userCountry: undefined,
+							bebopCountry: runtimeConfig.vatCountry || undefined,
+							vatNullOutsideSellerCountry: runtimeConfig.vatNullOutsideSellerCountry,
+							vatSingleCountry: runtimeConfig.vatSingleCountry,
+							vatProfiles
+						});
+
+						return paymentMethods({
+							totalSatoshis: toSatoshis(totalPrice.totalPriceWithVat, totalPrice.currency)
+						});
+					} catch {
+						return paymentMethods();
+					}
+				}
+			}
+		],
 		execute: async (send, { senderNpub, args }) => {
 			const paymentMethod = args.paymentMethod;
 
@@ -622,15 +687,19 @@ const commands: Record<
 	}
 };
 
-function usage(commandName: string) {
+async function usage(commandName: string, senderNpub: string) {
 	const command = commands[commandName];
 
-	return `${commandName} ${(command.args || [])
-		.map(
-			(arg) =>
-				` [${
-					arg.enum ? (typeof arg.enum === 'function' ? arg.enum() : arg.enum).join('|') : arg.name
-				}${arg.default ? `=${arg.default}` : ''}]`
+	return `${commandName} ${(
+		await Promise.all(
+			(command.args || []).map(
+				async (arg) =>
+					` [${
+						arg.enum
+							? (typeof arg.enum === 'function' ? await arg.enum(senderNpub) : arg.enum).join('|')
+							: arg.name
+					}${arg.default ? `=${arg.default}` : ''}]`
+			)
 		)
-		.join('')}`.trim();
+	).join('')}`.trim();
 }
