@@ -544,6 +544,10 @@ export async function createOrder(
 		throw error(400, 'Missing billing address for deliveryless order');
 	}
 
+	if (paymentMethod === 'free' && totalSatoshis !== 0) {
+		throw error(400, "You can't use free payment method on this order");
+	}
+
 	await withTransaction(async (session) => {
 		const order: Order = {
 			_id: orderId,

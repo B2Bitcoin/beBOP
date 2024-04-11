@@ -441,7 +441,7 @@ const commands: Record<
 	checkout: {
 		description: 'Checkout your cart',
 		maintenanceBlocked: true,
-		args: [{ name: 'paymentMethod', enum: () => paymentMethods() }],
+		args: [{ name: 'paymentMethod', enum: () => paymentMethods().filter((m) => m !== 'free') }],
 		execute: async (send, { senderNpub, args }) => {
 			const paymentMethod = args.paymentMethod;
 
@@ -474,12 +474,13 @@ const commands: Record<
 				}));
 
 			// Should not happen
-			if (!typedInclude(paymentMethods(), paymentMethod)) {
+			const availablePaymentMethods = paymentMethods().filter((m) => m !== 'free');
+			if (!typedInclude(availablePaymentMethods, paymentMethod)) {
 				await send(
 					'Invalid payment method: ' +
 						paymentMethod +
 						'. Available payment methods: ' +
-						paymentMethods().join(', ')
+						availablePaymentMethods.join(', ')
 				);
 				return;
 			}
