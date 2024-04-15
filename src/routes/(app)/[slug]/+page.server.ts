@@ -16,7 +16,8 @@ export async function load({ params, locals }) {
 					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
 				},
 				fullScreen: 1,
-				maintenanceDisplay: 1
+				maintenanceDisplay: 1,
+				hideFromSEO: 1
 			}
 		}
 	);

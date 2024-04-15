@@ -14,7 +14,7 @@
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { POS_ROLE_ID } from '$lib/types/User.js';
 	import { toSatoshis } from '$lib/utils/toSatoshis';
-	import type { DiscountType } from '$lib/types/Order.js';
+	import { MIN_SATOSHIS_FOR_BITCOIN_PAYMENT, type DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
 	import { page } from '$app/stores';
@@ -31,7 +31,7 @@
 	let isFreeVat = false;
 	let offerDeliveryFees = false;
 	let addDiscount = false;
-	let discountAmount: number;
+	let discountAmount = 0;
 	let discountType: DiscountType;
 	let multiplePaymentMethods = false;
 
@@ -100,10 +100,14 @@
 		vatExempted: data.vatExempted || isFreeVat,
 		userCountry: isDigital ? digitalCountry : country,
 		deliveryFees: {
-			amount: deliveryFees || 0,
+			amount: offerDeliveryFees ? 0 : deliveryFees || 0,
 			currency: UNDERLYING_CURRENCY
 		},
-		vatProfiles: data.vatProfiles
+		vatProfiles: data.vatProfiles,
+		discount: {
+			amount: !addDiscount ? 0 : discountAmount,
+			type: discountType
+		}
 	});
 
 	$: isDigital = items.every((item) => !item.product.shipping);
@@ -115,7 +119,8 @@
 					(method) =>
 						method !== 'free' &&
 						(method === 'bitcoin'
-							? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >= 10_000
+							? toCurrency('SAT', priceInfo.partialPriceWithVat, priceInfo.currency) >=
+							  MIN_SATOSHIS_FOR_BITCOIN_PAYMENT
 							: true)
 			  );
 	$: isDiscountValid =

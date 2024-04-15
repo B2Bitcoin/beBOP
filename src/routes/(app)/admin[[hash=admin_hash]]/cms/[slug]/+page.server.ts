@@ -16,11 +16,12 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { title, content, shortDescription, fullScreen, maintenanceDisplay } = z
+		const { title, content, shortDescription, fullScreen, maintenanceDisplay, hideFromSEO } = z
 			.object({
 				...cmsTranslatableSchema,
 				fullScreen: z.boolean({ coerce: true }),
-				maintenanceDisplay: z.boolean({ coerce: true })
+				maintenanceDisplay: z.boolean({ coerce: true }),
+				hideFromSEO: z.boolean({ coerce: true })
 			})
 			.parse(Object.fromEntries(data));
 
@@ -35,6 +36,7 @@ export const actions = {
 					shortDescription,
 					fullScreen,
 					maintenanceDisplay,
+					hideFromSEO,
 					updatedAt: new Date()
 				}
 			}

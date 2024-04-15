@@ -19,6 +19,7 @@ export const paymentMethods = (opts?: {
 	role?: string;
 	includePOS?: boolean;
 	includeDisabled?: boolean;
+	totalSatoshis?: number;
 }) =>
 	env.VITEST
 		? [...ALL_PAYMENT_METHODS]
@@ -26,6 +27,9 @@ export const paymentMethods = (opts?: {
 				(method) => {
 					if (!opts?.includeDisabled && runtimeConfig.paymentMethods.disabled.includes(method)) {
 						return false;
+					}
+					if (opts?.totalSatoshis !== undefined && opts.totalSatoshis === 0) {
+						return method === 'free';
 					}
 					switch (method) {
 						case 'card':
@@ -39,7 +43,7 @@ export const paymentMethods = (opts?: {
 						case 'point-of-sale':
 							return opts?.role === POS_ROLE_ID || opts?.includePOS;
 						case 'free':
-							return true;
+							return opts?.totalSatoshis === undefined;
 					}
 				}
 		  );

@@ -81,6 +81,7 @@ const baseConfig = {
 	vatNullOutsideSellerCountry: false,
 	collectIPOnDeliverylessOrders: false,
 	isBillingAddressMandatory: false,
+	disableLanguageSelector: false,
 
 	checkoutButtonOnProductPage: true,
 	discovery: true,
