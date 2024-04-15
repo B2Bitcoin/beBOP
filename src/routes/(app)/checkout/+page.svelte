@@ -126,7 +126,7 @@
 	$: isDiscountValid =
 		(discountType === 'fiat' &&
 			priceInfo.totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
-		(discountType === 'percentage' && discountAmount < 100);
+		(discountType === 'percentage' && discountAmount <= 100);
 	let showBillingInfo = false;
 	let isProfessionalOrder = false;
 </script>
