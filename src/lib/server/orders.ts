@@ -856,7 +856,7 @@ export async function createOrder(
 		};
 		await collections.orders.insertOne(order, { session });
 
-		let orderPayment;
+		let orderPayment: OrderPayment | undefined = undefined;
 		if (paymentMethod) {
 			const expiresAt = paymentMethodExpiration(paymentMethod);
 
@@ -878,7 +878,7 @@ export async function createOrder(
 				await refreshAvailableStockInDb(product._id, session);
 			}
 		}
-		if (paymentMethod === 'free' && orderPayment) {
+		if (orderPayment?.method === 'free') {
 			await onOrderPayment(order, orderPayment, orderPayment.price, { providedSession: session });
 		}
 	});
