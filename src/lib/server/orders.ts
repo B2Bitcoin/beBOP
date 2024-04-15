@@ -90,9 +90,7 @@ export async function onOrderPayment(
 
 	payment.status = 'paid'; // for isOrderFullyPaid
 	payment.paidAt = paidAt;
-
-	return await withTransaction(async (session) => {
-		const usedSession = params?.providedSession || session;
+	const fn = async (session: ClientSession) => {
 		const ret = await collections.orders.findOneAndUpdate(
 			{ _id: order._id, 'payments._id': payment._id },
 			{
@@ -215,7 +213,7 @@ export async function onOrderPayment(
 					updatedAt: new Date()
 				}
 			},
-			{ session: usedSession, returnDocument: 'after' }
+			{ session, returnDocument: 'after' }
 		);
 
 		if (!ret.value) {
@@ -228,7 +226,8 @@ export async function onOrderPayment(
 		}
 
 		return ret.value;
-	});
+	};
+	return params?.providedSession ? await fn(params.providedSession) : await withTransaction(fn);
 }
 
 export async function onOrderPaymentFailed(
