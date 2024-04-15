@@ -8,7 +8,6 @@ import { FAKE_ORDER_INVOICE_NUMBER } from '$lib/types/Order';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
-import { pojo } from '$lib/server/pojo.js';
 
 export async function fetchOrderForUser(orderId: string) {
 	const order = await collections.orders.findOne({
@@ -137,6 +136,9 @@ export async function fetchOrderForUser(orderId: string) {
 				alias: note.userAlias
 			})) || [],
 		receiptNote: order.receiptNote,
-		user: pojo(order.user)
+		user: {
+			npub: order.user.npub,
+			email: order.user.email
+		}
 	};
 }
