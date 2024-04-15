@@ -442,6 +442,9 @@
 		"backToOrder": "<< Retour à la commande",
 		"clickQR": "Cliquez sur le QR code pour payer avec votre portefeuille",
 		"confirmCancel": "Êtes-vous sûr ? \nS'il s'agit de votre seul paiement en attente et qu'il n'y a aucun paiement payé sur la commande, la commande sera annulée. \nEn cas d'erreur, créez d'abord un paiement, puis supprimez celui-ci.",
+		"contactAddress": {
+			"title": "Adresse de contact"
+		},
 		"copyAddress": "Copier l'adresse de paiement",
 		"createdAt": "Date de la commande : <0></0>",
 		"depositCancelled": "Demande d'acompte annulée",
