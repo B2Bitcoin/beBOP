@@ -112,10 +112,18 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.products, { 'actionSettings.eShop.visible': 1 }],
 	[collections.products, { 'actionSettings.retail.visible': 1 }],
 	[collections.locks, { updatedAt: 1 }, { expireAfterSeconds: 60 }],
-	[collections.carts, { 'user.**': 1 }],
+	[collections.carts, { 'user.userId': 1 }],
+	[collections.carts, { 'user.sessionId': 1 }],
+	[collections.carts, { 'user.npub': 1 }],
+	[collections.carts, { 'user.email': 1 }],
+	[collections.carts, { 'user.ssoIds': 1 }],
 	[collections.carts, { 'items.productId': 1 }],
 	[collections.challenges, { beginsAt: 1, endsAt: 1 }],
-	[collections.orders, { 'user.**': 1 }],
+	[collections.orders, { 'user.userId': 1 }],
+	[collections.orders, { 'user.sessionId': 1 }],
+	[collections.orders, { 'user.npub': 1 }],
+	[collections.orders, { 'user.email': 1 }],
+	[collections.orders, { 'user.ssoIds': 1 }],
 	/**
 	 * To check amount reserved for a product (with pending orders)
 	 */
@@ -133,7 +141,12 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.emailNotifications, { dest: 1 }],
 	[collections.emailNotifications, { processedAt: 1 }],
 	[collections.bootikSubscriptions, { npub: 1 }, { sparse: true }],
-	[collections.paidSubscriptions, { 'user.**': 1, productId: 1 }],
+	[collections.paidSubscriptions, { 'user.userId': 1, productId: 1 }],
+	[collections.paidSubscriptions, { 'user.sessionId': 1, productId: 1 }],
+	[collections.paidSubscriptions, { 'user.npub': 1, productId: 1 }],
+	[collections.paidSubscriptions, { 'user.email': 1, productId: 1 }],
+	[collections.paidSubscriptions, { 'user.ssoIds': 1, productId: 1 }],
+	[collections.paidSubscriptions, { productId: 1 }],
 	[collections.paidSubscriptions, { number: 1 }, { unique: true }],
 	// See subscription-lock.ts, for searching for subscriptions to remind
 	// todo: find which index is better
@@ -156,7 +169,11 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 		{ wholeCatalog: 1, endsAt: -1 },
 		{ partialFilterExpression: { wholeCatalog: true } }
 	],
-	[collections.personalInfo, { 'user.**': 1 }],
+	[collections.personalInfo, { 'user.userId': 1 }],
+	[collections.personalInfo, { 'user.sessionId': 1 }],
+	[collections.personalInfo, { 'user.npub': 1 }],
+	[collections.personalInfo, { 'user.email': 1 }],
+	[collections.personalInfo, { 'user.ssoIds': 1 }],
 	[collections.products, { alias: 1 }, { sparse: true, unique: true }],
 	[collections.tickets, { orderId: 1 }],
 	[collections.tickets, { productId: 1 }],
