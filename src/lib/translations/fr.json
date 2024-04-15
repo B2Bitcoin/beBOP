@@ -6,6 +6,7 @@
 		"country": "Pays",
 		"firstName": "Prénom",
 		"lastName": "Nom",
+		"phone": "Téléphone",
 		"state": "Canton / Région",
 		"vatNumber": "Numéro TVA",
 		"zipCode": "Code postal"

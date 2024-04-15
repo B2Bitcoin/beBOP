@@ -110,6 +110,7 @@ export interface OrderAddress {
 	isCompany?: boolean;
 	companyName?: string;
 	vatNumber?: string;
+	phone?: string;
 }
 
 export interface Order extends Timestamps {

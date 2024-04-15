@@ -6,6 +6,7 @@
 		"country": "Country",
 		"firstName": "First name",
 		"lastName": "Last name",
+		"phone": "Phone",
 		"state": "State",
 		"vatNumber": "VAT number",
 		"zipCode": "Zip code"

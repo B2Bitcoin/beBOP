@@ -245,6 +245,18 @@
 							autocomplete="postal-code"
 						/>
 					</label>
+					<label class="form-label col-span-6">
+						{t('address.phone')}
+						<input type="number" name="shipping.phone" class="form-input" />
+					</label>
+					<p class="col-span-6">
+						This information is optional but sometimes required by carriers. We will not approach
+						you on this number.
+					</p>
+					<p class="col-span-6">
+						If your number is not from the same country as the country of delivery, please enter the
+						international code.
+					</p>
 
 					<label class="col-span-6 checkbox-label">
 						<input
