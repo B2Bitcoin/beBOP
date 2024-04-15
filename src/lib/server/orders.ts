@@ -1047,10 +1047,6 @@ export async function addOrderPayment(
 	 */
 	opts?: { expiresAt?: Date | null; session?: ClientSession }
 ) {
-	if (paymentMethod !== 'free' && order.status !== 'pending') {
-		throw error(400, 'Order is not pending');
-	}
-
 	if (paymentMethod !== 'free' && isOrderFullyPaid(order, { includePendingOrders: true })) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
