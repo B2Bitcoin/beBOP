@@ -556,7 +556,7 @@ export async function createOrder(
 			number: orderNumber,
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			status: paymentMethod === 'free' ? 'paid' : 'pending',
+			status: 'pending',
 			sellerIdentity: runtimeConfig.sellerIdentity,
 			items: items.map((item, i) => ({
 				quantity: item.quantity,
