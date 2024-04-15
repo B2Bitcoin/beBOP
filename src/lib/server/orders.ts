@@ -77,11 +77,12 @@ export async function onOrderPayment(
 	params?: {
 		bankTransferNumber?: string;
 		detail?: string;
+		providedSession?: ClientSession;
 	}
 ): Promise<Order> {
 	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
 
-	if (!order.payments.includes(payment)) {
+	if (!order.payments.includes(payment) && payment.method !== 'free') {
 		throw new Error('Sync broken between order and payment');
 	}
 
@@ -91,6 +92,7 @@ export async function onOrderPayment(
 	payment.paidAt = paidAt;
 
 	return await withTransaction(async (session) => {
+		const usedSession = params?.providedSession || session;
 		const ret = await collections.orders.findOneAndUpdate(
 			{ _id: order._id, 'payments._id': payment._id },
 			{
@@ -213,7 +215,7 @@ export async function onOrderPayment(
 					updatedAt: new Date()
 				}
 			},
-			{ session, returnDocument: 'after' }
+			{ session: usedSession, returnDocument: 'after' }
 		);
 
 		if (!ret.value) {
@@ -854,9 +856,7 @@ export async function createOrder(
 			...(params.engagements && { engagements: params.engagements })
 		};
 		await collections.orders.insertOne(order, { session });
-		if (order.status === 'paid' && paymentMethod && paymentMethod === 'free') {
-			await updateAfterOrderPaid(order, session);
-		}
+
 		if (paymentMethod) {
 			const expiresAt = paymentMethodExpiration(paymentMethod);
 
@@ -1078,11 +1078,10 @@ export async function addOrderPayment(
 	const paymentId = new ObjectId();
 	const expiresAt =
 		opts?.expiresAt !== undefined ? opts.expiresAt : paymentMethodExpiration(paymentMethod);
-	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
 
 	const payment: OrderPayment = {
 		_id: paymentId,
-		status: paymentMethod === 'free' ? 'paid' : 'pending',
+		status: 'pending',
 		method: paymentMethod,
 		price: paymentPrice(paymentMethod, priceToPay),
 		currencySnapshot: {
@@ -1115,12 +1114,6 @@ export async function addOrderPayment(
 				}
 			}
 		},
-		...(paymentMethod === 'free' && {
-			invoice: {
-				number: invoiceNumber,
-				createdAt: new Date()
-			}
-		}),
 		...(expiresAt && { expiresAt }),
 		...(await generatePaymentInfo({
 			method: paymentMethod,
@@ -1142,6 +1135,9 @@ export async function addOrderPayment(
 		},
 		{ session: opts?.session }
 	);
+	if (paymentMethod === 'free') {
+		await onOrderPayment(order, payment, payment.price, { providedSession: opts?.session });
+	}
 }
 
 export async function updateAfterOrderPaid(order: Order, session: ClientSession) {
