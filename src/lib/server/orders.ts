@@ -82,7 +82,7 @@ export async function onOrderPayment(
 ): Promise<Order> {
 	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
 
-	if (!order.payments.includes(payment) && payment.method !== 'free') {
+	if (!order.payments.includes(payment)) {
 		throw new Error('Sync broken between order and payment');
 	}
 
@@ -866,6 +866,7 @@ export async function createOrder(
 				{ currency: 'SAT', amount: partialSatoshis },
 				{ session, expiresAt }
 			);
+			order.payments.push(orderPayment);
 		}
 
 		if (params.cart) {

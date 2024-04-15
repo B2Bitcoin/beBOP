@@ -114,6 +114,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.locks, { updatedAt: 1 }, { expireAfterSeconds: 60 }],
 	[collections.carts, { 'user.**': 1 }],
 	[collections.carts, { 'items.productId': 1 }],
+	[collections.challenges, { beginsAt: 1, endsAt: 1 }],
 	[collections.orders, { 'user.**': 1 }],
 	/**
 	 * To check amount reserved for a product (with pending orders)
@@ -149,6 +150,12 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
 	[collections.sessions, { sessionId: 1 }, { unique: true }],
 	[collections.discounts, { endAt: 1 }],
+	[collections.discounts, { productIds: 1, endsAt: -1 }],
+	[
+		collections.discounts,
+		{ wholeCatalog: 1, endsAt: -1 },
+		{ partialFilterExpression: { wholeCatalog: true } }
+	],
 	[collections.personalInfo, { 'user.**': 1 }],
 	[collections.products, { alias: 1 }, { sparse: true, unique: true }],
 	[collections.tickets, { orderId: 1 }],
