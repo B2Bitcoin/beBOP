@@ -856,10 +856,11 @@ export async function createOrder(
 		};
 		await collections.orders.insertOne(order, { session });
 
+		let orderPayment;
 		if (paymentMethod) {
 			const expiresAt = paymentMethodExpiration(paymentMethod);
 
-			await addOrderPayment(
+			orderPayment = await addOrderPayment(
 				order,
 				paymentMethod,
 				{ currency: 'SAT', amount: partialSatoshis },
@@ -876,6 +877,9 @@ export async function createOrder(
 			if (product.stock) {
 				await refreshAvailableStockInDb(product._id, session);
 			}
+		}
+		if (paymentMethod === 'free' && orderPayment) {
+			await onOrderPayment(order, orderPayment, orderPayment.price, { providedSession: session });
 		}
 	});
 
@@ -1134,9 +1138,8 @@ export async function addOrderPayment(
 		},
 		{ session: opts?.session }
 	);
-	if (paymentMethod === 'free') {
-		await onOrderPayment(order, payment, payment.price, { providedSession: opts?.session });
-	}
+
+	return payment;
 }
 
 export async function updateAfterOrderPaid(order: Order, session: ClientSession) {
