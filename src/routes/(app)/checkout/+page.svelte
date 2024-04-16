@@ -104,10 +104,25 @@
 			currency: UNDERLYING_CURRENCY
 		},
 		vatProfiles: data.vatProfiles,
-		discount: {
-			amount: !addDiscount ? 0 : discountAmount,
-			type: discountType
-		}
+		...(addDiscount &&
+			!isNaN(discountAmount) && {
+				discount: {
+					amount: discountAmount,
+					type: discountType
+				}
+			})
+	});
+	$: priceInfoInitial = computePriceInfo(items, {
+		bebopCountry: data.vatCountry,
+		vatSingleCountry: data.vatSingleCountry,
+		vatNullOutsideSellerCountry: data.vatNullOutsideSellerCountry,
+		vatExempted: data.vatExempted || isFreeVat,
+		userCountry: isDigital ? digitalCountry : country,
+		deliveryFees: {
+			amount: offerDeliveryFees ? 0 : deliveryFees || 0,
+			currency: UNDERLYING_CURRENCY
+		},
+		vatProfiles: data.vatProfiles
 	});
 
 	$: isDigital = items.every((item) => !item.product.shipping);
@@ -125,8 +140,9 @@
 			  );
 	$: isDiscountValid =
 		(discountType === 'fiat' &&
-			priceInfo.totalPriceWithVat > toSatoshis(discountAmount, data.currencies.main)) ||
-		(discountType === 'percentage' && discountAmount < 100);
+			priceInfoInitial.totalPriceWithVat >=
+				toSatoshis(discountAmount || 0, data.currencies.main)) ||
+		(discountType === 'percentage' && discountAmount <= 100);
 	let showBillingInfo = false;
 	let isProfessionalOrder = false;
 </script>
@@ -701,7 +717,6 @@
 						secondary
 					/>
 				</div>
-
 				{#if priceInfo.totalPriceWithVat !== priceInfo.partialPriceWithVat}
 					<div class="-mx-3 p-3 flex flex-col">
 						<div class="flex justify-between">
