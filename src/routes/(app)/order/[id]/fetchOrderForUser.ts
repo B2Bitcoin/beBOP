@@ -135,6 +135,10 @@ export async function fetchOrderForUser(orderId: string) {
 				isEmployee: note.role !== CUSTOMER_ROLE_ID,
 				alias: note.userAlias
 			})) || [],
-		receiptNote: order.receiptNote
+		receiptNote: order.receiptNote,
+		user: {
+			npub: order.user.npub,
+			email: order.user.email
+		}
 	};
 }
