@@ -118,6 +118,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.carts, { 'user.email': 1 }],
 	[collections.carts, { 'user.ssoIds': 1 }],
 	[collections.carts, { 'items.productId': 1 }],
+	[collections.challenges, { beginsAt: 1, endsAt: 1 }],
 	[collections.orders, { 'user.userId': 1 }],
 	[collections.orders, { 'user.sessionId': 1 }],
 	[collections.orders, { 'user.npub': 1 }],
@@ -162,6 +163,12 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.sessions, { expiresAt: 1 }, { expireAfterSeconds: 0 }],
 	[collections.sessions, { sessionId: 1 }, { unique: true }],
 	[collections.discounts, { endAt: 1 }],
+	[collections.discounts, { productIds: 1, endsAt: -1 }],
+	[
+		collections.discounts,
+		{ wholeCatalog: 1, endsAt: -1 },
+		{ partialFilterExpression: { wholeCatalog: true } }
+	],
 	[collections.personalInfo, { 'user.userId': 1 }],
 	[collections.personalInfo, { 'user.sessionId': 1 }],
 	[collections.personalInfo, { 'user.npub': 1 }],

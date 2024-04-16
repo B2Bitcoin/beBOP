@@ -99,7 +99,7 @@
 			"bitcoin": "Onchain",
 			"card": "Credit card",
 			"cash": "Cash",
-			"free": "Rien à payer (panier gratuit)",
+			"free": "Nothing to pay (free cart)",
 			"lightning": "Lightning",
 			"point-of-sale": "Point of sale",
 			"unavailable": "No payment methods available."
@@ -471,14 +471,16 @@
 			"bitcoin": "Paid with: Bitcoin on-chain payment (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
 			"card": "Paid with: bank card via Sum UP",
 			"lightning": "Paid with: Lightning transaction (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
-			"point-of-sale": "Paid in store"
+			"point-of-sale": "Paid in store",
+			"free": "Paid Nothing"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Paid with: verified bank transfer",
 			"bitcoin": "Paid with: Bitcoin on-chain payment",
 			"card": "Paid with: bank card via Sum UP",
 			"lightning": "Paid with: Lightning transaction",
-			"point-of-sale": "Paid in store"
+			"point-of-sale": "Paid in store",
+			"free": "Paid Nothing"
 		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
