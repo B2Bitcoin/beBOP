@@ -43,7 +43,7 @@ function textAddress(address: OrderAddress) {
 		address.zip || ''
 	} ${address.city || ''}\n${address.state || ''}${address.state && address.country ? ',' : ''} ${
 		address.country ? countryName(address.country) : ''
-	}\n${address.companyName || ''}\n${address.vatNumber || ''}`
+	}\n${address.companyName || ''}\n${address.vatNumber || ''}\n${address.phone || ''}`
 		.trim()
 		.replace(/\n+/g, '\n')
 		.replace(/ +/g, ' ');

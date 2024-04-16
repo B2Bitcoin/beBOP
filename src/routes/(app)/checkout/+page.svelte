@@ -261,6 +261,16 @@
 							autocomplete="postal-code"
 						/>
 					</label>
+					<label class="form-label col-span-6">
+						{t('address.phone')}
+						<input type="tel" name="shipping.phone" class="form-input" />
+					</label>
+					<p class="col-span-6">
+						{t('address.phoneDisclaimer')}
+					</p>
+					<p class="col-span-6">
+						{t('address.phoneCode')}
+					</p>
 
 					<label class="col-span-6 checkbox-label">
 						<input
