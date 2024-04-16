@@ -77,6 +77,7 @@ export async function onOrderPayment(
 	params?: {
 		bankTransferNumber?: string;
 		detail?: string;
+		providedSession?: ClientSession;
 	}
 ): Promise<Order> {
 	const invoiceNumber = ((await lastInvoiceNumber()) ?? 0) + 1;
@@ -89,8 +90,7 @@ export async function onOrderPayment(
 
 	payment.status = 'paid'; // for isOrderFullyPaid
 	payment.paidAt = paidAt;
-
-	return await withTransaction(async (session) => {
+	const fn = async (session: ClientSession) => {
 		const ret = await collections.orders.findOneAndUpdate(
 			{ _id: order._id, 'payments._id': payment._id },
 			{
@@ -226,7 +226,8 @@ export async function onOrderPayment(
 		}
 
 		return ret.value;
-	});
+	};
+	return params?.providedSession ? await fn(params.providedSession) : await withTransaction(fn);
 }
 
 export async function onOrderPaymentFailed(
@@ -555,7 +556,7 @@ export async function createOrder(
 			number: orderNumber,
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			status: paymentMethod === 'free' ? 'paid' : 'pending',
+			status: 'pending',
 			sellerIdentity: runtimeConfig.sellerIdentity,
 			items: items.map((item, i) => ({
 				quantity: item.quantity,
@@ -854,18 +855,18 @@ export async function createOrder(
 			...(params.engagements && { engagements: params.engagements })
 		};
 		await collections.orders.insertOne(order, { session });
-		if (order.status === 'paid' && paymentMethod && paymentMethod === 'free') {
-			await updateAfterOrderPaid(order, session);
-		}
-		if (paymentMethod && paymentMethod !== 'free') {
+
+		let orderPayment: OrderPayment | undefined = undefined;
+		if (paymentMethod) {
 			const expiresAt = paymentMethodExpiration(paymentMethod);
 
-			await addOrderPayment(
+			orderPayment = await addOrderPayment(
 				order,
 				paymentMethod,
 				{ currency: 'SAT', amount: partialSatoshis },
 				{ session, expiresAt }
 			);
+			order.payments.push(orderPayment);
 		}
 
 		if (params.cart) {
@@ -877,6 +878,9 @@ export async function createOrder(
 			if (product.stock) {
 				await refreshAvailableStockInDb(product._id, session);
 			}
+		}
+		if (orderPayment?.method === 'free') {
+			await onOrderPayment(order, orderPayment, orderPayment.price, { providedSession: session });
 		}
 	});
 
@@ -1052,7 +1056,7 @@ export async function addOrderPayment(
 		throw error(400, 'Order is not pending');
 	}
 
-	if (isOrderFullyPaid(order, { includePendingOrders: true })) {
+	if (paymentMethod !== 'free' && isOrderFullyPaid(order, { includePendingOrders: true })) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 
@@ -1071,7 +1075,7 @@ export async function addOrderPayment(
 					currency: mainCurrency
 			  };
 
-	if (priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
+	if (paymentMethod !== 'free' && priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
 		throw error(400, 'Order already fully paid with pending payments');
 	}
 
@@ -1135,6 +1139,8 @@ export async function addOrderPayment(
 		},
 		{ session: opts?.session }
 	);
+
+	return payment;
 }
 
 export async function updateAfterOrderPaid(order: Order, session: ClientSession) {

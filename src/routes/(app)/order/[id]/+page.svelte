@@ -456,6 +456,21 @@
 					</p>
 				</div>
 			{/if}
+			{#if data.order.user}
+				<div>
+					{t('order.contactAddress.title')}:
+					{#if data.order.user.email}
+						<p class="body-secondaryText whitespace-pre-line">
+							{data.order.user.email}
+						</p>
+					{/if}
+					{#if data.order.user.npub}
+						<p class="body-secondaryText whitespace-pre-line">
+							{data.order.user.npub}
+						</p>
+					{/if}
+				</div>
+			{/if}
 
 			{#if data.order.status === 'pending' && remainingAmount && data.roleId !== CUSTOMER_ROLE_ID && data.roleId}
 				<form
