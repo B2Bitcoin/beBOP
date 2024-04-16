@@ -14,7 +14,6 @@ import type { JsonObject } from 'type-fest';
 import { omit, set } from 'lodash-es';
 import { rateLimit } from '$lib/server/rateLimit.js';
 import { cmsFromContent } from '$lib/server/cms';
-import type { OrderAddress } from '$lib/types/Order';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -163,6 +162,7 @@ export const actions = {
 										city: z.string().default(''),
 										state: z.string().optional(),
 										zip: z.string().default(''),
+										phone: z.string().optional(),
 										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
 								  }
 								: {
@@ -416,9 +416,8 @@ export const actions = {
 					}
 				},
 				cart,
-				shippingAddress: shippingInfo?.shipping as OrderAddress,
-				billingAddress:
-					(billingInfo?.billing as OrderAddress) || (shippingInfo?.shipping as OrderAddress),
+				shippingAddress: shippingInfo?.shipping,
+				billingAddress: billingInfo?.billing || shippingInfo?.shipping,
 				userVatCountry: vatCountry,
 				...(locals.user?.roleId === POS_ROLE_ID && isFreeVat && { reasonFreeVat }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
