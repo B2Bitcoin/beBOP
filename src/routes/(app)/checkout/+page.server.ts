@@ -162,8 +162,8 @@ export const actions = {
 										city: z.string().default(''),
 										state: z.string().optional(),
 										zip: z.string().default(''),
-										phone: z.string().optional(),
-										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]])
+										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+										phone: z.string().optional()
 								  }
 								: {
 										firstName: z.string().min(1),
@@ -192,7 +192,8 @@ export const actions = {
 							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
 							isCompany: z.boolean({ coerce: true }).default(false),
 							vatNumber: z.string().optional(),
-							companyName: z.string().optional()
+							companyName: z.string().optional(),
+							phone: z.string().optional()
 						})
 					})
 					.parse(json)
