@@ -632,7 +632,7 @@
 					<div class="border-b border-gray-300 col-span-4" />
 				{/each}
 
-				{#if deliveryFees}
+				{#if deliveryFees && !offerDeliveryFees}
 					<div class="flex justify-between items-center">
 						<h3 class="text-base">{t('checkout.deliveryFees')}</h3>
 
