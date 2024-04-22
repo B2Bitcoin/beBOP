@@ -308,11 +308,20 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			_id: 'error'
 		});
 
-		if (errorPages) {
+		if (errorPages && runtimeConfig.errorBehavior === 'displayCMSPageError') {
 			return new Response(null, {
 				status: 302,
 				headers: {
 					location: '/error'
+				}
+			});
+		} else if (runtimeConfig.errorBehavior === 'displayError') {
+			throw error(403, 'URL not found');
+		} else {
+			return new Response(null, {
+				status: 302,
+				headers: {
+					location: runtimeConfig.errorRedirectUrl
 				}
 			});
 		}

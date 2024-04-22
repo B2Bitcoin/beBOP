@@ -17,6 +17,7 @@
 	let vatSingleCountry = data.vatSingleCountry;
 	let priceReferenceCurrency = data.currencies.priceReference;
 	let hasCartLimitProductLine = !!data.cartMaxSeparateItems;
+	let errorBehavior = data.errorBehavior;
 	async function onOverwrite(event: Event) {
 		if (!confirm('Do you want to overwrite current product currencies with this one?')) {
 			event.preventDefault();
@@ -274,7 +275,59 @@
 			</button>
 		{/each}
 	</div>
+	<h2 class="text-2xl">404 Behavior</h2>
+	<label class="checkbox-label">
+		<input
+			type="radio"
+			name="errorBehavior"
+			value="displayError "
+			class="form-radio"
+			bind:group={errorBehavior}
+		/> Display error (current behavior)
+	</label>
 
+	<label class="checkbox-label">
+		<input
+			type="radio"
+			name="errorBehavior"
+			value="displayCMSPageError"
+			class="form-radio"
+			bind:group={errorBehavior}
+		/>
+		Display CMS page /error
+	</label>
+	<label class="checkbox-label">
+		<input
+			type="radio"
+			name="errorBehavior"
+			value="redirectPageError"
+			class="form-radio"
+			bind:group={errorBehavior}
+		/> Redirect to page
+	</label>
+	{#if errorBehavior === 'redirectPageError'}
+		<label class="form-label">
+			Redirect url
+			<input
+				type="text"
+				name="errorRedirectUrl"
+				value={data.errorRedirectUrl}
+				class="form-input max-w-[25rem]"
+				placeholder="/page-to-redirect"
+			/>
+		</label>
+		<label class="form-label">
+			Custom error message in page headband
+			<textarea
+				name="errorRedirectCustomHeadband"
+				cols="10"
+				rows="3"
+				maxlength="1000"
+				value={data.errorRedirectCustomHeadband}
+				class="form-input"
+			/>
+		</label>
+	{/if}
 	<h2 class="text-2xl">Timing</h2>
 	<label class="form-label">
 		Subscription duration

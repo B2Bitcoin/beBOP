@@ -33,7 +33,10 @@ export async function load(event) {
 		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems,
 		accountingCurrency: runtimeConfig.accountingCurrency,
 		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin,
-		disableLanguageSelector: runtimeConfig.disableLanguageSelector
+		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
+		errorBehavior: runtimeConfig.errorBehavior,
+		errorRedirectCustomHeadband: runtimeConfig.errorRedirectCustomHeadband,
+		errorRedirectUrl: runtimeConfig.errorRedirectUrl
 	};
 }
 
@@ -85,7 +88,10 @@ export const actions = {
 				isBillingAddressMandatory: z.boolean({ coerce: true }),
 				displayNewsletterCommercialProspection: z.boolean({ coerce: true }),
 				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0),
-				disableLanguageSelector: z.boolean({ coerce: true })
+				disableLanguageSelector: z.boolean({ coerce: true }),
+				errorBehavior: z.enum(['displayCMSPageError', 'displayError', 'redirectPageError']),
+				errorRedirectCustomHeadband: z.string().trim().max(1_000),
+				errorRedirectUrl: z.string()
 			})
 			.parse({
 				...Object.fromEntries(formData),
