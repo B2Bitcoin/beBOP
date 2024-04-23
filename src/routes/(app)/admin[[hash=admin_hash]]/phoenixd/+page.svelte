@@ -54,4 +54,14 @@
 		</div>
 	</form>
 	<form method="POST" action="?/disable" id="disableForm"></form>
+
+	{#if data.nodeInfo === null}
+		<p class="text-red-500">
+			There was an error, check your http password and if PhoenixD is running/listening on port
+			9740.
+		</p>
+	{:else if data.nodeInfo}
+		<h2 class="text-2xl">Node info</h2>
+		<pre>{JSON.stringify(data.nodeInfo, null, 2)}</pre>
+	{/if}
 {/if}

@@ -4,8 +4,23 @@ import { fail } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const load = async () => {
+	let nodeInfo = undefined;
+	if (runtimeConfig.phoenixd.enabled && runtimeConfig.phoenixd.password) {
+		nodeInfo = await Promise.race([
+			await fetch('http://localhost:9740/getinfo', {
+				headers: {
+					Authorization: `Basic ${btoa(`phoenixd:${runtimeConfig.phoenixd.password}`)}`
+				}
+			}).then(
+				(res) => res.json(),
+				() => null
+			),
+			new Promise((resolve) => setTimeout(() => resolve(null), 2000))
+		]);
+	}
 	return {
-		phoenixd: runtimeConfig.phoenixd
+		phoenixd: runtimeConfig.phoenixd,
+		nodeInfo
 	};
 };
 
