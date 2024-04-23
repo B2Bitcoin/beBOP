@@ -308,25 +308,43 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			_id: 'error'
 		});
 
-		if (errorPages && runtimeConfig.errorBehavior === 'displayCMSPageError') {
+		if (errorPages) {
 			return new Response(null, {
 				status: 302,
 				headers: {
 					location: '/error'
 				}
 			});
-		} else if (runtimeConfig.errorBehavior === 'displayError') {
-			throw error(403, 'URL not found');
-		} else {
-			return new Response(null, {
-				status: 302,
-				headers: {
-					location: runtimeConfig.errorRedirectUrl
-				}
-			});
 		}
 	}
 
+	const errorPages = await collections.cmsPages.countDocuments({
+		_id: 'error'
+	});
+	if (
+		response.status === 404 &&
+		runtimeConfig.errorBehavior === 'displayCMSPageError' &&
+		errorPages
+	) {
+		return new Response(null, {
+			status: 302,
+			headers: {
+				location: '/error'
+			}
+		});
+	}
+	if (
+		response.status === 404 &&
+		runtimeConfig.errorBehavior === 'redirectPageError' &&
+		runtimeConfig.errorRedirectUrl.startsWith('/')
+	) {
+		return new Response(null, {
+			status: 302,
+			headers: {
+				location: runtimeConfig.errorRedirectUrl
+			}
+		});
+	}
 	// Work around handleError which does not allow setting the header
 	const status = event.locals.status;
 	if (status) {
