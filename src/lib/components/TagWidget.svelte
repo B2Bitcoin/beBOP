@@ -12,6 +12,7 @@
 	import TagWidgetVariation1CtAless from './TagWidget/TagWidgetVariation1CTAless.svelte';
 	import TagWidgetVariation4Reverse from './TagWidget/TagWidgetVariation4Reverse.svelte';
 	import TagWidgetVariation1noBG from './TagWidget/TagWidgetVariation1noBG.svelte';
+	import TagWidgetVariation1Reverse from './TagWidget/TagWidgetVariation1Reverse.svelte';
 
 	let className = '';
 	export { className as class };
@@ -33,6 +34,10 @@
 		},
 		'var-1-noBG': {
 			component: TagWidgetVariation1noBG,
+			pictureType: 'full'
+		},
+		'var-1-reverse': {
+			component: TagWidgetVariation1Reverse,
 			pictureType: 'full'
 		},
 		'var-2': {
