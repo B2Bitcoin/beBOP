@@ -32,6 +32,7 @@
 	export let pageName: string | undefined;
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
+	export let errorRedirectCustomHeadband: string | undefined;
 	export let tags: CmsTag[];
 	export let specifications: CmsSpecification[];
 	export let contactForms: CmsContactForm[];
@@ -66,6 +67,7 @@
 		{brandName}
 		{countdowns}
 		{galleries}
+		{errorRedirectCustomHeadband}
 		class="body body-mainPlan"
 	/>
 {:else}
@@ -88,6 +90,7 @@
 			{brandName}
 			{countdowns}
 			{galleries}
+			{errorRedirectCustomHeadband}
 			class="body"
 		/>
 	</main>

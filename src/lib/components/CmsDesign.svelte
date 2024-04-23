@@ -26,6 +26,7 @@
 	import { mapKeys } from '$lib/utils/mapKeys';
 	import CountdownWidget from './CountdownWidget.svelte';
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
+	import { page } from '$app/stores';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -44,6 +45,7 @@
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
 	export let galleries: CmsGallery[];
+	export let errorRedirectCustomHeadband: string | undefined;
 
 	let classNames = '';
 	export { classNames as class };
@@ -108,9 +110,15 @@
 		);
 	}
 	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
+	let redirectPage = $page.url.searchParams.get('redirectPage');
 </script>
 
 <div class="prose max-w-full {classNames}">
+	{#if redirectPage}
+		<div class="text-red-500">
+			{errorRedirectCustomHeadband}
+		</div>
+	{/if}
 	{#each tokens as token}
 		{#if token.type === 'productWidget' && productById[token.slug]}
 			<ProductWidget

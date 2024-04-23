@@ -341,7 +341,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				location: runtimeConfig.errorRedirectUrl
+				location: runtimeConfig.errorRedirectUrl + '?redirectPage=true'
 			}
 		});
 	}

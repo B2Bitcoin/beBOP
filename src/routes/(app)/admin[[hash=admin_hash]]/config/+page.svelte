@@ -307,7 +307,7 @@
 	</label>
 	{#if errorBehavior === 'redirectPageError'}
 		<label class="form-label">
-			Redirect url
+			Redirect url (Use Existing CMS page)
 			<input
 				type="text"
 				name="errorRedirectUrl"
@@ -317,8 +317,6 @@
 				required
 			/>
 		</label>
-	{/if}
-	{#if errorBehavior === 'displayCMSPageError'}
 		<label class="form-label">
 			Custom error message in page headband
 			<textarea

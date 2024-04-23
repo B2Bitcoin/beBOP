@@ -180,6 +180,7 @@ export async function load(params) {
 		cart: cartData,
 		confirmationBlocksThresholds: runtimeConfig.confirmationBlocksThresholds,
 		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems,
-		disableLanguageSelector: runtimeConfig.disableLanguageSelector
+		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
+		errorRedirectCustomHeadband: runtimeConfig.errorRedirectCustomHeadband
 	};
 }
