@@ -191,7 +191,7 @@
 							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.firstName ??
 								(data.roleId === POS_ROLE_ID && data.shopInformation?.businessName
-									? data.shopInformation?.businessName
+									? data.shopInformation.businessName
 									: '') ??
 								''}
 						/>
@@ -219,7 +219,7 @@
 							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.address?.street ??
 								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.street
-									? data.shopInformation?.address?.street
+									? data.shopInformation.address.street
 									: '') ??
 								''}
 						/>
@@ -245,7 +245,7 @@
 							class="form-input"
 							value={data.personalInfoConnected?.address?.state ??
 								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.state
-									? data.shopInformation?.address?.state
+									? data.shopInformation.address.state
 									: '') ??
 								''}
 						/>
@@ -259,7 +259,7 @@
 							class="form-input"
 							value={data.personalInfoConnected?.address?.city ??
 								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.city
-									? data.shopInformation?.address?.city
+									? data.shopInformation.address.city
 									: '') ??
 								''}
 							required={data.roleId !== POS_ROLE_ID}
@@ -274,7 +274,7 @@
 							class="form-input"
 							value={data.personalInfoConnected?.address?.zip ??
 								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.zip
-									? data.shopInformation?.address?.zip
+									? data.shopInformation.address.zip
 									: '') ??
 								''}
 							required={data.roleId !== POS_ROLE_ID}
@@ -288,7 +288,7 @@
 							name="shipping.phone"
 							class="form-input"
 							value={data.roleId === POS_ROLE_ID && data.shopInformation?.contact?.phone
-								? data.shopInformation?.contact?.phone
+								? data.shopInformation.contact.phone
 								: ''}
 						/>
 					</label>
