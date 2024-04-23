@@ -190,9 +190,10 @@
 							autocomplete="given-name"
 							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.firstName ??
-							(data.roleId === POS_ROLE_ID && data.shopInformation?.businessName)
-								? data.shopInformation?.businessName
-								: ''}
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.businessName
+									? data.shopInformation?.businessName
+									: '') ??
+								''}
 						/>
 					</label>
 
@@ -217,9 +218,10 @@
 							name="shipping.address"
 							required={data.roleId !== POS_ROLE_ID}
 							value={data.personalInfoConnected?.address?.street ??
-							(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.street)
-								? data.shopInformation?.address?.street
-								: ''}
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.street
+									? data.shopInformation?.address?.street
+									: '') ??
+								''}
 						/>
 					</label>
 
@@ -242,9 +244,10 @@
 							name="shipping.state"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.state ??
-							(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.state)
-								? data.shopInformation?.address?.state
-								: ''}
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.state
+									? data.shopInformation?.address?.state
+									: '') ??
+								''}
 						/>
 					</label>
 					<label class="form-label col-span-2">
@@ -255,9 +258,10 @@
 							name="shipping.city"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.city ??
-							(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.city)
-								? data.shopInformation?.address?.city
-								: ''}
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.city
+									? data.shopInformation?.address?.city
+									: '') ??
+								''}
 							required={data.roleId !== POS_ROLE_ID}
 						/>
 					</label>
@@ -269,9 +273,10 @@
 							name="shipping.zip"
 							class="form-input"
 							value={data.personalInfoConnected?.address?.zip ??
-							(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.zip)
-								? data.shopInformation?.address?.zip
-								: ''}
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.zip
+									? data.shopInformation?.address?.zip
+									: '') ??
+								''}
 							required={data.roleId !== POS_ROLE_ID}
 							autocomplete="postal-code"
 						/>
