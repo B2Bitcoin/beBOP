@@ -85,10 +85,6 @@ export const actions: Actions = {
 			parsed.preorder = false;
 		}
 
-		if (product.availableDate && !parsed.availableDate) {
-			parsed.availableDate = product.availableDate;
-		}
-
 		if (product.type === 'donation') {
 			parsed.shipping = false;
 		}

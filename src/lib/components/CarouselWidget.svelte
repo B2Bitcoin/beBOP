@@ -39,6 +39,8 @@
 		>
 			<Slide image={images[index]} />
 		</a>
-		<Indicators />
+		{#if images.length > 1}
+			<Indicators />
+		{/if}
 	</Carousel>
 </div>
