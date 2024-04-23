@@ -45,7 +45,7 @@
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
 	export let galleries: CmsGallery[];
-	export let errorRedirectCustomHeadband: string | undefined;
+	export let errorRedirectCustomHeadband = '';
 
 	let classNames = '';
 	export { classNames as class };
