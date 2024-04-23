@@ -99,6 +99,11 @@ const baseConfig = {
 		} satisfies DeliveryFees as DeliveryFees
 	},
 	plausibleScriptUrl: '',
+	phoenixd: {
+		enabled: false,
+		password: '',
+		paymentMethodLabel: 'Lightning'
+	},
 	productActionSettings: {
 		eShop: {
 			visible: true,

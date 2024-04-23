@@ -103,6 +103,10 @@ export const adminLinks = [
 				label: 'Orders'
 			},
 			{
+				href: '/admin/phoenixd',
+				label: 'PhoenixD'
+			},
+			{
 				href: '/admin/reporting',
 				label: 'Reporting'
 			}
