@@ -115,7 +115,7 @@
 
 <div class="prose max-w-full {classNames}">
 	{#if redirectPage}
-		<div class="text-red-500">
+		<div class="mt-4 p-2 border-2 border-red-500 rounded text-center text-red-500 font-bold">
 			{errorRedirectCustomHeadband}
 		</div>
 	{/if}

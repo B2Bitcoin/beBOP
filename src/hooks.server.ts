@@ -321,6 +321,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	const errorPages = await collections.cmsPages.countDocuments({
 		_id: 'error'
 	});
+
 	if (
 		response.status === 404 &&
 		runtimeConfig.errorBehavior === 'displayCMSPageError' &&
@@ -333,15 +334,26 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			}
 		});
 	}
+	const pageRedirect = await collections.cmsPages.countDocuments({
+		_id: runtimeConfig.errorRedirectUrl.split('/')[1]
+	});
 	if (
 		response.status === 404 &&
 		runtimeConfig.errorBehavior === 'redirectPageError' &&
 		runtimeConfig.errorRedirectUrl.startsWith('/')
 	) {
+		if (pageRedirect) {
+			return new Response(null, {
+				status: 302,
+				headers: {
+					location: runtimeConfig.errorRedirectUrl + '?redirectPage=true'
+				}
+			});
+		}
 		return new Response(null, {
 			status: 302,
 			headers: {
-				location: runtimeConfig.errorRedirectUrl + '?redirectPage=true'
+				location: '/?redirectPage=true'
 			}
 		});
 	}
