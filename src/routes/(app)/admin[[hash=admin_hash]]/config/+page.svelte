@@ -280,7 +280,7 @@
 		<input
 			type="radio"
 			name="errorBehavior"
-			value="displayError "
+			value="displayError"
 			class="form-radio"
 			bind:group={errorBehavior}
 		/> Display error (current behavior)
@@ -314,8 +314,11 @@
 				value={data.errorRedirectUrl}
 				class="form-input max-w-[25rem]"
 				placeholder="/page-to-redirect"
+				required
 			/>
 		</label>
+	{/if}
+	{#if errorBehavior === 'displayCMSPageError'}
 		<label class="form-label">
 			Custom error message in page headband
 			<textarea
@@ -325,6 +328,7 @@
 				maxlength="1000"
 				value={data.errorRedirectCustomHeadband}
 				class="form-input"
+				required
 			/>
 		</label>
 	{/if}

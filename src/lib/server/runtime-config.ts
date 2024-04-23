@@ -40,7 +40,7 @@ const baseConfig = {
 	isMaintenance: false,
 	noProBilling: false,
 	lightningQrCodeDescription: 'brand' as 'orderUrl' | 'brand' | 'brandAndOrderNumber' | 'none',
-	errorBehavior: 'displayError' as 'displayCMSPageError' | 'displayError' | 'redirectPageError',
+	errorBehavior: 'displayError' as 'displayCMSPageError' | 'redirectPageError' | 'displayError',
 	errorRedirectCustomHeadband: '',
 	errorRedirectUrl: '',
 	maintenanceIps: '',

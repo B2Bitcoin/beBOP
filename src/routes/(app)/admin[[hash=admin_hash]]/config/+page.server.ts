@@ -90,8 +90,8 @@ export const actions = {
 				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0),
 				disableLanguageSelector: z.boolean({ coerce: true }),
 				errorBehavior: z.enum(['displayCMSPageError', 'displayError', 'redirectPageError']),
-				errorRedirectCustomHeadband: z.string().trim().max(1_000),
-				errorRedirectUrl: z.string()
+				errorRedirectCustomHeadband: z.string().trim().max(1_000).optional(),
+				errorRedirectUrl: z.string().optional()
 			})
 			.parse({
 				...Object.fromEntries(formData),
