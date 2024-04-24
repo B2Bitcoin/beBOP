@@ -132,7 +132,7 @@
 	</ul>
 
 	<p>
-		Changing wallet in an active beBOP means that incoming transactions in the old wallet will not
+		Changing wallet in an active be-BOP means that incoming transactions in the old wallet will not
 		be detected.
 	</p>
 {/if}

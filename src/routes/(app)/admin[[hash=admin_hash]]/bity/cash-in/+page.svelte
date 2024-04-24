@@ -60,7 +60,7 @@
 <h1 class="text-3xl">Bitcoin node - Bity cash in</h1>
 
 <p>
-	In order to manage on-chain refunds and cross -beBOP automatic invoices, you might need to keep a
+	In order to manage on-chain refunds and cross -be-BOP automatic invoices, you might need to keep a
 	certain amount on your bitcoin wallet.
 </p>
 

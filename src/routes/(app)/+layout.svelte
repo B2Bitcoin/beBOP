@@ -17,7 +17,7 @@
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import IconTrash from '$lib/components/icons/IconTrash.svelte';
 	import DEFAULT_LOGO from '$lib/assets/bebop-light.svg';
-	import DEFAULT_LOGO_DARK from '$lib/assets/bebop-dark.svg';
+	import DEFAULT_LOGO_DARK from '$lib/assets/be-bop-dark.svg';
 
 	//import IconMenu from '~icons/ant-design/holder-outlined';
 	import IconMenu from '~icons/ant-design/menu-outlined';
