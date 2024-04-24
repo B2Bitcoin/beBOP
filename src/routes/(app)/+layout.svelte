@@ -17,7 +17,7 @@
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
 	import IconTrash from '$lib/components/icons/IconTrash.svelte';
 	import DEFAULT_LOGO from '$lib/assets/bebop-light.svg';
-	import DEFAULT_LOGO_DARK from '$lib/assets/be-bop-dark.svg';
+	import DEFAULT_LOGO_DARK from '$lib/assets/bebop-dark.svg';
 
 	//import IconMenu from '~icons/ant-design/holder-outlined';
 	import IconMenu from '~icons/ant-design/menu-outlined';
@@ -558,7 +558,7 @@
 					<div class="flex w-full">
 						<a class="flex items-center gap-4" href="https://be-bop.io" target="_blank">
 							<span class="font-light">{t('footer.poweredBy')} </span>
-							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO_DARK} alt="" />
+							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
 							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
 						</a>
 					</div>
