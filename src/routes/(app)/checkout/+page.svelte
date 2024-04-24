@@ -21,6 +21,7 @@
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
+	let submitting = false;
 
 	let actionCount = 0;
 	const defaultShippingCountry =
@@ -62,6 +63,7 @@
 	};
 
 	function checkForm(event: SubmitEvent) {
+		submitting = true;
 		for (const input of typedValues(npubInputs)) {
 			if (!input) {
 				continue;
@@ -968,7 +970,7 @@
 					class="btn body-cta body-mainCTA btn-xl -mx-1 -mb-1 mt-1"
 					value={t('checkout.cta.submit')}
 					form="checkout"
-					disabled={isNaN(deliveryFees) || (addDiscount && !isDiscountValid)}
+					disabled={isNaN(deliveryFees) || (addDiscount && !isDiscountValid) || submitting}
 				/>
 			</article>
 		</div>
