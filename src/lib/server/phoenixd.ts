@@ -117,3 +117,68 @@ export async function phoenixdLookupInvoice(paymentHash: string) {
 		description: json.description
 	};
 }
+
+export async function phoenixdPayInvoice(paymentRequest: string, amountSat?: number) {
+	const res = await fetch('http://localhost:9740/payinvoice', {
+		method: 'POST',
+		headers: {
+			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`,
+			'Content-Type': 'application/x-www-form-urlencoded',
+			Accept: 'application/json'
+		},
+		body: new URLSearchParams({
+			invoice: paymentRequest,
+			...(amountSat ? { amountSat: amountSat.toString() } : {})
+		})
+	});
+
+	if (!res.ok) {
+		throw error(500, `Could not pay invoice on PhoenixD: ${res.status} ${await res.text()}`);
+	}
+
+	const json: {
+		recipientAmountSat: number;
+		routingFeeSat: number;
+		paymentId: string;
+		paymentHash: string;
+		paymentPreimage: string;
+		reason?: string;
+	} = await res.json();
+
+	// For some reason PhoenixD returns 200 in case of errors
+	if (json.reason) {
+		throw error(500, json.reason);
+	}
+
+	return json;
+}
+
+export async function phoenixdSendOnChain(amountSat: number, address: string, feeVbSat: number) {
+	const res = await fetch('http://localhost:9740/sendtoaddress', {
+		method: 'POST',
+		headers: {
+			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`,
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body: new URLSearchParams({
+			amountSat: amountSat.toString(),
+			address,
+			feerateSatByte: feeVbSat.toString()
+		})
+	});
+
+	if (!res.ok) {
+		throw error(500, `Could not send on-chain on PhoenixD: ${res.status} ${await res.text()}`);
+	}
+
+	const transactionId = await res.text();
+
+	// For some reason PhoenixD returns 200 in case of errors
+	if (!/^[0-9a-f]{64}$/.test(transactionId)) {
+		throw error(500, transactionId);
+	}
+
+	return {
+		transactionId
+	};
+}

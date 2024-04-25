@@ -3,7 +3,9 @@ import {
 	isPhoenixdConfigured,
 	phoenixdBalance,
 	phoenixdDetected,
-	phoenixdInfo
+	phoenixdInfo,
+	phoenixdPayInvoice,
+	phoenixdSendOnChain
 } from '$lib/server/phoenixd.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { fail } from '@sveltejs/kit';
@@ -83,5 +85,38 @@ export const actions = {
 			},
 			{ upsert: true }
 		);
+	},
+	async withdraw(event) {
+		const formData = Object.fromEntries(await event.request.formData());
+
+		const withdrawMode = z
+			.object({
+				withdrawMode: z.enum(['bolt11', 'bitcoin'])
+			})
+			.parse(formData).withdrawMode;
+
+		if (withdrawMode === 'bolt11') {
+			if (!formData.amount) {
+				delete formData.amount;
+			}
+			const data = z
+				.object({
+					address: z.string().min(1),
+					amount: z.number({ coerce: true }).int().min(1).optional()
+				})
+				.parse(formData);
+
+			return await phoenixdPayInvoice(data.address, data.amount);
+		} else {
+			const data = z
+				.object({
+					address: z.string().min(1),
+					amount: z.number({ coerce: true }).int().min(1),
+					feeRate: z.number({ coerce: true }).int().min(1)
+				})
+				.parse(formData);
+
+			return await phoenixdSendOnChain(data.amount, data.address, data.feeRate);
+		}
 	}
 };
