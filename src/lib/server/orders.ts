@@ -3,8 +3,8 @@ import {
 	type DiscountType,
 	type Order,
 	type OrderPayment,
-	type OrderPaymentStatus,
-	type Price
+	type Price,
+	type OrderPaymentStatus
 } from '$lib/types/Order';
 import { ClientSession, ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
@@ -34,7 +34,7 @@ import type { CountryAlpha2 } from '$lib/types/Country';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { LanguageKey } from '$lib/translations';
 import { filterNullish } from '$lib/utils/fillterNullish';
-import { isPhoenixdConfigured } from './phoenixd';
+import { isPhoenixdConfigured, phoenixdCreateInvoice } from './phoenixd';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -74,10 +74,11 @@ export function isOrderFullyPaid(order: Order, opts?: { includePendingOrders?: b
 export async function onOrderPayment(
 	order: Order,
 	payment: Order['payments'][0],
-	received: { currency: Currency; amount: number },
+	received: Price,
 	params?: {
 		bankTransferNumber?: string;
 		detail?: string;
+		fees?: Price;
 		providedSession?: ClientSession;
 	}
 ): Promise<Order> {
@@ -111,6 +112,46 @@ export async function onOrderPayment(
 					...(isOrderFullyPaid(order) && {
 						status: 'paid'
 					}),
+					'payments.$.received': received,
+					...(params?.fees && {
+						'payments.$.fees': params.fees,
+						'payments.$.currencySnapshot.main.fees': {
+							currency: payment.currencySnapshot.main.price.currency,
+							amount: toCurrency(
+								payment.currencySnapshot.main.price.currency,
+								params.fees.amount,
+								params.fees.currency
+							)
+						},
+						...(payment.currencySnapshot.secondary && {
+							'payments.$.currencySnapshot.secondary.fees': {
+								currency: payment.currencySnapshot.secondary.price.currency,
+								amount: toCurrency(
+									payment.currencySnapshot.secondary.price.currency,
+									params.fees.amount,
+									params.fees.currency
+								)
+							}
+						}),
+						'payments.$.currencySnapshot.priceReference.fees': {
+							currency: payment.currencySnapshot.priceReference.price.currency,
+							amount: toCurrency(
+								payment.currencySnapshot.priceReference.price.currency,
+								params.fees.amount,
+								params.fees.currency
+							)
+						},
+						...(payment.currencySnapshot.accounting && {
+							'payments.$.currencySnapshot.accounting.fees': {
+								currency: payment.currencySnapshot.accounting.price.currency,
+								amount: toCurrency(
+									payment.currencySnapshot.accounting.price.currency,
+									params.fees.amount,
+									params.fees.currency
+								)
+							}
+						})
+					}),
 					'payments.$.currencySnapshot.main.previouslyPaid': {
 						currency: payment.currencySnapshot.main.price.currency,
 						amount: sumCurrency(
@@ -130,6 +171,14 @@ export async function onOrderPayment(
 								.map((p) => ({ currency: p.currency, amount: -p.amount }))
 						])
 					},
+					'payments.$.currencySnapshot.main.received': {
+						currency: payment.currencySnapshot.main.price.currency,
+						amount: toCurrency(
+							payment.currencySnapshot.main.price.currency,
+							received.amount,
+							received.currency
+						)
+					},
 					'payments.$.currencySnapshot.priceReference.previouslyPaid': {
 						currency: payment.currencySnapshot.priceReference.price.currency,
 						amount: sumCurrency(
@@ -148,6 +197,14 @@ export async function onOrderPayment(
 								.map((p) => p.currencySnapshot.priceReference.price)
 								.map((p) => ({ currency: p.currency, amount: -p.amount }))
 						])
+					},
+					'payments.$.currencySnapshot.priceReference.received': {
+						currency: payment.currencySnapshot.priceReference.price.currency,
+						amount: toCurrency(
+							payment.currencySnapshot.priceReference.price.currency,
+							received.amount,
+							received.currency
+						)
 					},
 					...(payment.currencySnapshot.secondary &&
 						order.currencySnapshot.secondary && {
@@ -172,6 +229,47 @@ export async function onOrderPayment(
 											.map((p) => p.currencySnapshot.secondary?.price)
 									).map((p) => ({ currency: p.currency, amount: -p.amount }))
 								])
+							},
+							'payments.$.currencySnapshot.secondary.received': {
+								currency: payment.currencySnapshot.secondary.price.currency,
+								amount: toCurrency(
+									payment.currencySnapshot.secondary.price.currency,
+									received.amount,
+									received.currency
+								)
+							}
+						}),
+					...(payment.currencySnapshot.accounting &&
+						order.currencySnapshot.accounting && {
+							'payments.$.currencySnapshot.accounting.previouslyPaid': {
+								currency: payment.currencySnapshot.accounting.price.currency,
+								amount: sumCurrency(
+									payment.currencySnapshot.accounting.price.currency,
+									filterUndef(
+										order.payments
+											.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt < paidAt)
+											.map((p) => p.currencySnapshot.accounting?.price)
+									)
+								)
+							},
+							'payments.$.currencySnapshot.accounting.remainingToPay': {
+								currency: payment.currencySnapshot.accounting.price.currency,
+								amount: sumCurrency(payment.currencySnapshot.accounting.price.currency, [
+									order.currencySnapshot.accounting.totalPrice,
+									...filterUndef(
+										order.payments
+											.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+											.map((p) => p.currencySnapshot.accounting?.price)
+									).map((p) => ({ currency: p.currency, amount: -p.amount }))
+								])
+							},
+							'payments.$.currencySnapshot.accounting.received': {
+								currency: payment.currencySnapshot.accounting.price.currency,
+								amount: toCurrency(
+									payment.currencySnapshot.accounting.price.currency,
+									received.amount,
+									received.currency
+								)
 							}
 						}),
 					'payments.$.transactions': payment.transactions,
@@ -913,34 +1011,35 @@ async function generatePaymentInfo(params: {
 				processor: 'bitcoind'
 			};
 		case 'lightning': {
+			const label = (() => {
+				switch (runtimeConfig.lightningQrCodeDescription) {
+					case 'brand':
+						return runtimeConfig.brandName;
+					case 'orderUrl':
+						return `${ORIGIN}/order/${params.orderId}`;
+					case 'brandAndOrderNumber':
+						return `${runtimeConfig.brandName} - Order #${params.orderNumber.toLocaleString('en')}`;
+					default:
+						return '';
+				}
+			})();
+			const satoshis = toSatoshis(params.toPay.amount, params.toPay.currency);
 			if (isPhoenixdConfigured()) {
-				// Todo
+				// no way to configure an expiration date for now
+				const invoice = await phoenixdCreateInvoice(satoshis, label, params.orderId);
+
 				return {
+					address: invoice.paymentAddress,
+					invoiceId: invoice.paymentHash,
 					processor: 'phoenixd'
 				};
 			} else {
-				const invoice = await lndCreateInvoice(
-					toSatoshis(params.toPay.amount, params.toPay.currency),
-					{
-						...(params.expiresAt && {
-							expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date())
-						}),
-						label: (() => {
-							switch (runtimeConfig.lightningQrCodeDescription) {
-								case 'brand':
-									return runtimeConfig.brandName;
-								case 'orderUrl':
-									return `${ORIGIN}/order/${params.orderId}`;
-								case 'brandAndOrderNumber':
-									return `${runtimeConfig.brandName} - Order #${params.orderNumber.toLocaleString(
-										'en'
-									)}`;
-								default:
-									return undefined;
-							}
-						})()
-					}
-				);
+				const invoice = await lndCreateInvoice(satoshis, {
+					...(params.expiresAt && {
+						expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date())
+					}),
+					label
+				});
 
 				return {
 					address: invoice.payment_request,

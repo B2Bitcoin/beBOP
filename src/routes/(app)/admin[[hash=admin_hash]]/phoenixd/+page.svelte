@@ -53,4 +53,9 @@
 		<h2 class="text-2xl">Node info</h2>
 		<pre>{JSON.stringify(data.nodeInfo, null, 2)}</pre>
 	{/if}
+
+	{#if data.balance}
+		<h2 class="text-2xl">Balance</h2>
+		<pre>{JSON.stringify(data.balance, null, 2)}</pre>
+	{/if}
 {/if}

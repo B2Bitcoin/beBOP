@@ -1,38 +1,42 @@
 import { collections } from '$lib/server/database.js';
+import {
+	isPhoenixdConfigured,
+	phoenixdBalance,
+	phoenixdDetected,
+	phoenixdInfo
+} from '$lib/server/phoenixd.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { fail } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const load = async () => {
-	let nodeInfo = undefined;
-	if (runtimeConfig.phoenixd.enabled && runtimeConfig.phoenixd.password) {
-		nodeInfo = await Promise.race([
-			await fetch('http://localhost:9740/getinfo', {
-				headers: {
-					Authorization: `Basic ${btoa(`phoenixd:${runtimeConfig.phoenixd.password}`)}`
-				}
-			}).then(
-				(res) => res.json(),
-				() => null
-			),
-			new Promise((resolve) => setTimeout(() => resolve(null), 2000))
-		]);
+	if (!isPhoenixdConfigured()) {
+		return {
+			phoenixd: runtimeConfig.phoenixd
+		};
 	}
-	return {
-		phoenixd: runtimeConfig.phoenixd,
-		nodeInfo
-	};
+
+	try {
+		const nodeInfo = await phoenixdInfo();
+		const balance = await phoenixdBalance();
+
+		return {
+			phoenixd: runtimeConfig.phoenixd,
+			nodeInfo,
+			balance
+		};
+	} catch (err) {
+		return {
+			phoenixd: runtimeConfig.phoenixd,
+			nodeInfo: null,
+			balance: null
+		};
+	}
 };
 
 export const actions = {
 	async detect() {
-		const res = await Promise.race([
-			fetch('http://localhost:9740/getinfo').then(
-				() => true,
-				() => false
-			),
-			new Promise((resolve) => setTimeout(() => resolve(false), 2000))
-		]);
+		const res = await phoenixdDetected();
 
 		if (res) {
 			runtimeConfig.phoenixd.enabled = true;

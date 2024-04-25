@@ -10,6 +10,7 @@ import { toSatoshis } from '$lib/utils/toSatoshis';
 import { onOrderPayment, onOrderPaymentFailed } from '../orders';
 import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
+import { phoenixdLookupInvoice } from '../phoenixd';
 
 const lock = new Lock('orders');
 
@@ -78,15 +79,40 @@ async function maintainOrders() {
 							if (!payment.invoiceId) {
 								throw new Error('Missing invoice ID on lightning order');
 							}
-							const invoice = await lndLookupInvoice(payment.invoiceId);
+							if (payment.processor === 'phoenixd') {
+								const invoice = await phoenixdLookupInvoice(payment.invoiceId);
 
-							if (invoice.state === 'SETTLED') {
-								order = await onOrderPayment(order, payment, {
-									amount: invoice.amt_paid_sat,
-									currency: 'SAT'
-								});
-							} else if (invoice.state === 'CANCELED') {
-								order = await onOrderPaymentFailed(order, payment, 'expired');
+								if (invoice.isPaid) {
+									order = await onOrderPayment(
+										order,
+										payment,
+										{
+											amount: invoice.receivedSat,
+											currency: 'SAT'
+										},
+										{
+											fees: {
+												amount: invoice.feesSat,
+												currency: 'SAT'
+											}
+										}
+									);
+								} else {
+									if (payment.expiresAt && payment.expiresAt < new Date()) {
+										order = await onOrderPaymentFailed(order, payment, 'expired');
+									}
+								}
+							} else {
+								const invoice = await lndLookupInvoice(payment.invoiceId);
+
+								if (invoice.state === 'SETTLED') {
+									order = await onOrderPayment(order, payment, {
+										amount: invoice.amt_paid_sat,
+										currency: 'SAT'
+									});
+								} else if (invoice.state === 'CANCELED') {
+									order = await onOrderPaymentFailed(order, payment, 'expired');
+								}
 							}
 						} catch (err) {
 							console.error(inspect(err, { depth: 10 }));

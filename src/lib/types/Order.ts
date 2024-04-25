@@ -35,24 +35,42 @@ export interface OrderPayment {
 	_id: ObjectId;
 	status: OrderPaymentStatus;
 	price: Price;
+	/**
+	 * Info may not always be available, for card payments for example.
+	 */
+	fees?: Price;
+	/**
+	 * Amount actually received for crypto payments.
+	 *
+	 * For other payment methods, this is the same as price.
+	 */
+	received?: Price;
 	currencySnapshot: {
 		main: {
 			price: Price;
+			received?: Price;
+			fees?: Price;
 			previouslyPaid?: Price;
 			remainingToPay?: Price;
 		};
 		priceReference: {
 			price: Price;
+			received?: Price;
+			fees?: Price;
 			previouslyPaid?: Price;
 			remainingToPay?: Price;
 		};
 		secondary?: {
 			price: Price;
+			received?: Price;
+			fees?: Price;
 			previouslyPaid?: Price;
 			remainingToPay?: Price;
 		};
 		accounting?: {
 			price: Price;
+			received?: Price;
+			fees?: Price;
 			previouslyPaid?: Price;
 			remainingToPay?: Price;
 		};
