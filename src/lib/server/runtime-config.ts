@@ -101,8 +101,7 @@ const baseConfig = {
 	plausibleScriptUrl: '',
 	phoenixd: {
 		enabled: false,
-		password: '',
-		paymentMethodLabel: 'Lightning'
+		password: ''
 	},
 	productActionSettings: {
 		eShop: {

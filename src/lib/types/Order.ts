@@ -4,7 +4,7 @@ import type { CountryAlpha2 } from './Country';
 import type { Timestamps } from './Timestamps';
 import type { UserIdentifier } from './UserIdentifier';
 import type { SellerIdentity } from './SellerIdentity';
-import type { PaymentMethod } from '$lib/server/payment-methods';
+import type { PaymentMethod, PaymentProcessor } from '$lib/server/payment-methods';
 import type { ObjectId } from 'mongodb';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import type { LanguageKey } from '$lib/translations';
@@ -58,6 +58,7 @@ export interface OrderPayment {
 		};
 	};
 	method: PaymentMethod;
+	processor?: PaymentProcessor;
 	/**
 	 * Can be unset for cash or bank transfer payments for example.
 	 */

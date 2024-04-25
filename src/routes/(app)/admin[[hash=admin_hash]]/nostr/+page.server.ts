@@ -1,6 +1,6 @@
 import { ORIGIN } from '$env/static/private';
 import { collections } from '$lib/server/database';
-import { isLightningConfigured, lndGetInfo } from '$lib/server/lightning';
+import { isLightningConfigured, lndGetInfo } from '$lib/server/lnd';
 import {
 	nostrPrivateKey,
 	nostrPublicKey,

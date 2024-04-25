@@ -6,7 +6,7 @@ import {
 	lndGetInfo,
 	lndListChannels,
 	lndWalletBalance
-} from '$lib/server/lightning';
+} from '$lib/server/lnd';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { z } from 'zod';
 

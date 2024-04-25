@@ -5,7 +5,7 @@ import { listTransactions, orderAddressLabel } from '../bitcoin';
 import { sum } from '$lib/utils/sum';
 import { Lock } from '../lock';
 import { inspect } from 'node:util';
-import { lndLookupInvoice } from '../lightning';
+import { lndLookupInvoice } from '../lnd';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { onOrderPayment, onOrderPaymentFailed } from '../orders';
 import { refreshPromise, runtimeConfig } from '../runtime-config';

@@ -53,12 +53,10 @@ export const actions = {
 	async update(event) {
 		const parsed = z
 			.object({
-				paymentMethodLabel: z.string().min(1),
 				password: z.string().min(1)
 			})
 			.parse(Object.fromEntries(await event.request.formData()));
 
-		runtimeConfig.phoenixd.paymentMethodLabel = parsed.paymentMethodLabel;
 		runtimeConfig.phoenixd.password = parsed.password;
 
 		await collections.runtimeConfig.updateOne(

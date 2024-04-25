@@ -15,7 +15,7 @@ import type { Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
-import { lndCreateInvoice } from './lightning';
+import { lndCreateInvoice } from './lnd';
 import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
@@ -29,11 +29,12 @@ import { SMTP_USER } from '$env/static/private';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
-import type { PaymentMethod } from './payment-methods';
+import type { PaymentMethod, PaymentProcessor } from './payment-methods';
 import type { CountryAlpha2 } from '$lib/types/Country';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { LanguageKey } from '$lib/translations';
 import { filterNullish } from '$lib/utils/fillterNullish';
+import { isPhoenixdConfigured } from './phoenixd';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -901,42 +902,52 @@ async function generatePaymentInfo(params: {
 	invoiceId?: string;
 	checkoutId?: string;
 	meta?: unknown;
+	processor?: PaymentProcessor;
 }> {
 	switch (params.method) {
 		case 'bitcoin':
 			return {
 				address: await getNewAddress(orderAddressLabel(params.orderId, params.paymentId)),
 				wallet: await currentWallet(),
-				label: orderAddressLabel(params.orderId, params.paymentId)
+				label: orderAddressLabel(params.orderId, params.paymentId),
+				processor: 'bitcoind'
 			};
 		case 'lightning': {
-			const invoice = await lndCreateInvoice(
-				toSatoshis(params.toPay.amount, params.toPay.currency),
-				{
-					...(params.expiresAt && {
-						expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date())
-					}),
-					label: (() => {
-						switch (runtimeConfig.lightningQrCodeDescription) {
-							case 'brand':
-								return runtimeConfig.brandName;
-							case 'orderUrl':
-								return `${ORIGIN}/order/${params.orderId}`;
-							case 'brandAndOrderNumber':
-								return `${runtimeConfig.brandName} - Order #${params.orderNumber.toLocaleString(
-									'en'
-								)}`;
-							default:
-								return undefined;
-						}
-					})()
-				}
-			);
+			if (isPhoenixdConfigured()) {
+				// Todo
+				return {
+					processor: 'phoenixd'
+				};
+			} else {
+				const invoice = await lndCreateInvoice(
+					toSatoshis(params.toPay.amount, params.toPay.currency),
+					{
+						...(params.expiresAt && {
+							expireAfterSeconds: differenceInSeconds(params.expiresAt, new Date())
+						}),
+						label: (() => {
+							switch (runtimeConfig.lightningQrCodeDescription) {
+								case 'brand':
+									return runtimeConfig.brandName;
+								case 'orderUrl':
+									return `${ORIGIN}/order/${params.orderId}`;
+								case 'brandAndOrderNumber':
+									return `${runtimeConfig.brandName} - Order #${params.orderNumber.toLocaleString(
+										'en'
+									)}`;
+								default:
+									return undefined;
+							}
+						})()
+					}
+				);
 
-			return {
-				address: invoice.payment_request,
-				invoiceId: invoice.r_hash
-			};
+				return {
+					address: invoice.payment_request,
+					invoiceId: invoice.r_hash,
+					processor: 'lnd'
+				};
+			}
 		}
 		case 'point-of-sale': {
 			return {};
@@ -962,6 +973,7 @@ async function generateCardPaymentInfo(params: {
 	checkoutId: string;
 	meta: unknown;
 	address: string;
+	processor: PaymentProcessor;
 }> {
 	{
 		const resp = await fetch('https://api.sumup.com/v0.1/checkouts', {
@@ -1005,7 +1017,8 @@ async function generateCardPaymentInfo(params: {
 		return {
 			checkoutId,
 			meta: json,
-			address: `${ORIGIN}/order/${params.orderId}/payment/${params.paymentId}/pay`
+			address: `${ORIGIN}/order/${params.orderId}/payment/${params.paymentId}/pay`,
+			processor: 'sumup'
 		};
 	}
 }

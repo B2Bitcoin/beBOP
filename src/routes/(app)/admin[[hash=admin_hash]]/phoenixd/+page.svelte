@@ -27,17 +27,6 @@
 {:else}
 	<form class="contents" method="POST" action="?/update">
 		<label class="form-label">
-			Payment method label
-			<input
-				type="text"
-				class="form-input"
-				name="paymentMethodLabel"
-				value={data.phoenixd.paymentMethodLabel}
-				required
-			/>
-		</label>
-
-		<label class="form-label">
 			PhoenixD http password (from phoenix.conf)
 			<input
 				type="text"
