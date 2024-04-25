@@ -131,6 +131,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.orders, { number: 1 }, { unique: true }],
 	[collections.orders, { 'payments.invoice.number': 1 }, { unique: true, sparse: true }],
 	[collections.orders, { 'payments.status': 1 }],
+	[collections.orders, { status: 1, 'payments.status': 1 }],
 	[collections.digitalFiles, { productId: 1 }],
 	[collections.pendingDigitalFiles, { createdAt: 1 }],
 	[collections.pendingPictures, { createdAt: 1 }],

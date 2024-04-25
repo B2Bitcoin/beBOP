@@ -25,6 +25,7 @@
 		<p class="text-red-500">{form.message}</p>
 	{/if}
 {:else}
+	<p>Note that PhoenixD lightning payments have a max expiration of one hour.</p>
 	<form class="contents" method="POST" action="?/update">
 		<label class="form-label">
 			PhoenixD http password (from phoenix.conf)

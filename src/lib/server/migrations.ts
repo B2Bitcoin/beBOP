@@ -419,6 +419,16 @@ const migrations = [
 				);
 			}
 		}
+	},
+	{
+		name: 'Remove user.** wildcard indexes',
+		_id: new ObjectId('662a83f6b30d34879b2bbc1f'),
+		run: async () => {
+			await collections.carts.dropIndex('user.**_1').catch(console.error);
+			await collections.paidSubscriptions.dropIndex('user.**_1').catch(console.error);
+			await collections.orders.dropIndex('user.**_1').catch(console.error);
+			await collections.personalInfo.dropIndex('user.**_1').catch(console.error);
+		}
 	}
 ];
 

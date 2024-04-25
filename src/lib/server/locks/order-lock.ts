@@ -24,7 +24,7 @@ async function maintainOrders() {
 		}
 
 		const pendingOrders = await collections.orders
-			.find({ 'payments.status': 'pending' })
+			.find({ 'payments.status': 'pending', status: 'pending' })
 			.toArray()
 			.catch((err) => {
 				console.error(inspect(err, { depth: 10 }));

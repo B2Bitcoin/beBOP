@@ -8,7 +8,7 @@ import {
 } from '$lib/types/Order';
 import { ClientSession, ObjectId, type WithId } from 'mongodb';
 import { collections, withTransaction } from './database';
-import { add, addMinutes, differenceInSeconds, max, subSeconds } from 'date-fns';
+import { add, addHours, addMinutes, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
@@ -1125,6 +1125,10 @@ async function generateCardPaymentInfo(params: {
 function paymentMethodExpiration(paymentMethod: PaymentMethod) {
 	return paymentMethod === 'point-of-sale' || paymentMethod === 'bank-transfer'
 		? undefined
+		: paymentMethod === 'lightning' &&
+		  isPhoenixdConfigured() &&
+		  runtimeConfig.desiredPaymentTimeout > 60
+		? addHours(new Date(), 1)
 		: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
 }
 

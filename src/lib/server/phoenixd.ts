@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { runtimeConfig } from './runtime-config';
+import { error } from '@sveltejs/kit';
 
 export const isPhoenixdConfigured = () =>
 	runtimeConfig.phoenixd.enabled && !!runtimeConfig.phoenixd.password;
@@ -44,12 +45,6 @@ export async function phoenixdCreateInvoice(
 	description: string,
 	externalId: string
 ): Promise<{ paymentHash: string; paymentAddress: string }> {
-	const payload = new FormData();
-
-	payload.append('amountSat', satoshis.toString());
-	payload.append('description', description);
-	payload.append('externalId', externalId);
-
 	const res = await fetch('http://localhost:9740/createinvoice', {
 		method: 'POST',
 		headers: {
@@ -57,8 +52,16 @@ export async function phoenixdCreateInvoice(
 			'Content-Type': 'application/x-www-form-urlencoded',
 			Accept: 'application/json'
 		},
-		body: payload
+		body: new URLSearchParams({
+			amountSat: satoshis.toString(),
+			description,
+			externalId
+		})
 	});
+
+	if (!res.ok) {
+		throw error(500, `Could not create invoice on PhoenixD: ${res.status} ${await res.text()}`);
+	}
 
 	const json = z
 		.object({
@@ -80,6 +83,13 @@ export async function phoenixdLookupInvoice(paymentHash: string) {
 			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`
 		}
 	});
+
+	if (!res.ok) {
+		throw error(
+			500,
+			`Could not lookup invoice ${paymentHash} on PhoenixD: ${res.status} ${await res.text()}`
+		);
+	}
 
 	const json = z
 		.object({
