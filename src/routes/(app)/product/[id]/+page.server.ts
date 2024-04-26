@@ -73,7 +73,7 @@ export const load = async ({ params, locals }) => {
 	);
 
 	if (!product) {
-		throw error(404, 'Resource not found');
+		throw error(404, 'Product not found');
 	}
 
 	if (

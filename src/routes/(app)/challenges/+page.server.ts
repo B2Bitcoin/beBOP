@@ -8,7 +8,7 @@ export const load = async () => {
 		.project<Pick<Challenge, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 	if (!challenges) {
-		throw error(404, 'Resource not found');
+		throw error(404, 'Challenge not found');
 	}
 
 	return {
