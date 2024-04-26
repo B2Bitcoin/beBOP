@@ -86,6 +86,7 @@ export async function load({ parent, locals }) {
 			npub: personalInfoConnected?.npub,
 			email: personalInfoConnected?.email
 		},
+		shopInformation: runtimeConfig.shopInformation,
 		isBillingAddressMandatory: runtimeConfig.isBillingAddressMandatory,
 		displayNewsletterCommercialProspection: runtimeConfig.displayNewsletterCommercialProspection,
 		noProBilling: runtimeConfig.noProBilling,
