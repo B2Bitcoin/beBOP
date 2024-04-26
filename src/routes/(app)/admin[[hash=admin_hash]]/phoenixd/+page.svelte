@@ -64,7 +64,8 @@
 			<li>
 				Make sure that your firewall accepts connections on port 9740 {data.dockerIp
 					? `from ${data.dockerIp}`
-					: 'from your docker container'}
+					: 'from your docker container'}. For example, with ufw:
+				<code class="font-mono">ufw allow from any to {data.dockerIp || 'any'} port 9740</code>
 			</li>
 		</ul>
 
