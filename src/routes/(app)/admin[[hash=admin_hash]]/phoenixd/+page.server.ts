@@ -37,11 +37,15 @@ export const load = async () => {
 };
 
 export const actions = {
-	async detect() {
-		const res = await phoenixdDetected();
+	async detect(event) {
+		const formData = Object.fromEntries(await event.request.formData());
+
+		const url = z.object({ url: z.string().url() }).parse(formData).url;
+		const res = await phoenixdDetected(url);
 
 		if (res) {
 			runtimeConfig.phoenixd.enabled = true;
+			runtimeConfig.phoenixd.url = url;
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'phoenixd' },
 				{
@@ -52,7 +56,7 @@ export const actions = {
 			);
 		} else {
 			return fail(404, {
-				message: 'No response when interrogating port 9740 locally, PhoenixD server not detected'
+				message: `No response when interrogating ${url}, PhoenixD server not detected`
 			});
 		}
 	},

@@ -11,9 +11,11 @@ export async function phoenixdInfo(): Promise<{
 	channels: string[];
 	version: string;
 }> {
-	const res = await fetch('http://localhost:9740/getinfo', {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/getinfo`, {
 		headers: {
-			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`
 		}
 	});
 
@@ -21,18 +23,20 @@ export async function phoenixdInfo(): Promise<{
 }
 
 export async function phoenixdBalance(): Promise<{ balanceSat: number; feeCreditSat: number }> {
-	const res = await fetch('http://localhost:9740/getbalance', {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/getbalance`, {
 		headers: {
-			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`
 		}
 	});
 
 	return await res.json();
 }
 
-export async function phoenixdDetected(): Promise<boolean> {
+export async function phoenixdDetected(url?: string): Promise<boolean> {
 	return await Promise.race<boolean>([
-		fetch('http://localhost:9740/getinfo').then(
+		fetch(`${url || runtimeConfig.phoenixd.url}/getinfo`).then(
 			() => true,
 			() => false
 		),
@@ -45,10 +49,12 @@ export async function phoenixdCreateInvoice(
 	description: string,
 	externalId: string
 ): Promise<{ paymentHash: string; paymentAddress: string }> {
-	const res = await fetch('http://localhost:9740/createinvoice', {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/createinvoice`, {
 		method: 'POST',
 		headers: {
-			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`,
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`,
 			'Content-Type': 'application/x-www-form-urlencoded',
 			Accept: 'application/json'
 		},
@@ -78,9 +84,11 @@ export async function phoenixdCreateInvoice(
 }
 
 export async function phoenixdLookupInvoice(paymentHash: string) {
-	const res = await fetch(`http://localhost:9740/payments/incoming/${paymentHash}`, {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/payments/incoming/${paymentHash}`, {
 		headers: {
-			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`
 		}
 	});
 
@@ -119,10 +127,12 @@ export async function phoenixdLookupInvoice(paymentHash: string) {
 }
 
 export async function phoenixdPayInvoice(paymentRequest: string, amountSat?: number) {
-	const res = await fetch('http://localhost:9740/payinvoice', {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/payinvoice`, {
 		method: 'POST',
 		headers: {
-			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`,
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`,
 			'Content-Type': 'application/x-www-form-urlencoded',
 			Accept: 'application/json'
 		},
@@ -154,10 +164,12 @@ export async function phoenixdPayInvoice(paymentRequest: string, amountSat?: num
 }
 
 export async function phoenixdSendOnChain(amountSat: number, address: string, feeVbSat: number) {
-	const res = await fetch('http://localhost:9740/sendtoaddress', {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/sendtoaddress`, {
 		method: 'POST',
 		headers: {
-			Authorization: `Basic ${btoa(`:${runtimeConfig.phoenixd.password}`)}`,
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`,
 			'Content-Type': 'application/x-www-form-urlencoded'
 		},
 		body: new URLSearchParams({

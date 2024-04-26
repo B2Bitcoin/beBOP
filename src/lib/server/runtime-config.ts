@@ -107,6 +107,7 @@ const baseConfig = {
 	},
 	plausibleScriptUrl: '',
 	phoenixd: {
+		url: 'http://localhost:9740',
 		enabled: false,
 		password: ''
 	},

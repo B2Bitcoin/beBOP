@@ -20,6 +20,8 @@
 	}
 
 	let withdrawMode = 'bolt11' as 'bolt11' | 'bitcoin';
+
+	let defaultUrl = data.phoenixd.url || 'http://localhost:9740';
 </script>
 
 <h1 class="text-3xl">PhoenixD</h1>
@@ -34,8 +36,30 @@
 
 	<p>Once done, click on "Detect PhoenixD Server" button</p>
 
-	<form method="POST" action="?/detect">
-		<button class="btn btn-black" type="submit">Detect PhoenixD Server</button>
+	<form method="POST" class="flex flex-col gap-2" action="?/detect">
+		<label class="form-label">
+			PhoenixD URL
+			<input
+				type="url"
+				name="url"
+				class="form-input"
+				placeholder="http://localhost:9740"
+				value={defaultUrl}
+				required
+			/>
+		</label>
+		<p>
+			If you run be-BOP (but not phoenixd) inside Docker, change the url to <a
+				href="http://host.docker.internal:9740"
+				class="body-hyperlink underline"
+				on:click|preventDefault={() => (defaultUrl = 'http://host.docker.internal:9740')}
+				>http://host.docker.internal:9740</a
+			>
+			and run phoenixd like this:
+			<code class="font-mone">./phoenixd --http-bind-ip=host.docker.internal</code>
+		</p>
+
+		<button class="btn btn-black self-start" type="submit">Detect PhoenixD Server</button>
 	</form>
 
 	{#if $page.status >= 400 && form?.message}
@@ -161,8 +185,10 @@
 
 	{#if data.nodeInfo === null}
 		<p class="text-red-500">
-			There was an error, check your http password and if PhoenixD is running/listening on port
-			9740.
+			There was an error, check your http password and if PhoenixD is running/listening on <a
+				href={defaultUrl}
+				class="body-hyperlink underline">{defaultUrl}</a
+			>. If you want to change the url, click on the "Reset" button.
 		</p>
 	{:else if data.nodeInfo}
 		<h2 class="text-2xl">Node info</h2>
