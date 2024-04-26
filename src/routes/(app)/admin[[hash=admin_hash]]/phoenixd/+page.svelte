@@ -48,16 +48,25 @@
 				required
 			/>
 		</label>
-		<p>
-			If you run be-BOP (but not phoenixd) inside Docker, change the url to <a
-				href="http://host.docker.internal:9740"
-				class="body-hyperlink underline"
-				on:click|preventDefault={() => (defaultUrl = 'http://host.docker.internal:9740')}
-				>http://host.docker.internal:9740</a
-			>
-			and run phoenixd like this:
-			<code class="font-mone">./phoenixd --http-bind-ip=host.docker.internal</code>
-		</p>
+		<p>If you run be-BOP (but not phoenixd) inside Docker:</p>
+		<ul class="list-disc ml-4 mb-4">
+			<li>
+				Change the url to <a
+					href="http://host.docker.internal:9740"
+					class="body-hyperlink underline"
+					on:click|preventDefault={() => (defaultUrl = 'http://host.docker.internal:9740')}
+					>http://host.docker.internal:9740</a
+				>
+			</li>
+			<li>
+				Run phoenixd with <code class="font-mono">--http-bind-ip={data.dockerIp || '0.0.0.0'}</code>
+			</li>
+			<li>
+				Make sure that your firewall accepts connections on port 9740 {data.dockerIp
+					? `from ${data.dockerIp}`
+					: 'from your docker container'}
+			</li>
+		</ul>
 
 		<button class="btn btn-black self-start" type="submit">Detect PhoenixD Server</button>
 	</form>

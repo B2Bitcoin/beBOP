@@ -1,4 +1,6 @@
 import { collections } from '$lib/server/database.js';
+import { lookup as dnsLookup } from 'node:dns/promises';
+import { setTimeout } from 'node:timers/promises';
 import {
 	isPhoenixdConfigured,
 	phoenixdBalance,
@@ -13,8 +15,14 @@ import { z } from 'zod';
 
 export const load = async () => {
 	if (!isPhoenixdConfigured()) {
+		const dockerIp = await Promise.race([
+			dnsLookup('host.docker.internal').catch(() => null),
+			setTimeout(2000).then(() => null)
+		]);
+
 		return {
-			phoenixd: runtimeConfig.phoenixd
+			phoenixd: runtimeConfig.phoenixd,
+			dockerIp: dockerIp?.address
 		};
 	}
 
