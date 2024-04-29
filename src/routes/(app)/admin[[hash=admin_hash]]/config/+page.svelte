@@ -182,7 +182,7 @@
 
 	<label class="checkbox-label">
 		<input type="checkbox" name="vatExempted" class="form-checkbox" bind:checked={vatExempted} />
-		Disable VAT for my beBOP
+		Disable VAT for my be-BOP
 	</label>
 	{#if vatExempted}
 		<label class="form-label">

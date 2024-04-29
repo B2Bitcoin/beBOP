@@ -100,7 +100,7 @@
 			class="form-checkbox"
 			checked={data.displayPoweredBy}
 		/>
-		Display "Powered by beBOP"
+		Display "Powered by be-BOP"
 	</label>
 	<label class="checkbox-label">
 		<input

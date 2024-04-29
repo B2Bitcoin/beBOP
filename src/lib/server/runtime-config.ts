@@ -44,7 +44,7 @@ const baseConfig = {
 	errorRedirectCustomHeadband: '',
 	errorRedirectUrl: '',
 	maintenanceIps: '',
-	brandName: 'My beBOP',
+	brandName: 'My be-BOP',
 	subscriptionDuration: 'month' as 'month' | 'day' | 'hour',
 	subscriptionReminderSeconds: 24 * 60 * 60,
 	reserveStockInMinutes: 20,
@@ -134,8 +134,8 @@ const baseConfig = {
 	displayMainShopInfo: false,
 	displayNewsletterCommercialProspection: false,
 	cartMaxSeparateItems: null as null | number,
-	websiteTitle: 'B2Bitcoin beBOP',
-	websiteShortDescription: "B2Bitcoin's beBOP store",
+	websiteTitle: 'B2Bitcoin be-BOP',
+	websiteShortDescription: "B2Bitcoin's be-BOP store",
 	emailTemplates: {
 		passwordReset: {
 			subject: 'Password reset',

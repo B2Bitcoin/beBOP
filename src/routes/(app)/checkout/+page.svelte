@@ -21,6 +21,7 @@
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
+	let submitting = false;
 
 	let actionCount = 0;
 	const defaultShippingCountry =
@@ -62,6 +63,7 @@
 	};
 
 	function checkForm(event: SubmitEvent) {
+		submitting = true;
 		for (const input of typedValues(npubInputs)) {
 			if (!input) {
 				continue;
@@ -189,7 +191,11 @@
 							name="shipping.firstName"
 							autocomplete="given-name"
 							required={data.roleId !== POS_ROLE_ID}
-							value={data.personalInfoConnected?.firstName ?? ''}
+							value={data.personalInfoConnected?.firstName ??
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.businessName
+									? data.shopInformation.businessName
+									: '') ??
+								''}
 						/>
 					</label>
 
@@ -213,7 +219,11 @@
 							autocomplete="street-address"
 							name="shipping.address"
 							required={data.roleId !== POS_ROLE_ID}
-							value={data.personalInfoConnected?.address?.street ?? ''}
+							value={data.personalInfoConnected?.address?.street ??
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.street
+									? data.shopInformation.address.street
+									: '') ??
+								''}
 						/>
 					</label>
 
@@ -235,7 +245,11 @@
 							type="text"
 							name="shipping.state"
 							class="form-input"
-							value={data.personalInfoConnected?.address?.state ?? ''}
+							value={data.personalInfoConnected?.address?.state ??
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.state
+									? data.shopInformation.address.state
+									: '') ??
+								''}
 						/>
 					</label>
 					<label class="form-label col-span-2">
@@ -245,7 +259,11 @@
 							type="text"
 							name="shipping.city"
 							class="form-input"
-							value={data.personalInfoConnected?.address?.city ?? ''}
+							value={data.personalInfoConnected?.address?.city ??
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.city
+									? data.shopInformation.address.city
+									: '') ??
+								''}
 							required={data.roleId !== POS_ROLE_ID}
 						/>
 					</label>
@@ -256,14 +274,25 @@
 							type="text"
 							name="shipping.zip"
 							class="form-input"
-							value={data.personalInfoConnected?.address?.zip ?? ''}
+							value={data.personalInfoConnected?.address?.zip ??
+								(data.roleId === POS_ROLE_ID && data.shopInformation?.address?.zip
+									? data.shopInformation.address.zip
+									: '') ??
+								''}
 							required={data.roleId !== POS_ROLE_ID}
 							autocomplete="postal-code"
 						/>
 					</label>
 					<label class="form-label col-span-6">
 						{t('address.phone')}
-						<input type="tel" name="shipping.phone" class="form-input" />
+						<input
+							type="tel"
+							name="shipping.phone"
+							class="form-input"
+							value={data.roleId === POS_ROLE_ID && data.shopInformation?.contact?.phone
+								? data.shopInformation.contact.phone
+								: ''}
+						/>
 					</label>
 					<p class="col-span-6">
 						{t('address.phoneDisclaimer')}
@@ -968,7 +997,7 @@
 					class="btn body-cta body-mainCTA btn-xl -mx-1 -mb-1 mt-1"
 					value={t('checkout.cta.submit')}
 					form="checkout"
-					disabled={isNaN(deliveryFees) || (addDiscount && !isDiscountValid)}
+					disabled={isNaN(deliveryFees) || (addDiscount && !isDiscountValid) || submitting}
 				/>
 			</article>
 		</div>
