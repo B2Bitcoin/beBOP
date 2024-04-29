@@ -1,10 +1,10 @@
 import { collections } from '$lib/server/database';
-import { error } from '@sveltejs/kit';
 import { omit } from 'lodash-es';
 import { cmsFromContent } from '$lib/server/cms.js';
+import { error } from '@sveltejs/kit';
 
 export async function load({ params, locals }) {
-	const cmsPage = await collections.cmsPages.findOne(
+	let cmsPage = await collections.cmsPages.findOne(
 		{
 			_id: params.slug
 		},
@@ -23,7 +23,27 @@ export async function load({ params, locals }) {
 	);
 
 	if (!cmsPage) {
-		throw error(404, 'CMS Page not found');
+		cmsPage = await collections.cmsPages.findOne(
+			{
+				_id: 'error'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1,
+					hideFromSEO: 1
+				}
+			}
+		);
+
+		if (!cmsPage) {
+			throw error(404, 'Page not found');
+		}
 	}
 
 	return {
