@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 import { omit } from 'lodash-es';
 
 export async function load({ locals }) {
-	const errorPages = await collections.cmsPages.findOne(
+	const errorPage = await collections.cmsPages.findOne(
 		{
 			_id: 'error'
 		},
@@ -22,11 +22,11 @@ export async function load({ locals }) {
 		}
 	);
 
-	if (errorPages) {
+	if (errorPage) {
 		return {
-			cmsPage: omit(errorPages, ['content']),
-			cmsData: cmsFromContent(errorPages.content, locals),
-			layoutReset: errorPages.fullScreen
+			cmsPage: omit(errorPage, ['content']),
+			cmsData: cmsFromContent(errorPage.content, locals),
+			layoutReset: errorPage.fullScreen
 		};
 	} else {
 		throw error(404, 'Page not found');
