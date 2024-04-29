@@ -380,7 +380,8 @@
 		}
 	},
 	"error": {
-		"title": "Error {status}"
+		"title": "Error {status}",
+		"404": "The page {invalidUrl} you requested could not be found. Please check that your link is correct or contact the site team to report the problem."
 	},
 	"footer": {
 		"company": {

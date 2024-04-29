@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { useI18n } from '$lib/i18n';
 	import type {
 		CmsChallenge,
 		CmsDigitalFile,
@@ -15,6 +17,7 @@
 	import CmsDesign from './CmsDesign.svelte';
 
 	export let cmsPage: {
+		_id: string;
 		title: string;
 		shortDescription: string;
 		fullScreen: boolean;
@@ -28,7 +31,6 @@
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
 	export let sessionEmail: string | undefined;
-	export let pageLink: string | undefined;
 	export let pageName: string | undefined;
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
@@ -37,6 +39,7 @@
 	export let contactForms: CmsContactForm[];
 	export let countdowns: CmsCountdown[];
 	export let galleries: CmsGallery[];
+	const { t } = useI18n();
 </script>
 
 <svelte:head>
@@ -60,7 +63,6 @@
 		{specifications}
 		{contactForms}
 		{sessionEmail}
-		{pageLink}
 		{pageName}
 		{websiteLink}
 		{brandName}
@@ -70,6 +72,11 @@
 	/>
 {:else}
 	<main class="mx-auto max-w-7xl px-6">
+		{#if cmsPage._id === 'error' && $page.url.pathname !== '/error'}
+			<div class="mt-4 p-2 border-2 border-red-500 rounded text-center text-red-500 font-bold">
+				{t('error.404', { invalidUrl: $page.url.pathname })}
+			</div>
+		{/if}
 		<CmsDesign
 			{products}
 			{pictures}
@@ -82,7 +89,6 @@
 			{specifications}
 			{contactForms}
 			{sessionEmail}
-			{pageLink}
 			{pageName}
 			{websiteLink}
 			{brandName}

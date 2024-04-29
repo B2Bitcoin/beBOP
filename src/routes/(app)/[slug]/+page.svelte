@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import CmsPage from '$lib/components/CmsPage.svelte';
 	export let data;
 </script>
@@ -16,7 +15,6 @@
 	roleId={data.roleId ? data.roleId : ''}
 	specifications={data.cmsData.specifications}
 	contactForms={data.cmsData.contactForms}
-	pageLink={$page.url.toString()}
 	pageName={data.cmsPage.title}
 	websiteLink={data.websiteLink}
 	brandName={data.brandName}

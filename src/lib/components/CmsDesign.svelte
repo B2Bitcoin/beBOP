@@ -26,6 +26,7 @@
 	import { mapKeys } from '$lib/utils/mapKeys';
 	import CountdownWidget from './CountdownWidget.svelte';
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
+	import { page } from '$app/stores';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -40,7 +41,6 @@
 	export let contactForms: CmsContactForm[];
 	export let countdowns: CmsCountdown[];
 	export let pageName: string | undefined;
-	export let pageLink: string | undefined;
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
 	export let galleries: CmsGallery[];
@@ -50,7 +50,7 @@
 
 	const lowerVars = mapKeys(
 		{
-			pageLink: pageLink,
+			pageLink: $page.url.toString(),
 			pageName: pageName,
 			websiteLink: websiteLink,
 			brandName: brandName

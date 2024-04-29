@@ -17,7 +17,6 @@
 	import { MIN_SATOSHIS_FOR_BITCOIN_PAYMENT, type DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
-	import { page } from '$app/stores';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
@@ -162,7 +161,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.cmsCheckoutTopData.specifications}
 			contactForms={data.cmsCheckoutTopData.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.cmsCheckoutTop.title}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
@@ -1014,7 +1012,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.cmsCheckoutBottomData.specifications}
 			contactForms={data.cmsCheckoutBottomData.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.cmsCheckoutBottom.title}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}

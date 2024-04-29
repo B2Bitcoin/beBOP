@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { applyAction, enhance } from '$app/forms';
 	import { goto, invalidate } from '$app/navigation';
 	import CartQuantity from '$lib/components/CartQuantity.svelte';
@@ -60,7 +59,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.cmsBasketTopData.specifications}
 			contactForms={data.cmsBasketTopData.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.cmsBasketTop?.title}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
@@ -353,7 +351,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.cmsBasketBottomData.specifications}
 			contactForms={data.cmsBasketBottomData.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.cmsBasketBottom?.title}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
