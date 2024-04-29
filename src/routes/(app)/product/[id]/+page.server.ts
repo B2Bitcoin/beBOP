@@ -73,15 +73,7 @@ export const load = async ({ params, locals }) => {
 	);
 
 	if (!product) {
-		const errorPages = await collections.cmsPages.countDocuments({
-			_id: 'error'
-		});
-
-		if (errorPages) {
-			throw redirect(303, '/error');
-		} else {
-			throw error(404, 'Page not found');
-		}
+		throw error(404, 'Page not found');
 	}
 
 	if (
