@@ -1,4 +1,4 @@
-import { isLightningConfigured, lndGetInfo } from '$lib/server/lightning';
+import { isLightningConfigured, lndGetInfo } from '$lib/server/lnd';
 import { getPrivateS3DownloadLink } from '$lib/server/s3';
 import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
 import { runtimeConfig } from '$lib/server/runtime-config';

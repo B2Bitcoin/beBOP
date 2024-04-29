@@ -88,6 +88,10 @@ export const adminLinks = [
 			{
 				href: '/admin/sumup',
 				label: 'SumUp'
+			},
+			{
+				href: '/admin/phoenixd',
+				label: 'PhoenixD'
 			}
 			// {
 			// 	href: '/admin/bity',

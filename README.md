@@ -93,14 +93,14 @@ docker build -t bebop .
 
 ```shell
 export DOTENV_LOCAL=$(cat .env.local)
-docker run -p 3000:3000 --env DOTENV_LOCAL=$DOTENV_LOCAL bebop
+docker run -p 3000:3000 --env DOTENV_LOCAL=$DOTENV_LOCAL bebop --add-host=host.docker.internal:host-gateway
 ```
 
 or
 
 ```shell
 # Be careful, double-quotes surrounding values in .env.local will not be ignored
-docker run -p 3000:3000 --env-file .env.local bebop
+docker run -p 3000:3000 --env-file .env.local bebop --add-host=host.docker.internal:host-gateway
 ```
 
 If you want to access a local BTC node or LND node, use `host.docker.internal` as the hostname instead of `localhost`:
@@ -136,6 +136,19 @@ docker compose --env-file .env.local up --build -d
 It will still use the `.env.local` file for the environment variables if present, overriding the values for MongoDB and S3.
 
 Minio will be available on http://localhost:9000 and bebop on http://localhost:3000.
+
+Some helper commands:
+
+```bash
+# See the containers
+docker compose ps
+# Get the logs
+docker compose logs bebop -f
+# Enter the container
+docker compose exec bebop sh
+# Stop the containers
+docker compose down
+```
 
 #### Other configuration
 

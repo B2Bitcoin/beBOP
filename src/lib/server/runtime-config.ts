@@ -50,6 +50,13 @@ const baseConfig = {
 		thresholds: [],
 		defaultBlocks: 1
 	} as ConfirmationThresholds,
+	/**
+	 * Payment timeout in minutes
+	 *
+	 * For POS & Wire transfer we set unlimited
+	 *
+	 * For Phoenixd max value is 60 minutes
+	 */
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logo: { isWide: false, pictureId: '', darkModePictureId: '' },
@@ -99,6 +106,11 @@ const baseConfig = {
 		} satisfies DeliveryFees as DeliveryFees
 	},
 	plausibleScriptUrl: '',
+	phoenixd: {
+		url: 'http://localhost:9740',
+		enabled: false,
+		password: ''
+	},
 	productActionSettings: {
 		eShop: {
 			visible: true,

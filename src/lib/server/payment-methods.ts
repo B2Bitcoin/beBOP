@@ -1,7 +1,8 @@
 import { env } from '$env/dynamic/private';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { isBitcoinConfigured } from './bitcoin';
-import { isLightningConfigured } from './lightning';
+import { isLightningConfigured } from './lnd';
+import { isPhoenixdConfigured } from './phoenixd';
 import { runtimeConfig } from './runtime-config';
 import { isSumupEnabled } from './sumup';
 
@@ -14,6 +15,8 @@ const ALL_PAYMENT_METHODS = [
 	'free'
 ] as const;
 export type PaymentMethod = (typeof ALL_PAYMENT_METHODS)[number];
+
+export type PaymentProcessor = 'sumup' | 'bitcoind' | 'lnd' | 'phoenixd';
 
 export const paymentMethods = (opts?: {
 	role?: string;
@@ -39,7 +42,7 @@ export const paymentMethods = (opts?: {
 						case 'bitcoin':
 							return isBitcoinConfigured;
 						case 'lightning':
-							return isLightningConfigured;
+							return isLightningConfigured || isPhoenixdConfigured();
 						case 'point-of-sale':
 							return opts?.role === POS_ROLE_ID || opts?.includePOS;
 						case 'free':
