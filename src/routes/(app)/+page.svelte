@@ -25,7 +25,6 @@
 		brandName={data.brandName}
 		countdowns={data.cmsData.countdowns}
 		galleries={data.cmsData.galleries}
-		errorRedirectCustomHeadband={data.errorRedirectCustomHeadband}
 	/>
 {:else}
 	<Catalog {...data.catalog} />

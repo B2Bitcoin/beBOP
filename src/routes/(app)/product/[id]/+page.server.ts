@@ -9,6 +9,7 @@ import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
+import { renderErrorPage } from '$lib/server/renderErrorPage';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -73,7 +74,15 @@ export const load = async ({ params, locals }) => {
 	);
 
 	if (!product) {
-		throw error(404, 'Product not found');
+		const errorPages = await collections.cmsPages.countDocuments({
+			_id: 'error'
+		});
+
+		if (errorPages) {
+			throw redirect(303, '/error');
+		} else {
+			throw error(404, 'Page not found');
+		}
 	}
 
 	if (

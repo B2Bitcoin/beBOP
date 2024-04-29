@@ -45,7 +45,6 @@
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
 	export let galleries: CmsGallery[];
-	export let errorRedirectCustomHeadband = '';
 
 	let classNames = '';
 	export { classNames as class };
@@ -114,11 +113,6 @@
 </script>
 
 <div class="prose max-w-full {classNames}">
-	{#if redirectPage}
-		<div class="mt-4 p-2 border-2 border-red-500 rounded text-center text-red-500 font-bold">
-			{errorRedirectCustomHeadband}
-		</div>
-	{/if}
 	{#each tokens as token}
 		{#if token.type === 'productWidget' && productById[token.slug]}
 			<ProductWidget

@@ -1,7 +1,8 @@
 import { collections } from '$lib/server/database';
-import { error } from '@sveltejs/kit';
 import { omit } from 'lodash-es';
 import { cmsFromContent } from '$lib/server/cms.js';
+import { renderErrorPage } from '$lib/server/renderErrorPage';
+import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, locals }) {
 	const cmsPage = await collections.cmsPages.findOne(
@@ -23,7 +24,15 @@ export async function load({ params, locals }) {
 	);
 
 	if (!cmsPage) {
-		throw error(404, 'CMS Page not found');
+		const errorPages = await collections.cmsPages.countDocuments({
+			_id: 'error'
+		});
+
+		if (errorPages) {
+			throw redirect(303, '/error');
+		} else {
+			throw error(404, 'Page not found');
+		}
 	}
 
 	return {

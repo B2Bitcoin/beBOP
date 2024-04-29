@@ -23,5 +23,4 @@
 	sessionEmail={data.email}
 	countdowns={data.cmsData.countdowns}
 	galleries={data.cmsData.galleries}
-	errorRedirectCustomHeadband={data.errorRedirectCustomHeadband}
 />
