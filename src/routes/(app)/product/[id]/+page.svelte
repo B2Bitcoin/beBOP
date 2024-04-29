@@ -139,7 +139,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSBefore.specifications}
 			contactForms={data.productCMSBefore?.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.product.name}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
@@ -479,7 +478,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.productCMSAfter.specifications}
 			contactForms={data.productCMSAfter.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.product.name}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}

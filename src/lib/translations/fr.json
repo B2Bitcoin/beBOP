@@ -380,7 +380,8 @@
 		}
 	},
 	"error": {
-		"title": "Erreur {status}"
+		"title": "Erreur {status}",
+		"404": "La page {invalidUrl} que vous avez demandée est introuvable. Veuillez vérifier que votre lien est correct ou contactez l'équipe du site pour leur signaler le problème. "
 	},
 	"footer": {
 		"company": {

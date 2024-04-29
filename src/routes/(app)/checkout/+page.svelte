@@ -162,7 +162,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.cmsCheckoutTopData.specifications}
 			contactForms={data.cmsCheckoutTopData.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.cmsCheckoutTop.title}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
@@ -1014,7 +1013,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.cmsCheckoutBottomData.specifications}
 			contactForms={data.cmsCheckoutBottomData.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.cmsCheckoutBottom.title}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}

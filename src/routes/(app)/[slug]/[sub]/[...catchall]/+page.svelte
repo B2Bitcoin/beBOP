@@ -16,7 +16,6 @@
 	roleId={data.roleId ? data.roleId : ''}
 	specifications={data.cmsData.specifications}
 	contactForms={data.cmsData.contactForms}
-	pageLink={$page.url.toString()}
 	pageName={data.cmsPage.title}
 	websiteLink={data.websiteLink}
 	brandName={data.brandName}

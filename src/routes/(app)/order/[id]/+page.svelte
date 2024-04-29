@@ -77,7 +77,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.cmsOrderTopData.specifications}
 			contactForms={data.cmsOrderTopData.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.cmsOrderTop.title}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
@@ -573,7 +572,6 @@
 			roleId={data.roleId ? data.roleId : ''}
 			specifications={data.cmsOrderBottomData.specifications}
 			contactForms={data.cmsOrderBottomData.contactForms}
-			pageLink={$page.url.toString()}
 			pageName={data.cmsOrderBottom.title}
 			websiteLink={data.websiteLink}
 			brandName={data.brandName}
