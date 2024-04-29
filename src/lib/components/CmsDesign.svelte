@@ -109,7 +109,6 @@
 		);
 	}
 	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
-	let redirectPage = $page.url.searchParams.get('redirectPage');
 </script>
 
 <div class="prose max-w-full {classNames}">

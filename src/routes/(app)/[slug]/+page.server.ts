@@ -1,7 +1,6 @@
 import { collections } from '$lib/server/database';
 import { omit } from 'lodash-es';
 import { cmsFromContent } from '$lib/server/cms.js';
-import { renderErrorPage } from '$lib/server/renderErrorPage';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, locals }) {
