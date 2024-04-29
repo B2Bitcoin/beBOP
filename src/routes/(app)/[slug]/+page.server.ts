@@ -4,7 +4,7 @@ import { cmsFromContent } from '$lib/server/cms.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, locals }) {
-	const cmsPage = await collections.cmsPages.findOne(
+	let cmsPage = await collections.cmsPages.findOne(
 		{
 			_id: params.slug
 		},
@@ -23,7 +23,7 @@ export async function load({ params, locals }) {
 	);
 
 	if (!cmsPage) {
-		const errorPages = await collections.cmsPages.findOne(
+		cmsPage = await collections.cmsPages.findOne(
 			{
 				_id: 'error'
 			},
@@ -41,13 +41,7 @@ export async function load({ params, locals }) {
 			}
 		);
 
-		if (errorPages) {
-			return {
-				cmsPage: omit(errorPages, ['content']),
-				cmsData: cmsFromContent(errorPages.content, locals),
-				layoutReset: errorPages.fullScreen
-			};
-		} else {
+		if (!cmsPage) {
 			throw error(404, 'Page not found');
 		}
 	}
