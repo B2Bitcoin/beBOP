@@ -26,7 +26,6 @@
 	import { mapKeys } from '$lib/utils/mapKeys';
 	import CountdownWidget from './CountdownWidget.svelte';
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
-	import { page } from '$app/stores';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
