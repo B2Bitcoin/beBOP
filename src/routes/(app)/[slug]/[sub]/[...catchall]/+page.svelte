@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import CmsPage from '$lib/components/CmsPage.svelte';
 	export let data;
 </script>

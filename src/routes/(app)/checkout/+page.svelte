@@ -17,7 +17,6 @@
 	import { MIN_SATOSHIS_FOR_BITCOIN_PAYMENT, type DiscountType } from '$lib/types/Order.js';
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
-	import { page } from '$app/stores';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
