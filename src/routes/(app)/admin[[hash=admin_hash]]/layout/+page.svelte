@@ -24,7 +24,7 @@
 		}
 		if (
 			viewportFor === 'everyone' &&
-			confirm(
+			!confirm(
 				"Mobile-friendly display is still under construction. Are you sure ? This option is meant to be use on a public test phase of your be-BOP and to provide mobile-friendly experience. For now, it's mean to be a temporary, and can degrade both visitors and employees journey, as POS session. Are you really sure ?"
 			)
 		) {

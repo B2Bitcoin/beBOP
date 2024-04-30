@@ -7,16 +7,17 @@ export async function load(event) {
 			case 'everyone':
 				return 'width=device-width';
 			case 'employee':
-				return event.locals.user?.roleId !== CUSTOMER_ROLE_ID
+				return event.locals.user?.roleId !== CUSTOMER_ROLE_ID ||
+					event.locals.user?.roleId !== undefined
 					? 'width=device-width'
-					: runtimeConfig.viewportContentWidth;
+					: runtimeConfig.viewportContentWidth.toString();
 			case 'visitors':
-				return event.locals.user?.roleId !== POS_ROLE_ID &&
-					event.locals.user?.roleId !== SUPER_ADMIN_ROLE_ID
+				return event.locals.user?.roleId === undefined ||
+					event.locals.user?.roleId === CUSTOMER_ROLE_ID
 					? 'width=device-width'
-					: runtimeConfig.viewportContentWidth;
+					: runtimeConfig.viewportContentWidth.toString();
 			default:
-				return runtimeConfig.viewportContentWidth;
+				return runtimeConfig.viewportContentWidth.toString();
 		}
 	})();
 
