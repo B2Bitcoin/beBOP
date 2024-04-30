@@ -1,23 +1,24 @@
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
-import { CUSTOMER_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID, POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
 
 export async function load(event) {
-	let viewportWidth;
-	if (runtimeConfig.viewportFor === 'everyone') {
-		viewportWidth = 'width=device-width';
-	} else if (
-		event.locals.user?.roleId !== CUSTOMER_ROLE_ID &&
-		runtimeConfig.viewportFor === 'employee'
-	) {
-		viewportWidth = 'width=device-width';
-	} else if (
-		event.locals.user?.roleId === CUSTOMER_ROLE_ID &&
-		runtimeConfig.viewportFor === 'visitors'
-	) {
-		viewportWidth = 'width=device-width';
-	} else {
-		viewportWidth = runtimeConfig.viewportContentWidth;
-	}
+	const viewportWidth = (() => {
+		switch (runtimeConfig.viewportFor) {
+			case 'everyone':
+				return 'width=device-width';
+			case 'employee':
+				return event.locals.user?.roleId !== CUSTOMER_ROLE_ID
+					? 'width=device-width'
+					: runtimeConfig.viewportContentWidth;
+			case 'visitors':
+				return event.locals.user?.roleId !== POS_ROLE_ID &&
+					event.locals.user?.roleId !== SUPER_ADMIN_ROLE_ID
+					? 'width=device-width'
+					: runtimeConfig.viewportContentWidth;
+			default:
+				return runtimeConfig.viewportContentWidth;
+		}
+	})();
 
 	return {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
