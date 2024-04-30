@@ -1,5 +1,5 @@
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
-import { CUSTOMER_ROLE_ID, POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 export async function load(event) {
 	const viewportWidth = (() => {
