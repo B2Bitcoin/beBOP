@@ -27,7 +27,12 @@ export const actions = {
 					.optional(),
 				displayPoweredBy: z.boolean({ coerce: true }),
 				displayCompanyInfo: z.boolean({ coerce: true }),
-				displayMainShopInfo: z.boolean({ coerce: true })
+				displayMainShopInfo: z.boolean({ coerce: true }),
+				viewportContentWidth: z
+					.string()
+					.regex(/^\d+(\.\d+)?$/)
+					.default('1000'),
+				viewportFor: z.enum(['no-one', 'employee', 'visitors', 'everyone']).optional()
 			})
 			.parse(json);
 

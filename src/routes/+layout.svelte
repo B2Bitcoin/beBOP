@@ -10,6 +10,7 @@
 	import { page } from '$app/stores';
 	import { setContext } from 'svelte';
 	import { PUBLIC_VERSION } from '$env/static/public';
+	import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 	export let data;
 
@@ -18,6 +19,15 @@
 
 <svelte:head>
 	<title>{data.websiteTitle}</title>
+	{#if data.roleId !== CUSTOMER_ROLE_ID && data.viewportFor === 'employee'}
+		<meta name="viewport" content="width=device-width" />
+	{:else if data.roleId === CUSTOMER_ROLE_ID && data.viewportFor === 'visitors'}
+		<meta name="viewport" content="width=device-width" />
+	{:else if data.viewportFor === 'everyone'}
+		<meta name="viewport" content="width=device-width" />
+	{:else}
+		<meta name="viewport" content="width={data.viewportContentWidth}" />
+	{/if}
 	<meta name="description" content={data.websiteShortDescription} />
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
 	{#if data.faviconPictureId}

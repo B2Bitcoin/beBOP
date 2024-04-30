@@ -14,6 +14,9 @@ export async function load(event) {
 			runtimeConfig.websiteTitle,
 		websiteShortDescription:
 			runtimeConfig[`translations.${event.locals.language}.config`]?.websiteShortDescription ||
-			runtimeConfig.websiteShortDescription
+			runtimeConfig.websiteShortDescription,
+		viewportContentWidth: runtimeConfig.viewportContentWidth,
+		viewportFor: runtimeConfig.viewportFor,
+		roleId: event.locals.user?.roleId
 	};
 }
