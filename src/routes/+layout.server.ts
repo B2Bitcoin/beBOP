@@ -1,6 +1,24 @@
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 export async function load(event) {
+	let viewportWidth;
+	if (runtimeConfig.viewportFor === 'everyone') {
+		viewportWidth = 'width=device-width';
+	} else if (
+		event.locals.user?.roleId !== CUSTOMER_ROLE_ID &&
+		runtimeConfig.viewportFor === 'employee'
+	) {
+		viewportWidth = 'width=device-width';
+	} else if (
+		event.locals.user?.roleId === CUSTOMER_ROLE_ID &&
+		runtimeConfig.viewportFor === 'visitors'
+	) {
+		viewportWidth = 'width=device-width';
+	} else {
+		viewportWidth = runtimeConfig.viewportContentWidth;
+	}
+
 	return {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		language: event.locals.language,
@@ -15,8 +33,6 @@ export async function load(event) {
 		websiteShortDescription:
 			runtimeConfig[`translations.${event.locals.language}.config`]?.websiteShortDescription ||
 			runtimeConfig.websiteShortDescription,
-		viewportContentWidth: runtimeConfig.viewportContentWidth,
-		viewportFor: runtimeConfig.viewportFor,
-		roleId: event.locals.user?.roleId
+		viewportWidth
 	};
 }
