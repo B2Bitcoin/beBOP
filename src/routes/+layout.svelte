@@ -10,7 +10,6 @@
 	import { page } from '$app/stores';
 	import { setContext } from 'svelte';
 	import { PUBLIC_VERSION } from '$env/static/public';
-	import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 	export let data;
 
