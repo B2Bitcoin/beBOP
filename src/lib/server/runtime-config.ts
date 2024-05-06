@@ -79,6 +79,9 @@ const baseConfig = {
 		{ label: 'Terms of Service', href: '/terms' },
 		{ label: 'Privacy Policy', href: '/privacy' }
 	],
+
+	viewportFor: 'no-one' as 'employee' | 'no-one' | 'visitors' | 'everyone',
+	viewportContentWidth: 1000,
 	socialNetworkIcons: [] as Array<{ name: string; svg: string; href: string }>,
 
 	vatExempted: false,

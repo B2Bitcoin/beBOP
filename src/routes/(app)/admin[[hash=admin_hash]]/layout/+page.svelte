@@ -1,7 +1,36 @@
 <script lang="ts">
 	import { MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product.js';
+	import { upperFirst } from 'lodash-es';
 
 	export let data;
+	let viewportContentWidth = data.viewportContentWidth;
+	let viewportFor = data.viewportFor;
+	async function confirmSubmit(event: Event) {
+		if (
+			viewportFor === 'employee' &&
+			!confirm(
+				"Mobile-friendly display is still under construction. Are you sure ? This option is meant to be use to check your be-BOP with mobile specific display as an employee. For now, it's mean to be a temporary, and can reduce useability of the back-office to your team and POS session. Are you really sure ?"
+			)
+		) {
+			event.preventDefault();
+		}
+		if (
+			viewportFor === 'visitors' &&
+			!confirm(
+				"Mobile-friendly display is still under construction. Are you sure ? This option is meant to be use to give your visitors a mobile-friendly experience. For now, it's mean to be a temporary, and can degrade display of CMS and other pages of user journey. Are you really sure ?"
+			)
+		) {
+			event.preventDefault();
+		}
+		if (
+			viewportFor === 'everyone' &&
+			!confirm(
+				"Mobile-friendly display is still under construction. Are you sure ? This option is meant to be use on a public test phase of your be-BOP and to provide mobile-friendly experience. For now, it's mean to be a temporary, and can degrade both visitors and employees journey, as POS session. Are you really sure ?"
+			)
+		) {
+			event.preventDefault();
+		}
+	}
 </script>
 
 <form method="post" class="flex flex-col gap-4">
@@ -173,6 +202,28 @@
 			</label>
 		</div>
 	{/each}
+	<h2 class="text-2xl">Mobile Display</h2>
+	<h2>Allow you to customize be-bop default behavior on mobile</h2>
+	<h2>Default configuration is:</h2>
+	<code class="font-mono">meta name="viewport" content="width=1000"</code>
 
-	<button class="btn btn-black self-start" type="submit">Update</button>
+	<label class="form-label">
+		Viewport width (default: 1000)
+		<input
+			type="number"
+			name="viewportContentWidth"
+			class="form-input"
+			max="1000"
+			bind:value={viewportContentWidth}
+		/>
+	</label>
+	<label class="form-label">
+		Use content="width=device-width" for:
+		<select class="form-input" name="viewportFor" required bind:value={viewportFor}>
+			{#each ['no-one', 'employee', 'visitors', 'everyone'] as value}
+				<option {value} selected={data.viewportFor === value}>{upperFirst(value)}</option>
+			{/each}
+		</select>
+	</label>
+	<button class="btn btn-black self-start" type="submit" on:click={confirmSubmit}>Update</button>
 </form>

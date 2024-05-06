@@ -18,6 +18,7 @@
 
 <svelte:head>
 	<title>{data.websiteTitle}</title>
+	<meta name="viewport" content={data.viewportWidth} />
 	<meta name="description" content={data.websiteShortDescription} />
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
 	{#if data.faviconPictureId}

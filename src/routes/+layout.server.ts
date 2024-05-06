@@ -1,6 +1,26 @@
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 export async function load(event) {
+	const viewportWidth = (() => {
+		switch (runtimeConfig.viewportFor) {
+			case 'everyone':
+				return 'width=device-width';
+			case 'employee':
+				return event.locals.user?.roleId !== undefined &&
+					event.locals.user?.roleId !== CUSTOMER_ROLE_ID
+					? 'width=device-width'
+					: `width=${runtimeConfig.viewportContentWidth}`;
+			case 'visitors':
+				return event.locals.user?.roleId === undefined ||
+					event.locals.user?.roleId === CUSTOMER_ROLE_ID
+					? 'width=device-width'
+					: `width=${runtimeConfig.viewportContentWidth}`;
+			default:
+				return `width=${runtimeConfig.viewportContentWidth}`;
+		}
+	})();
+
 	return {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		language: event.locals.language,
@@ -14,6 +34,7 @@ export async function load(event) {
 			runtimeConfig.websiteTitle,
 		websiteShortDescription:
 			runtimeConfig[`translations.${event.locals.language}.config`]?.websiteShortDescription ||
-			runtimeConfig.websiteShortDescription
+			runtimeConfig.websiteShortDescription,
+		viewportWidth
 	};
 }

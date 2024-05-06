@@ -27,7 +27,9 @@ export const actions = {
 					.optional(),
 				displayPoweredBy: z.boolean({ coerce: true }),
 				displayCompanyInfo: z.boolean({ coerce: true }),
-				displayMainShopInfo: z.boolean({ coerce: true })
+				displayMainShopInfo: z.boolean({ coerce: true }),
+				viewportContentWidth: z.number({ coerce: true }),
+				viewportFor: z.enum(['no-one', 'employee', 'visitors', 'everyone']).optional()
 			})
 			.parse(json);
 
