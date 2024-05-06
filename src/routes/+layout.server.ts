@@ -7,7 +7,8 @@ export async function load(event) {
 			case 'everyone':
 				return 'width=device-width';
 			case 'employee':
-				return event.locals.user?.roleId !== CUSTOMER_ROLE_ID
+				return event.locals.user?.roleId !== undefined &&
+					event.locals.user?.roleId !== CUSTOMER_ROLE_ID
 					? 'width=device-width'
 					: `width=${runtimeConfig.viewportContentWidth}`;
 			case 'visitors':
