@@ -5,21 +5,11 @@ export function load({ locals }) {
 	return {
 		cmsPages: collections.cmsPages
 			.find({})
-			.project<
-				Pick<
-					CMSPage,
-					| '_id'
-					| 'title'
-					| 'maintenanceDisplay'
-					| 'desktopDisplayOnly'
-					| 'mobileDisplaySubstitution'
-				>
-			>({
+			.project<Pick<CMSPage, '_id' | 'title' | 'maintenanceDisplay' | 'hasSubstitutionContent'>>({
 				_id: 1,
 				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 				maintenanceDisplay: 1,
-				desktopDisplayOnly: 1,
-				mobileDisplaySubstitution: 1
+				hasSubstitutionContent: 1
 			})
 			.sort({ updatedAt: -1 })
 			.toArray()

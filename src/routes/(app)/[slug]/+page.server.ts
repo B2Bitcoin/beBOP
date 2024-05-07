@@ -11,13 +11,17 @@ export async function load({ params, locals }) {
 		{
 			projection: {
 				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+				substitutionContent: {
+					$ifNull: [`$translations.${locals.language}.substitutionContent`, '$substitutionContent']
+				},
 				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 				shortDescription: {
 					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
 				},
 				fullScreen: 1,
 				maintenanceDisplay: 1,
-				hideFromSEO: 1
+				hideFromSEO: 1,
+				hasSubstitutionContent: 1
 			}
 		}
 	);
@@ -30,13 +34,20 @@ export async function load({ params, locals }) {
 			{
 				projection: {
 					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					substitutionContent: {
+						$ifNull: [
+							`$translations.${locals.language}.substitutionContent`,
+							'$substitutionContent'
+						]
+					},
 					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 					shortDescription: {
 						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
 					},
 					fullScreen: 1,
 					maintenanceDisplay: 1,
-					hideFromSEO: 1
+					hideFromSEO: 1,
+					hasSubstitutionContent: 1
 				}
 			}
 		);
@@ -49,6 +60,10 @@ export async function load({ params, locals }) {
 	return {
 		cmsPage: omit(cmsPage, ['content']),
 		cmsData: cmsFromContent(cmsPage.content, locals),
-		layoutReset: cmsPage.fullScreen
+		layoutReset: cmsPage.fullScreen,
+		...(cmsPage.hasSubstitutionContent &&
+			cmsPage.substitutionContent && {
+				cmsDataSubstitute: cmsFromContent(cmsPage.substitutionContent, locals)
+			})
 	};
 }

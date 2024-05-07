@@ -40,6 +40,17 @@
 			value={data.cmsPage.translations?.[language]?.content ?? ''}
 		/>
 	</label>
+	<label class="form-label">
+		Substitution content
+		<textarea
+			name="substitutionContent"
+			class="form-input"
+			rows="10"
+			maxlength={MAX_CONTENT_LIMIT}
+			placeholder={data.cmsPage.substitutionContent}
+			value={data.cmsPage.translations?.[language]?.substitutionContent ?? ''}
+		/>
+	</label>
 
 	<label class="form-label">
 		Short Description
