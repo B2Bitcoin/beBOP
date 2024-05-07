@@ -23,8 +23,8 @@ export const actions = {
 			fullScreen,
 			maintenanceDisplay,
 			hideFromSEO,
-			hasSubstitutionContent,
-			substitutionContent
+			hasMobileContent,
+			mobileContent
 		} = z
 			.object({
 				...cmsTranslatableSchema,
@@ -33,7 +33,7 @@ export const actions = {
 				hideFromSEO: z.boolean({ coerce: true }),
 				desktopDisplayOnly: z.boolean({ coerce: true }),
 				mobileDisplaySubstitution: z.boolean({ coerce: true }),
-				hasSubstitutionContent: z.boolean({ coerce: true })
+				hasMobileContent: z.boolean({ coerce: true })
 			})
 			.parse(Object.fromEntries(data));
 
@@ -49,8 +49,8 @@ export const actions = {
 					fullScreen,
 					maintenanceDisplay,
 					hideFromSEO,
-					hasSubstitutionContent,
-					...(hasSubstitutionContent && substitutionContent && { substitutionContent }),
+					hasMobileContent,
+					...(hasMobileContent && mobileContent && { mobileContent }),
 					updatedAt: new Date()
 				}
 			}

@@ -26,9 +26,58 @@ purify.addHook('afterSanitizeAttributes', function (node) {
 		node.setAttribute('rel', 'noopener');
 	}
 });
-
+type TokenObject =
+	| {
+			type: 'html';
+			raw: string;
+	  }
+	| {
+			type: 'productWidget';
+			slug: string;
+			display: string | undefined;
+			raw: string;
+	  }
+	| {
+			type: 'challengeWidget';
+			slug: string;
+			raw: string;
+	  }
+	| {
+			type: 'sliderWidget';
+			slug: string;
+			autoplay: number | undefined;
+			raw: string;
+	  }
+	| {
+			type: 'tagWidget';
+			slug: string;
+			display: string | undefined;
+			raw: string;
+	  }
+	| {
+			type: 'specificationWidget';
+			slug: string;
+			raw: string;
+	  }
+	| {
+			type: 'pictureWidget';
+			slug: string;
+			raw: string;
+			fit?: 'cover' | 'contain';
+			width?: number;
+			height?: number;
+	  }
+	| { type: 'contactFormWidget'; slug: string; raw: string }
+	| { type: 'countdownWidget'; slug: string; raw: string }
+	| { type: 'tagProducts'; slug: string; display: string | undefined; raw: string }
+	| {
+			type: 'galleryWidget';
+			slug: string;
+			display: string | undefined;
+			raw: string;
+	  };
 export async function cmsFromContent(
-	content: string,
+	{ content, mobileContent }: { content: string; mobileContent?: string },
 	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email' | 'sso'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
@@ -59,57 +108,13 @@ export async function cmsFromContent(
 	const tagProductsSlugs = new Set<string>();
 	const gallerySlugs = new Set<string>();
 
-	const tokens: Array<
-		| {
-				type: 'html';
-				raw: string;
-		  }
-		| {
-				type: 'productWidget';
-				slug: string;
-				display: string | undefined;
-				raw: string;
-		  }
-		| {
-				type: 'challengeWidget';
-				slug: string;
-				raw: string;
-		  }
-		| {
-				type: 'sliderWidget';
-				slug: string;
-				autoplay: number | undefined;
-				raw: string;
-		  }
-		| {
-				type: 'tagWidget';
-				slug: string;
-				display: string | undefined;
-				raw: string;
-		  }
-		| {
-				type: 'specificationWidget';
-				slug: string;
-				raw: string;
-		  }
-		| {
-				type: 'pictureWidget';
-				slug: string;
-				raw: string;
-				fit?: 'cover' | 'contain';
-				width?: number;
-				height?: number;
-		  }
-		| { type: 'contactFormWidget'; slug: string; raw: string }
-		| { type: 'countdownWidget'; slug: string; raw: string }
-		| { type: 'tagProducts'; slug: string; display: string | undefined; raw: string }
-		| {
-				type: 'galleryWidget';
-				slug: string;
-				display: string | undefined;
-				raw: string;
-		  }
-	> = [];
+	const tokens: {
+		desktop: Array<TokenObject>;
+		mobile?: Array<TokenObject>;
+	} = {
+		desktop: [],
+		mobile: []
+	};
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
 	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
@@ -157,7 +162,7 @@ export async function cmsFromContent(
 
 	for (const match of orderedMatches) {
 		const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
-		tokens.push({
+		tokens.desktop.push({
 			type: 'html',
 			raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html, { ADD_ATTR: ['target'] })
 		});
@@ -165,7 +170,7 @@ export async function cmsFromContent(
 			switch (match.type) {
 				case 'productWidget':
 					productSlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'productWidget',
 						slug: match.groups.slug,
 						display: match.groups?.display,
@@ -174,7 +179,7 @@ export async function cmsFromContent(
 					break;
 				case 'challengeWidget':
 					challengeSlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'challengeWidget',
 						slug: match.groups.slug,
 						raw: match[0]
@@ -182,7 +187,7 @@ export async function cmsFromContent(
 					break;
 				case 'sliderWidget':
 					sliderSlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'sliderWidget',
 						slug: match.groups.slug,
 						autoplay: Number(match.groups?.autoplay),
@@ -191,7 +196,7 @@ export async function cmsFromContent(
 					break;
 				case 'tagWidget':
 					tagSlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'tagWidget',
 						slug: match.groups.slug,
 						display: match.groups?.display,
@@ -200,7 +205,7 @@ export async function cmsFromContent(
 					break;
 				case 'specificationWidget':
 					specificationSlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'specificationWidget',
 						slug: match.groups.slug,
 						raw: match[0]
@@ -216,7 +221,7 @@ export async function cmsFromContent(
 						| undefined;
 					const width = /[?\s]width=(?<width>\d+)/.exec(raw)?.groups?.width;
 					const height = /[?\s]height=(?<height>\d+)/.exec(raw)?.groups?.height;
-					tokens.push({
+					tokens.desktop.push({
 						type: 'pictureWidget',
 						slug: match.groups.slug,
 						raw,
@@ -227,7 +232,7 @@ export async function cmsFromContent(
 					break;
 				case 'contactFormWidget':
 					contactFormSlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'contactFormWidget',
 						slug: match.groups.slug,
 						raw: match[0]
@@ -235,7 +240,7 @@ export async function cmsFromContent(
 					break;
 				case 'countdownWidget':
 					countdownFormSlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'countdownWidget',
 						slug: match.groups.slug,
 						raw: match[0]
@@ -243,7 +248,7 @@ export async function cmsFromContent(
 					break;
 				case 'tagProducts':
 					tagProductsSlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'tagProducts',
 						slug: match.groups.slug,
 						display: match.groups?.display,
@@ -252,7 +257,7 @@ export async function cmsFromContent(
 					break;
 				case 'galleryWidget':
 					gallerySlugs.add(match.groups.slug);
-					tokens.push({
+					tokens.desktop.push({
 						type: 'galleryWidget',
 						slug: match.groups.slug,
 						display: match.groups?.display,
@@ -263,11 +268,124 @@ export async function cmsFromContent(
 		}
 		index = match.index + match[0].length;
 	}
-
-	tokens.push({
+	tokens.desktop.push({
 		type: 'html',
 		raw: trimPrefix(content.slice(index), '</p>')
 	});
+	if (mobileContent?.length) {
+		for (const match of orderedMatches) {
+			const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
+			tokens.mobile?.push({
+				type: 'html',
+				raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html, { ADD_ATTR: ['target'] })
+			});
+			if (match.groups?.slug) {
+				switch (match.type) {
+					case 'productWidget':
+						productSlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'productWidget',
+							slug: match.groups.slug,
+							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'challengeWidget':
+						challengeSlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'challengeWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'sliderWidget':
+						sliderSlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'sliderWidget',
+							slug: match.groups.slug,
+							autoplay: Number(match.groups?.autoplay),
+							raw: match[0]
+						});
+						break;
+					case 'tagWidget':
+						tagSlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'tagWidget',
+							slug: match.groups.slug,
+							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'specificationWidget':
+						specificationSlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'specificationWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'pictureWidget':
+						pictureSlugs.add(match.groups.slug);
+						// With multiple options, to handle any ordering for the options, we need to parse the string again
+						const raw = match[0];
+						const fit = /[?\s]fit=(?<fit>(cover|contain))/.exec(raw)?.groups?.fit as
+							| 'cover'
+							| 'contain'
+							| undefined;
+						const width = /[?\s]width=(?<width>\d+)/.exec(raw)?.groups?.width;
+						const height = /[?\s]height=(?<height>\d+)/.exec(raw)?.groups?.height;
+						tokens.mobile?.push({
+							type: 'pictureWidget',
+							slug: match.groups.slug,
+							raw,
+							fit,
+							width: width ? Number(width) : undefined,
+							height: height ? Number(height) : undefined
+						});
+						break;
+					case 'contactFormWidget':
+						contactFormSlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'contactFormWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'countdownWidget':
+						countdownFormSlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'countdownWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'tagProducts':
+						tagProductsSlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'tagProducts',
+							slug: match.groups.slug,
+							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'galleryWidget':
+						gallerySlugs.add(match.groups.slug);
+						tokens.mobile?.push({
+							type: 'galleryWidget',
+							slug: match.groups.slug,
+							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+				}
+			}
+			index = match.index + match[0].length;
+		}
+		tokens.mobile?.push({
+			type: 'html',
+			raw: trimPrefix(content.slice(index), '</p>')
+		});
+	}
 	const query =
 		locals.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
@@ -443,7 +561,7 @@ export async function cmsFromContent(
 	};
 }
 
-export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens'][number];
+export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens'][][number];
 export type CmsProduct = Awaited<ReturnType<typeof cmsFromContent>>['products'][number];
 export type CmsChallenge = Awaited<ReturnType<typeof cmsFromContent>>['challenges'][number];
 export type CmsSlider = Awaited<ReturnType<typeof cmsFromContent>>['sliders'][number];

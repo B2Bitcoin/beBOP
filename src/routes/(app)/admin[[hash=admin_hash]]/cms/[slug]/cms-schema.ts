@@ -6,5 +6,5 @@ export const cmsTranslatableSchema = {
 	title: z.string().min(1).max(MAX_NAME_LIMIT),
 	content: z.string().max(MAX_CONTENT_LIMIT),
 	shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),
-	substitutionContent: z.string().max(MAX_CONTENT_LIMIT)
+	mobileContent: z.string().max(MAX_CONTENT_LIMIT)
 };

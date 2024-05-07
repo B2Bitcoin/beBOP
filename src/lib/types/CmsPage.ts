@@ -5,7 +5,7 @@ export interface CMSPageTranslatableFields {
 	title: string;
 	shortDescription: string;
 	content: string;
-	substitutionContent?: string;
+	mobileContent?: string;
 }
 
 export interface CMSPage extends Timestamps, CMSPageTranslatableFields {
@@ -13,7 +13,7 @@ export interface CMSPage extends Timestamps, CMSPageTranslatableFields {
 	fullScreen: boolean;
 	maintenanceDisplay: boolean;
 	hideFromSEO?: boolean;
-	hasSubstitutionContent?: boolean;
+	hasMobileContent?: boolean;
 	translations?: Partial<Record<LanguageKey, Partial<CMSPageTranslatableFields>>>;
 }
 

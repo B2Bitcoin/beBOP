@@ -43,12 +43,12 @@
 	<label class="form-label">
 		Substitution content
 		<textarea
-			name="substitutionContent"
+			name="mobileContent"
 			class="form-input"
 			rows="10"
 			maxlength={MAX_CONTENT_LIMIT}
-			placeholder={data.cmsPage.substitutionContent}
-			value={data.cmsPage.translations?.[language]?.substitutionContent ?? ''}
+			placeholder={data.cmsPage.mobileContent}
+			value={data.cmsPage.translations?.[language]?.mobileContent ?? ''}
 		/>
 	</label>
 

@@ -3,7 +3,7 @@ import { omit } from 'lodash-es';
 import { cmsFromContent } from '$lib/server/cms.js';
 import { error } from '@sveltejs/kit';
 
-export async function load({ params, locals }) {
+export async function load({ params, locals, url }) {
 	let cmsPage = await collections.cmsPages.findOne(
 		{
 			_id: params.slug
@@ -11,8 +11,8 @@ export async function load({ params, locals }) {
 		{
 			projection: {
 				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				substitutionContent: {
-					$ifNull: [`$translations.${locals.language}.substitutionContent`, '$substitutionContent']
+				mobileContent: {
+					$ifNull: [`$translations.${locals.language}.mobileContent`, '$mobileContent']
 				},
 				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 				shortDescription: {
@@ -21,7 +21,7 @@ export async function load({ params, locals }) {
 				fullScreen: 1,
 				maintenanceDisplay: 1,
 				hideFromSEO: 1,
-				hasSubstitutionContent: 1
+				hasMobileContent: 1
 			}
 		}
 	);
@@ -34,11 +34,8 @@ export async function load({ params, locals }) {
 			{
 				projection: {
 					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-					substitutionContent: {
-						$ifNull: [
-							`$translations.${locals.language}.substitutionContent`,
-							'$substitutionContent'
-						]
+					mobileContent: {
+						$ifNull: [`$translations.${locals.language}.mobileContent`, '$mobileContent']
 					},
 					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 					shortDescription: {
@@ -47,7 +44,7 @@ export async function load({ params, locals }) {
 					fullScreen: 1,
 					maintenanceDisplay: 1,
 					hideFromSEO: 1,
-					hasSubstitutionContent: 1
+					hasMobileContent: 1
 				}
 			}
 		);
@@ -58,12 +55,17 @@ export async function load({ params, locals }) {
 	}
 
 	return {
-		cmsPage: omit(cmsPage, ['content']),
-		cmsData: cmsFromContent(cmsPage.content, locals),
-		layoutReset: cmsPage.fullScreen,
-		...(cmsPage.hasSubstitutionContent &&
-			cmsPage.substitutionContent && {
-				cmsDataSubstitute: cmsFromContent(cmsPage.substitutionContent, locals)
-			})
+		cmsPage: omit(cmsPage, ['content', 'mobileContent']),
+		cmsData: cmsFromContent(
+			url.searchParams.get('content') === 'desktop' ||
+				!cmsPage.hasMobileContent ||
+				!cmsPage.mobileContent
+				? { content: cmsPage.content }
+				: url.searchParams.get('content') === 'mobile'
+				? { content: cmsPage.mobileContent }
+				: { content: cmsPage.content, mobileContent: cmsPage.mobileContent },
+			locals
+		),
+		layoutReset: cmsPage.fullScreen
 	};
 }

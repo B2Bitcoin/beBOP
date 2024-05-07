@@ -17,8 +17,8 @@ export const actions = {
 			shortDescription,
 			fullScreen,
 			maintenanceDisplay,
-			hasSubstitutionContent,
-			substitutionContent
+			hasMobileContent,
+			mobileContent
 		} = z
 			.object({
 				slug: zodSlug(),
@@ -27,8 +27,8 @@ export const actions = {
 				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),
 				fullScreen: z.boolean({ coerce: true }),
 				maintenanceDisplay: z.boolean({ coerce: true }),
-				hasSubstitutionContent: z.boolean({ coerce: true }),
-				substitutionContent: z.string().max(MAX_CONTENT_LIMIT)
+				hasMobileContent: z.boolean({ coerce: true }),
+				mobileContent: z.string().max(MAX_CONTENT_LIMIT)
 			})
 			.parse(Object.fromEntries(data));
 
@@ -49,8 +49,8 @@ export const actions = {
 			shortDescription,
 			fullScreen,
 			maintenanceDisplay,
-			hasSubstitutionContent,
-			...(hasSubstitutionContent && substitutionContent && { substitutionContent }),
+			hasMobileContent,
+			...(hasMobileContent && mobileContent && { mobileContent }),
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});
