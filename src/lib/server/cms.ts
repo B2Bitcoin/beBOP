@@ -116,16 +116,16 @@ export async function cmsFromContent(
 		mobile: []
 	};
 
-	const productMatches = (content + mobileContent).matchAll(PRODUCT_WIDGET_REGEX);
-	const challengeMatches = (content + mobileContent).matchAll(CHALLENGE_WIDGET_REGEX);
-	const sliderMatches = (content + mobileContent).matchAll(SLIDER_WIDGET_REGEX);
-	const tagMatches = (content + mobileContent).matchAll(TAG_WIDGET_REGEX);
-	const specificationMatches = (content + mobileContent).matchAll(SPECIFICATION_WIDGET_REGEX);
-	const contactFormMatches = (content + mobileContent).matchAll(CONTACTFORM_WIDGET_REGEX);
-	const pictureMatches = (content + mobileContent).matchAll(PICTURE_WIDGET_REGEX);
-	const countdownMatches = (content + mobileContent).matchAll(COUNTDOWN_WIDGET_REGEX);
-	const tagProductsMatches = (content + mobileContent).matchAll(TAG_PRODUCTS_REGEX);
-	const galleryMatches = (content + mobileContent).matchAll(GALLERY_WIDGET_REGEX);
+	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
+	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
+	const sliderMatches = content.matchAll(SLIDER_WIDGET_REGEX);
+	const tagMatches = content.matchAll(TAG_WIDGET_REGEX);
+	const specificationMatches = content.matchAll(SPECIFICATION_WIDGET_REGEX);
+	const contactFormMatches = content.matchAll(CONTACTFORM_WIDGET_REGEX);
+	const pictureMatches = content.matchAll(PICTURE_WIDGET_REGEX);
+	const countdownMatches = content.matchAll(COUNTDOWN_WIDGET_REGEX);
+	const tagProductsMatches = content.matchAll(TAG_PRODUCTS_REGEX);
+	const galleryMatches = content.matchAll(GALLERY_WIDGET_REGEX);
 
 	let index = 0;
 

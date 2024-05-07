@@ -111,7 +111,6 @@
 </script>
 
 <div class={tokens.mobile ? 'hidden sm:contents' : 'contents'}>
-	Desktop
 	<div class="prose max-w-full {classNames}">
 		{#each tokens.desktop as token}
 			{#if token.type === 'productWidget' && productById[token.slug]}
@@ -190,7 +189,6 @@
 	</div>
 </div>
 {#if tokens.mobile}
-	Mobile
 	<div class="contents sm:hidden">
 		<div class="prose max-w-full {classNames}">
 			{#each tokens.mobile as token}
