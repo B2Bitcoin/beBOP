@@ -63,7 +63,7 @@ export async function load({ params, locals, url }) {
 				? { content: cmsPage.content }
 				: url.searchParams.get('content') === 'mobile'
 				? { content: cmsPage.mobileContent }
-				: { content: cmsPage.content, mobileContent: cmsPage.mobileContent },
+				: { content: cmsPage.mobileContent, mobileContent: cmsPage.mobileContent },
 			locals
 		),
 		layoutReset: cmsPage.fullScreen

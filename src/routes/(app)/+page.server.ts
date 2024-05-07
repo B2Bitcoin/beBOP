@@ -11,6 +11,9 @@ export const load = async ({ locals }) => {
 		{
 			projection: {
 				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+				mobileContent: {
+					$ifNull: [`$translations.${locals.language}.mobileContent`, '$mobileContent']
+				},
 				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 				shortDescription: {
 					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
@@ -30,7 +33,10 @@ export const load = async ({ locals }) => {
 
 	return {
 		cmsPage: omit(cmsPage, ['content']),
-		cmsData: cmsFromContent(cmsPage.content, locals),
+		cmsData: cmsFromContent(
+			{ content: cmsPage.content, mobileContent: cmsPage.mobileContent },
+			locals
+		),
 		layoutReset: cmsPage.fullScreen
 	};
 };
