@@ -163,7 +163,7 @@
 		{#if topMenuOpen}
 			<nav
 				transition:slide
-				class="print:hidden header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4 text-white"
+				class="print:hidden header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4"
 			>
 				{#each data.links.topbar as link}
 					<a
@@ -450,7 +450,7 @@
 		{#if navMenuOpen}
 			<nav
 				transition:slide
-				class="bg-gray-240 print:hidden font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
+				class=" print:hidden header-tab font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 			>
 				{#each data.links.navbar as link}
 					<a class="py-2 hover:underline" data-sveltekit-preload-data="off" href={link.href}
