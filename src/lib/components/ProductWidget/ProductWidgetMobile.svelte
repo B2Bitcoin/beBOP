@@ -3,7 +3,6 @@
 	import PictureComponent from '../Picture.svelte';
 	import PriceTag from '../PriceTag.svelte';
 	import ProductType from '../ProductType.svelte';
-	import AddToCart from '../AddToCart.svelte';
 	import { useI18n } from '$lib/i18n';
 	import type { ProductWidgetProduct } from './ProductWidgetProduct';
 

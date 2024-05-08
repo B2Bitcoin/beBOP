@@ -6,7 +6,6 @@
 	import AddToCart from '../AddToCart.svelte';
 	import { useI18n } from '$lib/i18n';
 	import type { ProductWidgetProduct } from './ProductWidgetProduct';
-	import ProductWidgetMobile from './ProductWidgetMobile.svelte';
 
 	export let pictures: Picture[] | [];
 	export let product: ProductWidgetProduct;
