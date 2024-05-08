@@ -10,6 +10,7 @@
 	import { typedKeys } from '$lib/utils/typedKeys';
 	import ProductWidgetVariation0 from './ProductWidget/ProductWidgetVariation0.svelte';
 	import type { ProductWidgetProduct } from './ProductWidget/ProductWidgetProduct';
+	import ProductWidgetMobile from './ProductWidget/ProductWidgetMobile.svelte';
 
 	export let pictures: Picture[] | [];
 	export let product: ProductWidgetProduct;
@@ -50,11 +51,22 @@
 		: widgets['img-0'];
 </script>
 
-<svelte:component
-	this={widget.component}
-	{product}
-	{pictures}
-	{hasDigitalFiles}
-	{canAddToCart}
-	class={className}
-/>
+<div class="sm:hidden contents">
+	<svelte:component
+		this={ProductWidgetMobile}
+		{product}
+		{pictures}
+		{hasDigitalFiles}
+		class={className}
+	/>
+</div>
+<div class="hidden sm:contents">
+	<svelte:component
+		this={widget.component}
+		{product}
+		{pictures}
+		{hasDigitalFiles}
+		{canAddToCart}
+		class={className}
+	/>
+</div>
