@@ -48,7 +48,7 @@
 		</div>
 		<a href="/product/{product._id}" class="flex flex-col">
 			<p class="max-w-[500px]">
-				Lorem, ipsum dolor sit amet consectetur adipisicing elit. Minima nam maiores asperiores,
+				{product.shortDescription}
 			</p>
 		</a>
 	</div>
