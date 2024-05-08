@@ -157,7 +157,8 @@ export async function cmsFromContent(
 		? mobileContent.matchAll(GALLERY_WIDGET_REGEX)
 		: ''.matchAll(GALLERY_WIDGET_REGEX);
 
-	let index = 0;
+	const index = 0;
+	const indexMobile = 0;
 
 	const orderedMatches = [
 		...[...productMatches].map((m) =>
@@ -192,34 +193,34 @@ export async function cmsFromContent(
 
 	const orderedMatchesMobile = [
 		...[...productMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'productWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'productWidget' })
 		),
 		...[...challengeMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'challengeWidget' })
 		),
 		...[...sliderMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'sliderWidget' })
 		),
 		...[...tagMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'tagWidget' })
 		),
 		...[...specificationMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'specificationWidget' })
 		),
 		...[...contactFormMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'contactFormWidget' })
 		),
 		...[...pictureMatchesMobile].map((m) =>
 			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
 		),
 		...[...countdownMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'countdownWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'countdownWidget' })
 		),
 		...[...tagProductsMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'tagProducts' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'tagProducts' })
 		),
 		...[...galleryMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'galleryWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'galleryWidget' })
 		)
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
@@ -229,7 +230,8 @@ export async function cmsFromContent(
 			type: string;
 		})[],
 		token: TokenObject[],
-		content: string
+		content: string,
+		index: number
 	) => {
 		for (const match of matches) {
 			const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
@@ -345,9 +347,9 @@ export async function cmsFromContent(
 		});
 	};
 
-	processMatches(orderedMatches, tokens.desktop, content);
+	processMatches(orderedMatches, tokens.desktop, content, index);
 	if (mobileContent?.length && tokens.mobile) {
-		processMatches(orderedMatchesMobile, tokens.mobile, mobileContent);
+		processMatches(orderedMatchesMobile, tokens.mobile, mobileContent, indexMobile);
 	}
 
 	const query =
