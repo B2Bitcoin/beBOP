@@ -126,6 +126,36 @@ export async function cmsFromContent(
 	const countdownMatches = content.matchAll(COUNTDOWN_WIDGET_REGEX);
 	const tagProductsMatches = content.matchAll(TAG_PRODUCTS_REGEX);
 	const galleryMatches = content.matchAll(GALLERY_WIDGET_REGEX);
+	const productMatchesMobile = mobileContent
+		? mobileContent.matchAll(PRODUCT_WIDGET_REGEX)
+		: ''.matchAll(PRODUCT_WIDGET_REGEX);
+	const challengeMatchesMobile = mobileContent
+		? mobileContent.matchAll(CHALLENGE_WIDGET_REGEX)
+		: ''.matchAll(CHALLENGE_WIDGET_REGEX);
+	const sliderMatchesMobile = mobileContent
+		? mobileContent.matchAll(SLIDER_WIDGET_REGEX)
+		: ''.matchAll(SLIDER_WIDGET_REGEX);
+	const tagMatchesMobile = mobileContent
+		? mobileContent.matchAll(TAG_WIDGET_REGEX)
+		: ''.matchAll(TAG_WIDGET_REGEX);
+	const specificationMatchesMobile = mobileContent
+		? mobileContent.matchAll(SPECIFICATION_WIDGET_REGEX)
+		: ''.matchAll(SPECIFICATION_WIDGET_REGEX);
+	const contactFormMatchesMobile = mobileContent
+		? mobileContent.matchAll(CONTACTFORM_WIDGET_REGEX)
+		: ''.matchAll(CONTACTFORM_WIDGET_REGEX);
+	const pictureMatchesMobile = mobileContent
+		? mobileContent.matchAll(PICTURE_WIDGET_REGEX)
+		: ''.matchAll(PICTURE_WIDGET_REGEX);
+	const countdownMatchesMobile = mobileContent
+		? mobileContent.matchAll(COUNTDOWN_WIDGET_REGEX)
+		: ''.matchAll(COUNTDOWN_WIDGET_REGEX);
+	const tagProductsMatchesMobile = mobileContent
+		? mobileContent.matchAll(TAG_PRODUCTS_REGEX)
+		: ''.matchAll(TAG_PRODUCTS_REGEX);
+	const galleryMatchesMobile = mobileContent
+		? mobileContent.matchAll(GALLERY_WIDGET_REGEX)
+		: ''.matchAll(GALLERY_WIDGET_REGEX);
 
 	let index = 0;
 
@@ -160,122 +190,50 @@ export async function cmsFromContent(
 		)
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
-	for (const match of orderedMatches) {
-		const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
-		tokens.desktop.push({
-			type: 'html',
-			raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html, { ADD_ATTR: ['target'] })
-		});
-		if (match.groups?.slug) {
-			switch (match.type) {
-				case 'productWidget':
-					productSlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'productWidget',
-						slug: match.groups.slug,
-						display: match.groups?.display,
-						raw: match[0]
-					});
-					break;
-				case 'challengeWidget':
-					challengeSlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'challengeWidget',
-						slug: match.groups.slug,
-						raw: match[0]
-					});
-					break;
-				case 'sliderWidget':
-					sliderSlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'sliderWidget',
-						slug: match.groups.slug,
-						autoplay: Number(match.groups?.autoplay),
-						raw: match[0]
-					});
-					break;
-				case 'tagWidget':
-					tagSlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'tagWidget',
-						slug: match.groups.slug,
-						display: match.groups?.display,
-						raw: match[0]
-					});
-					break;
-				case 'specificationWidget':
-					specificationSlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'specificationWidget',
-						slug: match.groups.slug,
-						raw: match[0]
-					});
-					break;
-				case 'pictureWidget':
-					pictureSlugs.add(match.groups.slug);
-					// With multiple options, to handle any ordering for the options, we need to parse the string again
-					const raw = match[0];
-					const fit = /[?\s]fit=(?<fit>(cover|contain))/.exec(raw)?.groups?.fit as
-						| 'cover'
-						| 'contain'
-						| undefined;
-					const width = /[?\s]width=(?<width>\d+)/.exec(raw)?.groups?.width;
-					const height = /[?\s]height=(?<height>\d+)/.exec(raw)?.groups?.height;
-					tokens.desktop.push({
-						type: 'pictureWidget',
-						slug: match.groups.slug,
-						raw,
-						fit,
-						width: width ? Number(width) : undefined,
-						height: height ? Number(height) : undefined
-					});
-					break;
-				case 'contactFormWidget':
-					contactFormSlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'contactFormWidget',
-						slug: match.groups.slug,
-						raw: match[0]
-					});
-					break;
-				case 'countdownWidget':
-					countdownFormSlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'countdownWidget',
-						slug: match.groups.slug,
-						raw: match[0]
-					});
-					break;
-				case 'tagProducts':
-					tagProductsSlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'tagProducts',
-						slug: match.groups.slug,
-						display: match.groups?.display,
-						raw: match[0]
-					});
-					break;
-				case 'galleryWidget':
-					gallerySlugs.add(match.groups.slug);
-					tokens.desktop.push({
-						type: 'galleryWidget',
-						slug: match.groups.slug,
-						display: match.groups?.display,
-						raw: match[0]
-					});
-					break;
-			}
-		}
-		index = match.index + match[0].length;
-	}
-	tokens.desktop.push({
-		type: 'html',
-		raw: trimPrefix(content.slice(index), '</p>')
-	});
-	if (mobileContent?.length) {
-		for (const match of orderedMatches) {
-			const html = trimPrefix(trimSuffix(mobileContent.slice(index, match.index), '<p>'), '</p>');
-			tokens.mobile?.push({
+	const orderedMatchesMobile = [
+		...[...productMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'productWidget' })
+		),
+		...[...challengeMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
+		),
+		...[...sliderMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
+		),
+		...[...tagMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' })
+		),
+		...[...specificationMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
+		),
+		...[...contactFormMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
+		),
+		...[...pictureMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
+		),
+		...[...countdownMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'countdownWidget' })
+		),
+		...[...tagProductsMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'tagProducts' })
+		),
+		...[...galleryMatchesMobile].map((m) =>
+			Object.assign(m, { index: m.index ?? 0, type: 'galleryWidget' })
+		)
+	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+
+	const processMatches = (
+		matches: (RegExpExecArray & {
+			index: number;
+			type: string;
+		})[],
+		token: TokenObject[],
+		content: string
+	) => {
+		for (const match of matches) {
+			const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
+			token.push({
 				type: 'html',
 				raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html, { ADD_ATTR: ['target'] })
 			});
@@ -283,7 +241,7 @@ export async function cmsFromContent(
 				switch (match.type) {
 					case 'productWidget':
 						productSlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'productWidget',
 							slug: match.groups.slug,
 							display: match.groups?.display,
@@ -292,7 +250,7 @@ export async function cmsFromContent(
 						break;
 					case 'challengeWidget':
 						challengeSlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'challengeWidget',
 							slug: match.groups.slug,
 							raw: match[0]
@@ -300,7 +258,7 @@ export async function cmsFromContent(
 						break;
 					case 'sliderWidget':
 						sliderSlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'sliderWidget',
 							slug: match.groups.slug,
 							autoplay: Number(match.groups?.autoplay),
@@ -309,7 +267,7 @@ export async function cmsFromContent(
 						break;
 					case 'tagWidget':
 						tagSlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'tagWidget',
 							slug: match.groups.slug,
 							display: match.groups?.display,
@@ -318,7 +276,7 @@ export async function cmsFromContent(
 						break;
 					case 'specificationWidget':
 						specificationSlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'specificationWidget',
 							slug: match.groups.slug,
 							raw: match[0]
@@ -334,7 +292,7 @@ export async function cmsFromContent(
 							| undefined;
 						const width = /[?\s]width=(?<width>\d+)/.exec(raw)?.groups?.width;
 						const height = /[?\s]height=(?<height>\d+)/.exec(raw)?.groups?.height;
-						tokens.mobile?.push({
+						token.push({
 							type: 'pictureWidget',
 							slug: match.groups.slug,
 							raw,
@@ -345,7 +303,7 @@ export async function cmsFromContent(
 						break;
 					case 'contactFormWidget':
 						contactFormSlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'contactFormWidget',
 							slug: match.groups.slug,
 							raw: match[0]
@@ -353,7 +311,7 @@ export async function cmsFromContent(
 						break;
 					case 'countdownWidget':
 						countdownFormSlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'countdownWidget',
 							slug: match.groups.slug,
 							raw: match[0]
@@ -361,7 +319,7 @@ export async function cmsFromContent(
 						break;
 					case 'tagProducts':
 						tagProductsSlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'tagProducts',
 							slug: match.groups.slug,
 							display: match.groups?.display,
@@ -370,7 +328,7 @@ export async function cmsFromContent(
 						break;
 					case 'galleryWidget':
 						gallerySlugs.add(match.groups.slug);
-						tokens.mobile?.push({
+						token.push({
 							type: 'galleryWidget',
 							slug: match.groups.slug,
 							display: match.groups?.display,
@@ -381,11 +339,17 @@ export async function cmsFromContent(
 			}
 			index = match.index + match[0].length;
 		}
+		token.push({
+			type: 'html',
+			raw: trimPrefix(content.slice(index), '</p>')
+		});
+	};
+
+	processMatches(orderedMatches, tokens.desktop, content);
+	if (mobileContent?.length && tokens.mobile) {
+		processMatches(orderedMatchesMobile, tokens.mobile, mobileContent);
 	}
-	tokens.mobile?.push({
-		type: 'html',
-		raw: trimPrefix(content.slice(index), '</p>')
-	});
+
 	const query =
 		locals.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
@@ -561,7 +525,7 @@ export async function cmsFromContent(
 	};
 }
 
-export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens'][][number];
+export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens'];
 export type CmsProduct = Awaited<ReturnType<typeof cmsFromContent>>['products'][number];
 export type CmsChallenge = Awaited<ReturnType<typeof cmsFromContent>>['challenges'][number];
 export type CmsSlider = Awaited<ReturnType<typeof cmsFromContent>>['sliders'][number];
