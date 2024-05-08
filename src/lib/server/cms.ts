@@ -158,7 +158,6 @@ export async function cmsFromContent(
 		: ''.matchAll(GALLERY_WIDGET_REGEX);
 
 	const index = 0;
-	const indexMobile = 0;
 
 	const orderedMatches = [
 		...[...productMatches].map((m) =>
@@ -193,34 +192,34 @@ export async function cmsFromContent(
 
 	const orderedMatchesMobile = [
 		...[...productMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'productWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'productWidget' })
 		),
 		...[...challengeMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'challengeWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
 		),
 		...[...sliderMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'sliderWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
 		),
 		...[...tagMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'tagWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' })
 		),
 		...[...specificationMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'specificationWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
 		),
 		...[...contactFormMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'contactFormWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
 		),
 		...[...pictureMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'pictureWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
 		),
 		...[...countdownMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'countdownWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'countdownWidget' })
 		),
 		...[...tagProductsMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'tagProducts' })
+			Object.assign(m, { index: m.index ?? 0, type: 'tagProducts' })
 		),
 		...[...galleryMatchesMobile].map((m) =>
-			Object.assign(m, { indexMobile: m.index ?? 0, type: 'galleryWidget' })
+			Object.assign(m, { index: m.index ?? 0, type: 'galleryWidget' })
 		)
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
@@ -349,7 +348,7 @@ export async function cmsFromContent(
 
 	processMatches(orderedMatches, tokens.desktop, content, index);
 	if (mobileContent?.length && tokens.mobile) {
-		processMatches(orderedMatchesMobile, tokens.mobile, mobileContent, indexMobile);
+		processMatches(orderedMatchesMobile, tokens.mobile, mobileContent, index);
 	}
 
 	const query =
