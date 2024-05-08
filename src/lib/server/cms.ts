@@ -113,7 +113,7 @@ export async function cmsFromContent(
 		mobile?: Array<TokenObject>;
 	} = {
 		desktop: [],
-		mobile: []
+		mobile: mobileContent ? [] : undefined
 	};
 
 	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
@@ -526,7 +526,7 @@ export async function cmsFromContent(
 	};
 }
 
-export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens'];
+export type CmsTokens = Awaited<ReturnType<typeof cmsFromContent>>['tokens'];
 export type CmsProduct = Awaited<ReturnType<typeof cmsFromContent>>['products'][number];
 export type CmsChallenge = Awaited<ReturnType<typeof cmsFromContent>>['challenges'][number];
 export type CmsSlider = Awaited<ReturnType<typeof cmsFromContent>>['sliders'][number];

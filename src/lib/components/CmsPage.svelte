@@ -8,7 +8,7 @@
 		CmsProduct,
 		CmsSlider,
 		CmsTag,
-		CmsToken,
+		CmsTokens,
 		CmsSpecification,
 		CmsContactForm,
 		CmsCountdown,
@@ -26,7 +26,7 @@
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
 	export let challenges: CmsChallenge[];
-	export let tokens: CmsToken;
+	export let tokens: CmsTokens;
 	export let sliders: CmsSlider[];
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
