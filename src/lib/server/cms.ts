@@ -225,10 +225,11 @@ export async function cmsFromContent(
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	const processMatches = (
-		matches: (RegExpExecArray & {
-			index: number;
-			type: string;
-		})[],
+		matches: (RegExpExecArray &
+			RegExpMatchArray & {
+				index: number;
+				type: string;
+			})[],
 		token: TokenObject[],
 		content: string,
 		index: number
