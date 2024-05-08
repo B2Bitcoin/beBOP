@@ -211,7 +211,7 @@ export async function cmsFromContent(
 			Object.assign(m, { indexMobile: m.index ?? 0, type: 'contactFormWidget' })
 		),
 		...[...pictureMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
+			Object.assign(m, { indexMobile: m.index ?? 0, type: 'pictureWidget' })
 		),
 		...[...countdownMatchesMobile].map((m) =>
 			Object.assign(m, { indexMobile: m.index ?? 0, type: 'countdownWidget' })
