@@ -349,7 +349,7 @@ export async function cmsFromContent(
 
 	processMatches(orderedMatches, tokens.desktop, content, index);
 	if (mobileContent?.length && tokens.mobile) {
-		processMatches(orderedMatchesMobile, tokens.mobile, mobileContent, indexMobile);
+		processMatches(orderedMatchesMobile, tokens.mobile, mobileContent, indexMobile || 0);
 	}
 
 	const query =
