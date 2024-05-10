@@ -18,7 +18,7 @@
 	});
 </script>
 
-<div class="flex flex-row gap-4 {className}">
+<div class="hidden sm:contents gap-4 {className}">
 	<div class="flex flex-row w-full tagWidget tagWidget-main grow pr-5">
 		<div class="p-4 grow">
 			<h2 class="text-2xl font-bold mb-2 body-title">
@@ -45,6 +45,36 @@
 					{unit}
 				</div>
 			{/each}
+		</div>
+	</div>
+</div>
+
+<div class="sm:hidden contents gap-4 {className}">
+	<div class="flex flex-col w-full tagWidget tagWidget-main grow pr-5">
+		<div class="p-4 grow">
+			<h2 class="text-2xl font-bold mb-2 body-title">
+				{countdown.title}
+			</h2>
+
+			<div class="grow-[2] flex flex-row gap-6 p-4 justify-end">
+				{#each ['DAYS', 'HOURS', 'MINS', 'SECS'] as unit (unit)}
+					<div class="flex flex-col">
+						<span class="text-3xl font-bold body-title">
+							{Math.floor(
+								unit === 'DAYS'
+									? distance / (1000 * 60 * 60 * 24)
+									: unit === 'HOURS'
+									? (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+									: unit === 'MINS'
+									? (distance % (1000 * 60 * 60)) / (1000 * 60)
+									: (distance % (1000 * 60)) / 1000
+							)}
+						</span>
+						{unit}
+					</div>
+				{/each}
+			</div>
+			<p class="mb-4">{countdown.description}</p>
 		</div>
 	</div>
 </div>
