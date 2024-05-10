@@ -1,5 +1,4 @@
 <script lang="ts">
-	import CmsPage from '$lib/components/CmsPage.svelte';
 	import { typedKeys } from '$lib/utils/typedKeys.js';
 
 	export let data;
