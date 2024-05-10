@@ -116,7 +116,7 @@ export async function cmsFromContent(
 		mobile: mobileContent ? [] : undefined
 	};
 
-	function matchAndSort(content: string, regex: RegExp, type: string) {
+	function matchAndSort(content: string | undefined, regex: RegExp, type: string) {
 		const regexMatches = content ? [...content.matchAll(regex)] : [];
 		return regexMatches
 			.map((m) => Object.assign(m, { index: m.index ?? 0, type }))
@@ -139,16 +139,16 @@ export async function cmsFromContent(
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	const orderedMatchesMobile = [
-		...matchAndSort(mobileContent || '', PRODUCT_WIDGET_REGEX, 'productWidget'),
-		...matchAndSort(mobileContent || '', CHALLENGE_WIDGET_REGEX, 'challengeWidget'),
-		...matchAndSort(mobileContent || '', SLIDER_WIDGET_REGEX, 'sliderWidget'),
-		...matchAndSort(mobileContent || '', TAG_WIDGET_REGEX, 'tagWidget'),
-		...matchAndSort(mobileContent || '', SPECIFICATION_WIDGET_REGEX, 'specificationWidget'),
-		...matchAndSort(mobileContent || '', CONTACTFORM_WIDGET_REGEX, 'contactFormWidget'),
-		...matchAndSort(mobileContent || '', PICTURE_WIDGET_REGEX, 'pictureWidget'),
-		...matchAndSort(mobileContent || '', COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
-		...matchAndSort(mobileContent || '', TAG_PRODUCTS_REGEX, 'tagProducts'),
-		...matchAndSort(mobileContent || '', GALLERY_WIDGET_REGEX, 'galleryWidget')
+		...matchAndSort(mobileContent, PRODUCT_WIDGET_REGEX, 'productWidget'),
+		...matchAndSort(mobileContent, CHALLENGE_WIDGET_REGEX, 'challengeWidget'),
+		...matchAndSort(mobileContent, SLIDER_WIDGET_REGEX, 'sliderWidget'),
+		...matchAndSort(mobileContent, TAG_WIDGET_REGEX, 'tagWidget'),
+		...matchAndSort(mobileContent, SPECIFICATION_WIDGET_REGEX, 'specificationWidget'),
+		...matchAndSort(mobileContent, CONTACTFORM_WIDGET_REGEX, 'contactFormWidget'),
+		...matchAndSort(mobileContent, PICTURE_WIDGET_REGEX, 'pictureWidget'),
+		...matchAndSort(mobileContent, COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
+		...matchAndSort(mobileContent, TAG_PRODUCTS_REGEX, 'tagProducts'),
+		...matchAndSort(mobileContent, GALLERY_WIDGET_REGEX, 'galleryWidget')
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	const processMatches = (
