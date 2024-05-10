@@ -116,111 +116,39 @@ export async function cmsFromContent(
 		mobile: mobileContent ? [] : undefined
 	};
 
-	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
-	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
-	const sliderMatches = content.matchAll(SLIDER_WIDGET_REGEX);
-	const tagMatches = content.matchAll(TAG_WIDGET_REGEX);
-	const specificationMatches = content.matchAll(SPECIFICATION_WIDGET_REGEX);
-	const contactFormMatches = content.matchAll(CONTACTFORM_WIDGET_REGEX);
-	const pictureMatches = content.matchAll(PICTURE_WIDGET_REGEX);
-	const countdownMatches = content.matchAll(COUNTDOWN_WIDGET_REGEX);
-	const tagProductsMatches = content.matchAll(TAG_PRODUCTS_REGEX);
-	const galleryMatches = content.matchAll(GALLERY_WIDGET_REGEX);
-	const productMatchesMobile = mobileContent
-		? mobileContent.matchAll(PRODUCT_WIDGET_REGEX)
-		: ''.matchAll(PRODUCT_WIDGET_REGEX);
-	const challengeMatchesMobile = mobileContent
-		? mobileContent.matchAll(CHALLENGE_WIDGET_REGEX)
-		: ''.matchAll(CHALLENGE_WIDGET_REGEX);
-	const sliderMatchesMobile = mobileContent
-		? mobileContent.matchAll(SLIDER_WIDGET_REGEX)
-		: ''.matchAll(SLIDER_WIDGET_REGEX);
-	const tagMatchesMobile = mobileContent
-		? mobileContent.matchAll(TAG_WIDGET_REGEX)
-		: ''.matchAll(TAG_WIDGET_REGEX);
-	const specificationMatchesMobile = mobileContent
-		? mobileContent.matchAll(SPECIFICATION_WIDGET_REGEX)
-		: ''.matchAll(SPECIFICATION_WIDGET_REGEX);
-	const contactFormMatchesMobile = mobileContent
-		? mobileContent.matchAll(CONTACTFORM_WIDGET_REGEX)
-		: ''.matchAll(CONTACTFORM_WIDGET_REGEX);
-	const pictureMatchesMobile = mobileContent
-		? mobileContent.matchAll(PICTURE_WIDGET_REGEX)
-		: ''.matchAll(PICTURE_WIDGET_REGEX);
-	const countdownMatchesMobile = mobileContent
-		? mobileContent.matchAll(COUNTDOWN_WIDGET_REGEX)
-		: ''.matchAll(COUNTDOWN_WIDGET_REGEX);
-	const tagProductsMatchesMobile = mobileContent
-		? mobileContent.matchAll(TAG_PRODUCTS_REGEX)
-		: ''.matchAll(TAG_PRODUCTS_REGEX);
-	const galleryMatchesMobile = mobileContent
-		? mobileContent.matchAll(GALLERY_WIDGET_REGEX)
-		: ''.matchAll(GALLERY_WIDGET_REGEX);
+	function matchAndSort(content: string, regex: RegExp, type: string) {
+		const regexMatches = content ? [...content.matchAll(regex)] : [];
+		return regexMatches
+			.map((m) => Object.assign(m, { index: m.index ?? 0, type }))
+			.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+	}
 
 	const index = 0;
 
 	const orderedMatches = [
-		...[...productMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'productWidget' })
-		),
-		...[...challengeMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
-		),
-		...[...sliderMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
-		),
-		...[...tagMatches].map((m) => Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' })),
-		...[...specificationMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
-		),
-		...[...contactFormMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
-		),
-		...[...pictureMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
-		),
-		...[...countdownMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'countdownWidget' })
-		),
-		...[...tagProductsMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'tagProducts' })
-		),
-		...[...galleryMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'galleryWidget' })
-		)
+		...matchAndSort(content, PRODUCT_WIDGET_REGEX, 'productWidget'),
+		...matchAndSort(content, CHALLENGE_WIDGET_REGEX, 'challengeWidget'),
+		...matchAndSort(content, SLIDER_WIDGET_REGEX, 'sliderWidget'),
+		...matchAndSort(content, TAG_WIDGET_REGEX, 'tagWidget'),
+		...matchAndSort(content, SPECIFICATION_WIDGET_REGEX, 'specificationWidget'),
+		...matchAndSort(content, CONTACTFORM_WIDGET_REGEX, 'contactFormWidget'),
+		...matchAndSort(content, PICTURE_WIDGET_REGEX, 'pictureWidget'),
+		...matchAndSort(content, COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
+		...matchAndSort(content, TAG_PRODUCTS_REGEX, 'tagProducts'),
+		...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget')
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	const orderedMatchesMobile = [
-		...[...productMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'productWidget' })
-		),
-		...[...challengeMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
-		),
-		...[...sliderMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
-		),
-		...[...tagMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' })
-		),
-		...[...specificationMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
-		),
-		...[...contactFormMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
-		),
-		...[...pictureMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
-		),
-		...[...countdownMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'countdownWidget' })
-		),
-		...[...tagProductsMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'tagProducts' })
-		),
-		...[...galleryMatchesMobile].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'galleryWidget' })
-		)
+		...matchAndSort(mobileContent || '', PRODUCT_WIDGET_REGEX, 'productWidget'),
+		...matchAndSort(mobileContent || '', CHALLENGE_WIDGET_REGEX, 'challengeWidget'),
+		...matchAndSort(mobileContent || '', SLIDER_WIDGET_REGEX, 'sliderWidget'),
+		...matchAndSort(mobileContent || '', TAG_WIDGET_REGEX, 'tagWidget'),
+		...matchAndSort(mobileContent || '', SPECIFICATION_WIDGET_REGEX, 'specificationWidget'),
+		...matchAndSort(mobileContent || '', CONTACTFORM_WIDGET_REGEX, 'contactFormWidget'),
+		...matchAndSort(mobileContent || '', PICTURE_WIDGET_REGEX, 'pictureWidget'),
+		...matchAndSort(mobileContent || '', COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
+		...matchAndSort(mobileContent || '', TAG_PRODUCTS_REGEX, 'tagProducts'),
+		...matchAndSort(mobileContent || '', GALLERY_WIDGET_REGEX, 'galleryWidget')
 	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
 	const processMatches = (

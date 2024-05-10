@@ -28,7 +28,7 @@ export const actions = {
 				fullScreen: z.boolean({ coerce: true }),
 				maintenanceDisplay: z.boolean({ coerce: true }),
 				hasMobileContent: z.boolean({ coerce: true }),
-				mobileContent: z.string().max(MAX_CONTENT_LIMIT)
+				mobileContent: z.string().max(MAX_CONTENT_LIMIT).optional()
 			})
 			.parse(Object.fromEntries(data));
 
