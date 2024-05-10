@@ -116,8 +116,8 @@ export async function cmsFromContent(
 		mobile: mobileContent ? [] : undefined
 	};
 
-	function matchAndSort(content: string | undefined, regex: RegExp, type: string) {
-		const regexMatches = content ? [...content.matchAll(regex)] : [];
+	function matchAndSort(content: string, regex: RegExp, type: string) {
+		const regexMatches = [...content.matchAll(regex)];
 		return regexMatches
 			.map((m) => Object.assign(m, { index: m.index ?? 0, type }))
 			.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
