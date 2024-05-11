@@ -70,11 +70,11 @@ export async function load({ params, depends, locals }) {
 		),
 		...(cmsOrderTop && {
 			cmsOrderTop,
-			cmsOrderTopData: cmsFromContent(cmsOrderTop.content, locals)
+			cmsOrderTopData: cmsFromContent({ content: cmsOrderTop.content }, locals)
 		}),
 		...(cmsOrderBottom && {
 			cmsOrderBottom,
-			cmsOrderBottomData: cmsFromContent(cmsOrderBottom.content, locals)
+			cmsOrderBottomData: cmsFromContent({ content: cmsOrderBottom.content }, locals)
 		})
 	};
 }

@@ -11,6 +11,9 @@ export async function load({ locals }) {
 		{
 			projection: {
 				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+				mobileContent: {
+					$ifNull: [`$translations.${locals.language}.mobileContent`, '$mobileContent']
+				},
 				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 				shortDescription: {
 					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
@@ -25,7 +28,10 @@ export async function load({ locals }) {
 	if (errorPage) {
 		return {
 			cmsPage: omit(errorPage, ['content']),
-			cmsData: cmsFromContent(errorPage.content, locals),
+			cmsData: cmsFromContent(
+				{ content: errorPage.content, mobileContent: errorPage.mobileContent },
+				locals
+			),
 			layoutReset: errorPage.fullScreen
 		};
 	} else {
