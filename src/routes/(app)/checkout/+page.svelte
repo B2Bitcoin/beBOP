@@ -170,11 +170,11 @@
 		/>
 	{/if}
 	<div
-		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid gap-4 md:gap-2 flex md:grid-cols-3 sm:flex-wrap"
+		class="w-full rounded-xl body-mainPlan border-gray-300 lg:p-6 p-2 md:grid gap-4 md:gap-2 md:grid-cols-3 sm:flex-wrap"
 	>
 		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
 			<h1 class="page-title body-title">{t('checkout.title')}</h1>
-			<section class="gap-4 grid grid-cols-6 w-4/5">
+			<section class="gap-4 grid grid-cols-6">
 				<h2 class="font-light text-2xl col-span-6">{t('checkout.shipmentInfo')}</h2>
 				{#if isDigital}
 					<p class="col-span-6">
@@ -324,7 +324,7 @@
 			</section>
 
 			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory) || isProfessionalOrder}
-				<section class="gap-4 grid grid-cols-6 w-4/5">
+				<section class="gap-4 grid grid-cols-6">
 					<h2 class="font-light text-2xl col-span-6">{t('checkout.billingInfo')}</h2>
 
 					<label class="form-label col-span-3">
@@ -444,7 +444,7 @@
 				{#if multiplePaymentMethods}
 					<p>{t('checkout.multiplePaymentMethodsHelpText')}</p>
 				{:else}
-					<label class="form-label">
+					<label class="form-label col-span-6">
 						{t('checkout.payment.method')}
 
 						<div class="grid grid-cols-2 gap-4 items-center">
@@ -558,7 +558,7 @@
 				</article>
 			</section>
 		</form>
-		<div class="w-full md:w-auto">
+		<div class="w-full md:w-auto mt-6">
 			<article
 				class="rounded sticky top-4 md:-mr-2 md:-mt-2 p-3 border border-gray-300 flex flex-col overflow-hidden gap-1"
 			>
