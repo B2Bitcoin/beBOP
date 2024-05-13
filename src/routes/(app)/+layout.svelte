@@ -531,8 +531,8 @@
 					{/if}
 				{/if}
 
-				<div class="flex flex-col gap-4 items-end">
-					<div class="flex items-end sm:flex-row flex-col gap-2">
+				<div class="flex flex-col gap-4 items-end lg:items-center">
+					<div class="flex items-end lg:flex-row flex-col gap-2">
 						{#each data.links.footer as link}
 							<a
 								href={link.href}
@@ -555,7 +555,7 @@
 						<Picture class={logoClass} picture={data.footerPicture} />
 					</div>
 				{:else if data.displayPoweredBy}
-					<div class="justify-center sm:justify-normal flex w-full">
+					<div class="justify-center lg:justify-normal flex w-full">
 						<a class="items-center gap-4" href="https://be-bop.io" target="_blank">
 							<span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
