@@ -532,16 +532,7 @@
 				{/if}
 
 				<div class="flex flex-col gap-4 items-end">
-					<div class="hidden sm:flex flex-row gap-2">
-						{#each data.links.footer as link}
-							<a
-								href={link.href}
-								target={link.href.startsWith('http') ? '_blank' : '_self'}
-								data-sveltekit-preload-data="off">{link.label}</a
-							>
-						{/each}
-					</div>
-					<div class="sm:hidden flex items-end flex-col gap-2">
+					<div class="flex items-end sm:flex-row flex-col gap-2">
 						{#each data.links.footer as link}
 							<a
 								href={link.href}
@@ -564,15 +555,8 @@
 						<Picture class={logoClass} picture={data.footerPicture} />
 					</div>
 				{:else if data.displayPoweredBy}
-					<div class="w-full hidden sm:flex">
+					<div class="justify-center sm:justify-normal flex w-full">
 						<a class="items-center gap-4" href="https://be-bop.io" target="_blank">
-							<span class="font-light">{t('footer.poweredBy')} </span>
-							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
-							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
-						</a>
-					</div>
-					<div class="sm:hidden justify-center flex w-full">
-						<a class="flex items-center gap-4" href="https://be-bop.io" target="_blank">
 							<span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
 							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
