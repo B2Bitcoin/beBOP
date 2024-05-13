@@ -149,7 +149,7 @@
 	{/if}
 
 	<div class="flex flex-row my-12">
-		<div class="w-14 min-w-[48px] py-14 hidden md:block">
+		<div class="w-14 min-w-[48px] py-14 hidden lg:block">
 			{#if data.pictures.length > 1}
 				{#each data.pictures as picture, i}
 					<a
@@ -167,7 +167,7 @@
 			{/if}
 		</div>
 
-		<div class="flex flex-col md:grid md:grid-cols-[70%_1fr] gap-2 grow pb-12">
+		<div class="flex flex-col lg:grid lg:grid-cols-[70%_1fr] gap-2 grow pb-12">
 			<div class="flex flex-col gap-4">
 				<!-- add product name -->
 				<h2 class="text-4xl body-title">{data.product.name}</h2>
@@ -179,7 +179,7 @@
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
-				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:inline md:hidden py-12">
+				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:inline lg:hidden py-12">
 					{#if data.pictures.length > 1}
 						{#each data.pictures as picture, i}
 							<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
@@ -235,13 +235,13 @@
 				{/if}
 			</div>
 			<div
-				class="flex flex-col gap-2 border-gray-300 md:border-l md:border-b md:rounded md:pl-4 md:pb-4 h-fit overflow-hidden"
+				class="flex flex-col gap-2 border-gray-300 lg:border-l lg:border-b lg:rounded lg:pl-4 lg:pb-4 h-fit overflow-hidden"
 			>
-				<hr class="border-gray-300 md:hidden mt-4 pb-2" />
-				<div class="flex gap-2 md:flex-col md:items-start items-center justify-between">
+				<hr class="border-gray-300 lg:hidden mt-4 pb-2" />
+				<div class="flex gap-2 lg:flex-col lg:items-start items-center justify-between">
 					<PriceTag
 						currency={data.product.price.currency}
-						class="text-2xl md:text-4xl truncate max-w-full"
+						class="text-2xl lg:text-4xl truncate max-w-full"
 						short={false}
 						amount={data.product.price.amount}
 						main
@@ -340,7 +340,7 @@
 					>
 						{#if canBuy}
 							{#if data.product.payWhatYouWant}
-								<hr class="border-gray-300 md:hidden mt-4 pb-2" />
+								<hr class="border-gray-300 lg:hidden mt-4 pb-2" />
 								<input type="hidden" name="customPriceCurrency" value={PWYWCurrency} />
 								<div class="flex flex-col gap-2 justify-between">
 									<label class="w-full form-label">
