@@ -476,7 +476,7 @@
 
 		<footer class="footer h-auto items-center flex print:hidden">
 			<div
-				class="mx-auto max-w-7xl px-6 py-6 grid items-start justify-between gap-y-8 w-full grid-cols-1 lg:grid-cols-4 gap-4"
+				class="mx-auto max-w-7xl px-6 py-6 items-start justify-between gap-y-8 w-full grid grid-cols-1 lg:flex lg:flex-wrap gap-4"
 			>
 				{#if data.displayCompanyInfo && data.sellerIdentity}
 					<div>
