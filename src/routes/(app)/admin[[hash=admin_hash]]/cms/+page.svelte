@@ -47,6 +47,7 @@
 			{#each typedKeys(specialPages).filter((key) => cmsPageMap.has(key)) as specialPage}
 				<tr>
 					<td class="border border-gray-300 p-2">
+						{#if cmsPageMap.get(specialPage)?.hasMobileContent}📱{:else}💻{/if}
 						<a href="{data.adminPrefix}/cms/{specialPage}" class="underline body-hyperlink">
 							{specialPage}
 						</a>
@@ -73,6 +74,7 @@
 			{#each data.cmsPages.filter((cmsPage) => !(cmsPage._id in specialPages)) as cmsPage}
 				<tr>
 					<td class="border border-gray-300 p-2">
+						{#if cmsPage.hasMobileContent}📱{:else}💻{/if}
 						<a href="{data.adminPrefix}/cms/{cmsPage._id}" class="underline body-hyperlink">
 							{cmsPage._id}
 						</a>

@@ -16,12 +16,24 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { title, content, shortDescription, fullScreen, maintenanceDisplay, hideFromSEO } = z
+		const {
+			title,
+			content,
+			shortDescription,
+			fullScreen,
+			maintenanceDisplay,
+			hideFromSEO,
+			hasMobileContent,
+			mobileContent
+		} = z
 			.object({
 				...cmsTranslatableSchema,
 				fullScreen: z.boolean({ coerce: true }),
 				maintenanceDisplay: z.boolean({ coerce: true }),
-				hideFromSEO: z.boolean({ coerce: true })
+				hideFromSEO: z.boolean({ coerce: true }),
+				desktopDisplayOnly: z.boolean({ coerce: true }),
+				mobileDisplaySubstitution: z.boolean({ coerce: true }),
+				hasMobileContent: z.boolean({ coerce: true })
 			})
 			.parse(Object.fromEntries(data));
 
@@ -37,6 +49,8 @@ export const actions = {
 					fullScreen,
 					maintenanceDisplay,
 					hideFromSEO,
+					hasMobileContent,
+					...(hasMobileContent && mobileContent && { mobileContent }),
 					updatedAt: new Date()
 				}
 			}
