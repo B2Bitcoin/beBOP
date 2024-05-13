@@ -26,9 +26,58 @@ purify.addHook('afterSanitizeAttributes', function (node) {
 		node.setAttribute('rel', 'noopener');
 	}
 });
-
+type TokenObject =
+	| {
+			type: 'html';
+			raw: string;
+	  }
+	| {
+			type: 'productWidget';
+			slug: string;
+			display: string | undefined;
+			raw: string;
+	  }
+	| {
+			type: 'challengeWidget';
+			slug: string;
+			raw: string;
+	  }
+	| {
+			type: 'sliderWidget';
+			slug: string;
+			autoplay: number | undefined;
+			raw: string;
+	  }
+	| {
+			type: 'tagWidget';
+			slug: string;
+			display: string | undefined;
+			raw: string;
+	  }
+	| {
+			type: 'specificationWidget';
+			slug: string;
+			raw: string;
+	  }
+	| {
+			type: 'pictureWidget';
+			slug: string;
+			raw: string;
+			fit?: 'cover' | 'contain';
+			width?: number;
+			height?: number;
+	  }
+	| { type: 'contactFormWidget'; slug: string; raw: string }
+	| { type: 'countdownWidget'; slug: string; raw: string }
+	| { type: 'tagProducts'; slug: string; display: string | undefined; raw: string }
+	| {
+			type: 'galleryWidget';
+			slug: string;
+			display: string | undefined;
+			raw: string;
+	  };
 export async function cmsFromContent(
-	content: string,
+	{ content, mobileContent }: { content: string; mobileContent?: string },
 	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email' | 'sso'>>
 ) {
 	const PRODUCT_WIDGET_REGEX =
@@ -59,215 +108,155 @@ export async function cmsFromContent(
 	const tagProductsSlugs = new Set<string>();
 	const gallerySlugs = new Set<string>();
 
-	const tokens: Array<
-		| {
-				type: 'html';
-				raw: string;
-		  }
-		| {
-				type: 'productWidget';
-				slug: string;
-				display: string | undefined;
-				raw: string;
-		  }
-		| {
-				type: 'challengeWidget';
-				slug: string;
-				raw: string;
-		  }
-		| {
-				type: 'sliderWidget';
-				slug: string;
-				autoplay: number | undefined;
-				raw: string;
-		  }
-		| {
-				type: 'tagWidget';
-				slug: string;
-				display: string | undefined;
-				raw: string;
-		  }
-		| {
-				type: 'specificationWidget';
-				slug: string;
-				raw: string;
-		  }
-		| {
-				type: 'pictureWidget';
-				slug: string;
-				raw: string;
-				fit?: 'cover' | 'contain';
-				width?: number;
-				height?: number;
-		  }
-		| { type: 'contactFormWidget'; slug: string; raw: string }
-		| { type: 'countdownWidget'; slug: string; raw: string }
-		| { type: 'tagProducts'; slug: string; display: string | undefined; raw: string }
-		| {
-				type: 'galleryWidget';
-				slug: string;
-				display: string | undefined;
-				raw: string;
-		  }
-	> = [];
+	const tokens: {
+		desktop: Array<TokenObject>;
+		mobile?: Array<TokenObject>;
+	} = {
+		desktop: [],
+		mobile: mobileContent ? [] : undefined
+	};
 
-	const productMatches = content.matchAll(PRODUCT_WIDGET_REGEX);
-	const challengeMatches = content.matchAll(CHALLENGE_WIDGET_REGEX);
-	const sliderMatches = content.matchAll(SLIDER_WIDGET_REGEX);
-	const tagMatches = content.matchAll(TAG_WIDGET_REGEX);
-	const specificationMatches = content.matchAll(SPECIFICATION_WIDGET_REGEX);
-	const contactFormMatches = content.matchAll(CONTACTFORM_WIDGET_REGEX);
-	const pictureMatches = content.matchAll(PICTURE_WIDGET_REGEX);
-	const countdownMatches = content.matchAll(COUNTDOWN_WIDGET_REGEX);
-	const tagProductsMatches = content.matchAll(TAG_PRODUCTS_REGEX);
-	const galleryMatches = content.matchAll(GALLERY_WIDGET_REGEX);
-
-	let index = 0;
-
-	const orderedMatches = [
-		...[...productMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'productWidget' })
-		),
-		...[...challengeMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'challengeWidget' })
-		),
-		...[...sliderMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'sliderWidget' })
-		),
-		...[...tagMatches].map((m) => Object.assign(m, { index: m.index ?? 0, type: 'tagWidget' })),
-		...[...specificationMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'specificationWidget' })
-		),
-		...[...contactFormMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'contactFormWidget' })
-		),
-		...[...pictureMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'pictureWidget' })
-		),
-		...[...countdownMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'countdownWidget' })
-		),
-		...[...tagProductsMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'tagProducts' })
-		),
-		...[...galleryMatches].map((m) =>
-			Object.assign(m, { index: m.index ?? 0, type: 'galleryWidget' })
-		)
-	].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
-
-	for (const match of orderedMatches) {
-		const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
-		tokens.push({
-			type: 'html',
-			raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html, { ADD_ATTR: ['target'] })
-		});
-		if (match.groups?.slug) {
-			switch (match.type) {
-				case 'productWidget':
-					productSlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'productWidget',
-						slug: match.groups.slug,
-						display: match.groups?.display,
-						raw: match[0]
-					});
-					break;
-				case 'challengeWidget':
-					challengeSlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'challengeWidget',
-						slug: match.groups.slug,
-						raw: match[0]
-					});
-					break;
-				case 'sliderWidget':
-					sliderSlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'sliderWidget',
-						slug: match.groups.slug,
-						autoplay: Number(match.groups?.autoplay),
-						raw: match[0]
-					});
-					break;
-				case 'tagWidget':
-					tagSlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'tagWidget',
-						slug: match.groups.slug,
-						display: match.groups?.display,
-						raw: match[0]
-					});
-					break;
-				case 'specificationWidget':
-					specificationSlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'specificationWidget',
-						slug: match.groups.slug,
-						raw: match[0]
-					});
-					break;
-				case 'pictureWidget':
-					pictureSlugs.add(match.groups.slug);
-					// With multiple options, to handle any ordering for the options, we need to parse the string again
-					const raw = match[0];
-					const fit = /[?\s]fit=(?<fit>(cover|contain))/.exec(raw)?.groups?.fit as
-						| 'cover'
-						| 'contain'
-						| undefined;
-					const width = /[?\s]width=(?<width>\d+)/.exec(raw)?.groups?.width;
-					const height = /[?\s]height=(?<height>\d+)/.exec(raw)?.groups?.height;
-					tokens.push({
-						type: 'pictureWidget',
-						slug: match.groups.slug,
-						raw,
-						fit,
-						width: width ? Number(width) : undefined,
-						height: height ? Number(height) : undefined
-					});
-					break;
-				case 'contactFormWidget':
-					contactFormSlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'contactFormWidget',
-						slug: match.groups.slug,
-						raw: match[0]
-					});
-					break;
-				case 'countdownWidget':
-					countdownFormSlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'countdownWidget',
-						slug: match.groups.slug,
-						raw: match[0]
-					});
-					break;
-				case 'tagProducts':
-					tagProductsSlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'tagProducts',
-						slug: match.groups.slug,
-						display: match.groups?.display,
-						raw: match[0]
-					});
-					break;
-				case 'galleryWidget':
-					gallerySlugs.add(match.groups.slug);
-					tokens.push({
-						type: 'galleryWidget',
-						slug: match.groups.slug,
-						display: match.groups?.display,
-						raw: match[0]
-					});
-					break;
-			}
-		}
-		index = match.index + match[0].length;
+	function matchAndSort(content: string, regex: RegExp, type: string) {
+		const regexMatches = [...content.matchAll(regex)];
+		return regexMatches
+			.map((m) => Object.assign(m, { index: m.index ?? 0, type }))
+			.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 	}
 
-	tokens.push({
-		type: 'html',
-		raw: trimPrefix(content.slice(index), '</p>')
-	});
+	const index = 0;
+
+	const processMatches = (token: TokenObject[], content: string, index: number) => {
+		const matches = [
+			...matchAndSort(content, PRODUCT_WIDGET_REGEX, 'productWidget'),
+			...matchAndSort(content, CHALLENGE_WIDGET_REGEX, 'challengeWidget'),
+			...matchAndSort(content, SLIDER_WIDGET_REGEX, 'sliderWidget'),
+			...matchAndSort(content, TAG_WIDGET_REGEX, 'tagWidget'),
+			...matchAndSort(content, SPECIFICATION_WIDGET_REGEX, 'specificationWidget'),
+			...matchAndSort(content, CONTACTFORM_WIDGET_REGEX, 'contactFormWidget'),
+			...matchAndSort(content, PICTURE_WIDGET_REGEX, 'pictureWidget'),
+			...matchAndSort(content, COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
+			...matchAndSort(content, TAG_PRODUCTS_REGEX, 'tagProducts'),
+			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget')
+		].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+		for (const match of matches) {
+			const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
+			token.push({
+				type: 'html',
+				raw: ALLOW_JS_INJECTION === 'true' ? html : purify.sanitize(html, { ADD_ATTR: ['target'] })
+			});
+			if (match.groups?.slug) {
+				switch (match.type) {
+					case 'productWidget':
+						productSlugs.add(match.groups.slug);
+						token.push({
+							type: 'productWidget',
+							slug: match.groups.slug,
+							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'challengeWidget':
+						challengeSlugs.add(match.groups.slug);
+						token.push({
+							type: 'challengeWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'sliderWidget':
+						sliderSlugs.add(match.groups.slug);
+						token.push({
+							type: 'sliderWidget',
+							slug: match.groups.slug,
+							autoplay: Number(match.groups?.autoplay),
+							raw: match[0]
+						});
+						break;
+					case 'tagWidget':
+						tagSlugs.add(match.groups.slug);
+						token.push({
+							type: 'tagWidget',
+							slug: match.groups.slug,
+							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'specificationWidget':
+						specificationSlugs.add(match.groups.slug);
+						token.push({
+							type: 'specificationWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'pictureWidget':
+						pictureSlugs.add(match.groups.slug);
+						// With multiple options, to handle any ordering for the options, we need to parse the string again
+						const raw = match[0];
+						const fit = /[?\s]fit=(?<fit>(cover|contain))/.exec(raw)?.groups?.fit as
+							| 'cover'
+							| 'contain'
+							| undefined;
+						const width = /[?\s]width=(?<width>\d+)/.exec(raw)?.groups?.width;
+						const height = /[?\s]height=(?<height>\d+)/.exec(raw)?.groups?.height;
+						token.push({
+							type: 'pictureWidget',
+							slug: match.groups.slug,
+							raw,
+							fit,
+							width: width ? Number(width) : undefined,
+							height: height ? Number(height) : undefined
+						});
+						break;
+					case 'contactFormWidget':
+						contactFormSlugs.add(match.groups.slug);
+						token.push({
+							type: 'contactFormWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'countdownWidget':
+						countdownFormSlugs.add(match.groups.slug);
+						token.push({
+							type: 'countdownWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'tagProducts':
+						tagProductsSlugs.add(match.groups.slug);
+						token.push({
+							type: 'tagProducts',
+							slug: match.groups.slug,
+							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'galleryWidget':
+						gallerySlugs.add(match.groups.slug);
+						token.push({
+							type: 'galleryWidget',
+							slug: match.groups.slug,
+							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+				}
+			}
+			index = match.index + match[0].length;
+		}
+		token.push({
+			type: 'html',
+			raw: trimPrefix(content.slice(index), '</p>')
+		});
+	};
+
+	processMatches(tokens.desktop, content, index);
+	if (mobileContent?.length && tokens.mobile) {
+		processMatches(tokens.mobile, mobileContent, index);
+	}
+
 	const query =
 		locals.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
@@ -443,7 +432,7 @@ export async function cmsFromContent(
 	};
 }
 
-export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens'][number];
+export type CmsTokens = Awaited<ReturnType<typeof cmsFromContent>>['tokens'];
 export type CmsProduct = Awaited<ReturnType<typeof cmsFromContent>>['products'][number];
 export type CmsChallenge = Awaited<ReturnType<typeof cmsFromContent>>['challenges'][number];
 export type CmsSlider = Awaited<ReturnType<typeof cmsFromContent>>['sliders'][number];

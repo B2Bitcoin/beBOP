@@ -60,11 +60,11 @@ export async function load({ parent, locals }) {
 	return {
 		...(cmsBasketTop && {
 			cmsBasketTop,
-			cmsBasketTopData: cmsFromContent(cmsBasketTop.content, locals)
+			cmsBasketTopData: cmsFromContent({ content: cmsBasketTop.content }, locals)
 		}),
 		...(cmsBasketBottom && {
 			cmsBasketBottom,
-			cmsBasketBottomData: cmsFromContent(cmsBasketBottom.content, locals)
+			cmsBasketBottomData: cmsFromContent({ content: cmsBasketBottom.content }, locals)
 		})
 	};
 }

@@ -10,14 +10,25 @@ export const actions = {
 	default: async function ({ request }) {
 		const data = await request.formData();
 
-		const { slug, title, content, shortDescription, fullScreen, maintenanceDisplay } = z
+		const {
+			slug,
+			title,
+			content,
+			shortDescription,
+			fullScreen,
+			maintenanceDisplay,
+			hasMobileContent,
+			mobileContent
+		} = z
 			.object({
 				slug: zodSlug(),
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
 				content: z.string().max(MAX_CONTENT_LIMIT),
 				shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT),
 				fullScreen: z.boolean({ coerce: true }),
-				maintenanceDisplay: z.boolean({ coerce: true })
+				maintenanceDisplay: z.boolean({ coerce: true }),
+				hasMobileContent: z.boolean({ coerce: true }),
+				mobileContent: z.string().max(MAX_CONTENT_LIMIT).optional()
 			})
 			.parse(Object.fromEntries(data));
 
@@ -38,6 +49,8 @@ export const actions = {
 			shortDescription,
 			fullScreen,
 			maintenanceDisplay,
+			hasMobileContent,
+			...(hasMobileContent && mobileContent && { mobileContent }),
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});

@@ -40,6 +40,17 @@
 			value={data.cmsPage.translations?.[language]?.content ?? ''}
 		/>
 	</label>
+	<label class="form-label">
+		Substitution content
+		<textarea
+			name="mobileContent"
+			class="form-input"
+			rows="10"
+			maxlength={MAX_CONTENT_LIMIT}
+			placeholder={data.cmsPage.mobileContent}
+			value={data.cmsPage.translations?.[language]?.mobileContent ?? ''}
+		/>
+	</label>
 
 	<label class="form-label">
 		Short Description

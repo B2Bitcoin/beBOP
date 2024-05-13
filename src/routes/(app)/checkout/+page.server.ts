@@ -92,11 +92,11 @@ export async function load({ parent, locals }) {
 		noProBilling: runtimeConfig.noProBilling,
 		...(cmsCheckoutTop && {
 			cmsCheckoutTop,
-			cmsCheckoutTopData: cmsFromContent(cmsCheckoutTop.content, locals)
+			cmsCheckoutTopData: cmsFromContent({ content: cmsCheckoutTop.content }, locals)
 		}),
 		...(cmsCheckoutBottom && {
 			cmsCheckoutBottom,
-			cmsCheckoutBottomData: cmsFromContent(cmsCheckoutBottom.content, locals)
+			cmsCheckoutBottomData: cmsFromContent({ content: cmsCheckoutBottom.content }, locals)
 		})
 	};
 }

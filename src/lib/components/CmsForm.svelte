@@ -13,8 +13,10 @@
 		shortDescription: string;
 		fullScreen: boolean;
 		hideFromSEO?: boolean;
+		hasMobileContent?: boolean;
 		maintenanceDisplay: boolean;
 		content: string;
+		mobileContent?: string;
 	} | null;
 
 	export let slug = cmsPage?._id || '';
@@ -25,6 +27,8 @@
 	let maintenanceDisplay = cmsPage?.maintenanceDisplay || false;
 	let hideFromSEO = cmsPage?.hideFromSEO || false;
 
+	let hasMobileContent = cmsPage?.hasMobileContent || false;
+	let mobileContent = cmsPage?.mobileContent || '';
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this CMS page?')) {
 			event.preventDefault();
@@ -93,7 +97,6 @@
 
 	<label class="block w-full mt-4">
 		Content
-
 		<Editor
 			scriptSrc="/tinymce/tinymce.js"
 			bind:value={pageContent}
@@ -188,10 +191,46 @@
 		/>
 	</label>
 
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="hasMobileContent"
+			bind:checked={hasMobileContent}
+			class="form-checkbox"
+		/>
+		This page has a subtitution target on mobile devices
+	</label>
+	{#if hasMobileContent}
+		<label class="block w-full mt-4">
+			Substitution content
+			<Editor
+				scriptSrc="/tinymce/tinymce.js"
+				bind:value={mobileContent}
+				conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
+			/>
+
+			Raw HTML
+
+			<textarea
+				name="mobileContent"
+				cols="30"
+				rows="10"
+				maxlength={MAX_CONTENT_LIMIT}
+				placeholder="HTML content"
+				class="form-input block w-full"
+				bind:value={mobileContent}
+			/>
+		</label>
+	{/if}
 	<div class="flex flex-row justify-between gap-2">
 		{#if cmsPage}
 			<input type="submit" class="btn btn-blue text-white" formaction="?/update" value="Update" />
-			<a href="/{slug}" class="btn btn-gray">View</a>
+			{#if hasMobileContent && mobileContent}
+				<a href="/{slug}?content=desktop" class="btn btn-gray">View 💻</a>
+				<a href="/{slug}?content=mobile" class="btn btn-gray">View 📱</a>
+			{:else}
+				<a href="/{slug}" class="btn btn-gray">View</a>
+			{/if}
 
 			<input
 				type="submit"

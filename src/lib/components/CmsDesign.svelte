@@ -16,7 +16,7 @@
 		CmsSlider,
 		CmsSpecification,
 		CmsTag,
-		CmsToken,
+		CmsTokens,
 		CmsContactForm,
 		CmsCountdown,
 		CmsGallery
@@ -31,7 +31,7 @@
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
 	export let challenges: CmsChallenge[];
-	export let tokens: CmsToken[] = [];
+	export let tokens: CmsTokens;
 	export let sliders: CmsSlider[];
 	export let digitalFiles: CmsDigitalFile[];
 	export let roleId: string | undefined;
@@ -110,79 +110,164 @@
 	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
 </script>
 
-<div class="prose max-w-full {classNames}">
-	{#each tokens as token}
-		{#if token.type === 'productWidget' && productById[token.slug]}
-			<ProductWidget
-				product={productById[token.slug]}
-				pictures={picturesByProduct[token.slug]}
-				hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
-				displayOption={token.display}
-				canBuy={roleId === POS_ROLE_ID
-					? productById[token.slug].actionSettings.retail.canBeAddedToBasket
-					: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
-				class="not-prose my-5"
-			/>
-		{:else if token.type === 'tagProducts' && productsByTag(token.slug)}
-			{#each productsByTag(token.slug) as product}
+<div class={tokens.mobile ? 'hidden sm:contents' : 'contents'}>
+	<div class="prose max-w-full {classNames}">
+		{#each tokens.desktop as token}
+			{#if token.type === 'productWidget' && productById[token.slug]}
 				<ProductWidget
-					{product}
-					pictures={picturesByProduct[product._id]}
-					hasDigitalFiles={digitalFilesByProduct[product._id] !== null}
-					canBuy={roleId === POS_ROLE_ID
-						? product.actionSettings.retail.canBeAddedToBasket
-						: product.actionSettings.eShop.canBeAddedToBasket}
-					class="not-prose my-5"
+					product={productById[token.slug]}
+					pictures={picturesByProduct[token.slug]}
+					hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
 					displayOption={token.display}
+					canBuy={roleId === POS_ROLE_ID
+						? productById[token.slug].actionSettings.retail.canBeAddedToBasket
+						: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
+					class="not-prose my-5"
 				/>
-			{/each}
-		{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
-			<ChallengeWidget challenge={challengeById[token.slug]} class="not-prose my-5" />
-		{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
-			<CarouselWidget
-				autoplay={token.autoplay ? token.autoplay : 3000}
-				pictures={picturesBySlider[token.slug]}
-				class="not-prose mx-auto my-5"
-			/>
-		{:else if token.type === 'tagWidget' && tagById[token.slug]}
-			<TagWidget
-				tag={tagById[token.slug]}
-				pictures={picturesByTag[token.slug]}
-				displayOption={token.display}
-				class="not-prose my-5"
-			/>
-		{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
-			<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
-		{:else if token.type === 'contactFormWidget' && contactFormById[token.slug]}
-			<ContactForm
-				contactForm={contactFormById[token.slug]}
-				{sessionEmail}
-				class="not-prose my-5"
-			/>
-		{:else if token.type === 'countdownWidget' && countdownById[token.slug]}
-			<CountdownWidget countdown={countdownById[token.slug]} class="not-prose my-5" />
-		{:else if token.type === 'galleryWidget' && galleryById[token.slug]}
-			<GalleryWidget
-				gallery={galleryById[token.slug]}
-				pictures={picturesByGallery[token.slug]}
-				displayOption={token.display}
-				class="not-prose my-5"
-			/>
-		{:else if token.type === 'pictureWidget'}
-			<PictureComponent
-				picture={pictureById[token.slug]}
-				class="my-5 {token.height ? `h-[${token.height}px]` : ''} {token.width
-					? `w-[${token.width}px]`
-					: ''}"
-				style="{token.fit ? `object-fit: ${token.fit};` : ''}{token.width
-					? `width: ${token.width}px;`
-					: ''}{token.height ? `height: ${token.height}px;` : ''}"
-			/>
-		{:else if token.type === 'html'}
-			<div class="my-5">
-				<!-- eslint-disable svelte/no-at-html-tags -->
-				{@html token.raw}
-			</div>
-		{/if}
-	{/each}
+			{:else if token.type === 'tagProducts' && productsByTag(token.slug)}
+				{#each productsByTag(token.slug) as product}
+					<ProductWidget
+						{product}
+						pictures={picturesByProduct[product._id]}
+						hasDigitalFiles={digitalFilesByProduct[product._id] !== null}
+						canBuy={roleId === POS_ROLE_ID
+							? product.actionSettings.retail.canBeAddedToBasket
+							: product.actionSettings.eShop.canBeAddedToBasket}
+						class="not-prose my-5"
+						displayOption={token.display}
+					/>
+				{/each}
+			{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
+				<ChallengeWidget challenge={challengeById[token.slug]} class="not-prose my-5" />
+			{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
+				<CarouselWidget
+					autoplay={token.autoplay ? token.autoplay : 3000}
+					pictures={picturesBySlider[token.slug]}
+					class="not-prose mx-auto my-5"
+				/>
+			{:else if token.type === 'tagWidget' && tagById[token.slug]}
+				<TagWidget
+					tag={tagById[token.slug]}
+					pictures={picturesByTag[token.slug]}
+					displayOption={token.display}
+					class="not-prose my-5"
+				/>
+			{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
+				<SpecificationWidget specification={specificationById[token.slug]} class="not-prose my-5" />
+			{:else if token.type === 'contactFormWidget' && contactFormById[token.slug]}
+				<ContactForm
+					contactForm={contactFormById[token.slug]}
+					{sessionEmail}
+					class="not-prose my-5"
+				/>
+			{:else if token.type === 'countdownWidget' && countdownById[token.slug]}
+				<CountdownWidget countdown={countdownById[token.slug]} class="not-prose my-5" />
+			{:else if token.type === 'galleryWidget' && galleryById[token.slug]}
+				<GalleryWidget
+					gallery={galleryById[token.slug]}
+					pictures={picturesByGallery[token.slug]}
+					displayOption={token.display}
+					class="not-prose my-5"
+				/>
+			{:else if token.type === 'pictureWidget'}
+				<PictureComponent
+					picture={pictureById[token.slug]}
+					class="my-5 {token.height ? `h-[${token.height}px]` : ''} {token.width
+						? `w-[${token.width}px]`
+						: ''}"
+					style="{token.fit ? `object-fit: ${token.fit};` : ''}{token.width
+						? `width: ${token.width}px;`
+						: ''}{token.height ? `height: ${token.height}px;` : ''}"
+				/>
+			{:else if token.type === 'html'}
+				<div class="my-5">
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					{@html token.raw}
+				</div>
+			{/if}
+		{/each}
+	</div>
 </div>
+{#if tokens.mobile}
+	<div class="contents sm:hidden">
+		<div class="prose max-w-full {classNames}">
+			{#each tokens.mobile as token}
+				{#if token.type === 'productWidget' && productById[token.slug]}
+					<ProductWidget
+						product={productById[token.slug]}
+						pictures={picturesByProduct[token.slug]}
+						hasDigitalFiles={digitalFilesByProduct[token.slug] !== null}
+						displayOption={token.display}
+						canBuy={roleId === POS_ROLE_ID
+							? productById[token.slug].actionSettings.retail.canBeAddedToBasket
+							: productById[token.slug].actionSettings.eShop.canBeAddedToBasket}
+						class="not-prose my-5"
+					/>
+				{:else if token.type === 'tagProducts' && productsByTag(token.slug)}
+					{#each productsByTag(token.slug) as product}
+						<ProductWidget
+							{product}
+							pictures={picturesByProduct[product._id]}
+							hasDigitalFiles={digitalFilesByProduct[product._id] !== null}
+							canBuy={roleId === POS_ROLE_ID
+								? product.actionSettings.retail.canBeAddedToBasket
+								: product.actionSettings.eShop.canBeAddedToBasket}
+							class="not-prose my-5"
+							displayOption={token.display}
+						/>
+					{/each}
+				{:else if token.type === 'challengeWidget' && challengeById[token.slug]}
+					<ChallengeWidget challenge={challengeById[token.slug]} class="not-prose my-5" />
+				{:else if token.type === 'sliderWidget' && sliderById[token.slug]}
+					<CarouselWidget
+						autoplay={token.autoplay ? token.autoplay : 3000}
+						pictures={picturesBySlider[token.slug]}
+						class="not-prose mx-auto my-5"
+					/>
+				{:else if token.type === 'tagWidget' && tagById[token.slug]}
+					<TagWidget
+						tag={tagById[token.slug]}
+						pictures={picturesByTag[token.slug]}
+						displayOption={token.display}
+						class="not-prose my-5"
+					/>
+				{:else if token.type === 'specificationWidget' && specificationById[token.slug]}
+					<SpecificationWidget
+						specification={specificationById[token.slug]}
+						class="not-prose my-5"
+					/>
+				{:else if token.type === 'contactFormWidget' && contactFormById[token.slug]}
+					<ContactForm
+						contactForm={contactFormById[token.slug]}
+						{sessionEmail}
+						class="not-prose my-5"
+					/>
+				{:else if token.type === 'countdownWidget' && countdownById[token.slug]}
+					<CountdownWidget countdown={countdownById[token.slug]} class="not-prose my-5" />
+				{:else if token.type === 'galleryWidget' && galleryById[token.slug]}
+					<GalleryWidget
+						gallery={galleryById[token.slug]}
+						pictures={picturesByGallery[token.slug]}
+						displayOption={token.display}
+						class="not-prose my-5"
+					/>
+				{:else if token.type === 'pictureWidget'}
+					<PictureComponent
+						picture={pictureById[token.slug]}
+						class="my-5 {token.height ? `h-[${token.height}px]` : ''} {token.width
+							? `w-[${token.width}px]`
+							: ''}"
+						style="{token.fit ? `object-fit: ${token.fit};` : ''}{token.width
+							? `width: ${token.width}px;`
+							: ''}{token.height ? `height: ${token.height}px;` : ''}"
+					/>
+				{:else if token.type === 'html'}
+					<div class="my-5">
+						<!-- eslint-disable svelte/no-at-html-tags -->
+						{@html token.raw}
+					</div>
+				{/if}
+			{/each}
+		</div>
+	</div>
+{/if}
