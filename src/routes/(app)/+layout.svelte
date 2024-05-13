@@ -475,98 +475,112 @@
 		{/if}
 
 		<footer class="footer h-auto items-center flex print:hidden">
-			<div class="hidden sm:contents">
-				<div
-					class="mx-auto max-w-7xl px-6 py-6 flex items-start justify-between gap-2 gap-y-8 w-full flex-wrap"
-				>
-					{#if data.displayCompanyInfo && data.sellerIdentity}
-						<div>
-							<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.identity')}</h3>
-							<p class="whitespace-pre-line">
-								{textAddress({
-									firstName: data.sellerIdentity.businessName,
-									lastName: '',
-									address: data.sellerIdentity.address.street,
-									zip: data.sellerIdentity.address.zip,
-									city: data.sellerIdentity.address.city,
-									country: data.sellerIdentity.address.country,
-									state: data.sellerIdentity.address.state
-								})}
-							</p>
-						</div>
-					{/if}
-
-					{#if data.displayMainShopInfo && data.shopInformation}
-						<div>
-							<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.shop.info')}</h3>
-							<p class="whitespace-pre-line">
-								{textAddress({
-									firstName: data.shopInformation.businessName,
-									lastName: '',
-									address: data.shopInformation.address.street,
-									zip: data.shopInformation.address.zip,
-									city: data.shopInformation.address.city,
-									country: data.shopInformation.address.country,
-									state: data.shopInformation.address.state
-								})}
-							</p>
-						</div>
-					{/if}
-
-					{#if data.displayCompanyInfo && data.sellerIdentity}
-						{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
-							<div>
-								<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.contact')}</h3>
-								{#if data.sellerIdentity.contact.email}
-									<a href="mailto:{data.sellerIdentity.contact.email}">
-										{data.sellerIdentity.contact.email}
-									</a>
-								{/if}
-								<br />
-								{#if data.sellerIdentity.contact.phone}
-									<a href="tel:{data.sellerIdentity.contact.phone}">
-										{data.sellerIdentity.contact.phone}
-									</a>
-								{/if}
-							</div>
-						{/if}
-					{/if}
-
-					<div class="flex flex-col gap-4 items-center">
-						<div class="flex flex-row gap-2">
-							{#each data.links.footer as link}
-								<a
-									href={link.href}
-									target={link.href.startsWith('http') ? '_blank' : '_self'}
-									data-sveltekit-preload-data="off">{link.label}</a
-								>
-							{/each}
-						</div>
-						<div class="flex flex-row gap-1">
-							{#each data.links.socialNetworkIcons as icon}
-								<a href={icon.href} target="_blank"
-									><img src="data:image/svg+xml;utf8, {icon.svg}" alt={icon.name} /></a
-								>
-							{/each}
-						</div>
+			<div
+				class="mx-auto max-w-7xl px-6 py-6 grid items-start justify-between gap-y-8 w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+			>
+				{#if data.displayCompanyInfo && data.sellerIdentity}
+					<div>
+						<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.identity')}</h3>
+						<p class="whitespace-pre-line">
+							{textAddress({
+								firstName: data.sellerIdentity.businessName,
+								lastName: '',
+								address: data.sellerIdentity.address.street,
+								zip: data.sellerIdentity.address.zip,
+								city: data.sellerIdentity.address.city,
+								country: data.sellerIdentity.address.country,
+								state: data.sellerIdentity.address.state
+							})}
+						</p>
 					</div>
+				{/if}
 
-					{#if data.footerLogoId}
-						<div class="flex w-full">
-							<Picture class={logoClass} picture={data.footerPicture} />
-						</div>
-					{:else if data.displayPoweredBy}
-						<div class="flex w-full">
-							<a class="flex items-center gap-4" href="https://be-bop.io" target="_blank">
-								<span class="font-light">{t('footer.poweredBy')} </span>
-								<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
-								<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
-							</a>
+				{#if data.displayMainShopInfo && data.shopInformation}
+					<div>
+						<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.shop.info')}</h3>
+						<p class="whitespace-pre-line">
+							{textAddress({
+								firstName: data.shopInformation.businessName,
+								lastName: '',
+								address: data.shopInformation.address.street,
+								zip: data.shopInformation.address.zip,
+								city: data.shopInformation.address.city,
+								country: data.shopInformation.address.country,
+								state: data.shopInformation.address.state
+							})}
+						</p>
+					</div>
+				{/if}
+
+				{#if data.displayCompanyInfo && data.sellerIdentity}
+					{#if data.sellerIdentity.contact.email || data.sellerIdentity.contact.phone}
+						<div>
+							<h3 class="text-lg font-semibold mb-2 uppercase">{t('footer.company.contact')}</h3>
+							{#if data.sellerIdentity.contact.email}
+								<a href="mailto:{data.sellerIdentity.contact.email}">
+									{data.sellerIdentity.contact.email}
+								</a>
+							{/if}
+							<br />
+							{#if data.sellerIdentity.contact.phone}
+								<a href="tel:{data.sellerIdentity.contact.phone}">
+									{data.sellerIdentity.contact.phone}
+								</a>
+							{/if}
 						</div>
 					{/if}
+				{/if}
+
+				<div class="flex flex-col gap-4 items-end">
+					<div class="hidden sm:flex flex-row gap-2">
+						{#each data.links.footer as link}
+							<a
+								href={link.href}
+								target={link.href.startsWith('http') ? '_blank' : '_self'}
+								data-sveltekit-preload-data="off">{link.label}</a
+							>
+						{/each}
+					</div>
+					<div class="sm:hidden flex items-end flex-col gap-2">
+						{#each data.links.footer as link}
+							<a
+								href={link.href}
+								target={link.href.startsWith('http') ? '_blank' : '_self'}
+								data-sveltekit-preload-data="off">{link.label}</a
+							>
+						{/each}
+					</div>
+					<div class="flex flex-row gap-1">
+						{#each data.links.socialNetworkIcons as icon}
+							<a href={icon.href} target="_blank"
+								><img src="data:image/svg+xml;utf8, {icon.svg}" alt={icon.name} /></a
+							>
+						{/each}
+					</div>
 				</div>
+
+				{#if data.footerLogoId}
+					<div class="flex w-full">
+						<Picture class={logoClass} picture={data.footerPicture} />
+					</div>
+				{:else if data.displayPoweredBy}
+					<div class="w-full hidden sm:flex">
+						<a class="items-center gap-4" href="https://be-bop.io" target="_blank">
+							<span class="font-light">{t('footer.poweredBy')} </span>
+							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
+							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
+						</a>
+					</div>
+					<div class="sm:hidden justify-center flex w-full">
+						<a class="flex items-center gap-4" href="https://be-bop.io" target="_blank">
+							<span class="font-light">{t('footer.poweredBy')} </span>
+							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
+							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
+						</a>
+					</div>
+				{/if}
 			</div>
-			<div class="sm:hidden contents">
+			<!-- <div class="sm:hidden contents">
 				<div class="mx-auto max-w-7xl px-6 py-6 flex justify-between gap-2 gap-y-8 w-full flex-col">
 					{#if data.displayCompanyInfo && data.sellerIdentity}
 						<div>
@@ -621,8 +635,8 @@
 						{/if}
 					{/if}
 
-					<div class="flex flex-col gap-4 items-end justify-end">
-						<div class="flex flex-row gap-2">
+					<div class="flex flex-col gap-4 items-end">
+						<div class="flex flex-col gap-2">
 							{#each data.links.footer as link}
 								<a
 									href={link.href}
@@ -654,7 +668,7 @@
 						</div>
 					{/if}
 				</div>
-			</div>
+			</div> -->
 		</footer>
 	{/if}
 </div>
