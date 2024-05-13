@@ -18,7 +18,7 @@
 	});
 </script>
 
-<div class="flex lg:flex-row flex-col w-full tagWidget tagWidget-main grow pr-5">
+<div class="flex lg:flex-row flex-col w-full tagWidget tagWidget-main grow pr-5 {className}">
 	<div class="p-4 grow">
 		<h2 class="text-2xl font-bold mb-2 body-title">
 			{countdown.title}
