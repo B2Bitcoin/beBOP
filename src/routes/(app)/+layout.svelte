@@ -476,7 +476,7 @@
 
 		<footer class="footer h-auto items-center flex print:hidden">
 			<div
-				class="mx-auto max-w-7xl px-6 py-6 flex items-start justify-between gap-2 gap-y-8 w-full flex-wrap"
+				class="mx-auto max-w-7xl px-6 py-6 items-start justify-between gap-y-8 w-full grid grid-cols-1 lg:flex lg:flex-wrap gap-4"
 			>
 				{#if data.displayCompanyInfo && data.sellerIdentity}
 					<div>
@@ -531,10 +531,11 @@
 					{/if}
 				{/if}
 
-				<div class="flex flex-col gap-4 items-center">
-					<div class="flex flex-row gap-2">
+				<div class="flex flex-col gap-4 items-end lg:items-center">
+					<div class="flex items-end lg:flex-row flex-col gap-2">
 						{#each data.links.footer as link}
 							<a
+								class={link.label === '-' ? 'hidden lg:contents' : ''}
 								href={link.href}
 								target={link.href.startsWith('http') ? '_blank' : '_self'}
 								data-sveltekit-preload-data="off">{link.label}</a
@@ -555,8 +556,8 @@
 						<Picture class={logoClass} picture={data.footerPicture} />
 					</div>
 				{:else if data.displayPoweredBy}
-					<div class="flex w-full">
-						<a class="flex items-center gap-4" href="https://be-bop.io" target="_blank">
+					<div class="justify-center lg:justify-normal flex w-full">
+						<a class="items-center gap-4" href="https://be-bop.io" target="_blank">
 							<span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
 							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
