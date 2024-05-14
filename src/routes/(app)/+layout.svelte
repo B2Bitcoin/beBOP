@@ -535,6 +535,7 @@
 					<div class="flex items-end lg:flex-row flex-col gap-2">
 						{#each data.links.footer as link}
 							<a
+								class={link.label === '-' ? 'hidden lg:contents' : ''}
 								href={link.href}
 								target={link.href.startsWith('http') ? '_blank' : '_self'}
 								data-sveltekit-preload-data="off">{link.label}</a
