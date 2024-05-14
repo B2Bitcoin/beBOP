@@ -13,7 +13,6 @@
 	$: pictureById = Object.fromEntries(pictures.map((picture) => [picture._id, picture]));
 </script>
 
-<!-- flex-row-reverse -->
 <div
 	class="mx-auto flex rounded justify-center {className} {displayOption === 'var-2'
 		? 'flex-row-reverse'
