@@ -1,6 +1,5 @@
 <script lang="ts">
 	import CountdownWidget from '$lib/components/CountdownWidget.svelte';
-	import SlidingDiv from '$lib/components/GallerySlide.svelte';
 
 	export let data;
 </script>
