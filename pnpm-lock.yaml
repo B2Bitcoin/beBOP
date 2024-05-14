@@ -204,6 +204,9 @@ devDependencies:
   svelte-multiselect:
     specifier: ^10.2.0
     version: 10.2.0
+  svelte-tiny-slider:
+    specifier: ^1.1.5
+    version: 1.1.5(svelte@4.2.2)
   tailwindcss:
     specifier: ^3.3.1
     version: 3.3.1(postcss@8.4.21)(ts-node@10.9.1)
@@ -4747,6 +4750,14 @@ packages:
       strip-indent: 3.0.0
       svelte: 4.2.2
       typescript: 5.0.4
+    dev: true
+
+  /svelte-tiny-slider@1.1.5(svelte@4.2.2):
+    resolution: {integrity: sha512-lZrplfCMbuKNqFg7igTXMWt5dLHs8nRDckV3BZ12DiPs7SQh66aAcllS2d/X8zD60EGQYArOcKbSLsD/YG6SPQ==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      svelte: 4.2.2
     dev: true
 
   /svelte@4.2.2:
