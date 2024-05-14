@@ -14,13 +14,14 @@
 	>;
 	export let picture: Picture | undefined;
 	export let avatar: Picture | undefined;
+	export let titleCase = 'uppercase';
 </script>
 
 <div class="hidden sm:inline">
 	<div class="flex">
 		<div class="mx-auto tagWidget tagWidget-main flex rounded sm:gap-2 {className}">
 			<div class="flex flex-col w-[50%] m-2">
-				<h2 class="text-6xl body-title pb-2 uppercase">{tag.title}</h2>
+				<h2 class="text-6xl body-title pb-2 {titleCase}">{tag.title}</h2>
 				<h2 class="text-md md:text-xl">
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html marked(tag.content.replaceAll('<', '&lt;'))}

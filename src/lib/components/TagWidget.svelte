@@ -13,8 +13,6 @@
 	import TagWidgetVariation4Reverse from './TagWidget/TagWidgetVariation4Reverse.svelte';
 	import TagWidgetVariation1noBG from './TagWidget/TagWidgetVariation1noBG.svelte';
 	import TagWidgetVariation1Reverse from './TagWidget/TagWidgetVariation1Reverse.svelte';
-	import TagWidgetVariation1noUc from './TagWidget/TagWidgetVariation1noUC.svelte';
-	import TagWidgetVariation1ReversenoUc from './TagWidget/TagWidgetVariation1ReversenoUC.svelte';
 
 	let className = '';
 	export { className as class };
@@ -24,6 +22,7 @@
 	>;
 	export let pictures: Picture[];
 	export let displayOption = 'var-1';
+	export let titleCase = 'uppercase';
 
 	const widgets = {
 		'var-1': {
@@ -43,14 +42,6 @@
 			pictureType: 'full'
 		},
 
-		'var-1-noUC': {
-			component: TagWidgetVariation1noUc,
-			pictureType: 'full'
-		},
-		'var-1-reverse-noUC': {
-			component: TagWidgetVariation1ReversenoUc,
-			pictureType: 'full'
-		},
 		'var-2': {
 			component: TagWidgetVariation2,
 			pictureType: 'wide'
@@ -87,5 +78,6 @@
 		picture={pictures.find((picture) => picture.tag?.type === widget?.pictureType)}
 		avatar={pictures.find((picture) => picture.tag?.type === 'avatar')}
 		class={className}
+		{titleCase}
 	/>
 {/if}
