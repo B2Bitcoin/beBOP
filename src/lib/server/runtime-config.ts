@@ -9,7 +9,7 @@ import { createSuperAdminUserInDb } from './user';
 import { runMigrations } from './migrations';
 import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
 import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
-import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '$lib/types/User';
+import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID, TICKET_CHECKER_ROLE_ID } from '$lib/types/User';
 import { building } from '$app/environment';
 import type { SellerIdentity } from '$lib/types/SellerIdentity';
 import { isUniqueConstraintError } from './utils/isUniqueConstraintError';
@@ -107,6 +107,9 @@ const baseConfig = {
 				currency: 'EUR'
 			}
 		} satisfies DeliveryFees as DeliveryFees
+	},
+	specialRolesCreated: {
+		[TICKET_CHECKER_ROLE_ID]: false
 	},
 	plausibleScriptUrl: '',
 	phoenixd: {
@@ -329,7 +332,7 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 		await createSuperAdminUserInDb(ADMIN_LOGIN, ADMIN_PASSWORD).catch(console.error);
 	}
 
-	if ((await collections.roles.countDocuments({ _id: SUPER_ADMIN_ROLE_ID })) === 0) {
+	if ((await collections.roles.countDocuments({ _id: SUPER_ADMIN_ROLE_ID }, { limit: 1 })) === 0) {
 		await collections.roles
 			.insertOne({
 				_id: SUPER_ADMIN_ROLE_ID,
@@ -350,7 +353,7 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 			});
 	}
 
-	if ((await collections.roles.countDocuments({ _id: POS_ROLE_ID })) === 0) {
+	if ((await collections.roles.countDocuments({ _id: POS_ROLE_ID }, { limit: 1 })) === 0) {
 		await collections.roles
 			.insertOne({
 				_id: POS_ROLE_ID,
@@ -371,6 +374,36 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 				}
 				throw err;
 			});
+	}
+
+	if (
+		(await collections.roles.countDocuments({ _id: TICKET_CHECKER_ROLE_ID }, { limit: 1 })) === 0 &&
+		!runtimeConfig.specialRolesCreated[TICKET_CHECKER_ROLE_ID]
+	) {
+		try {
+			await collections.roles.insertOne({
+				_id: TICKET_CHECKER_ROLE_ID,
+				name: 'Ticket checker',
+				permissions: {
+					read: [],
+					write: ['/admin/ticket/:id/burn'],
+					forbidden: []
+				},
+				createdAt: new Date(),
+				updatedAt: new Date()
+			});
+
+			runtimeConfig.specialRolesCreated[TICKET_CHECKER_ROLE_ID] = true;
+
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'specialRolesCreated' },
+				{ $set: { data: runtimeConfig.specialRolesCreated, updatedAt: new Date() } }
+			);
+		} catch (err) {
+			if (!isUniqueConstraintError(err)) {
+				throw err;
+			}
+		}
 	}
 }
 
