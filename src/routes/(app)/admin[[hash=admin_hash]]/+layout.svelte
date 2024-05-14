@@ -59,13 +59,13 @@
 						</button>
 					</form>
 				</span>
-				{#each adminLinks as adminLink}
+				{#each adminLinks as adminSection}
 					<span class="text-xl hidden sm:inline">
 						<a
-							class={sectionName === adminLink.section ? 'underline' : ''}
-							on:mouseenter={() => (sectionName = adminLink.section)}
-							on:click|preventDefault={() => (sectionName = adminLink.section)}
-							href="#{adminLink.section}">{adminLink.section}</a
+							class={sectionName === adminSection.section ? 'underline' : ''}
+							on:mouseenter={() => (sectionName = adminSection.section)}
+							on:click|preventDefault={() => (sectionName = adminSection.section)}
+							href="#{adminSection.section}">{adminSection.section}</a
 						>
 					</span>
 				{/each}
@@ -82,11 +82,13 @@
 				{/if}
 			</nav>
 			<nav class="flex gap-x-6 items-center">
-				{#each adminLinks.filter((item) => item.section === sectionName) as adminLink}
+				{#each adminLinks.filter((item) => item.section === sectionName) as adminSection}
 					<span class="font-bold text-xl hidden sm:inline">
-						{adminLink.section}
+						{adminSection.section}
 					</span>
-					{#each adminLink.links.filter( (l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true) ) as link}
+					{#each adminSection.links
+						.filter((link) => !link.hidden)
+						.filter((l) => (data.role ? isAllowedOnPage(data.role, l.href, 'read') : true)) as link}
 						<a
 							href={link.href}
 							data-sveltekit-preload-data="off"
@@ -109,11 +111,11 @@
 		transition:slide
 		class="bg-gray-400 text-gray-800 font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 	>
-		{#each adminLinks as adminLink}
+		{#each adminLinks as adminSection}
 			<span class="font-bold text-xl">
-				{adminLink.section}
+				{adminSection.section}
 			</span>
-			{#each adminLink.links as link}
+			{#each adminSection.links.filter((link) => !link.hidden) as link}
 				<a
 					href={link.href}
 					class={$page.url.pathname.startsWith(link.href) ? 'underline' : ''}
