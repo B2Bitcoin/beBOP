@@ -22,7 +22,7 @@
 	>;
 	export let pictures: Picture[];
 	export let displayOption = 'var-1';
-	export let titleCase = 'uppercase';
+	export let titleClassName = 'uppercase';
 
 	const widgets = {
 		'var-1': {
@@ -78,6 +78,6 @@
 		picture={pictures.find((picture) => picture.tag?.type === widget?.pictureType)}
 		avatar={pictures.find((picture) => picture.tag?.type === 'avatar')}
 		class={className}
-		{titleCase}
+		{titleClassName}
 	/>
 {/if}

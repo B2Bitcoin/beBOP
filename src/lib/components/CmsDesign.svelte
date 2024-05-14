@@ -150,7 +150,7 @@
 					tag={tagById[token.slug]}
 					pictures={picturesByTag[token.slug]}
 					displayOption={token.display}
-					titleCase={token.titleCase}
+					titleClassName={token.titleCase}
 					class="not-prose my-5"
 				/>
 			{:else if token.type === 'specificationWidget' && specificationById[token.slug]}

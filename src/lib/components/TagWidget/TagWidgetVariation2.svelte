@@ -10,6 +10,7 @@
 		'_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'
 	>;
 	export let picture: Picture | undefined;
+	export let titleClassName = 'uppercase';
 </script>
 
 <div class="mx-auto tagWidget tagWidget-main rounded {className}">
@@ -18,7 +19,9 @@
 
 		<div class="flex flex-col p-2 text-center justify-center">
 			<div class="mx-auto text-center">
-				<h2 class="text-md bg-[rgba(243,240,240,0.5)] uppercase md:text-6xl lg:text-6xl body-title">
+				<h2
+					class="text-md bg-[rgba(243,240,240,0.5)] {titleClassName} md:text-6xl lg:text-6xl body-title"
+				>
 					{tag.title}
 				</h2>
 			</div>
