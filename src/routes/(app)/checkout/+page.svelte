@@ -170,7 +170,7 @@
 		/>
 	{/if}
 	<div
-		class="w-full rounded-xl body-mainPlan border-gray-300 lg:p-6 p-2 md:grid gap-4 md:gap-2 md:grid-cols-3 sm:flex-wrap"
+		class="w-full rounded-xl body-mainPlan border-gray-300 lg:p-6 p-2 lg:grid gap-4 lg:gap-2 lg:grid-cols-3 sm:flex-wrap"
 	>
 		<form id="checkout" method="post" class="col-span-2 flex gap-4 flex-col" on:submit={checkForm}>
 			<h1 class="page-title body-title">{t('checkout.title')}</h1>
