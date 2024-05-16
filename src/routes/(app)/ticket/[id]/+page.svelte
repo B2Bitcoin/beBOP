@@ -25,7 +25,7 @@
 
 	{#if data.canBurn && !data.ticket.scanned}
 		<form action="/admin/ticket/{data.ticket.ticketId}/burn" method="POST">
-			<button class="btn btn-black self-start">{t('ticket.burn')}</button>
+			<button class="btn btn-green self-start">{t('ticket.burn')}</button>
 		</form>
 	{/if}
 	{#if data.canUnburn && data.ticket.scanned}
@@ -33,7 +33,6 @@
 			<button class="btn btn-red self-start">{t('ticket.unburn')}</button>
 		</form>
 	{/if}
-	<img src="/ticket/{data.ticket.ticketId}/qrcode" alt="QR code" class="h-96 w-96" />
 
 	{#if data.ticket.scanned}
 		<p>{t('ticket.scanned')}</p>
@@ -42,4 +41,5 @@
 			{t('ticket.print')}
 		</button>
 	{/if}
+	<img src="/ticket/{data.ticket.ticketId}/qrcode" alt="QR code" class="h-96 w-96" />
 </main>

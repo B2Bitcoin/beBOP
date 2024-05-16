@@ -83,6 +83,14 @@
 		@apply hover:bg-[#ff3d1a];
 	}
 
+	.btn-green {
+		@apply bg-[#00a86b] text-white;
+	}
+
+	.btn-green:not([disabled]) {
+		@apply hover:bg-[#00c07f];
+	}
+
 	.btn-orange {
 		@apply bg-[#ff7f00] text-white;
 	}
