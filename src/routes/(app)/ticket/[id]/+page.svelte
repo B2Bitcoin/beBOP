@@ -35,7 +35,12 @@
 	{/if}
 
 	{#if data.ticket.scanned}
-		<p>{t('ticket.scanned')}</p>
+		<p>
+			{t('ticket.scanned', {
+				date: new Date(data.ticket.scanned.at).toLocaleDateString(),
+				time: new Date(data.ticket.scanned.at).toLocaleTimeString()
+			})}
+		</p>
 	{:else}
 		<button class="print:hidden self-start body-hyperlink" on:click={() => window.print()}>
 			{t('ticket.print')}

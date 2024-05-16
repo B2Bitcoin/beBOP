@@ -659,7 +659,7 @@
 		"boughtAt": "Acheté le {date} à {time}",
 		"burn": "Marquer le ticket comme utilisé",
 		"print": "Imprimer",
-		"scanned": "🔥 Ce billet a été scanné et n'est plus valable",
+		"scanned": "🔥 Ce billet a été scanné le {date} à {time} et n'est plus valable",
 		"unburn": "Marquer le ticket comme inutilisé"
 	},
 	"widget": {
