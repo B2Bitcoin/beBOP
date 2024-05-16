@@ -1,5 +1,6 @@
 import { collections } from '$lib/server/database.js';
 import type { Product } from '$lib/types/Product.js';
+import { isAllowedOnPage } from '$lib/types/Role.js';
 import { error } from '@sveltejs/kit';
 
 export async function load(event) {
@@ -33,6 +34,21 @@ export async function load(event) {
 		}
 	);
 
+	let canBurn = false;
+	let canUnburn = false;
+	if (event.locals.user?.role) {
+		canBurn = isAllowedOnPage(
+			event.locals.user.role,
+			`/admin/ticket/${ticket.ticketId}/burn`,
+			'write'
+		);
+		canUnburn = isAllowedOnPage(
+			event.locals.user.role,
+			`/admin/ticket/${ticket.ticketId}/unburn`,
+			'write'
+		);
+	}
+
 	return {
 		ticket: {
 			ticketId: ticket.ticketId,
@@ -41,6 +57,8 @@ export async function load(event) {
 				at: ticket.scanned.at
 			}
 		},
+		canBurn,
+		canUnburn,
 		product,
 		picture
 	};

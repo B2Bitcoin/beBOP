@@ -23,4 +23,13 @@ export interface Ticket extends Timestamps {
 			role: User['roleId'];
 		};
 	};
+
+	descanned?: {
+		at: Date;
+		by: {
+			_id: User['_id'];
+			login: User['login'];
+			role: User['roleId'];
+		};
+	};
 }
