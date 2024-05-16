@@ -26,12 +26,19 @@ export const load = async ({ params }) => {
 		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
 
+	const [reserved, sold, scanned] = await Promise.all([
+		amountOfProductReserved(params.id),
+		amountOfProductSold(params.id),
+		collections.tickets.countDocuments({ productId: params.id, scanned: { $exists: true } })
+	]);
+
 	return {
 		pictures,
 		digitalFiles,
 		tags,
-		reserved: amountOfProductReserved(params.id),
-		sold: amountOfProductSold(params.id)
+		reserved,
+		sold,
+		scanned
 	};
 };
 
