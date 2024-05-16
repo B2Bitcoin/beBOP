@@ -2,6 +2,7 @@
 	import Picture from '$lib/components/Picture.svelte';
 	import ProductTypeTicket from '$lib/components/ProductType/ProductTypeTicket.svelte';
 	import { useI18n } from '$lib/i18n.js';
+	import { isAllowedOnPage } from '$lib/types/Role.js';
 
 	const { t } = useI18n();
 
@@ -22,13 +23,24 @@
 			time: new Date(data.ticket.createdAt).toLocaleTimeString()
 		})}
 	</p>
-	<img src="/ticket/{data.ticket.ticketId}/qrcode" alt="QR code" class="h-96 w-96" />
 
-	<button class="print:hidden self-start body-hyperlink" on:click={() => window.print()}>
-		{t('ticket.print')}
-	</button>
+	{#if data.canBurn && !data.ticket.scanned}
+		<form action="/admin/ticket/{data.ticket.ticketId}/burn" method="POST">
+			<button class="btn btn-black self-start">Mark ticket as used</button>
+		</form>
+	{/if}
+	{#if data.canUnburn && data.ticket.scanned}
+		<form action="/admin/ticket/{data.ticket.ticketId}/unburn" method="POST">
+			<button class="btn btn-red self-start">Mark ticket as unused</button>
+		</form>
+	{/if}
+	<img src="/ticket/{data.ticket.ticketId}/qrcode" alt="QR code" class="h-96 w-96" />
 
 	{#if data.ticket.scanned}
 		<p>{t('ticket.scanned')}</p>
+	{:else}
+		<button class="print:hidden self-start body-hyperlink" on:click={() => window.print()}>
+			{t('ticket.print')}
+		</button>
 	{/if}
 </main>
