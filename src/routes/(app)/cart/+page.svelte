@@ -103,6 +103,7 @@
 							name="alias"
 							bind:value={alias}
 							disabled={loading}
+							autofocus
 						/>
 					</label>
 				</div>
