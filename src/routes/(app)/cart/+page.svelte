@@ -97,6 +97,7 @@
 				<div class="gap-4 flex flex-col md:flex-row">
 					<label class="form-label w-[20em]">
 						Fill product alias
+						<!-- svelte-ignore a11y-autofocus -->
 						<input
 							bind:this={formAlias}
 							class="form-input"
