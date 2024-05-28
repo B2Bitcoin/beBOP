@@ -86,7 +86,7 @@
 		/>
 	{/if}
 	<div
-		class="w-full rounded-xl body-mainPlan border-gray-300 p-6 md:grid flex md:grid-cols-3 sm:flex-wrap gap-2"
+		class="w-full rounded-xl body-mainPlan border-gray-300 lg:p-6 p-2 lg:grid lg:grid-cols-3 sm:flex-wrap gap-2 flex-col-reverse"
 	>
 		<div class="col-span-2 flex flex-col gap-2">
 			<h1 class="text-3xl body-title">{t('order.singleTitle', { number: data.order.number })}</h1>
@@ -112,7 +112,7 @@
 
 			{#each data.order.payments as payment, i}
 				<details class="border border-gray-300 rounded-xl p-4" open={payment.status === 'pending'}>
-					<summary class="text-xl cursor-pointer">
+					<summary class="lg:text-xl cursor-pointer">
 						<!-- Extra span to keep the "arrow" for the details -->
 						<span class="items-center inline-flex gap-2"
 							>{t(`checkout.paymentMethod.${payment.method}`)} - <PriceTag
@@ -464,7 +464,7 @@
 						</p>
 					{/if}
 					{#if data.order.user.npub}
-						<p class="body-secondaryText whitespace-pre-line">
+						<p class="body-secondaryText whitespace-pre-line break-words break-all">
 							{data.order.user.npub}
 						</p>
 					{/if}
@@ -544,10 +544,10 @@
 							</div>
 						</article>
 						<div class="flex flex-wrap gap-3 justify-between">
-							<button type="submit" class="btn btn-blue self-start"
+							<button type="submit" class="btn lg:w-auto w-full btn-blue self-start"
 								>{t('order.note.saveText')}</button
 							>
-							<a href="/order/{data.order._id}/notes" class="btn btn-gray self-end"
+							<a href="/order/{data.order._id}/notes" class="btn lg:w-auto w-full btn-gray self-end"
 								>{t('order.note.seeText')}</a
 							>
 						</div>
@@ -556,7 +556,7 @@
 			{/if}
 		</div>
 
-		<div class="">
+		<div class="mt-6">
 			<OrderSummary class="sticky top-4 -mr-2 -mt-2" order={data.order} />
 		</div>
 	</div>

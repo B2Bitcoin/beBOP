@@ -1,4 +1,17 @@
-export const adminLinks = [
+type AdminLinks = Array<{
+	section: string;
+	links: Array<{
+		href: string;
+		label: string;
+		hidden?: boolean;
+		/**
+		 * Specific endpoints that we want to add explicit roles for.
+		 */
+		endpoints?: string[];
+	}>;
+}>;
+
+export const adminLinks: AdminLinks = [
 	{
 		section: 'Merch',
 		links: [
@@ -9,6 +22,15 @@ export const adminLinks = [
 			{
 				href: '/admin/product',
 				label: 'Products'
+			},
+			{
+				href: '/admin/ticket',
+				label: 'Tickets',
+				hidden: true,
+				/**
+				 * Note: this is also passed in runtimeConfig to create a special role TICKET_CHECKER_ROLE_ID
+				 */
+				endpoints: ['/admin/ticket/:id/burn']
 			},
 			{
 				href: '/admin/picture',

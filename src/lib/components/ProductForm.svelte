@@ -35,6 +35,7 @@
 	export let duplicateFromId: string | undefined = undefined;
 	export let sold = 0;
 	export let reserved = 0;
+	export let scanned = 0;
 	export let globalDeliveryFees: LayoutServerData['deliveryFees'];
 	export let adminPrefix: string;
 	export let vatProfiles: LayoutServerData['vatProfiles'];
@@ -598,6 +599,14 @@
 				<ul class="list-disc ml-4">
 					<li>Amount in pending orders / carts: <b>{reserved}</b></li>
 					<li>Amount sold: <b>{sold}</b></li>
+					{#if product.isTicket}
+						<li>
+							Amount scanned: <b>{scanned}</b>
+						</li>
+						<li>
+							Amount sold but not scanned: <b>{sold - scanned}</b>
+						</li>
+					{/if}
 				</ul>
 			{/if}
 		{/if}

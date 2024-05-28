@@ -13,6 +13,7 @@
 	reserved={data.reserved}
 	defaultActionSettings={data.productActionSettings}
 	sold={data.sold}
+	scanned={data.scanned}
 	vatProfiles={data.vatProfiles}
 	availablePaymentMethods={data.availablePaymentMethods}
 />

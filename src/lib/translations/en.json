@@ -380,8 +380,8 @@
 		}
 	},
 	"error": {
-		"title": "Error {status}",
-		"404": "The page {invalidUrl} you requested could not be found. Please check that your link is correct or contact the site team to report the problem."
+		"404": "The page {invalidUrl} you requested could not be found. Please check that your link is correct or contact the site team to report the problem.",
+		"title": "Error {status}"
 	},
 	"footer": {
 		"company": {
@@ -477,17 +477,17 @@
 			"bank-transfer": "Paid with: verified bank transfer",
 			"bitcoin": "Paid with: Bitcoin on-chain payment (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
 			"card": "Paid with: bank card via Sum UP",
+			"free": "Paid Nothing",
 			"lightning": "Paid with: Lightning transaction (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
-			"point-of-sale": "Paid in store",
-			"free": "Paid Nothing"
+			"point-of-sale": "Paid in store"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Paid with: verified bank transfer",
 			"bitcoin": "Paid with: Bitcoin on-chain payment",
 			"card": "Paid with: bank card via Sum UP",
+			"free": "Paid Nothing",
 			"lightning": "Paid with: Lightning transaction",
-			"point-of-sale": "Paid in store",
-			"free": "Paid Nothing"
+			"point-of-sale": "Paid in store"
 		},
 		"payToComplete": "Pay to complete the order.",
 		"payToCompleteBitcoin": {
@@ -657,8 +657,10 @@
 	},
 	"ticket": {
 		"boughtAt": "Bought {date} at {time}",
+		"burn": "Mark ticket as used",
 		"print": "Print",
-		"scanned": "This ticket has been scanned and is not valid anymore"
+		"scanned": "🔥 This ticket has been scanned le {date} à {time} and is not valid anymore",
+		"unburn": "Mark ticket as unused"
 	},
 	"widget": {
 		"specification": "Specifications"

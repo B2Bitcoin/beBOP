@@ -41,7 +41,7 @@
 		vatProfiles: data.vatProfiles
 	});
 	let alias = '';
-	let formAlias: HTMLFormElement;
+	let formAlias: HTMLInputElement;
 	let loading = false;
 	const { t, locale, countryName } = useI18n();
 </script>
@@ -74,7 +74,6 @@
 				action="/product/{alias}?/addToCart"
 				method="post"
 				class="flex flex-col gap-2"
-				bind:this={formAlias}
 				use:enhance={() => {
 					errorMessage = '';
 					return async ({ result }) => {
@@ -90,6 +89,7 @@
 						}
 
 						await invalidate(UrlDependency.Cart);
+						formAlias?.focus();
 					};
 				}}
 				on:submit|preventDefault={() => (loading = true)}
@@ -98,6 +98,7 @@
 					<label class="form-label w-[20em]">
 						Fill product alias
 						<input
+							bind:this={formAlias}
 							class="form-input"
 							type="text"
 							name="alias"

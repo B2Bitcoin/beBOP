@@ -15,43 +15,62 @@ export interface Role extends Timestamps {
 
 export const defaultRoleOptions = [
 	'/admin/*',
-	...adminLinks.map((section) => section.links.map((link) => link.href + '/*')).flat()
+	...adminLinks
+		.map((section) =>
+			section.links.flatMap((link) => [link.href + '/*', ...(link.endpoints ?? [])])
+		)
+		.flat()
 ];
+
+function matchPath(path: string, pattern: string): boolean {
+	const parts = path.split('/');
+	const patternParts = pattern.split('/');
+
+	for (let i = 0; i < Math.max(patternParts.length, parts.length); i++) {
+		if (patternParts[i] === '*') {
+			if (i === patternParts.length - 1) {
+				return true;
+			}
+			if (parts[i] === undefined) {
+				return false;
+			} else {
+				continue;
+			}
+		}
+
+		if (patternParts[i].startsWith(':')) {
+			if (parts[i] === undefined) {
+				return false;
+			} else {
+				continue;
+			}
+		}
+
+		if (patternParts[i] !== parts[i]) {
+			return false;
+		}
+	}
+
+	return true;
+}
 
 export function isAllowedOnPage(role: Role, path: string, mode: 'read' | 'write'): boolean {
 	path = path.replace(/^\/admin-[a-zA-Z0-9]+/, '/admin');
 	if (path === '/admin' && role._id !== CUSTOMER_ROLE_ID) {
 		return true;
 	}
-	for (const forbidden of role.permissions.forbidden) {
-		if (forbidden.endsWith('*')) {
-			if (path.startsWith(forbidden.slice(0, -1)) || path === forbidden.replace(/\/?\*$/, '')) {
-				return false;
-			}
-		} else if (path === forbidden) {
-			return false;
-		}
+
+	if (role.permissions.forbidden.find((forbidden) => matchPath(path, forbidden))) {
+		return false;
 	}
 
-	for (const write of role.permissions.write) {
-		if (write.endsWith('*')) {
-			if (path.startsWith(write.slice(0, -1)) || path === write.replace(/\/?\*$/, '')) {
-				return true;
-			}
-		} else if (path === write) {
-			return true;
-		}
+	if (role.permissions.write.find((write) => matchPath(path, write))) {
+		return true;
 	}
 
 	if (mode === 'read') {
-		for (const read of role.permissions.read) {
-			if (read.endsWith('*')) {
-				if (path.startsWith(read.slice(0, -1)) || path === read.replace(/\/?\*$/, '')) {
-					return true;
-				}
-			} else if (path === read) {
-				return true;
-			}
+		if (role.permissions.read.find((read) => matchPath(path, read))) {
+			return true;
 		}
 	}
 

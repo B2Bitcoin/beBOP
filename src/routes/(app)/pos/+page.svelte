@@ -7,6 +7,9 @@
 	export let data;
 </script>
 
+<svelte:head>
+	<meta name="viewport" content="width=1000" />
+</svelte:head>
 <main class="max-w-7xl p-4 flex flex-col gap-4">
 	<a href="/pos/session" class="body-hyperlink hover:underline">{t('pos.sessionLink')}</a>
 	<a href="/admin" class="body-hyperlink hover:underline" target="_blank"
