@@ -2,7 +2,7 @@
 	import type { Picture } from '$lib/types/Picture';
 	import { TinySlider } from 'svelte-tiny-slider';
 	import PictureComponent from './Picture.svelte';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	export let pictures: Picture[];
 	export let autoplay: number;
