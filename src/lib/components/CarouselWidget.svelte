@@ -13,11 +13,9 @@
 	function nextSlide() {
 		currentIndex = (currentIndex + 1) % pictures.length;
 	}
-	const interval = setInterval(nextSlide, autoplay);
-	onDestroy(() => {
-		clearInterval(interval);
-	});
+	let interval: number;
 	onMount(() => {
+		interval = Number(setInterval(nextSlide, autoplay));
 		return () => clearInterval(interval);
 	});
 	function setIndex(index: number) {
