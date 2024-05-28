@@ -598,7 +598,15 @@
 			{#if !isNew}
 				<ul class="list-disc ml-4">
 					<li>Amount in pending orders / carts: <b>{reserved}</b></li>
-					<li>Amount sold: <b>{sold}</b></li>
+					<li>
+						<a
+							href="{adminPrefix}/order?productAlias={product.alias?.[0]}"
+							class="underline body-hyperlink"
+						>
+							Amount sold:
+							<b>{sold}</b></a
+						>
+					</li>
 					{#if product.isTicket}
 						<li>
 							Amount scanned: <b>{scanned}</b>
