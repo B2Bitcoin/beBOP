@@ -154,6 +154,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.paidSubscriptions, { cancelledAt: 1, paidUntil: 1, 'notifications.type': 1 }],
 	[collections.paidSubscriptions, { cancelledAt: 1, 'notifications.type': 1, paidUntil: 1 }],
 	[collections.users, { login: 1 }, { unique: true }],
+	[collections.users, { roleId: 1 }], // When deleting a role, check if there are users with that role
 	[
 		collections.users,
 		{ login: 1 },

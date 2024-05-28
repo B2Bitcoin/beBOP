@@ -22,13 +22,29 @@
 			time: new Date(data.ticket.createdAt).toLocaleTimeString()
 		})}
 	</p>
-	<img src="/ticket/{data.ticket.ticketId}/qrcode" alt="QR code" class="h-96 w-96" />
 
-	<button class="print:hidden self-start body-hyperlink" on:click={() => window.print()}>
-		{t('ticket.print')}
-	</button>
+	{#if data.canBurn && !data.ticket.scanned}
+		<form action="/admin/ticket/{data.ticket.ticketId}/burn" method="POST">
+			<button class="btn btn-green self-start">{t('ticket.burn')}</button>
+		</form>
+	{/if}
+	{#if data.canUnburn && data.ticket.scanned}
+		<form action="/admin/ticket/{data.ticket.ticketId}/unburn" method="POST">
+			<button class="btn btn-red self-start">{t('ticket.unburn')}</button>
+		</form>
+	{/if}
 
 	{#if data.ticket.scanned}
-		<p>{t('ticket.scanned')}</p>
+		<p>
+			{t('ticket.scanned', {
+				date: new Date(data.ticket.scanned.at).toLocaleDateString(),
+				time: new Date(data.ticket.scanned.at).toLocaleTimeString()
+			})}
+		</p>
+	{:else}
+		<button class="print:hidden self-start body-hyperlink" on:click={() => window.print()}>
+			{t('ticket.print')}
+		</button>
 	{/if}
+	<img src="/ticket/{data.ticket.ticketId}/qrcode" alt="QR code" class="h-96 w-96" />
 </main>

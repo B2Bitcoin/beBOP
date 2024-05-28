@@ -4,7 +4,7 @@ import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 export async function load() {
 	const nonCustomers = await collections.users
 		.find({ roleId: { $ne: CUSTOMER_ROLE_ID } })
-		.sort({ createdAt: 1 })
+		.sort({ _id: 1 })
 		.toArray();
 
 	return {

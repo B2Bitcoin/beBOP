@@ -142,7 +142,7 @@
 				<span class="grow body-mainPlan" />
 				<nav class="flex gap-10 text-[22px] font-semibold header-tab">
 					{#each data.links.topbar as link}
-						<a href={link.href} class="hidden sm:inline" data-sveltekit-preload-data="off">
+						<a href={link.href} class="hidden lg:inline" data-sveltekit-preload-data="off">
 							{link.label}
 						</a>
 					{/each}
@@ -152,7 +152,7 @@
 					<a href="/admin" class="btn btn-blue font-bold">Connect your wallet</a>
 				{/if}
 				<button
-					class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-4xl transition"
+					class="inline-flex flex-col justify-center lg:hidden cursor-pointer text-4xl transition"
 					class:rotate-90={topMenuOpen}
 					on:click={() => (topMenuOpen = !topMenuOpen)}
 				>
@@ -163,7 +163,7 @@
 		{#if topMenuOpen}
 			<nav
 				transition:slide
-				class="header print:hidden header-tab flex flex-col sm:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4"
+				class="header print:hidden header-tab flex flex-col lg:hidden text-[22px] font-semibold border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-10 py-4"
 			>
 				{#each data.links.topbar as link}
 					<a
@@ -179,7 +179,7 @@
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 				<nav class="flex gap-6 font-light items-center">
 					<button
-						class="inline-flex flex-col justify-center sm:hidden cursor-pointer text-2xl transition"
+						class="inline-flex flex-col justify-center lg:hidden cursor-pointer text-2xl transition"
 						class:rotate-90={navMenuOpen}
 						on:click={() => (navMenuOpen = !navMenuOpen)}
 					>
@@ -191,7 +191,7 @@
 					{#each data.links.navbar as link}
 						<a
 							href={link.href}
-							class="hidden sm:inline"
+							class="hidden lg:inline"
 							target={link.href.startsWith('http') ? '_blank' : '_self'}
 							data-sveltekit-preload-data="off">{link.label}</a
 						>
@@ -450,7 +450,7 @@
 		{#if navMenuOpen}
 			<nav
 				transition:slide
-				class="navbar print:hidden header-tab font-light flex flex-col sm:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
+				class="navbar print:hidden header-tab font-light flex flex-col lg:hidden border-x-0 border-b-0 border-opacity-25 border-t-1 border-white px-4 pb-3"
 			>
 				{#each data.links.navbar as link}
 					<a class="py-2 hover:underline" data-sveltekit-preload-data="off" href={link.href}
@@ -476,7 +476,7 @@
 
 		<footer class="footer h-auto items-center flex print:hidden">
 			<div
-				class="mx-auto max-w-7xl px-6 py-6 flex items-start justify-between gap-2 gap-y-8 w-full flex-wrap"
+				class="mx-auto max-w-7xl px-6 py-6 items-start justify-between gap-y-8 w-full grid grid-cols-1 lg:flex lg:flex-wrap gap-4"
 			>
 				{#if data.displayCompanyInfo && data.sellerIdentity}
 					<div>
@@ -531,10 +531,11 @@
 					{/if}
 				{/if}
 
-				<div class="flex flex-col gap-4 items-center">
-					<div class="flex flex-row gap-2">
+				<div class="flex flex-col gap-4 items-end lg:items-center">
+					<div class="flex items-end lg:flex-row flex-col gap-2">
 						{#each data.links.footer as link}
 							<a
+								class={link.label === '-' ? 'hidden lg:contents' : ''}
 								href={link.href}
 								target={link.href.startsWith('http') ? '_blank' : '_self'}
 								data-sveltekit-preload-data="off">{link.label}</a
@@ -555,8 +556,8 @@
 						<Picture class={logoClass} picture={data.footerPicture} />
 					</div>
 				{:else if data.displayPoweredBy}
-					<div class="flex w-full">
-						<a class="flex items-center gap-4" href="https://be-bop.io" target="_blank">
+					<div class="justify-center lg:justify-normal flex w-full">
+						<a class="items-center gap-4" href="https://be-bop.io" target="_blank">
 							<span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
 							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />

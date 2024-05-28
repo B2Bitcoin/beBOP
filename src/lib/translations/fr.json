@@ -380,8 +380,8 @@
 		}
 	},
 	"error": {
-		"title": "Erreur {status}",
-		"404": "La page {invalidUrl} que vous avez demandée est introuvable. Veuillez vérifier que votre lien est correct ou contactez l'équipe du site pour leur signaler le problème. "
+		"404": "La page {invalidUrl} que vous avez demandée est introuvable. Veuillez vérifier que votre lien est correct ou contactez l'équipe du site pour leur signaler le problème. ",
+		"title": "Erreur {status}"
 	},
 	"footer": {
 		"company": {
@@ -477,17 +477,17 @@
 			"bank-transfer": "Payé avec : virement bancaire vérifié",
 			"bitcoin": "Payé avec : Paiement Bitcoin on-chain (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
 			"card": "Payé avec : carte bancaire via Sum UP",
+			"free": "N'a rien payé",
 			"lightning": "Payé avec : Transaction Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
-			"point-of-sale": "Payé en magasin",
-			"free": "N'a rien payé"
+			"point-of-sale": "Payé en magasin"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Payé avec : virement bancaire vérifié",
 			"bitcoin": "Payé avec : Paiement Bitcoin on-chain",
 			"card": "Payé avec : carte bancaire via Sum UP",
+			"free": "N'a rien payé",
 			"lightning": "Payé avec : Transaction Lightning",
-			"point-of-sale": "Payé en magasin",
-			"free": "N'a rien payé"
+			"point-of-sale": "Payé en magasin"
 		},
 		"payToComplete": "Payez pour finaliser la commande.",
 		"payToCompleteBitcoin": {
@@ -657,8 +657,10 @@
 	},
 	"ticket": {
 		"boughtAt": "Acheté le {date} à {time}",
+		"burn": "Marquer le ticket comme utilisé",
 		"print": "Imprimer",
-		"scanned": "Ce billet a été scanné et n'est plus valable"
+		"scanned": "🔥 Ce billet a été scanné le {date} à {time} et n'est plus valable",
+		"unburn": "Marquer le ticket comme inutilisé"
 	},
 	"widget": {
 		"specification": "Caractéristiques techniques"
