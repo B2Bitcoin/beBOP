@@ -75,6 +75,26 @@
 		? 'flex-row-reverse'
 		: ''}"
 >
+	<div class="flex-col w-[100%]">
+		<div class="tagWidget tagWidget-main m-2 p-4">
+			<h2 class="text-2xl body-title pb-2 uppercase">{gallery.principal.title}</h2>
+		</div>
+		<div class="btn tagWidget-cta text-xl text-center w-auto m-2 p-4">
+			<a
+				class="tagWidget-hyperlink"
+				href={gallery.principal.cta.href}
+				target={gallery.principal.cta.href.startsWith('http') || gallery.principal.cta.openNewTab
+					? '_blank'
+					: '_self'}>{gallery.principal.cta.label}</a
+			>
+		</div>
+		<div class="tagWidget tagWidget-main m-2 p-4">
+			<p class="min-h-[37em] mt-2">
+				<!-- eslint-disable svelte/no-at-html-tags -->
+				{@html marked(gallery.principal.content.replaceAll('<', '&lt;'))}
+			</p>
+		</div>
+	</div>
 	<TinySlider let:currentIndex>
 		{#each Array.from({ length: gallery.secondary.length }, (_, index) => index) as i}
 			<div class="flex-wrap">
