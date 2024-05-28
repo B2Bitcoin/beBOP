@@ -117,7 +117,7 @@
 			<div class="absolute inset-y-0 left-0 flex items-center px-2">
 				{#if currentIndex > 0}
 					<button
-						class="bg-gray-400 hover:bg-gray-300 px-3 py-2 rounded-full"
+						class="body-mainCTA px-3 py-2 rounded-full"
 						on:click={() => setIndex(currentIndex - 1)}>&#9664;</button
 					>
 				{/if}
@@ -125,7 +125,7 @@
 			<div class="absolute inset-y-0 right-0 flex items-center px-2">
 				{#if currentIndex < gallery.secondary.length - 1}
 					<button
-						class="bg-gray-400 hover:bg-gray-300 px-3 py-2 rounded-full"
+						class="body-mainCTA px-3 py-2 rounded-full"
 						on:click={() => setIndex(currentIndex + 1)}>&#9654;</button
 					>
 				{/if}
