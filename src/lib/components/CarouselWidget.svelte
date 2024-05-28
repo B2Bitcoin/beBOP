@@ -41,7 +41,7 @@
 		<svelte:fragment slot="controls" let:currentIndex>
 			<!-- Pagination Points -->
 			<div class="relative bottom-10 mx-auto w-full flex justify-center p-4 space-x-2">
-				{#each pictures as _, i}
+				{#each Array.from({ length: pictures.length }, (_, index) => index) as i}
 					<button
 						class="w-3 h-3 rounded-full transition-colors duration-300"
 						class:body-mainCTA={currentIndex === i}
