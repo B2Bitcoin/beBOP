@@ -11,13 +11,7 @@ export async function load({ url }) {
 	} else if (productAlias) {
 		orders = await collections.orders
 			.find({
-				items: {
-					$elemMatch: {
-						'product.alias': {
-							$in: [productAlias]
-						}
-					}
-				}
+				'items.product.alias': productAlias
 			})
 			.toArray();
 	} else {
