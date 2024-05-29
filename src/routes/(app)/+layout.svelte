@@ -222,7 +222,8 @@
 						<a
 							href="/cart"
 							on:click={(ev) => {
-								if (!items.length || $page.url.pathname === '/checkout') {
+								const isMobile = window.innerWidth < 1024;
+								if (!items.length || $page.url.pathname === '/checkout' || isMobile) {
 									return;
 								}
 								cartOpen = !cartOpen;

@@ -110,7 +110,7 @@
 	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
 </script>
 
-<div class={tokens.mobile ? 'hidden sm:contents' : 'contents'}>
+<div class={tokens.mobile ? 'hidden lg:contents' : 'contents'}>
 	<div class="prose max-w-full {classNames}">
 		{#each tokens.desktop as token}
 			{#if token.type === 'productWidget' && productById[token.slug]}
@@ -189,7 +189,7 @@
 	</div>
 </div>
 {#if tokens.mobile}
-	<div class="contents sm:hidden">
+	<div class="contents lg:hidden">
 		<div class="prose max-w-full {classNames}">
 			{#each tokens.mobile as token}
 				{#if token.type === 'productWidget' && productById[token.slug]}
