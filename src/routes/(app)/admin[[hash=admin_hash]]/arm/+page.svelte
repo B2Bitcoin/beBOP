@@ -164,7 +164,7 @@
 					name="login"
 					class="form-input"
 					value={user.login}
-					disabled={user.roleId === SUPER_ADMIN_ROLE_ID}
+					disabled={data.roleId !== SUPER_ADMIN_ROLE_ID && user.roleId === SUPER_ADMIN_ROLE_ID}
 				/>
 				<input
 					type="text"
