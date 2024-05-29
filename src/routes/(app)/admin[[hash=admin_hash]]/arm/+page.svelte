@@ -171,20 +171,20 @@
 					name="alias"
 					class="form-input"
 					value={user.alias ?? ''}
-					disabled={data.roleId !== SUPER_ADMIN_ROLE_ID}
+					disabled={data.roleId !== SUPER_ADMIN_ROLE_ID && user.roleId === SUPER_ADMIN_ROLE_ID}
 				/>
 				<input
 					type="email"
 					name="recoveryEmail"
 					class="form-input"
-					disabled={data.roleId !== SUPER_ADMIN_ROLE_ID}
+					disabled={data.roleId !== SUPER_ADMIN_ROLE_ID && user.roleId === SUPER_ADMIN_ROLE_ID}
 					value={user.recovery?.email ?? ''}
 				/>
 				<input
 					type="text"
 					name="recoveryNpub"
 					class="form-input"
-					disabled={data.roleId !== SUPER_ADMIN_ROLE_ID}
+					disabled={data.roleId !== SUPER_ADMIN_ROLE_ID && user.roleId === SUPER_ADMIN_ROLE_ID}
 					value={user.recovery?.npub ?? ''}
 				/>
 				<select class="form-input" disabled={user.roleId === SUPER_ADMIN_ROLE_ID} name="roleId">
