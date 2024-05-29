@@ -48,25 +48,40 @@ export const actions = {
 		if (user.roleId !== SUPER_ADMIN_ROLE_ID && !parsed.recoveryEmail && !parsed.recoveryNpub) {
 			throw error(400, 'You must provide a recovery email or npub');
 		}
-
-		await collections.users.updateOne(
-			{ _id: user._id },
-			{
-				$set: {
-					login: parsed.login ?? user.login,
-					...(parsed.alias && { alias: parsed.alias }),
-					recovery: {
-						...(parsed.recoveryEmail && { email: parsed.recoveryEmail }),
-						...(parsed.recoveryNpub && { npub: parsed.recoveryNpub })
-					},
-					...(parsedAdmin.alias && { alias: parsedAdmin.alias }),
-					disabled: parsed.status === 'disabled',
-					roleId: parsed.roleId ?? user.roleId
+		if (user.roleId === SUPER_ADMIN_ROLE_ID) {
+			await collections.users.updateOne(
+				{ _id: user._id },
+				{
+					$set: {
+						...(parsedAdmin.alias && { alias: parsedAdmin.alias }),
+						recovery: {
+							...(parsed.recoveryEmail && { email: parsed.recoveryEmail }),
+							...(parsed.recoveryNpub && { npub: parsed.recoveryNpub })
+						}
+					}
 				}
-			}
-		);
+			);
 
-		throw redirect(303, `${adminPrefix()}/arm`);
+			throw redirect(303, `${adminPrefix()}/arm`);
+		} else {
+			await collections.users.updateOne(
+				{ _id: user._id },
+				{
+					$set: {
+						login: parsed.login,
+						...(parsed.alias && { alias: parsed.alias }),
+						recovery: {
+							...(parsed.recoveryEmail && { email: parsed.recoveryEmail }),
+							...(parsed.recoveryNpub && { npub: parsed.recoveryNpub })
+						},
+						disabled: parsed.status === 'disabled',
+						roleId: parsed.roleId
+					}
+				}
+			);
+
+			throw redirect(303, `${adminPrefix()}/arm`);
+		}
 	},
 	resetPassword: async function ({ params }) {
 		const user = await collections.users.findOne({ _id: new ObjectId(params.id) });
