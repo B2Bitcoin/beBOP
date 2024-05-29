@@ -15,22 +15,22 @@
 	const { t } = useI18n();
 </script>
 
-<div class="mx-auto tagWidget tagWidget-main flex flex-row gap-4 rounded {className}">
+<div class="mx-auto tagWidget tagWidget-main flex flex-wrap gap-4 rounded {className}">
 	<div class="flex-col grid">
 		<div class="flex-row justify-start">
 			<ProductType {product} {hasDigitalFiles} class="last:rounded-tr first:rounded-bl text-sm" />
 		</div>
 		<a href="/product/{product._id}">
-			<PictureComponent picture={pictures[0]} class="object-contain max-h-full max-w-[164px]" />
+			<PictureComponent picture={pictures[0]} class="object-contain max-h-full max-w-full" />
 		</a>
 	</div>
-	<div class="grid flex-col gap-2">
+	<div class="grid flex-col gap-2 p-4 justify-end">
 		<div class="flex flex-col gap-2">
 			<a href="/product/{product._id}" class="flex flex-col">
 				<h2 class="text-2xl body-title">{product.name}</h2>
 			</a>
 
-			<div class="flex flex-row">
+			<div class="flex flex-row gap-1">
 				<PriceTag
 					amount={product.price.amount}
 					currency={product.price.currency}
@@ -43,13 +43,8 @@
 					currency={product.price.currency}
 					secondary
 				/>
+				<span class="font-semibold">{t('product.vatExcluded')}</span>
 			</div>
-			<span class="font-semibold">{t('product.vatExcluded')}</span>
 		</div>
-		<a href="/product/{product._id}" class="flex flex-col">
-			<p class="max-w-[500px]">
-				{product.shortDescription}
-			</p>
-		</a>
 	</div>
 </div>

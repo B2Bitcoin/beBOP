@@ -51,7 +51,7 @@
 		: widgets['img-0'];
 </script>
 
-<div class="sm:hidden contents">
+<div class="lg:hidden contents">
 	<svelte:component
 		this={ProductWidgetMobile}
 		{product}
@@ -60,7 +60,7 @@
 		class={className}
 	/>
 </div>
-<div class="hidden sm:contents">
+<div class="hidden lg:contents">
 	<svelte:component
 		this={widget.component}
 		{product}
