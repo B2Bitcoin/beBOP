@@ -13,6 +13,7 @@
 	import TagWidgetVariation4Reverse from './TagWidget/TagWidgetVariation4Reverse.svelte';
 	import TagWidgetVariation1noBG from './TagWidget/TagWidgetVariation1noBG.svelte';
 	import TagWidgetVariation1Reverse from './TagWidget/TagWidgetVariation1Reverse.svelte';
+	import type { CmsToken } from '$lib/server/cms';
 
 	let className = '';
 	export { className as class };
@@ -22,7 +23,9 @@
 	>;
 	export let pictures: Picture[];
 	export let displayOption = 'var-1';
+	export let titleCase: Extract<CmsToken, { type: 'tagWidget' }>['titleCase'] = 'upper';
 
+	$: titleClassNames = titleCase === 'upper' ? 'uppercase' : '';
 	const widgets = {
 		'var-1': {
 			component: TagWidgetVariation1,
@@ -40,6 +43,7 @@
 			component: TagWidgetVariation1Reverse,
 			pictureType: 'full'
 		},
+
 		'var-2': {
 			component: TagWidgetVariation2,
 			pictureType: 'wide'
@@ -76,5 +80,6 @@
 		picture={pictures.find((picture) => picture.tag?.type === widget?.pictureType)}
 		avatar={pictures.find((picture) => picture.tag?.type === 'avatar')}
 		class={className}
+		{titleClassNames}
 	/>
 {/if}
