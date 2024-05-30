@@ -52,6 +52,7 @@ type TokenObject =
 			type: 'tagWidget';
 			slug: string;
 			display: string | undefined;
+			titleCase: string | undefined;
 			raw: string;
 	  }
 	| {
@@ -86,7 +87,8 @@ export async function cmsFromContent(
 	const SLIDER_WIDGET_REGEX =
 		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:[?\s]autoplay=(?<autoplay>[\d]+))?\]/giu;
 	const TAG_WIDGET_REGEX =
-		/\[Tag=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
+		/\[Tag=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))(?:[?\s]titleCase=(?<titleCase>(upper|regular)))?\]/giu;
+
 	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const PICTURE_WIDGET_REGEX =
 		/\[Picture=(?<slug>[\p{L}\d_-]+)((?:[?\s]width=(?<width>\d+))?(?:[?\s]height=(?<height>\d+))?(?:[?\s]fit=(?<fit>(cover|contain)))?)*\]/giu;
@@ -178,6 +180,7 @@ export async function cmsFromContent(
 							type: 'tagWidget',
 							slug: match.groups.slug,
 							display: match.groups?.display,
+							titleCase: match.groups?.titleCase,
 							raw: match[0]
 						});
 						break;
@@ -443,3 +446,4 @@ export type CmsSpecification = Awaited<ReturnType<typeof cmsFromContent>>['speci
 export type CmsContactForm = Awaited<ReturnType<typeof cmsFromContent>>['contactForms'][number];
 export type CmsCountdown = Awaited<ReturnType<typeof cmsFromContent>>['countdowns'][number];
 export type CmsGallery = Awaited<ReturnType<typeof cmsFromContent>>['galleries'][number];
+export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens']['desktop'][number];

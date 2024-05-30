@@ -11,5 +11,8 @@ export function zodSlug() {
 		.trim()
 		.max(MAX_NAME_LIMIT)
 		.min(1)
-		.regex(/^[^/\\?#]+$/, "Slug can't contain special characters : # / \\ ?");
+		.regex(
+			/^(?!admin$)(?!admin-)[^/\\?#]+$/,
+			"Slug can't contain special characters: # / \\ ? and cannot begin with the word 'admin'"
+		);
 }
