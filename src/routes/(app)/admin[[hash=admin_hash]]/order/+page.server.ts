@@ -13,6 +13,7 @@ export async function load({ url }) {
 			.find({
 				'items.product.alias': productAlias
 			})
+			.sort({ createdAt: -1 })
 			.toArray();
 	} else {
 		orders = await collections.orders
