@@ -27,12 +27,12 @@
 			</div>
 		{/each}
 	</div>
-	<div class="flex lg:hidden flex-row gap-6 py-3">
+	<div class="flex lg:hidden py-3 justify-center">
 		<TinySlider let:currentIndex>
 			{#each Object.keys(specificationCategory) as category, i (category)}
 				<div class="flex-wrap">
 					{#if currentIndex === i}
-						<div class="flex-row">
+						<div class="flex-col">
 							<h2 class="text-xl body-title">{category}</h2>
 							<div class="my-3">
 								{#each specificationCategory[category] as { attribute, value } (attribute)}
@@ -45,18 +45,18 @@
 				</div>
 			{/each}
 			<svelte:fragment slot="controls" let:setIndex let:currentIndex>
-				<div class="absolute inset-y-0 left-0 flex items-center px-2">
+				<div class="absolute top-15 left-0 flex items-center px-2">
 					{#if currentIndex > 0}
 						<button
-							class="body-mainCTA hover:bg-gray-300 px-3 py-2 rounded-full"
+							class="body-mainCTA px-3 py-2 rounded-full"
 							on:click={() => setIndex(currentIndex - 1)}>&#9664;</button
 						>
 					{/if}
 				</div>
-				<div class="absolute inset-y-0 right-0 flex items-center px-2">
+				<div class="absolute top-15 right-0 flex items-center px-2">
 					{#if currentIndex < Object.keys(specificationCategory).length - 1}
 						<button
-							class="body-mainCTA hover:bg-gray-300 px-3 py-2 rounded-full"
+							class="body-mainCTA px-3 py-2 rounded-full"
 							on:click={() => setIndex(currentIndex + 1)}>&#9654;</button
 						>
 					{/if}
