@@ -43,7 +43,7 @@
 					currency={product.price.currency}
 					secondary
 				/>
-				<span class="font-semibold">{t('product.vatExcluded')}</span>
+				<span class="text-base mt-1">({t('product.horsTaxeShort')})</span>
 			</div>
 		</div>
 	</div>
