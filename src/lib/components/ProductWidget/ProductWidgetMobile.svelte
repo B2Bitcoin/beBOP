@@ -15,7 +15,7 @@
 	const { t } = useI18n();
 </script>
 
-<div class="mx-auto tagWidget tagWidget-main flex flex-wrap gap-4 rounded {className}">
+<div class="mx-auto tagWidget tagWidget-main flex flex-wrap rounded {className}">
 	<div class="flex-col grid">
 		<div class="flex-row justify-start">
 			<ProductType {product} {hasDigitalFiles} class="last:rounded-tr first:rounded-bl text-sm" />
@@ -24,7 +24,7 @@
 			<PictureComponent picture={pictures[0]} class="object-contain max-h-full max-w-full" />
 		</a>
 	</div>
-	<div class="grid flex-col gap-2 p-4 justify-end">
+	<div class="grid flex-col gap-2 px-4 py-2 justify-end">
 		<div class="flex flex-col gap-2">
 			<a href="/product/{product._id}" class="flex flex-col">
 				<h2 class="text-2xl body-title">{product.name}</h2>
