@@ -225,5 +225,14 @@
 			{/each}
 		</select>
 	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="hideCmsZoneOnMobile"
+			class="form-checkbox"
+			checked={data.hideCmsZoneOnMobile}
+		/>
+		Hide every CMS additional zone on mobile (product, cart, checkout and order page)
+	</label>
 	<button class="btn btn-black self-start" type="submit" on:click={confirmSubmit}>Update</button>
 </form>

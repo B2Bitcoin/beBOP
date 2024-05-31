@@ -58,5 +58,7 @@ export const productBaseSchema = () => ({
 		.optional()
 		.default([]),
 	contentBefore: z.string().max(MAX_CONTENT_LIMIT).default(''),
-	contentAfter: z.string().max(MAX_CONTENT_LIMIT).default('')
+	contentAfter: z.string().max(MAX_CONTENT_LIMIT).default(''),
+	hideContentBefore: z.boolean({ coerce: true }).default(false),
+	hideContentAfter: z.boolean({ coerce: true }).default(false)
 });

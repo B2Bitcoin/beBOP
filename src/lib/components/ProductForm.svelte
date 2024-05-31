@@ -65,7 +65,9 @@
 		createdAt: new Date(),
 		updatedAt: new Date(),
 		shortDescription: '',
-		description: ''
+		description: '',
+		hideContentBefore: false,
+		hideContentAfter: false
 	};
 
 	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
@@ -745,6 +747,15 @@
 		{#if !isNew}
 			<label class="block w-full mt-4">
 				Add CMS code and widgets before product page core
+				<label class="checkbox-label">
+					<input
+						class="form-checkbox"
+						type="checkbox"
+						name="hideContentBefore"
+						bind:checked={product.hideContentBefore}
+					/>
+					Hide on mobile
+				</label>
 				<Editor
 					scriptSrc="/tinymce/tinymce.js"
 					bind:value={product.contentBefore}
@@ -767,6 +778,15 @@
 			</label>
 			<label class="block w-full mt-4">
 				Add CMS code and widgets after product page core
+				<label class="checkbox-label">
+					<input
+						class="form-checkbox"
+						type="checkbox"
+						name="hideContentAfter"
+						bind:checked={product.hideContentAfter}
+					/>
+					Hide on mobile
+				</label>
 				<Editor
 					scriptSrc="/tinymce/tinymce.js"
 					bind:value={product.contentAfter}

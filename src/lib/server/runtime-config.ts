@@ -141,6 +141,7 @@ const baseConfig = {
 	bity: {
 		clientId: ''
 	},
+	hideCmsZoneOnMobile: false,
 	copyOrderEmailsToAdmin: true,
 	usersDarkDefaultTheme: false,
 	employeesDarkDefaultTheme: false,

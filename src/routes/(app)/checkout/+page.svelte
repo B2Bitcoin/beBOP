@@ -167,6 +167,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsCheckoutTopData.countdowns}
 			galleries={data.cmsCheckoutTopData.galleries}
+			class={data.hideCmsZoneOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
 	<div
@@ -1018,6 +1019,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsCheckoutBottomData.countdowns}
 			galleries={data.cmsCheckoutBottomData.galleries}
+			class={data.hideCmsZoneOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
 </main>
