@@ -39,5 +39,6 @@
 	this={VariationFourTemplateWidget}
 	{tag}
 	picture={avatar}
+	{avatar}
 	class="{className} sm:hidden"
 />
