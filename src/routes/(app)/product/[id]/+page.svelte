@@ -145,7 +145,7 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSBefore.countdowns}
 			galleries={data.productCMSBefore.galleries}
-			class={data.product.hideContentBefore ? 'hidden lg:contents' : ''}
+			class={data.product.hideContentBefore || data.hideCmsZoneOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
 
