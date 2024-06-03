@@ -69,8 +69,10 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 	 * The product can only be bought with the specified payment methods
 	 */
 	paymentMethods?: PaymentMethod[];
-	hideContentBefore?: boolean;
-	hideContentAfter?: boolean;
+	mobile?: {
+		hideContentBefore: boolean;
+		hideContentAfter: boolean;
+	};
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;

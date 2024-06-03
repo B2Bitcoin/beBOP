@@ -35,8 +35,7 @@ export const load = async ({ params, locals }) => {
 			| 'deposit'
 			| 'cta'
 			| 'maximumPrice'
-			| 'hideContentAfter'
-			| 'hideContentBefore'
+			| 'mobile'
 		>
 	>(
 		{ _id: params.id },
@@ -70,8 +69,7 @@ export const load = async ({ params, locals }) => {
 				deposit: 1,
 				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] },
 				maximumPrice: 1,
-				hideContentAfter: 1,
-				hideContentBefore: 1
+				mobile: 1
 			}
 		}
 	);

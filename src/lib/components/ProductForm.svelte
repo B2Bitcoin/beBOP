@@ -66,8 +66,10 @@
 		updatedAt: new Date(),
 		shortDescription: '',
 		description: '',
-		hideContentBefore: false,
-		hideContentAfter: false
+		mobile: {
+			hideContentBefore: false,
+			hideContentAfter: false
+		}
 	};
 
 	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
@@ -752,7 +754,7 @@
 						class="form-checkbox"
 						type="checkbox"
 						name="hideContentBefore"
-						bind:checked={product.hideContentBefore}
+						checked={product.mobile?.hideContentBefore}
 					/>
 					Hide on mobile
 				</label>
@@ -783,7 +785,7 @@
 						class="form-checkbox"
 						type="checkbox"
 						name="hideContentAfter"
-						bind:checked={product.hideContentAfter}
+						checked={product.mobile?.hideContentAfter}
 					/>
 					Hide on mobile
 				</label>
