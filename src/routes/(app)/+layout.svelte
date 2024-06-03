@@ -557,7 +557,11 @@
 					</div>
 				{:else if data.displayPoweredBy}
 					<div class="justify-center lg:justify-normal flex w-full">
-						<a class="items-center gap-4" href="https://be-bop.io" target="_blank">
+						<a
+							class="items-center gap-4"
+							href="https://be-bop.io?lang={data.language}"
+							target="_blank"
+						>
 							<span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
 							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />
