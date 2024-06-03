@@ -145,7 +145,7 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSBefore.countdowns}
 			galleries={data.productCMSBefore.galleries}
-			class={data.product.mobile?.hideContentBefore || data.hideCmsZoneOnMobile
+			class={data.product.mobile?.hideContentBefore || data.hideCmsZonesOnMobile
 				? 'hidden lg:contents'
 				: ''}
 		/>
@@ -487,7 +487,7 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSAfter.countdowns}
 			galleries={data.productCMSAfter.galleries}
-			class={data.product.mobile?.hideContentAfter || data.hideCmsZoneOnMobile
+			class={data.product.mobile?.hideContentAfter || data.hideCmsZonesOnMobile
 				? 'hidden lg:contents'
 				: ''}
 		/>

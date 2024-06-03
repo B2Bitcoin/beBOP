@@ -83,7 +83,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsOrderTopData.countdowns}
 			galleries={data.cmsOrderTopData.galleries}
-			class={data.hideCmsZoneOnMobile ? 'hidden lg:contents' : ''}
+			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
 	<div
@@ -579,7 +579,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsOrderBottomData.countdowns}
 			galleries={data.cmsOrderBottomData.galleries}
-			class={data.hideCmsZoneOnMobile ? 'hidden lg:contents' : ''}
+			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
 </main>

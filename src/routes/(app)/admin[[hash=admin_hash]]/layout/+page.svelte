@@ -228,9 +228,9 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
-			name="hideCmsZoneOnMobile"
+			name="hideCmsZonesOnMobile"
 			class="form-checkbox"
-			checked={data.hideCmsZoneOnMobile}
+			checked={data.hideCmsZonesOnMobile}
 		/>
 		Hide every CMS additional zone on mobile (product, cart, checkout and order page)
 	</label>
