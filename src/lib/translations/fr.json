@@ -620,6 +620,7 @@
 		"discountBanner": "{discountPercent}% de réduction pour {hours}h",
 		"freeWithSub": "Ce produit est disponible gratuitement avec votre abonnement mensuel",
 		"freeWithTitle": "Gratuit avec \"xxxxx",
+		"horsTaxeShort": "HT",
 		"minimumForCurrency": "Le montant minimum en {currency} est {minimum}",
 		"nameYourPrice": "Choisissez votre prix ({currency})",
 		"notForSale": "Ce produit n'est pas disponible à la vente par cette plateforme, merci de nous contacter",
