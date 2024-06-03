@@ -33,7 +33,9 @@
 				<div class="flex-wrap">
 					{#if currentIndex === i}
 						<div class="flex-col">
-							<h2 class="text-xl body-title">{category}</h2>
+							<div class="flex justify-center">
+								<h2 class="text-xl body-title text-justify">{category}</h2>
+							</div>
 							<div class="my-3">
 								{#each specificationCategory[category] as { attribute, value } (attribute)}
 									<p class="mt-4 uppercase">{attribute}</p>
