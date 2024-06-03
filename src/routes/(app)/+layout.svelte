@@ -123,7 +123,7 @@
 		<slot />
 	{:else}
 		<header class="header items-center flex h-[100px] print:hidden">
-			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
+			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 				<a class="flex items-center gap-4" href="/">
 					{#if data.logoPicture}
 						<Picture class="dark:hidden {logoClass}" picture={data.logoPicture} />
@@ -152,7 +152,7 @@
 					<a href="/admin" class="btn btn-blue font-bold">Connect your wallet</a>
 				{/if}
 				<button
-					class="inline-flex flex-col justify-center lg:hidden cursor-pointer text-4xl transition"
+					class="inline-flex flex-col justify-center lg:hidden cursor-pointer text-4xl transition header-tab"
 					class:rotate-90={topMenuOpen}
 					on:click={() => (topMenuOpen = !topMenuOpen)}
 				>
