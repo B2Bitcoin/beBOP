@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './touch.css';
 </script>
 
 <svelte:head>
