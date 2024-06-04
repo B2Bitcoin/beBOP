@@ -156,6 +156,92 @@ export const themeFormStructure = {
 			{ label: 'CTA font color', name: 'cta.color' },
 			{ label: 'Hyperlink color', name: 'hyperlink.color' }
 		]
+	},
+	touchScreen: {
+		label: 'Touch Screen',
+		elements: [
+			{
+				label: 'Category main CTA background color',
+				name: 'category.cta.backgroundColor'
+			},
+			{
+				label: 'Category main CTA font color',
+				name: 'category.cta.color'
+			},
+			{
+				label: 'Category main CTA font',
+				name: 'category.fontFamily'
+			},
+			{
+				label: 'Product list main CTA background color',
+				name: 'product.cta.backgroundColor'
+			},
+			{
+				label: 'Product list main CTA font',
+				name: 'product.cta.color'
+			},
+			{
+				label: 'Product list main CTA font',
+				name: 'product.cta.fontFamily'
+			},
+			{
+				label: 'Product list secondary CTA background color',
+				name: 'product.secondaryCTA.backgroundColor'
+			},
+			{
+				label: 'Product list secondary CTA font color',
+				name: 'product.secondaryCTA.color'
+			},
+			{
+				label: 'Product list secondary CTA font',
+				name: 'product.secondaryCTA.fontFamily'
+			},
+			{
+				label: 'Ticket menu background color',
+				name: 'ticket.menu.backgroundColor'
+			},
+			{
+				label: 'Ticket menu font color',
+				name: 'ticket.menu.color'
+			},
+			{
+				label: 'Ticket menu font',
+				name: 'ticket.menu.fontFamily'
+			},
+			{
+				label: 'Action main CTA background color',
+				name: 'action.cta.backgroundColor'
+			},
+			{
+				label: 'Action main CTA font',
+				name: 'action.cta.fontFamily'
+			},
+			{
+				label: 'Action main CTA font color',
+				name: 'action.cta.color'
+			},
+			{
+				label: 'Action secondary CTA background color',
+				name: 'action.secondaryCTA.backgroundColor'
+			},
+			{
+				label: 'Action secondary CTA font',
+				name: 'action.secondaryCTA.fontFamily'
+			},
+			{
+				label: 'Action secondary CTA font color',
+				name: 'action.secondaryCTA.color'
+			},
+			{
+				label: 'Action cancel CTA background color',
+				name: 'action.cancel.backgroundColor'
+			},
+			{
+				label: 'Action delete CTA background colort',
+
+				name: 'action.delete.backgroundColor'
+			}
+		]
 	}
 } satisfies {
 	[key in keyof Omit<ThemeData, 'name'>]: {

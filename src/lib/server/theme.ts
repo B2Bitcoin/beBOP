@@ -83,6 +83,25 @@ export const themeValidator = z.object({
 		fontFamily,
 		color,
 		hyperlink: z.object({ color })
+	}),
+	touchScreen: z.object({
+		category: z.object({
+			cta: z.object({ backgroundColor, color }),
+			fontFamily
+		}),
+		product: z.object({
+			cta: z.object({ backgroundColor, color, fontFamily }),
+			secondaryCTA: z.object({ backgroundColor, color, fontFamily })
+		}),
+		ticket: z.object({
+			menu: z.object({ backgroundColor, color, fontFamily })
+		}),
+		action: z.object({
+			cta: z.object({ backgroundColor, color, fontFamily }),
+			secondaryCTA: z.object({ backgroundColor, color, fontFamily }),
+			cancel: z.object({ backgroundColor }),
+			delete: z.object({ backgroundColor })
+		})
 	})
 });
 

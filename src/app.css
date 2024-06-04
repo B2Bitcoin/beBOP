@@ -46,6 +46,26 @@
 	--tagWidget-cta-color: #ffffff;
 	--tagWidget-color: #000000;
 	--tagWidget-hyperlink-color: #2271b1;
+	--touchScreen-category-fontFamily: Outfit;
+	--touchScreen-product-cta-fontFamily: Outfit;
+	--touchScreen-product-secondaryCTA-fontFamily: Outfit;
+	--touchScreen-ticket-menu-fontFamily: Outfit;
+	--touchScreen-action-cta-fontFamily: Outfit;
+	--touchScreen-action-secondaryCTA-fontFamily: Outfit;
+	--touchScreen-category-cta-backgroundColor: #310d40;
+	--touchScreen-category-cta-color: white;
+	--touchScreen-product-cta-backgroundColor: #ab47a5;
+	--touchScreen-product-cta-color: black;
+	--touchScreen-product-secondaryCTA-backgroundColor: #ffffff;
+	--touchScreen-product-secondaryCTA-color: #000000;
+	--touchScreen-ticket-menu-backgroundColor: #b6b6b6;
+	--touchScreen-ticket-menu-color: black;
+	--touchScreen-action-cta-backgroundColor: #310d40;
+	--touchScreen-action-cta-color: white;
+	--touchScreen-action-secondaryCTA-backgroundColor: #ab47a5;
+	--touchScreen-action-secondaryCTA-color: white;
+	--touchScreen-action-cancel-backgroundColor: #eee100;
+	--touchScreen-action-delete-backgroundColor: #ee0000;
 }
 
 @layer base {
@@ -291,6 +311,42 @@
 	}
 	.tagWidget-hyperlink {
 		color: var(--tagWidget-hyperlink-color);
+	}
+	.touchScreen-category-cta {
+		font-family: var(--touchScreen-category-fontFamily);
+		background-color: var(--touchScreen-category-cta-backgroundColor);
+		color: var(--touchScreen-category-cta-color: );
+	}
+	.touchScreen-product-cta {
+		font-family: var(--touchScreen-product-cta-fontFamily);
+		background-color: var(--touchScreen-product-cta-backgroundColor);
+		color: var(--touchScreen-product-cta-color);
+	}
+	.touchScreen-product-secondaryCTA {
+		fontfamily: var(--touchScreen-product-secondaryCTA-fontFamily);
+		background-color: var(--touchScreen-product-secondaryCTA-backgroundColor);
+		color: var(--touchScreen-product-secondaryCTA-color);
+	}
+	.touchScreen-ticket-menu {
+		fontfamily: var(--touchScreen-ticket-menu-fontFamily);
+		background-color: var(--touchScreen-ticket-menu-backgroundColor);
+		color: var(--touchScreen-ticket-menu-color);
+	}
+	.touchScreen-action-cta {
+		fontfamily: var(--touchScreen-action-cta-fontFamily);
+		background-color: var(--touchScreen-action-cta-backgroundColor);
+		color: var(--touchScreen-action-cta-color);
+	}
+	.touchScreen-action-secondaryCTA {
+		fontfamily: var(--touchScreen-action-secondaryCTA-fontFamily);
+		background-color: var(--touchScreen-action-secondaryCTA-backgroundColor);
+		color: var(--touchScreen-action-secondaryCTA-color);
+	}
+	.touchScreen-action-cancel {
+		background-color: var(--touchScreen-action-cancel-backgroundColor);
+	}
+	.touchScreen-action-delete {
+		background-color: var(--touchScreen-action-delete-backgroundColor);
 	}
 
 	.prose {
