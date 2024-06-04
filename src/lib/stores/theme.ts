@@ -20,3 +20,5 @@ theme.subscribe((value: string) => {
 });
 
 export default theme;
+
+export const LARGE_SCREEN = 1024;
