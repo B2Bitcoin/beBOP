@@ -1,1 +1,5 @@
-export const load = async ({}) => {};
+export const load = async ({}) => {
+	return {
+		layoutReset: true
+	};
+};
