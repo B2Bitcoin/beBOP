@@ -27,11 +27,12 @@
 	import { useI18n } from '$lib/i18n';
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
-	import theme, { LARGE_SCREEN } from '$lib/stores/theme';
+	import theme from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
+	import { LARGE_SCREEN } from '$lib/types/Theme.js';
 
 	export let data;
 
