@@ -595,6 +595,7 @@
 			"welcomeTitle": "Bienvenue"
 		},
 		"sessionLink": "Session point de vente",
+		"sessionTouchLink": "Session point de vente - écran tactile",
 		"vatFree": "Il s'agit d'une commande sans TVA (<0>conditions</0>)",
 		"vatFreeReason": "Motif hors TVA"
 	},
