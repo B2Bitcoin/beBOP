@@ -11,9 +11,11 @@
 			<div class="grid grid-cols-2 gap-4 text-white text-3xl text-center">
 				<div class="col-span-2 bg-rosebudcherry-500">FAVORIS</div>
 				<div class="bg-rosebudcherry-500">E-pub(salon FR)</div>
-				<div class="bg-rosebudcherry-500">Favoris</div>
-				<div class="bg-rosebudcherry-500">Favoris</div>
-				<div class="bg-rosebudcherry-500">Favoris</div>
+				<div class="bg-rosebudcherry-500">Livre audio CD(salon FR)</div>
+				<div class="bg-rosebudcherry-500">Livre physique(salon FR)</div>
+				<div class="bg-rosebudcherry-500">autres aricles(salon FR)</div>
+				<div class="col-span-2 bg-rosebudcherry-500">TOUS LES ARTICLES</div>
+
 				<div class="col-span-2 bg-gray-400">Liste produits</div>
 			</div>
 		</div>
