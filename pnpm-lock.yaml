@@ -180,12 +180,6 @@ devDependencies:
   eslint-plugin-svelte:
     specifier: ^2.35.0
     version: 2.35.0(eslint@8.40.0)(svelte@4.2.2)(ts-node@10.9.1)
-  flowbite:
-    specifier: ^2.0.0
-    version: 2.0.0
-  flowbite-svelte:
-    specifier: ^0.44.19
-    version: 0.44.19(svelte@4.2.2)
   postcss:
     specifier: ^8.4.21
     version: 8.4.21
@@ -204,6 +198,9 @@ devDependencies:
   svelte-multiselect:
     specifier: ^10.2.0
     version: 10.2.0
+  svelte-tiny-slider:
+    specifier: ^1.1.5
+    version: 1.1.5(svelte@4.2.2)
   tailwindcss:
     specifier: ^3.3.1
     version: 3.3.1(postcss@8.4.21)(ts-node@10.9.1)
@@ -1258,13 +1255,6 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@babel/runtime@7.23.2:
-    resolution: {integrity: sha512-mM8eg4yl5D6i3lu2QKPuPH4FArvJ8KhTofbE7jwMUv9KX5mBvwPAqnV3MlyBNqdp9RyRKP6Yck8TrfYrPvX3bg==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      regenerator-runtime: 0.14.0
-    dev: true
-
   /@bity/api@3.10.0(typescript@5.0.4):
     resolution: {integrity: sha512-jBMSGDGZl+v3dChpo1bSNJhAHBkrCkme01MEdTRvYOMgoKgvS3LbkJPbRHpjN+hJSDTrClhPw+bPhqQEEAoy3A==}
     dependencies:
@@ -1504,23 +1494,6 @@ packages:
     resolution: {integrity: sha512-JUFJad5lv7jxj926GPgymrWQxxjPYuJNiNjNMzqT+HiuP6Vl3dk5xzG+8sTX96np0ZAluvaMzPsjhHZ5rNuNQQ==}
     engines: {node: '>=14'}
 
-  /@floating-ui/core@1.5.0:
-    resolution: {integrity: sha512-kK1h4m36DQ0UHGj5Ah4db7R0rHemTqqO0QLvUqi1/mUUp3LuAWbWxdxSIf/XsnH9VS6rRVPLJCncjRzUvyCLXg==}
-    dependencies:
-      '@floating-ui/utils': 0.1.6
-    dev: true
-
-  /@floating-ui/dom@1.5.3:
-    resolution: {integrity: sha512-ClAbQnEqJAKCJOEbbLo5IUlZHkNszqhuxS4fHAVxRPXPya6Ysf2G8KypnYcOTpx6I8xcgF9bbHb6g/2KpbV8qA==}
-    dependencies:
-      '@floating-ui/core': 1.5.0
-      '@floating-ui/utils': 0.1.6
-    dev: true
-
-  /@floating-ui/utils@0.1.6:
-    resolution: {integrity: sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==}
-    dev: true
-
   /@fontsource/gloock@5.0.0:
     resolution: {integrity: sha512-/n26C8Z837MB5hX4pviNCwHnikmfPB1fYs3QXs1Xf/n5/MDFHt4aQwsJITjNMJ+wyXwdT0N49PGpxhrmQhuNoQ==}
     dev: false
@@ -1678,10 +1651,6 @@ packages:
 
   /@polka/url@1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
-
-  /@popperjs/core@2.11.8:
-    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
-    dev: true
 
   /@rollup/plugin-commonjs@24.1.0(rollup@3.20.2):
     resolution: {integrity: sha512-eSL45hjhCWI0jCCXcNtLVqM5N1JlBGvlFfY0m6oOYnLCJ6N0qEXoZql4sY2MOUArzhH4SA/qBpTxvvZp2Sc+DQ==}
@@ -2189,10 +2158,6 @@ packages:
       pretty-format: 29.7.0
     dev: true
 
-  /@yr/monotone-cubic-spline@1.0.3:
-    resolution: {integrity: sha512-FQXkOta0XBSUPHndIKON2Y9JeQz5ZeMqLYZVVK93FliNBFm7LNMIZmY6FrMEB9XPcDbE2bekMbZD6kzDkxwYjA==}
-    dev: true
-
   /abab@2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
 
@@ -2260,18 +2225,6 @@ packages:
     dependencies:
       normalize-path: 3.0.0
       picomatch: 2.3.1
-    dev: true
-
-  /apexcharts@3.44.0:
-    resolution: {integrity: sha512-u7Xzrbcxc2yWznN78Jh5NMCYVAsWDfBjRl5ea++rVzFAqjU2hLz4RgKIFwYOBDRQtW1e/Qz8azJTqIJ1+Vu9Qg==}
-    dependencies:
-      '@yr/monotone-cubic-spline': 1.0.3
-      svg.draggable.js: 2.2.2
-      svg.easing.js: 2.0.0
-      svg.filter.js: 2.0.2
-      svg.pathmorphing.js: 0.1.3
-      svg.resize.js: 1.4.3
-      svg.select.js: 3.0.1
     dev: true
 
   /arg@4.1.3:
@@ -3087,26 +3040,6 @@ packages:
 
   /flatted@3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
-    dev: true
-
-  /flowbite-svelte@0.44.19(svelte@4.2.2):
-    resolution: {integrity: sha512-ihP6NYxr34uTb/H91uqYLG830XffuSiPyezLufgjfS/ip3vWxTLRYrqQlRG8+ls7TqTmOsjJ9H/Yx4qN/oq+mQ==}
-    engines: {node: '>=18.0.0', npm: '>=7.0.0'}
-    peerDependencies:
-      svelte: ^4.0.0
-    dependencies:
-      '@floating-ui/dom': 1.5.3
-      apexcharts: 3.44.0
-      flowbite: 2.0.0
-      svelte: 4.2.2
-      tailwind-merge: 2.0.0
-    dev: true
-
-  /flowbite@2.0.0:
-    resolution: {integrity: sha512-gP/iC/WuznQ5XBzikhaSs4RDs49zrvoAdHbWMHSY3l7nVJX0xJz+dELIlLjh+czLdEVTMLxUjuARYYwCb5q34A==}
-    dependencies:
-      '@popperjs/core': 2.11.8
-      mini-svg-data-uri: 1.4.4
     dev: true
 
   /form-data@4.0.0:
@@ -4283,10 +4216,6 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /regenerator-runtime@0.14.0:
-    resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}
-    dev: true
-
   /require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -4749,6 +4678,14 @@ packages:
       typescript: 5.0.4
     dev: true
 
+  /svelte-tiny-slider@1.1.5(svelte@4.2.2):
+    resolution: {integrity: sha512-lZrplfCMbuKNqFg7igTXMWt5dLHs8nRDckV3BZ12DiPs7SQh66aAcllS2d/X8zD60EGQYArOcKbSLsD/YG6SPQ==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      svelte: 4.2.2
+    dev: true
+
   /svelte@4.2.2:
     resolution: {integrity: sha512-My2tytF2e2NnHSpn2M7/3VdXT4JdTglYVUuSuK/mXL2XtulPYbeBfl8Dm1QiaKRn0zoULRnL+EtfZHHP0k4H3A==}
     engines: {node: '>=16'}
@@ -4767,68 +4704,8 @@ packages:
       magic-string: 0.30.5
       periscopic: 3.1.0
 
-  /svg.draggable.js@2.2.2:
-    resolution: {integrity: sha512-JzNHBc2fLQMzYCZ90KZHN2ohXL0BQJGQimK1kGk6AvSeibuKcIdDX9Kr0dT9+UJ5O8nYA0RB839Lhvk4CY4MZw==}
-    engines: {node: '>= 0.8.0'}
-    dependencies:
-      svg.js: 2.7.1
-    dev: true
-
-  /svg.easing.js@2.0.0:
-    resolution: {integrity: sha512-//ctPdJMGy22YoYGV+3HEfHbm6/69LJUTAqI2/5qBvaNHZ9uUFVC82B0Pl299HzgH13rKrBgi4+XyXXyVWWthA==}
-    engines: {node: '>= 0.8.0'}
-    dependencies:
-      svg.js: 2.7.1
-    dev: true
-
-  /svg.filter.js@2.0.2:
-    resolution: {integrity: sha512-xkGBwU+dKBzqg5PtilaTb0EYPqPfJ9Q6saVldX+5vCRy31P6TlRCP3U9NxH3HEufkKkpNgdTLBJnmhDHeTqAkw==}
-    engines: {node: '>= 0.8.0'}
-    dependencies:
-      svg.js: 2.7.1
-    dev: true
-
-  /svg.js@2.7.1:
-    resolution: {integrity: sha512-ycbxpizEQktk3FYvn/8BH+6/EuWXg7ZpQREJvgacqn46gIddG24tNNe4Son6omdXCnSOaApnpZw6MPCBA1dODA==}
-    dev: true
-
-  /svg.pathmorphing.js@0.1.3:
-    resolution: {integrity: sha512-49HWI9X4XQR/JG1qXkSDV8xViuTLIWm/B/7YuQELV5KMOPtXjiwH4XPJvr/ghEDibmLQ9Oc22dpWpG0vUDDNww==}
-    engines: {node: '>= 0.8.0'}
-    dependencies:
-      svg.js: 2.7.1
-    dev: true
-
-  /svg.resize.js@1.4.3:
-    resolution: {integrity: sha512-9k5sXJuPKp+mVzXNvxz7U0uC9oVMQrrf7cFsETznzUDDm0x8+77dtZkWdMfRlmbkEEYvUn9btKuZ3n41oNA+uw==}
-    engines: {node: '>= 0.8.0'}
-    dependencies:
-      svg.js: 2.7.1
-      svg.select.js: 2.1.2
-    dev: true
-
-  /svg.select.js@2.1.2:
-    resolution: {integrity: sha512-tH6ABEyJsAOVAhwcCjF8mw4crjXSI1aa7j2VQR8ZuJ37H2MBUbyeqYr5nEO7sSN3cy9AR9DUwNg0t/962HlDbQ==}
-    engines: {node: '>= 0.8.0'}
-    dependencies:
-      svg.js: 2.7.1
-    dev: true
-
-  /svg.select.js@3.0.1:
-    resolution: {integrity: sha512-h5IS/hKkuVCbKSieR9uQCj9w+zLHoPh+ce19bBYyqF53g6mnPB8sAtIbe1s9dh2S2fCmYX2xel1Ln3PJBbK4kw==}
-    engines: {node: '>= 0.8.0'}
-    dependencies:
-      svg.js: 2.7.1
-    dev: true
-
   /symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
-
-  /tailwind-merge@2.0.0:
-    resolution: {integrity: sha512-WO8qghn9yhsldLSg80au+3/gY9E4hFxIvQ3qOmlpXnqpDKoMruKfi/56BbbMg6fHTQJ9QD3cc79PoWqlaQE4rw==}
-    dependencies:
-      '@babel/runtime': 7.23.2
-    dev: true
 
   /tailwindcss@3.3.1(postcss@8.4.21)(ts-node@10.9.1):
     resolution: {integrity: sha512-Vkiouc41d4CEq0ujXl6oiGFQ7bA3WEhUZdTgXAhtKxSy49OmKs8rEfQmupsfF0IGW8fv2iQkp1EVUuapCFrZ9g==}
