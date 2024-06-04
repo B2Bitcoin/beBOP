@@ -145,6 +145,9 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSBefore.countdowns}
 			galleries={data.productCMSBefore.galleries}
+			class={data.product.mobile?.hideContentBefore || data.hideCmsZonesOnMobile
+				? 'hidden lg:contents'
+				: ''}
 		/>
 	{/if}
 
@@ -490,6 +493,9 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSAfter.countdowns}
 			galleries={data.productCMSAfter.galleries}
+			class={data.product.mobile?.hideContentAfter || data.hideCmsZonesOnMobile
+				? 'hidden lg:contents'
+				: ''}
 		/>
 	{/if}
 </main>
