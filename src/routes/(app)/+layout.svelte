@@ -27,7 +27,7 @@
 	import { useI18n } from '$lib/i18n';
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
-	import theme from '$lib/stores/theme';
+	import theme, { LARGE_SCREEN } from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
@@ -222,7 +222,8 @@
 						<a
 							href="/cart"
 							on:click={(ev) => {
-								if (!items.length || $page.url.pathname === '/checkout') {
+								const isMobile = window.innerWidth < LARGE_SCREEN;
+								if (!items.length || $page.url.pathname === '/checkout' || isMobile) {
 									return;
 								}
 								cartOpen = !cartOpen;
