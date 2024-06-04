@@ -165,6 +165,10 @@ export const actions: Actions = {
 					cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
 					contentBefore: parsed.contentBefore,
 					contentAfter: parsed.contentAfter,
+					mobile: {
+						hideContentBefore: parsed.hideContentBefore,
+						hideContentAfter: parsed.hideContentAfter
+					},
 					updatedAt: new Date(),
 					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) }),
 					...(parsed.restrictPaymentMethods && {

@@ -27,7 +27,7 @@
 	import { useI18n } from '$lib/i18n';
 	import IconModeLight from '$lib/components/icons/IconModeLight.svelte';
 	import IconModeDark from '$lib/components/icons/IconModeDark.svelte';
-	import theme from '$lib/stores/theme';
+	import theme, { LARGE_SCREEN } from '$lib/stores/theme';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
@@ -123,7 +123,7 @@
 		<slot />
 	{:else}
 		<header class="header items-center flex h-[100px] print:hidden">
-			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 text-white grow">
+			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 				<a class="flex items-center gap-4" href="/">
 					{#if data.logoPicture}
 						<Picture class="dark:hidden {logoClass}" picture={data.logoPicture} />
@@ -152,7 +152,7 @@
 					<a href="/admin" class="btn btn-blue font-bold">Connect your wallet</a>
 				{/if}
 				<button
-					class="inline-flex flex-col justify-center lg:hidden cursor-pointer text-4xl transition"
+					class="inline-flex flex-col justify-center lg:hidden cursor-pointer text-4xl transition header-tab"
 					class:rotate-90={topMenuOpen}
 					on:click={() => (topMenuOpen = !topMenuOpen)}
 				>
@@ -222,7 +222,8 @@
 						<a
 							href="/cart"
 							on:click={(ev) => {
-								if (!items.length || $page.url.pathname === '/checkout') {
+								const isMobile = window.innerWidth < LARGE_SCREEN;
+								if (!items.length || $page.url.pathname === '/checkout' || isMobile) {
 									return;
 								}
 								cartOpen = !cartOpen;
@@ -557,7 +558,11 @@
 					</div>
 				{:else if data.displayPoweredBy}
 					<div class="justify-center lg:justify-normal flex w-full">
-						<a class="items-center gap-4" href="https://be-bop.io" target="_blank">
+						<a
+							class="items-center gap-4"
+							href="https://be-bop.io?lang={data.language}"
+							target="_blank"
+						>
 							<span class="font-light">{t('footer.poweredBy')} </span>
 							<img class="h-[40px] w-auto hidden dark:inline" src={DEFAULT_LOGO} alt="" />
 							<img class="h-[40px] w-auto dark:hidden" src={DEFAULT_LOGO_DARK} alt="" />

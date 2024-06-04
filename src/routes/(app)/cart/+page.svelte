@@ -65,6 +65,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsBasketTopData.countdowns}
 			galleries={data.cmsBasketTopData.galleries}
+			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
 	<div class="w-full rounded-xl p-6 flex flex-col gap-6 body-mainPlan border-gray-300">
@@ -97,6 +98,7 @@
 				<div class="gap-4 flex flex-col md:flex-row">
 					<label class="form-label w-[20em]">
 						Fill product alias
+						<!-- svelte-ignore a11y-autofocus -->
 						<input
 							bind:this={formAlias}
 							class="form-input"
@@ -104,6 +106,7 @@
 							name="alias"
 							bind:value={alias}
 							disabled={loading}
+							autofocus
 						/>
 					</label>
 				</div>
@@ -115,7 +118,7 @@
 
 		{#if items.length}
 			<div
-				class="grid gap-x-4 gap-y-6 overflow-hidden"
+				class="lg:grid gap-x-4 gap-y-6 overflow-hidden"
 				style="grid-template-columns: auto 1fr auto auto"
 			>
 				{#each items as item, i}
@@ -169,13 +172,13 @@
 								/>
 							{/if}
 						</a>
-						<div class="flex flex-col gap-2">
+						<div class="flex flex-col lg:gap-2">
 							<a href="/product/{item.product._id}">
 								<h2 class="text-2xl">{item.product.name}</h2>
 							</a>
-							<p class="text-sm">{item.product.shortDescription}</p>
+							<p class="text-sm hidden lg:contents">{item.product.shortDescription}</p>
 							<div class="grow" />
-							<div class="flex flex-row gap-2">
+							<div class="flex flex-row lg:gap-2">
 								<ProductType
 									product={item.product}
 									depositPercentage={item.depositPercentage}
@@ -189,14 +192,13 @@
 								{t('cart.cta.discardItem')}
 							</button>
 						</div>
-
 						<div class="self-center">
 							{#if !oneMaxPerLine(item.product)}
 								<CartQuantity {item} />
 							{/if}
 						</div>
 
-						<div class="flex flex-col items-end justify-center">
+						<div class="flex flex-col items-end justify-center lg:mb-0 mb-4">
 							<PriceTag
 								amount={(item.quantity * price.amount * (item.depositPercentage ?? 100)) / 100}
 								currency={price.currency}
@@ -358,6 +360,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsBasketBottomData.countdowns}
 			galleries={data.cmsBasketBottomData.galleries}
+			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
 </main>

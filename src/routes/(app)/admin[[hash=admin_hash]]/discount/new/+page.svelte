@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { addDays } from 'date-fns';
-	import { MultiSelect } from 'flowbite-svelte';
+	import { MultiSelect } from 'svelte-multiselect';
 
 	export let data;
 	let beginsAt = new Date().toJSON().slice(0, 10);
@@ -77,6 +77,7 @@
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label"
 		>Required Subscription
+
 		<MultiSelect
 			name="subscriptionIds"
 			options={subscriptions.map((p) => ({ label: p.name, value: p._id }))}
