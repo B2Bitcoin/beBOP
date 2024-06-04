@@ -145,6 +145,9 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSBefore.countdowns}
 			galleries={data.productCMSBefore.galleries}
+			class={data.product.mobile?.hideContentBefore || data.hideCmsZonesOnMobile
+				? 'hidden lg:contents'
+				: ''}
 		/>
 	{/if}
 
@@ -179,8 +182,8 @@
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
-				<div class="flex flex-row gap-2 h-12 min-w-[96px] sm:inline lg:hidden py-12">
-					{#if data.pictures.length > 1}
+				{#if data.pictures.length > 1}
+					<div class="flex flex-row min-w-[96px] sm:inline lg:hidden py-12">
 						{#each data.pictures as picture, i}
 							<a href={i === 0 ? $page.url.pathname : '?picture=' + picture._id}>
 								<Picture
@@ -191,8 +194,9 @@
 								/>
 							</a>
 						{/each}
-					{/if}
-				</div>
+					</div>
+				{/if}
+
 				{#if data.product.description.trim() || data.product.shortDescription.trim()}
 					<hr class="border-gray-300" />
 					<h2 class="text-[22px]">
@@ -200,7 +204,7 @@
 							? data.product.shortDescription
 							: 'Description'}
 					</h2>
-					<p class="prose body-secondaryText">
+					<p class="prose body-secondaryText lg:contents hidden">
 						<!-- eslint-disable svelte/no-at-html-tags -->
 						{@html marked(data.product.description.replaceAll('<', '&lt;'))}
 					</p>
@@ -463,6 +467,11 @@
 						{/if}
 					{/each}
 				{/if}
+
+				<p class="prose body-secondaryText contents lg:hidden">
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					{@html marked(data.product.description.replaceAll('<', '&lt;'))}
+				</p>
 			</div>
 		</div>
 	</div>
@@ -484,6 +493,9 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSAfter.countdowns}
 			galleries={data.productCMSAfter.galleries}
+			class={data.product.mobile?.hideContentAfter || data.hideCmsZonesOnMobile
+				? 'hidden lg:contents'
+				: ''}
 		/>
 	{/if}
 </main>

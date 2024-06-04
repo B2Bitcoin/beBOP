@@ -28,9 +28,9 @@
 				{tag.shortContent}
 			</h2>
 		</div>
-		<div class="flex text-center justify-evenly mt-auto">
+		<div class="flex text-center lg:justify-evenly mt-auto">
 			{#each tag.cta as cta}
-				<div class="btn tagWidget-cta mx-20 md:text-2xl text-center w-auto">
+				<div class="btn tagWidget-cta lg:mx-20 mx-2 md:text-2xl text-center w-auto">
 					<a
 						class="tagWidget-hyperlink"
 						href={cta.href}

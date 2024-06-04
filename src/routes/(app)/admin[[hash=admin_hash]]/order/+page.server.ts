@@ -4,9 +4,17 @@ import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
 export async function load({ url }) {
 	const skip = url.searchParams.get('skip');
 	const orderNumber = url.searchParams.get('orderNumber');
+	const productAlias = url.searchParams.get('productAlias');
 	let orders;
 	if (orderNumber) {
 		orders = await collections.orders.find({ number: Number(orderNumber) }).toArray();
+	} else if (productAlias) {
+		orders = await collections.orders
+			.find({
+				'items.product.alias': productAlias
+			})
+			.sort({ createdAt: -1 })
+			.toArray();
 	} else {
 		orders = await collections.orders
 			.find()

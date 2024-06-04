@@ -29,7 +29,8 @@ export const actions = {
 				displayCompanyInfo: z.boolean({ coerce: true }),
 				displayMainShopInfo: z.boolean({ coerce: true }),
 				viewportContentWidth: z.number({ coerce: true }),
-				viewportFor: z.enum(['no-one', 'employee', 'visitors', 'everyone']).optional()
+				viewportFor: z.enum(['no-one', 'employee', 'visitors', 'everyone']).optional(),
+				hideCmsZonesOnMobile: z.boolean({ coerce: true })
 			})
 			.parse(json);
 

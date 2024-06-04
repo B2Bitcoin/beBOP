@@ -8,7 +8,7 @@
 </script>
 
 <h1 class="text-3xl">List of orders</h1>
-<form class="flex flex-col gap-2">
+<form class="flex flex-col gap-2" method="get">
 	<div class="gap-4 flex flex-col md:flex-row">
 		<label class="form-label w-[30em]">
 			Search Order
@@ -19,6 +19,19 @@
 				placeholder="search order by number"
 			/>
 		</label>
+		<label class="form-label w-[30em]">
+			Product alias
+			<input
+				class="form-input"
+				type="text"
+				name="productAlias"
+				value={$page.url.searchParams.get('productAlias')}
+				placeholder="search order by product alias"
+			/>
+		</label>
+		<label class="form-label w-[2em] mt-8">
+			<input type="submit" value="🔍" class="btn btn-gray" /></label
+		>
 	</div>
 </form>
 <OrdersList orders={data.orders} adminPrefix={data.adminPrefix} />
