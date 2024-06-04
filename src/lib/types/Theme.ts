@@ -270,3 +270,4 @@ export const systemFonts = [
 ];
 
 export type StyleFormStructure = typeof themeFormStructure;
+export const LARGE_SCREEN = 1024;
