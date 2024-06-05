@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { typedKeys } from '$lib/utils/typedKeys.js';
+
 	export let data;
 	const tagsCreators = data.tags.filter((tag) => tag.family === 'creators');
 	const tagsRetailers = data.tags.filter((tag) => tag.family === 'retailers');
@@ -24,6 +26,10 @@
 			showTags.events = !showTags.events;
 		}
 	}
+	const specialTags = {
+		'pos-favorite': 'Products with this tag will be dispalyed by default on /pos/touch interface'
+	};
+	const tagsMap = new Map(data.tags.map((tag) => [tag._id, tag]));
 </script>
 
 <a href="{data.adminPrefix}/tags/new" class="underline block">Create new tag</a>
@@ -116,3 +122,53 @@
 		</ul>
 	{/if}
 </div>
+
+{#if typedKeys(specialTags).some((key) => tagsMap.has(key))}
+	<h2 class="text-2xl">Existing Special tag</h2>
+
+	<table class="border border-gray-300 divide-y divide-gray-300 border-collapse">
+		<thead>
+			<tr>
+				<th class="text-left border border-gray-300 p-2">Tag slug</th>
+				<th class="text-left border border-gray-300 p-2">Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each typedKeys(specialTags).filter((key) => tagsMap.has(key)) as specialTag}
+				<tr>
+					<td class="border border-gray-300 p-2">
+						<a href="{data.adminPrefix}/tags/{specialTag}" class="underline body-hyperlink">
+							{specialTag}
+						</a>
+					</td>
+					<td class="border border-gray-300 p-2">{specialTags[specialTag]}</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+{/if}
+
+{#if typedKeys(specialTags).some((key) => !tagsMap.has(key))}
+	<h2 class="text-2xl">Suggestions</h2>
+
+	<table class="border border-gray-300 divide-y divide-gray-300 border-collapse">
+		<thead>
+			<tr>
+				<th class="text-left border border-gray-300 p-2">Tag slug</th>
+				<th class="text-left border border-gray-300 p-2">Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each typedKeys(specialTags).filter((key) => !tagsMap.has(key)) as specialTag}
+				<tr>
+					<td class="border border-gray-300 p-2">
+						<a href="{data.adminPrefix}/tags/new?id={specialTag}" class="underline body-hyperlink">
+							{specialTag}
+						</a>
+					</td>
+					<td class="border border-gray-300 p-2">{specialTags[specialTag]}</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+{/if}

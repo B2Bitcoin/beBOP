@@ -4,11 +4,12 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { uploadPicture } from '$lib/types/Picture.js';
+	import { page } from '$app/stores';
 
 	export let data;
-
-	let name = '';
-	let slug = '';
+	let pageId = $page.url.searchParams.get('id') || null;
+	let name = $page.url.searchParams.get('id')?.replace('-', ' ') ?? '';
+	let slug = pageId ?? '';
 	let formElement: HTMLFormElement;
 	let fileMainPicture: FileList;
 	let fileFullPicture: FileList;
