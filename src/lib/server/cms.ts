@@ -87,7 +87,7 @@ export async function cmsFromContent(
 	const SLIDER_WIDGET_REGEX =
 		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:[?\s]autoplay=(?<autoplay>[\d]+))?\]/giu;
 	const TAG_WIDGET_REGEX =
-		/\[Tag=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))(?:[?\s]titleCase=(?<titleCase>(upper|regular)))?\]/giu;
+		/\[Tag=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?(?:[?\s]titleCase=(?<titleCase>(upper|regular)))?\]/giu;
 
 	const SPECIFICATION_WIDGET_REGEX = /\[Specification=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const PICTURE_WIDGET_REGEX =
