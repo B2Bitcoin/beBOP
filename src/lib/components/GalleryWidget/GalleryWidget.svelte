@@ -87,21 +87,17 @@
 							{gallerySecondaryMobile[i].title}
 						</h2>
 					</div>
-					<div
-						class="{i === 0
-							? 'col-span-6'
-							: 'col-span-3'} m-2 tagWidget tagWidget-main p-4 text-center"
-					>
-						<p class="min-h-[12em] mt-2">
-							<!-- eslint-disable svelte/no-at-html-tags -->
-							{@html marked(gallerySecondaryMobile[i].content.replaceAll('<', '&lt;'))}
-						</p>
-					</div>
-					<div class="col-span-3 m-2 justify-center items-center">
+					<div class="col-span-6 m-2 justify-center items-center">
 						<PictureComponent
 							picture={pictureById[gallerySecondaryMobile[i].pictureId || '']}
 							class="block h-auto w-auto"
 						/>
+					</div>
+					<div class="col-span-6 m-2 tagWidget tagWidget-main p-4 text-center">
+						<p class="m-4">
+							<!-- eslint-disable svelte/no-at-html-tags -->
+							{@html marked(gallerySecondaryMobile[i].content.replaceAll('<', '&lt;'))}
+						</p>
 					</div>
 					<div class="col-span-6 btn tagWidget-cta text-xl w-auto p-4 mx-12 my-2">
 						<a
