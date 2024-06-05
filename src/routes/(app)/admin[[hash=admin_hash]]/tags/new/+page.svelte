@@ -8,7 +8,7 @@
 
 	export let data;
 	let pageId = $page.url.searchParams.get('id') || null;
-	let name = $page.url.searchParams.get('id')?.replace('-', ' ') ?? '';
+	let name = $page.url.searchParams.get('id')?.replaceAll('-', ' ') ?? '';
 	let slug = pageId ?? '';
 	let formElement: HTMLFormElement;
 	let fileMainPicture: FileList;
