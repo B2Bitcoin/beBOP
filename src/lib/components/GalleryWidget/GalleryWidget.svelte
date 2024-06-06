@@ -82,24 +82,24 @@
 		{#each Array.from({ length: gallerySecondaryMobile.length }, (_, index) => index) as i}
 			<div class="grid grid-cols-6 justify-center">
 				{#if currentIndex === i}
-					<div class="col-span-6 m-2 tagWidget tagWidget-main text-center p-2">
-						<h2 class="text-xl body-title pb-2 uppercase min-h-[2em]">
+					<div class="col-span-6 btn p-2 m-2 mx-12 tagWidget tagWidget-main text-center">
+						<h2 class="text-xl body-title pb-2 uppercase">
 							{gallerySecondaryMobile[i].title}
 						</h2>
 					</div>
-					<div class="col-span-6 m-2 justify-center items-center">
+					<div class="col-span-6 mx-12 m-2 justify-center items-center">
 						<PictureComponent
 							picture={pictureById[gallerySecondaryMobile[i].pictureId || '']}
 							class="block h-auto w-auto"
 						/>
 					</div>
-					<div class="col-span-6 m-2 tagWidget tagWidget-main p-4 text-center">
+					<div class="col-span-6 mx-12 m-2 tagWidget tagWidget-main p-4 text-center">
 						<p class="m-4">
 							<!-- eslint-disable svelte/no-at-html-tags -->
 							{@html marked(gallerySecondaryMobile[i].content.replaceAll('<', '&lt;'))}
 						</p>
 					</div>
-					<div class="col-span-6 btn tagWidget-cta text-xl w-auto p-4 mx-12 my-2">
+					<div class="col-span-6 btn tagWidget-cta text-xl w-auto p-4 m-2 mx-12">
 						<a
 							class="tagWidget-hyperlink"
 							href={gallerySecondaryMobile[i].cta.href}
@@ -113,7 +113,7 @@
 			</div>
 		{/each}
 		<svelte:fragment slot="controls" let:setIndex let:currentIndex>
-			<div class="absolute bottom-0 left-0 flex items-center my-2 px-2">
+			<div class="absolute top-0 left-0 flex items-center m-2 py-2">
 				{#if currentIndex > 0}
 					<button
 						class="body-mainCTA px-3 py-2 rounded-full"
@@ -121,7 +121,7 @@
 					>
 				{/if}
 			</div>
-			<div class="absolute bottom-0 right-0 flex items-center my-2 px-2">
+			<div class="absolute top-0 right-0 flex items-center m-2 py-2">
 				{#if currentIndex < gallerySecondaryMobile.length - 1}
 					<button
 						class="body-mainCTA px-3 py-2 rounded-full"
