@@ -93,8 +93,8 @@
 							class="block h-auto w-auto"
 						/>
 					</div>
-					<div class="col-span-6 mx-12 m-2 tagWidget tagWidget-main p-4 text-center">
-						<p class="m-4">
+					<div class="col-span-6 mx-12 m-2 tagWidget tagWidget-main text-center">
+						<p class="m-3">
 							<!-- eslint-disable svelte/no-at-html-tags -->
 							{@html marked(gallerySecondaryMobile[i].content.replaceAll('<', '&lt;'))}
 						</p>
