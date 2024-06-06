@@ -5,11 +5,11 @@
 <svelte:head>
 	<meta name="viewport" content="width=1024" />
 </svelte:head>
-<main class="fixed top-0 bottom-0 right-0 left-0 bg-white p-4">
+<main class="fixed top-0 bottom-0 right-0 left-0 p-4">
 	<div class="grid grid-cols-3 gap-4">
-		<div class=" bg-yellow-100"></div>
+		<div class=" touchScreen-ticket-menu"></div>
 		<div class="col-span-2">
-			<div class="grid grid-cols-2 gap-4 text-white text-3xl text-center">
+			<div class="grid grid-cols-2 gap-4 text-3xl text-center">
 				<div class="col-span-2 touchScreen-category-cta">FAVORIS</div>
 				<div class="touchScreen-category-cta">E-pub(salon FR)</div>
 				<div class="touchScreen-category-cta">Livre audio CD(salon FR)</div>
