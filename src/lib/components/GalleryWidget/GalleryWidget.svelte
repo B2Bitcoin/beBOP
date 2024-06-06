@@ -82,7 +82,7 @@
 		{#each Array.from({ length: gallerySecondaryMobile.length }, (_, index) => index) as i}
 			<div class="grid grid-cols-6 justify-center">
 				{#if currentIndex === i}
-					<div class="col-span-6 btn p-2 m-2 mx-12 tagWidget tagWidget-main text-center">
+					<div class="col-span-6 p-2 m-2 mx-12 tagWidget tagWidget-main text-center">
 						<h2 class="text-xl body-title pb-2 uppercase">
 							{gallerySecondaryMobile[i].title}
 						</h2>
@@ -113,7 +113,7 @@
 			</div>
 		{/each}
 		<svelte:fragment slot="controls" let:setIndex let:currentIndex>
-			<div class="absolute top-0 left-0 flex items-center m-2 py-2">
+			<div class="absolute top-0 left-0 flex items-center m-1 py-2">
 				{#if currentIndex > 0}
 					<button
 						class="body-mainCTA px-3 py-2 rounded-full"
@@ -121,7 +121,7 @@
 					>
 				{/if}
 			</div>
-			<div class="absolute top-0 right-0 flex items-center m-2 py-2">
+			<div class="absolute top-0 right-0 flex items-center m-1 py-2">
 				{#if currentIndex < gallerySecondaryMobile.length - 1}
 					<button
 						class="body-mainCTA px-3 py-2 rounded-full"
