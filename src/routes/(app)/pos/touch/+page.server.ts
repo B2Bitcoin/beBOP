@@ -19,6 +19,6 @@ export const load = async ({ locals }) => {
 				productId: { $in: [...products.map((product) => product._id)] }
 			})
 			.sort({ createdAt: 1 })
-			.toArray(),
+			.toArray()
 	};
 };
