@@ -15,7 +15,7 @@ export const load = async ({ locals }) => {
 	return {
 		products,
 		pictures: await collections.pictures
-			.find({productId: { $in: [...products.map((product) => product._id)] } })
+			.find({ productId: { $in: [...products.map((product) => product._id)] } })
 			.sort({ createdAt: 1 })
 			.toArray()
 	};
