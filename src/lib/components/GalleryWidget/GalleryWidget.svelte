@@ -87,19 +87,19 @@
 							{gallerySecondaryMobile[i].title}
 						</h2>
 					</div>
-					<div class="col-span-6 mx-12 m-2 justify-center items-center">
+					<div class="col-span-6 m-2 justify-center items-center">
 						<PictureComponent
 							picture={pictureById[gallerySecondaryMobile[i].pictureId || '']}
 							class="block h-auto w-auto"
 						/>
 					</div>
-					<div class="col-span-6 mx-12 m-2 tagWidget tagWidget-main text-center">
+					<div class="col-span-6 m-2 tagWidget tagWidget-main text-center">
 						<p class="m-2">
 							<!-- eslint-disable svelte/no-at-html-tags -->
 							{@html marked(gallerySecondaryMobile[i].content.replaceAll('<', '&lt;'))}
 						</p>
 					</div>
-					<div class="col-span-6 btn tagWidget-cta text-xl w-auto p-4 m-2 mx-12">
+					<div class="col-span-6 btn tagWidget-cta text-xl w-auto p-4 m-2">
 						<a
 							class="tagWidget-hyperlink"
 							href={gallerySecondaryMobile[i].cta.href}
