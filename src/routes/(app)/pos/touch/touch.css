@@ -31,22 +31,22 @@
 	color: var(--touchScreen-product-cta-color);
 }
 .touchScreen-product-secondaryCTA {
-	fontfamily: var(--touchScreen-product-secondaryCTA-fontFamily);
+	font-family: var(--touchScreen-product-secondaryCTA-fontFamily);
 	background-color: var(--touchScreen-product-secondaryCTA-backgroundColor);
 	color: var(--touchScreen-product-secondaryCTA-color);
 }
 .touchScreen-ticket-menu {
-	fontfamily: var(--touchScreen-ticket-menu-fontFamily);
+	font-family: var(--touchScreen-ticket-menu-fontFamily);
 	background-color: var(--touchScreen-ticket-menu-backgroundColor);
 	color: var(--touchScreen-ticket-menu-color);
 }
 .touchScreen-action-cta {
-	fontfamily: var(--touchScreen-action-cta-fontFamily);
+	font-family: var(--touchScreen-action-cta-fontFamily);
 	background-color: var(--touchScreen-action-cta-backgroundColor);
 	color: var(--touchScreen-action-cta-color);
 }
 .touchScreen-action-secondaryCTA {
-	fontfamily: var(--touchScreen-action-secondaryCTA-fontFamily);
+	font-family: var(--touchScreen-action-secondaryCTA-fontFamily);
 	background-color: var(--touchScreen-action-secondaryCTA-backgroundColor);
 	color: var(--touchScreen-action-secondaryCTA-color);
 }
