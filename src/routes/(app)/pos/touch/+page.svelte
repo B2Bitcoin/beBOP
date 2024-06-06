@@ -3,6 +3,7 @@
 	import type { SetRequired } from 'type-fest';
 	import type { Picture } from '$lib/types/Picture';
 	import ProductWidgetPOS from '$lib/components/ProductWidget/ProductWidgetPOS.svelte';
+	import { isPreorder } from '$lib/types/Product';
 
 	export let data;
 	$: picturesByProduct = groupBy(
@@ -26,7 +27,9 @@
 
 			<div class="col-span-2 grid grid-cols-2 gap-4">
 				{#each data.products as product}
-					<ProductWidgetPOS {product} pictures={picturesByProduct[product._id]} />
+					{#if !isPreorder(product.availableDate, product.preorder)}
+						<ProductWidgetPOS {product} pictures={picturesByProduct[product._id]} />
+					{/if}
 				{/each}
 			</div>
 		</div>
