@@ -94,7 +94,7 @@
 						/>
 					</div>
 					<div class="col-span-6 mx-12 m-2 tagWidget tagWidget-main text-center">
-						<p class="m-3">
+						<p class="m-2">
 							<!-- eslint-disable svelte/no-at-html-tags -->
 							{@html marked(gallerySecondaryMobile[i].content.replaceAll('<', '&lt;'))}
 						</p>
@@ -113,18 +113,18 @@
 			</div>
 		{/each}
 		<svelte:fragment slot="controls" let:setIndex let:currentIndex>
-			<div class="absolute top-0 left-0 flex items-center m-1 py-2">
+			<div class="absolute top-0 left-0 flex items-center py-3">
 				{#if currentIndex > 0}
 					<button
-						class="body-mainCTA px-3 py-2 rounded-full"
+						class="body-mainCTA px-4 py-2 rounded-full"
 						on:click={() => setIndex(currentIndex - 1)}>&#9664;</button
 					>
 				{/if}
 			</div>
-			<div class="absolute top-0 right-0 flex items-center m-1 py-2">
+			<div class="absolute top-0 right-0 flex items-center py-3">
 				{#if currentIndex < gallerySecondaryMobile.length - 1}
 					<button
-						class="body-mainCTA px-3 py-2 rounded-full"
+						class="body-mainCTA px-4 py-2 rounded-full"
 						on:click={() => setIndex(currentIndex + 1)}>&#9654;</button
 					>
 				{/if}
