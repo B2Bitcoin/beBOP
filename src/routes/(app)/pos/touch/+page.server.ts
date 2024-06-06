@@ -2,9 +2,14 @@ import { collections } from '$lib/server/database';
 import type { Product } from '$lib/types/Product';
 
 export const load = async ({ locals }) => {
+	const query =
+		locals.user?.roleId === locals.user?.roleId
+			? { 'actionSettings.retail.visible': true }
+			: { 'actionSettings.eShop.visible': true };
+
 	const products = await collections.products
 		.find({
-			tagIds: 'pos-favorite'
+			 ...query
 		})
 		.project<Pick<Product, '_id' | 'price' | 'name'>>({
 			price: 1,
