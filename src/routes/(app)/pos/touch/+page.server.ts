@@ -10,6 +10,7 @@ export const load = async ({ locals }) => {
 			price: 1,
 			name: locals.language ? { $ifNull: [`$translations.${locals.language}.name`, '$name'] } : 1
 		})
+		.sort({ createdAt: 1 })
 		.toArray();
 
 	return {
