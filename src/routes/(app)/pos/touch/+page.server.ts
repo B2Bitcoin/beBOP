@@ -20,5 +20,5 @@ export const load = async ({ locals }) => {
 			})
 			.sort({ createdAt: 1 })
 			.toArray()
-	}
-};
+	};
+}
