@@ -595,6 +595,7 @@
 			"welcomeTitle": "Welcome"
 		},
 		"sessionLink": "POS session",
+		"sessionTouchLink": "POS session - touch screen",
 		"vatFree": "This is a VAT-free order (<0>conditions</0>)",
 		"vatFreeReason": "VAT-free reason"
 	},
