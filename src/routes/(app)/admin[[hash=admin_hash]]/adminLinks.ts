@@ -80,7 +80,7 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/pos',
 				label: 'POS'
-			},
+			}
 		]
 	},
 	{
