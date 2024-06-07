@@ -5,47 +5,44 @@ import type { Tag } from '$lib/types/Tag';
 import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
-export const load = async ({ }) => {
-    const tags = await collections.tags
-        .find({})
-        .project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
-        .toArray();
+export const load = async ({}) => {
+	const tags = await collections.tags
+		.find({})
+		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
+		.toArray();
 
-    return {
-        tags: tags.filter((tag) => tag._id !== 'pos-favorite'),
-        posTouchTag: runtimeConfig.posTouchTag
-    };
+	return {
+		tags: tags.filter((tag) => tag._id !== 'pos-favorite'),
+		posTouchTag: runtimeConfig.posTouchTag
+	};
 };
-
 export const actions = {
-    default: async function ({ request }) {
-        const formData = await request.formData();
-        const result = z
-            .object({
-                posTouchTag: z.string().array(),
-            })
-            .parse({
-                posTouchTag: JSON.parse(String(formData.get('posTouchTag'))).map((x: { value: string }) => x.value)
-            });
+	default: async function ({ request }) {
+		const formData = await request.formData();
+		const result = z
+			.object({
+				posTouchTag: z.string().array()
+			})
+			.parse({
+				posTouchTag: JSON.parse(String(formData.get('posTouchTag'))).map(
+					(x: { value: string }) => x.value
+				)
+			});
+		await collections.runtimeConfig.updateOne(
+			{
+				_id: 'posTouchTag'
+			},
+			{
+				$set: {
+					data: result.posTouchTag,
+					updatedAt: new Date()
+				}
+			},
+			{
+				upsert: true
+			}
+		);
 
-        await collections.runtimeConfig.updateOne(
-            {
-                _id: 'posTouchTag'
-            },
-            {
-                $set: {
-                    data: result.posTouchTag,
-                    updatedAt: new Date()
-                }
-            },
-            {
-                upsert: true
-            }
-        );
-
-        throw redirect(303, `${adminPrefix()}/pos`);
-
-    },
-
+		throw redirect(303, `${adminPrefix()}/pos`);
+	}
 };
-
