@@ -15,7 +15,7 @@ export const load = async ({ locals }) => {
 			price: 1,
 			preorder: 1,
 			name: locals.language ? { $ifNull: [`$translations.${locals.language}.name`, '$name'] } : 1,
-			availableDate: 1, 
+			availableDate: 1,
 			tagIds: 1
 		})
 		.sort({ createdAt: 1 })
