@@ -4,6 +4,7 @@
 	import type { Picture } from '$lib/types/Picture';
 	import ProductWidgetPOS from '$lib/components/ProductWidget/ProductWidgetPOS.svelte';
 	import { isPreorder } from '$lib/types/Product';
+	import { page } from '$app/stores';
 
 	export let data;
 	$: picturesByProduct = groupBy(
@@ -12,21 +13,26 @@
 		),
 		'productId'
 	);
+	$: filter = $page.url.searchParams.get('filter') ?? 'pos-favorite';
+	$: productFiltered =
+		filter === 'all'
+			? data.products
+			: data.products.filter((product) => product.tagIds?.includes(filter));
 </script>
 
 <div class="grid grid-cols-3 gap-4">
 	<div class=" touchScreen-ticket-menu"></div>
 	<div class="col-span-2">
 		<div class="grid grid-cols-2 gap-4 text-3xl text-center">
-			<div class="col-span-2 touchScreen-category-cta">FAVORIS</div>
+			<a class="col-span-2 touchScreen-category-cta" href="?filter=pos-favorite">FAVORIS</a>
 			<div class="touchScreen-category-cta">E-pub(salon FR)</div>
 			<div class="touchScreen-category-cta">Livre audio CD(salon FR)</div>
 			<div class="touchScreen-category-cta">Livre physique(salon FR)</div>
 			<div class="touchScreen-category-cta">autres aricles(salon FR)</div>
-			<div class="col-span-2 touchScreen-category-cta">TOUS LES ARTICLES</div>
+			<a class="col-span-2 touchScreen-category-cta" href="?filter=all">TOUS LES ARTICLES</a>
 
 			<div class="col-span-2 grid grid-cols-2 gap-4">
-				{#each data.products as product}
+				{#each productFiltered as product}
 					{#if !isPreorder(product.availableDate, product.preorder)}
 						<ProductWidgetPOS {product} pictures={picturesByProduct[product._id]} />
 					{/if}
