@@ -11,12 +11,13 @@ export const load = async ({ locals }) => {
 		.find({
 			...query
 		})
-		.project<Pick<Product, '_id' | 'price' | 'name' | 'preorder' | 'availableDate' | 'tagIds'>>({
+		.project<Pick<Product, '_id' | 'price' | 'name' | 'preorder' | 'availableDate' | 'tagIds' | 'stock'>>({
 			price: 1,
 			preorder: 1,
 			name: locals.language ? { $ifNull: [`$translations.${locals.language}.name`, '$name'] } : 1,
 			availableDate: 1,
-			tagIds: 1
+			tagIds: 1,
+			stock: 1
 		})
 		.sort({ createdAt: 1 })
 		.toArray();
