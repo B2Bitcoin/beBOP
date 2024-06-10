@@ -48,7 +48,7 @@
 	<a
 		href="/product/{product._id}"
 		on:click={() => formElement.submit()}
-		class={!hasStock ? 'disabled ' : ''}
+		class={!hasStock || loading ? 'disabled ' : ''}
 	>
 		<div class="touchScreen-product-cta flex flex-row {className}">
 			<div>
