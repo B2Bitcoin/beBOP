@@ -3,10 +3,11 @@
 	import type { SetRequired } from 'type-fest';
 	import type { Picture } from '$lib/types/Picture';
 	import ProductWidgetPOS from '$lib/components/ProductWidget/ProductWidgetPOS.svelte';
-	import { isPreorder } from '$lib/types/Product';
+	import { POS_PRODUCT_PAGINATION, isPreorder } from '$lib/types/Product';
 	import { page } from '$app/stores';
 
 	export let data;
+	let next = Number($page.url.searchParams.get('skip')) || 0;
 	$: picturesByProduct = groupBy(
 		data.pictures.filter(
 			(picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId
@@ -18,6 +19,9 @@
 		filter === 'all'
 			? data.products
 			: data.products.filter((product) => product.tagIds?.includes(filter));
+	$: displayedProducts = productFiltered.slice(next, next + POS_PRODUCT_PAGINATION);
+	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
+	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
 </script>
 
 <div class="grid grid-cols-3 gap-4">
@@ -32,11 +36,29 @@
 			<a class="col-span-2 touchScreen-category-cta" href="?filter=all">TOUS LES ARTICLES</a>
 
 			<div class="col-span-2 grid grid-cols-2 gap-4">
-				{#each productFiltered as product}
+				{#each displayedProducts as product}
 					{#if !isPreorder(product.availableDate, product.preorder)}
 						<ProductWidgetPOS {product} pictures={picturesByProduct[product._id]} />
 					{/if}
 				{/each}
+				<div class="col-span-2 grid-cols-1 flex gap-2 justify-center">
+					{#if next > 0}
+						<a
+							class="btn touchScreen-product-secondaryCTA"
+							on:click={() => (next = Math.max(0, next - POS_PRODUCT_PAGINATION))}
+							href={`?filter=${filter}&skip=${Math.max(0, next - POS_PRODUCT_PAGINATION)}`}
+							>&#9664;</a
+						>
+					{/if}
+					PAGE {currentPage}/{totalPages}
+					{#if next + POS_PRODUCT_PAGINATION < productFiltered.length}
+						<a
+							class="btn touchScreen-product-secondaryCTA"
+							on:click={() => (next += POS_PRODUCT_PAGINATION)}
+							href={`?filter=${filter}&skip=${next + POS_PRODUCT_PAGINATION}`}>&#9654;</a
+						>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
