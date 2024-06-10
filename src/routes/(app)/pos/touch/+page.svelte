@@ -44,18 +44,17 @@
 				<div class="col-span-2 grid-cols-1 flex gap-2 justify-center">
 					{#if next > 0}
 						<a
-							class="btn touchScreen-product-secondaryCTA"
+							class="btn touchScreen-product-secondaryCTA text-3xl"
 							on:click={() => (next = Math.max(0, next - POS_PRODUCT_PAGINATION))}
-							href={`?filter=${filter}&skip=${Math.max(0, next - POS_PRODUCT_PAGINATION)}`}
-							>&#9664;</a
+							href={`?filter=${filter}&skip=${Math.max(0, next - POS_PRODUCT_PAGINATION)}`}>&lt;</a
 						>
 					{/if}
 					PAGE {currentPage}/{totalPages}
 					{#if next + POS_PRODUCT_PAGINATION < productFiltered.length}
 						<a
-							class="btn touchScreen-product-secondaryCTA"
+							class="btn touchScreen-product-secondaryCTA text-3xl"
 							on:click={() => (next += POS_PRODUCT_PAGINATION)}
-							href={`?filter=${filter}&skip=${next + POS_PRODUCT_PAGINATION}`}>&#9654;</a
+							href={`?filter=${filter}&skip=${next + POS_PRODUCT_PAGINATION}`}>&gt;</a
 						>
 					{/if}
 				</div>
