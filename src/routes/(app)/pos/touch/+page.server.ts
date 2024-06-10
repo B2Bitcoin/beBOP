@@ -11,7 +11,9 @@ export const load = async ({ locals }) => {
 		.find({
 			...query
 		})
-		.project<Pick<Product, '_id' | 'price' | 'name' | 'preorder' | 'availableDate' | 'tagIds' | 'stock'>>({
+		.project<
+			Pick<Product, '_id' | 'price' | 'name' | 'preorder' | 'availableDate' | 'tagIds' | 'stock'>
+		>({
 			price: 1,
 			preorder: 1,
 			name: locals.language ? { $ifNull: [`$translations.${locals.language}.name`, '$name'] } : 1,
