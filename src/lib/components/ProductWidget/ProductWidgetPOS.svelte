@@ -14,7 +14,7 @@
 <div class="touchScreen-product-cta flex flex-row {className}">
 	<div>
 		<a href="/product/{product._id}">
-			{#if pictures.length}
+			{#if pictures.length > 1}
 				<PictureComponent picture={pictures[0]} class="object-contain h-24 w-24" />
 			{:else}
 				<img class="object-contain h-24 w-48" src={DEFAULT_PICTURE} alt="default-img" />
