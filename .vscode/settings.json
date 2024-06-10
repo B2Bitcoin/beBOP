@@ -15,5 +15,8 @@
 	"i18n-ally.localesPaths": ["src/lib/translations"],
 	"i18n-ally.sourceLanguage": "en",
 	"i18n-ally.tabStyle": "tab",
-	"i18n-ally.sortKeys": true
+	"i18n-ally.sortKeys": true,
+	"[typescript]": {
+		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+	}
 }
