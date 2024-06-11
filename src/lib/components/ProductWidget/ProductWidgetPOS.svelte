@@ -25,7 +25,7 @@
 			widget
 		};
 	}
-	let hasStock = true; //!!(product.stock?.available ?? Infinity)
+	let hasStock = !!(product.stock?.available ?? Infinity);
 	let errorMessage = '';
 	const dispatch = createEventDispatcher<{ dismiss: void }>();
 
