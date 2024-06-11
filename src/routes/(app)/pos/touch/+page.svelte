@@ -7,7 +7,7 @@
 	import { page } from '$app/stores';
 
 	export let data;
-	let next = Number($page.url.searchParams.get('skip')) || 0;
+	$: next = Number($page.url.searchParams.get('skip')) || 0;
 	$: picturesByProduct = groupBy(
 		data.pictures.filter(
 			(picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId
@@ -28,12 +28,12 @@
 	<div class=" touchScreen-ticket-menu"></div>
 	<div class="col-span-2">
 		<div class="grid grid-cols-2 gap-4 text-3xl text-center">
-			<a class="col-span-2 touchScreen-category-cta" href="?filter=pos-favorite">FAVORIS</a>
+			<a class="col-span-2 touchScreen-category-cta" href="?filter=pos-favorite&skip=0">FAVORIS</a>
 			<div class="touchScreen-category-cta">E-pub(salon FR)</div>
 			<div class="touchScreen-category-cta">Livre audio CD(salon FR)</div>
 			<div class="touchScreen-category-cta">Livre physique(salon FR)</div>
 			<div class="touchScreen-category-cta">autres aricles(salon FR)</div>
-			<a class="col-span-2 touchScreen-category-cta" href="?filter=all">TOUS LES ARTICLES</a>
+			<a class="col-span-2 touchScreen-category-cta" href="?filter=all&skip=0">TOUS LES ARTICLES</a>
 
 			<div class="col-span-2 grid grid-cols-2 gap-4">
 				{#each displayedProducts as product}
