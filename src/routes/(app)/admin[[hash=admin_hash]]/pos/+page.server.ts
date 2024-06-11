@@ -2,7 +2,7 @@ import { adminPrefix } from '$lib/server/admin';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Tag } from '$lib/types/Tag';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const load = async ({}) => {
@@ -21,9 +21,8 @@ export const actions = {
 		const formData = await request.formData();
 		const posTouchTagString = formData.get('posTouchTag');
 		if (!posTouchTagString) {
-			throw new Error('No posTouchTag provided');
+			throw error(400,'No posTouchTag provided');
 		}
-
 		const posTouchTag = JSON.parse(String(posTouchTagString));
 		const result = z
 			.object({
