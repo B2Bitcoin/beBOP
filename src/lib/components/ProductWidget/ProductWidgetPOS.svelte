@@ -21,7 +21,7 @@
 			widget
 		};
 	}
-	let hasStock = true;
+	let hasStock = !!(product.stock?.available ?? Infinity);
 	let errorMessage = '';
 </script>
 
