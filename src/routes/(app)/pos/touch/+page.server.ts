@@ -1,5 +1,7 @@
 import { collections } from '$lib/server/database';
+import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Product } from '$lib/types/Product';
+import type { Tag } from '$lib/types/Tag';
 
 export const load = async ({ locals }) => {
 	const query =
@@ -23,12 +25,16 @@ export const load = async ({ locals }) => {
 		})
 		.sort({ createdAt: 1 })
 		.toArray();
-
+	const tags = await collections.tags
+		.find({ _id: { $in: [...runtimeConfig.posTouchTag] } })
+		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
+		.toArray();
 	return {
 		products,
 		pictures: await collections.pictures
 			.find({ productId: { $in: [...products.map((product) => product._id)] } })
 			.sort({ createdAt: 1 })
-			.toArray()
+			.toArray(),
+		tags
 	};
 };
