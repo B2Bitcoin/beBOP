@@ -22,7 +22,6 @@
 		};
 	}
 	let hasStock = !!(product.stock?.available ?? Infinity);
-	let errorMessage = '';
 </script>
 
 <form
@@ -34,8 +33,7 @@
 		return async ({ result }) => {
 			loading = false;
 			if (result.type === 'error') {
-				errorMessage = result.error.message;
-				alert(errorMessage);
+				alert(result.error.message);
 				return;
 			}
 

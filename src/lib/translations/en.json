@@ -596,9 +596,6 @@
 		},
 		"sessionLink": "POS session",
 		"sessionTouchLink": "POS session - touch screen",
-		"touch": {
-			"addProduct": "Add product:"
-		},
 		"vatFree": "This is a VAT-free order (<0>conditions</0>)",
 		"vatFreeReason": "VAT-free reason"
 	},
