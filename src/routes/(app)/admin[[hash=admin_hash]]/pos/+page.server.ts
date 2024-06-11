@@ -21,7 +21,7 @@ export const actions = {
 		const formData = await request.formData();
 		const posTouchTagString = formData.get('posTouchTag');
 		if (!posTouchTagString) {
-			throw error(400,'No posTouchTag provided');
+			throw error(400, 'No posTouchTag provided');
 		}
 		const posTouchTag = JSON.parse(String(posTouchTagString));
 		const result = z
