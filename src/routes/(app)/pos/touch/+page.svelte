@@ -3,10 +3,11 @@
 	import type { SetRequired } from 'type-fest';
 	import type { Picture } from '$lib/types/Picture';
 	import ProductWidgetPOS from '$lib/components/ProductWidget/ProductWidgetPOS.svelte';
-	import { isPreorder } from '$lib/types/Product';
+	import { POS_PRODUCT_PAGINATION, isPreorder } from '$lib/types/Product';
 	import { page } from '$app/stores';
 
 	export let data;
+	$: next = Number($page.url.searchParams.get('skip')) || 0;
 	$: picturesByProduct = groupBy(
 		data.pictures.filter(
 			(picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId
@@ -18,24 +19,46 @@
 		filter === 'all'
 			? data.products
 			: data.products.filter((product) => product.tagIds?.includes(filter));
+	$: displayedProducts = productFiltered.slice(next, next + POS_PRODUCT_PAGINATION);
+	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
+	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
 </script>
 
 <div class="grid grid-cols-3 gap-4">
 	<div class=" touchScreen-ticket-menu"></div>
 	<div class="col-span-2">
 		<div class="grid grid-cols-2 gap-4 text-3xl text-center">
-			<a class="col-span-2 touchScreen-category-cta" href="?filter=pos-favorite">FAVORIS</a>
+			<a class="col-span-2 touchScreen-category-cta" href="?filter=pos-favorite&skip=0">FAVORIS</a>
 			{#each data.tags as favoriteTag}
-				<a class="touchScreen-category-cta" href="?filter={favoriteTag._id}">{favoriteTag.name}</a>
+				<a class="touchScreen-category-cta" href="?filter={favoriteTag._id}&skip=0"
+					>{favoriteTag.name}</a
+				>
 			{/each}
-			<a class="col-span-2 touchScreen-category-cta" href="?filter=all">TOUS LES ARTICLES</a>
+			<a class="col-span-2 touchScreen-category-cta" href="?filter=all&skip=0">TOUS LES ARTICLES</a>
 
 			<div class="col-span-2 grid grid-cols-2 gap-4">
-				{#each productFiltered as product}
+				{#each displayedProducts as product}
 					{#if !isPreorder(product.availableDate, product.preorder)}
 						<ProductWidgetPOS {product} pictures={picturesByProduct[product._id]} />
 					{/if}
 				{/each}
+				<div class="col-span-2 grid-cols-1 flex gap-2 justify-center">
+					{#if next > 0}
+						<a
+							class="btn touchScreen-product-secondaryCTA text-3xl"
+							on:click={() => (next = Math.max(0, next - POS_PRODUCT_PAGINATION))}
+							href={`?filter=${filter}&skip=${Math.max(0, next - POS_PRODUCT_PAGINATION)}`}>&lt;</a
+						>
+					{/if}
+					PAGE {currentPage}/{totalPages}
+					{#if next + POS_PRODUCT_PAGINATION < productFiltered.length}
+						<a
+							class="btn touchScreen-product-secondaryCTA text-3xl"
+							on:click={() => (next += POS_PRODUCT_PAGINATION)}
+							href={`?filter=${filter}&skip=${next + POS_PRODUCT_PAGINATION}`}>&gt;</a
+						>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
