@@ -3,9 +3,12 @@
 	import type { Picture } from '$lib/types/Picture';
 	import type { Product } from '$lib/types/Product';
 	import PictureComponent from '../Picture.svelte';
-	import { applyAction, enhance } from '$app/forms';
+	import { enhance } from '$app/forms';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
+	import PopupPos from '../PopupPOS.svelte';
+	import IconCross from '../icons/IconCross.svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	export let pictures: Picture[] | [];
 	export let product: Pick<Product, 'name' | '_id' | 'price' | 'stock'>;
@@ -21,21 +24,22 @@
 			widget
 		};
 	}
-	let hasStock = !!(product.stock?.available ?? Infinity);
-	let formElement: HTMLFormElement;
+	let hasStock = true; //!!(product.stock?.available ?? Infinity)
+	let errorMessage = '';
+	const dispatch = createEventDispatcher<{ dismiss: void }>();
 </script>
 
 <form
 	method="post"
 	class="contents"
 	action="/product/{product._id}?/addToCart"
-	bind:this={formElement}
 	use:enhance={() => {
 		loading = true;
 		return async ({ result }) => {
 			loading = false;
 			if (result.type === 'error') {
-				return await applyAction(result);
+				errorMessage = result.error.message;
+				return;
 			}
 
 			await invalidate(UrlDependency.Cart);
@@ -56,6 +60,17 @@
 		</div>
 	</button>
 </form>
+{#if errorMessage}
+	<PopupPos>
+		<div class="{className} cartPreview flex flex-wrap p-2 gap-4 relative">
+			<p>{errorMessage}</p>
+
+			<button class="absolute top-2 right-2" type="button" on:click={() => dispatch('dismiss')}>
+				<IconCross />
+			</button>
+		</div>
+	</PopupPos>
+{/if}
 
 <style>
 	button.disabled {
