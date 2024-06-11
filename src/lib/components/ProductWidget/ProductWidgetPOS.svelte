@@ -3,7 +3,7 @@
 	import type { Picture } from '$lib/types/Picture';
 	import type { Product } from '$lib/types/Product';
 	import PictureComponent from '../Picture.svelte';
-	import { applyAction, enhance } from '$app/forms';
+	import { enhance } from '$app/forms';
 	import { invalidate } from '$app/navigation';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 
@@ -22,26 +22,23 @@
 		};
 	}
 	let hasStock = !!(product.stock?.available ?? Infinity);
-	let formElement: HTMLFormElement;
 </script>
 
 <form
 	method="post"
 	class="contents"
 	action="/product/{product._id}?/addToCart"
-	bind:this={formElement}
 	use:enhance={() => {
 		loading = true;
 		return async ({ result }) => {
 			loading = false;
 			if (result.type === 'error') {
-				return await applyAction(result);
+				alert(result.error.message);
+				return;
 			}
 
 			await invalidate(UrlDependency.Cart);
 			addToCart();
-			// Not for the widget, see https://github.com/B2Bitcoin/B2BitcoinBootik/issues/243
-			//document.body.scrollIntoView();
 		};
 	}}
 >
