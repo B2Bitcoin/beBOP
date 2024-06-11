@@ -12,6 +12,8 @@ import type { ConfirmationThresholds } from '$lib/types/ConfirmationThresholds';
 import { POS_ROLE_ID, SUPER_ADMIN_ROLE_ID, TICKET_CHECKER_ROLE_ID } from '$lib/types/User';
 import { building } from '$app/environment';
 import type { SellerIdentity } from '$lib/types/SellerIdentity';
+import type { Tag } from '$lib/types/Tag';
+
 import { isUniqueConstraintError } from './utils/isUniqueConstraintError';
 import { typedKeys } from '$lib/utils/typedKeys';
 import { addTranslations, type LocalesDictionary } from '$lib/i18n';
@@ -141,6 +143,7 @@ const baseConfig = {
 	bity: {
 		clientId: ''
 	},
+	posTouchTag: [] as Tag['_id'][],
 	hideCmsZonesOnMobile: false,
 	copyOrderEmailsToAdmin: true,
 	usersDarkDefaultTheme: false,
