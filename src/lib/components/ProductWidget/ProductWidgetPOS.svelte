@@ -9,6 +9,7 @@
 	import PopupPos from '../PopupPOS.svelte';
 	import IconCross from '../icons/IconCross.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import { useI18n } from '$lib/i18n';
 
 	export let pictures: Picture[] | [];
 	export let product: Pick<Product, 'name' | '_id' | 'price' | 'stock'>;
@@ -27,6 +28,12 @@
 	let hasStock = true; //!!(product.stock?.available ?? Infinity)
 	let errorMessage = '';
 	const dispatch = createEventDispatcher<{ dismiss: void }>();
+
+	function dismissPopup() {
+		errorMessage = ''; // Reset the error message
+		dispatch('dismiss');
+	}
+	const { t } = useI18n();
 </script>
 
 <form
@@ -44,8 +51,6 @@
 
 			await invalidate(UrlDependency.Cart);
 			addToCart();
-			// Not for the widget, see https://github.com/B2Bitcoin/B2BitcoinBootik/issues/243
-			//document.body.scrollIntoView();
 		};
 	}}
 >
@@ -62,10 +67,19 @@
 </form>
 {#if errorMessage}
 	<PopupPos>
-		<div class="{className} cartPreview flex flex-wrap p-2 gap-4 relative">
-			<p>{errorMessage}</p>
-
-			<button class="absolute top-2 right-2" type="button" on:click={() => dispatch('dismiss')}>
+		<div class="flex flex-wrap p-4 gap-4 relative w-[20em] h-[10em]">
+			<div class="flex flex-col grow gap-4">
+				<div class="flex flex-col items-start justify-start">
+					<h3 class="text-3xl">{t('pos.touch.addProduct')}</h3>
+				</div>
+				<div class="flex flex-col">
+					<h3 class="text-3xl">{product.name}</h3>
+				</div>
+				<div class="flex flex-col items-start justify-start bottom-0">
+					<span class="text-red-500">{errorMessage}</span>
+				</div>
+			</div>
+			<button class="absolute top-2 right-2" type="button" on:click={dismissPopup}>
 				<IconCross />
 			</button>
 		</div>
