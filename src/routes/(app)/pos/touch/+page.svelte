@@ -29,10 +29,11 @@
 	<div class="col-span-2">
 		<div class="grid grid-cols-2 gap-4 text-3xl text-center">
 			<a class="col-span-2 touchScreen-category-cta" href="?filter=pos-favorite&skip=0">FAVORIS</a>
-			<div class="touchScreen-category-cta">E-pub(salon FR)</div>
-			<div class="touchScreen-category-cta">Livre audio CD(salon FR)</div>
-			<div class="touchScreen-category-cta">Livre physique(salon FR)</div>
-			<div class="touchScreen-category-cta">autres aricles(salon FR)</div>
+			{#each data.tags as favoriteTag}
+				<a class="touchScreen-category-cta" href="?filter={favoriteTag._id}&skip=0"
+					>{favoriteTag.name}</a
+				>
+			{/each}
 			<a class="col-span-2 touchScreen-category-cta" href="?filter=all&skip=0">TOUS LES ARTICLES</a>
 
 			<div class="col-span-2 grid grid-cols-2 gap-4">
