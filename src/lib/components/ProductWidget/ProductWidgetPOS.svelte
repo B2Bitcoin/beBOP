@@ -30,7 +30,7 @@
 	const dispatch = createEventDispatcher<{ dismiss: void }>();
 
 	function dismissPopup() {
-		errorMessage = ''; // Reset the error message
+		errorMessage = '';
 		dispatch('dismiss');
 	}
 	const { t } = useI18n();
