@@ -19,14 +19,18 @@ export const load = async ({}) => {
 export const actions = {
 	default: async function ({ request }) {
 		const formData = await request.formData();
+		const posTouchTagString = formData.get('posTouchTag');
+		if (!posTouchTagString) {
+			throw new Error('No posTouchTag provided');
+		}
+
+		const posTouchTag = JSON.parse(String(posTouchTagString));
 		const result = z
 			.object({
 				posTouchTag: z.string().array()
 			})
 			.parse({
-				posTouchTag: JSON.parse(String(formData.get('posTouchTag'))).map(
-					(x: { value: string }) => x.value
-				)
+				posTouchTag
 			});
 		await collections.runtimeConfig.updateOne(
 			{
