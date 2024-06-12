@@ -102,7 +102,7 @@ export async function load({ parent, locals }) {
 }
 
 export const actions = {
-	default: async ({ request, locals }) => {
+	default: async ({ request, locals, url }) => {
 		const cart = await getCartFromDb({ user: userIdentifier(locals) });
 
 		if (!cart?.items.length) {
@@ -450,7 +450,7 @@ export const actions = {
 				}
 			}
 		);
-
-		throw redirect(303, `/order/${orderId}`);
+        const displayHeadless =  url.searchParams.get('display') === 'headless'? '?display=headless' : ''; 
+		throw redirect(303, `/order/${orderId}${displayHeadless}`);
 	}
 };
