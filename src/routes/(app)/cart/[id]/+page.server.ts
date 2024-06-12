@@ -140,20 +140,19 @@ export const actions = {
 					.int()
 					.min(1)
 					.max(max - 1),
-				note: z
-					.string(),
+				note: z.string()
 			})
 			.parse({
 				quantity: formData.get('quantity'),
-				note: formData.get('note'),
+				note: formData.get('note')
 			});
 			
-		await addToCartInDb(product, quantity , {
+		await addToCartInDb(product, quantity, {
 			user: userIdentifier(locals),
 			totalQuantity: true,
-			note:note
+			note: note
 		});
 
 		throw redirect(303, request.headers.get('referer') || '/cart');
-	},
+	}
 };
