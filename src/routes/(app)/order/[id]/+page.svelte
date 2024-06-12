@@ -89,6 +89,15 @@
 	<div
 		class="w-full rounded-xl body-mainPlan border-gray-300 lg:p-6 p-2 lg:grid lg:grid-cols-3 sm:flex-wrap gap-2 flex-col-reverse"
 	>
+		<div
+			class="flex justify-start {$page.url.searchParams.get('display') === 'headless'
+				? ''
+				: 'hidden'}"
+		>
+			<a href="/pos/touch" class="body-hyperlink hover:underline"
+				>&lt;&lt;{t('checkout.backToCart')}</a
+			>
+		</div>
 		<div class="col-span-2 flex flex-col gap-2">
 			<h1 class="text-3xl body-title">{t('order.singleTitle', { number: data.order.number })}</h1>
 			{#if data.order.notifications?.paymentStatus?.npub}

@@ -218,7 +218,9 @@
 	</div>
 </div>
 <div class="grid grid-cols-2 gap-4 mt-2">
-	<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
+	<a class="touchScreen-action-cta text-3xl p-4 text-center" href="/checkout?display=headless"
+		>PAYER</a
+	>
 	<div class="grid grid-cols-2 gap-4">
 		<button
 			class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center"
