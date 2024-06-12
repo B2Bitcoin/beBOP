@@ -450,7 +450,7 @@ export const actions = {
 				}
 			}
 		);
-        const displayHeadless =  
+		const displayHeadless =
 				url.searchParams.get('display') === 'headless' ? '?display=headless' : ''; 
 		throw redirect(303, `/order/${orderId}${displayHeadless}`);
 	}
