@@ -45,6 +45,57 @@
 	$: displayedProducts = productFiltered.slice(next, next + POS_PRODUCT_PAGINATION);
 	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
+
+	async function removeLastItem() {
+		if (items.length > 0) {
+			const lastItem = items[items.length - 1];
+			const url = `/cart/${lastItem.product._id}/?/remove`;
+			const formData = new FormData();
+			if (confirm('Do you want to delete the last cart line ?')) {
+				try {
+					const response = await fetch(url, {
+						method: 'POST',
+						body: formData
+					});
+					if (response.ok) {
+						items = items.slice(0, -1);
+					} else {
+						console.error('Failed to remove item', response.statusText);
+					}
+				} catch (error) {
+					console.error('Error removing item', error);
+				}
+			}
+		}
+	}
+	async function removeAllItems() {
+		if (items.length > 0) {
+			if (confirm('Do you want to delete all items from the cart?')) {
+				try {
+					const formData = new FormData();
+
+					const responses = await Promise.all(
+						items.map((item) => {
+							const url = `/cart/${item.product._id}/?/remove`;
+							return fetch(url, {
+								method: 'POST',
+								body: formData
+							});
+						})
+					);
+
+					const allSuccessful = responses.every((response) => response.ok);
+					if (allSuccessful) {
+						items = [];
+					} else {
+						console.error('Failed to remove all items');
+					}
+				} catch (error) {
+					console.error('Error removing all items', error);
+				}
+			}
+		}
+	}
 </script>
 
 <div class="grid grid-cols-3 gap-4">
@@ -147,17 +198,35 @@
 </div>
 
 <div class="grid grid-cols-3 gap-4 mt-2">
-	<div class="touchScreen-ticket-menu text-3xl p-4 text-center">TICKETS</div>
+	<button
+		class="touchScreen-ticket-menu text-3xl p-4 text-center"
+		on:click={() => alert('Not developped yet')}>TICKETS</button
+	>
 	<div class="col-span-2 grid grid-cols-3 gap-4">
-		<div class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4">SAUVER</div>
-		<div class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4">POOL</div>
-		<div class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4">OUVRIR TIROIR</div>
+		<button
+			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+			on:click={() => alert('Not developped yet')}>SAUVER</button
+		>
+		<button
+			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+			on:click={() => alert('Not developped yet')}>POOL</button
+		>
+		<button
+			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+			on:click={() => alert('Not developped yet')}>OUVRIR TIROIR</button
+		>
 	</div>
 </div>
 <div class="grid grid-cols-2 gap-4 mt-2">
 	<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
 	<div class="grid grid-cols-2 gap-4">
-		<div class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center">❎</div>
-		<div class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center">🗑️</div>
+		<button
+			class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center"
+			on:click={() => removeLastItem()}>❎</button
+		>
+		<button
+			class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center"
+			on:click={() => removeAllItems()}>🗑️</button
+		>
 	</div>
 </div>
