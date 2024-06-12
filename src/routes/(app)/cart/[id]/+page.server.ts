@@ -113,5 +113,47 @@ export const actions = {
 		});
 
 		throw redirect(303, request.headers.get('referer') || '/cart');
-	}
+	},
+	addNote: async ({ locals, params, request }) => {
+		const product = await collections.products.findOne({ _id: params.id });
+		if (!product) {
+			await collections.carts.updateOne(userQuery(userIdentifier(locals)), {
+				$pull: { items: { productId: params.id } },
+				$set: { updatedAt: new Date() }
+			});
+			throw error(404, 'This product does not exist');
+		}
+		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
+		if (!product) {
+			await collections.carts.updateOne(userQuery(userIdentifier(locals)), {
+				$pull: { items: { productId: params.id } },
+				$set: { updatedAt: new Date() }
+			});
+			throw error(404, 'This product does not exist');
+		}
+		const formData = await request.formData();
+
+		const { quantity, note } = z
+			.object({
+				quantity: z
+					.number({ coerce: true })
+					.int()
+					.min(1)
+					.max(max - 1),
+				note: z
+					.string(),
+			})
+			.parse({
+				quantity: formData.get('quantity'),
+				note: formData.get('note'),
+			});
+			
+		await addToCartInDb(product, quantity , {
+			user: userIdentifier(locals),
+			totalQuantity: true,
+			note:note
+		});
+
+		throw redirect(303, request.headers.get('referer') || '/cart');
+	},
 };

@@ -10,6 +10,9 @@
 	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
+	import { enhance } from '$app/forms';
+	import { invalidate } from '$app/navigation';
+	import { UrlDependency } from '$lib/types/UrlDependency';
 
 	export let data;
 	$: next = Number($page.url.searchParams.get('skip')) || 0;
@@ -45,15 +48,52 @@
 	$: displayedProducts = productFiltered.slice(next, next + POS_PRODUCT_PAGINATION);
 	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
+
+	function addNoteToItem(index: number) {
+		const notePrompt = prompt('enter a comment:');
+		if (notePrompt) {
+			items = items.map((item, i) =>
+				i === index ? { ...item, note: { note: notePrompt, internal: true } } : item
+			);
+		}
+	}
+	let formNotes = [];
 </script>
 
 <div class="grid grid-cols-3 gap-4">
-	<div class=" touchScreen-ticket-menu p-3">
+	<div class="touchScreen-ticket-menu p-3">
 		{#if items.length}
 			<h3 class="text-3xl">TICKET n° tmp</h3>
 			{#each items as item, i}
 				<div class="flex flex-col py-3 gap-4">
-					<h3 class="text-2xl">{item.quantity} X {item.product.name.toUpperCase()}</h3>
+					<form
+						method="post"
+						bind:this={formNotes[i]}
+						action="/cart/{item.product._id}/?/addNote"
+						on:submit|preventDefault={() => {
+							const formData = new FormData(formNotes[i]);
+							formData.set('note', item.note?.note ?? '');
+							formData.set('quantity', item.quantity.toString());
+							formNotes[i].submit();
+						}}
+						use:enhance={() => {
+							return async ({ result }) => {
+								if (result.type === 'error') {
+									alert(result.error.message);
+									return;
+								}
+
+								await invalidate(UrlDependency.Cart);
+							};
+						}}
+					>
+						<input type="hidden" name="note" value={item.note?.note || ''} />
+						<input type="hidden" name="quantity" value={item.quantity} />
+						<button type="submit" class="text-2xl" on:click={() => addNoteToItem(i)}>
+							{item.quantity} X {item.product.name.toUpperCase()}
+						</button><br />
+						{item.note?.note ? '+' + item.note?.note : ''}
+					</form>
 					<div class="flex text-2xl flex-row items-end justify-end">
 						{#if item.quantity > 1}{item.quantity}X
 						{/if}
