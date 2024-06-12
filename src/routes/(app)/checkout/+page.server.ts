@@ -451,7 +451,7 @@ export const actions = {
 			}
 		);
 		const displayHeadless =
-				url.searchParams.get('display') === 'headless' ? '?display=headless' : ''; 
+		url.searchParams.get('display') === 'headless' ? '?display=headless' : ''; 
 		throw redirect(303, `/order/${orderId}${displayHeadless}`);
 	}
 };
