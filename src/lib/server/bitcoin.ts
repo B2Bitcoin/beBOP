@@ -15,7 +15,8 @@ import type { ObjectId } from 'mongodb';
 export const isBitcoinConfigured =
 	!!BITCOIN_RPC_URL && !!BITCOIN_RPC_PASSWORD && !!BITCOIN_RPC_USER;
 
-export const isBIP84Configured = isBitcoinConfigured && BIP84_XPUB.startsWith('xpub');
+export const isBIP84Configured =
+	isBitcoinConfigured && (BIP84_XPUB.startsWith('xpub') || BIP84_XPUB.startsWith('tpub'));
 
 const dispatcher =
 	isBitcoinConfigured &&
