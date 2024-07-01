@@ -24,7 +24,7 @@ export interface Cart extends Timestamps {
 		customPrice?: { amount: number; currency: Currency };
 		reservedUntil?: Date;
 		depositPercentage?: number;
-		note?: { note: string; internal: boolean }; 
+		note?: { note: string; internal: boolean };
 	}>;
 }
 
