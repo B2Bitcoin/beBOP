@@ -146,7 +146,7 @@ export const actions = {
 				quantity: formData.get('quantity'),
 				note: formData.get('note')
 			});
-			
+
 		await addToCartInDb(product, quantity, {
 			user: userIdentifier(locals),
 			totalQuantity: true,
