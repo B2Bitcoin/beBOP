@@ -1,5 +1,10 @@
 import { collections } from '$lib/server/database.js';
+import { countryFromIp } from '$lib/server/geoip.js';
 import { userIdentifier, userQuery } from '$lib/server/user.js';
+import { redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
+import { z } from 'zod';
+import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
 
 export const load = async (event) => {
 	const lastOrders = await collections.orders
@@ -27,6 +32,21 @@ export const load = async (event) => {
 					createdAt: note.createdAt
 				})) || [],
 			status: order.status
-		}))
+		})),
+		countryCode: event.locals.countryCode
 	};
+};
+
+export const actions: Actions = {
+	overwrite: async ({ request, locals }) => {
+		const formData = await request.formData();
+		const country = z.object({
+			country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+
+		}).parse({
+			country: formData.get('countryCode')
+		})
+        locals.clientIp = country.country;
+		throw redirect(303, `/pos`);
+	}
 };
