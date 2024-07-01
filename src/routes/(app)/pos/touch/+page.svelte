@@ -60,10 +60,10 @@
 					if (response.ok) {
 						items = items.slice(0, -1);
 					} else {
-						console.error('Failed to remove item', response.statusText);
+						alert('Failed to remove item ' + response.statusText);
 					}
 				} catch (error) {
-					console.error('Error removing item', error);
+					alert('Error removing item ' + error);
 				}
 			}
 		}
@@ -88,10 +88,10 @@
 					if (allSuccessful) {
 						items = [];
 					} else {
-						console.error('Failed to remove all items');
+						alert('Failed to remove all items');
 					}
 				} catch (error) {
-					console.error('Error removing all items', error);
+					alert('Error removing all items ' + error);
 				}
 			}
 		}
