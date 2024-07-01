@@ -1,10 +1,20 @@
-<script>
+<script lang="ts">
 	import OrdersList from '$lib/components/OrdersList.svelte';
 	import { useI18n } from '$lib/i18n';
 
-	const { t } = useI18n();
+	const { t, countryName, sortedCountryCodes } = useI18n();
 
 	export let data;
+	let overwriteIP = false;
+	function handleSubmit(event: Event) {
+		if (
+			!confirm(
+				"Are you sure ? This can have impact on law compliance with your sales and invoices. Do it only if you're sure about it and if the owner requested it"
+			)
+		) {
+			event.preventDefault();
+		}
+	}
 </script>
 
 <svelte:head>
@@ -16,6 +26,23 @@
 	<a href="/admin" class="body-hyperlink hover:underline" target="_blank"
 		>{t('pos.adminInterface')}</a
 	>
+	<form action="?/overwrite" method="POST" on:submit={handleSubmit}>
+		<label class="checkbox-label">
+			<input type="checkbox" class="form-checkbox" name="overwriteIP" bind:checked={overwriteIP} />
+			Overwrite IP country for this POS session with selected country
+		</label>
+		<label class="form-label col-span-3">
+			Overwrite session IP country (current value {data.countryCode})
+			<select name="countryCode" class="form-input" required bind:value={data.countryCode}>
+				{#each sortedCountryCodes() as code}
+					<option value={code}>{countryName(code)}</option>
+				{/each}
+			</select>
+		</label>
+		<button type="submit" disabled={!overwriteIP} class="btn btn-black mt-4"
+			>Overwrite IP country</button
+		>
+	</form>
 
 	<form action="/admin/logout" method="POST">
 		<button type="submit" class="btn btn-red">{t('login.cta.logout')}</button>
