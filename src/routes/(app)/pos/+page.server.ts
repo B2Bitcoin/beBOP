@@ -40,13 +40,14 @@ export const load = async (event) => {
 export const actions: Actions = {
 	overwrite: async ({ request, locals }) => {
 		const formData = await request.formData();
-		const country = z.object({
-			country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
-
-		}).parse({
-			country: formData.get('countryCode')
-		})
-        locals.clientIp = country.country;
+		const country = z.
+				object({
+					country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+				})
+				.parse({
+					country: formData.get('countryCode')
+				})
+		locals.clientIp = country.country;
 		throw redirect(303, `/pos`);
 	}
 };
