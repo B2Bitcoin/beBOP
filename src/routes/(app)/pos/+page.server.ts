@@ -1,5 +1,4 @@
 import { collections } from '$lib/server/database.js';
-import { countryFromIp } from '$lib/server/geoip.js';
 import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
