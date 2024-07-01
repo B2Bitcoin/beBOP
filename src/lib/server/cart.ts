@@ -58,7 +58,7 @@ export async function addToCartInDb(
 		totalQuantity?: boolean;
 		customPrice?: { amount: number; currency: Currency };
 		deposit?: boolean;
-		note?: string
+		note?: string;
 	}
 ) {
 	if (
@@ -160,11 +160,11 @@ export async function addToCartInDb(
 			existingItem.quantity = 1;
 		}
 		existingItem.reservedUntil = addMinutes(new Date(), runtimeConfig.reserveStockInMinutes);
-		if(params.note){
+		if (params.note) {
 			existingItem.note = {
 				note: params.note,
-				internal:true
-			}
+				internal: true
+			};
 		}
 	} else {
 		if (totalQuantityInCart() + quantity > availableAmount) {
@@ -179,7 +179,7 @@ export async function addToCartInDb(
 			...(params.note && {
 				note: {
 					note: params.note,
-					internal:true
+					internal: true
 				}
 			}),
 			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes),
