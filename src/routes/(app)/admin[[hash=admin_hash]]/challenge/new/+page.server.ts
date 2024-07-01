@@ -42,7 +42,7 @@ export const actions: Actions = {
 				),
 				goalAmount: data.get('goalAmount'),
 				mode: data.get('mode'),
-				currency: data.get('currency'),
+				currency: data.get('currency') ?? data.append('currency','BTC'),
 				beginsAt: data.get('beginsAt'),
 				endsAt: data.get('endsAt')
 			});
