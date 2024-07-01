@@ -57,7 +57,7 @@
 			);
 		}
 	}
-	let formNotes = [];
+	// let formNotes = [];
 </script>
 
 <div class="grid grid-cols-3 gap-4">
@@ -66,7 +66,7 @@
 			<h3 class="text-3xl">TICKET n° tmp</h3>
 			{#each items as item, i}
 				<div class="flex flex-col py-3 gap-4">
-					<form
+					<!-- <form
 						method="post"
 						bind:this={formNotes[i]}
 						action="/cart/{item.product._id}/?/addNote"
@@ -93,7 +93,7 @@
 							{item.quantity} X {item.product.name.toUpperCase()}
 						</button><br />
 						{item.note?.note ? '+' + item.note?.note : ''}
-					</form>
+					</form> -->
 					<div class="flex text-2xl flex-row items-end justify-end">
 						{#if item.quantity > 1}{item.quantity}X
 						{/if}
