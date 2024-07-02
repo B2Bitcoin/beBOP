@@ -71,7 +71,7 @@ export async function load({ parent, locals }) {
 	};
 }
 export const actions = {
-	removeAll: async ({ locals, params, request }) => {
+	removeAll: async ({ locals, request }) => {
 		const cart = await collections.carts.findOne({ user: userIdentifier(locals) });
 
 		if (!cart) {
