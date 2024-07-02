@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Picture } from '$lib/types/Picture';
+	import DEFAULT_PICTURE from '$lib/assets/default-product.png';
 
 	export let picture: Picture | undefined;
 	let className = '';
@@ -97,6 +98,9 @@
 	} ${style};`;
 	$: sizeHint =
 		matchedWidth !== null && !maxWidth ? matchedWidth : computedWidth ?? maxComputedWidth;
+	function handleError(event: Event) {
+		(event.target as HTMLImageElement).srcset = DEFAULT_PICTURE;
+	}
 </script>
 
 {#if picture}
@@ -111,6 +115,7 @@
 		sizes={sizeHint !== null ? `${sizeHint}px` : undefined}
 		class={className}
 		style={computedStyle}
+		on:error={handleError}
 		{...$$restProps}
 		on:keypress
 		on:click
