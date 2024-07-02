@@ -73,19 +73,13 @@
 			if (confirm('Do you want to delete all items from the cart?')) {
 				try {
 					const formData = new FormData();
+					const url = `/cart/?/removeAll`;
 
-					const responses = await Promise.all(
-						items.map((item) => {
-							const url = `/cart/${item.product._id}/?/remove`;
-							return fetch(url, {
-								method: 'POST',
-								body: formData
-							});
-						})
-					);
-
-					const allSuccessful = responses.every((response) => response.ok);
-					if (allSuccessful) {
+					const response = await fetch(url, {
+						method: 'POST',
+						body: formData
+					});
+					if (response.ok) {
 						items = [];
 					} else {
 						alert('Failed to remove all items');
