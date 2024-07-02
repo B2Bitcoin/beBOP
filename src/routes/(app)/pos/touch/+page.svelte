@@ -47,7 +47,9 @@
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
 
 	async function removeLastItem() {
-		if (items.length > 0) {
+		if (!items.length) {
+			return;
+		} else {
 			const lastItem = items[items.length - 1];
 			const url = `/cart/${lastItem.product._id}/?/remove`;
 			const formData = new FormData();
@@ -69,7 +71,9 @@
 		}
 	}
 	async function removeAllItems() {
-		if (items.length > 0) {
+		if (!items.length) {
+			return;
+		} else {
 			if (confirm('Do you want to delete all items from the cart?')) {
 				try {
 					const formData = new FormData();

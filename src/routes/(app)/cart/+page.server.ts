@@ -2,7 +2,7 @@ import { checkCartItems } from '$lib/server/cart';
 import { cmsFromContent } from '$lib/server/cms';
 import { collections, withTransaction } from '$lib/server/database';
 import { refreshAvailableStockInDb } from '$lib/server/product.js';
-import { userIdentifier } from '$lib/server/user.js';
+import { userIdentifier, userQuery } from '$lib/server/user.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ parent, locals }) {
@@ -72,8 +72,7 @@ export async function load({ parent, locals }) {
 }
 export const actions = {
 	removeAll: async ({ locals, request }) => {
-		const cart = await collections.carts.findOne({ user: userIdentifier(locals) });
-
+		const cart = await collections.carts.findOne({ ...userQuery(userIdentifier(locals)) });
 		if (!cart) {
 			throw error(404, 'Cart not found');
 		}
