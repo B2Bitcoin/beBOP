@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Picture } from '$lib/types/Picture';
-	import DEFAULT_PICTURE from '$lib/assets/default-product.png';
+	import DEFAULT_PICTURE from '$lib/assets/default-picture.svg';
 
 	export let picture: Picture | undefined;
 	let className = '';
