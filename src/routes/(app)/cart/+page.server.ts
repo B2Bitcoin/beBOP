@@ -72,7 +72,7 @@ export async function load({ parent, locals }) {
 }
 export const actions = {
 	removeAll: async ({ locals, request }) => {
-		const cart = await collections.carts.findOne({ ...userQuery(userIdentifier(locals)) });
+		const cart = await collections.carts.findOne(userQuery(userIdentifier(locals)));
 		if (!cart) {
 			throw error(404, 'Cart not found');
 		}
