@@ -10,9 +10,6 @@
 	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
-	import { enhance } from '$app/forms';
-	import { invalidate } from '$app/navigation';
-	import { UrlDependency } from '$lib/types/UrlDependency';
 
 	export let data;
 	$: next = Number($page.url.searchParams.get('skip')) || 0;
@@ -49,14 +46,14 @@
 	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
 
-	function addNoteToItem(index: number) {
-		const notePrompt = prompt('enter a comment:');
-		if (notePrompt) {
-			items = items.map((item, i) =>
-				i === index ? { ...item, note: { note: notePrompt, internal: true } } : item
-			);
-		}
-	}
+	// function addNoteToItem(index: number) {
+	// 	const notePrompt = prompt('enter a comment:');
+	// 	if (notePrompt) {
+	// 		items = items.map((item, i) =>
+	// 			i === index ? { ...item, note: { note: notePrompt, internal: true } } : item
+	// 		);
+	// 	}
+	// }
 	// let formNotes = [];
 </script>
 
