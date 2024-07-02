@@ -53,43 +53,45 @@
 		const lastItem = items[items.length - 1];
 		const url = `/cart/${lastItem.product._id}/?/remove`;
 		const formData = new FormData();
-		if (confirm('Do you want to delete the last cart line ?')) {
-			try {
-				const response = await fetch(url, {
-					method: 'POST',
-					body: formData
-				});
-				if (response.ok) {
-					items = items.slice(0, -1);
-				} else {
-					alert('Failed to remove item ' + response.statusText);
-				}
-			} catch (error) {
-				alert('Error removing item ' + error);
+		if (!confirm('Do you want to delete the last cart line ?')) {
+			return;
+		}
+		try {
+			const response = await fetch(url, {
+				method: 'POST',
+				body: formData
+			});
+			if (response.ok) {
+				items = items.slice(0, -1);
+			} else {
+				alert('Failed to remove item ' + response.statusText);
 			}
+		} catch (error) {
+			alert('Error removing item ' + error);
 		}
 	}
 	async function removeAllItems() {
 		if (!items.length) {
 			return;
 		}
-		if (confirm('Do you want to delete all items from the cart?')) {
-			try {
-				const formData = new FormData();
-				const url = `/cart/?/removeAll`;
+		if (!confirm('Do you want to delete all items from the cart?')) {
+			return;
+		}
+		try {
+			const formData = new FormData();
+			const url = `/cart/?/removeAll`;
 
-				const response = await fetch(url, {
-					method: 'POST',
-					body: formData
-				});
-				if (response.ok) {
-					items = [];
-				} else {
-					alert('Failed to remove all items');
-				}
-			} catch (error) {
-				alert('Error removing all items ' + error);
+			const response = await fetch(url, {
+				method: 'POST',
+				body: formData
+			});
+			if (response.ok) {
+				items = [];
+			} else {
+				alert('Failed to remove all items');
 			}
+		} catch (error) {
+			alert('Error removing all items ' + error);
 		}
 	}
 </script>
