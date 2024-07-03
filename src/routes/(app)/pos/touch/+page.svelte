@@ -48,7 +48,6 @@
 	$: displayedProducts = productFiltered.slice(next, next + POS_PRODUCT_PAGINATION);
 	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
-	let loading = false;
 	$: lastItemId = items.length > 0 ? items[items.length - 1]?.product?._id : null;
 	let warningMessage = '';
 </script>
@@ -181,9 +180,7 @@
 			if (!confirm(warningMessage)) {
 				return;
 			}
-			loading = true;
 			return async ({ result }) => {
-				loading = false;
 				if (result.type === 'error') {
 					alert(result.error?.message);
 					return await applyAction(result);
