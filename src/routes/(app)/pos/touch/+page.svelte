@@ -10,6 +10,9 @@
 	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
+	import { invalidate } from '$app/navigation';
+	import { applyAction, enhance } from '$app/forms';
+	import { UrlDependency } from '$lib/types/UrlDependency.js';
 
 	export let data;
 	$: next = Number($page.url.searchParams.get('skip')) || 0;
@@ -45,55 +48,9 @@
 	$: displayedProducts = productFiltered.slice(next, next + POS_PRODUCT_PAGINATION);
 	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
-
-	async function removeLastItem() {
-		if (!items.length) {
-			return;
-		}
-		const lastItem = items[items.length - 1];
-		const url = `/cart/${lastItem.product._id}/?/remove`;
-		const formData = new FormData();
-		if (!confirm('Do you want to delete the last cart line ?')) {
-			return;
-		}
-		try {
-			const response = await fetch(url, {
-				method: 'POST',
-				body: formData
-			});
-			if (response.ok) {
-				items = items.slice(0, -1);
-			} else {
-				alert('Failed to remove item ' + response.statusText);
-			}
-		} catch (error) {
-			alert('Error removing item ' + error);
-		}
-	}
-	async function removeAllItems() {
-		if (!items.length) {
-			return;
-		}
-		if (!confirm('Do you want to delete all items from the cart?')) {
-			return;
-		}
-		try {
-			const formData = new FormData();
-			const url = `/cart/?/removeAll`;
-
-			const response = await fetch(url, {
-				method: 'POST',
-				body: formData
-			});
-			if (response.ok) {
-				items = [];
-			} else {
-				alert('Failed to remove all items');
-			}
-		} catch (error) {
-			alert('Error removing all items ' + error);
-		}
-	}
+	let loading = false;
+	$: lastItemId = items.length > 0 ? items[items.length - 1]?.product?._id : null;
+	let warningMessage = '';
 </script>
 
 <div class="grid grid-cols-3 gap-4">
@@ -217,14 +174,35 @@
 </div>
 <div class="grid grid-cols-2 gap-4 mt-2">
 	<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
-	<div class="grid grid-cols-2 gap-4">
+	<form
+		method="post"
+		class="grid grid-cols-2 gap-4"
+		use:enhance={() => {
+			if (!confirm(warningMessage)) {
+				return;
+			}
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'error') {
+					alert(result.error?.message);
+					return await applyAction(result);
+				}
+				await invalidate(UrlDependency.Cart);
+			};
+		}}
+	>
 		<button
 			class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center"
-			on:click={() => removeLastItem()}>❎</button
+			disabled={!items.length}
+			formaction="/cart/{lastItemId}/?/remove"
+			on:click={() => (warningMessage = 'Do you want to delete the last cart line ?')}>❎</button
 		>
 		<button
 			class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center"
-			on:click={() => removeAllItems()}>🗑️</button
+			disabled={!items.length}
+			formaction="/cart/?/removeAll"
+			on:click={() => (warningMessage = 'Do you want to delete all cart line ?')}>🗑️</button
 		>
-	</div>
+	</form>
 </div>
