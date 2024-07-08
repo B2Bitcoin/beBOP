@@ -385,7 +385,7 @@
 								<label class="checkbox-label">
 									<input type="radio" value="partial" name="deposit" checked bind:group={deposit} />
 									{t('product.deposit.payPercentage', {
-										percentage: (data.product.deposit.percentage / 100).toLocaleString($locale, {
+										percentage: (data.product.deposit.percentage / 100).toLocaleString('es-sv', {
 											style: 'percent'
 										})
 									})}: <PriceTag
