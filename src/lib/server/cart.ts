@@ -176,12 +176,6 @@ export async function addToCartInDb(
 			...(params.customPrice && {
 				customPrice: params.customPrice
 			}),
-			...(params.note && {
-				note: {
-					note: params.note,
-					internal: true
-				}
-			}),
 			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes),
 			...(depositPercentage && { depositPercentage })
 		});

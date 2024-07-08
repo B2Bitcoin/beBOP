@@ -10,6 +10,9 @@
 	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
+	import { invalidate } from '$app/navigation';
+	import { UrlDependency } from '$lib/types/UrlDependency.js';
+	import { enhance } from '$app/forms';
 
 	export let data;
 	$: next = Number($page.url.searchParams.get('skip')) || 0;
@@ -46,15 +49,15 @@
 	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
 
-	// function addNoteToItem(index: number) {
-	// 	const notePrompt = prompt('enter a comment:');
-	// 	if (notePrompt) {
-	// 		items = items.map((item, i) =>
-	// 			i === index ? { ...item, note: { note: notePrompt, internal: true } } : item
-	// 		);
-	// 	}
-	// }
-	// let formNotes = [];
+	function addNoteToItem(index: number) {
+		const notePrompt = prompt('enter a comment:');
+		if (notePrompt) {
+			items = items.map((item, i) =>
+				i === index ? { ...item, note: { note: notePrompt, internal: true } } : item
+			);
+		}
+	}
+	let formNotes = [];
 </script>
 
 <div class="grid grid-cols-3 gap-4">
@@ -63,23 +66,16 @@
 			<h3 class="text-3xl">TICKET n° tmp</h3>
 			{#each items as item, i}
 				<div class="flex flex-col py-3 gap-4">
-					<!-- <form
+					<form
 						method="post"
 						bind:this={formNotes[i]}
 						action="/cart/{item.product._id}/?/addNote"
-						on:submit|preventDefault={() => {
-							const formData = new FormData(formNotes[i]);
-							formData.set('note', item.note?.note ?? '');
-							formData.set('quantity', item.quantity.toString());
-							formNotes[i].submit();
-						}}
 						use:enhance={() => {
 							return async ({ result }) => {
 								if (result.type === 'error') {
 									alert(result.error.message);
 									return;
 								}
-
 								await invalidate(UrlDependency.Cart);
 							};
 						}}
@@ -90,7 +86,7 @@
 							{item.quantity} X {item.product.name.toUpperCase()}
 						</button><br />
 						{item.note?.note ? '+' + item.note?.note : ''}
-					</form> -->
+					</form>
 					<div class="flex text-2xl flex-row items-end justify-end">
 						{#if item.quantity > 1}{item.quantity}X
 						{/if}

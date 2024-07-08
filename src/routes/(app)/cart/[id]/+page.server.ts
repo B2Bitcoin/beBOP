@@ -123,7 +123,6 @@ export const actions = {
 			});
 			throw error(404, 'This product does not exist');
 		}
-		const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
 		if (!product) {
 			await collections.carts.updateOne(userQuery(userIdentifier(locals)), {
 				$pull: { items: { productId: params.id } },
@@ -132,18 +131,12 @@ export const actions = {
 			throw error(404, 'This product does not exist');
 		}
 		const formData = await request.formData();
-
-		const { quantity, note } = z
+		const quantity = 1;
+		const { note } = z
 			.object({
-				quantity: z
-					.number({ coerce: true })
-					.int()
-					.min(1)
-					.max(max - 1),
 				note: z.string()
 			})
 			.parse({
-				quantity: formData.get('quantity'),
 				note: formData.get('note')
 			});
 
