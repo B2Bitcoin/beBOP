@@ -123,13 +123,6 @@ export const actions = {
 			});
 			throw error(404, 'This product does not exist');
 		}
-		if (!product) {
-			await collections.carts.updateOne(userQuery(userIdentifier(locals)), {
-				$pull: { items: { productId: params.id } },
-				$set: { updatedAt: new Date() }
-			});
-			throw error(404, 'This product does not exist');
-		}
 		const formData = await request.formData();
 		const quantity = 1;
 		const { note } = z

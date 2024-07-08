@@ -52,9 +52,8 @@
 	function addNoteToItem(index: number) {
 		const notePrompt = prompt('enter a comment:');
 		if (notePrompt) {
-			items = items.map((item, i) =>
-				i === index ? { ...item, note: { note: notePrompt, internal: true } } : item
-			);
+			items[index].note = { note: notePrompt, internal: true };
+			items = [...items];
 		}
 	}
 	let formNotes = [];
@@ -81,7 +80,6 @@
 						}}
 					>
 						<input type="hidden" name="note" value={item.note?.note || ''} />
-						<input type="hidden" name="quantity" value={item.quantity} />
 						<button type="submit" class="text-2xl" on:click={() => addNoteToItem(i)}>
 							{item.quantity} X {item.product.name.toUpperCase()}
 						</button><br />
