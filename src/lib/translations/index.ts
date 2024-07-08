@@ -13,3 +13,8 @@ export const enhancedLanguages = merge({}, languages);
 export const locales = typedKeys(languages);
 
 export type LanguageKey = keyof typeof languages;
+
+export const languageNames: Record<LanguageKey, string> = {
+	en: 'English',
+	fr: 'Français'
+};

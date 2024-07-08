@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { LanguageKey } from '$lib/translations/index.js';
+	import { languageNames, locales, type LanguageKey } from '$lib/translations/index.js';
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
 	import { MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 
@@ -13,8 +13,9 @@
 		Select Language
 
 		<select bind:value={language} name="language" class="form-input">
-			<option value="en">English</option>
-			<option value="fr">French</option>
+			{#each locales as locale}
+				<option value={locale}>{languageNames[locale]}</option>
+			{/each}
 		</select>
 	</label>
 
