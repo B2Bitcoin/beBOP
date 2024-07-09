@@ -165,6 +165,16 @@
 		/>
 		Limit product line per cart (for law purpose and small business )
 	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="defaultOnLocation"
+			class="form-checkbox"
+			checked={data.defaultOnLocation}
+		/>
+		Default enable "this is a fully-paid on-location physical order"
+	</label>
+
 	{#if hasCartLimitProductLine}
 		<label class="form-label">
 			Set maximum product line per cart (minimum 1)

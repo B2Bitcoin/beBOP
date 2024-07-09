@@ -94,7 +94,7 @@ const baseConfig = {
 	collectIPOnDeliverylessOrders: false,
 	isBillingAddressMandatory: false,
 	disableLanguageSelector: false,
-
+	defaultOnLocation: false,
 	checkoutButtonOnProductPage: true,
 	discovery: true,
 	orderNotificationsResumeToken: null as unknown,

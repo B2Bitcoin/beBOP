@@ -93,6 +93,7 @@
 			"other": "{count} products",
 			"zero": "{count} products"
 		},
+		"onLocation": "This is a fully-paid on-location pyhsical order",
 		"payment": {
 			"method": "Payment method",
 			"title": "Payment"

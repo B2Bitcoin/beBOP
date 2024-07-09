@@ -322,6 +322,18 @@
 						{t('checkout.isProBilling')}
 					</label>
 				{/if}
+				{#if data.defaultOnLocation && data.roleId === POS_ROLE_ID}
+					<label class="col-span-6 checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							form="checkout"
+							name="onLocation"
+							bind:checked={offerDeliveryFees}
+						/>
+						{t('checkout.onLocation')}
+					</label>
+				{/if}
 			</section>
 
 			{#if showBillingInfo || (isDigital && data.isBillingAddressMandatory) || isProfessionalOrder}

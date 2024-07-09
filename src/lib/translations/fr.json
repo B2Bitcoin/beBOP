@@ -93,6 +93,7 @@
 			"other": "{count} produits",
 			"zero": "{count} produits"
 		},
+		"onLocation": "Il s'agit d'une commande physique sur place entièrement payée",
 		"payment": {
 			"method": "Mode de paiement",
 			"title": "Paiement"

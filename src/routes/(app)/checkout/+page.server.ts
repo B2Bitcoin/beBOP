@@ -97,7 +97,8 @@ export async function load({ parent, locals }) {
 		...(cmsCheckoutBottom && {
 			cmsCheckoutBottom,
 			cmsCheckoutBottomData: cmsFromContent({ content: cmsCheckoutBottom.content }, locals)
-		})
+		}),
+		defaultOnLocation: runtimeConfig.defaultOnLocation
 	};
 }
 
@@ -335,7 +336,13 @@ export const actions = {
 				}
 			);
 		}
-
+		const physicalFullyPaid = z
+			.object({
+				onLocation: z.boolean({ coerce: true }).default(false)
+			})
+			.parse({
+				onLocation: formData.get('onLocation')
+			});
 		const agreements = z
 			.object({
 				teecees: z.boolean({ coerce: true }).default(false),
@@ -447,7 +454,8 @@ export const actions = {
 					...(agreements.isVATNullForeigner && {
 						acceptedExportationAndVATObligation: agreements.isVATNullForeigner
 					})
-				}
+				},
+				...(physicalFullyPaid.onLocation && { onLocation: physicalFullyPaid.onLocation })
 			}
 		);
 

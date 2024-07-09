@@ -247,6 +247,7 @@ export interface Order extends Timestamps {
 	clientIp?: string;
 	notes?: Note[];
 	receiptNote?: string;
+	onLocation?: boolean;
 	engagements?: {
 		acceptedTermsOfUse?: boolean;
 		acceptedIPCollect?: boolean;

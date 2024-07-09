@@ -33,7 +33,8 @@ export async function load(event) {
 		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems,
 		accountingCurrency: runtimeConfig.accountingCurrency,
 		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin,
-		disableLanguageSelector: runtimeConfig.disableLanguageSelector
+		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
+		defaultOnLocation: runtimeConfig.defaultOnLocation
 	};
 }
 
@@ -47,6 +48,7 @@ export const actions = {
 				isMaintenance: z.boolean({ coerce: true }),
 				maintenanceIps: z.string(),
 				checkoutButtonOnProductPage: z.boolean({ coerce: true }),
+				defaultOnLocation: z.boolean({ coerce: true }),
 				noProBilling: z.boolean({ coerce: true }),
 				discovery: z.boolean({ coerce: true }),
 				copyOrderEmailsToAdmin: z.boolean({ coerce: true }),
