@@ -13,16 +13,16 @@
 		currentIndex = (currentIndex + 1) % pictures.length;
 	}
 
-	let interval: number;
+	let interval: ReturnType<typeof setInterval>;
 	onMount(() => {
-		interval = Number(setInterval(nextSlide, autoplay));
+		interval = setInterval(nextSlide, autoplay);
 		return () => clearInterval(interval);
 	});
 
 	function setIndex(index: number) {
 		currentIndex = index;
 		clearInterval(interval);
-		interval = Number(setInterval(nextSlide, autoplay));
+		interval = setInterval(nextSlide, autoplay);
 	}
 </script>
 
