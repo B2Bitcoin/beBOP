@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 export const actions = {
 	remove: async ({ locals, params, request }) => {
-		const cart = await collections.carts.findOne({ user: userQuery(userIdentifier(locals)) });
+		const cart = await collections.carts.findOne(userQuery(userIdentifier(locals)));
 
 		if (!cart) {
 			throw error(404, 'This product is not in the cart');
@@ -118,7 +118,7 @@ export const actions = {
 		const cart = await collections.carts.findOne(userQuery(userIdentifier(locals)));
 
 		if (!cart) {
-			throw error(404, 'This product is not in the cart');
+			throw error(404, 'No cart found for user');
 		}
 		const formData = await request.formData();
 		const { note } = z
