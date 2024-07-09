@@ -58,7 +58,6 @@ export async function addToCartInDb(
 		totalQuantity?: boolean;
 		customPrice?: { amount: number; currency: Currency };
 		deposit?: boolean;
-		note?: string;
 	}
 ) {
 	if (
@@ -160,12 +159,6 @@ export async function addToCartInDb(
 			existingItem.quantity = 1;
 		}
 		existingItem.reservedUntil = addMinutes(new Date(), runtimeConfig.reserveStockInMinutes);
-		if (params.note) {
-			existingItem.note = {
-				note: params.note,
-				internal: true
-			};
-		}
 	} else {
 		if (totalQuantityInCart() + quantity > availableAmount) {
 			throw error(400, `You can only order ${availableAmount} of this product`);

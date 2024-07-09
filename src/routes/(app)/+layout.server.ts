@@ -121,7 +121,10 @@ export async function load(params) {
 								quantity: item.quantity,
 								...(item.customPrice && { customPrice: item.customPrice }),
 								depositPercentage: item.depositPercentage,
-								note: item.note
+								internalNote: {
+									value: item.internalNote?.value,
+									updatedAt: item.internalNote?.updatedAt
+								}
 							};
 						}
 					})

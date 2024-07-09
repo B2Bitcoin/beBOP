@@ -52,7 +52,7 @@
 	function addNoteToItem(index: number) {
 		const notePrompt = prompt('enter a comment:');
 		if (notePrompt) {
-			items[index].note = { note: notePrompt, internal: true };
+			items[index].internalNote = { value: notePrompt, updatedAt: new Date() };
 			items = [...items];
 		}
 	}
@@ -79,11 +79,11 @@
 							};
 						}}
 					>
-						<input type="hidden" name="note" value={item.note?.note || ''} />
+						<input type="hidden" name="note" value={item.internalNote?.value || ''} />
 						<button type="submit" class="text-2xl" on:click={() => addNoteToItem(i)}>
 							{item.quantity} X {item.product.name.toUpperCase()}
 						</button><br />
-						{item.note?.note ? '+' + item.note?.note : ''}
+						{item.internalNote?.value ? '+' + item.internalNote.value : ''}
 					</form>
 					<div class="flex text-2xl flex-row items-end justify-end">
 						{#if item.quantity > 1}{item.quantity}X

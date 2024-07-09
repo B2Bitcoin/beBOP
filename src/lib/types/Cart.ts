@@ -13,6 +13,7 @@ import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 import { currencies } from '$lib/stores/currencies';
 import { get } from 'svelte/store';
 import { filterUndef } from '$lib/utils/filterUndef';
+import type { User } from './User';
 
 export interface Cart extends Timestamps {
 	_id: ObjectId;
@@ -24,7 +25,7 @@ export interface Cart extends Timestamps {
 		customPrice?: { amount: number; currency: Currency };
 		reservedUntil?: Date;
 		depositPercentage?: number;
-		note?: { note: string; internal: boolean };
+		internalNote?: { value: string; updatedAt: Date; updatedById?: User['_id'] };
 	}>;
 }
 

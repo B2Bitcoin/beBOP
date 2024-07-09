@@ -115,16 +115,12 @@ export const actions = {
 		throw redirect(303, request.headers.get('referer') || '/cart');
 	},
 	addNote: async ({ locals, params, request }) => {
-		const product = await collections.products.findOne({ _id: params.id });
-		if (!product) {
-			await collections.carts.updateOne(userQuery(userIdentifier(locals)), {
-				$pull: { items: { productId: params.id } },
-				$set: { updatedAt: new Date() }
-			});
-			throw error(404, 'This product does not exist');
+		const cart = await collections.carts.findOne(userQuery(userIdentifier(locals)));
+
+		if (!cart) {
+			throw error(404, 'This product is not in the cart');
 		}
 		const formData = await request.formData();
-		const quantity = 1;
 		const { note } = z
 			.object({
 				note: z.string()
@@ -133,12 +129,21 @@ export const actions = {
 				note: formData.get('note')
 			});
 
-		await addToCartInDb(product, quantity, {
-			user: userIdentifier(locals),
-			totalQuantity: true,
-			note: note
-		});
+		const res = await collections.carts.updateOne(
+			{ _id: cart._id, 'items.productId': params.id },
+			{
+				$set: {
+					'items.$.internalNote': {
+						value: note,
+						updatedAt: new Date(),
+						updatedById: locals.user?._id
+					}
+				}
+			}
+		);
 
-		throw redirect(303, request.headers.get('referer') || '/cart');
+		if (!res.matchedCount) {
+			throw error(404, 'This product is not in the cart');
+		}
 	}
 };
