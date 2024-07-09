@@ -123,7 +123,7 @@ export const actions = {
 		const formData = await request.formData();
 		const { note } = z
 			.object({
-				note: z.string()
+				note: z.string().trim().min(1)
 			})
 			.parse({
 				note: formData.get('note')
