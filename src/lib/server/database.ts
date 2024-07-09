@@ -46,6 +46,9 @@ import type { Gallery } from '$lib/types/Gallery';
 import type { VatProfile } from '$lib/types/VatProfile';
 import type { Ticket } from '$lib/types/Ticket';
 
+// Bigger than the default 10, helpful with MongoDB errors
+Error.stackTraceLimit = 100;
+
 const client = building
 	? (null as unknown as MongoClient)
 	: new MongoClient(
@@ -107,10 +110,14 @@ export const collections = building
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?]> = [
-	[collections.pictures, { productId: 1 }],
+	[collections.pictures, { productId: 1, createdAt: 1 }],
+	[collections.pictures, { galleryId: 1, createdAt: 1 }],
+	[collections.pictures, { 'slider._id': 1, createdAt: 1 }],
+	[collections.pictures, { 'tag._id': 1, createdAt: 1 }],
 	[collections.products, { stock: 1 }, { sparse: true }],
 	[collections.products, { 'actionSettings.eShop.visible': 1 }],
 	[collections.products, { 'actionSettings.retail.visible': 1 }],
+	[collections.products, { alias: 1 }, { sparse: true, unique: true }],
 	[collections.locks, { updatedAt: 1 }, { expireAfterSeconds: 60 }],
 	[collections.carts, { 'user.userId': 1 }],
 	[collections.carts, { 'user.sessionId': 1 }],
@@ -176,7 +183,6 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.personalInfo, { 'user.npub': 1 }],
 	[collections.personalInfo, { 'user.email': 1 }],
 	[collections.personalInfo, { 'user.ssoIds': 1 }],
-	[collections.products, { alias: 1 }, { sparse: true, unique: true }],
 	[collections.tickets, { orderId: 1 }],
 	[collections.tickets, { productId: 1 }],
 	[collections.tickets, { ticketId: 1 }, { unique: true }]
