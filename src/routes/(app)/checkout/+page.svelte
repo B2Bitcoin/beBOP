@@ -29,7 +29,7 @@
 	let country = defaultShippingCountry;
 
 	let isFreeVat = false;
-	let onLocation = false;
+	let onLocation = data.defaultOnLocation;
 	$: offerDeliveryFees = onLocation;
 	let addDiscount = false;
 	let discountAmount = 0;
