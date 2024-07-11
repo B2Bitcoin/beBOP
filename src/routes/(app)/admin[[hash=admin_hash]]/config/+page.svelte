@@ -402,6 +402,7 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
+			id="disableLanguageSelector"
 			name="disableLanguageSelector"
 			class="form-checkbox"
 			checked={data.disableLanguageSelector}

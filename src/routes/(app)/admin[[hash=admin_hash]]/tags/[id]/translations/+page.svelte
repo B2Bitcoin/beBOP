@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { languageNames, locales, type LanguageKey } from '$lib/translations';
+	import { languageNames, type LanguageKey } from '$lib/translations';
 
 	export let data;
 
@@ -11,7 +11,7 @@
 		Select Language
 
 		<select bind:value={language} name="language" class="form-input">
-			{#each locales as locale}
+			{#each data.locales as locale}
 				<option value={locale}>{languageNames[locale]}</option>
 			{/each}
 		</select>

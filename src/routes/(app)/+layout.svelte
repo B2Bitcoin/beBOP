@@ -428,7 +428,7 @@
 						>
 							<IconModeDark />
 						</button>
-						{#if !data.disableLanguageSelector}
+						{#if !data.disableLanguageSelector && data.locales.length > 1}
 							<select
 								class="ml-4 border-0 cursor-pointer rounded appearance-none bg-none bg-transparent text-xl"
 								size="0"

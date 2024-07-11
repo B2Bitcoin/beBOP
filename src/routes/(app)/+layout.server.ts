@@ -5,7 +5,6 @@ import { collections } from '$lib/server/database';
 import { pojo } from '$lib/server/pojo.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier } from '$lib/server/user.js';
-import { locales } from '$lib/translations/index.js';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import type { VatProfile } from '$lib/types/VatProfile.js';
@@ -150,7 +149,7 @@ export async function load(params) {
 		},
 		brandName:
 			runtimeConfig[`translations.${locals.language}.config`]?.brandName || runtimeConfig.brandName,
-		locales,
+		locales: runtimeConfig.languages,
 		logoPicture,
 		logoPictureDark,
 		logo: runtimeConfig.logo,
