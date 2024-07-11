@@ -336,13 +336,16 @@ export const actions = {
 				}
 			);
 		}
-		const physicalFullyPaid = z
-			.object({
-				onLocation: z.boolean({ coerce: true }).default(false)
-			})
-			.parse({
-				onLocation: formData.get('onLocation')
-			});
+		const physicalFullyPaid =
+			locals.user?.roleId === POS_ROLE_ID && runtimeConfig.defaultOnLocation
+				? z
+						.object({
+							onLocation: z.boolean({ coerce: true }).default(false)
+						})
+						.parse({
+							onLocation: formData.get('onLocation')
+						})
+				: null;
 		const agreements = z
 			.object({
 				teecees: z.boolean({ coerce: true }).default(false),
@@ -455,7 +458,8 @@ export const actions = {
 						acceptedExportationAndVATObligation: agreements.isVATNullForeigner
 					})
 				},
-				...(physicalFullyPaid.onLocation && { onLocation: physicalFullyPaid.onLocation })
+				...(physicalFullyPaid &&
+					physicalFullyPaid.onLocation && { onLocation: physicalFullyPaid.onLocation })
 			}
 		);
 
