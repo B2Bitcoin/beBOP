@@ -27,7 +27,7 @@
 </script>
 
 <div class={className}>
-	<TinySlider {currentIndex} transitionDuration={200}>
+	<TinySlider bind:currentIndex transitionDuration={1000}>
 		{#each pictures as picture, i}
 			<div class="flex-row" style="display: {currentIndex === i ? 'block' : 'none'};">
 				<a href={picture.slider?.url} target={picture.slider?.openNewTab ? '_blank' : '_self'}>
