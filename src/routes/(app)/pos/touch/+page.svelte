@@ -11,8 +11,8 @@
 	import { UNDERLYING_CURRENCY } from '$lib/types/Currency.js';
 	import { isAlpha2CountryCode } from '$lib/types/Country.js';
 	import { invalidate } from '$app/navigation';
+	import { applyAction, enhance } from '$app/forms';
 	import { UrlDependency } from '$lib/types/UrlDependency.js';
-	import { enhance } from '$app/forms';
 
 	export let data;
 	$: next = Number($page.url.searchParams.get('skip')) || 0;
@@ -57,6 +57,8 @@
 		}
 	}
 	let formNotes: HTMLFormElement[] = [];
+	$: lastItemId = items.length > 0 ? items[items.length - 1]?.product?._id : null;
+	let warningMessage = '';
 </script>
 
 <div class="grid grid-cols-3 gap-4">
@@ -183,17 +185,54 @@
 </div>
 
 <div class="grid grid-cols-3 gap-4 mt-2">
-	<div class="touchScreen-ticket-menu text-3xl p-4 text-center">TICKETS</div>
+	<button
+		class="touchScreen-ticket-menu text-3xl p-4 text-center"
+		on:click={() => alert('Not developped yet')}>TICKETS</button
+	>
 	<div class="col-span-2 grid grid-cols-3 gap-4">
-		<div class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4">SAUVER</div>
-		<div class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4">POOL</div>
-		<div class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4">OUVRIR TIROIR</div>
+		<button
+			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+			on:click={() => alert('Not developped yet')}>SAUVER</button
+		>
+		<button
+			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+			on:click={() => alert('Not developped yet')}>POOL</button
+		>
+		<button
+			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+			on:click={() => alert('Not developped yet')}>OUVRIR TIROIR</button
+		>
 	</div>
 </div>
 <div class="grid grid-cols-2 gap-4 mt-2">
 	<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
-	<div class="grid grid-cols-2 gap-4">
-		<div class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center">❎</div>
-		<div class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center">🗑️</div>
-	</div>
+	<form
+		method="post"
+		class="grid grid-cols-2 gap-4"
+		use:enhance={() => {
+			if (!confirm(warningMessage)) {
+				return;
+			}
+			return async ({ result }) => {
+				if (result.type === 'error') {
+					alert(result.error?.message);
+					return await applyAction(result);
+				}
+				await invalidate(UrlDependency.Cart);
+			};
+		}}
+	>
+		<button
+			class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center"
+			disabled={!items.length}
+			formaction="/cart/{lastItemId}/?/remove"
+			on:click={() => (warningMessage = 'Do you want to delete the last cart line ?')}>❎</button
+		>
+		<button
+			class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center"
+			disabled={!items.length}
+			formaction="/cart/?/removeAll"
+			on:click={() => (warningMessage = 'Do you want to delete all cart line ?')}>🗑️</button
+		>
+	</form>
 </div>
