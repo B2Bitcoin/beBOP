@@ -209,8 +209,9 @@
 	<form
 		method="post"
 		class="grid grid-cols-2 gap-4"
-		use:enhance={() => {
+		use:enhance={(event) => {
 			if (!confirm(warningMessage)) {
+				event.cancel();
 				return;
 			}
 			return async ({ result }) => {
