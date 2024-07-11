@@ -1,5 +1,6 @@
 import type { ObjectId } from 'mongodb';
 import type { Timestamps } from './Timestamps';
+import { CountryAlpha2 } from './Country';
 
 export interface Session extends Timestamps {
 	_id: ObjectId;
@@ -16,5 +17,7 @@ export interface Session extends Timestamps {
 		name: string;
 		id: string;
 	}>;
-	clientIp?: string;
+	pos?: {
+		countryCodeOverwrite?: CountryAlpha2;
+	};
 }

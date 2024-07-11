@@ -4,7 +4,6 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { z } from 'zod';
 import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
-import { ipFromCountry } from '$lib/server/geoip';
 
 export const load = async (event) => {
 	const lastOrders = await collections.orders
@@ -47,7 +46,7 @@ export const actions: Actions = {
 			.parse({
 				country: formData.get('countryCode')
 			});
-		const clientIp = ipFromCountry(country.country);
+		const countryCode = country.country;
 		await collections.sessions.updateOne(
 			{
 				sessionId: locals.sessionId
@@ -55,7 +54,9 @@ export const actions: Actions = {
 			{
 				$set: {
 					updatedAt: new Date(),
-					clientIp
+					pos: {
+						countryCodeOverwrite: countryCode
+					}
 				}
 			}
 		);
