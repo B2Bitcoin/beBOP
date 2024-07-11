@@ -120,7 +120,7 @@
 -->
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
-	{#if $page.data.layoutReset}
+	{#if $page.data.layoutReset || $page.url.searchParams.get('display') === 'headless'}
 		<slot />
 	{:else}
 		<header class="header items-center flex h-[100px] print:hidden">
