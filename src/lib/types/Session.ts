@@ -16,4 +16,5 @@ export interface Session extends Timestamps {
 		name: string;
 		id: string;
 	}>;
+	clientIp?: string;
 }

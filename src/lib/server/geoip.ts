@@ -122,3 +122,50 @@ export function countryFromIp(ip: string): CountryAlpha2 | undefined {
 
 	cache.set(ip, undefined);
 }
+
+export function ipFromCountry(country: string): string | undefined {
+	if (!isAlpha2CountryCode(country)) {
+		return undefined;
+	}
+
+	const cached = cache.get(country);
+	if (cached) {
+		// This moves the entry to the end of the Map, making it the most recently used
+		cache.delete(country);
+		cache.set(country, cached);
+		return cached;
+	}
+
+	const findIpInRange = (
+		ranges: { start: bigint; end: bigint; country: string }[]
+	): string | undefined => {
+		for (const range of ranges) {
+			if (range.country === country) {
+				const ip = intToIp(Number(range.start));
+				cache.set(country, ip as CountryAlpha2);
+				if (cache.size > 10_000) {
+					// This deletes the oldest entry
+					cache.delete(cache.keys().next().value);
+				}
+				return ip;
+			}
+		}
+		return undefined;
+	};
+
+	let ip = findIpInRange(ipv4s);
+	if (!ip) {
+		ip = findIpInRange(ipv6s);
+	}
+
+	if (!ip) {
+		cache.set(country, undefined);
+	}
+
+	return ip;
+}
+
+function intToIp(int: number): string {
+	// Assuming IPv4 for simplicity; implement IPv6 conversion as needed
+	return [(int >>> 24) & 0xff, (int >>> 16) & 0xff, (int >>> 8) & 0xff, int & 0xff].join('.');
+}
