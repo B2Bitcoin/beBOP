@@ -134,10 +134,10 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			.get('accept-language')
 			?.split(',')
 			?.map((lang) => lang.slice(0, 2)) ?? []),
-		'en'
+		runtimeConfig.defaultLanguage
 	]);
 	event.locals.language = (acceptLanguages.find((l) => typedInclude(runtimeConfig.languages, l)) ||
-		'en') as LanguageKey;
+		runtimeConfig.defaultLanguage) as LanguageKey;
 
 	if (runtimeConfig.isMaintenance) {
 		const cmsPageMaintenanceAvailable = await collections.cmsPages
