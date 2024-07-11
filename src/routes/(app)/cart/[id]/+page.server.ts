@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 export const actions = {
 	remove: async ({ locals, params, request }) => {
-		const cart = await collections.carts.findOne({ user: userIdentifier(locals) });
+		const cart = await collections.carts.findOne(userQuery(userIdentifier(locals)));
 
 		if (!cart) {
 			throw error(404, 'This product is not in the cart');

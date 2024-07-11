@@ -18,6 +18,5 @@ export const GET: RequestHandler = async ({ params }) => {
 	if (!format) {
 		throw error(500, "Error when finding picture's format");
 	}
-
 	throw redirect(302, await getPublicS3DownloadLink(format.key));
 };

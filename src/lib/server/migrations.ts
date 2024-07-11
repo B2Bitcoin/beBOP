@@ -429,6 +429,13 @@ const migrations = [
 			await collections.orders.dropIndex('user.**_1').catch(console.error);
 			await collections.personalInfo.dropIndex('user.**_1').catch(console.error);
 		}
+	},
+	{
+		name: 'Remove productId index',
+		_id: new ObjectId('668c423519c3d2f1ba38344e'),
+		run: async () => {
+			await collections.pictures.dropIndex('productId_1').catch(console.error);
+		}
 	}
 ];
 
