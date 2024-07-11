@@ -94,6 +94,8 @@ const baseConfig = {
 	collectIPOnDeliverylessOrders: false,
 	isBillingAddressMandatory: false,
 	disableLanguageSelector: false,
+	languages: locales,
+	defaultLanguage: 'en' as LanguageKey,
 
 	checkoutButtonOnProductPage: true,
 	discovery: true,

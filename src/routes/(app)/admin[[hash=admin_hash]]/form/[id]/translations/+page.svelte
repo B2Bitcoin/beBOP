@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { languageNames, locales, type LanguageKey } from '$lib/translations/index.js';
+	import { languageNames, type LanguageKey } from '$lib/translations/index.js';
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
 
 	export let data;
@@ -12,7 +12,7 @@
 		Select Language
 
 		<select bind:value={language} name="language" class="form-input">
-			{#each locales as locale}
+			{#each data.locales as locale}
 				<option value={locale}>{languageNames[locale]}</option>
 			{/each}
 		</select>

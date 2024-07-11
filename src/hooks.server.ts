@@ -31,7 +31,7 @@ import { building } from '$app/environment';
 import { sha256 } from '$lib/utils/sha256';
 import { countryFromIp } from '$lib/server/geoip';
 import { isAllowedOnPage } from '$lib/types/Role';
-import { enhancedLanguages, languages, locales, type LanguageKey } from '$lib/translations';
+import { enhancedLanguages, locales, type LanguageKey } from '$lib/translations';
 import { addTranslations } from '$lib/i18n';
 import { filterNullish } from '$lib/utils/fillterNullish';
 import { refreshSessionCookie } from '$lib/server/cookies';
@@ -136,7 +136,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			?.map((lang) => lang.slice(0, 2)) ?? []),
 		'en'
 	]);
-	event.locals.language = (acceptLanguages.find((l) => l in languages) || 'en') as LanguageKey;
+	event.locals.language = (acceptLanguages.find((l) => typedInclude(runtimeConfig.languages, l)) ||
+		'en') as LanguageKey;
 
 	if (runtimeConfig.isMaintenance) {
 		const cmsPageMaintenanceAvailable = await collections.cmsPages
