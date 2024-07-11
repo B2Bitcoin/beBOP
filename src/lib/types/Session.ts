@@ -1,6 +1,6 @@
 import type { ObjectId } from 'mongodb';
 import type { Timestamps } from './Timestamps';
-import { CountryAlpha2 } from './Country';
+import type { CountryAlpha2 } from './Country';
 
 export interface Session extends Timestamps {
 	_id: ObjectId;
