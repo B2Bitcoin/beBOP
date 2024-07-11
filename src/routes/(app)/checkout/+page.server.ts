@@ -458,8 +458,7 @@ export const actions = {
 						acceptedExportationAndVATObligation: agreements.isVATNullForeigner
 					})
 				},
-				...(physicalFullyPaid &&
-					physicalFullyPaid.onLocation && { onLocation: physicalFullyPaid.onLocation })
+				...(physicalFullyPaid?.onLocation && { onLocation: physicalFullyPaid.onLocation })
 			}
 		);
 
