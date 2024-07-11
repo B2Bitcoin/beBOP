@@ -49,14 +49,14 @@
 	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
 
-	function addNoteToItem(index: number) {
-		const notePrompt = prompt('enter a comment:');
+	function addNoteToItem(index: number, defaultPrompt: string) {
+		const notePrompt = prompt('enter a comment:', defaultPrompt);
 		if (notePrompt) {
 			items[index].internalNote = { value: notePrompt, updatedAt: new Date() };
 			items = [...items];
 		}
 	}
-	let formNotes = [];
+	let formNotes: HTMLFormElement[] = [];
 </script>
 
 <div class="grid grid-cols-3 gap-4">
@@ -69,6 +69,7 @@
 						method="post"
 						bind:this={formNotes[i]}
 						action="/cart/{item.product._id}/?/addNote"
+						on:submit|preventDefault
 						use:enhance={() => {
 							return async ({ result }) => {
 								if (result.type === 'error') {
@@ -80,34 +81,38 @@
 						}}
 					>
 						<input type="hidden" name="note" value={item.internalNote?.value || ''} />
-						<button type="submit" class="text-2xl" on:click={() => addNoteToItem(i)}>
-							{item.quantity} X {item.product.name.toUpperCase()}
+						<button
+							type="submit"
+							class="text-start text-2xl w-full justify-between"
+							on:click={() => addNoteToItem(i, item.internalNote?.value || '')}
+						>
+							{item.quantity} X {item.product.name.toUpperCase()}<br />
+							{item.internalNote?.value ? '+' + item.internalNote.value : ''}
+							<div class="flex text-2xl flex-row items-end justify-end">
+								{#if item.quantity > 1}{item.quantity}X
+								{/if}
+								<PriceTag
+									amount={item.product.price.amount}
+									currency={item.product.price.currency}
+									class="text-2xl"
+									main
+								/>
+							</div>
+							{#if item.quantity > 1}
+								<div class="text-2xl flex flex-row items-end justify-end">
+									=<PriceTag
+										amount={item.quantity * item.product.price.amount}
+										currency={item.product.price.currency}
+										class="text-2xl"
+										main
+									/>
+								</div>
+							{/if}
+							<div class="text-2xl flex flex-row items-end justify-end">
+								+<span class="font-semibold">{t('cart.vat')} {priceInfo.vatRates[i]}%</span>
+							</div>
 						</button><br />
-						{item.internalNote?.value ? '+' + item.internalNote.value : ''}
 					</form>
-					<div class="flex text-2xl flex-row items-end justify-end">
-						{#if item.quantity > 1}{item.quantity}X
-						{/if}
-						<PriceTag
-							amount={item.product.price.amount}
-							currency={item.product.price.currency}
-							class="text-2xl"
-							main
-						/>
-					</div>
-					{#if item.quantity > 1}
-						<div class="text-2xl flex flex-row items-end justify-end">
-							=<PriceTag
-								amount={item.quantity * item.product.price.amount}
-								currency={item.product.price.currency}
-								class="text-2xl"
-								main
-							/>
-						</div>
-					{/if}
-					<div class="text-2xl flex flex-row items-end justify-end">
-						+<span class="font-semibold">{t('cart.vat')} {priceInfo.vatRates[i]}%</span>
-					</div>
 				</div>
 			{/each}
 			<div class="flex flex-col border-t border-gray-300 py-6">
