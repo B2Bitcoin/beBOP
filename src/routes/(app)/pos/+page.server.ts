@@ -4,7 +4,6 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { z } from 'zod';
 import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
-import { pojo } from '$lib/server/pojo';
 
 export const load = async (event) => {
 	const lastOrders = await collections.orders
@@ -37,7 +36,7 @@ export const load = async (event) => {
 			status: order.status
 		})),
 		countryCode: event.locals.countryCode,
-		session: pojo(session)
+		sessionPos: session?.pos
 	};
 };
 

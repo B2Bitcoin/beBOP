@@ -45,7 +45,7 @@
 			class="btn btn-black mt-4"
 			formaction="?/overwrite">Overwrite IP country</button
 		>
-		{#if data.session?.pos?.countryCodeOverwrite}
+		{#if data.sessionPos?.countryCodeOverwrite}
 			<button type="submit" formaction="?/removeOverwrite" class="btn btn-black mt-4"
 				>Remove Overwrite</button
 			>{/if}
