@@ -113,5 +113,37 @@ export const actions = {
 		});
 
 		throw redirect(303, request.headers.get('referer') || '/cart');
+	},
+	addNote: async ({ locals, params, request }) => {
+		const cart = await collections.carts.findOne(userQuery(userIdentifier(locals)));
+
+		if (!cart) {
+			throw error(404, 'No cart found for user');
+		}
+		const formData = await request.formData();
+		const { note } = z
+			.object({
+				note: z.string().trim().min(1)
+			})
+			.parse({
+				note: formData.get('note')
+			});
+
+		const res = await collections.carts.updateOne(
+			{ _id: cart._id, 'items.productId': params.id },
+			{
+				$set: {
+					'items.$.internalNote': {
+						value: note,
+						updatedAt: new Date(),
+						updatedById: locals.user?._id
+					}
+				}
+			}
+		);
+
+		if (!res.matchedCount) {
+			throw error(404, 'This product is not in the cart');
+		}
 	}
 };
