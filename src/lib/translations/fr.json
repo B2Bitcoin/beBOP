@@ -109,6 +109,7 @@
 			"unavailable": "Aucun mode de paiement disponible."
 		},
 		"paymentStatus": "Statut de paiement",
+		"reasonOfferFeesDefault": "Commande physique sur place entièrement payée",
 		"receiptNote": {
 			"label": "Renseignez une mention additionnelle sur la facture"
 		},

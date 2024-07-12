@@ -998,6 +998,7 @@
 									form="checkout"
 									name="reasonOfferDeliveryFees"
 									required
+									value={onLocation ? t('checkout.reasonOfferFeesDefault') : ''}
 								/></label
 							>
 						{/if}

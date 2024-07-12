@@ -109,6 +109,7 @@
 			"unavailable": "No payment methods available."
 		},
 		"paymentStatus": "Payment status",
+		"reasonOfferFeesDefault": "Fully-paid on-location physical order",
 		"receiptNote": {
 			"label": "Provide additional information on the invoice"
 		},
