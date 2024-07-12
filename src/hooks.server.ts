@@ -217,6 +217,9 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		event.locals.email = session.email;
 		event.locals.npub = session.npub;
 		event.locals.sso = session.sso;
+		if (session.pos?.countryCodeOverwrite) {
+			event.locals.countryCode = session.pos.countryCodeOverwrite;
+		}
 	}
 	if (
 		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
