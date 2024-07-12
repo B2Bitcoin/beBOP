@@ -2,9 +2,12 @@
 	import OrdersList from '$lib/components/OrdersList.svelte';
 	import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
 	import { page } from '$app/stores';
+	import { useI18n } from '$lib/i18n.js';
 
 	export let data;
 	let next = 0;
+
+	const { t } = useI18n();
 </script>
 
 <h1 class="text-3xl">List of orders</h1>
@@ -29,7 +32,22 @@
 				placeholder="search order by product alias"
 			/>
 		</label>
-		<label class="form-label w-[2em] mt-8">
+		<label class="form-label w-[30em]">
+			Payment Mean
+			<select
+				name="paymentMethod"
+				class="form-input"
+				disabled={data.paymentMethods.length === 0}
+				required
+			>
+				{#each data.paymentMethods as paymentMethod}
+					<option value={paymentMethod}>
+						{t('checkout.paymentMethod.' + paymentMethod)}
+					</option>
+				{/each}
+			</select>
+		</label>
+		<label class="form-label w-auto mt-8">
 			<input type="submit" value="🔍" class="btn btn-gray" /></label
 		>
 	</div>

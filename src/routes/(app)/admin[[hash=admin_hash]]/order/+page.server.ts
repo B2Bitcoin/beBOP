@@ -1,10 +1,13 @@
 import { collections } from '$lib/server/database';
+import { paymentMethods } from '$lib/server/payment-methods.js';
 import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
 
-export async function load({ url }) {
+export async function load({ url, locals }) {
 	const skip = url.searchParams.get('skip');
 	const orderNumber = url.searchParams.get('orderNumber');
 	const productAlias = url.searchParams.get('productAlias');
+	const paymentMethod = url.searchParams.get('paymentMethod');
+
 	let orders;
 	if (orderNumber) {
 		orders = await collections.orders.find({ number: Number(orderNumber) }).toArray();
@@ -12,6 +15,13 @@ export async function load({ url }) {
 		orders = await collections.orders
 			.find({
 				'items.product.alias': productAlias
+			})
+			.sort({ createdAt: -1 })
+			.toArray();
+	} else if (paymentMethod) {
+		orders = await collections.orders
+			.find({
+				'payments.method': paymentMethod
 			})
 			.sort({ createdAt: -1 })
 			.toArray();
@@ -23,6 +33,7 @@ export async function load({ url }) {
 			.sort({ createdAt: -1 })
 			.toArray();
 	}
+	const methods = paymentMethods({ role: locals.user?.roleId });
 
 	return {
 		orders: orders.map((order) => ({
@@ -41,6 +52,7 @@ export async function load({ url }) {
 					createdAt: note.createdAt
 				})) || [],
 			status: order.status
-		}))
+		})),
+		paymentMethods: methods
 	};
 }
