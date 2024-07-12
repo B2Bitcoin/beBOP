@@ -93,6 +93,7 @@
 			"other": "{count} products",
 			"zero": "{count} products"
 		},
+		"onLocation": "This is a fully-paid on-location pyhsical order",
 		"payment": {
 			"method": "Payment method",
 			"title": "Payment"
@@ -108,6 +109,7 @@
 			"unavailable": "No payment methods available."
 		},
 		"paymentStatus": "Payment status",
+		"reasonOfferFeesDefault": "Fully-paid on-location physical order",
 		"receiptNote": {
 			"label": "Provide additional information on the invoice"
 		},
