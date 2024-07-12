@@ -49,11 +49,28 @@
 	$: totalPages = Math.ceil(productFiltered.length / POS_PRODUCT_PAGINATION);
 	$: currentPage = Math.floor(next / POS_PRODUCT_PAGINATION) + 1;
 
-	function addNoteToItem(index: number, defaultPrompt: string) {
+	async function addNoteToItem(event: Event, index: number, defaultPrompt: string) {
+		event.preventDefault();
 		const notePrompt = prompt('enter a comment:', defaultPrompt);
 		if (notePrompt) {
 			items[index].internalNote = { value: notePrompt, updatedAt: new Date() };
 			items = [...items];
+			const formData = new FormData(formNotes[index]);
+			formData.set('note', notePrompt);
+			try {
+				const response = await fetch(formNotes[index].action, {
+					method: 'POST',
+					body: formData
+				});
+				const result = await response.json();
+				if (result.type === 'error') {
+					alert(result.error.message);
+				} else {
+					await invalidate(UrlDependency.Cart);
+				}
+			} catch (error) {
+				alert('There was an error submitting the form.');
+			}
 		}
 	}
 	let formNotes: HTMLFormElement[] = [];
@@ -67,26 +84,12 @@
 			<h3 class="text-3xl">TICKET n° tmp</h3>
 			{#each items as item, i}
 				<div class="flex flex-col py-3 gap-4">
-					<form
-						method="post"
-						bind:this={formNotes[i]}
-						action="/cart/{item.product._id}/?/addNote"
-						on:submit|preventDefault
-						use:enhance={() => {
-							return async ({ result }) => {
-								if (result.type === 'error') {
-									alert(result.error.message);
-									return;
-								}
-								await invalidate(UrlDependency.Cart);
-							};
-						}}
-					>
-						<input type="hidden" name="note" value={item.internalNote?.value || ''} />
+					<form method="post" bind:this={formNotes[i]} action="/cart/{item.product._id}/?/addNote">
+						<input type="hidden" name="note" />
 						<button
 							type="submit"
 							class="text-start text-2xl w-full justify-between"
-							on:click={() => addNoteToItem(i, item.internalNote?.value || '')}
+							on:click={(event) => addNoteToItem(event, i, item.internalNote?.value || '')}
 						>
 							{item.quantity} X {item.product.name.toUpperCase()}<br />
 							{item.internalNote?.value ? '+' + item.internalNote.value : ''}
