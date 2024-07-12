@@ -26,22 +26,29 @@
 	<a href="/admin" class="body-hyperlink hover:underline" target="_blank"
 		>{t('pos.adminInterface')}</a
 	>
-	<form action="?/overwrite" method="POST" on:submit={handleSubmit}>
+	<form method="POST" on:submit={handleSubmit}>
 		<label class="checkbox-label">
 			<input type="checkbox" class="form-checkbox" name="overwriteIP" bind:checked={overwriteIP} />
 			Overwrite IP country for this POS session with selected country
 		</label>
 		<label class="form-label col-span-3">
 			Overwrite session IP country (current value {data.countryCode})
-			<select name="countryCode" class="form-input" required bind:value={data.countryCode}>
+			<select name="countryCode" class="form-input" required value={data.countryCode}>
 				{#each sortedCountryCodes() as code}
 					<option value={code}>{countryName(code)}</option>
 				{/each}
 			</select>
 		</label>
-		<button type="submit" disabled={!overwriteIP} class="btn btn-black mt-4"
-			>Overwrite IP country</button
+		<button
+			type="submit"
+			disabled={!overwriteIP}
+			class="btn btn-black mt-4"
+			formaction="?/overwrite">Overwrite IP country</button
 		>
+		{#if data.session?.pos?.countryCodeOverwrite}
+			<button type="submit" formaction="?/removeOverwrite" class="btn btn-black mt-4"
+				>Remove Overwrite</button
+			>{/if}
 	</form>
 
 	<form action="/admin/logout" method="POST">

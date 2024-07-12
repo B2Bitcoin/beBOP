@@ -4,6 +4,7 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { z } from 'zod';
 import { COUNTRY_ALPHA2S, type CountryAlpha2 } from '$lib/types/Country';
+import { pojo } from '$lib/server/pojo';
 
 export const load = async (event) => {
 	const lastOrders = await collections.orders
@@ -13,6 +14,9 @@ export const load = async (event) => {
 		.sort({ createdAt: -1 })
 		.limit(50)
 		.toArray();
+	const session = await collections.sessions.findOne({
+		sessionId: event.locals.sessionId
+	});
 
 	return {
 		orders: lastOrders.map((order) => ({
@@ -32,7 +36,8 @@ export const load = async (event) => {
 				})) || [],
 			status: order.status
 		})),
-		countryCode: event.locals.countryCode
+		countryCode: event.locals.countryCode,
+		session: pojo(session)
 	};
 };
 
@@ -57,6 +62,22 @@ export const actions: Actions = {
 					pos: {
 						countryCodeOverwrite: countryCode
 					}
+				}
+			}
+		);
+		throw redirect(303, `/pos`);
+	},
+	removeOverwrite: async ({ locals }) => {
+		await collections.sessions.updateOne(
+			{
+				sessionId: locals.sessionId
+			},
+			{
+				$set: {
+					updatedAt: new Date()
+				},
+				$unset: {
+					pos: ''
 				}
 			}
 		);
