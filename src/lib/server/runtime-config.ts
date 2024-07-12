@@ -95,6 +95,9 @@ const baseConfig = {
 	isBillingAddressMandatory: false,
 	disableLanguageSelector: false,
 	defaultOnLocation: false,
+	languages: locales,
+	defaultLanguage: 'en' as LanguageKey,
+
 	checkoutButtonOnProductPage: true,
 	discovery: true,
 	orderNotificationsResumeToken: null as unknown,

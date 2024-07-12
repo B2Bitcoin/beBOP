@@ -1,7 +1,9 @@
 import { checkCartItems } from '$lib/server/cart';
 import { cmsFromContent } from '$lib/server/cms';
-import { collections } from '$lib/server/database';
-import { userIdentifier } from '$lib/server/user.js';
+import { collections, withTransaction } from '$lib/server/database';
+import { refreshAvailableStockInDb } from '$lib/server/product.js';
+import { userIdentifier, userQuery } from '$lib/server/user.js';
+import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ parent, locals }) {
 	const parentData = await parent();
@@ -68,3 +70,28 @@ export async function load({ parent, locals }) {
 		})
 	};
 }
+export const actions = {
+	removeAll: async ({ locals, request }) => {
+		const cart = await collections.carts.findOne(userQuery(userIdentifier(locals)));
+		if (!cart) {
+			throw error(404, 'Cart not found');
+		}
+
+		cart.items = [];
+
+		await withTransaction(async (session) => {
+			await collections.carts.updateOne(
+				{ _id: cart._id },
+				{ $set: { items: cart.items, updatedAt: new Date() } },
+				{ session }
+			);
+
+			// Refresh available stock for all products in the cart
+			for (const item of cart.items) {
+				await refreshAvailableStockInDb(item.productId, session);
+			}
+		});
+
+		throw redirect(303, request.headers.get('referer') || '/cart');
+	}
+};

@@ -9,31 +9,30 @@
 	let className = '';
 	export { className as class };
 	let currentIndex = 0;
-	// Function to move to the next slide
 	function nextSlide() {
 		currentIndex = (currentIndex + 1) % pictures.length;
 	}
-	let interval: number;
+
+	let interval: ReturnType<typeof setInterval>;
 	onMount(() => {
-		interval = Number(setInterval(nextSlide, autoplay));
+		interval = setInterval(nextSlide, autoplay);
 		return () => clearInterval(interval);
 	});
+
 	function setIndex(index: number) {
 		currentIndex = index;
 		clearInterval(interval);
-		setInterval(nextSlide, autoplay);
+		interval = setInterval(nextSlide, autoplay);
 	}
 </script>
 
 <div class={className}>
-	<TinySlider {currentIndex} transitionDuration={200}>
+	<TinySlider bind:currentIndex transitionDuration={1000}>
 		{#each pictures as picture, i}
-			<div class="flex-row">
-				{#if currentIndex === i}
-					<a href={picture.slider?.url} target={picture.slider?.openNewTab ? '_blank' : '_self'}>
-						<PictureComponent {picture} class="object-fill h-auto w-auto " /></a
-					>
-				{/if}
+			<div class="flex-row" style="display: {currentIndex === i ? 'block' : 'none'};">
+				<a href={picture.slider?.url} target={picture.slider?.openNewTab ? '_blank' : '_self'}>
+					<PictureComponent {picture} class="object-fill h-auto w-auto" />
+				</a>
 			</div>
 		{/each}
 		<svelte:fragment slot="controls" let:currentIndex>

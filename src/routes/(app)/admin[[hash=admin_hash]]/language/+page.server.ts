@@ -10,7 +10,8 @@ import { error } from '@sveltejs/kit';
 
 export async function load() {
 	return {
-		customTranslationKeys: locales.map((locale) => ({
+		defaultLanguage: runtimeConfig.defaultLanguage,
+		customTranslationKeys: runtimeConfig.languages.map((locale) => ({
 			locale: locale,
 			keys: runtimeConfig[`translations.${locale}`] || {}
 		}))
@@ -18,6 +19,65 @@ export async function load() {
 }
 
 export const actions = {
+	languages: async ({ request }) => {
+		const formData = await request.formData();
+
+		const parsed = z
+			.object({
+				languages: z.array(z.enum([locales[0], ...locales.slice(1)])).min(1),
+				defaultLanguage: z.enum([locales[0], ...locales.slice(1)])
+			})
+			.parse({
+				languages: formData.getAll('languages'),
+				defaultLanguage: formData.get('defaultLanguage')
+			});
+
+		if (!parsed.languages.includes(parsed.defaultLanguage)) {
+			throw error(400, 'Default language must be one of the selected languages');
+		}
+
+		if (JSON.stringify(runtimeConfig.languages) !== JSON.stringify(parsed.languages)) {
+			runtimeConfig.languages = parsed.languages;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'languages'
+				},
+				{
+					$set: {
+						data: parsed.languages,
+						updatedAt: new Date()
+					},
+					$setOnInsert: {
+						createdAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+
+		if (runtimeConfig.defaultLanguage !== parsed.defaultLanguage) {
+			runtimeConfig.defaultLanguage = parsed.defaultLanguage;
+			await collections.runtimeConfig.updateOne(
+				{
+					_id: 'defaultLanguage'
+				},
+				{
+					$set: {
+						data: parsed.defaultLanguage,
+						updatedAt: new Date()
+					},
+					$setOnInsert: {
+						createdAt: new Date()
+					}
+				},
+				{
+					upsert: true
+				}
+			);
+		}
+	},
 	custom: async ({ request }) => {
 		const formData = await request.formData();
 
