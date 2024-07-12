@@ -1,12 +1,18 @@
 import { collections } from '$lib/server/database';
 import { paymentMethods } from '$lib/server/payment-methods.js';
 import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
+import { z } from 'zod';
 
 export async function load({ url, locals }) {
-	const skip = url.searchParams.get('skip');
-	const orderNumber = url.searchParams.get('orderNumber');
-	const productAlias = url.searchParams.get('productAlias');
-	const paymentMethod = url.searchParams.get('paymentMethod');
+	const querySchema = z.object({
+		skip: z.string().optional(),
+		orderNumber: z.string().optional(),
+		productAlias: z.string().optional(),
+		paymentMethod: z.string().optional()
+	});
+	const searchParams = Object.fromEntries(url.searchParams.entries());
+	const result = querySchema.parse(searchParams);
+	const { skip, orderNumber, productAlias, paymentMethod } = result;
 
 	let orders;
 	if (orderNumber) {
