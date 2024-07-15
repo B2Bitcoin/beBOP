@@ -35,6 +35,7 @@
 		<label class="form-label w-[15em]">
 			Payment Mean
 			<select name="paymentMethod" class="form-input" disabled={data.paymentMethods.length === 0}>
+				<option></option>
 				{#each data.paymentMethods as paymentMethod}
 					<option value={paymentMethod}>
 						{t('checkout.paymentMethod.' + paymentMethod)}
@@ -45,6 +46,7 @@
 		<label class="form-label w-[15em]">
 			Country
 			<select name="country" class="form-input">
+				<option></option>
 				{#each sortedCountryCodes() as code}
 					<option value={code} selected={$page.url.searchParams.get('country') === code}
 						>{countryName(code)}</option

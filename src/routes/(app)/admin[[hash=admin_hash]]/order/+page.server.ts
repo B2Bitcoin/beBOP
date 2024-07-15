@@ -1,6 +1,5 @@
 import { collections } from '$lib/server/database';
-import { type PaymentMethod, paymentMethods } from '$lib/server/payment-methods';
-import { type CountryAlpha2, COUNTRY_ALPHA2S } from '$lib/types/Country.js';
+import { paymentMethods } from '$lib/server/payment-methods.js';
 import { type Order, ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
 
 import type { Filter } from 'mongodb';
@@ -13,8 +12,8 @@ export async function load({ url, locals }) {
 		skip: z.number({ coerce: true }).int().min(0).optional().default(0),
 		orderNumber: z.number({ coerce: true }).int().min(0).optional(),
 		productAlias: z.string().optional(),
-		paymentMethod: z.enum(methods as [PaymentMethod, ...PaymentMethod[]]).optional(),
-		country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]).optional(),
+		paymentMethod: z.string().optional(),
+		country: z.string().optional(),
 		email: z.string().optional(),
 		npub: z.string().optional()
 	});
