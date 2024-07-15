@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { downloadFile } from '$lib/utils/downloadFile.js';
