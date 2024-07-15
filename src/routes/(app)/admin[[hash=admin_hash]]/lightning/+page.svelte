@@ -1,10 +1,23 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import PriceTag from '$lib/components/PriceTag.svelte';
+	import { onMount } from 'svelte';
 
 	export let data;
+	export let form;
 
 	let qrCodeDescription = data.qrCodeDescription;
+
+	let rpcCommand = '';
+	let rpcParams = '';
+	let rpcMethod = 'GET';
+
+	onMount(() => {
+		rpcCommand = localStorage.getItem('lndRpcCommand') ?? '';
+		rpcParams = localStorage.getItem('lndRpcParams') ?? '';
+		rpcMethod = localStorage.getItem('lndRpcMethod') ?? 'GET';
+	});
 </script>
 
 <h1 class="text-3xl">Lightning node</h1>
@@ -121,3 +134,54 @@
 		No channels open
 	{/each}
 </ul>
+
+{#if data.rpc}
+	<h2 class="text-2xl">LND RPC</h2>
+
+	<form
+		action="?/rpc"
+		class="contents"
+		method="post"
+		use:enhance={() => {
+			localStorage.setItem('lndRpcCommand', rpcCommand);
+			localStorage.setItem('lndRpcParams', rpcParams);
+			localStorage.setItem('lndRpcMethod', rpcMethod);
+
+			return async ({ update }) => {
+				await update({ reset: false });
+			};
+		}}
+	>
+		<label class="form-label">
+			Url
+			<input
+				type="text"
+				name="url"
+				class="form-input"
+				bind:value={rpcCommand}
+				required
+				placeholder="/v1/getinfo"
+			/>
+		</label>
+		<label class="form-label">
+			Method
+			<select class="form-input" name="method" bind:value={rpcMethod}>
+				<option value="GET">GET</option>
+				<option value="POST">POST</option>
+			</select>
+		</label>
+		<label class="form-label">
+			Params
+			<textarea cols="30" rows="10" name="params" class="form-input" bind:value={rpcParams} />
+		</label>
+		<button class="btn btn-black self-start" type="submit">Send</button>
+	</form>
+
+	{#if form?.rpcFail}
+		<p class="text-red-500">{form.rpcFail}</p>
+	{/if}
+
+	{#if form?.rpcSuccess}
+		<pre class="text-sm">{JSON.stringify(form.rpcSuccess, null, 2)}</pre>
+	{/if}
+{/if}

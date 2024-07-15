@@ -59,7 +59,7 @@ const dispatcher =
 				return null;
 		  })();
 
-function lndRpc(
+export function lndRpc(
 	path: string,
 	options: { method?: string; headers?: Record<string, string>; body?: string } = {}
 ) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { enhance } from '$app/forms';
 	import PriceTag from '$lib/components/PriceTag.svelte';
 	import { downloadFile } from '$lib/utils/downloadFile.js';
 	import { formatDistance } from 'date-fns';
@@ -45,13 +45,6 @@
 	let rpcCommand = '';
 	let rpcParams = '';
 
-	$: {
-		if (browser && rpcCommand && rpcParams && data.rpc) {
-			localStorage.setItem('rpcCommand', rpcCommand);
-			localStorage.setItem('rpcParams', rpcParams);
-		}
-	}
-
 	onMount(() => {
 		rpcCommand = localStorage.getItem('rpcCommand') ?? '';
 		rpcParams = localStorage.getItem('rpcParams') ?? '';
@@ -70,10 +63,22 @@
 {#if data.rpc}
 	<h2 class="text-2xl">Bitcoin RPC</h2>
 
-	<form action="?/rpc" class="contents" method="post">
+	<form
+		action="?/rpc"
+		class="contents"
+		method="post"
+		use:enhance={() => {
+			localStorage.setItem('rpcCommand', rpcCommand);
+			localStorage.setItem('rpcParams', rpcParams);
+
+			return async ({ update }) => {
+				await update({ reset: false });
+			};
+		}}
+	>
 		<label class="form-label">
 			Command
-			<input type="text" name="method" class="form-input" bind:value={rpcCommand} />
+			<input type="text" name="method" class="form-input" bind:value={rpcCommand} required />
 		</label>
 		<label class="form-label">
 			Params
