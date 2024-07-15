@@ -1,6 +1,8 @@
 import { collections } from '$lib/server/database';
-import { PaymentMethod, paymentMethods } from '$lib/server/payment-methods.js';
-import { COUNTRY_ALPHA2S, CountryAlpha2 } from '$lib/types/Country.js';
+import { paymentMethods } from '$lib/server/payment-methods';
+import type { PaymentMethod } from '$lib/server/payment-methods';
+import type { CountryAlpha2 } from '$lib/types/Country.js';
+import { COUNTRY_ALPHA2S } from '$lib/types/Country.js';
 import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
 import { z } from 'zod';
 
