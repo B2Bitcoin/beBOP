@@ -7,13 +7,13 @@
 	export let data;
 	let next = 0;
 
-	const { t } = useI18n();
+	const { t, countryName, sortedCountryCodes } = useI18n();
 </script>
 
 <h1 class="text-3xl">List of orders</h1>
-<form class="flex flex-col gap-2" method="get">
+<form class="flex flex-col gap-2" method="GET">
 	<div class="gap-4 flex flex-col md:flex-row">
-		<label class="form-label w-[30em]">
+		<label class="form-label w-[15em]">
 			Search Order
 			<input
 				class="form-input"
@@ -22,7 +22,7 @@
 				placeholder="search order by number"
 			/>
 		</label>
-		<label class="form-label w-[30em]">
+		<label class="form-label w-[15em]">
 			Product alias
 			<input
 				class="form-input"
@@ -32,20 +32,31 @@
 				placeholder="search order by product alias"
 			/>
 		</label>
-		<label class="form-label w-[30em]">
+		<label class="form-label w-[15em]">
 			Payment Mean
-			<select
-				name="paymentMethod"
-				class="form-input"
-				disabled={data.paymentMethods.length === 0}
-				required
-			>
+			<select name="paymentMethod" class="form-input" disabled={data.paymentMethods.length === 0}>
 				{#each data.paymentMethods as paymentMethod}
 					<option value={paymentMethod}>
 						{t('checkout.paymentMethod.' + paymentMethod)}
 					</option>
 				{/each}
 			</select>
+		</label>
+		<label class="form-label w-[15em]">
+			Country
+			<select name="country" class="form-input">
+				{#each sortedCountryCodes() as code}
+					<option value={code}>{countryName(code)}</option>
+				{/each}
+			</select>
+		</label>
+		<label class="form-label w-[15em]">
+			Email
+			<input class="form-input" type="text" name="email" placeholder="search order by email" />
+		</label>
+		<label class="form-label w-[15em]">
+			Npub
+			<input class="form-input" type="text" name="npub" placeholder="search order npub" />
 		</label>
 		<label class="form-label w-auto mt-8">
 			<input type="submit" value="🔍" class="btn btn-gray" /></label
