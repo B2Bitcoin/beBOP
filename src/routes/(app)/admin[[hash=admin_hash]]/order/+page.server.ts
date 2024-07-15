@@ -3,21 +3,16 @@ import { paymentMethods } from '$lib/server/payment-methods';
 import type { PaymentMethod } from '$lib/server/payment-methods';
 import type { CountryAlpha2 } from '$lib/types/Country.js';
 import { COUNTRY_ALPHA2S } from '$lib/types/Country.js';
-import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
+import { Order, ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
+import { Filter } from 'mongodb';
 import { z } from 'zod';
 
 export async function load({ url, locals }) {
 	const methods = paymentMethods({ role: locals.user?.roleId });
 
 	const querySchema = z.object({
-		skip: z.preprocess(
-			(val) => (val !== undefined ? Number(val) : undefined),
-			z.number().int().min(0).optional().default(0)
-		),
-		orderNumber: z.preprocess(
-			(val) => (val !== undefined ? Number(val) : undefined),
-			z.number().int().min(0).optional()
-		),
+		skip: z.number({ coerce: true }).int().min(0).optional().default(0),
+		orderNumber: z.number({ coerce: true }).int().min(0).optional(),
 		productAlias: z.string().optional(),
 		paymentMethod: z.enum(methods as [PaymentMethod, ...PaymentMethod[]]).optional(),
 		country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]).optional(),
@@ -29,7 +24,7 @@ export async function load({ url, locals }) {
 	const result = querySchema.parse(searchParams);
 	const { skip, orderNumber, productAlias, paymentMethod, country, email, npub } = result;
 
-	const query: Record<string, unknown> = {};
+	const query: Filter<Order> = {};
 
 	if (orderNumber) {
 		query.number = orderNumber;

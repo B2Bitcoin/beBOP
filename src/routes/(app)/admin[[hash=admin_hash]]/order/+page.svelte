@@ -5,7 +5,7 @@
 	import { useI18n } from '$lib/i18n.js';
 
 	export let data;
-	let next = 0;
+	$: next = 0;
 
 	const { t, countryName, sortedCountryCodes } = useI18n();
 </script>
@@ -46,7 +46,9 @@
 			Country
 			<select name="country" class="form-input">
 				{#each sortedCountryCodes() as code}
-					<option value={code}>{countryName(code)}</option>
+					<option value={code} selected={$page.url.searchParams.get('country') === code}
+						>{countryName(code)}</option
+					>
 				{/each}
 			</select>
 		</label>
@@ -58,23 +60,25 @@
 			Npub
 			<input class="form-input" type="text" name="npub" placeholder="search order npub" />
 		</label>
-		<label class="form-label w-auto mt-8">
-			<input type="submit" value="🔍" class="btn btn-gray" /></label
-		>
+		<label class="form-label w-auto mt-8 flex flex-row">
+			<input type="submit" value="🔍" class="btn btn-gray" />
+			<a href="/admin/order" class="btn btn-gray">🧹</a>
+		</label>
+	</div>
+	<OrdersList orders={data.orders} adminPrefix={data.adminPrefix} />
+	<div class="flex gap-2">
+		<input type="hidden" value={next} name="skip" />
+		{#if Number($page.url.searchParams.get('skip'))}
+			<button
+				class="btn btn-blue"
+				type="submit"
+				on:click={() => (next = Math.max(0, next - ORDER_PAGINATION_LIMIT))}>Previous</button
+			>
+		{/if}
+		{#if data.orders.length >= ORDER_PAGINATION_LIMIT}
+			<button class="btn btn-blue" type="submit" on:click={() => (next += ORDER_PAGINATION_LIMIT)}
+				>Next</button
+			>
+		{/if}
 	</div>
 </form>
-<OrdersList orders={data.orders} adminPrefix={data.adminPrefix} />
-<div class="flex gap-2">
-	{#if Number($page.url.searchParams.get('skip'))}
-		<a
-			class="btn btn-blue"
-			on:click={() => (next = Math.max(0, next - ORDER_PAGINATION_LIMIT))}
-			href="?skip={next}">Previous</a
-		>
-	{/if}
-	{#if data.orders.length >= ORDER_PAGINATION_LIMIT}
-		<a class="btn btn-blue" on:click={() => (next += ORDER_PAGINATION_LIMIT)} href="?skip={next}"
-			>Next</a
-		>
-	{/if}
-</div>
