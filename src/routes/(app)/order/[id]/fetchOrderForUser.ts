@@ -139,6 +139,7 @@ export async function fetchOrderForUser(orderId: string) {
 		user: {
 			npub: order.user.npub,
 			email: order.user.email
-		}
+		},
+		onLocation: order.onLocation
 	};
 }

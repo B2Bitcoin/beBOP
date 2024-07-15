@@ -60,7 +60,7 @@
 	{#if data.order.notifications.paymentStatus.email}
 		<!-- <p>{data.order.notifications.paymentStatus.email}</p> -->
 	{/if}
-	{#if data.order.billingAddress}
+	{#if data.order.billingAddress && !data.order.onLocation}
 		{#if differentAddress}
 			<p class="font-bold">{t('checkout.billingInfo')}</p>
 		{/if}

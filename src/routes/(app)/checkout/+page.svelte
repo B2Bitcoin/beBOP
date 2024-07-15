@@ -29,7 +29,8 @@
 	let country = defaultShippingCountry;
 
 	let isFreeVat = false;
-	let offerDeliveryFees = false;
+	let onLocation = data.defaultOnLocation;
+	$: offerDeliveryFees = onLocation;
 	let addDiscount = false;
 	let discountAmount = 0;
 	let discountType: DiscountType;
@@ -320,6 +321,18 @@
 							bind:checked={isProfessionalOrder}
 						/>
 						{t('checkout.isProBilling')}
+					</label>
+				{/if}
+				{#if data.defaultOnLocation && data.roleId === POS_ROLE_ID && !isDigital}
+					<label class="col-span-6 checkbox-label">
+						<input
+							type="checkbox"
+							class="form-checkbox"
+							form="checkout"
+							name="onLocation"
+							bind:checked={onLocation}
+						/>
+						{t('checkout.onLocation')}
 					</label>
 				{/if}
 			</section>
@@ -985,6 +998,7 @@
 									form="checkout"
 									name="reasonOfferDeliveryFees"
 									required
+									value={onLocation ? t('checkout.reasonOfferFeesDefault') : ''}
 								/></label
 							>
 						{/if}

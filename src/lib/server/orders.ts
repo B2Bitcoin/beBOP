@@ -461,6 +461,7 @@ export async function createOrder(
 			acceptedDepositConditionsAndFullPayment?: boolean;
 			acceptedExportationAndVATObligation?: boolean;
 		};
+		onLocation?: boolean;
 	}
 ): Promise<Order['_id']> {
 	const npubAddress = params.notifications?.paymentStatus?.npub;
@@ -951,7 +952,8 @@ export async function createOrder(
 					reason: params.reasonOfferDeliveryFees
 				}
 			}),
-			...(params.engagements && { engagements: params.engagements })
+			...(params.engagements && { engagements: params.engagements }),
+			...(params.onLocation && { onLocation: params.onLocation })
 		};
 		await collections.orders.insertOne(order, { session });
 
