@@ -4,6 +4,7 @@ import { rateLimit } from '$lib/server/rateLimit';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { error, redirect } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
+import { Kind } from 'nostr-tools';
 import { z } from 'zod';
 
 export const load = async ({ params, locals }) => {
@@ -47,14 +48,26 @@ export const actions = {
 		const htmlContent = `Message envoyé par formulaire sur le site ${ORIGIN}<br> Adresse de contact : ${
 			parsed.from ? parsed.from : 'non-renseigné'
 		}  <br> Message envoyé :<br> ${parsedMessageHtml}`;
-		await collections.emailNotifications.insertOne({
-			_id: new ObjectId(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			subject: parsed.subject,
-			htmlContent: htmlContent,
-			dest: parsed.target || SMTP_USER
-		});
+		if (parsed.target.startsWith('npub')) {
+			await collections.nostrNotifications.insertOne({
+				_id: new ObjectId(),
+				createdAt: new Date(),
+				kind: Kind.EncryptedDirectMessage,
+				updatedAt: new Date(),
+				content: htmlContent,
+				dest: parsed.target
+			});
+		} else {
+			await collections.emailNotifications.insertOne({
+				_id: new ObjectId(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				subject: parsed.subject,
+				htmlContent: htmlContent,
+				dest: parsed.target || SMTP_USER
+			});
+		}
+
 		throw redirect(303, request.headers.get('referer') || '/');
 	}
 };
