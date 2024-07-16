@@ -70,7 +70,9 @@
 			}
 
 			input.value = input.value.trim();
-
+			if (input.value.includes('nostr:')) {
+				input.value = input.value.replace(/^nostr:/, '');
+			}
 			if (
 				input.value &&
 				(!input.value.startsWith('npub1') || bech32.decodeUnsafe(input.value)?.prefix !== 'npub')
