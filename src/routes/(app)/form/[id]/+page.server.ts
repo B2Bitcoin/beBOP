@@ -48,13 +48,16 @@ export const actions = {
 		const htmlContent = `Message envoyé par formulaire sur le site ${ORIGIN}<br> Adresse de contact : ${
 			parsed.from ? parsed.from : 'non-renseigné'
 		}  <br> Message envoyé :<br> ${parsedMessageHtml}`;
+		const content = `Message envoyé par formulaire sur le site ${ORIGIN} Adresse de contact : ${
+			parsed.from ? parsed.from : 'non-renseigné'
+		}   Message envoyé : ${parsed.content}`;
 		if (parsed.target.startsWith('npub')) {
 			await collections.nostrNotifications.insertOne({
 				_id: new ObjectId(),
 				createdAt: new Date(),
 				kind: Kind.EncryptedDirectMessage,
 				updatedAt: new Date(),
-				content: htmlContent,
+				content,
 				dest: parsed.target
 			});
 		} else {
