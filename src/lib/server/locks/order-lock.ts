@@ -119,45 +119,96 @@ async function maintainOrders() {
 						}
 						break;
 					case 'card':
-						try {
-							if (!runtimeConfig.sumUp.apiKey) {
-								throw new Error('Missing sumup API key');
-							}
-							const checkoutId = payment.checkoutId;
+						switch (payment.processor) {
+							case 'sumup':
+								try {
+									if (!runtimeConfig.sumUp.apiKey) {
+										throw new Error('Missing sumup API key');
+									}
+									const checkoutId = payment.checkoutId;
 
-							if (!checkoutId) {
-								throw new Error('Missing checkout ID on card order');
-							}
+									if (!checkoutId) {
+										throw new Error('Missing checkout ID on card order');
+									}
 
-							const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + checkoutId, {
-								headers: {
-									Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
-								},
-								...{ autoSelectFamily: true }
-							});
+									const response = await fetch(
+										'https://api.sumup.com/v0.1/checkouts/' + checkoutId,
+										{
+											headers: {
+												Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
+											},
+											...{ autoSelectFamily: true }
+										}
+									);
 
-							if (!response.ok) {
-								throw new Error(
-									'Failed to fetch checkout status for order ' +
-										order._id +
-										', checkout ' +
-										checkoutId
-								);
-							}
+									if (!response.ok) {
+										throw new Error(
+											'Failed to fetch checkout status for order ' +
+												order._id +
+												', checkout ' +
+												checkoutId
+										);
+									}
 
-							const checkout = await response.json();
+									const checkout = await response.json();
 
-							if (checkout.status === 'PAID') {
-								payment.transactions = checkout.transactions;
-								order = await onOrderPayment(order, payment, {
-									amount: checkout.amount,
-									currency: checkout.currency
-								});
-							} else if (checkout.status === 'FAILED' || checkout.status === 'EXPIRED') {
-								order = await onOrderPaymentFailed(order, payment, 'expired');
-							}
-						} catch (err) {
-							console.error(inspect(err, { depth: 10 }));
+									if (checkout.status === 'PAID') {
+										payment.transactions = checkout.transactions;
+										order = await onOrderPayment(order, payment, {
+											amount: checkout.amount,
+											currency: checkout.currency
+										});
+									} else if (checkout.status === 'FAILED' || checkout.status === 'EXPIRED') {
+										order = await onOrderPaymentFailed(order, payment, 'expired');
+									}
+								} catch (err) {
+									console.error(inspect(err, { depth: 10 }));
+								} finally {
+									break;
+								}
+							case 'stripe':
+								try {
+									if (!runtimeConfig.stripe.secretKey) {
+										throw new Error('Missing stripe secret key');
+									}
+									const checkoutId = payment.checkoutId;
+
+									if (!checkoutId) {
+										throw new Error('Missing checkout ID on card order');
+									}
+
+									const response = await fetch(
+										'https://api.stripe.com/v1/checkout/sessions/' + checkoutId,
+										{
+											headers: {
+												Authorization: 'Bearer ' + runtimeConfig.stripe.secretKey
+											}
+										}
+									);
+
+									if (!response.ok) {
+										throw new Error(
+											'Failed to fetch checkout status for order ' +
+												order._id +
+												', checkout ' +
+												checkoutId
+										);
+									}
+
+									const checkout = await response.json();
+
+									if (checkout.payment_status === 'paid') {
+										order = await onOrderPayment(order, payment, {
+											amount: checkout.amount_total,
+											currency: checkout.currency
+										});
+									}
+								} catch (err) {
+									console.error(inspect(err, { depth: 10 }));
+								}
+								break;
+							default:
+								console.error('Unknown card processor', payment.processor);
 						}
 						break;
 					// handled by admin
