@@ -533,7 +533,7 @@ const commands: Record<
 				products.every((product) => !product.shipping)
 			) {
 				await send(
-					`Sorry, this beBOP required IP for orders for legal motives, orders through Nostr are disabled ; you can check why on ${ORIGIN}/why-collect-ip`
+					`Sorry, this beBOP requires an IP address or shipping address for each order, which is not possible via NostR at the moment`
 				);
 				return;
 			}
