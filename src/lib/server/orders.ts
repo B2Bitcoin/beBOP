@@ -34,7 +34,10 @@ import type { CountryAlpha2 } from '$lib/types/Country';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { LanguageKey } from '$lib/translations';
 import { filterNullish } from '$lib/utils/fillterNullish';
+import { toUrlEncoded } from '$lib/utils/toUrlEncoded';
 import { isPhoenixdConfigured, phoenixdCreateInvoice } from './phoenixd';
+import { isSumupEnabled } from './sumup';
+import { isStripeEnabled } from './stripe';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -1076,7 +1079,7 @@ async function generateCardPaymentInfo(params: {
 	address: string;
 	processor: PaymentProcessor;
 }> {
-	{
+	if (isSumupEnabled()) {
 		const resp = await fetch('https://api.sumup.com/v0.1/checkouts', {
 			method: 'POST',
 			headers: {
@@ -1122,6 +1125,45 @@ async function generateCardPaymentInfo(params: {
 			processor: 'sumup'
 		};
 	}
+
+	if (isStripeEnabled()) {
+		const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${runtimeConfig.stripe.secretKey}`,
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: toUrlEncoded({
+				payment_method_types: ['card'],
+				mode: 'payment',
+				success_url: `${ORIGIN}/order/${params.orderId}`,
+				cancel_url: `${ORIGIN}/order/${params.orderId}`,
+				client_reference_id: params.orderId + '-' + params.paymentId,
+				payment_intent_data: JSON.stringify({
+					amount: toCurrency('EUR', params.toPay.amount, params.toPay.currency),
+					currency: 'EUR',
+					application_fee_amount: 0,
+					description: 'Order ' + params.orderNumber
+				})
+			})
+		});
+
+		if (!response.ok) {
+			console.error(await response.text());
+			throw error(402, 'Stripe checkout creation failed');
+		}
+
+		const session = await response.json();
+
+		return {
+			checkoutId: session.id,
+			meta: session,
+			address: session.url,
+			processor: 'stripe'
+		};
+	}
+
+	throw error(501, 'No payment processor configured');
 }
 
 function paymentMethodExpiration(paymentMethod: PaymentMethod) {
