@@ -196,13 +196,13 @@
 
 	function mountStripeCard() {
 		// Actually more like "clientSecret"
-		if (data.payment.checkoutId && data.stripePublicKey) {
+		if (data.payment.clientSecret && data.stripePublicKey) {
 			const stripe = window.Stripe(data.stripePublicKey);
 			const elements = stripe.elements({
 				appearance: {
 					theme: 'stripe'
 				},
-				clientSecret: data.payment.checkoutId
+				clientSecret: data.payment.clientSecret
 			});
 
 			elements
