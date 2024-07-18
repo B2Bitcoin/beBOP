@@ -25,38 +25,63 @@ export async function fetchOrderForUser(orderId: string) {
 		.toArray();
 
 	for (const payment of order.payments) {
-		if (
-			payment.method === 'card' &&
-			payment.status === 'pending' &&
-			isSumupEnabled() &&
-			payment.checkoutId
-		) {
-			const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + payment.checkoutId, {
-				headers: {
-					Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
-				},
-				...{ autoSelectFamily: true }
-			});
+		// Check if the payment has been paid but the status is still pending in DB
+		// In that case, we send back the status as paid, but do not update the DB (it's taken care of by order-lock)
+		if (payment.method === 'card' && payment.status === 'pending') {
+			if (payment.processor === 'sumup' && isSumupEnabled() && payment.checkoutId) {
+				const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + payment.checkoutId, {
+					headers: {
+						Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
+					},
+					...{ autoSelectFamily: true }
+				});
 
-			if (!response.ok) {
-				throw new Error('Failed to fetch checkout status');
-			}
-
-			const checkout = await response.json();
-
-			if (checkout.status === 'PAID') {
-				payment.status = 'paid';
-
-				payment.invoice = {
-					number: FAKE_ORDER_INVOICE_NUMBER,
-					createdAt: new Date()
-				};
-
-				if (isOrderFullyPaid(order) && order.status === 'pending') {
-					order.status = 'paid';
+				if (!response.ok) {
+					throw new Error('Failed to fetch checkout status');
 				}
 
-				// order-lock will take care of updating in background
+				const checkout = await response.json();
+
+				if (checkout.status === 'PAID') {
+					payment.status = 'paid';
+
+					payment.invoice = {
+						number: FAKE_ORDER_INVOICE_NUMBER,
+						createdAt: new Date()
+					};
+
+					if (isOrderFullyPaid(order) && order.status === 'pending') {
+						order.status = 'paid';
+					}
+				}
+			} else if (payment.processor === 'stripe' && payment.checkoutId) {
+				const response = await fetch(
+					'https://api.stripe.com/v1/checkout/sessions/' + payment.checkoutId,
+					{
+						headers: {
+							Authorization: 'Bearer ' + runtimeConfig.stripe.secretKey
+						}
+					}
+				);
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch checkout status');
+				}
+
+				const checkout = await response.json();
+
+				if (checkout.payment_status === 'paid') {
+					payment.status = 'paid';
+
+					payment.invoice = {
+						number: FAKE_ORDER_INVOICE_NUMBER,
+						createdAt: new Date()
+					};
+
+					if (isOrderFullyPaid(order) && order.status === 'pending') {
+						order.status = 'paid';
+					}
+				}
 			}
 		}
 	}
