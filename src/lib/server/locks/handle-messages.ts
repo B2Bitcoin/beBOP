@@ -527,12 +527,9 @@ const commands: Record<
 				);
 				return;
 			}
-			if (
-				runtimeConfig.isBillingAddressMandatory &&
-				products.every((product) => !product.shipping)
-			) {
+			if (runtimeConfig.isBillingAddressMandatory) {
 				await send(
-					`Sorry, this beBOP required billing informations for orders for legal motives, orders through Nostr are disabled ; you can check why on ${ORIGIN}/terms and ${ORIGIN}/privacy`
+					`This beBOP is configured to always require a billing address, but this is not supported yet via NostR`
 				);
 				return;
 			}
