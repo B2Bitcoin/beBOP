@@ -527,6 +527,15 @@ const commands: Record<
 				);
 				return;
 			}
+			if (
+				runtimeConfig.isBillingAddressMandatory &&
+				products.every((product) => !product.shipping)
+			) {
+				await send(
+					`Sorry, this beBOP required billing informations for orders for legal motives, orders through Nostr are disabled ; you can check why on ${ORIGIN}/terms and ${ORIGIN}/privacy`
+				);
+				return;
+			}
 
 			const productById = Object.fromEntries(products.map((p) => [p._id, p]));
 
