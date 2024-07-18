@@ -93,6 +93,7 @@ export async function fetchOrderForUser(orderId: string) {
 		payments: order.payments.map((payment) => ({
 			id: payment._id.toString(),
 			method: payment.method,
+			processor: payment.method === 'card' ? payment.processor : undefined,
 			status: payment.status,
 			address: payment.address,
 			expiresAt: payment.expiresAt,
