@@ -371,6 +371,12 @@ const commands: Record<
 				);
 				return;
 			}
+			if (product.shipping) {
+				await send(
+					`Sorry, this product has a physical component and cannot be ordered through Nostr`
+				);
+				return;
+			}
 
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
 				async (e) => {
