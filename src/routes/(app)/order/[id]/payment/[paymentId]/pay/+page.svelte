@@ -151,11 +151,13 @@
 								| 'accordion'
 								| 'tabs';
 						}
-					) => any;
+					) => {
+						mount: (element: string | HTMLElement) => void;
+					};
 				};
-				createToken: (element: any) => Promise<{ token: string }>;
+				createToken: (element: unknown) => Promise<{ token: string }>;
 				confirmPayment: (options: {
-					elements: any;
+					elements: unknown;
 					confirmParams: {
 						return_url: string;
 					};
