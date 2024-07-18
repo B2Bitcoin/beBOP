@@ -8,7 +8,7 @@ import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
 import { addToCartInDb, getCartFromDb, removeFromCartInDb } from '../cart';
-import type { Product } from '$lib/types/Product';
+import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
@@ -371,8 +371,14 @@ const commands: Record<
 				);
 				return;
 			}
-
-			if (product.stock && product.stock?.available) {
+			const amountAvailable = Math.max(
+				Math.min(
+					product.stock?.available ?? Infinity,
+					product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
+				),
+				0
+			);
+			if (amountAvailable === 0) {
 				await send('Sorry, this product is out of stock');
 				return;
 			}
