@@ -374,7 +374,7 @@ const commands: Record<
 
 			const isPreorder = isPreorderFn(product.availableDate, product.preorder);
 			if (!isPreorder && product.availableDate && product.availableDate > new Date()) {
-				await send('Sorry, this product cannot be ordered yet');
+				await send('Sorry, this product is not available yet to order');
 				return;
 			}
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
