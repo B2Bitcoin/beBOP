@@ -528,6 +528,16 @@ const commands: Record<
 				return;
 			}
 
+			if (
+				runtimeConfig.collectIPOnDeliverylessOrders &&
+				products.every((product) => !product.shipping)
+			) {
+				await send(
+					`Sorry, this beBOP required IP for orders for legal motives, orders through Nostr are disabled ; you can check why on ${ORIGIN}/why-collect-ip`
+				);
+				return;
+			}
+
 			const productById = Object.fromEntries(products.map((p) => [p._id, p]));
 
 			const items = cart.items
