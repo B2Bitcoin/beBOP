@@ -372,6 +372,11 @@ const commands: Record<
 				return;
 			}
 
+			if (product.stock && product.stock?.available) {
+				await send('Sorry, this product is out of stock');
+				return;
+			}
+
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
 				async (e) => {
 					console.error(e);
