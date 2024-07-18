@@ -171,14 +171,16 @@ async function maintainOrders() {
 									if (!runtimeConfig.stripe.secretKey) {
 										throw new Error('Missing stripe secret key');
 									}
-									const checkoutId = payment.checkoutId;
+									const paymentId = payment.checkoutId;
 
-									if (!checkoutId) {
-										throw new Error('Missing checkout ID on card order');
+									if (!paymentId) {
+										throw new Error('Missing cjeckout id on stripe order');
 									}
 
+									// Fetch payment intent
 									const response = await fetch(
-										'https://api.stripe.com/v1/checkout/sessions/' + checkoutId,
+										'https://api.stripe.com/v1/payment_intents/' + paymentId,
+
 										{
 											headers: {
 												Authorization: 'Bearer ' + runtimeConfig.stripe.secretKey
@@ -188,20 +190,43 @@ async function maintainOrders() {
 
 									if (!response.ok) {
 										throw new Error(
-											'Failed to fetch checkout status for order ' +
+											'Failed to fetch payment intent status for order ' +
 												order._id +
-												', checkout ' +
-												checkoutId
+												', payment intent ' +
+												paymentId
 										);
 									}
 
-									const checkout = await response.json();
+									const paymentIntent = await response.json();
 
-									if (checkout.payment_status === 'paid') {
+									if (paymentIntent.status === 'succeeded') {
+										payment.transactions = paymentIntent.charges.data;
 										order = await onOrderPayment(order, payment, {
-											amount: checkout.amount_total,
-											currency: checkout.currency
+											amount: paymentIntent.amount_received,
+											currency: paymentIntent.currency
 										});
+									} else if (paymentIntent.status === 'canceled') {
+										order = await onOrderPaymentFailed(order, payment, 'expired');
+									} else if (payment.expiresAt && new Date() > payment.expiresAt) {
+										const cancelResponse = await fetch(
+											'https://api.stripe.com/v1/payment_intents/' + paymentId + '/cancel',
+											{
+												method: 'POST',
+												headers: {
+													Authorization: 'Bearer ' + runtimeConfig.stripe.secretKey
+												}
+											}
+										);
+
+										if (!cancelResponse.ok) {
+											throw new Error(
+												'Failed to cancel payment intent for order ' +
+													order._id +
+													', payment intent ' +
+													paymentId
+											);
+										}
+										order = await onOrderPaymentFailed(order, payment, 'expired');
 									}
 								} catch (err) {
 									console.error(inspect(err, { depth: 10 }));

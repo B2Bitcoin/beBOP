@@ -1078,6 +1078,7 @@ async function generateCardPaymentInfo(params: {
 	meta: unknown;
 	address: string;
 	processor: PaymentProcessor;
+	clientSecret?: string;
 }> {
 	if (isSumupEnabled()) {
 		const resp = await fetch('https://api.sumup.com/v0.1/checkouts', {
@@ -1127,38 +1128,56 @@ async function generateCardPaymentInfo(params: {
 	}
 
 	if (isStripeEnabled()) {
-		const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+		// Create payment intent
+		const response = await fetch('https://api.stripe.com/v1/payment_intents', {
 			method: 'POST',
 			headers: {
 				Authorization: `Bearer ${runtimeConfig.stripe.secretKey}`,
 				'Content-Type': 'application/x-www-form-urlencoded'
 			},
 			body: toUrlEncoded({
-				payment_method_types: ['card'],
-				mode: 'payment',
-				success_url: `${ORIGIN}/order/${params.orderId}`,
-				cancel_url: `${ORIGIN}/order/${params.orderId}`,
-				client_reference_id: params.orderId + '-' + params.paymentId,
-				payment_intent_data: JSON.stringify({
-					amount: toCurrency('EUR', params.toPay.amount, params.toPay.currency),
-					currency: 'EUR',
-					application_fee_amount: 0,
-					description: 'Order ' + params.orderNumber
-				})
+				amount: Math.round(
+					toCurrency(runtimeConfig.stripe.currency, params.toPay.amount, params.toPay.currency) /
+						CURRENCY_UNIT[runtimeConfig.stripe.currency]
+				),
+				currency: runtimeConfig.stripe.currency.toLowerCase(),
+				automatic_payment_methods: {
+					enabled: true
+				},
+				metadata: {
+					orderId: params.orderId,
+					paymentId: params.paymentId.toHexString()
+				},
+				description: 'Order ' + params.orderNumber
 			})
 		});
 
 		if (!response.ok) {
 			console.error(await response.text());
-			throw error(402, 'Stripe checkout creation failed');
+			throw error(402, 'Stripe payment intent creation failed');
 		}
 
-		const session = await response.json();
+		const json = await response.json();
+
+		const clientSecret = json.client_secret;
+
+		if (!clientSecret || typeof clientSecret !== 'string') {
+			console.error('no client secret', json);
+			throw error(402, 'Stripe payment intent creation failed');
+		}
+
+		const paymentId = json.id;
+
+		if (!paymentId || typeof paymentId !== 'string') {
+			console.error('no payment id', json);
+			throw error(402, 'Stripe payment intent creation failed');
+		}
 
 		return {
-			checkoutId: session.id,
-			meta: session,
-			address: session.url,
+			checkoutId: paymentId,
+			clientSecret,
+			meta: json,
+			address: `${ORIGIN}/order/${params.orderId}/payment/${params.paymentId}/pay`,
 			processor: 'stripe'
 		};
 	}

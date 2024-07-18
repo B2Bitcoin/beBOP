@@ -56,7 +56,7 @@ export async function fetchOrderForUser(orderId: string) {
 				}
 			} else if (payment.processor === 'stripe' && payment.checkoutId) {
 				const response = await fetch(
-					'https://api.stripe.com/v1/checkout/sessions/' + payment.checkoutId,
+					'https://api.stripe.com/v1/payment_intents/' + payment.checkoutId,
 					{
 						headers: {
 							Authorization: 'Bearer ' + runtimeConfig.stripe.secretKey
@@ -68,9 +68,9 @@ export async function fetchOrderForUser(orderId: string) {
 					throw new Error('Failed to fetch checkout status');
 				}
 
-				const checkout = await response.json();
+				const paymentIntent = await response.json();
 
-				if (checkout.payment_status === 'paid') {
+				if (paymentIntent.status === 'succeeded') {
 					payment.status = 'paid';
 
 					payment.invoice = {
@@ -100,6 +100,7 @@ export async function fetchOrderForUser(orderId: string) {
 			paidAt: payment.paidAt,
 			createdAt: payment.createdAt,
 			checkoutId: payment.checkoutId,
+			clientSecret: payment.clientSecret,
 			invoice: payment.invoice,
 			price: payment.price,
 			currencySnapshot: payment.currencySnapshot,
