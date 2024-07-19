@@ -26,7 +26,7 @@ const migrations = [
 		}
 	},
 	{
-		_id: new ObjectId('39811201e92e590e858af8bb'),
+		_id: new ObjectId('39811201e92e590e858af8ba'),
 		name: 'Adding actionSettings to products',
 		run: async (session: ClientSession) => {
 			await collections.products.updateMany(
@@ -44,10 +44,6 @@ const migrations = [
 							},
 							googleShopping: {
 								visible: true
-							},
-							nostr: {
-								visible: true,
-								canBeAddedToBasket: true
 							}
 						}
 					}
@@ -439,6 +435,37 @@ const migrations = [
 		_id: new ObjectId('668c423519c3d2f1ba38344e'),
 		run: async () => {
 			await collections.pictures.dropIndex('productId_1').catch(console.error);
+		}
+	},
+	{
+		_id: new ObjectId('39811201e92e590e858af8bb'),
+		name: 'Adding actionSettings nostr to products',
+		run: async (session: ClientSession) => {
+			await collections.products.updateMany(
+				{},
+				{
+					$set: {
+						actionSettings: {
+							eShop: {
+								visible: true,
+								canBeAddedToBasket: true
+							},
+							retail: {
+								visible: true,
+								canBeAddedToBasket: true
+							},
+							googleShopping: {
+								visible: true
+							},
+							nostr: {
+								visible: true,
+								canBeAddedToBasket: true
+							}
+						}
+					}
+				},
+				{ session }
+			);
 		}
 	}
 ];
