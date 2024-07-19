@@ -372,7 +372,7 @@ const commands: Record<
 				return;
 			}
 			if (product.standalone && quantity > 1) {
-				await send(`Sorry, you cannot order more than 1 product at a time`);
+				await send(`Sorry, you cannot order more than one of this product at a time`);
 				return;
 			}
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
