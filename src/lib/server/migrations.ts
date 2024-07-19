@@ -26,7 +26,7 @@ const migrations = [
 		}
 	},
 	{
-		_id: new ObjectId('39811201e92e590e858af8ba'),
+		_id: new ObjectId('39811201e92e590e858af8bb'),
 		name: 'Adding actionSettings to products',
 		run: async (session: ClientSession) => {
 			await collections.products.updateMany(
@@ -44,6 +44,10 @@ const migrations = [
 							},
 							googleShopping: {
 								visible: true
+							},
+							nostr: {
+								visible: true,
+								canBeAddedToBasket: true
 							}
 						}
 					}
