@@ -442,29 +442,16 @@ const migrations = [
 		}
 	},
 	{
-		_id: new ObjectId('39811201e92e590e858af8bb'),
+		_id: new ObjectId('669a90d18bc5aaf40c863b63'),
 		name: 'Adding actionSettings nostr to products',
 		run: async (session: ClientSession) => {
 			await collections.products.updateMany(
 				{},
 				{
 					$set: {
-						actionSettings: {
-							eShop: {
-								visible: true,
-								canBeAddedToBasket: true
-							},
-							retail: {
-								visible: true,
-								canBeAddedToBasket: true
-							},
-							googleShopping: {
-								visible: true
-							},
-							nostr: {
-								visible: true,
-								canBeAddedToBasket: true
-							}
+						'actionSettings.nostr': {
+							visible: true,
+							canBeAddedToBasket: true
 						}
 					}
 				},
