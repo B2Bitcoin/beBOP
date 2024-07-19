@@ -12,7 +12,7 @@
 		<input
 			class="form-input"
 			type="text"
-			name="apiKey"
+			name="secretKey"
 			value={data.stripe.secretKey}
 			placeholder="sk_..."
 			required
@@ -24,7 +24,7 @@
 		<input
 			class="form-input"
 			type="text"
-			name="apiKey"
+			name="publicKey"
 			value={data.stripe.publicKey}
 			placeholder="pk_..."
 			required

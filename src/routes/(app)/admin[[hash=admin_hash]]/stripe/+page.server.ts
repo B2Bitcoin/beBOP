@@ -17,8 +17,7 @@ export const actions = {
 				secretKey: z.string().startsWith('sk_'),
 				currency: z.enum(
 					CURRENCIES.filter((c) => c !== 'BTC' && c !== 'SAT') as [Currency, ...Currency[]]
-				),
-				merchantCode: z.string().min(1)
+				)
 			})
 			.parse(Object.fromEntries(await request.formData()));
 

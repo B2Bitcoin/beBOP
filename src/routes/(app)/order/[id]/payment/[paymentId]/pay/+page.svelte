@@ -172,10 +172,13 @@
 
 	import { page } from '$app/stores';
 	import OrderSummary from '$lib/components/OrderSummary.svelte';
+	import { useI18n } from '$lib/i18n';
 
 	import { onMount } from 'svelte';
 
 	export let data;
+
+	const { t } = useI18n();
 
 	let paymentLoading = false;
 
@@ -290,9 +293,11 @@
 <main class="mx-auto max-w-7xl py-10 px-6 flex flex-col md:flex-row gap-4 justify-around">
 	<div class="grow">
 		{#if data.payment.processor === 'stripe'}
-			<form class="payment-form" on:submit|preventDefault={handleSubmit}>
+			<form class="payment-form flex flex-col gap-4" on:submit|preventDefault={handleSubmit}>
 				<div id="payment-element" class="stripe"></div>
-				<button class="btn btn-black" type="submit" disabled={paymentLoading}>Pay now</button>
+				<button class="btn btn-black self-start" type="submit" disabled={paymentLoading}>
+					{t('checkout.cta.submit')}
+				</button>
 			</form>
 		{:else}
 			<div

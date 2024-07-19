@@ -11,6 +11,8 @@ import { onOrderPayment, onOrderPaymentFailed } from '../orders';
 import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 import { phoenixdLookupInvoice } from '../phoenixd';
+import { CURRENCIES, CURRENCY_UNIT } from '$lib/types/Currency';
+import { typedInclude } from '$lib/utils/typedIncludes';
 
 const lock = new Lock('orders');
 
@@ -197,13 +199,22 @@ async function maintainOrders() {
 										);
 									}
 
-									const paymentIntent = await response.json();
+									const paymentIntent: {
+										status: string;
+										amount_received: number;
+										currency: string;
+									} = await response.json();
 
 									if (paymentIntent.status === 'succeeded') {
-										payment.transactions = paymentIntent.charges.data;
+										const currency = paymentIntent.currency.toUpperCase();
+
+										if (!typedInclude(CURRENCIES, currency)) {
+											throw new Error('Unknown currency ' + currency);
+										}
+
 										order = await onOrderPayment(order, payment, {
-											amount: paymentIntent.amount_received,
-											currency: paymentIntent.currency
+											amount: paymentIntent.amount_received * CURRENCY_UNIT[currency],
+											currency: currency
 										});
 									} else if (paymentIntent.status === 'canceled') {
 										order = await onOrderPaymentFailed(order, payment, 'expired');
