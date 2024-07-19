@@ -44,6 +44,10 @@ const migrations = [
 							},
 							googleShopping: {
 								visible: true
+							},
+							nostr: {
+								visible: true,
+								canBeAddedToBasket: true
 							}
 						}
 					}
