@@ -184,6 +184,10 @@ export const actions: Actions = {
 							},
 							googleShopping: {
 								visible: parsed.googleShoppingVisible
+							},
+							nostr: {
+								visible: parsed.nostrVisible,
+								canBeAddedToBasket: parsed.nostrBasket
 							}
 						},
 						tagIds: parsed.tagIds,
@@ -312,6 +316,10 @@ export const actions: Actions = {
 						},
 						googleShopping: {
 							visible: parsed.googleShoppingVisible
+						},
+						nostr: {
+							visible: parsed.nostrVisible,
+							canBeAddedToBasket: parsed.nostrBasket
 						}
 					},
 					...(parsed.restrictPaymentMethods && {
