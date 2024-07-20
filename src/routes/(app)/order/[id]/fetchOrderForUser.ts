@@ -1,8 +1,10 @@
 import { collections } from '$lib/server/database';
 import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 import { isOrderFullyPaid } from '$lib/server/orders';
+import { isPaypalEnabled, paypalAccessToken } from '$lib/server/paypal';
 import { picturesForProducts } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
+import { isStripeEnabled } from '$lib/server/stripe';
 import { isSumupEnabled } from '$lib/server/sumup';
 import { FAKE_ORDER_INVOICE_NUMBER } from '$lib/types/Order';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
@@ -27,8 +29,8 @@ export async function fetchOrderForUser(orderId: string) {
 	for (const payment of order.payments) {
 		// Check if the payment has been paid but the status is still pending in DB
 		// In that case, we send back the status as paid, but do not update the DB (it's taken care of by order-lock)
-		if (payment.method === 'card' && payment.status === 'pending') {
-			if (payment.processor === 'sumup' && isSumupEnabled() && payment.checkoutId) {
+		if (payment.status === 'pending' && payment.checkoutId) {
+			if (payment.processor === 'sumup' && isSumupEnabled()) {
 				const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + payment.checkoutId, {
 					headers: {
 						Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
@@ -54,7 +56,7 @@ export async function fetchOrderForUser(orderId: string) {
 						order.status = 'paid';
 					}
 				}
-			} else if (payment.processor === 'stripe' && payment.checkoutId) {
+			} else if (payment.processor === 'stripe' && isStripeEnabled()) {
 				const response = await fetch(
 					'https://api.stripe.com/v1/payment_intents/' + payment.checkoutId,
 					{
@@ -71,6 +73,34 @@ export async function fetchOrderForUser(orderId: string) {
 				const paymentIntent = await response.json();
 
 				if (paymentIntent.status === 'succeeded') {
+					payment.status = 'paid';
+
+					payment.invoice = {
+						number: FAKE_ORDER_INVOICE_NUMBER,
+						createdAt: new Date()
+					};
+
+					if (isOrderFullyPaid(order) && order.status === 'pending') {
+						order.status = 'paid';
+					}
+				}
+			} else if (payment.processor === 'paypal' && isPaypalEnabled()) {
+				const response = await fetch(
+					'https://api.paypal.com/v2/checkout/orders/' + payment.checkoutId,
+					{
+						headers: {
+							Authorization: 'Bearer ' + (await paypalAccessToken())
+						}
+					}
+				);
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch checkout status');
+				}
+
+				const checkout = await response.json();
+
+				if (checkout.status === 'COMPLETED') {
 					payment.status = 'paid';
 
 					payment.invoice = {
