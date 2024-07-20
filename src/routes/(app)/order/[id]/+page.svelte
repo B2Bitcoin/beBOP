@@ -141,7 +141,7 @@
 							<ul>
 								{#if payment.status === 'pending'}
 									<li>
-										{#if payment.method === 'card' || payment.method === 'paypal'}
+										{#if payment.method === 'card'}
 											<a
 												href="/order/{data.order._id}/payment/{payment.id}/pay"
 												class="body-hyperlink"
@@ -151,13 +151,25 @@
 													<IconSumupWide class="h-12" />
 												{:else if payment.processor === 'stripe'}
 													<IconStripe class="h-12" />
-												{:else if payment.method === 'paypal'}
+												{:else if payment.processor === 'paypal'}
 													<img
 														src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_200x51.png"
 														alt="PayPal"
 														class="h-12"
 													/>
 												{/if}
+											</a>
+										{:else if payment.method === 'paypal'}
+											<a
+												href="/order/{data.order._id}/payment/{payment.id}/pay"
+												class="body-hyperlink"
+											>
+												<span>{t('order.paymentLinkGeneric')}</span>
+												<img
+													src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_200x51.png"
+													alt="PayPal"
+													class="h-12"
+												/>
 											</a>
 										{:else if payment.method === 'bank-transfer'}
 											{#if data.sellerIdentity?.bank?.accountHolder}
