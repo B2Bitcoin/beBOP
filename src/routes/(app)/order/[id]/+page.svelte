@@ -141,13 +141,19 @@
 							<ul>
 								{#if payment.status === 'pending'}
 									<li>
-										{#if payment.method === 'card'}
+										{#if payment.method === 'card' || payment.method === 'paypal'}
 											<a href={trimOrigin(payment.address ?? '')} class="body-hyperlink">
 												<span>{t('order.paymentLink')}</span>
 												{#if payment.processor === 'sumup'}
 													<IconSumupWide class="h-12" />
 												{:else if payment.processor === 'stripe'}
 													<IconStripe class="h-12" />
+												{:else if payment.method === 'paypal'}
+													<img
+														src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_200x51.png"
+														alt="PayPal"
+														class="h-12"
+													/>
 												{/if}
 											</a>
 										{:else if payment.method === 'bank-transfer'}
