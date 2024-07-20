@@ -4,36 +4,22 @@
 	export let data;
 </script>
 
-<h1 class="text-3xl">Stripe</h1>
+<h1 class="text-3xl">Paypal</h1>
 
 <form class="contents" method="post" action="?/save">
 	<label class="form-label">
-		Secret Key
-		<input
-			class="form-input"
-			type="text"
-			name="secretKey"
-			value={data.stripe.secretKey}
-			placeholder="sk_..."
-			required
-		/>
+		Client ID
+		<input class="form-input" type="text" name="clientId" value={data.paypal.clientId} required />
 	</label>
 
 	<label class="form-label">
-		Public Key
-		<input
-			class="form-input"
-			type="text"
-			name="publicKey"
-			value={data.stripe.publicKey}
-			placeholder="pk_..."
-			required
-		/>
+		Secret
+		<input class="form-input" type="text" name="secret" value={data.paypal.secret} required />
 	</label>
 
 	<label class="form-label">
 		Currency
-		<select class="form-input" name="currency" bind:value={data.stripe.currency} required>
+		<select class="form-input" name="currency" bind:value={data.paypal.currency} required>
 			{#each CURRENCIES.filter((c) => c !== 'BTC' && c !== 'SAT') as currency}
 				<option value={currency}>{currency}</option>
 			{/each}

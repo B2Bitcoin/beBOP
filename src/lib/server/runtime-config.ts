@@ -150,6 +150,11 @@ const baseConfig = {
 		secretKey: '',
 		currency: 'EUR' as Currency
 	},
+	paypal: {
+		clientId: '',
+		secret: '',
+		currency: 'EUR' as Currency
+	},
 	bity: {
 		clientId: ''
 	},

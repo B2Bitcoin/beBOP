@@ -105,6 +105,7 @@
 			"cash": "Efectivo",
 			"free": "Nada que pagar (lista de compras de gratis)",
 			"lightning": "Lightning",
+			"paypal": "Paypal",
 			"point-of-sale": "Punto de venta",
 			"unavailable": "No hay métodos de pago disponibles."
 		},

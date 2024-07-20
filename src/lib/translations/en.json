@@ -105,6 +105,7 @@
 			"cash": "Cash",
 			"free": "Nothing to pay (free cart)",
 			"lightning": "Lightning",
+			"paypal": "Paypal",
 			"point-of-sale": "Point of sale",
 			"unavailable": "No payment methods available."
 		},

@@ -1,0 +1,52 @@
+import { collections } from '$lib/server/database.js';
+import { runtimeConfig } from '$lib/server/runtime-config';
+import { CURRENCIES, type Currency } from '$lib/types/Currency.js';
+import { z } from 'zod';
+
+export async function load() {
+	return {
+		paypal: runtimeConfig.paypal
+	};
+}
+
+export const actions = {
+	save: async function ({ request }) {
+		const paypal = z
+			.object({
+				clientId: z.string().min(1),
+				secret: z.string().min(1),
+				currency: z.enum(
+					CURRENCIES.filter((c) => c !== 'BTC' && c !== 'SAT') as [Currency, ...Currency[]]
+				)
+			})
+			.parse(Object.fromEntries(await request.formData()));
+
+		await collections.runtimeConfig.updateOne(
+			{
+				_id: 'paypal'
+			},
+			{
+				$set: {
+					data: paypal,
+					updatedAt: new Date()
+				}
+			},
+			{
+				upsert: true
+			}
+		);
+
+		runtimeConfig.paypal = paypal;
+	},
+	delete: async function () {
+		await collections.runtimeConfig.deleteOne({
+			_id: 'paypal'
+		});
+
+		runtimeConfig.paypal = {
+			clientId: '',
+			secret: '',
+			currency: 'EUR'
+		};
+	}
+};

@@ -105,6 +105,7 @@
 			"cash": "Espèces",
 			"free": "Rien à payer (panier gratuit)",
 			"lightning": "Lightning",
+			"paypal": "Paypal",
 			"point-of-sale": "Point of sale",
 			"unavailable": "Aucun mode de paiement disponible."
 		},
