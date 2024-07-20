@@ -1205,10 +1205,21 @@ function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 				currency: runtimeConfig.mainCurrency
 			};
 		case 'card':
-			return {
-				amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
-				currency: runtimeConfig.sumUp.currency
-			};
+			if (isSumupEnabled()) {
+				return {
+					amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
+					currency: runtimeConfig.sumUp.currency
+				};
+			}
+
+			if (isStripeEnabled()) {
+				return {
+					amount: toCurrency(runtimeConfig.stripe.currency, price.amount, price.currency),
+					currency: runtimeConfig.stripe.currency
+				};
+			}
+
+			throw error(402, 'No card payment processor configured');
 		case 'bitcoin':
 			return {
 				amount: toCurrency('BTC', price.amount, price.currency),
