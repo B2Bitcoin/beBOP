@@ -86,8 +86,7 @@ export async function fetchOrderForUser(orderId: string) {
 				}
 			} else if (payment.processor === 'paypal' && isPaypalEnabled()) {
 				const checkout = await paypalGetCheckout(payment.checkoutId);
-
-				if (checkout.status === 'COMPLETED') {
+				if (checkout.status === 'COMPLETED' || checkout.status === 'APPROVED') {
 					payment.status = 'paid';
 
 					payment.invoice = {

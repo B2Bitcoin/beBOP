@@ -56,7 +56,7 @@ export async function paypalAccessToken(): Promise<string> {
 	return data.access_token;
 }
 
-export async function paypalGetCheckout(checkoutId: string): Promise<{
+export interface PaypalCheckout {
 	id: string;
 	create_time: string;
 	update_time: string;
@@ -67,7 +67,10 @@ export async function paypalGetCheckout(checkoutId: string): Promise<{
 			value: string;
 		};
 	}[];
-}> {
+	payment_source: Record<string, unknown>;
+}
+
+export async function paypalGetCheckout(checkoutId: string): Promise<PaypalCheckout> {
 	const response = await fetch(`${paypalApiOrigin()}/v2/checkout/orders/${checkoutId}`, {
 		headers: {
 			Authorization: `Bearer ${await paypalAccessToken()}`
@@ -78,5 +81,28 @@ export async function paypalGetCheckout(checkoutId: string): Promise<{
 		throw new Error(`Failed to get PayPal order: ${response.status} ${response.statusText}`);
 	}
 
-	return response.json();
+	const checkout: PaypalCheckout = await response.json();
+
+	// Automatically execute payment if approved
+	if (checkout.status === 'APPROVED') {
+		const captureResponse = await fetch(
+			paypalApiOrigin() + '/v2/checkout/orders/' + checkoutId + '/capture',
+			{
+				method: 'POST',
+				headers: {
+					Authorization: 'Bearer ' + (await paypalAccessToken()),
+					'Content-Type': 'application/json'
+				}
+			}
+		);
+
+		if (!captureResponse.ok) {
+			console.error(captureResponse.status, await captureResponse.text());
+			throw new Error('Failed to capture PayPal payment for checkout ' + checkoutId);
+		}
+
+		checkout.status = 'COMPLETED';
+	}
+
+	return checkout;
 }

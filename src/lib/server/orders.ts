@@ -1229,7 +1229,7 @@ async function generatePaypalPaymentInfo(params: {
 				// No need to fill shipping information through PayPal
 				shipping_preference: 'NO_SHIPPING',
 				return_url: `${ORIGIN}/order/${params.orderId}`,
-				cancel_url: `${ORIGIN}/order/${params.orderId}`
+				cancel_url: `${ORIGIN}/order/${params.orderId}?paymentId=${params.paymentId}&cancel=true`
 			}
 		})
 	});
