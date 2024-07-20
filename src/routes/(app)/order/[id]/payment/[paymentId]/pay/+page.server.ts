@@ -18,7 +18,7 @@ export async function load({ params, depends }) {
 		throw redirect(303, `/order/${order._id}`);
 	}
 
-	if (payment.processor === 'paypal') {
+	if (payment.processor === 'paypal' || payment.method === 'paypal') {
 		if (!payment.address) {
 			throw error(400, 'PayPal payment address not found');
 		}

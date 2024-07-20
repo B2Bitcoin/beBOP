@@ -142,7 +142,10 @@
 								{#if payment.status === 'pending'}
 									<li>
 										{#if payment.method === 'card' || payment.method === 'paypal'}
-											<a href={trimOrigin(payment.address ?? '')} class="body-hyperlink">
+											<a
+												href="/order/{data.order._id}/payment/{payment.id}/pay"
+												class="body-hyperlink"
+											>
 												<span>{t('order.paymentLink')}</span>
 												{#if payment.processor === 'sumup'}
 													<IconSumupWide class="h-12" />
