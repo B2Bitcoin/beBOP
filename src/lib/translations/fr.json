@@ -105,6 +105,7 @@
 			"cash": "Espèces",
 			"free": "Rien à payer (panier gratuit)",
 			"lightning": "Lightning",
+			"paypal": "Paypal",
 			"point-of-sale": "Point of sale",
 			"unavailable": "Aucun mode de paiement disponible."
 		},
@@ -505,6 +506,7 @@
 		"paymentExpiresAt": "Date limite de paiement: <0></0>",
 		"paymentIban": "IBAN de paiement",
 		"paymentLink": "Cliquez pour payer par carte avec",
+		"paymentLinkGeneric": "Cliquez ici pour payer avec",
 		"paymentPaidAt": "Paiement effectué le {date}",
 		"paymentStatus": {
 			"canceled": "annulé",

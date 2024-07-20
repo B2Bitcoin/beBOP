@@ -105,6 +105,7 @@
 			"cash": "Efectivo",
 			"free": "Nada que pagar (lista de compras de gratis)",
 			"lightning": "Lightning",
+			"paypal": "Paypal",
 			"point-of-sale": "Punto de venta",
 			"unavailable": "No hay métodos de pago disponibles."
 		},
@@ -505,6 +506,7 @@
 		"paymentExpiresAt": "Fecha límite de pago: <0></0>",
 		"paymentIban": "IBAN para enviar la transferencia bancaria",
 		"paymentLink": "Clic aquí para pagar con tarjeta",
+		"paymentLinkGeneric": "Haga clic aquí para pagar con",
 		"paymentPaidAt": "Pago realizado el {date}",
 		"paymentStatus": {
 			"canceled": "cancelado",

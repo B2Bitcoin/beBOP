@@ -14,11 +14,18 @@ export async function load({ params, depends }) {
 		throw error(404, 'Payment not found');
 	}
 
-	if (payment.method !== 'card') {
+	if (payment.status !== 'pending') {
 		throw redirect(303, `/order/${order._id}`);
 	}
 
-	if (payment.status !== 'pending') {
+	if (payment.processor === 'paypal' || payment.method === 'paypal') {
+		if (!payment.address) {
+			throw error(400, 'PayPal payment address not found');
+		}
+		throw redirect(303, payment.address);
+	}
+
+	if (payment.method !== 'card') {
 		throw redirect(303, `/order/${order._id}`);
 	}
 

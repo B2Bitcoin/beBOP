@@ -6,6 +6,7 @@ import { isPhoenixdConfigured } from './phoenixd';
 import { runtimeConfig } from './runtime-config';
 import { isSumupEnabled } from './sumup';
 import { isStripeEnabled } from './stripe';
+import { isPaypalEnabled } from './paypal';
 
 const ALL_PAYMENT_METHODS = [
 	'card',
@@ -13,11 +14,12 @@ const ALL_PAYMENT_METHODS = [
 	'bitcoin',
 	'lightning',
 	'point-of-sale',
-	'free'
+	'free',
+	'paypal'
 ] as const;
 export type PaymentMethod = (typeof ALL_PAYMENT_METHODS)[number];
 
-export type PaymentProcessor = 'sumup' | 'bitcoind' | 'lnd' | 'phoenixd' | 'stripe';
+export type PaymentProcessor = 'sumup' | 'bitcoind' | 'lnd' | 'phoenixd' | 'stripe' | 'paypal';
 
 export const paymentMethods = (opts?: {
 	role?: string;
@@ -37,7 +39,9 @@ export const paymentMethods = (opts?: {
 					}
 					switch (method) {
 						case 'card':
-							return isSumupEnabled() || isStripeEnabled();
+							return isSumupEnabled() || isStripeEnabled() || isPaypalEnabled();
+						case 'paypal':
+							return isPaypalEnabled();
 						case 'bank-transfer':
 							return runtimeConfig.sellerIdentity?.bank;
 						case 'bitcoin':
