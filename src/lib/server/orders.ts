@@ -1283,17 +1283,29 @@ function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 				amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
 				currency: runtimeConfig.mainCurrency
 			};
-		case 'card': {
-			const currency = isSumupEnabled()
-				? runtimeConfig.sumUp.currency
-				: isStripeEnabled()
-				? runtimeConfig.stripe.currency
-				: runtimeConfig.paypal.currency;
-			return {
-				amount: toCurrency(currency, price.amount, price.currency),
-				currency
-			};
-		}
+		case 'card':
+			if (isSumupEnabled()) {
+				return {
+					amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
+					currency: runtimeConfig.sumUp.currency
+				};
+			}
+
+			if (isStripeEnabled()) {
+				return {
+					amount: toCurrency(runtimeConfig.stripe.currency, price.amount, price.currency),
+					currency: runtimeConfig.stripe.currency
+				};
+			}
+
+			if (isPaypalEnabled()) {
+				return {
+					amount: toCurrency(runtimeConfig.paypal.currency, price.amount, price.currency),
+					currency: runtimeConfig.paypal.currency
+				};
+			}
+
+			throw error(402, 'No card payment processor configured');
 		case 'paypal':
 			return {
 				amount: toCurrency(runtimeConfig.paypal.currency, price.amount, price.currency),
