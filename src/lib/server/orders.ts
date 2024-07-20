@@ -20,7 +20,7 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
-import { CURRENCY_UNIT, type Currency } from '$lib/types/Currency';
+import { CURRENCY_UNIT, FRACTION_DIGITS_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
@@ -38,6 +38,7 @@ import { toUrlEncoded } from '$lib/utils/toUrlEncoded';
 import { isPhoenixdConfigured, phoenixdCreateInvoice } from './phoenixd';
 import { isSumupEnabled } from './sumup';
 import { isStripeEnabled } from './stripe';
+import { isPaypalEnabled, paypalAccessToken } from './paypal';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -1064,6 +1065,8 @@ async function generatePaymentInfo(params: {
 		}
 		case 'card':
 			return await generateCardPaymentInfo(params);
+		case 'paypal':
+			return await generatePaypalPaymentInfo(params);
 	}
 }
 
@@ -1182,7 +1185,83 @@ async function generateCardPaymentInfo(params: {
 		};
 	}
 
-	throw error(501, 'No payment processor configured');
+	if (isPaypalEnabled()) {
+		return await generatePaypalPaymentInfo(params);
+	}
+
+	throw error(402, 'No card payment processor configured');
+}
+
+async function generatePaypalPaymentInfo(params: {
+	orderId: string;
+	orderNumber: number;
+	toPay: Price;
+	paymentId: ObjectId;
+}): Promise<{
+	checkoutId: string;
+	meta: unknown;
+	address: string;
+	processor: PaymentProcessor;
+}> {
+	const response = await fetch('https://api.paypal.com/v2/checkout/orders', {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${await paypalAccessToken()}`,
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			intent: 'CAPTURE',
+			purchase_units: [
+				{
+					amount: {
+						currency_code: runtimeConfig.paypal.currency,
+						value: toCurrency(
+							runtimeConfig.paypal.currency,
+							params.toPay.amount,
+							params.toPay.currency
+						).toFixed(FRACTION_DIGITS_PER_CURRENCY[runtimeConfig.paypal.currency])
+					},
+					description: 'Order ' + params.orderNumber
+				}
+			],
+			application_context: {
+				user_action: 'PAY_NOW',
+				return_url: `${ORIGIN}/order/${params.orderId}`,
+				cancel_url: `${ORIGIN}/order/${params.orderId}`
+			}
+		})
+	});
+
+	if (!response.ok) {
+		console.error(await response.text());
+		throw error(402, 'PayPal checkout creation failed');
+	}
+
+	const json: {
+		id: string;
+		links: Array<{ rel: string; href: string }>;
+	} = await response.json();
+
+	const checkoutId = json.id;
+
+	if (!checkoutId || typeof checkoutId !== 'string') {
+		console.error('no checkout id', json);
+		throw error(402, 'PayPal checkout creation failed');
+	}
+
+	const approveLink = json.links.find((link) => link.rel === 'approve');
+
+	if (!approveLink) {
+		console.error('no approve link', json);
+		throw error(402, 'PayPal checkout creation failed');
+	}
+
+	return {
+		checkoutId,
+		meta: json,
+		address: approveLink.href,
+		processor: 'paypal'
+	};
 }
 
 function paymentMethodExpiration(paymentMethod: PaymentMethod) {
@@ -1204,10 +1283,21 @@ function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 				amount: toCurrency(runtimeConfig.mainCurrency, price.amount, price.currency),
 				currency: runtimeConfig.mainCurrency
 			};
-		case 'card':
+		case 'card': {
+			const currency = isSumupEnabled()
+				? runtimeConfig.sumUp.currency
+				: isStripeEnabled()
+				? runtimeConfig.stripe.currency
+				: runtimeConfig.paypal.currency;
 			return {
-				amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
-				currency: runtimeConfig.sumUp.currency
+				amount: toCurrency(currency, price.amount, price.currency),
+				currency
+			};
+		}
+		case 'paypal':
+			return {
+				amount: toCurrency(runtimeConfig.paypal.currency, price.amount, price.currency),
+				currency: runtimeConfig.paypal.currency
 			};
 		case 'bitcoin':
 			return {
