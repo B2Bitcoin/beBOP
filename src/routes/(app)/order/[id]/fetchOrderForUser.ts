@@ -1,7 +1,7 @@
 import { collections } from '$lib/server/database';
 import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 import { isOrderFullyPaid } from '$lib/server/orders';
-import { isPaypalEnabled, paypalAccessToken } from '$lib/server/paypal';
+import { isPaypalEnabled, paypalGetCheckout } from '$lib/server/paypal';
 import { picturesForProducts } from '$lib/server/picture';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { isStripeEnabled } from '$lib/server/stripe';
@@ -85,20 +85,7 @@ export async function fetchOrderForUser(orderId: string) {
 					}
 				}
 			} else if (payment.processor === 'paypal' && isPaypalEnabled()) {
-				const response = await fetch(
-					'https://api.paypal.com/v2/checkout/orders/' + payment.checkoutId,
-					{
-						headers: {
-							Authorization: 'Bearer ' + (await paypalAccessToken())
-						}
-					}
-				);
-
-				if (!response.ok) {
-					throw new Error('Failed to fetch checkout status');
-				}
-
-				const checkout = await response.json();
+				const checkout = await paypalGetCheckout(payment.checkoutId);
 
 				if (checkout.status === 'COMPLETED') {
 					payment.status = 'paid';

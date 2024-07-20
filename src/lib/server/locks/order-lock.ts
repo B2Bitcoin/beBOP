@@ -13,7 +13,7 @@ import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 import { phoenixdLookupInvoice } from '../phoenixd';
 import { CURRENCIES, CURRENCY_UNIT } from '$lib/types/Currency';
 import { typedInclude } from '$lib/utils/typedIncludes';
-import { paypalAccessToken } from '../paypal';
+import { isPaypalEnabled, paypalGetCheckout } from '../paypal';
 
 const lock = new Lock('orders');
 
@@ -246,7 +246,7 @@ async function maintainOrders() {
 								break;
 							case 'paypal':
 								try {
-									if (!runtimeConfig.paypal.clientId || !runtimeConfig.paypal.secret) {
+									if (!isPaypalEnabled()) {
 										throw new Error('Missing PayPal credentials');
 									}
 
@@ -254,26 +254,7 @@ async function maintainOrders() {
 										throw new Error('Missing checkout ID on PayPal order');
 									}
 
-									const response = await fetch(
-										'https://api.paypal.com/v2/checkout/orders/' + payment.checkoutId,
-										{
-											headers: {
-												Authorization: 'Bearer ' + (await paypalAccessToken()),
-												'Content-Type': 'application/json'
-											}
-										}
-									);
-
-									if (!response.ok) {
-										throw new Error(
-											'Failed to fetch PayPal order status for order ' +
-												order._id +
-												', checkout ' +
-												payment.checkoutId
-										);
-									}
-
-									const checkout = await response.json();
+									const checkout = await paypalGetCheckout(payment.checkoutId);
 
 									if (checkout.status === 'COMPLETED') {
 										order = await onOrderPayment(order, payment, {
@@ -295,7 +276,7 @@ async function maintainOrders() {
 						break;
 					case 'paypal':
 						try {
-							if (!runtimeConfig.paypal.clientId || !runtimeConfig.paypal.secret) {
+							if (!isPaypalEnabled()) {
 								throw new Error('Missing PayPal credentials');
 							}
 
@@ -303,26 +284,7 @@ async function maintainOrders() {
 								throw new Error('Missing checkout ID on PayPal order');
 							}
 
-							const response = await fetch(
-								'https://api.paypal.com/v2/checkout/orders/' + payment.checkoutId,
-								{
-									headers: {
-										Authorization: 'Bearer ' + (await paypalAccessToken()),
-										'Content-Type': 'application/json'
-									}
-								}
-							);
-
-							if (!response.ok) {
-								throw new Error(
-									'Failed to fetch PayPal order status for order ' +
-										order._id +
-										', checkout ' +
-										payment.checkoutId
-								);
-							}
-
-							const checkout = await response.json();
+							const checkout = await paypalGetCheckout(payment.checkoutId);
 
 							if (checkout.status === 'COMPLETED') {
 								order = await onOrderPayment(order, payment, {

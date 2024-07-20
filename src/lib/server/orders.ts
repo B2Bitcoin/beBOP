@@ -38,7 +38,7 @@ import { toUrlEncoded } from '$lib/utils/toUrlEncoded';
 import { isPhoenixdConfigured, phoenixdCreateInvoice } from './phoenixd';
 import { isSumupEnabled } from './sumup';
 import { isStripeEnabled } from './stripe';
-import { isPaypalEnabled, paypalAccessToken } from './paypal';
+import { isPaypalEnabled, paypalAccessToken, paypalApiOrigin } from './paypal';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -1203,7 +1203,7 @@ async function generatePaypalPaymentInfo(params: {
 	address: string;
 	processor: PaymentProcessor;
 }> {
-	const response = await fetch('https://api.paypal.com/v2/checkout/orders', {
+	const response = await fetch(`${paypalApiOrigin()}/v2/checkout/orders`, {
 		method: 'POST',
 		headers: {
 			Authorization: `Bearer ${await paypalAccessToken()}`,

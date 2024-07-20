@@ -15,6 +15,7 @@ export const actions = {
 			.object({
 				clientId: z.string().min(1),
 				secret: z.string().min(1),
+				sandbox: z.boolean({ coerce: true }),
 				currency: z.enum(
 					CURRENCIES.filter((c) => c !== 'BTC' && c !== 'SAT') as [Currency, ...Currency[]]
 				)
@@ -46,7 +47,8 @@ export const actions = {
 		runtimeConfig.paypal = {
 			clientId: '',
 			secret: '',
-			currency: 'EUR'
+			currency: 'EUR',
+			sandbox: false
 		};
 	}
 };

@@ -1,9 +1,13 @@
 import { addSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
+import type { Currency } from '$lib/types/Currency';
 
 export function isPaypalEnabled() {
 	return !!runtimeConfig.paypal.clientId && !!runtimeConfig.paypal.secret;
 }
+
+export const paypalApiOrigin = () =>
+	runtimeConfig.paypal.sandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api.paypal.com';
 
 let cachedToken: string | null = null;
 let tokenExpiresAt: Date | null = null;
@@ -27,7 +31,7 @@ export async function paypalAccessToken(): Promise<string> {
 		return cachedToken;
 	}
 
-	const response = await fetch('https://api.paypal.com/v1/oauth2/token', {
+	const response = await fetch(`${paypalApiOrigin()}/v1/oauth2/token`, {
 		method: 'POST',
 		headers: {
 			Authorization: `Basic ${Buffer.from(credentials).toString('base64')}`,
@@ -50,4 +54,29 @@ export async function paypalAccessToken(): Promise<string> {
 	credentialsUsedForToken = credentials;
 
 	return data.access_token;
+}
+
+export async function paypalGetCheckout(checkoutId: string): Promise<{
+	id: string;
+	create_time: string;
+	update_time: string;
+	status: 'COMPLETED' | 'VOIDED' | 'CREATED' | 'SAVED' | 'APPROVED' | 'PAYER_ACTION_REQUIRED';
+	purchase_units: {
+		amount: {
+			currency_code: Currency;
+			value: string;
+		};
+	}[];
+}> {
+	const response = await fetch(`${paypalApiOrigin()}/v2/checkout/orders/${checkoutId}`, {
+		headers: {
+			Authorization: `Bearer ${await paypalAccessToken()}`
+		}
+	});
+
+	if (!response.ok) {
+		throw new Error(`Failed to get PayPal order: ${response.status} ${response.statusText}`);
+	}
+
+	return response.json();
 }

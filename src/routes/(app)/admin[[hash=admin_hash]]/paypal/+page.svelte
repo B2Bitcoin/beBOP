@@ -17,6 +17,17 @@
 		<input class="form-input" type="text" name="secret" value={data.paypal.secret} required />
 	</label>
 
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			name="sandbox"
+			bind:checked={data.paypal.sandbox}
+			value="true"
+		/>
+		Those credentials are for the sandbox environment
+	</label>
+
 	<label class="form-label">
 		Currency
 		<select class="form-input" name="currency" bind:value={data.paypal.currency} required>

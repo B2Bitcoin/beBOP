@@ -153,7 +153,8 @@ const baseConfig = {
 	paypal: {
 		clientId: '',
 		secret: '',
-		currency: 'EUR' as Currency
+		currency: 'EUR' as Currency,
+		sandbox: false
 	},
 	bity: {
 		clientId: ''
