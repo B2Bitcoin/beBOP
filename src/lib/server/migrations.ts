@@ -44,6 +44,10 @@ const migrations = [
 							},
 							googleShopping: {
 								visible: true
+							},
+							nostr: {
+								visible: true,
+								canBeAddedToBasket: true
 							}
 						}
 					}
@@ -435,6 +439,36 @@ const migrations = [
 		_id: new ObjectId('668c423519c3d2f1ba38344e'),
 		run: async () => {
 			await collections.pictures.dropIndex('productId_1').catch(console.error);
+		}
+	},
+	{
+		_id: new ObjectId('669a90d18bc5aaf40c863b63'),
+		name: 'Adding actionSettings nostr to products and runtimeConfig',
+		run: async (session: ClientSession) => {
+			await collections.products.updateMany(
+				{},
+				{
+					$set: {
+						'actionSettings.nostr': {
+							visible: true,
+							canBeAddedToBasket: true
+						}
+					}
+				},
+				{ session }
+			);
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'productActionSettings' },
+				{
+					$set: {
+						'data.nostr': {
+							visible: true,
+							canBeAddedToBasket: true
+						}
+					}
+				},
+				{ session }
+			);
 		}
 	}
 ];
