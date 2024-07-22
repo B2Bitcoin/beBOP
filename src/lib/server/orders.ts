@@ -34,7 +34,10 @@ import type { CountryAlpha2 } from '$lib/types/Country';
 import { filterUndef } from '$lib/utils/filterUndef';
 import type { LanguageKey } from '$lib/translations';
 import { filterNullish } from '$lib/utils/fillterNullish';
+import { toUrlEncoded } from '$lib/utils/toUrlEncoded';
 import { isPhoenixdConfigured, phoenixdCreateInvoice } from './phoenixd';
+import { isSumupEnabled } from './sumup';
+import { isStripeEnabled } from './stripe';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -1075,8 +1078,9 @@ async function generateCardPaymentInfo(params: {
 	meta: unknown;
 	address: string;
 	processor: PaymentProcessor;
+	clientSecret?: string;
 }> {
-	{
+	if (isSumupEnabled()) {
 		const resp = await fetch('https://api.sumup.com/v0.1/checkouts', {
 			method: 'POST',
 			headers: {
@@ -1122,6 +1126,63 @@ async function generateCardPaymentInfo(params: {
 			processor: 'sumup'
 		};
 	}
+
+	if (isStripeEnabled()) {
+		// Create payment intent
+		const response = await fetch('https://api.stripe.com/v1/payment_intents', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${runtimeConfig.stripe.secretKey}`,
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: toUrlEncoded({
+				amount: Math.round(
+					toCurrency(runtimeConfig.stripe.currency, params.toPay.amount, params.toPay.currency) /
+						CURRENCY_UNIT[runtimeConfig.stripe.currency]
+				),
+				currency: runtimeConfig.stripe.currency.toLowerCase(),
+				automatic_payment_methods: {
+					enabled: true
+				},
+				metadata: {
+					orderId: params.orderId,
+					paymentId: params.paymentId.toHexString()
+				},
+				description: 'Order ' + params.orderNumber
+			})
+		});
+
+		if (!response.ok) {
+			console.error(await response.text());
+			throw error(402, 'Stripe payment intent creation failed');
+		}
+
+		const json = await response.json();
+
+		const clientSecret = json.client_secret;
+
+		if (!clientSecret || typeof clientSecret !== 'string') {
+			console.error('no client secret', json);
+			throw error(402, 'Stripe payment intent creation failed');
+		}
+
+		const paymentId = json.id;
+
+		if (!paymentId || typeof paymentId !== 'string') {
+			console.error('no payment id', json);
+			throw error(402, 'Stripe payment intent creation failed');
+		}
+
+		return {
+			checkoutId: paymentId,
+			clientSecret,
+			meta: json,
+			address: `${ORIGIN}/order/${params.orderId}/payment/${params.paymentId}/pay`,
+			processor: 'stripe'
+		};
+	}
+
+	throw error(501, 'No payment processor configured');
 }
 
 function paymentMethodExpiration(paymentMethod: PaymentMethod) {
@@ -1144,10 +1205,21 @@ function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
 				currency: runtimeConfig.mainCurrency
 			};
 		case 'card':
-			return {
-				amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
-				currency: runtimeConfig.sumUp.currency
-			};
+			if (isSumupEnabled()) {
+				return {
+					amount: toCurrency(runtimeConfig.sumUp.currency, price.amount, price.currency),
+					currency: runtimeConfig.sumUp.currency
+				};
+			}
+
+			if (isStripeEnabled()) {
+				return {
+					amount: toCurrency(runtimeConfig.stripe.currency, price.amount, price.currency),
+					currency: runtimeConfig.stripe.currency
+				};
+			}
+
+			throw error(402, 'No card payment processor configured');
 		case 'bitcoin':
 			return {
 				amount: toCurrency('BTC', price.amount, price.currency),
