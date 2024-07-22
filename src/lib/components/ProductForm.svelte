@@ -678,7 +678,8 @@
 					<th class="py-2 px-4 border-r border-gray-300">Action</th>
 					<th class="py-2 px-4 border-r border-gray-300">Eshop (anyone)</th>
 					<th class="py-2 px-4 border-r border-gray-300">Retail (POS logged seat)</th>
-					<th class="py-2 px-4">Google Shopping</th>
+					<th class="py-2 px-4 border-r border-gray-300">Google Shopping</th>
+					<th class="py-2 px-4">Nostr-bot</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -708,6 +709,14 @@
 							class="rounded"
 						/></td
 					>
+					<td class="py-2 px-4 border-r border-gray-300 text-center"
+						><input
+							type="checkbox"
+							bind:checked={product.actionSettings.nostr.visible}
+							name="nostrVisible"
+							class="rounded"
+						/></td
+					>
 				</tr>
 				<tr>
 					<td class="py-2 px-4 border border-gray-300">Product can be added to basket</td>
@@ -728,6 +737,14 @@
 						/></td
 					>
 					<td class="py-2 px-4 border border-gray-300 text-center" />
+					<td class="py-2 px-4 border border-gray-300 text-center"
+						><input
+							type="checkbox"
+							bind:checked={product.actionSettings.nostr.canBeAddedToBasket}
+							name="nostrBasket"
+							class="rounded"
+						/></td
+					>
 				</tr>
 			</tbody>
 		</table>

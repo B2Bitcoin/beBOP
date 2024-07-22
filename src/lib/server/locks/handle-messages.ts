@@ -371,6 +371,7 @@ const commands: Record<
 				);
 				return;
 			}
+
 			const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
 			if (quantity > max) {
 				await send(
@@ -378,6 +379,34 @@ const commands: Record<
 				);
 				return;
 			}
+
+			const amountAvailable = Math.max(
+				Math.min(
+					product.stock?.available ?? Infinity,
+					product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
+				),
+				0
+			);
+			if (amountAvailable === 0) {
+				await send('Sorry, this product is out of stock');
+				return;
+			}
+
+			if (product.shipping) {
+				await send(
+					`Sorry, this product has a physical component and cannot be ordered through Nostr`
+				);
+				return;
+			}
+
+
+			if (product.deposit?.enforce) {
+				await send(
+					`Sorry, this product cannot be ordered through Nostr due to the deposit mechanism`
+				);
+				return;
+			}
+
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
 				async (e) => {
 					console.error(e);
@@ -389,7 +418,15 @@ const commands: Record<
 			if (!cart) {
 				return;
 			}
-
+			if (
+				runtimeConfig.cartMaxSeparateItems &&
+				cart.items.length === runtimeConfig.cartMaxSeparateItems
+			) {
+				await send(
+					'Your cart has reached the maximum size. Please remove lines from your cart to add more items.'
+				);
+				return;
+			}
 			const item = cart.items.find((item) => item.productId === product._id);
 
 			if (!item) {
@@ -530,6 +567,19 @@ const commands: Record<
 			if (products.some((product) => product.shipping)) {
 				await send(
 					'Some products in your cart require shipping, this is not yet supported by the bot. Please remove them from your cart or use the website to checkout'
+				);
+				return;
+			}
+			if (runtimeConfig.isBillingAddressMandatory) {
+				await send(
+					`This beBOP is configured to always require a billing address, but this is not supported yet via NostR`
+				);
+				return;
+			}
+
+			if (runtimeConfig.collectIPOnDeliverylessOrders) {
+				await send(
+					`Sorry, this beBOP requires an IP address or shipping address for each order, which is not possible via NostR at the moment`
 				);
 				return;
 			}

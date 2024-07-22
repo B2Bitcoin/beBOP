@@ -38,6 +38,10 @@ export const TEST_DIGITAL_PRODUCT = {
 		retail: {
 			visible: true,
 			canBeAddedToBasket: true
+		},
+		nostr: {
+			visible: true,
+			canBeAddedToBasket: true
 		}
 	},
 	vatProfileId: undefined
@@ -78,6 +82,10 @@ export const TEST_PHYSICAL_PRODUCT = {
 		retail: {
 			visible: true,
 			canBeAddedToBasket: true
+		},
+		nostr: {
+			visible: true,
+			canBeAddedToBasket: true
 		}
 	},
 	isTicket: false,
@@ -112,6 +120,10 @@ export const TEST_DIGITAL_PRODUCT_UNLIMITED = {
 			visible: true
 		},
 		retail: {
+			visible: true,
+			canBeAddedToBasket: true
+		},
+		nostr: {
 			visible: true,
 			canBeAddedToBasket: true
 		}
