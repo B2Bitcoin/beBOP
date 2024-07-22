@@ -371,6 +371,15 @@ const commands: Record<
 				);
 				return;
 			}
+
+			const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
+			if (quantity > max) {
+				await send(
+					'Sorry, the quantity of this product you want to order is greater than the allowed quantity'
+				);
+				return;
+			}
+
 			const amountAvailable = Math.max(
 				Math.min(
 					product.stock?.available ?? Infinity,
