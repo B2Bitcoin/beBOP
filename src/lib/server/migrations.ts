@@ -458,6 +458,24 @@ const migrations = [
 				{ session }
 			);
 		}
+	},
+	{
+		_id: new ObjectId('669e255c5cf12669421d9a2a'),
+		name: 'Adding actionSettings nostr to runtimConfig',
+		run: async (session: ClientSession) => {
+			await collections.runtimeConfig.updateOne(
+				{ _id: 'productActionSettings' },
+				{
+					$set: {
+						'data.nostr': {
+							visible: true,
+							canBeAddedToBasket: true
+						}
+					}
+				},
+				{ session }
+			);
+		}
 	}
 ];
 
