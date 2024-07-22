@@ -147,6 +147,13 @@ const baseConfig = {
 		merchantCode: '',
 		currency: 'EUR' as Currency
 	},
+	stripe: {
+		/** pk_... */
+		publicKey: '',
+		/** sk_... */
+		secretKey: '',
+		currency: 'EUR' as Currency
+	},
 	bity: {
 		clientId: ''
 	},

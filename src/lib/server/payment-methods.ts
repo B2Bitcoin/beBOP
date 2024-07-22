@@ -5,6 +5,7 @@ import { isLightningConfigured } from './lnd';
 import { isPhoenixdConfigured } from './phoenixd';
 import { runtimeConfig } from './runtime-config';
 import { isSumupEnabled } from './sumup';
+import { isStripeEnabled } from './stripe';
 
 const ALL_PAYMENT_METHODS = [
 	'card',
@@ -16,7 +17,7 @@ const ALL_PAYMENT_METHODS = [
 ] as const;
 export type PaymentMethod = (typeof ALL_PAYMENT_METHODS)[number];
 
-export type PaymentProcessor = 'sumup' | 'bitcoind' | 'lnd' | 'phoenixd';
+export type PaymentProcessor = 'sumup' | 'bitcoind' | 'lnd' | 'phoenixd' | 'stripe';
 
 export const paymentMethods = (opts?: {
 	role?: string;
@@ -36,7 +37,7 @@ export const paymentMethods = (opts?: {
 					}
 					switch (method) {
 						case 'card':
-							return isSumupEnabled();
+							return isSumupEnabled() || isStripeEnabled();
 						case 'bank-transfer':
 							return runtimeConfig.sellerIdentity?.bank;
 						case 'bitcoin':
