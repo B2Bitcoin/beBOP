@@ -383,7 +383,15 @@ const commands: Record<
 			if (!cart) {
 				return;
 			}
-
+			if (
+				runtimeConfig.cartMaxSeparateItems &&
+				cart.items.length === runtimeConfig.cartMaxSeparateItems
+			) {
+				await send(
+					'Your cart has reached the maximum size. Please remove lines from your cart to add more items.'
+				);
+				return;
+			}
 			const item = cart.items.find((item) => item.productId === product._id);
 
 			if (!item) {
