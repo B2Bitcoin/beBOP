@@ -8,7 +8,7 @@ import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
 import { addToCartInDb, getCartFromDb, removeFromCartInDb } from '../cart';
-import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
+import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product, isPreorder as isPreorderFn } from '$lib/types/Product';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
@@ -358,6 +358,16 @@ const commands: Record<
 			}
 
 			const product = await collections.products.findOne({ _id: ref });
+      
+      const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
+			async (e) => {
+				console.error(e);
+				await send(e.message);
+				return null;
+				}
+			);
+      
+      const isPreorder = isPreorderFn(product.availableDate, product.preorder);
 
 			if (!product) {
 				const products = await collections.products
@@ -371,6 +381,9 @@ const commands: Record<
 				);
 				return;
 			}
+
+			if (!isPreorder && product.availableDate && product.availableDate > new Date()) {
+				await send('Sorry, this product is not available yet to order');
 
 			if (product.standalone && quantity > 1) {
 				await send(`Sorry, you cannot order more than one of this product at a time`);
@@ -394,6 +407,7 @@ const commands: Record<
 			);
 			if (amountAvailable === 0) {
 				await send('Sorry, this product is out of stock');
+
 				return;
 			}
 
@@ -411,14 +425,6 @@ const commands: Record<
 				);
 				return;
 			}
-
-			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
-				async (e) => {
-					console.error(e);
-					await send(e.message);
-					return null;
-				}
-			);
 
 			if (!cart) {
 				return;
