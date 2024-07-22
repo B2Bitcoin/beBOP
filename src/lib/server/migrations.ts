@@ -443,7 +443,7 @@ const migrations = [
 	},
 	{
 		_id: new ObjectId('669a90d18bc5aaf40c863b63'),
-		name: 'Adding actionSettings nostr to products',
+		name: 'Adding actionSettings nostr to products and runtimeConfig',
 		run: async (session: ClientSession) => {
 			await collections.products.updateMany(
 				{},
@@ -457,12 +457,6 @@ const migrations = [
 				},
 				{ session }
 			);
-		}
-	},
-	{
-		_id: new ObjectId('669e255c5cf12669421d9a2a'),
-		name: 'Adding actionSettings nostr to runtimConfig',
-		run: async (session: ClientSession) => {
 			await collections.runtimeConfig.updateOne(
 				{ _id: 'productActionSettings' },
 				{
