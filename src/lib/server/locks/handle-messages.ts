@@ -371,7 +371,10 @@ const commands: Record<
 				);
 				return;
 			}
-
+			if (product.deposit?.enforce) {
+				await send(`Sorry, this product cannot be ordered through Nostr`);
+				return;
+			}
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
 				async (e) => {
 					console.error(e);
