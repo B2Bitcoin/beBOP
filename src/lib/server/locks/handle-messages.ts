@@ -540,6 +540,12 @@ const commands: Record<
 				);
 				return;
 			}
+			if (runtimeConfig.isBillingAddressMandatory) {
+				await send(
+					`This beBOP is configured to always require a billing address, but this is not supported yet via NostR`
+				);
+				return;
+			}
 
 			const productById = Object.fromEntries(products.map((p) => [p._id, p]));
 
