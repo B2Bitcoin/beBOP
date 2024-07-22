@@ -371,12 +371,22 @@ const commands: Record<
 				);
 				return;
 			}
+
+			if (product.shipping) {
+				await send(
+					`Sorry, this product has a physical component and cannot be ordered through Nostr`
+				);
+				return;
+			}
+
+
 			if (product.deposit?.enforce) {
 				await send(
 					`Sorry, this product cannot be ordered through Nostr due to the deposit mechanism`
 				);
 				return;
 			}
+
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
 				async (e) => {
 					console.error(e);
