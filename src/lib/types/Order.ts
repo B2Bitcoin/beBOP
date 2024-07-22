@@ -89,6 +89,7 @@ export interface OrderPayment {
 	invoiceId?: string;
 	/** For card transactions */
 	checkoutId?: string;
+	clientSecret?: string;
 	/** For bitcoin transactions */
 	wallet?: string;
 	label?: string;
