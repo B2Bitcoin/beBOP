@@ -8,7 +8,11 @@ import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
 import { addToCartInDb, getCartFromDb, removeFromCartInDb } from '../cart';
-import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
+import {
+	DEFAULT_MAX_QUANTITY_PER_ORDER,
+	type Product,
+	isPreorder as isPreorderFn
+} from '$lib/types/Product';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
@@ -408,6 +412,11 @@ const commands: Record<
 				await send(
 					`Sorry, this product cannot be ordered through Nostr due to the deposit mechanism`
 				);
+				return;
+			}
+			const isPreorder = isPreorderFn(product.availableDate, product.preorder);
+			if (!isPreorder && product.availableDate && product.availableDate > new Date()) {
+				await send('Sorry, this product is not available yet to order');
 				return;
 			}
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
