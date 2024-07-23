@@ -372,6 +372,11 @@ const commands: Record<
 				return;
 			}
 
+			if (product.standalone && quantity > 1) {
+				await send(`Sorry, you cannot order more than one of this product at a time`);
+				return;
+			}
+
 			const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
 			if (quantity > max) {
 				await send(
