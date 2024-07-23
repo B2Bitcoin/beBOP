@@ -8,7 +8,7 @@ import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
 import { addToCartInDb, getCartFromDb, removeFromCartInDb } from '../cart';
-import type { Product } from '$lib/types/Product';
+import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
@@ -371,6 +371,34 @@ const commands: Record<
 				);
 				return;
 			}
+
+			const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
+			if (quantity > max) {
+				await send(
+					'Sorry, the quantity of this product you want to order is greater than the allowed quantity'
+				);
+				return;
+			}
+
+			const amountAvailable = Math.max(
+				Math.min(
+					product.stock?.available ?? Infinity,
+					product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER
+				),
+				0
+			);
+			if (amountAvailable === 0) {
+				await send('Sorry, this product is out of stock');
+				return;
+			}
+
+			if (product.shipping) {
+				await send(
+					`Sorry, this product has a physical component and cannot be ordered through Nostr`
+				);
+				return;
+			}
+
 			if (product.deposit?.enforce) {
 				await send(
 					`Sorry, this product cannot be ordered through Nostr due to the deposit mechanism`
@@ -537,6 +565,19 @@ const commands: Record<
 			if (products.some((product) => product.shipping)) {
 				await send(
 					'Some products in your cart require shipping, this is not yet supported by the bot. Please remove them from your cart or use the website to checkout'
+				);
+				return;
+			}
+			if (runtimeConfig.isBillingAddressMandatory) {
+				await send(
+					`This beBOP is configured to always require a billing address, but this is not supported yet via NostR`
+				);
+				return;
+			}
+
+			if (runtimeConfig.collectIPOnDeliverylessOrders) {
+				await send(
+					`Sorry, this beBOP requires an IP address or shipping address for each order, which is not possible via NostR at the moment`
 				);
 				return;
 			}

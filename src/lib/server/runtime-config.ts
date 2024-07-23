@@ -133,6 +133,10 @@ const baseConfig = {
 		},
 		googleShopping: {
 			visible: true
+		},
+		nostr: {
+			visible: true,
+			canBeAddedToBasket: true
 		}
 	} satisfies ProductActionSettings as ProductActionSettings,
 	mainThemeId: '',
