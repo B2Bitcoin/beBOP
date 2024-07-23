@@ -588,13 +588,6 @@ const commands: Record<
 				return;
 			}
 
-			if (runtimeConfig.collectIPOnDeliverylessOrders) {
-				await send(
-					`Sorry, this beBOP requires an IP address or shipping address for each order, which is not possible via NostR at the moment`
-				);
-				return;
-			}
-
 			const productById = Object.fromEntries(products.map((p) => [p._id, p]));
 
 			const items = cart.items
