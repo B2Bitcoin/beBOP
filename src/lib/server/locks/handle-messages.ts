@@ -264,7 +264,7 @@ const commands: Record<
 				await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
 			} else {
 				const products = await collections.products
-					.find({ 'actionSettings.eShop.visible': true })
+					.find({ 'actionSettings.eShop.visible': true, 'actionSettings.nostr.visible': true })
 					.toArray();
 
 				if (!products.length) {
@@ -293,7 +293,7 @@ const commands: Record<
 				await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
 			} else {
 				const products = await collections.products
-					.find({ 'actionSettings.eShop.visible': true })
+					.find({ 'actionSettings.eShop.visible': true, 'actionSettings.nostr.visible': true })
 					.toArray();
 
 				if (!products.length) {
@@ -375,19 +375,14 @@ const commands: Record<
 				);
 				return;
 			}
+			if (!product.actionSettings.nostr.canBeAddedToBasket) {
+				await send('Sorry, this product cannot be ordered through Nostr');
+				return;
+			}
 			if (product.standalone && quantity > 1) {
 				await send(`Sorry, you cannot order more than one of this product at a time`);
 				return;
 			}
-
-			const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
-			if (quantity > max) {
-				await send(
-					'Sorry, the quantity of this product you want to order is greater than the allowed quantity'
-				);
-				return;
-			}
-
 			const amountAvailable = Math.max(
 				Math.min(
 					product.stock?.available ?? Infinity,
@@ -397,6 +392,13 @@ const commands: Record<
 			);
 			if (amountAvailable === 0) {
 				await send('Sorry, this product is out of stock');
+				return;
+			}
+			const max = product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER;
+			if (quantity > max) {
+				await send(
+					'Sorry, the quantity of this product you want to order is greater than the allowed quantity'
+				);
 				return;
 			}
 
@@ -431,7 +433,7 @@ const commands: Record<
 			}
 			if (
 				runtimeConfig.cartMaxSeparateItems &&
-				cart.items.length === runtimeConfig.cartMaxSeparateItems
+				cart.items.length >= runtimeConfig.cartMaxSeparateItems
 			) {
 				await send(
 					'Your cart has reached the maximum size. Please remove lines from your cart to add more items.'
