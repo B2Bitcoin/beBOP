@@ -1,0 +1,672 @@
+{
+	"address": {
+		"address": "Adres",
+		"city": "Stad",
+		"companyName": "Bedrijfsnaam",
+		"country": "Land",
+		"firstName": "Voornaam",
+		"lastName": "Achternaam",
+		"phone": "Telefoon",
+		"phoneCode": "Indien uw nummer niet uit hetzelfde land komt als het land van levering, voer dan de internationale code in.",
+		"phoneDisclaimer": "Deze informatie is optioneel, maar soms vereist door vervoerders. \nWij zullen u niet benaderen op dit nummer.",
+		"state": "Staat",
+		"vatNumber": "btw-nummer",
+		"zipCode": "Postcode"
+	},
+	"cart": {
+		"cta": {
+			"checkout": "Uitchecken",
+			"discardItem": "Weggooien",
+			"view": "Bekijk winkelwagen"
+		},
+		"empty": "Winkelwagen is leeg",
+		"items": "Producten",
+		"quantity": "Hoeveelheid",
+		"reachedMaxPerLine": "Uw winkelwagen heeft de maximale grootte bereikt. \nOm meer artikelen toe te voegen, verwijdert u artikelen uit uw winkelwagen",
+		"remaining": "Resteert na het afrekenen",
+		"remainingHelpText": "Voor artikelen met aanbetaling is de huidige bestelling een gedeeltelijke betaling.\n\nOm de aankoop af te ronden, moet u nog een betaling uitvoeren met het volgende bedrag.\n\n(BTW is al inbegrepen in het bedrag)",
+		"remainingShort": "Later",
+		"sr": {
+			"decrease": "Hoeveelheid verlagen",
+			"increase": "Verhoog de hoeveelheid",
+			"remove": "Artikel uit winkelwagen verwijderen"
+		},
+		"total": "Totaal",
+		"vat": "VAT",
+		"vatIpCountry": "Het land wordt bepaald aan de hand van gegevens van <0></0>",
+		"vatIpCountryText": "Het land wordt bepaald aan de hand van gegevens van {link}",
+		"vatNullOutsideSellerCountry": "Importbelastingen moeten bij levering door de klant aan de douane worden betaald.",
+		"vatRate": "Btw-tarief voor {country}",
+		"vatSellerCountry": "Het land is het land van de verkoper."
+	},
+	"challenge": {
+		"beginsAt": "Begint over {days} dagen",
+		"ended": "Afgerond !",
+		"endsAt": "Eindigt <0></0>",
+		"goalMet": "Goed gedaan jongens! \n👏👏",
+		"goalOvershot": "Jullie zijn geweldige jongens! \n🤭",
+		"list": "Lijst met uitdagingen",
+		"moneyAmount": {
+			"goalOvershot": "<0></0> op een doel van <1></1> ! \nJe bent geweldig !"
+		},
+		"numProducts": {
+			"one": "{count} product",
+			"other": "{count} producten",
+			"zero": "{count} producten"
+		},
+		"singleTitle": "Uitdaging {naam}",
+		"title": "Uitdagingen",
+		"totalProducts": {
+			"goalOvershot": "{progress} voorverkoop met een target van {goal}! \nJe bent geweldig !"
+		}
+	},
+	"checkout": {
+		"agreeIpCollect": "Ik ga akkoord met het verzamelen van mijn IP-adres (<0>waarom?</0>)",
+		"agreeNullVatForeigner": "Ik begrijp dat ik bij levering BTW moet betalen (<0>waarom?</0>)",
+		"agreeOnlyDeposit": "Ik ga ermee akkoord dat ik het restant in de toekomst moet betalen (<0>waarom?</0>)",
+		"backToCart": "Terug naar winkelwagen",
+		"billingInfo": "Facturatie adres",
+		"cta": {
+			"submit": "Doorgaan"
+		},
+		"deliveryFees": "Bezorgkosten",
+		"deliveryFeesEstimationTooltip": "Dit is een schatting. De definitieve kosten worden verwerkt bij de keuze van het land van levering.",
+		"differentBillingAddress": "Mijn verzendadres en mijn factuuradres zijn verschillend",
+		"digitalNoShippingNeeded": "Alle producten in uw winkelwagen zijn digitale producten. \nU hoeft geen verzendgegevens op te geven.",
+		"invalidNpub": "Ongeldig openbaar Nostr-adres",
+		"isProBilling": "Dit is een professionele bestelling",
+		"multiplePaymentMethods": "Maak gebruik van meerdere betaalmethoden",
+		"multiplePaymentMethodsHelpText": "Bij de volgende stap kunt u de betaalmethoden instellen.",
+		"noDeliveryInCountry": "Voor sommige artikelen in uw winkelwagentje is bezorging in uw land niet mogelijk.",
+		"note": {
+			"label": "Laat een briefje achter voor de verkoper",
+			"title": "Opmerking"
+		},
+		"notifications": {
+			"email": "E-mail",
+			"message": "Vul ten minste één contactadres in om op de hoogte te blijven van uw bestellingsnieuws.",
+			"npub": "Geen openbaar adres",
+			"title": "Voer"
+		},
+		"numProducts": {
+			"one": "{count} product",
+			"other": "{count} producten",
+			"zero": "{count} producten"
+		},
+		"onLocation": "Dit is een volledig betaalde fysieke bestelling op locatie",
+		"payment": {
+			"method": "Betalingsmiddel",
+			"title": "Betaling"
+		},
+		"paymentMethod": {
+			"bank-transfer": "overschrijving",
+			"bitcoin": "Onchain",
+			"card": "Kredietkaart",
+			"cash": "Contant geld",
+			"free": "Niets te betalen (gratis winkelwagen)",
+			"lightning": "Bliksem",
+			"point-of-sale": "Verkooppunt",
+			"unavailable": "Geen betaalmethoden beschikbaar."
+		},
+		"paymentStatus": "Betalingsstatus",
+		"reasonOfferFeesDefault": "Volledig betaalde fysieke bestelling op locatie",
+		"receiptNote": {
+			"label": "Geef aanvullende informatie op de factuur"
+		},
+		"shipmentInfo": "Verzendingsinformatie",
+		"title": "Uitchecken",
+		"tosAgree": "Ik ga akkoord met de <0>servicevoorwaarden</0>",
+		"vatShippingAddress": "Het land wordt bepaald door het verzendadres"
+	},
+	"contact": {
+		"form": {
+			"contactUs": "Neem contact met ons op"
+		}
+	},
+	"contactForm": {
+		"content": "Inhoud",
+		"from": "van",
+		"subject": "Onderwerp"
+	},
+	"country": {
+		"alpha2": {
+			"AD": "Andorra",
+			"AE": "Verenigde Arabische Emiraten",
+			"AF": "Afghanistan",
+			"AG": "Antigua en Barbuda",
+			"AI": "Anguilla",
+			"AL": "Albanië",
+			"AM": "Armenië",
+			"AN": "Nederlandse Antillen",
+			"AO": "Angola",
+			"AQ": "Antarctica",
+			"AR": "Argentinië",
+			"AS": "Amerikaans Samoa",
+			"AT": "Oostenrijk",
+			"AU": "Australië",
+			"AW": "Aruba",
+			"AZ": "Azerbeidzjan",
+			"BA": "Bosnië-Herzegovina",
+			"BB": "Barbados",
+			"BD": "Bangladesh",
+			"BE": "België",
+			"BF": "Burkina Faso",
+			"BG": "Bulgarije",
+			"BH": "Bahrein",
+			"BI": "Burundi",
+			"BJ": "Benin",
+			"BM": "Bermuda",
+			"BN": "Brunei",
+			"BO": "Bolivia",
+			"BQ": "Bonaire",
+			"BR": "Brazilië",
+			"BS": "Bahamas",
+			"BT": "Bhutan",
+			"BV": "Bouvet-eiland",
+			"BW": "Botswana",
+			"BY": "Wit-Rusland",
+			"BZ": "Belize",
+			"CA": "Canada",
+			"CC": "Cocoseilanden (Keeling).",
+			"CD": "Congo, de Democratische Republiek der",
+			"CF": "Centraal Afrikaanse Republiek",
+			"CG": "Congo",
+			"CH": "Zwitserland",
+			"CI": "Ivoorkust",
+			"CK": "Cook Eilanden",
+			"CL": "Chili",
+			"CM": "Kameroen",
+			"CN": "China",
+			"CO": "Colombia",
+			"CR": "Costa Rica",
+			"CU": "Cuba",
+			"CV": "Kaapverdië",
+			"CW": "Curacao",
+			"CX": "Kersteiland",
+			"CY": "Cyprus",
+			"CZ": "Tsjechische Republiek",
+			"DE": "Duitsland",
+			"DJ": "Djibouti",
+			"DK": "Denemarken",
+			"DM": "Dominica",
+			"DO": "Dominicaanse Republiek",
+			"DZ": "Algerije",
+			"EC": "Ecuador",
+			"EE": "Estland",
+			"EG": "Egypte",
+			"EH": "Westelijke Sahara",
+			"ER": "Eritrea",
+			"ES": "Spanje",
+			"ET": "Ethiopië",
+			"FI": "Finland",
+			"FJ": "Fiji",
+			"FK": "Falklandeilanden (Malvinas)",
+			"FM": "Micronesië",
+			"FO": "Faeröer eilanden",
+			"FR": "Frankrijk",
+			"GA": "Gabon",
+			"GB": "Verenigd Koninkrijk",
+			"GD": "Grenada",
+			"GE": "Georgië",
+			"GF": "Frans-Guyana",
+			"GG": "Guernsey",
+			"GH": "Ghana",
+			"GI": "Gibraltar",
+			"GL": "Groenland",
+			"GM": "Gambia",
+			"GN": "Guinea",
+			"GP": "Guadeloupe",
+			"GQ": "Equatoriaal-Guinea",
+			"GR": "Griekenland",
+			"GS": "Zuid-Georgië en de Zuidelijke Sandwicheilanden",
+			"GT": "Guatemala",
+			"GU": "Guam",
+			"GW": "Guinee-Bissau",
+			"GY": "Guyana",
+			"HK": "Hongkong",
+			"HM": "Heard-eiland en McDonald-eilanden",
+			"HN": "Honduras",
+			"HR": "Kroatië",
+			"HT": "Haïti",
+			"HU": "Hongarije",
+			"IC": "Canarische eilanden",
+			"ID": "Indonesië",
+			"IE": "Ierland",
+			"IL": "Israël",
+			"IM": "Eiland Man",
+			"IN": "Indië",
+			"IO": "Brits-Indisch oceaan gebied",
+			"IQ": "Irak",
+			"IR": "Iran",
+			"IS": "IJsland",
+			"IT": "Italië",
+			"JE": "Jersey",
+			"JM": "Jamaica",
+			"JO": "Jordanië",
+			"JP": "Japan",
+			"KE": "Kenia",
+			"KG": "Kirgizië",
+			"KH": "Cambodja",
+			"KI": "Kiribati",
+			"KM": "Comoren",
+			"KN": "Saint Kitts en Nevis",
+			"KP": "Noord Korea",
+			"KR": "Zuid-Korea",
+			"KW": "Koeweit",
+			"KY": "Kaaiman Eilanden",
+			"KZ": "Kazachstan",
+			"LA": "Laos",
+			"LB": "Libanon",
+			"LC": "Sint Lucia",
+			"LI": "Liechtenstein",
+			"LK": "Sri Lanka",
+			"LR": "Liberia",
+			"LS": "Lesotho",
+			"LT": "Litouwen",
+			"LU": "Luxemburg",
+			"LV": "Letland",
+			"LY": "Libië",
+			"MA": "Marokko",
+			"MC": "Monaco",
+			"MD": "Moldavië",
+			"ME": "Montenegro",
+			"MF": "Sint-Maarten",
+			"MG": "Madagascar",
+			"MH": "Marshall eilanden",
+			"MK": "Macedonië",
+			"ML": "Mali",
+			"MM": "Birma",
+			"MN": "Mongolië",
+			"MO": "Macau",
+			"MP": "noordelijke Mariana eilanden",
+			"MQ": "Martinique",
+			"MR": "Mauritanië",
+			"MS": "Montserrat",
+			"MT": "Malta",
+			"MU": "Mauritius",
+			"MV": "Maldiven",
+			"MW": "Malawi",
+			"MX": "Mexico",
+			"MY": "Maleisië",
+			"MZ": "Mozambique",
+			"NA": "Namibië",
+			"NC": "Nieuw-Caledonië",
+			"NE": "Niger",
+			"NF": "Norfolkeiland",
+			"NG": "Nigeria",
+			"NI": "Nicaragua",
+			"NL": "Nederland",
+			"NO": "Noorwegen",
+			"NP": "Nepal",
+			"NR": "Nauru",
+			"NU": "Niue",
+			"NZ": "Nieuw-Zeeland",
+			"OM": "Oman",
+			"PA": "Panama",
+			"PE": "Peru",
+			"PF": "Frans-Polynesië",
+			"PG": "Papoea-Nieuw-Guinea",
+			"PH": "Filippijnen",
+			"PK": "Pakistan",
+			"PL": "Polen",
+			"PM": "Saint-Pierre en Miquelon",
+			"PN": "Pitcairn",
+			"PR": "Puerto Rico",
+			"PS": "Palestina",
+			"PT": "Portugal",
+			"PW": "Palau",
+			"PY": "Paraguay",
+			"QA": "Katar",
+			"RE": "Bijeenkomst",
+			"RO": "Roemenië",
+			"RS": "Servië",
+			"RU": "Rusland",
+			"RW": "Rwanda",
+			"SA": "Saoedi-Arabië",
+			"SB": "Solomon eilanden",
+			"SC": "Seychellen",
+			"SD": "Soedan",
+			"SE": "Zweden",
+			"SG": "Singapore",
+			"SH": "Sint-Helena, Ascension en Tristan da Cunha",
+			"SI": "Slovenië",
+			"SJ": "Spitsbergen en Jan Mayen",
+			"SK": "Slowakije",
+			"SL": "Sierra Leone",
+			"SM": "San Marino",
+			"SN": "Senegal",
+			"SO": "Somalië",
+			"SR": "Suriname",
+			"SS": "Zuid Soedan",
+			"ST": "Sao Tomé en Principe",
+			"SV": "El Salvador",
+			"SY": "Syrische Arabische Republiek",
+			"SZ": "Swaziland",
+			"TC": "Turks- en Caicoseilanden",
+			"TD": "Tsjaad",
+			"TF": "Franse zuidelijke gebieden",
+			"TG": "Gaan",
+			"TH": "Thailand",
+			"TJ": "Tadzjikistan",
+			"TK": "Tokelau",
+			"TL": "Oost-Timor",
+			"TM": "Turkmenistan",
+			"TN": "Tunesië",
+			"TO": "Tonga",
+			"TR": "Kalkoen",
+			"TT": "Trinidad en Tobago",
+			"TV": "Tuvalu",
+			"TW": "Taiwan",
+			"TZ": "Tanzania",
+			"UA": "Oekraïne",
+			"UG": "Oeganda",
+			"UM": "Kleine afgelegen eilanden van de Verenigde Staten",
+			"US": "Verenigde Staten",
+			"UY": "Uruguay",
+			"UZ": "Oezbekistan",
+			"VA": "Heilige Stoel (staat Vaticaanstad)",
+			"VC": "Saint Vincent en de Grenadines",
+			"VE": "Venezuela",
+			"VG": "Maagdeneilanden, Brits",
+			"VI": "Maagdeneilanden, VS.",
+			"VN": "Vietnam",
+			"VU": "Vanuatu",
+			"WF": "Wallis en Futuna",
+			"WS": "Samoa",
+			"XK": "Kosovo",
+			"YE": "Jemen",
+			"YT": "Mayotte",
+			"ZA": "Zuid-Afrika",
+			"ZM": "Zambia",
+			"ZW": "Zimbabwe"
+		}
+	},
+	"error": {
+		"404": "De door u opgevraagde pagina {invalidUrl} kon niet worden gevonden. \nControleer of uw link correct is of neem contact op met het siteteam om het probleem te melden.",
+		"title": "Fout {status}"
+	},
+	"footer": {
+		"company": {
+			"contact": "Contactpersoon bedrijf",
+			"identity": "Bedrijfsidentiteit"
+		},
+		"poweredBy": "Aangedreven door",
+		"shop": {
+			"info": "onze winkel"
+		}
+	},
+	"general": {
+		"copied": "Gekopieerd"
+	},
+	"identity": {
+		"cta": {
+			"update": "Update"
+		},
+		"personalInformation": "Persoonlijke informatie"
+	},
+	"login": {
+		"authenticate": {
+			"ctaCancelLabel": "Rug",
+			"ctaLabel": "Bevestigen",
+			"disclaimer": "Om veiligheidsredenen kent onze website geen wachtwoord. \nU heeft toegang tot uw persoonlijke ruimte en uw bestelgeschiedenis via een verbindingslink of via een account van een derde partij (SSO).",
+			"inputLabel": "E-mail of npub",
+			"title": "Authenticatie toevoegen"
+		},
+		"cta": {
+			"authenticateAs": "Authenticeren als {as}",
+			"clearSession": "Duidelijke sessie",
+			"identity": "Identiteit",
+			"logout": "Uitloggen",
+			"orders": "Bestellingen",
+			"signInWith": "Inloggen met {provider}"
+		},
+		"password": {
+			"pwned": "Uw wachtwoord is onveilig. Het is aangetroffen bij {count} datalekken. \nStel alstublieft uw wachtwoord opnieuw in."
+		},
+		"session": {
+			"email": "E-mail: {e-mail}",
+			"identityPrefill": "U kunt uw postadres en uw contactadres vooraf invullen. \nAls u een bestelling plaatst, zijn deze gegevens vooraf ingevuld. \nAls u later besluit een account aan te maken, worden deze gegevens bewaard voor toekomstige bestellingen.",
+			"npub": "Npub: {npub}",
+			"title": "Sessie",
+			"userId": "Gebruikers-ID: {user-ID}"
+		},
+		"sso": {
+			"title": "Of log in met"
+		},
+		"willReceiveSessionLink": "U ontvangt een sessielink op uw adres"
+	},
+	"newsletter": {
+		"allowPartnerContact": "Laat onze partners u commerciële verzoeken sturen",
+		"allowSellerContact": "Sta ons toe u commerciële verzoeken te sturen"
+	},
+	"order": {
+		"addPayment": {
+			"amount": "Te betalen bedrag",
+			"cta": "Stuur een oproep voor betaling",
+			"currency": "Betalingsvaluta"
+		},
+		"backToOrder": "<< Terug naar bestelling",
+		"clickQR": "Klik op de QR-code om met uw portemonnee te betalen",
+		"confirmCancel": "Weet je het zeker ? \nAls dit uw enige openstaande betaling is en er geen betaling voor de bestelling is gedaan, wordt de bestelling geannuleerd. \nIn geval van een fout, maak eerst een betaling aan en verwijder deze vervolgens.",
+		"contactAddress": {
+			"title": "Contact adres"
+		},
+		"copyAddress": "Kopieer het betalingsadres",
+		"createdAt": "Gemaakt op <0></0>",
+		"depositCancelled": "Aanbetalingsverzoek geannuleerd",
+		"depositExpired": "Stortingsverzoek verlopen",
+		"depositPaid": "Voorschot betaald",
+		"depositToPay": "Borg om te betalen",
+		"discount": {
+			"title": "Korting"
+		},
+		"informSeller": "Verkoper informeren",
+		"linkReminder": "Bewaar deze link: <0></0> om later toegang te krijgen tot de bestelling.",
+		"list": {
+			"title": "Lijst met uw bestellingen"
+		},
+		"note": {
+			"author": "{alias} (werknemer)",
+			"authorCustomer": "Klant",
+			"backToOrder": "Ga naar bestellen",
+			"label": "Opmerking medewerker",
+			"saveText": "Bewaar notitie",
+			"seeText": "Zie bestelnotities",
+			"title": "Bestelnotities"
+		},
+		"paidAt": "Betaald op <0></0>",
+		"paidWith": {
+			"bank-transfer": "Betaald met: geverifieerde bankoverschrijving",
+			"bitcoin": "Betaald met: Bitcoin on-chain betaling (1 {betalingCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
+			"card": "Betaald met: bankkaart via Sum UP",
+			"free": "Niets betaald",
+			"lightning": "Betaald met: Lightning-transactie (1 {betalingCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
+			"point-of-sale": "Betaald in de winkel"
+		},
+		"paidWithSummary": {
+			"bank-transfer": "Betaald met: geverifieerde bankoverschrijving",
+			"bitcoin": "Betaald met: Bitcoin on-chain betaling",
+			"card": "Betaald met: bankkaart via Sum UP",
+			"free": "Niets betaald",
+			"lightning": "Betaald met: Lightning-transactie",
+			"point-of-sale": "Betaald in de winkel"
+		},
+		"payToComplete": "Betaal om de bestelling af te ronden.",
+		"payToCompleteBitcoin": {
+			"one": "Na 1 bevestiging wordt de betaling bevestigd.",
+			"other": "De betaling wordt bevestigd na {count} bevestigingen.",
+			"zero": "De betaling wordt bevestigd zonder op bevestigingen te wachten."
+		},
+		"paymentAccountHolder": "Rekeninghouder",
+		"paymentAccountHolderAddress": "Adres",
+		"paymentAddress": "Betaal adres",
+		"paymentAmount": "Te betalen bedrag",
+		"paymentBic": "BIC",
+		"paymentExpiresAt": "Betalingstermijn: <0></0>",
+		"paymentIban": "IBAN waarnaar de overboeking moet worden verzonden",
+		"paymentLink": "Klik hier om met pin te betalen",
+		"paymentPaidAt": "Betaling gedaan op {date}",
+		"paymentStatus": {
+			"canceled": "geannuleerd",
+			"canceledTemplate": "Bestelling geannuleerd!",
+			"expired": "verlopen",
+			"expiredTemplate": "Bestelling verlopen!",
+			"paid": "betaald",
+			"paidTemplate": "Bestelling <0>betaald</0>!",
+			"partiallyPaid": "gedeeltelijk betaald",
+			"pending": "in behandeling"
+		},
+		"paymentStatusNpub": "Nostr openbaar adres voor betalingsstatus",
+		"receipt": {
+			"accountHolder": "Rekeninghouder",
+			"accountHolderAddress": "Adres",
+			"alreadyPaidAmount": "Eerder betaald bedrag",
+			"bankInfo": "bankgegevens",
+			"cancelledOrPending": "Deze oproep tot betaling is niet gehonoreerd en is verlopen of geannuleerd",
+			"create": "Factuur downloaden",
+			"createProforma": "Voorfactuur downloaden",
+			"endMessage": "Wij staan ​​tot uw beschikking voor verdere informatie. \n<0></0> Met vriendelijke groet, <1></1> {businessName}",
+			"fullyPaid": {
+				"message": "Met deze betaling is de bestelling {orderNumber} nu volledig betaald"
+			},
+			"invoice": "Factuur",
+			"invoiceNumber": "{factuurnummer}",
+			"itemName": "Natuur",
+			"partialAmount": "Betaald bedrag (gedeeltelijke betaling)",
+			"partialAmountPre": "Te betalen bedrag (gedeeltelijke betaling)",
+			"proforma": "Dit is een proforma factuur. \nEr heeft nog geen betaling plaatsgevonden. \nBij betaling wordt de definitieve factuur gegenereerd.",
+			"proformaInvoiceNumber": "PROFORMA-{ordernummer}-{betalingsindex}",
+			"quantity": "Aantal",
+			"remainingAmount": "Resterend bedrag te betalen",
+			"summaryTitle": "Samenvatting van de bestelling",
+			"totalExcVat": "Totaal Excl. \nVAT",
+			"totalInclVat": "Totaal Incl. \nVAT",
+			"totalVat": "Totale BTW",
+			"unitPrice": "Eenheid prijs",
+			"vatFreeReason": "Vrijgesteld van btw: {reden}"
+		},
+		"receiptFullyPaid": "Bon genereren (volledig betaald)",
+		"receiptPending": "Ontvangst genereren (betaling in behandeling)",
+		"related": {
+			"invoice": "✅ Factuurnr.{factuurnummer}",
+			"invoiceFailed": "❌ Factuurnr.{factuurnummer}",
+			"invoicePending": "⏲ ​​Factuurnr.{invoiceNumber} (wacht op betaling)",
+			"title": "Gerelateerde facturen"
+		},
+		"requestedAt": "Betaling aangevraagd op <0></0>",
+		"restToPay": "Resteert nog te betalen",
+		"shippingAddress": {
+			"title": "Afleveradres"
+		},
+		"singleTitle": "Volgorde",
+		"summary": {
+			"fullyPaid": {
+				"title": "Bestelling volledig betaald, openstaand bedrag nul"
+			}
+		},
+		"tickets": {
+			"printAll": "Alles afdrukken",
+			"seeAll": "Alles zien",
+			"ticket": "Ticket",
+			"title": "Kaartjes"
+		},
+		"timeRemaining": "Resterende tijd: {minuten} minuten",
+		"vatFree": "Deze bestelling is BTW vrij. \nReden: {reden}"
+	},
+	"pos": {
+		"adminInterface": "Beheerinterface",
+		"applyGiftDiscount": "Als POS-gebruiker pas ik een <0>cadeaukorting</0> toe",
+		"cta": {
+			"cancelOrder": "Annuleren",
+			"markOrderPaid": "Mark betaald",
+			"updatePaymentInfo": "Betalingsgegevens bijwerken"
+		},
+		"discountJustification": "Rechtvaardiging",
+		"invalidDiscount": "Korting is niet geldig!",
+		"lastOrders": {
+			"title": "Laatste bestellingen"
+		},
+		"offerDeliveryFees": "Maak de bezorgkosten voor deze bestelling ongeldig",
+		"order": {
+			"satReceived": "ontvangen"
+		},
+		"pendingPayment": "Lopende betaling",
+		"session": {
+			"waitingPaymentConfirmation": "Wacht op bevestiging",
+			"welcomeMessage": "We zijn blij je te zien",
+			"welcomeTitle": "Welkom"
+		},
+		"sessionLink": "Bezit",
+		"sessionTouchLink": "POS-sessie - touchscreen",
+		"vatFree": "Dit is een BTW-vrije bestelling (<0>voorwaarden</0>)",
+		"vatFreeReason": "BTW-vrije reden"
+	},
+	"product": {
+		"addedToCart": "Product toegevoegd aan winkelwagen",
+		"availableOn": "Beschikbaar op {datum}",
+		"checkBackLater": "Kom later nog eens terug",
+		"cta": {
+			"add": "Voeg toe aan winkelkar",
+			"buy": "Koop nu",
+			"details": "Details",
+			"donate": "Doneer nu",
+			"preorder": "Bestel nu vooraf",
+			"subscribe": "Abonneer nu"
+		},
+		"deposit": {
+			"payFullPrice": "Betaal nu de volledige prijs",
+			"payPercentage": "Betaal nu {percentage}"
+		},
+		"digitalFiles": {
+			"title": "Digitale bestanden"
+		},
+		"discountBanner": "{discountPercent}% van voor {hours} uur",
+		"freeWithSub": "Dit product is gratis verkrijgbaar bij uw maandabonnement",
+		"freeWithTitle": "Gratis met \"xxxxx",
+		"horsTaxeShort": "HT",
+		"minimumForCurrency": "Het minimumbedrag voor {currency} is {minimum}",
+		"nameYourPrice": "Geef uw prijs een naam ({currency})",
+		"notForSale": "Dit product is niet te koop",
+		"outOfStock": "Geen voorraad meer",
+		"preorderText": "Dit is een voorbestelling. Uw product is beschikbaar op {date}",
+		"pricePlaceholder": "Prijs",
+		"seeInCabinet": "Zie in MijnKabinet",
+		"type": {
+			"deposit": "Op borg",
+			"digitalResource": "Digitale hulpbron",
+			"donation": "Bijdrage",
+			"physical": "Fysiek",
+			"preorder": "Voorafgaande bestelling",
+			"preview": "Voorbeeld",
+			"resource": "Bron",
+			"subscription": "Abonnement",
+			"ticket": "Ticket"
+		},
+		"vatExcluded": "Exclusief BTW"
+	},
+	"subscription": {
+		"associated": {
+			"npub": "Geassocieerd met npub: {npub}"
+		},
+		"cantRenew": "Abonnement hoeft niet te worden verlengd",
+		"cta": {
+			"renew": "Vernieuwen"
+		},
+		"initiallyCreated": "Oorspronkelijk gemaakt: <0></0>",
+		"paidUntil": "Betaald tot: <0></0>",
+		"singleTitle": "Abonnement",
+		"status": {
+			"expired": "verlopen"
+		}
+	},
+	"ticket": {
+		"boughtAt": "Gekocht op {date} om {time}",
+		"burn": "Markeer het ticket als gebruikt",
+		"print": "Afdrukken",
+		"scanned": "🔥 Dit ticket is gescand le {date} à {time} en is niet meer geldig",
+		"unburn": "Markeer het ticket als ongebruikt"
+	},
+	"widget": {
+		"specification": "Specificaties"
+	}
+}
