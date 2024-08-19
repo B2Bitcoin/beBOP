@@ -1,28 +1,50 @@
 import { collections } from '$lib/server/database';
-import { ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
+import { paymentMethods } from '$lib/server/payment-methods';
+import { COUNTRY_ALPHA2S } from '$lib/types/Country.js';
+import { type Order, ORDER_PAGINATION_LIMIT } from '$lib/types/Order';
 
-export async function load({ url }) {
-	const skip = url.searchParams.get('skip');
-	const orderNumber = url.searchParams.get('orderNumber');
-	const productAlias = url.searchParams.get('productAlias');
-	let orders;
+import type { Filter } from 'mongodb';
+import { z } from 'zod';
+
+export async function load({ url, locals }) {
+	const methods = paymentMethods({ role: locals.user?.roleId });
+
+	const querySchema = z.object({
+		skip: z.number({ coerce: true }).int().min(0).optional().default(0),
+		orderNumber: z.number({ coerce: true }).int().min(0).optional(),
+		productAlias: z.string().optional(),
+		paymentMethod: z.enum(['' as const, ...methods]).optional(),
+		country: z.enum(['' as const, ...COUNTRY_ALPHA2S]).optional(),
+		email: z.string().optional(),
+		npub: z.string().optional()
+	});
+
+	const searchParams = Object.fromEntries(url.searchParams.entries());
+	const result = querySchema.parse(searchParams);
+	const { skip, orderNumber, productAlias, paymentMethod, country, email, npub } = result;
+
+	const query: Filter<Order> = {};
+
 	if (orderNumber) {
-		orders = await collections.orders.find({ number: Number(orderNumber) }).toArray();
+		query.number = orderNumber;
 	} else if (productAlias) {
-		orders = await collections.orders
-			.find({
-				'items.product.alias': productAlias
-			})
-			.sort({ createdAt: -1 })
-			.toArray();
-	} else {
-		orders = await collections.orders
-			.find()
-			.skip(Number(skip))
-			.limit(ORDER_PAGINATION_LIMIT)
-			.sort({ createdAt: -1 })
-			.toArray();
+		query['items.product.alias'] = productAlias;
+	} else if (paymentMethod) {
+		query['payments.method'] = paymentMethod;
+	} else if (country) {
+		query['shippingAddress.country'] = country;
+	} else if (email) {
+		query['user.email'] = email;
+	} else if (npub) {
+		query['user.npub'] = npub;
 	}
+
+	const orders = await collections.orders
+		.find(query)
+		.skip(skip)
+		.limit(ORDER_PAGINATION_LIMIT)
+		.sort({ createdAt: -1 })
+		.toArray();
 
 	return {
 		orders: orders.map((order) => ({
@@ -41,6 +63,7 @@ export async function load({ url }) {
 					createdAt: note.createdAt
 				})) || [],
 			status: order.status
-		}))
+		})),
+		paymentMethods: methods
 	};
 }
