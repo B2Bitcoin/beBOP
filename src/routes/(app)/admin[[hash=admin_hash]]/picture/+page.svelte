@@ -7,6 +7,7 @@
 <h1 class="text-3xl">List of pictures with no associated product or widget</h1>
 
 <a href="{data.adminPrefix}/picture/new" class="block underline">New picture</a>
+<a href="{data.adminPrefix}/picture/name" class="block underline">Bulk picture name editor</a>
 
 <div class="flex flex-row flex-wrap gap-6">
 	{#each data.pictures as picture}
