@@ -8,7 +8,7 @@ import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { addSeconds, formatDistance, subMinutes } from 'date-fns';
 import { addToCartInDb, getCartFromDb, removeFromCartInDb } from '../cart';
-import { Product } from '$lib/types/Product';
+import type { Product } from '$lib/types/Product';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { createOrder } from '../orders';
 import { typedEntries } from '$lib/utils/typedEntries';
