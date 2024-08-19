@@ -112,6 +112,10 @@ export const adminLinks: AdminLinks = [
 				label: 'SumUp'
 			},
 			{
+				href: '/admin/stripe',
+				label: 'Stripe'
+			},
+			{
 				href: '/admin/phoenixd',
 				label: 'PhoenixD'
 			}

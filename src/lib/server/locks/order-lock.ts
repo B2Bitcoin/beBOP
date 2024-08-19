@@ -11,6 +11,8 @@ import { onOrderPayment, onOrderPaymentFailed } from '../orders';
 import { refreshPromise, runtimeConfig } from '../runtime-config';
 import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 import { phoenixdLookupInvoice } from '../phoenixd';
+import { CURRENCIES, CURRENCY_UNIT } from '$lib/types/Currency';
+import { typedInclude } from '$lib/utils/typedIncludes';
 
 const lock = new Lock('orders');
 
@@ -119,45 +121,130 @@ async function maintainOrders() {
 						}
 						break;
 					case 'card':
-						try {
-							if (!runtimeConfig.sumUp.apiKey) {
-								throw new Error('Missing sumup API key');
-							}
-							const checkoutId = payment.checkoutId;
+						switch (payment.processor) {
+							case 'sumup':
+								try {
+									if (!runtimeConfig.sumUp.apiKey) {
+										throw new Error('Missing sumup API key');
+									}
+									const checkoutId = payment.checkoutId;
 
-							if (!checkoutId) {
-								throw new Error('Missing checkout ID on card order');
-							}
+									if (!checkoutId) {
+										throw new Error('Missing checkout ID on card order');
+									}
 
-							const response = await fetch('https://api.sumup.com/v0.1/checkouts/' + checkoutId, {
-								headers: {
-									Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
-								},
-								...{ autoSelectFamily: true }
-							});
+									const response = await fetch(
+										'https://api.sumup.com/v0.1/checkouts/' + checkoutId,
+										{
+											headers: {
+												Authorization: 'Bearer ' + runtimeConfig.sumUp.apiKey
+											},
+											...{ autoSelectFamily: true }
+										}
+									);
 
-							if (!response.ok) {
-								throw new Error(
-									'Failed to fetch checkout status for order ' +
-										order._id +
-										', checkout ' +
-										checkoutId
-								);
-							}
+									if (!response.ok) {
+										throw new Error(
+											'Failed to fetch checkout status for order ' +
+												order._id +
+												', checkout ' +
+												checkoutId
+										);
+									}
 
-							const checkout = await response.json();
+									const checkout = await response.json();
 
-							if (checkout.status === 'PAID') {
-								payment.transactions = checkout.transactions;
-								order = await onOrderPayment(order, payment, {
-									amount: checkout.amount,
-									currency: checkout.currency
-								});
-							} else if (checkout.status === 'FAILED' || checkout.status === 'EXPIRED') {
-								order = await onOrderPaymentFailed(order, payment, 'expired');
-							}
-						} catch (err) {
-							console.error(inspect(err, { depth: 10 }));
+									if (checkout.status === 'PAID') {
+										payment.transactions = checkout.transactions;
+										order = await onOrderPayment(order, payment, {
+											amount: checkout.amount,
+											currency: checkout.currency
+										});
+									} else if (checkout.status === 'FAILED' || checkout.status === 'EXPIRED') {
+										order = await onOrderPaymentFailed(order, payment, 'expired');
+									}
+								} catch (err) {
+									console.error(inspect(err, { depth: 10 }));
+								} finally {
+									break;
+								}
+							case 'stripe':
+								try {
+									if (!runtimeConfig.stripe.secretKey) {
+										throw new Error('Missing stripe secret key');
+									}
+									const paymentId = payment.checkoutId;
+
+									if (!paymentId) {
+										throw new Error('Missing cjeckout id on stripe order');
+									}
+
+									// Fetch payment intent
+									const response = await fetch(
+										'https://api.stripe.com/v1/payment_intents/' + paymentId,
+
+										{
+											headers: {
+												Authorization: 'Bearer ' + runtimeConfig.stripe.secretKey
+											}
+										}
+									);
+
+									if (!response.ok) {
+										throw new Error(
+											'Failed to fetch payment intent status for order ' +
+												order._id +
+												', payment intent ' +
+												paymentId
+										);
+									}
+
+									const paymentIntent: {
+										status: string;
+										amount_received: number;
+										currency: string;
+									} = await response.json();
+
+									if (paymentIntent.status === 'succeeded') {
+										const currency = paymentIntent.currency.toUpperCase();
+
+										if (!typedInclude(CURRENCIES, currency)) {
+											throw new Error('Unknown currency ' + currency);
+										}
+
+										order = await onOrderPayment(order, payment, {
+											amount: paymentIntent.amount_received * CURRENCY_UNIT[currency],
+											currency: currency
+										});
+									} else if (paymentIntent.status === 'canceled') {
+										order = await onOrderPaymentFailed(order, payment, 'expired');
+									} else if (payment.expiresAt && new Date() > payment.expiresAt) {
+										const cancelResponse = await fetch(
+											'https://api.stripe.com/v1/payment_intents/' + paymentId + '/cancel',
+											{
+												method: 'POST',
+												headers: {
+													Authorization: 'Bearer ' + runtimeConfig.stripe.secretKey
+												}
+											}
+										);
+
+										if (!cancelResponse.ok) {
+											throw new Error(
+												'Failed to cancel payment intent for order ' +
+													order._id +
+													', payment intent ' +
+													paymentId
+											);
+										}
+										order = await onOrderPaymentFailed(order, payment, 'expired');
+									}
+								} catch (err) {
+									console.error(inspect(err, { depth: 10 }));
+								}
+								break;
+							default:
+								console.error('Unknown card processor', payment.processor);
 						}
 						break;
 					// handled by admin

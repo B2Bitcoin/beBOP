@@ -17,6 +17,7 @@
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { bitcoinPaymentQrCodeString } from '$lib/utils/bitcoinPaymentQr.js';
 	import Picture from '$lib/components/Picture.svelte';
+	import IconStripe from '$lib/components/icons/IconStripe.svelte';
 
 	let currentDate = new Date();
 	export let data;
@@ -143,7 +144,11 @@
 										{#if payment.method === 'card'}
 											<a href={trimOrigin(payment.address ?? '')} class="body-hyperlink">
 												<span>{t('order.paymentLink')}</span>
-												<IconSumupWide class="h-12" />
+												{#if payment.processor === 'sumup'}
+													<IconSumupWide class="h-12" />
+												{:else if payment.processor === 'stripe'}
+													<IconStripe class="h-12" />
+												{/if}
 											</a>
 										{:else if payment.method === 'bank-transfer'}
 											{#if data.sellerIdentity?.bank?.accountHolder}
