@@ -1,6 +1,6 @@
 import { collections } from '$lib/server/database.js';
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
-import { CMSPage } from '$lib/types/CmsPage.js';
+import { CMSPage } from '$lib/types/CmsPage';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 export async function load(event) {
