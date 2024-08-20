@@ -1,6 +1,4 @@
-import { collections } from '$lib/server/database.js';
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
-import type { CMSPage } from '$lib/types/CmsPage';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
 export async function load(event) {
@@ -37,12 +35,6 @@ export async function load(event) {
 		websiteShortDescription:
 			runtimeConfig[`translations.${event.locals.language}.config`]?.websiteShortDescription ||
 			runtimeConfig.websiteShortDescription,
-		viewportWidth,
-		cmsPages: await collections.cmsPages
-			.find()
-			.project<Pick<CMSPage, '_id'>>({
-				_id: 1
-			})
-			.toArray()
+		viewportWidth
 	};
 }

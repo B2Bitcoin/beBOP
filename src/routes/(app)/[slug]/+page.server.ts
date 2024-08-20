@@ -66,6 +66,7 @@ export async function load({ params, locals, url }) {
 				: { content: cmsPage.content, mobileContent: cmsPage.mobileContent },
 			locals
 		),
-		layoutReset: cmsPage.fullScreen
+		layoutReset: cmsPage.fullScreen,
+		websiteShortDescription: cmsPage.shortDescription
 	};
 }
