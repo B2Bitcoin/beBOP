@@ -19,7 +19,9 @@
 <svelte:head>
 	<title>{data.websiteTitle}</title>
 	<meta name="viewport" content={data.viewportWidth} />
-	<meta name="description" content={data.websiteShortDescription} />
+	{#if !$page.url.pathname.startsWith('/product') && !data.cmsPages.find((cmsPage) => cmsPage._id === $page.url.pathname.split('/')[1])}
+		<meta name="description" content={data.websiteShortDescription} />
+	{/if}
 	<link rel="stylesheet" href="/style/variables.css?v={data.themeChangeNumber}" />
 	{#if data.faviconPictureId}
 		<link rel="icon" href="/favicon/{data.faviconPictureId}" />
