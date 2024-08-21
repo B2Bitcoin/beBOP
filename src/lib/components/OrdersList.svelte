@@ -117,7 +117,7 @@
 				{/each}
 				{#if order.orderLabelIds?.length && labelById}
 					{#each order.orderLabelIds as labelId}
-						<OrderLabelComponent orderLabel={labelById[labelId]} class="text-xs" />
+						<OrderLabelComponent orderLabel={labelById[labelId]} class="text-sm" />
 					{/each}
 				{/if}
 				<a href="{adminPrefix}/order/{order._id}/label" class="btn btn-gray">+</a>

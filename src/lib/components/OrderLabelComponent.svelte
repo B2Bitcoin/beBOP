@@ -9,7 +9,10 @@
 		(className.includes('rounded') ? '' : 'rounded-full');
 </script>
 
-<span class="{baseClasses} {className} text-blue-500 bg-blue-200 whitespace-nowrap">
+<span
+	class="{baseClasses} {className}  whitespace-nowrap"
+	style="color: {orderLabel.color}; border:1px solid {orderLabel.color}"
+>
 	{orderLabel.icon}
 	{orderLabel.name}
 </span>
