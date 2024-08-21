@@ -67,7 +67,7 @@
 			<a href="/admin/order" class="btn btn-gray">🧹</a>
 		</label>
 	</div>
-	<OrdersList orders={data.orders} adminPrefix={data.adminPrefix} />
+	<OrdersList orders={data.orders} adminPrefix={data.adminPrefix} orderLabels={data.labels} />
 	<div class="flex gap-2">
 		<input type="hidden" value={next} name="skip" />
 		{#if Number($page.url.searchParams.get('skip'))}

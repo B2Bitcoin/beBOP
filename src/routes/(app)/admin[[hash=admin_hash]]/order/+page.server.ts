@@ -45,7 +45,7 @@ export async function load({ url, locals }) {
 		.limit(ORDER_PAGINATION_LIMIT)
 		.sort({ createdAt: -1 })
 		.toArray();
-
+	const labels = await collections.labels.find({}).toArray();
 	return {
 		orders: orders.map((order) => ({
 			_id: order._id,
@@ -62,8 +62,10 @@ export async function load({ url, locals }) {
 					content: note.content,
 					createdAt: note.createdAt
 				})) || [],
-			status: order.status
+			status: order.status,
+			orderLabelIds: order.orderLabelIds
 		})),
-		paymentMethods: methods
+		paymentMethods: methods,
+		labels
 	};
 }

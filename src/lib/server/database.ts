@@ -45,6 +45,7 @@ import type { Countdown } from '$lib/types/Countdown';
 import type { Gallery } from '$lib/types/Gallery';
 import type { VatProfile } from '$lib/types/VatProfile';
 import type { Ticket } from '$lib/types/Ticket';
+import { OrderLabel } from '$lib/types/OrderLabel';
 
 // Bigger than the default 10, helpful with MongoDB errors
 Error.stackTraceLimit = 100;
@@ -99,6 +100,7 @@ const genCollection = () => ({
 	galleries: db.collection<Gallery>('galleries'),
 	vatProfiles: db.collection<VatProfile>('vatProfiles'),
 	tickets: db.collection<Ticket>('tickets'),
+	labels: db.collection<OrderLabel>('labels'),
 
 	errors: db.collection<unknown & { _id: ObjectId; url: string; method: string }>('errors')
 });
