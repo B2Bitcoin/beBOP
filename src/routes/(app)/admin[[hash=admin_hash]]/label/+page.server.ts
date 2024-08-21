@@ -1,5 +1,5 @@
 import { collections } from '$lib/server/database';
-import { OrderLabel } from '$lib/types/OrderLabel';
+import type { OrderLabel } from '$lib/types/OrderLabel';
 
 export function load() {
 	return {

@@ -20,8 +20,10 @@
 		  >[]
 		| [];
 	export let adminPrefix: string | undefined = undefined;
-	export let orderLabels: OrderLabel[];
-	$: labelById = Object.fromEntries(orderLabels.map((label) => [label._id, label]));
+	export let orderLabels: OrderLabel[] | undefined = undefined;
+	$: labelById = orderLabels
+		? Object.fromEntries(orderLabels.map((label) => [label._id, label]))
+		: undefined;
 
 	const { t, locale } = useI18n();
 </script>
@@ -113,7 +115,7 @@
 						</form>
 					{/if}
 				{/each}
-				{#if order.orderLabelIds?.length}
+				{#if order.orderLabelIds?.length && labelById}
 					{#each order.orderLabelIds as labelId}
 						<OrderLabelComponent orderLabel={labelById[labelId]} class="text-xs" />
 					{/each}
