@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { useI18n } from '$lib/i18n';
 	import type { OrderLabel } from '$lib/types/OrderLabel';
 
 	export let orderLabel: OrderLabel;
