@@ -1,6 +1,4 @@
 <script lang="ts">
-	import Picture from '$lib/components/Picture.svelte';
-
 	export let data;
 </script>
 
