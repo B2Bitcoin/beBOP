@@ -3,7 +3,7 @@ import { locales, type LanguageKey } from '$lib/translations/index.js';
 import type { JsonObject } from 'type-fest';
 import { mapObject } from '$lib/utils/mapObject.js';
 import { z } from 'zod';
-import { contactFormTranslatableSchema } from '../contact-form-schema';
+import { labelTranslatableSchema } from '../label-schema';
 
 export const actions = {
 	default: async function ({ request, params }) {
@@ -18,7 +18,7 @@ export const actions = {
 		const parsed = z
 			.object({
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
-				...mapObject(contactFormTranslatableSchema, (x) => x.optional())
+				...mapObject(labelTranslatableSchema, (x) => x.optional())
 			})
 			.parse(json);
 		const { language, ...rest } = parsed;

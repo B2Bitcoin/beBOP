@@ -7,7 +7,7 @@
 	let name = data.label.name;
 	let slug = data.label._id;
 	function confirmDelete(event: Event) {
-		if (!confirm('Would you like to delete this Contact form?')) {
+		if (!confirm('Would you like to delete this label?')) {
 			event.preventDefault();
 		}
 	}
@@ -15,7 +15,7 @@
 
 <form method="post" class="flex flex-col gap-4">
 	<label class="form-label">
-		name
+		Name
 		<input
 			class="form-input"
 			type="text"
