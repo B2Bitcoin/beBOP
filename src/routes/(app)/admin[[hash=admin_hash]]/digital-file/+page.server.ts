@@ -2,6 +2,6 @@ import { collections } from '$lib/server/database';
 
 export const load = async () => {
 	return {
-		pictures: await collections.digitalFiles.find({}).toArray()
+		files: await collections.digitalFiles.find({ productId: { $exists: false } }).toArray()
 	};
 };

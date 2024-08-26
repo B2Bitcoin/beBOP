@@ -12,6 +12,10 @@
 		>
 			Back to product
 		</a>
+	{:else}
+		<a href="{data.adminPrefix}/digital-file" class="underline body-hyperlink text-center">
+			Back to files
+		</a>
 	{/if}
 
 	<input type="text" name="name" class="form-input" value={data.digitalFile.name} />

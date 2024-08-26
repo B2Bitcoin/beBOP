@@ -14,14 +14,15 @@ export async function POST({ request }) {
 			name: z.string().trim().min(1).max(100),
 			fileSize: z.number().int().min(1).max(100_000_000),
 			fileName: z.string().trim().min(1).max(500),
-			productId: z.string()
+			productId: z.string().nullable().optional()
 		})
 		.parse(await request.json());
+	if (body.productId) {
+		const product = await collections.products.findOne({ _id: body.productId });
 
-	const product = await collections.products.findOne({ _id: body.productId });
-
-	if (!product) {
-		throw error(404, 'The associated product does not exist');
+		if (!product) {
+			throw error(404, 'The associated product does not exist');
+		}
 	}
 
 	const digitalFileId = generateId(body.name, true);
@@ -29,7 +30,7 @@ export async function POST({ request }) {
 	const contentType = mimeTypes.lookup(body.fileName);
 	const extension = contentType ? mimeTypes.extension(contentType) : '';
 
-	const key = `products/${product._id}/${
+	const key = `products/${body.productId}/${
 		extension ? `${digitalFileId}.${extension}` : digitalFileId
 	}`;
 
@@ -55,7 +56,7 @@ export async function POST({ request }) {
 			size: body.fileSize,
 			key
 		},
-		productId: product._id
+		...(body.productId && { productId: body.productId })
 	});
 
 	return new Response(JSON.stringify({ uploadUrl: presignedUrl, digitalFileId }), {
