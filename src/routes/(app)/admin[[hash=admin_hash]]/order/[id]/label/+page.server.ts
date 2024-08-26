@@ -2,6 +2,8 @@ import { adminPrefix } from '$lib/server/admin';
 import { collections } from '$lib/server/database';
 import type { OrderLabel } from '$lib/types/OrderLabel';
 import { error, redirect } from '@sveltejs/kit';
+import { set } from 'lodash-es';
+import type { JsonObject } from 'type-fest';
 import { z } from 'zod';
 
 export const load = async ({ params }) => {
@@ -23,26 +25,28 @@ export const load = async ({ params }) => {
 };
 export const actions = {
 	default: async function ({ request, params }) {
-		const formData = await request.formData();
-		const orderLabelString = formData.get('orderLabel');
-		if (!orderLabelString) {
-			throw error(400, 'No orderLabel provided');
+		const order = await collections.orders.findOne({ _id: params.id });
+		if (!order) {
+			throw new Error('Order not found');
 		}
-		const orderLabel = JSON.parse(String(orderLabelString));
+
+		const formData = await request.formData();
+		const json: JsonObject = {};
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 		const result = z
 			.object({
-				orderLabel: z.string().array()
+				orderLabelId: z.string().array()
 			})
-			.parse({
-				orderLabel
-			});
+			.parse(json);
 		await collections.orders.updateOne(
 			{
 				_id: params.id
 			},
 			{
 				$set: {
-					orderLabelIds: result.orderLabel,
+					orderLabelIds: result.orderLabelId,
 					updatedAt: new Date()
 				}
 			}

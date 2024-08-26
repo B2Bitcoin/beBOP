@@ -6,8 +6,6 @@
 			value: orderLabel,
 			label: data.labels.find((label) => label._id === orderLabel)?.name ?? orderLabel
 		})) ?? [];
-
-	$: serializedLabels = JSON.stringify(selectedLabel.map((label) => label.value));
 </script>
 
 <h1 class="text-3xl">POS</h1>
@@ -24,6 +22,8 @@
 			bind:selected={selectedLabel}
 		/>
 	</label>
-	<input type="hidden" name="orderLabel" bind:value={serializedLabels} />
+	{#each selectedLabel.map((label) => label.value) as labelId, i}
+		<input type="hidden" name="orderLabelId[{i}]" value={labelId} />
+	{/each}
 	<input type="submit" value="Update" class="btn btn-blue self-start" />
 </form>
