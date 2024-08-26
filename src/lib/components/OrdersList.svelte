@@ -120,7 +120,11 @@
 						<OrderLabelComponent orderLabel={labelById[labelId]} class="text-sm" />
 					{/each}
 				{/if}
-				<a href="{adminPrefix}/order/{order._id}/label" class="btn btn-gray">+</a>
+				<a
+					href="{adminPrefix}/order/{order._id}/label"
+					class="bg-gray-200 px-2 rounded-full"
+					title="add label">+</a
+				>
 			{/if}
 		</li>
 	{:else}
