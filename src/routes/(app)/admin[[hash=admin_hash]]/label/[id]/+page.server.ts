@@ -55,7 +55,10 @@ export const actions = {
 		await collections.labels.deleteOne({
 			_id: params.id
 		});
-		await collections.orders.updateMany({}, { $pull: { orderLabelIds: params.id } });
+		await collections.orders.updateMany(
+			{ orderLabelIds: params.id },
+			{ $pull: { orderLabelIds: params.id } }
+		);
 		throw redirect(303, `${adminPrefix()}/label`);
 	}
 };

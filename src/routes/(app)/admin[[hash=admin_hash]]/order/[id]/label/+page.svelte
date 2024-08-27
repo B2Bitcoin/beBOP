@@ -23,7 +23,7 @@
 		/>
 	</label>
 	{#each selectedLabel.map((label) => label.value) as labelId, i}
-		<input type="hidden" name="orderLabelId[{i}]" value={labelId} />
+		<input type="hidden" name="orderLabelIds[{i}]" value={labelId} />
 	{/each}
 	<input type="submit" value="Update" class="btn btn-blue self-start" />
 </form>

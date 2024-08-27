@@ -37,7 +37,7 @@ export const actions = {
 		}
 		const result = z
 			.object({
-				orderLabelId: z.string().array()
+				orderLabelIds: z.string().array()
 			})
 			.parse(json);
 		await collections.orders.updateOne(
@@ -46,7 +46,7 @@ export const actions = {
 			},
 			{
 				$set: {
-					orderLabelIds: result.orderLabelId,
+					orderLabelIds: result.orderLabelIds,
 					updatedAt: new Date()
 				}
 			}
