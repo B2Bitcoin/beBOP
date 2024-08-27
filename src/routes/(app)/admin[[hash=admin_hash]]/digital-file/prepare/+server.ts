@@ -30,9 +30,14 @@ export async function POST({ request }) {
 	const contentType = mimeTypes.lookup(body.fileName);
 	const extension = contentType ? mimeTypes.extension(contentType) : '';
 
-	const key = `products/${body.productId}/${
-		extension ? `${digitalFileId}.${extension}` : digitalFileId
-	}`;
+	let key;
+	if (body.productId) {
+		key = `products/${body.productId}/${
+			extension ? `${digitalFileId}.${extension}` : digitalFileId
+		}`;
+	} else {
+		key = `digital-files/${extension ? `${digitalFileId}.${extension}` : digitalFileId}`;
+	}
 
 	const presignedUrl = secureLink(
 		await getSignedUrl(
