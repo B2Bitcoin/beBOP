@@ -34,28 +34,6 @@
 	</label>
 
 	<Picture picture={data.picture} class="object-contain max-h-[500px] max-w-full" />
-	{#each data.picture.storage.formats as format, i}
-		<code
-			>{`${data.websiteLink}/picture/raw/${data.picture?._id}/format/${format.width}`}
-
-			<button
-				class="inline-block body-secondaryText"
-				type="button"
-				on:click={() => {
-					window.navigator.clipboard.writeText(
-						`${data.websiteLink}/picture/raw/${data.picture?._id}/format/${format.width}`
-					);
-					copiedLinkPicture = i;
-				}}
-				>{#if copiedLinkPicture === i}
-					<IconCheckmark class="inline-block mb-1" />
-					{t('general.copied')}
-				{:else}
-					<IconCopy class="inline-block mb-1" />
-				{/if}</button
-			>
-		</code>
-	{/each}
 	<div class="flex gap-4">
 		<input type="submit" value="Update" class="btn btn-black" />
 		<input type="hidden" name="darkPicture" bind:value={darkPicture} />
