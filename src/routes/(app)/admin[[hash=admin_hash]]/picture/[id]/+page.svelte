@@ -1,14 +1,8 @@
 <script lang="ts">
 	import Picture from '$lib/components/Picture.svelte';
-	import IconCopy from '~icons/ant-design/copy-outlined';
-	import IconCheckmark from '~icons/ant-design/check-outlined';
-	import { useI18n } from '$lib/i18n';
 
 	export let data;
 	let darkPicture = 'light';
-	let copiedLinkPicture = -1;
-
-	const { t } = useI18n();
 </script>
 
 <form method="post" action="?/update" class="flex flex-col gap-4">
