@@ -62,7 +62,7 @@ export async function POST({ request }) {
 			key
 		},
 		...(body.productId && { productId: body.productId }),
-		...(!body.productId && { secret: crypto.randomUUID() })
+		secret: crypto.randomUUID()
 	});
 
 	return new Response(JSON.stringify({ uploadUrl: presignedUrl, digitalFileId }), {

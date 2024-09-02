@@ -29,29 +29,30 @@
 	<a href={data.downloadLink} target="_blank" class="underline body-hyperlink text-center"
 		>Download file</a
 	>
-	{#if data.digitalFile.secret}
-		<code>
-			{`${$page.url.origin}/digital-file/raw/${data.digitalFile._id}?key=${data.digitalFile.secret}`}
-			<button
-				class="inline-block body-secondaryText"
-				type="button"
-				on:click={() => {
-					window.navigator.clipboard.writeText(
-						`${$page.url.origin}/digital-file/raw/${data.digitalFile._id}?key=${data.digitalFile.secret}`
-					);
-					copiedLinkPicture = true;
-				}}
-				>{#if copiedLinkPicture}
-					<IconCheckmark class="inline-block mb-1" />
-					{t('general.copied')}
-				{:else}
-					<IconCopy class="inline-block mb-1" />
-				{/if}</button
-			>
-		</code>
-	{/if}
 	<div class="flex gap-4 justify-between">
 		<input type="submit" value="Update" class="btn btn-gray" />
 		<input type="submit" value="Delete" formaction="?/delete" class="btn btn-red" />
 	</div>
 </form>
+{#if data.digitalFile.secret}
+	<h2 class="text-md font-light">This permenantly valid link can be used to share file</h2>
+	<code>
+		{`${$page.url.origin}/digital-file/raw/${data.digitalFile._id}?key=${data.digitalFile.secret}`}
+		<button
+			class="inline-block body-secondaryText"
+			type="button"
+			on:click={() => {
+				window.navigator.clipboard.writeText(
+					`${$page.url.origin}/digital-file/raw/${data.digitalFile._id}?key=${data.digitalFile.secret}`
+				);
+				copiedLinkPicture = true;
+			}}
+			>{#if copiedLinkPicture}
+				<IconCheckmark class="inline-block mb-1" />
+				{t('general.copied')}
+			{:else}
+				<IconCopy class="inline-block mb-1" />
+			{/if}</button
+		>
+	</code>
+{/if}

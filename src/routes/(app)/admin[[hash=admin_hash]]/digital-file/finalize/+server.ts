@@ -39,7 +39,7 @@ export async function POST({ request }) {
 				updatedAt: new Date(),
 				storage: pendingFile.storage,
 				...(pendingFile.productId && { productId: pendingFile.productId }),
-				...(!pendingFile.productId && { secret: crypto.randomUUID() })
+				secret: crypto.randomUUID()
 			},
 			{ session }
 		);
