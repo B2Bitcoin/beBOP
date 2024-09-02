@@ -1,11 +1,15 @@
 import { error, redirect } from '@sveltejs/kit';
-import type { RequestHandler } from '../$types';
+import type { RequestHandler } from '../../$types';
 import { collections } from '$lib/server/database';
 import { getPublicS3DownloadLink } from '$lib/server/s3';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ url }) => {
+	const secretKey = url.searchParams.get('key');
+	if (!secretKey) {
+		throw error(404, 'Secret key is needed !');
+	}
 	const digitalFile = await collections.digitalFiles.findOne({
-		secret: params.key
+		secret: secretKey
 	});
 
 	if (!digitalFile) {

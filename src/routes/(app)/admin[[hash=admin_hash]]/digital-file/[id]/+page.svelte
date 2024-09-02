@@ -31,13 +31,13 @@
 	>
 	{#if data.digitalFile.secret}
 		<code>
-			{`${$page.url.origin}/digital-file/${data.digitalFile.secret}`}
+			{`${$page.url.origin}/digital-file/raw/${data.digitalFile._id}?key=${data.digitalFile.secret}`}
 			<button
 				class="inline-block body-secondaryText"
 				type="button"
 				on:click={() => {
 					window.navigator.clipboard.writeText(
-						`${$page.url.origin}/digital-file/${data.digitalFile.secret}`
+						`${$page.url.origin}/digital-file/raw/${data.digitalFile._id}?key=${data.digitalFile.secret}`
 					);
 					copiedLinkPicture = true;
 				}}

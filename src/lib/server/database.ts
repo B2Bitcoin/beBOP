@@ -140,6 +140,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.orders, { 'payments.status': 1 }],
 	[collections.orders, { status: 1, 'payments.status': 1 }],
 	[collections.digitalFiles, { productId: 1 }],
+	[collections.digitalFiles, { secret: 1 }, { sparse: true }],
 	[collections.pendingDigitalFiles, { createdAt: 1 }],
 	[collections.pendingPictures, { createdAt: 1 }],
 	[collections.nostrReceivedMessages, { processedAt: 1 }],
