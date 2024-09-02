@@ -35,7 +35,9 @@
 	</div>
 </form>
 {#if data.digitalFile.secret}
-	<h2 class="text-md font-light">This permenantly valid link can be used to share file</h2>
+	<h2 class="text-md font-light">
+		This permanently valid link can be used to share the file to anyone
+	</h2>
 	<code>
 		{`${$page.url.origin}/digital-file/raw/${data.digitalFile._id}?key=${data.digitalFile.secret}`}
 		<button
