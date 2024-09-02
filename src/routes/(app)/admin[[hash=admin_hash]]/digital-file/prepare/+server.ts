@@ -61,7 +61,8 @@ export async function POST({ request }) {
 			size: body.fileSize,
 			key
 		},
-		...(body.productId && { productId: body.productId })
+		...(body.productId && { productId: body.productId }),
+		...(!body.productId && { secret: crypto.randomUUID() })
 	});
 
 	return new Response(JSON.stringify({ uploadUrl: presignedUrl, digitalFileId }), {

@@ -9,4 +9,5 @@ export interface DigitalFile extends Timestamps {
 		size: number;
 		url?: string;
 	};
+	secret?: string;
 }

@@ -88,7 +88,7 @@ export function secureLink(url: string) {
 /**
  * Call when the resulting URL is used in the browser.
  */
-export async function getPublicS3DownloadLink(key: string, expiresIn: number = 7 * 24 * 3600) {
+export async function getPublicS3DownloadLink(key: string, expiresIn: number = 24 * 3600) {
 	return secureLink(
 		await getSignedUrl(
 			publicS3Client,
