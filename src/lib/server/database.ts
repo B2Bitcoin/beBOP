@@ -143,6 +143,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.orders, { status: 1, 'payments.status': 1 }],
 	[collections.orders, { orderLabelIds: 1 }, { sparse: true }],
 	[collections.digitalFiles, { productId: 1 }],
+	[collections.digitalFiles, { secret: 1 }, { unique: true, sparse: true }],
 	[collections.pendingDigitalFiles, { createdAt: 1 }],
 	[collections.pendingPictures, { createdAt: 1 }],
 	[collections.nostrReceivedMessages, { processedAt: 1 }],

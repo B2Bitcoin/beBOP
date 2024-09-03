@@ -51,6 +51,10 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/label',
 				label: 'Labels'
+			},
+			{
+				href: '/admin/digital-file',
+				label: 'Files'
 			}
 		]
 	},
