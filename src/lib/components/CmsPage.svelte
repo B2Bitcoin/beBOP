@@ -44,7 +44,6 @@
 
 <svelte:head>
 	<title>{cmsPage.title}</title>
-	<meta name="description" content={cmsPage.shortDescription} />
 	{#if cmsPage.hideFromSEO}
 		<meta name="robots" content="noindex" />
 	{/if}

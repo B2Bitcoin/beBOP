@@ -108,7 +108,6 @@
 <svelte:head>
 	<title>{data.product.name}</title>
 	{#if data.product.shortDescription}
-		<meta name="description" content={data.product.shortDescription} />
 		<meta property="og:description" content={data.product.shortDescription} />
 	{/if}
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />

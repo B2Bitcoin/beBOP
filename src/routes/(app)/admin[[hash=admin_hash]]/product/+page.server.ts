@@ -27,13 +27,23 @@ export const actions: Actions = {
 			set(json, key, value);
 		}
 
-		const { eshopVisible, retailVisible, googleShoppingVisible, eshopBasket, retailBasket } = z
+		const {
+			eshopVisible,
+			retailVisible,
+			googleShoppingVisible,
+			nostrVisible,
+			eshopBasket,
+			retailBasket,
+			nostrBasket
+		} = z
 			.object({
 				eshopVisible: z.boolean({ coerce: true }).default(false),
 				retailVisible: z.boolean({ coerce: true }).default(false),
 				googleShoppingVisible: z.boolean({ coerce: true }).default(false),
+				nostrVisible: z.boolean({ coerce: true }).default(false),
 				eshopBasket: z.boolean({ coerce: true }).default(false),
-				retailBasket: z.boolean({ coerce: true }).default(false)
+				retailBasket: z.boolean({ coerce: true }).default(false),
+				nostrBasket: z.boolean({ coerce: true }).default(false)
 			})
 			.parse({
 				...json
@@ -56,6 +66,10 @@ export const actions: Actions = {
 						},
 						googleShopping: {
 							visible: googleShoppingVisible
+						},
+						nostr: {
+							visible: nostrVisible,
+							canBeAddedToBasket: nostrBasket
 						}
 					},
 					updatedAt: new Date()
@@ -77,6 +91,10 @@ export const actions: Actions = {
 			},
 			googleShopping: {
 				visible: googleShoppingVisible
+			},
+			nostr: {
+				visible: nostrVisible,
+				canBeAddedToBasket: nostrBasket
 			}
 		};
 

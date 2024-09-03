@@ -18,6 +18,7 @@
 	import { useI18n } from '$lib/i18n';
 	import Trans from '$lib/components/Trans.svelte';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
+	import { trimPrefix } from '$lib/utils/trimPrefix.js';
 
 	export let data;
 	let submitting = false;
@@ -69,8 +70,7 @@
 				continue;
 			}
 
-			input.value = input.value.trim();
-
+			input.value = trimPrefix(input.value.trim(), 'nostr:');
 			if (
 				input.value &&
 				(!input.value.startsWith('npub1') || bech32.decodeUnsafe(input.value)?.prefix !== 'npub')

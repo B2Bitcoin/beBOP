@@ -133,6 +133,10 @@ const baseConfig = {
 		},
 		googleShopping: {
 			visible: true
+		},
+		nostr: {
+			visible: true,
+			canBeAddedToBasket: true
 		}
 	} satisfies ProductActionSettings as ProductActionSettings,
 	mainThemeId: '',
@@ -141,6 +145,13 @@ const baseConfig = {
 	sumUp: {
 		apiKey: '',
 		merchantCode: '',
+		currency: 'EUR' as Currency
+	},
+	stripe: {
+		/** pk_... */
+		publicKey: '',
+		/** sk_... */
+		secretKey: '',
 		currency: 'EUR' as Currency
 	},
 	bity: {

@@ -260,7 +260,7 @@ const commands: Record<
 				await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
 			} else {
 				const products = await collections.products
-					.find({ 'actionSettings.eShop.visible': true })
+					.find({ 'actionSettings.eShop.visible': true, 'actionSettings.nostr.visible': true })
 					.toArray();
 
 				if (!products.length) {
@@ -289,7 +289,7 @@ const commands: Record<
 				await send('Discovery is not enabled for this bootik. You cannot access the catalog.');
 			} else {
 				const products = await collections.products
-					.find({ 'actionSettings.eShop.visible': true })
+					.find({ 'actionSettings.eShop.visible': true, 'actionSettings.nostr.visible': true })
 					.toArray();
 
 				if (!products.length) {
@@ -371,12 +371,29 @@ const commands: Record<
 				);
 				return;
 			}
+			if (!product.actionSettings.nostr.canBeAddedToBasket) {
+				await send('Sorry, this product cannot be ordered through Nostr');
+				return;
+			}
 
+			if (product.shipping) {
+				await send(
+					`Sorry, this product has a physical component and cannot be ordered through Nostr`
+				);
+				return;
+			}
+
+			if (product.deposit?.enforce) {
+				await send(
+					`Sorry, this product cannot be ordered through Nostr due to the deposit mechanism`
+				);
+				return;
+			}
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
 				async (e) => {
 					console.error(e);
 					await send(e.message);
-					return null;
+					return;
 				}
 			);
 
@@ -527,6 +544,19 @@ const commands: Record<
 				);
 				return;
 			}
+			if (runtimeConfig.isBillingAddressMandatory) {
+				await send(
+					`This beBOP is configured to always require a billing address, but this is not supported yet via NostR`
+				);
+				return;
+			}
+
+			if (runtimeConfig.collectIPOnDeliverylessOrders) {
+				await send(
+					`Sorry, this beBOP requires an IP address or shipping address for each order, which is not possible via NostR at the moment`
+				);
+				return;
+			}
 
 			const productById = Object.fromEntries(products.map((p) => [p._id, p]));
 
@@ -566,6 +596,7 @@ const commands: Record<
 			}).catch(async (e) => {
 				console.error(e);
 				await send(e.message);
+				return;
 			});
 		}
 	},

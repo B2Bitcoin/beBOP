@@ -47,6 +47,10 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/theme',
 				label: 'Themes'
+			},
+			{
+				href: '/admin/digital-file',
+				label: 'Files'
 			}
 		]
 	},
@@ -110,6 +114,10 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/sumup',
 				label: 'SumUp'
+			},
+			{
+				href: '/admin/stripe',
+				label: 'Stripe'
 			},
 			{
 				href: '/admin/phoenixd',
