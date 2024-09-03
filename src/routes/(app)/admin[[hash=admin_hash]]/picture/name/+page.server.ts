@@ -2,12 +2,9 @@ import { collections } from '$lib/server/database';
 import { z } from 'zod';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
-import { MAX_NAME_LIMIT } from '$lib/types/Product.js';
 export const load = async () => {
 	return {
-		pictures: await collections.pictures
-			.find({ productId: { $exists: false }, slider: { $exists: false }, tag: { $exists: false } })
-			.toArray()
+		pictures: await collections.pictures.find().toArray()
 	};
 };
 export const actions = {
@@ -22,7 +19,7 @@ export const actions = {
 		for (const [key, value] of Object.entries(json)) {
 			const { name } = z
 				.object({
-					name: z.string().trim().max(MAX_NAME_LIMIT).optional()
+					name: z.string().trim().max(1000).optional()
 				})
 				.parse(value);
 
