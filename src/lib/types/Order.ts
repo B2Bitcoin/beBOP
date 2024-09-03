@@ -11,6 +11,7 @@ import type { LanguageKey } from '$lib/translations';
 import type { User } from './User';
 import { getWeek, getWeekOfMonth } from 'date-fns';
 import type { Ticket } from './Ticket';
+import type { OrderLabel } from './OrderLabel';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -255,6 +256,7 @@ export interface Order extends Timestamps {
 		acceptedDepositConditionsAndFullPayment?: boolean;
 		acceptedExportationAndVATObligation?: boolean;
 	};
+	orderLabelIds?: OrderLabel['_id'][];
 }
 interface SimplifiedOrderPayment {
 	id: string;
