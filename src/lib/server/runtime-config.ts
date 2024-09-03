@@ -157,6 +157,12 @@ const baseConfig = {
 	bity: {
 		clientId: ''
 	},
+	nostrRelays: [
+		'wss://nostr.wine',
+		'wss://nostr.lu.ke',
+		'wss://nos.lol',
+		'wss://relay.snort.social'
+	],
 	posTouchTag: [] as Tag['_id'][],
 	hideCmsZonesOnMobile: false,
 	copyOrderEmailsToAdmin: true,

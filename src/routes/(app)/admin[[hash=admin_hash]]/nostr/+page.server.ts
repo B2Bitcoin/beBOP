@@ -17,13 +17,15 @@ import { setTimeout } from 'node:timers/promises';
 import type { Event } from 'nostr-tools';
 import { uniqBy } from '$lib/utils/uniqBy';
 import { NOSTR_PROTOCOL_VERSION } from '$lib/server/locks/handle-messages';
+import { set } from 'lodash-es';
+import type { JsonObject } from 'type-fest';
 
 export function load() {
 	return {
 		origin: ORIGIN,
 		nostrPrivateKey: nostrPrivateKey,
 		nostrPublicKey: nostrPublicKey,
-		nostrRelays: nostrRelays,
+		nostrRelays: runtimeConfig.nostrRelays,
 		receivedMessages: collections.nostrReceivedMessages
 			.find({})
 			.sort({ createdAt: -1 })
@@ -129,5 +131,34 @@ export const actions = {
 		} finally {
 			relayPool.close();
 		}
+	},
+	addRelay: async ({ request }) => {
+		const formData = await request.formData();
+		const json: JsonObject = {};
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
+		const { relays } = z
+			.object({
+				relays: z.string().array()
+			})
+			.parse(json);
+		await collections.runtimeConfig.updateOne(
+			{
+				_id: 'nostrRelays'
+			},
+			{
+				$set: {
+					data: relays,
+					updatedAt: new Date()
+				}
+			},
+			{
+				upsert: true
+			}
+		);
+		return {
+			success: 'Relay added sucessfully !'
+		};
 	}
 };
