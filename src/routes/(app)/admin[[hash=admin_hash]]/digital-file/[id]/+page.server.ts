@@ -35,8 +35,11 @@ export const actions = {
 		await s3client
 			.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: digitalFile.storage.key }))
 			.catch(console.error);
-
-		throw redirect(303, `${adminPrefix()}/product/${digitalFile.productId}`);
+		if (digitalFile.productId) {
+			throw redirect(303, `${adminPrefix()}/product/${digitalFile.productId}`);
+		} else {
+			throw redirect(303, `${adminPrefix()}/digital-file`);
+		}
 	},
 	update: async function (input) {
 		const formData = await input.request.formData();
