@@ -16,12 +16,13 @@ export async function load({ url, locals }) {
 		paymentMethod: z.enum(['' as const, ...methods]).optional(),
 		country: z.enum(['' as const, ...COUNTRY_ALPHA2S]).optional(),
 		email: z.string().optional(),
+		label: z.string().optional(),
 		npub: z.string().optional()
 	});
 
 	const searchParams = Object.fromEntries(url.searchParams.entries());
 	const result = querySchema.parse(searchParams);
-	const { skip, orderNumber, productAlias, paymentMethod, country, email, npub } = result;
+	const { skip, orderNumber, productAlias, paymentMethod, country, email, npub, label } = result;
 
 	const query: Filter<Order> = {};
 
@@ -37,6 +38,8 @@ export async function load({ url, locals }) {
 		query['user.email'] = email;
 	} else if (npub) {
 		query['user.npub'] = npub;
+	} else if (label) {
+		query['orderLabelIds'] = label;
 	}
 
 	const orders = await collections.orders
@@ -45,7 +48,7 @@ export async function load({ url, locals }) {
 		.limit(ORDER_PAGINATION_LIMIT)
 		.sort({ createdAt: -1 })
 		.toArray();
-
+	const labels = await collections.labels.find({}).toArray();
 	return {
 		orders: orders.map((order) => ({
 			_id: order._id,
@@ -62,8 +65,10 @@ export async function load({ url, locals }) {
 					content: note.content,
 					createdAt: note.createdAt
 				})) || [],
-			status: order.status
+			status: order.status,
+			orderLabelIds: order.orderLabelIds
 		})),
-		paymentMethods: methods
+		paymentMethods: methods,
+		labels
 	};
 }
