@@ -40,10 +40,10 @@
 					</time>
 					<time
 						datetime={challenge.endsAt.toJSON()}
-						slot="0"
+						slot="1"
 						title={challenge.endsAt.toLocaleString($locale)}
 					>
-						{challenge.endsAt.toLocaleTimeString($locale)}
+						{challenge.endsAt.toLocaleTimeString($locale, { minute: '2-digit', hour: '2-digit' })}
 					</time>
 				</Trans>
 			{/if}

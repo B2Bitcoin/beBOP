@@ -3,11 +3,26 @@
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { MultiSelect } from 'svelte-multiselect';
+	import { formatInTimeZone } from 'date-fns-tz';
 
 	export let data;
 
-	let beginsAt = data.beginsAt;
-	let endsAt = data.endsAt;
+	let beginsAt = formatInTimeZone(
+		data.beginsAt,
+		Intl.DateTimeFormat().resolvedOptions().timeZone,
+		'yyyy-MM-dd HH:mm'
+	);
+	let endsAt = formatInTimeZone(
+		data.endsAt,
+		Intl.DateTimeFormat().resolvedOptions().timeZone,
+		'yyyy-MM-dd HH:mm'
+	);
+
+	$: beginsAtISO = new Date(beginsAt).toISOString();
+	$: endsAtISO = new Date(endsAt).toISOString();
+
+	$: console.log(beginsAtISO, endsAtISO);
+
 	let endsAtElement: HTMLInputElement;
 	let progressChanged = false;
 	function checkForm(event: SubmitEvent) {
@@ -106,22 +121,32 @@
 	<label class="form-label">
 		Beginning date
 
-		<input class="form-input" type="date" name="beginsAt" bind:value={beginsAt} required />
+		<input
+			class="form-input"
+			type="datetime-local"
+			name="beginsAtDisplay"
+			bind:value={beginsAt}
+			required
+		/>
 	</label>
+
+	<input type="hidden" name="beginsAt" value={beginsAtISO} />
 
 	<label class="form-label">
 		Ending date
 
 		<input
 			class="form-input"
-			type="date"
+			type="datetime-local"
 			required
-			name="endsAt"
+			name="endsAtDisplay"
 			bind:value={endsAt}
 			bind:this={endsAtElement}
 			on:input={() => endsAtElement?.setCustomValidity('')}
 		/>
 	</label>
+
+	<input type="hidden" name="endsAt" value={endsAtISO} />
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">
