@@ -55,6 +55,17 @@
 			</select>
 		</label>
 		<label class="form-label w-[15em]">
+			Label
+			<select name="label" class="form-input">
+				<option></option>
+				{#each data.labels as label}
+					<option value={label._id} selected={$page.url.searchParams.get('label') === label._id}
+						>{label.name}</option
+					>
+				{/each}
+			</select>
+		</label>
+		<label class="form-label w-[15em]">
 			Email
 			<input class="form-input" type="text" name="email" placeholder="search order by email" />
 		</label>
@@ -67,7 +78,7 @@
 			<a href="/admin/order" class="btn btn-gray">🧹</a>
 		</label>
 	</div>
-	<OrdersList orders={data.orders} adminPrefix={data.adminPrefix} />
+	<OrdersList orders={data.orders} adminPrefix={data.adminPrefix} orderLabels={data.labels} />
 	<div class="flex gap-2">
 		<input type="hidden" value={next} name="skip" />
 		{#if Number($page.url.searchParams.get('skip'))}
