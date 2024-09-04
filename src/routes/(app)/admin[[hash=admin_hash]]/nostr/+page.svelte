@@ -82,23 +82,19 @@
 <h2 class="text-2xl">Relays</h2>
 <form action="?/addRelay" method="post" class="flex flex-col gap-4">
 	<ul>
-		{#each data.nostrRelays as relay, i}
+		{#each data.nostrRelays as relay}
 			<li>{relay}</li>
-			<input type="hidden" name="relays[{i}]" value={relay} />
+			<input type="hidden" name="relays" value={relay} />
 		{/each}
 	</ul>
 	<label class="form-label">
 		Relay
-		<input
-			class="form-input"
-			type="text"
-			name="relays[{data.nostrRelays.length}]"
-			placeholder="wss://new.relay.url"
-			required
-		/>
+		<input class="form-input" type="text" name="relays" placeholder="wss://new.relay.url" />
 	</label>
-
-	<button class="btn btn-black self-start" type="submit">Add relay</button>
+	<div class="flex justify-between gap-2">
+		<button class="btn btn-black self-start" type="submit">Add relay</button>
+		<input type="submit" value="delete" class="btn btn-red self-end" formaction="?/deleteRelay" />
+	</div>
 </form>
 <h2 class="text-2xl">Received messages</h2>
 
