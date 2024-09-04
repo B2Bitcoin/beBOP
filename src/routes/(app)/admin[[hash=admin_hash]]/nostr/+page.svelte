@@ -86,7 +86,19 @@
 		<li>{relay}</li>
 	{/each}
 </ul>
-
+<h2 class="text-2xl">Intro Message</h2>
+<form action="?/disableIntro" method="post" class="flex flex-col gap-4">
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="disableNostrBotIntro"
+			class="form-checkbox"
+			checked={data.disableNostrBotIntro}
+		/>
+		Disable Nostr-bot intro message
+	</label>
+	<button class="btn btn-black self-start" type="submit">Send</button>
+</form>
 <h2 class="text-2xl">Received messages</h2>
 
 <ul>
