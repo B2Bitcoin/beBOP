@@ -39,6 +39,10 @@ if (!languages.includes('en')) {
 	process.exit(1);
 }
 
+const allowedMismatches = new Set(['es-sv.challenge.numProducts.zero']);
+
+let failed = false;
+
 /**
  * @type {Object.<string, string>}
  */
@@ -62,12 +66,17 @@ for (const language of languages.filter((l) => l !== 'en')) {
 		const enParams = [...new Set(enTranslations[key].match(/{(.*?)}/g)?.sort() ?? [])];
 		const params = [...new Set(flatTranslations[key].match(/{(.*?)}/g)?.sort() ?? [])];
 
-		if (enParams.join(',') !== params.join(',')) {
+		if (enParams.join(',') !== params.join(',') && !allowedMismatches.has(language + '.' + key)) {
 			console.error(
 				`Mismatched parameters for ${key} in ${language}: ${params.join(', ')} !== ${enParams.join(
 					', '
 				)}`
 			);
+			failed = true;
 		}
 	}
+}
+
+if (failed) {
+	process.exit(1);
 }
