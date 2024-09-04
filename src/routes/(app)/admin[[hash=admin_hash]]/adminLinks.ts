@@ -49,6 +49,10 @@ export const adminLinks: AdminLinks = [
 				label: 'Themes'
 			},
 			{
+				href: '/admin/label',
+				label: 'Labels'
+			},
+			{
 				href: '/admin/digital-file',
 				label: 'Files'
 			}
