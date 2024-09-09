@@ -180,7 +180,11 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 			}
 		}
 
-		if (!matched && !message.tags?.some(([key]) => key === 'bootikVersion')) {
+		if (
+			!matched &&
+			!message.tags?.some(([key]) => key === 'bootikVersion') &&
+			!runtimeConfig.disableNostrBotIntro
+		) {
 			await send(
 				`Hello ${
 					!isPrivateMessage ? 'world' : isCustomer ? 'customer' : 'you'
