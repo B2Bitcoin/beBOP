@@ -184,7 +184,7 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 			await send(
 				`Hello ${
 					!isPrivateMessage ? 'world' : isCustomer ? 'customer' : 'you'
-				}! To get the list of commands, say 'help'.`
+				}! To get the list of commands, say '!help'.`
 			);
 		}
 		await collections.nostrReceivedMessages.updateOne(
@@ -237,7 +237,7 @@ const commands: Record<
 		maintenanceBlocked?: boolean;
 	}
 > = {
-	help: {
+	'!help': {
 		description: 'Show the list of commands',
 		execute: async (send, params) => {
 			await send(
@@ -253,7 +253,7 @@ const commands: Record<
 			);
 		}
 	},
-	catalog: {
+	'!catalog': {
 		description: 'Show the list of products',
 		execute: async (send) => {
 			if (!runtimeConfig.discovery) {
@@ -282,7 +282,7 @@ const commands: Record<
 			}
 		}
 	},
-	'detailed catalog': {
+	'!detailed catalog': {
 		description: 'Show the list of products, with product descriptions',
 		execute: async (send) => {
 			if (!runtimeConfig.discovery) {
@@ -313,7 +313,7 @@ const commands: Record<
 			}
 		}
 	},
-	cart: {
+	'!cart': {
 		description: 'Show the contents of your cart',
 		maintenanceBlocked: true,
 		execute: async (send, { senderNpub }) => {
@@ -345,7 +345,7 @@ const commands: Record<
 			}
 		}
 	},
-	add: {
+	'!add': {
 		description: 'Add a product to your cart',
 		maintenanceBlocked: true,
 		args: [{ name: 'ref' }, { name: 'quantity', default: '1' }],
@@ -417,7 +417,7 @@ const commands: Record<
 			);
 		}
 	},
-	remove: {
+	'!remove': {
 		description: 'Remove a product from your cart',
 		maintenanceBlocked: true,
 		args: [{ name: 'ref' }, { name: 'quantity', default: 'all' }],
@@ -470,7 +470,7 @@ const commands: Record<
 			);
 		}
 	},
-	checkout: {
+	'!checkout': {
 		description: 'Checkout your cart',
 		maintenanceBlocked: true,
 		args: [
@@ -600,7 +600,7 @@ const commands: Record<
 			});
 		}
 	},
-	orders: {
+	'!orders': {
 		description: 'Show your orders',
 		execute: async (send, { senderNpub }) => {
 			const orders = await collections.orders
@@ -618,7 +618,7 @@ const commands: Record<
 			}
 		}
 	},
-	subscribe: {
+	'!subscribe': {
 		description: 'Subscribe to catalog updates',
 		execute: async (send, { senderNpub }) => {
 			if (!runtimeConfig.discovery) {
@@ -642,7 +642,7 @@ const commands: Record<
 			}
 		}
 	},
-	unsubscribe: {
+	'!unsubscribe': {
 		description: 'Unsubscribe from catalog updates',
 		execute: async (send, { senderNpub }) => {
 			const result = await collections.bootikSubscriptions.deleteOne({ npub: senderNpub });
@@ -654,7 +654,7 @@ const commands: Record<
 			}
 		}
 	},
-	subscriptions: {
+	'!subscriptions': {
 		description: 'Show your paid subscriptions',
 		execute: async (send, { senderNpub }) => {
 			{
@@ -682,7 +682,7 @@ const commands: Record<
 			}
 		}
 	},
-	cancel: {
+	'!cancel': {
 		description: 'Cancel a paid subscription',
 		args: [{ name: 'subscriptionNumber' }],
 		execute: async (send, { senderNpub, args }) => {
