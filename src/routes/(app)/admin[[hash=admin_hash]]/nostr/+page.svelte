@@ -8,8 +8,7 @@
 
 		prompt('Your NostR private key is:', bech32.encode('nsec', bech32.toWords(hex)));
 	}
-	let index = -1;
-	$: relays = data.nostrRelays.filter((_, i) => i !== index);
+	let relays = data.nostrRelays;
 </script>
 
 <h1 class="text-3xl">NostR</h1>
@@ -82,10 +81,14 @@
 </form>
 
 <h2 class="text-2xl">Relays</h2>
-<form action="?/addRelay" method="post" class="flex flex-col gap-4">
+<form action="?/updateRelays" method="post" class="flex flex-col gap-4">
 	<ul>
-		{#each relays as relay, i}
-			<li>{relay}<button type="button" on:click={() => (index = i)}>🗑️</button></li>
+		{#each relays as relay}
+			<li>
+				{relay}<button type="button" on:click={() => (relays = relays.filter((r) => r !== relay))}
+					>🗑️</button
+				>
+			</li>
 			<input type="hidden" name="relays" value={relay} />
 		{/each}
 	</ul>

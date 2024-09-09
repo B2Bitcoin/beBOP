@@ -130,7 +130,7 @@ export const actions = {
 			relayPool.close();
 		}
 	},
-	addRelay: async ({ request }) => {
+	updateRelays: async ({ request }) => {
 		const formData = await request.formData();
 
 		const relays = z.string().array().parse(formData.getAll('relays'));
