@@ -140,7 +140,7 @@ export const actions = {
 			},
 			{
 				$set: {
-					data: relays,
+					data: relays.filter((rel) => rel),
 					updatedAt: new Date()
 				}
 			},
@@ -148,35 +148,9 @@ export const actions = {
 				upsert: true
 			}
 		);
-		runtimeConfig.nostrRelays = relays;
+		runtimeConfig.nostrRelays = relays.filter((rel) => rel);
 		return {
-			success: 'Relay added sucessfully !'
-		};
-	},
-	deleteRelay: async ({ request }) => {
-		const formData = await request.formData();
-
-		const relaysToDelete = z.string().array().parse(formData.getAll('relays'));
-		const relays = relaysToDelete.filter(
-			(rel) => rel !== relaysToDelete[relaysToDelete.length - 1]
-		);
-		await collections.runtimeConfig.updateOne(
-			{
-				_id: 'nostrRelays'
-			},
-			{
-				$set: {
-					data: relays,
-					updatedAt: new Date()
-				}
-			},
-			{
-				upsert: true
-			}
-		);
-		runtimeConfig.nostrRelays = relays;
-		return {
-			success: 'Relay deleted sucessfully !'
+			success: 'Relay list updated sucessfully !'
 		};
 	}
 };
