@@ -1,4 +1,5 @@
 <script lang="ts">
+	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { bech32 } from 'bech32';
 	export let data;
 	export let form;
@@ -86,7 +87,14 @@
 		<li>{relay}</li>
 	{/each}
 </ul>
-<h2 class="text-2xl">Intro Message</h2>
+<div class="flex items-center gap-2 text-2xl">
+	Intro Message <div
+		class="contents"
+		title="This is the message sent when receiving a message that doesn't match a command"
+	>
+		<IconInfo class="cursor-pointer"></IconInfo>
+	</div>
+</div>
 <form action="?/disableIntro" method="post" class="flex flex-col gap-4">
 	<label class="checkbox-label">
 		<input
