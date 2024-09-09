@@ -20,7 +20,7 @@ export async function load(event) {
 				return `width=${runtimeConfig.viewportContentWidth}`;
 		}
 	})();
-
+	const notResponsive = runtimeConfig.viewportFor === 'no-one' ? true : false;
 	return {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		language: event.locals.language,
@@ -35,6 +35,7 @@ export async function load(event) {
 		websiteShortDescription:
 			runtimeConfig[`translations.${event.locals.language}.config`]?.websiteShortDescription ||
 			runtimeConfig.websiteShortDescription,
-		viewportWidth
+		viewportWidth,
+		notResponsive
 	};
 }
