@@ -186,6 +186,7 @@ export async function load(params) {
 		confirmationBlocksThresholds: runtimeConfig.confirmationBlocksThresholds,
 		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems,
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
-		hideCmsZonesOnMobile: runtimeConfig.hideCmsZonesOnMobile
+		hideCmsZonesOnMobile: runtimeConfig.hideCmsZonesOnMobile,
+		notResponsive: runtimeConfig.viewportFor === 'no-one' ? true : false
 	};
 }

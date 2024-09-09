@@ -24,6 +24,7 @@ export function load() {
 		nostrPrivateKey: nostrPrivateKey,
 		nostrPublicKey: nostrPublicKey,
 		nostrRelays: runtimeConfig.nostrRelays,
+		disableNostrBotIntro: runtimeConfig.disableNostrBotIntro,
 		receivedMessages: collections.nostrReceivedMessages
 			.find({})
 			.sort({ createdAt: -1 })
@@ -143,14 +144,31 @@ export const actions = {
 					data: relays.filter((rel) => rel.startsWith('wss://')),
 					updatedAt: new Date()
 				}
-			},
-			{
-				upsert: true
 			}
 		);
 		runtimeConfig.nostrRelays = relays.filter((rel) => rel.startsWith('wss://'));
 		return {
 			success: 'Relay list updated sucessfully !'
+		};
+	},
+	disableIntro: async ({ request }) => {
+		const formData = await request.formData();
+		const disableNostrBotIntro = z
+			.boolean({ coerce: true })
+			.parse(formData.get('disableNostrBotIntro'));
+		await collections.runtimeConfig.updateOne(
+			{
+				_id: 'disableNostrBotIntro'
+			},
+			{ $set: { data: disableNostrBotIntro, updatedAt: new Date() } },
+			{
+				upsert: true
+			}
+		);
+
+		runtimeConfig.disableNostrBotIntro = disableNostrBotIntro;
+		return {
+			success: `Nostr-bot intro message ${disableNostrBotIntro ? 'disabled !' : 'enabled !'}`
 		};
 	}
 };
