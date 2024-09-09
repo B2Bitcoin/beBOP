@@ -94,7 +94,13 @@
 	</ul>
 	<label class="form-label">
 		Relay
-		<input class="form-input" type="text" name="relays" placeholder="wss://new.relay.url" />
+		<input
+			class="form-input"
+			type="text"
+			name="relays"
+			placeholder="wss://new.relay.url"
+			pattern="wss://.*"
+		/>
 	</label>
 	<button class="btn btn-black self-start" type="submit">Update relay list</button>
 </form>

@@ -140,7 +140,7 @@ export const actions = {
 			},
 			{
 				$set: {
-					data: relays.filter((rel) => rel),
+					data: relays.filter((rel) => rel.startsWith('wss://')),
 					updatedAt: new Date()
 				}
 			},
@@ -148,7 +148,7 @@ export const actions = {
 				upsert: true
 			}
 		);
-		runtimeConfig.nostrRelays = relays.filter((rel) => rel);
+		runtimeConfig.nostrRelays = relays.filter((rel) => rel.startsWith('wss://'));
 		return {
 			success: 'Relay list updated sucessfully !'
 		};
