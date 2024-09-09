@@ -14,8 +14,8 @@ export async function load({ params }) {
 		throw error(404, 'Challenge not found');
 	}
 
-	const beginsAt = challenge.beginsAt?.toJSON().slice(0, 10);
-	const endsAt = challenge.endsAt.toJSON().slice(0, 10);
+	const beginsAt = challenge.beginsAt;
+	const endsAt = challenge.endsAt;
 	const products = await collections.products
 		.find({})
 		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })

@@ -42,7 +42,7 @@
 	"challenge": {
 		"beginsAt": "Begint over {days} dagen",
 		"ended": "Afgerond !",
-		"endsAt": "Eindigt <0></0>",
+		"endsAt": "Eindigt <0></0> om <1></1>",
 		"goalMet": "Goed gedaan jongens! \n👏👏",
 		"goalOvershot": "Jullie zijn geweldige jongens! \n🤭",
 		"list": "Lijst met uitdagingen",
