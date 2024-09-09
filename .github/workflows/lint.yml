@@ -58,3 +58,6 @@ jobs:
       - name: 'Checking type errors'
         run: |
           pnpm run check
+      - name: 'Check translation errors'
+        run: |
+          node scripts/check-translations.mjs

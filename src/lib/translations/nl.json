@@ -54,7 +54,7 @@
 			"other": "{count} producten",
 			"zero": "{count} producten"
 		},
-		"singleTitle": "Uitdaging {naam}",
+		"singleTitle": "Uitdaging {name}",
 		"title": "Uitdagingen",
 		"totalProducts": {
 			"goalOvershot": "{progress} voorverkoop met een target van {goal}! \nJe bent geweldig !"
@@ -424,11 +424,11 @@
 			"pwned": "Uw wachtwoord is onveilig. Het is aangetroffen bij {count} datalekken. \nStel alstublieft uw wachtwoord opnieuw in."
 		},
 		"session": {
-			"email": "E-mail: {e-mail}",
+			"email": "E-mail: {email}",
 			"identityPrefill": "U kunt uw postadres en uw contactadres vooraf invullen. \nAls u een bestelling plaatst, zijn deze gegevens vooraf ingevuld. \nAls u later besluit een account aan te maken, worden deze gegevens bewaard voor toekomstige bestellingen.",
 			"npub": "Npub: {npub}",
 			"title": "Sessie",
-			"userId": "Gebruikers-ID: {user-ID}"
+			"userId": "Gebruikers-ID: {userId}"
 		},
 		"sso": {
 			"title": "Of log in met"
@@ -472,15 +472,15 @@
 			"label": "Opmerking medewerker",
 			"saveText": "Bewaar notitie",
 			"seeText": "Zie bestelnotities",
-			"title": "Bestelnotities"
+			"title": "Bestelnotities #{number}"
 		},
 		"paidAt": "Betaald op <0></0>",
 		"paidWith": {
 			"bank-transfer": "Betaald met: geverifieerde bankoverschrijving",
-			"bitcoin": "Betaald met: Bitcoin on-chain betaling (1 {betalingCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
+			"bitcoin": "Betaald met: Bitcoin on-chain betaling (1 {paymentCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
 			"card": "Betaald met: bankkaart via Sum UP",
 			"free": "Niets betaald",
-			"lightning": "Betaald met: Lightning-transactie (1 {betalingCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
+			"lightning": "Betaald met: Lightning-transactie (1 {paymentCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
 			"point-of-sale": "Betaald in de winkel"
 		},
 		"paidWithSummary": {
@@ -530,26 +530,26 @@
 				"message": "Met deze betaling is de bestelling {orderNumber} nu volledig betaald"
 			},
 			"invoice": "Factuur",
-			"invoiceNumber": "{factuurnummer}",
+			"invoiceNumber": "{invoiceNumber}",
 			"itemName": "Natuur",
 			"partialAmount": "Betaald bedrag (gedeeltelijke betaling)",
 			"partialAmountPre": "Te betalen bedrag (gedeeltelijke betaling)",
 			"proforma": "Dit is een proforma factuur. \nEr heeft nog geen betaling plaatsgevonden. \nBij betaling wordt de definitieve factuur gegenereerd.",
-			"proformaInvoiceNumber": "PROFORMA-{ordernummer}-{betalingsindex}",
+			"proformaInvoiceNumber": "PROFORMA-{orderNumber}-{paymentIndex}",
 			"quantity": "Aantal",
 			"remainingAmount": "Resterend bedrag te betalen",
-			"summaryTitle": "Samenvatting van de bestelling",
+			"summaryTitle": "Samenvatting van de bestelling #{number}",
 			"totalExcVat": "Totaal Excl. \nVAT",
 			"totalInclVat": "Totaal Incl. \nVAT",
 			"totalVat": "Totale BTW",
 			"unitPrice": "Eenheid prijs",
-			"vatFreeReason": "Vrijgesteld van btw: {reden}"
+			"vatFreeReason": "Vrijgesteld van btw: {reason}"
 		},
 		"receiptFullyPaid": "Bon genereren (volledig betaald)",
 		"receiptPending": "Ontvangst genereren (betaling in behandeling)",
 		"related": {
-			"invoice": "✅ Factuurnr.{factuurnummer}",
-			"invoiceFailed": "❌ Factuurnr.{factuurnummer}",
+			"invoice": "✅ Factuurnr.{invoiceNumber}",
+			"invoiceFailed": "❌ Factuurnr.{invoiceNumber}",
 			"invoicePending": "⏲ ​​Factuurnr.{invoiceNumber} (wacht op betaling)",
 			"title": "Gerelateerde facturen"
 		},
@@ -558,7 +558,7 @@
 		"shippingAddress": {
 			"title": "Afleveradres"
 		},
-		"singleTitle": "Volgorde",
+		"singleTitle": "Volgorde #{number}",
 		"summary": {
 			"fullyPaid": {
 				"title": "Bestelling volledig betaald, openstaand bedrag nul"
@@ -567,11 +567,11 @@
 		"tickets": {
 			"printAll": "Alles afdrukken",
 			"seeAll": "Alles zien",
-			"ticket": "Ticket",
+			"ticket": "Ticket #{number}",
 			"title": "Kaartjes"
 		},
-		"timeRemaining": "Resterende tijd: {minuten} minuten",
-		"vatFree": "Deze bestelling is BTW vrij. \nReden: {reden}"
+		"timeRemaining": "Resterende tijd: {minutes} minuten",
+		"vatFree": "Deze bestelling is BTW vrij. \nReden: {reason}"
 	},
 	"pos": {
 		"adminInterface": "Beheerinterface",
@@ -603,7 +603,7 @@
 	},
 	"product": {
 		"addedToCart": "Product toegevoegd aan winkelwagen",
-		"availableOn": "Beschikbaar op {datum}",
+		"availableOn": "Beschikbaar op {date}",
 		"checkBackLater": "Kom later nog eens terug",
 		"cta": {
 			"add": "Voeg toe aan winkelkar",
@@ -654,7 +654,7 @@
 		},
 		"initiallyCreated": "Oorspronkelijk gemaakt: <0></0>",
 		"paidUntil": "Betaald tot: <0></0>",
-		"singleTitle": "Abonnement",
+		"singleTitle": "Abonnement #{number}",
 		"status": {
 			"expired": "verlopen"
 		}
