@@ -7,7 +7,7 @@
  */
 
 import { error } from '@sveltejs/kit';
-import { sub } from 'date-fns';
+import { type Duration, sub } from 'date-fns';
 import ipModule from 'ip';
 import { isIPv6 } from 'node:net';
 import { processClosed } from './process';

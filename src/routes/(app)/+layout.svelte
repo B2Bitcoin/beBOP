@@ -143,7 +143,11 @@
 				<span class="grow body-mainPlan" />
 				<nav class="flex gap-10 text-[22px] font-semibold header-tab">
 					{#each data.links.topbar as link}
-						<a href={link.href} class="hidden lg:inline" data-sveltekit-preload-data="off">
+						<a
+							href={link.href}
+							class=" {data.notResponsive ? '' : 'hidden lg:inline'}"
+							data-sveltekit-preload-data="off"
+						>
 							{link.label}
 						</a>
 					{/each}
@@ -153,7 +157,9 @@
 					<a href="/admin" class="btn btn-blue font-bold">Connect your wallet</a>
 				{/if}
 				<button
-					class="inline-flex flex-col justify-center lg:hidden cursor-pointer text-4xl transition header-tab"
+					class="inline-flex flex-col justify-center {data.notResponsive
+						? 'hidden'
+						: 'lg:hidden'} cursor-pointer text-4xl transition header-tab"
 					class:rotate-90={topMenuOpen}
 					on:click={() => (topMenuOpen = !topMenuOpen)}
 				>
@@ -180,7 +186,9 @@
 			<div class="mx-auto max-w-7xl flex items-center gap-6 px-6 grow">
 				<nav class="flex gap-6 font-light items-center">
 					<button
-						class="inline-flex flex-col justify-center lg:hidden cursor-pointer text-2xl transition"
+						class="inline-flex flex-col justify-center {data.notResponsive
+							? 'hidden'
+							: 'lg:hidden'} cursor-pointer text-2xl transition"
 						class:rotate-90={navMenuOpen}
 						on:click={() => (navMenuOpen = !navMenuOpen)}
 					>
@@ -192,7 +200,7 @@
 					{#each data.links.navbar as link}
 						<a
 							href={link.href}
-							class="hidden lg:inline"
+							class={data.notResponsive ? '' : 'hidden lg:inline'}
 							target={link.href.startsWith('http') ? '_blank' : '_self'}
 							data-sveltekit-preload-data="off">{link.label}</a
 						>

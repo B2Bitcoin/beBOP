@@ -30,14 +30,22 @@
 			{:else if challenge.endsAt < new Date()}
 				{t('challenge.ended')}
 			{:else}
-				<Trans key="challenge.endsAt"
-					><time
+				<Trans key="challenge.endsAt">
+					<time
 						datetime={challenge.endsAt.toJSON()}
 						slot="0"
 						title={challenge.endsAt.toLocaleString($locale)}
-						>{challenge.endsAt.toLocaleDateString($locale)}</time
-					></Trans
-				>
+					>
+						{challenge.endsAt.toLocaleDateString($locale)}
+					</time>
+					<time
+						datetime={challenge.endsAt.toJSON()}
+						slot="1"
+						title={challenge.endsAt.toLocaleString($locale)}
+					>
+						{challenge.endsAt.toLocaleTimeString($locale, { minute: '2-digit', hour: '2-digit' })}
+					</time>
+				</Trans>
 			{/if}
 		</span>
 	</div>
