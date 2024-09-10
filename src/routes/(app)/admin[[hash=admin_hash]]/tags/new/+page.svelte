@@ -3,7 +3,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { uploadPicture } from '$lib/types/Picture.js';
+	import { preUploadPicture } from '$lib/types/Picture.js';
 	import { page } from '$app/stores';
 
 	export let data;
@@ -33,7 +33,9 @@
 			await Promise.all(
 				picturesToUpload.map(async (picture) => {
 					if (picture.file) {
-						const pictureId = await uploadPicture(data.adminPrefix, picture.file[0]);
+						const pictureId = await preUploadPicture(data.adminPrefix, picture.file[0], {
+							fileName: name
+						});
 						formData.set(picture.id, pictureId);
 					}
 				})

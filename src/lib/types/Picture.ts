@@ -35,9 +35,13 @@ export interface Picture extends Timestamps {
 /**
  * @returns the picture id
  */
-export async function uploadPicture(adminPrefix: string, file: File): Promise<string> {
+export async function preUploadPicture(
+	adminPrefix: string,
+	file: File,
+	opts?: { fileName?: string }
+): Promise<string> {
 	const fileSize = file.size;
-	const fileName = file.name;
+	const fileName = opts?.fileName || file.name;
 
 	const response = await fetch(`${adminPrefix}/picture/prepare`, {
 		method: 'POST',
