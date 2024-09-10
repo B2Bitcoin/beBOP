@@ -109,7 +109,7 @@ function initRelayPool() {
 				if (!event.tags.some((tag) => tag[0] === 'p' && tag[1] === nostrPublicKeyHex)) {
 					return;
 				}
-				if (![Kind.EncryptedDirectMessage, Kind.Text].includes(event.kind)) {
+				if (![Kind.EncryptedDirectMessage, Kind.Text, Kind.Zap].includes(event.kind)) {
 					return;
 				}
 
