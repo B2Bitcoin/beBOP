@@ -223,7 +223,7 @@ async function handleNostrNotification(nostrNotification: NostRNotification): Pr
 				} satisfies Event;
 			}
 
-			if (nostrNotification.kind === Kind.ZapRequest) {
+			if (nostrNotification.kind === Kind.Zap) {
 				const npub = nostrNotification.dest;
 
 				if (!npub) {
@@ -246,7 +246,7 @@ async function handleNostrNotification(nostrNotification: NostRNotification): Pr
 						['p', receiverPublicKeyHex],
 						['bootikVersion', String(NOSTR_PROTOCOL_VERSION)]
 					],
-					kind: Kind.EncryptedDirectMessage,
+					kind: Kind.Zap,
 					sig: ''
 				} satisfies Event;
 			}
