@@ -23,7 +23,7 @@ export function load() {
 		origin: ORIGIN,
 		nostrPrivateKey: nostrPrivateKey,
 		nostrPublicKey: nostrPublicKey,
-		nostrRelays: nostrRelays,
+		nostrRelays: runtimeConfig.nostrRelays,
 		disableNostrBotIntro: runtimeConfig.disableNostrBotIntro,
 		receivedMessages: collections.nostrReceivedMessages
 			.find({})
@@ -131,6 +131,26 @@ export const actions = {
 			relayPool.close();
 		}
 	},
+	updateRelays: async ({ request }) => {
+		const formData = await request.formData();
+
+		const relays = z.string().array().parse(formData.getAll('relays'));
+		await collections.runtimeConfig.updateOne(
+			{
+				_id: 'nostrRelays'
+			},
+			{
+				$set: {
+					data: relays.filter((rel) => rel.startsWith('wss://')),
+					updatedAt: new Date()
+				}
+			}
+		);
+		runtimeConfig.nostrRelays = relays.filter((rel) => rel.startsWith('wss://'));
+		return {
+			success: 'Relay list updated sucessfully !'
+		};
+	},
 	disableIntro: async ({ request }) => {
 		const formData = await request.formData();
 		const disableNostrBotIntro = z
@@ -145,6 +165,7 @@ export const actions = {
 				upsert: true
 			}
 		);
+
 		runtimeConfig.disableNostrBotIntro = disableNostrBotIntro;
 		return {
 			success: `Nostr-bot intro message ${disableNostrBotIntro ? 'disabled !' : 'enabled !'}`
