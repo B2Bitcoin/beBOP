@@ -13,6 +13,7 @@ export const load = async ({ params, locals }) => {
 			projection: {
 				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
 				subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] },
+				disclaimer: { $ifNull: [`$translations.${locals.language}.disclaimer`, '$disclaimer'] },
 				target: 1,
 				displayFromField: 1
 			}

@@ -7,6 +7,7 @@
 	let title = data.contactForm.title;
 	let slug = data.contactForm._id;
 	let displayFrom = data.contactForm.displayFromField;
+	let mandatoryAgreement = !!data.contactForm.disclaimer;
 	function confirmDelete(event: Event) {
 		if (!confirm('Would you like to delete this Contact form?')) {
 			event.preventDefault();
@@ -67,10 +68,53 @@
 				class="form-checkbox"
 				type="checkbox"
 				name="prefillWithSession"
-				placeholder="From"
 				checked={data.contactForm.prefillWithSession}
 			/> Prefill with session information
 		</label>{/if}
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			name="mandatoryAgreement"
+			bind:checked={mandatoryAgreement}
+		/> Add a warning to the form with mandatory agreement
+	</label>
+	{#if mandatoryAgreement}
+		<label class="form-label">
+			Disclaimer label
+			<input
+				class="form-input block"
+				type="text"
+				name="disclaimer.label"
+				placeholder="Disclaimer label"
+				required
+				value={data.contactForm.disclaimer?.label}
+			/>
+		</label>
+		Disclaimer Content
+		<label class="form-label">
+			<textarea
+				name="disclaimer.content"
+				cols="30"
+				rows="5"
+				maxlength={MAX_CONTENT_LIMIT}
+				placeholder="message"
+				class="form-input block w-full"
+				value={data.contactForm.disclaimer?.content}
+			/>
+		</label>
+		<label class="form-label">
+			Disclaimer checkbox label
+			<input
+				class="form-input block"
+				type="text"
+				name="disclaimer.checkboxLabel"
+				placeholder="Disclaimer checkbox label"
+				required
+				value={data.contactForm.disclaimer?.checkboxLabel}
+			/>
+		</label>
+	{/if}
 	<label class="form-label">
 		Subject
 		<input
