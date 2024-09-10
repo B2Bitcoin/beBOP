@@ -50,6 +50,7 @@
 			name="target"
 			placeholder="Target"
 			value={data.contactForm.target}
+			required
 		/>
 	</label>
 	<label class="checkbox-label">

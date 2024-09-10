@@ -4,6 +4,7 @@ import { rateLimit } from '$lib/server/rateLimit';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { error, redirect } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
+import { Kind } from 'nostr-tools';
 import { z } from 'zod';
 
 export const load = async ({ params, locals }) => {
@@ -30,14 +31,17 @@ export const load = async ({ params, locals }) => {
 };
 
 export const actions = {
-	sendEmail: async function ({ request, locals }) {
+	sendEmail: async function ({ request, locals, params }) {
+		const contactForm = await collections.contactForms.findOne({ _id: params.id });
+		if (!contactForm) {
+			throw error(404, 'contact form not found');
+		}
 		rateLimit(locals.clientIp, 'email', 5, { minutes: 5 });
 
 		const data = await request.formData();
 		const parsed = z
 			.object({
 				content: z.string().max(MAX_CONTENT_LIMIT),
-				target: z.string().max(100),
 				subject: z.string().max(100),
 				from: z.string().max(100).optional()
 			})
@@ -47,14 +51,30 @@ export const actions = {
 		const htmlContent = `Message envoyé par formulaire sur le site ${ORIGIN}<br> Adresse de contact : ${
 			parsed.from ? parsed.from : 'non-renseigné'
 		}  <br> Message envoyé :<br> ${parsedMessageHtml}`;
-		await collections.emailNotifications.insertOne({
-			_id: new ObjectId(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			subject: parsed.subject,
-			htmlContent: htmlContent,
-			dest: parsed.target || SMTP_USER
-		});
+		const content = `Message envoyé par formulaire sur le site ${ORIGIN} Adresse de contact : ${
+			parsed.from ? parsed.from : 'non-renseigné'
+		}   Message envoyé : ${parsed.content}`;
+
+		if (contactForm.target.startsWith('npub')) {
+			await collections.nostrNotifications.insertOne({
+				_id: new ObjectId(),
+				createdAt: new Date(),
+				kind: Kind.EncryptedDirectMessage,
+				updatedAt: new Date(),
+				content,
+				dest: contactForm.target
+			});
+		} else {
+			await collections.emailNotifications.insertOne({
+				_id: new ObjectId(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				subject: parsed.subject,
+				htmlContent: htmlContent,
+				dest: contactForm.target || SMTP_USER
+			});
+		}
+
 		throw redirect(303, request.headers.get('referer') || '/');
 	}
 };
