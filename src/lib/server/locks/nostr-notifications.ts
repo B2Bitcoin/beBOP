@@ -222,6 +222,34 @@ async function handleNostrNotification(nostrNotification: NostRNotification): Pr
 					sig: ''
 				} satisfies Event;
 			}
+
+			if (nostrNotification.kind === Kind.ZapRequest) {
+				const npub = nostrNotification.dest;
+
+				if (!npub) {
+					return;
+				}
+
+				const receiverPublicKeyHex = nostrToHex(npub);
+
+				return {
+					id: '',
+					content: await nip04.encrypt(nostrPrivateKeyHex, receiverPublicKeyHex, content),
+					created_at: getUnixTime(
+						max([
+							nostrNotification.minCreatedAt ?? nostrNotification.createdAt,
+							nostrNotification.createdAt
+						])
+					),
+					pubkey: nostrPublicKeyHex,
+					tags: [
+						['p', receiverPublicKeyHex],
+						['bootikVersion', String(NOSTR_PROTOCOL_VERSION)]
+					],
+					kind: Kind.EncryptedDirectMessage,
+					sig: ''
+				} satisfies Event;
+			}
 		})();
 
 		if (!event) {
