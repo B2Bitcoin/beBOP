@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { adminPrefix } from '$lib/server/admin';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
 
 export async function load({ params }) {
 	const contactForm = await collections.contactForms.findOne({
@@ -29,7 +31,13 @@ export const actions = {
 		}
 
 		const data = await request.formData();
+		const json: JsonObject = {};
 
+		for (const [key, value] of data) {
+			if (value) {
+				set(json, key, value);
+			}
+		}
 		const parsed = z
 			.object({
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
@@ -37,9 +45,16 @@ export const actions = {
 				target: z.string().max(100),
 				subject: z.string().max(100),
 				displayFromField: z.boolean({ coerce: true }).default(false),
-				prefillWithSession: z.boolean({ coerce: true }).default(false)
+				prefillWithSession: z.boolean({ coerce: true }).default(false),
+				disclaimer: z
+					.object({
+						label: z.string().min(1).max(100).trim(),
+						content: z.string().min(1).max(MAX_CONTENT_LIMIT).trim(),
+						checkboxLabel: z.string().min(1).max(100).trim()
+					})
+					.optional()
 			})
-			.parse(Object.fromEntries(data));
+			.parse(json);
 		await collections.contactForms.updateOne(
 			{
 				_id: contactForm._id
@@ -52,7 +67,8 @@ export const actions = {
 					subject: parsed.subject,
 					displayFromField: parsed.displayFromField,
 					prefillWithSession: parsed.prefillWithSession,
-					updatedAt: new Date()
+					updatedAt: new Date(),
+					...(parsed.disclaimer && { disclaimer: parsed.disclaimer })
 				}
 			}
 		);
