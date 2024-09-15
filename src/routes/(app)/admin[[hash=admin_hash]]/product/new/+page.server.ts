@@ -9,7 +9,7 @@ import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Product } from '$lib/types/Product';
 import { Kind } from 'nostr-tools';
 import { parsePriceAmount } from '$lib/types/Currency';
-import { getPrivateS3DownloadLink, s3ProductPrefix, s3client } from '$lib/server/s3';
+import { s3ProductPrefix, s3client } from '$lib/server/s3';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { productBaseSchema } from '../product-schema';
@@ -106,23 +106,7 @@ export const actions: Actions = {
 			parsed.free = true;
 		}
 
-		const pendingPicture = await collections.pendingPictures.findOne({
-			_id: parsed.pictureId
-		});
-
-		if (!pendingPicture) {
-			throw error(400, 'Error when uploading picture');
-		}
-
-		const resp = await fetch(await getPrivateS3DownloadLink(pendingPicture.storage.original.key));
-
-		if (!resp.ok) {
-			throw error(400, 'Error when uploading picture');
-		}
-
-		const buffer = await resp.arrayBuffer();
-
-		await generatePicture(Buffer.from(buffer), parsed.name, {
+		await generatePicture(parsed.pictureId, {
 			productId: parsed.slug,
 			cb: async (session) => {
 				await collections.products.insertOne(
@@ -196,15 +180,6 @@ export const actions: Actions = {
 					},
 					{ session }
 				);
-
-				await s3client
-					.deleteObject({
-						Key: pendingPicture.storage.original.key,
-						Bucket: S3_BUCKET
-					})
-					.catch();
-
-				await collections.pendingPictures.deleteOne({ _id: parsed.pictureId }, { session });
 			}
 		});
 

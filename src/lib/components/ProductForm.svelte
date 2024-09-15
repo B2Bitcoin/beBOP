@@ -22,7 +22,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import type { ProductActionSettings } from '$lib/types/ProductActionSettings';
-	import { uploadPicture } from '$lib/types/Picture';
+	import { preUploadPicture } from '$lib/types/Picture';
 	import { currencies } from '$lib/stores/currencies';
 	import type { PojoObject } from '$lib/server/pojo';
 	import type { PaymentMethod } from '$lib/server/payment-methods';
@@ -125,7 +125,7 @@
 			}
 
 			if (!duplicateFromId && isNew) {
-				const pictureId = await uploadPicture(adminPrefix, files[0]);
+				const pictureId = await preUploadPicture(adminPrefix, files[0], { fileName: product.name });
 
 				formData.set('pictureId', pictureId);
 			}

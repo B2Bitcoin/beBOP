@@ -3,7 +3,7 @@
 	import PictureComponent from '$lib/components/Picture.svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { applyAction, deserialize } from '$app/forms';
-	import { uploadPicture } from '$lib/types/Picture.js';
+	import { preUploadPicture } from '$lib/types/Picture.js';
 
 	export let data;
 	let name = data.gallery.name;
@@ -27,7 +27,7 @@
 			await Promise.all(
 				galleryPictures.map(async (picture, i) => {
 					if (picture[0]) {
-						const pictureId = await uploadPicture(data.adminPrefix, picture[0]);
+						const pictureId = await preUploadPicture(data.adminPrefix, picture[0]);
 						formData.set(`secondary[${i}].pictureId`, pictureId);
 					}
 				})

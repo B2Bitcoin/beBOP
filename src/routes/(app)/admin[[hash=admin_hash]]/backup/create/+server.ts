@@ -64,13 +64,14 @@ export const POST = async ({ request }) => {
 };
 
 const addPictureUrls = async (picture: Picture) => {
-	picture.storage.original.url = await getPublicS3DownloadLink(
-		picture.storage.original.key,
-		604800
-	);
+	picture.storage.original.url = await getPublicS3DownloadLink(picture.storage.original.key, {
+		expiresIn: ONE_WEEK_IN_SECONDS
+	});
 	const resolvedFormats = await Promise.all(
 		picture.storage.formats.map(async (currentFormat) => {
-			currentFormat.url = await getPublicS3DownloadLink(currentFormat.key, ONE_WEEK_IN_SECONDS);
+			currentFormat.url = await getPublicS3DownloadLink(currentFormat.key, {
+				expiresIn: ONE_WEEK_IN_SECONDS
+			});
 			return currentFormat;
 		})
 	);
@@ -79,10 +80,9 @@ const addPictureUrls = async (picture: Picture) => {
 };
 
 const addDigitalFileUrl = async (digitalFile: DigitalFile) => {
-	digitalFile.storage.url = await getPublicS3DownloadLink(
-		digitalFile.storage.key,
-		ONE_WEEK_IN_SECONDS
-	);
+	digitalFile.storage.url = await getPublicS3DownloadLink(digitalFile.storage.key, {
+		expiresIn: ONE_WEEK_IN_SECONDS
+	});
 
 	return digitalFile;
 };

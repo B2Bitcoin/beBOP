@@ -1,9 +1,14 @@
 import sharp from 'sharp';
 import { collections, withTransaction } from '$lib/server/database';
-import { generateId } from '$lib/utils/generateId';
 import type { ClientSession } from 'mongodb';
 import { error } from '@sveltejs/kit';
-import { s3GalleryPrefix, s3ProductPrefix, s3TagPrefix, s3client } from './s3';
+import {
+	getPrivateS3DownloadLink,
+	s3GalleryPrefix,
+	s3ProductPrefix,
+	s3TagPrefix,
+	s3client
+} from './s3';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { S3_BUCKET } from '$env/static/private';
 import * as mimeTypes from 'mime-types';
@@ -16,8 +21,7 @@ import type { ImageData, Picture, TagType } from '../types/Picture';
  * will cancel everything (remove from DB and S3)
  */
 export async function generatePicture(
-	buffer: Buffer | Uint8Array,
-	name: string,
+	pictureId: string,
 	opts?: {
 		productId?: string;
 		tag?: { _id: string; type: TagType };
@@ -26,6 +30,35 @@ export async function generatePicture(
 		cb?: (session: ClientSession) => Promise<void>;
 	}
 ): Promise<void> {
+	const pendingPicture = await collections.pendingPictures.findOne({
+		_id: pictureId
+	});
+
+	if (!pendingPicture) {
+		throw error(400, 'Error when uploading picture');
+	}
+
+	const resp = await fetch(await getPrivateS3DownloadLink(pendingPicture.storage.original.key));
+
+	if (!resp.ok) {
+		throw error(400, 'Error when uploading picture');
+	}
+
+	const buffer = Buffer.from(await resp.arrayBuffer());
+
+	if (!resp.ok) {
+		throw error(400, 'Error when uploading picture');
+	}
+
+	await s3client
+		.deleteObject({
+			Key: pendingPicture.storage.original.key,
+			Bucket: S3_BUCKET
+		})
+		.catch();
+
+	await collections.pendingPictures.deleteOne({ _id: pictureId });
+
 	if (buffer.length > 10 * 1024 * 1024) {
 		throw error(400, 'Image too big, 10MB max');
 	}
@@ -47,7 +80,7 @@ export async function generatePicture(
 		throw error(400, 'Invalid image format: ' + format);
 	}
 
-	const _id = opts?.galleryId ? name : generateId(name, true);
+	const _id = pictureId;
 	const extension = '.' + mimeTypes.extension(mime);
 
 	const uploadedKeys: string[] = [];
@@ -145,7 +178,7 @@ export async function generatePicture(
 			await collections.pictures.insertOne(
 				{
 					_id,
-					name,
+					name: pendingPicture.name,
 					storage: {
 						original,
 						formats
