@@ -7,6 +7,7 @@
 	let title: string;
 	let slug: string;
 	let displayFrom = false;
+	let mandatoryAgreement = false;
 </script>
 
 <h1 class="text-3xl">Add a contact form</h1>
@@ -61,7 +62,6 @@
 			class="form-checkbox"
 			type="checkbox"
 			name="displayFromField"
-			placeholder="From"
 			bind:checked={displayFrom}
 		/> Display From: field
 	</label>
@@ -70,6 +70,48 @@
 			<input class="form-checkbox" type="checkbox" name="prefillWithSession" placeholder="From" /> Prefill
 			with session information
 		</label>{/if}
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			name="mandatoryAgreement"
+			bind:checked={mandatoryAgreement}
+		/> Add a warning to the form with mandatory agreement
+	</label>
+	{#if mandatoryAgreement}
+		<label class="form-label">
+			Disclaimer label
+			<input
+				class="form-input block"
+				type="text"
+				name="disclaimer.label"
+				placeholder="Disclaimer label"
+				required
+			/>
+		</label>
+		Disclaimer Content
+		<label class="form-label">
+			<textarea
+				name="disclaimer.content"
+				cols="30"
+				rows="5"
+				maxlength={MAX_CONTENT_LIMIT}
+				placeholder="message"
+				class="form-input block w-full"
+			/>
+		</label>
+		<label class="form-label">
+			Disclaimer checkbox label
+			<input
+				class="form-input block"
+				type="text"
+				name="disclaimer.checkboxLabel"
+				placeholder="Disclaimer checkbox label"
+				required
+			/>
+		</label>
+	{/if}
+
 	<label class="form-label">
 		Subject
 		<input class="form-input block" type="text" name="subject" placeholder="Subject" required />

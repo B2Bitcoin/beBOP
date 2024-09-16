@@ -88,15 +88,22 @@ export function secureLink(url: string) {
 /**
  * Call when the resulting URL is used in the browser.
  */
-export async function getPublicS3DownloadLink(key: string, expiresIn: number = 24 * 3600) {
+export async function getPublicS3DownloadLink(
+	key: string,
+	opts?: {
+		expiresIn?: number;
+		input?: Partial<AWS.GetObjectCommandInput>;
+	}
+) {
 	return secureLink(
 		await getSignedUrl(
 			publicS3Client,
 			new AWS.GetObjectCommand({
 				Bucket: S3_BUCKET,
-				Key: key
+				Key: key,
+				...opts?.input
 			}),
-			{ expiresIn }
+			{ expiresIn: opts?.expiresIn ?? 24 * 3600 }
 		)
 	);
 }
@@ -104,15 +111,22 @@ export async function getPublicS3DownloadLink(key: string, expiresIn: number = 2
 /**
  * Call when the resulting URL is used in the server.
  */
-export async function getPrivateS3DownloadLink(key: string, expiresIn: number = 24 * 3600) {
+export async function getPrivateS3DownloadLink(
+	key: string,
+	opts?: {
+		expiresIn?: number;
+		input?: Partial<AWS.GetObjectCommandInput>;
+	}
+) {
 	return secureLink(
 		await getSignedUrl(
 			s3client,
 			new AWS.GetObjectCommand({
 				Bucket: S3_BUCKET,
-				Key: key
+				Key: key,
+				...opts?.input
 			}),
-			{ expiresIn }
+			{ expiresIn: opts?.expiresIn ?? 24 * 3600 }
 		)
 	);
 }

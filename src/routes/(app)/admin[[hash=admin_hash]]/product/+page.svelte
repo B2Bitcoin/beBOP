@@ -6,9 +6,11 @@
 
 	let eshopVisible = data.productActionSettings.eShop.visible;
 	let retailVisible = data.productActionSettings.retail.visible;
+	let nostrVisible = data.productActionSettings.nostr.visible;
 	let googleShoppingVisible = data.productActionSettings.googleShopping.visible;
 	let eshopBasket = data.productActionSettings.eShop.canBeAddedToBasket;
 	let retailBasket = data.productActionSettings.retail.canBeAddedToBasket;
+	let nostrBasket = data.productActionSettings.nostr.canBeAddedToBasket;
 
 	let picturesByProduct = Object.fromEntries(
 		[...data.pictures].reverse().map((picture) => [picture.productId, picture])
@@ -50,7 +52,8 @@
 				<th class="py-2 px-4 border-r border-gray-300">Action</th>
 				<th class="py-2 px-4 border-r border-gray-300">Eshop (anyone)</th>
 				<th class="py-2 px-4 border-r border-gray-300">Retail (POS logged seat)</th>
-				<th class="py-2 px-4">Google Shopping</th>
+				<th class="py-2 px-4 border-r border-gray-300">Google Shopping</th>
+				<th class="py-2 px-4">Nostr-bot</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -75,6 +78,9 @@
 						class="rounded"
 					/>
 				</td>
+				<td class="py-2 px-4 border-r border-gray-300 text-center">
+					<input type="checkbox" bind:checked={nostrVisible} name="nostrVisible" class="rounded" />
+				</td>
 			</tr>
 			<tr>
 				<td class="py-2 px-4 border border-gray-300">Product can be added to basket</td>
@@ -85,6 +91,9 @@
 					<input type="checkbox" bind:checked={retailBasket} name="retailBasket" class="rounded" />
 				</td>
 				<td class="py-2 px-4 border border-gray-300 text-center" />
+				<td class="py-2 px-4 border border-gray-300 text-center">
+					<input type="checkbox" bind:checked={nostrBasket} name="nostrBasket" class="rounded" />
+				</td>
 			</tr>
 		</tbody>
 	</table>

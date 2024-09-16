@@ -2,7 +2,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { TAGTYPES, uploadPicture } from '$lib/types/Picture.js';
+	import { TAGTYPES, preUploadPicture } from '$lib/types/Picture.js';
 
 	export let data;
 
@@ -21,7 +21,7 @@
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
 		try {
-			const pictureId = await uploadPicture(data.adminPrefix, files[0]);
+			const pictureId = await preUploadPicture(data.adminPrefix, files[0], { fileName });
 
 			formData.set('pictureId', pictureId);
 

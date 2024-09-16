@@ -366,14 +366,21 @@ export async function cmsFromContent(
 		.project<
 			Pick<
 				ContactForm,
-				'_id' | 'content' | 'target' | 'subject' | 'displayFromField' | 'prefillWithSession'
+				| '_id'
+				| 'content'
+				| 'target'
+				| 'subject'
+				| 'displayFromField'
+				| 'prefillWithSession'
+				| 'disclaimer'
 			>
 		>({
 			content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
 			target: 1,
 			displayFromField: 1,
 			prefillWithSession: 1,
-			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] }
+			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] },
+			disclaimer: { $ifNull: [`$translations.${locals.language}.disclaimer`, '$disclaimer'] }
 		})
 		.toArray();
 	const countdowns = await collections.countdowns

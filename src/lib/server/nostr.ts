@@ -2,6 +2,7 @@ import { NOSTR_PRIVATE_KEY } from '$env/static/private';
 import { bech32 } from 'bech32';
 import { getPublicKey } from 'nostr-tools';
 import { z } from 'zod';
+import { runtimeConfig } from './runtime-config';
 
 export const nostrPrivateKey = NOSTR_PRIVATE_KEY;
 export let nostrPublicKey = '';
@@ -40,9 +41,4 @@ export function zodNpub() {
 		});
 }
 
-export const nostrRelays = [
-	'wss://nostr.wine',
-	'wss://nostr.lu.ke',
-	'wss://nos.lol',
-	'wss://relay.snort.social'
-];
+export const nostrRelays = runtimeConfig.nostrRelays;

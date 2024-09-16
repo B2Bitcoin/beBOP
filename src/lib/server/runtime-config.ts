@@ -133,6 +133,10 @@ const baseConfig = {
 		},
 		googleShopping: {
 			visible: true
+		},
+		nostr: {
+			visible: true,
+			canBeAddedToBasket: true
 		}
 	} satisfies ProductActionSettings as ProductActionSettings,
 	mainThemeId: '',
@@ -159,6 +163,12 @@ const baseConfig = {
 	bity: {
 		clientId: ''
 	},
+	nostrRelays: [
+		'wss://nostr.wine',
+		'wss://nostr.lu.ke',
+		'wss://nos.lol',
+		'wss://relay.snort.social'
+	],
 	posTouchTag: [] as Tag['_id'][],
 	hideCmsZonesOnMobile: false,
 	copyOrderEmailsToAdmin: true,
@@ -167,6 +177,7 @@ const baseConfig = {
 	displayPoweredBy: false,
 	displayCompanyInfo: false,
 	displayMainShopInfo: false,
+	disableNostrBotIntro: false,
 	displayNewsletterCommercialProspection: false,
 	cartMaxSeparateItems: null as null | number,
 	websiteTitle: 'B2Bitcoin be-BOP',

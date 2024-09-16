@@ -3,14 +3,27 @@
 	import PriceTag from './PriceTag.svelte';
 	import { currencies } from '$lib/stores/currencies';
 	import { useI18n } from '$lib/i18n';
+	import OrderLabelComponent from './OrderLabelComponent.svelte';
+	import type { OrderLabel } from '$lib/types/OrderLabel';
 
 	export let orders:
 		| Pick<
 				SimplifiedOrder,
-				'_id' | 'payments' | 'number' | 'createdAt' | 'currencySnapshot' | 'status' | 'notes'
+				| '_id'
+				| 'payments'
+				| 'number'
+				| 'createdAt'
+				| 'currencySnapshot'
+				| 'status'
+				| 'notes'
+				| 'orderLabelIds'
 		  >[]
 		| [];
 	export let adminPrefix: string | undefined = undefined;
+	export let orderLabels: OrderLabel[] | undefined = undefined;
+	$: labelById = orderLabels
+		? Object.fromEntries(orderLabels.map((label) => [label._id, label]))
+		: undefined;
 
 	const { t, locale } = useI18n();
 </script>
@@ -102,6 +115,16 @@
 						</form>
 					{/if}
 				{/each}
+				{#if order.orderLabelIds?.length && labelById}
+					{#each order.orderLabelIds as labelId}
+						<OrderLabelComponent orderLabel={labelById[labelId]} class="text-sm" />
+					{/each}
+				{/if}
+				<a
+					href="{adminPrefix}/order/{order._id}/label"
+					class="bg-gray-200 px-2 rounded-full"
+					title="add label">+</a
+				>
 			{/if}
 		</li>
 	{:else}

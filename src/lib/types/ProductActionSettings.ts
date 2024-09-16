@@ -10,4 +10,8 @@ export type ProductActionSettings = {
 	googleShopping: {
 		visible: boolean;
 	};
+	nostr: {
+		visible: boolean;
+		canBeAddedToBasket: boolean;
+	};
 };

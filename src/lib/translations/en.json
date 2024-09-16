@@ -42,7 +42,7 @@
 	"challenge": {
 		"beginsAt": "Begins in {days} days",
 		"ended": "Finished !",
-		"endsAt": "Ends <0></0>",
+		"endsAt": "Ends <0></0> at <1></1>",
 		"goalMet": "Good job guys! 👏👏",
 		"goalOvershot": "You are amazing guys! 🤭",
 		"list": "List of challenges",
