@@ -105,6 +105,7 @@
 			"cash": "Contant geld",
 			"free": "Niets te betalen (gratis winkelwagen)",
 			"lightning": "Bliksem",
+			"paypal": "Paypal",
 			"point-of-sale": "Verkooppunt",
 			"unavailable": "Geen betaalmethoden beschikbaar."
 		},
