@@ -49,7 +49,8 @@ export async function POST({ request }) {
 				ContentLength: body.fileSize
 			}),
 			{ expiresIn: 60 * 60 * 24 }
-		)
+		),
+		{ public: true }
 	);
 
 	await collections.pendingDigitalFiles.insertOne({

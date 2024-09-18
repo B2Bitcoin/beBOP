@@ -4,8 +4,7 @@ import {
 	S3_REGION,
 	S3_KEY_SECRET,
 	S3_ENDPOINT_URL,
-	S3_BUCKET,
-	ORIGIN
+	S3_BUCKET
 } from '$env/static/private';
 import { PUBLIC_S3_ENDPOINT_URL } from '$env/static/public';
 import * as AWS from '@aws-sdk/client-s3';
@@ -74,15 +73,13 @@ if (s3client) {
 		.catch(() => {} /* (err) => console.error('S3 CORS error: ', err) */);
 }
 
-export function secureLink(url: string) {
-	if (
-		['127.0.0.1', 'localhost'].includes(new URL(url).hostname) ||
-		((PUBLIC_S3_ENDPOINT_URL || S3_ENDPOINT_URL)?.includes('http:') && ORIGIN?.includes('http:'))
-	) {
-		return url;
-	}
+export function secureLink(url: string, params: { public: boolean }) {
+	const endpointUrl = (params.public ? PUBLIC_S3_ENDPOINT_URL : S3_ENDPOINT_URL) ?? S3_ENDPOINT_URL;
 
-	return url.replace('http:', 'https:');
+	if (url.startsWith('http:') && endpointUrl.startsWith('https:')) {
+		return url.replace('http:', 'https:');
+	}
+	return url;
 }
 
 /**
@@ -104,7 +101,8 @@ export async function getPublicS3DownloadLink(
 				...opts?.input
 			}),
 			{ expiresIn: opts?.expiresIn ?? 24 * 3600 }
-		)
+		),
+		{ public: true }
 	);
 }
 
@@ -127,7 +125,8 @@ export async function getPrivateS3DownloadLink(
 				...opts?.input
 			}),
 			{ expiresIn: opts?.expiresIn ?? 24 * 3600 }
-		)
+		),
+		{ public: false }
 	);
 }
 
