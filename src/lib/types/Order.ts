@@ -313,7 +313,7 @@ export function orderRemainingToPay(
 export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
 	'bank-transfer': '🏦',
 	card: '💳',
-	paypal: '💸',
+	paypal: '🅿',
 	'point-of-sale': '🛒',
 	lightning: '⚡',
 	bitcoin: '₿',
