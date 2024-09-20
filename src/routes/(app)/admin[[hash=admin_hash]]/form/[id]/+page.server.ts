@@ -6,6 +6,7 @@ import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export async function load({ params }) {
 	const contactForm = await collections.contactForms.findOne({
@@ -17,7 +18,8 @@ export async function load({ params }) {
 	}
 
 	return {
-		contactForm
+		contactForm,
+		hideEmailOptions: runtimeConfig.hideEmailOptions
 	};
 }
 export const actions = {

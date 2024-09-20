@@ -118,7 +118,8 @@ export const load = async ({ params, locals }) => {
 			productCMSAfter: cmsFromContent({ content: product.contentAfter }, locals)
 		}),
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage,
-		websiteShortDescription: product.shortDescription
+		websiteShortDescription: product.shortDescription,
+		hideEmailOptions: runtimeConfig.hideEmailOptions
 	};
 };
 

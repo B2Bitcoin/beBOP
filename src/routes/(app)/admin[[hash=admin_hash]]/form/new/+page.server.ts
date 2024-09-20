@@ -8,8 +8,13 @@ import { adminPrefix } from '$lib/server/admin';
 import { zodSlug } from '$lib/server/zod';
 import { set } from 'lodash-es';
 import type { JsonObject } from 'type-fest';
+import { runtimeConfig } from '$lib/server/runtime-config';
 
-export const load = async () => {};
+export const load = async () => {
+	return {
+		hideEmailOptions: runtimeConfig.hideEmailOptions
+	};
+};
 
 export const actions: Actions = {
 	default: async ({ request }) => {

@@ -52,6 +52,7 @@
 			placeholder="Target"
 			value={data.contactForm.target}
 			required
+			pattern={data.hideEmailOptions ? '' : '^(?!.*@).*'}
 		/>
 	</label>
 	<label class="checkbox-label">

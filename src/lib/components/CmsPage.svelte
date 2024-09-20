@@ -39,6 +39,7 @@
 	export let contactForms: CmsContactForm[];
 	export let countdowns: CmsCountdown[];
 	export let galleries: CmsGallery[];
+	export let hideEmailOptions: boolean;
 	const { t } = useI18n();
 </script>
 
@@ -67,6 +68,7 @@
 		{brandName}
 		{countdowns}
 		{galleries}
+		{hideEmailOptions}
 		class="body body-mainPlan"
 	/>
 {:else}
@@ -93,6 +95,7 @@
 			{brandName}
 			{countdowns}
 			{galleries}
+			{hideEmailOptions}
 			class="body"
 		/>
 	</main>

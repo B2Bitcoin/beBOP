@@ -15,6 +15,7 @@
 		| 'disclaimer'
 	>;
 	export let sessionEmail: string | undefined = undefined;
+	export let hideEmailOptions: boolean;
 	let className = '';
 	export { className as class };
 
@@ -38,7 +39,8 @@
 				maxlength={MAX_NAME_LIMIT}
 				name="from"
 				placeholder="From"
-				value={contactForm.prefillWithSession ? sessionEmail ?? '' : ''}
+				value={contactForm.prefillWithSession && !hideEmailOptions ? sessionEmail ?? '' : ''}
+				pattern={hideEmailOptions ? '' : '^(?!.*@).*'}
 			/>
 		</label>
 	{/if}

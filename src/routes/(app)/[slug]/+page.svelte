@@ -21,4 +21,5 @@
 	sessionEmail={data.email}
 	countdowns={data.cmsData.countdowns}
 	galleries={data.cmsData.galleries}
+	hideEmailOptions={data.hideEmailOptions}
 />

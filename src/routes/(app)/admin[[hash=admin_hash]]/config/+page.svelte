@@ -109,6 +109,16 @@
 			<IconInfo class="cursor-pointer"></IconInfo>
 		</div>
 	</div>
+	<h2 class="text-2xl">Notifications</h2>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="hideEmailOptions"
+			class="form-checkbox"
+			checked={data.hideEmailOptions}
+		/>
+		Hide email options
+	</label>
 
 	<h2 class="text-2xl">Checkout</h2>
 

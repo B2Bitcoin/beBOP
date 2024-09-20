@@ -94,17 +94,19 @@
 						value={data.personalInfoConnected?.address?.zip ?? ''}
 					/>
 				</label>
-				<label class="form-label col-span-3">
-					{t('checkout.notifications.email')}
-					<input
-						type="email"
-						name="email"
-						class="form-input"
-						placeholder={data.email || ''}
-						value={data.personalInfoConnected?.email || ''}
-					/>
-				</label>
-				<label class="form-label col-span-3">
+				{#if !data.hideEmailOptions}
+					<label class="form-label col-span-3">
+						{t('checkout.notifications.email')}
+						<input
+							type="email"
+							name="email"
+							class="form-input"
+							placeholder={data.email || ''}
+							value={data.personalInfoConnected?.email || ''}
+						/>
+					</label>
+				{/if}
+				<label class="form-label {data.hideEmailOptions ? 'col-span-6' : 'col-span-3'}">
 					{t('checkout.notifications.npub')}
 
 					<input
@@ -135,7 +137,11 @@
 						{t('newsletter.allowPartnerContact')}
 					</label>
 				{/if}
-				<button type="submit" class="btn btn-black self-start">{t('identity.cta.update')}</button>
+				<input
+					type="submit"
+					class="btn btn-black self-start p-1"
+					value={t('identity.cta.update')}
+				/>
 			</section>
 		</form>
 	</div>

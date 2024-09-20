@@ -53,8 +53,9 @@
 			type="text"
 			name="target"
 			placeholder="Target"
-			value={data.sellerIdentity?.contact.email || ''}
+			value={!data.hideEmailOptions ? data.sellerIdentity?.contact.email || '' : ''}
 			required
+			pattern={data.hideEmailOptions ? '' : '^(?!.*@).*'}
 		/>
 	</label>
 	<label class="checkbox-label">

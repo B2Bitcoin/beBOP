@@ -24,7 +24,8 @@ export async function load({ locals }) {
 			newsletter: personalInfoConnected?.newsletter,
 			npub: personalInfoConnected?.npub,
 			email: personalInfoConnected?.email
-		}
+		},
+		hideEmailOptions: runtimeConfig.hideEmailOptions
 	};
 }
 

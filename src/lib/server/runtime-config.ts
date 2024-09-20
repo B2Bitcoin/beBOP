@@ -97,7 +97,7 @@ const baseConfig = {
 	defaultOnLocation: false,
 	languages: locales,
 	defaultLanguage: 'en' as LanguageKey,
-
+	hideEmailOptions: false,
 	checkoutButtonOnProductPage: true,
 	discovery: true,
 	orderNotificationsResumeToken: null as unknown,
