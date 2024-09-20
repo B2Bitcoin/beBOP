@@ -112,10 +112,11 @@
 				<code class="font-mono">[Product=slug?display=img-1]</code>
 			</li>
 			<li>
-				To include pictures, add a paragraph with only <code class="font-mono">[Picture=slug]</code
+				To include pictures, add a paragraph with only <code class="font-mono">[Picture=slug]</code>
+				<!-- </code
 				>. You can also set the width, height and fit:
 				<code class="font-mono">[Picture=slug width=100 height=100 fit=cover]</code> or
-				<code class="font-mono">[Picture=slug width=100 height=100 fit=contain]</code>
+				<code class="font-mono">[Picture=slug width=100 height=100 fit=contain]</code> -->
 			</li>
 			<li>
 				To include challenges, add a paragraph with only <code class="font-mono"
