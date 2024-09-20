@@ -187,6 +187,7 @@ export async function load(params) {
 		cartMaxSeparateItems: runtimeConfig.cartMaxSeparateItems,
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
 		hideCmsZonesOnMobile: runtimeConfig.hideCmsZonesOnMobile,
-		notResponsive: runtimeConfig.viewportFor === 'no-one' ? true : false
+		notResponsive: runtimeConfig.viewportFor === 'no-one' ? true : false,
+		cartPreviewReadOnly: runtimeConfig.cartPreviewReadOnly
 	};
 }

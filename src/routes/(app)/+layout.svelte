@@ -325,7 +325,11 @@
 												{#if item.product.type !== 'subscription' && !item.product.standalone}
 													<div class="flex items-center gap-2">
 														<span class="text-xs">{t('cart.quantity')}: </span>
-														<CartQuantity {item} sm />
+														{#if data.cartPreviewReadOnly}
+															<CartQuantity {item} sm />
+														{:else}
+															<CartQuantity {item} sm disabled />
+														{/if}
 													</div>
 												{/if}
 											</div>
@@ -342,11 +346,12 @@
 														  })})`
 														: ''}</PriceTag
 												>
-
-												<button formaction="/cart/{item.product._id}/?/remove">
-													<IconTrash class="body-secondaryText" />
-													<span class="sr-only">{t('cart.sr.remove')}</span>
-												</button>
+												{#if data.cartPreviewReadOnly}
+													<button formaction="/cart/{item.product._id}/?/remove">
+														<IconTrash class="body-secondaryText" />
+														<span class="sr-only">{t('cart.sr.remove')}</span>
+													</button>
+												{/if}
 											</div>
 										</form>
 									{/each}

@@ -109,7 +109,17 @@
 			<IconInfo class="cursor-pointer"></IconInfo>
 		</div>
 	</div>
+	<h2 class="text-2xl">Cart preview</h2>
 
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="cartPreviewReadOnly"
+			class="form-checkbox"
+			checked={data.cartPreviewReadOnly}
+		/>
+		Make cart preview interactive
+	</label>
 	<h2 class="text-2xl">Checkout</h2>
 
 	<label class="checkbox-label">
