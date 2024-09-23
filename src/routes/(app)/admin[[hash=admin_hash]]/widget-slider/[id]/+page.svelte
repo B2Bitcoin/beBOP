@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId';
-	import PictureComponent from '$lib/components/Picture.svelte';
 
 	export let data;
 	let name = data.widgetSlider.title;
