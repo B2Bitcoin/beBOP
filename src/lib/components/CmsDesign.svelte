@@ -19,7 +19,8 @@
 		CmsTokens,
 		CmsContactForm,
 		CmsCountdown,
-		CmsGallery
+		CmsGallery,
+		CmsWidgetSlider
 	} from '$lib/server/cms';
 	import SpecificationWidget from './SpecificationWidget.svelte';
 	import ContactForm from './ContactForm.svelte';
@@ -27,6 +28,7 @@
 	import CountdownWidget from './CountdownWidget.svelte';
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
 	import { page } from '$app/stores';
+	import WidgetSlider from './WidgetSlider.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -44,6 +46,7 @@
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
 	export let galleries: CmsGallery[];
+	export let widgetSliders: CmsWidgetSlider[];
 
 	let classNames = '';
 	export { classNames as class };
@@ -108,6 +111,9 @@
 		);
 	}
 	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
+	$: widgetSliderById = Object.fromEntries(
+		widgetSliders.map((widgetSlider) => [widgetSlider._id, widgetSlider])
+	);
 </script>
 
 <div class={tokens.mobile ? 'hidden lg:contents' : 'contents'}>
@@ -170,6 +176,8 @@
 					displayOption={token.display}
 					class="not-prose my-5"
 				/>
+			{:else if token.type === 'widgetSlider' && widgetSliderById[token.slug]}
+				<WidgetSlider widgetSlider={widgetSliderById[token.slug]} class="not-prose my-5" />
 			{:else if token.type === 'pictureWidget'}
 				<PictureComponent
 					picture={pictureById[token.slug]}

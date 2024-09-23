@@ -176,6 +176,10 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/gallery',
 				label: 'Galleries'
+			},
+			{
+				href: '/admin/widget-slider',
+				label: 'Widgets Slider'
 			}
 		]
 	}
