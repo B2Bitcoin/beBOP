@@ -46,7 +46,7 @@ import type { Gallery } from '$lib/types/Gallery';
 import type { VatProfile } from '$lib/types/VatProfile';
 import type { Ticket } from '$lib/types/Ticket';
 import type { OrderLabel } from '$lib/types/OrderLabel';
-import { WidgetSlider } from '$lib/types/WidgetSlider';
+import type { WidgetSlider } from '$lib/types/WidgetSlider';
 
 // Bigger than the default 10, helpful with MongoDB errors
 Error.stackTraceLimit = 100;
