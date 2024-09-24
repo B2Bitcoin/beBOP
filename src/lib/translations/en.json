@@ -479,7 +479,7 @@
 		"paidWith": {
 			"bank-transfer": "Paid with: verified bank transfer",
 			"bitcoin": "Paid with: Bitcoin on-chain payment (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
-			"card": "Paid with: bank card via Sum UP",
+			"card": "Paid with: bank card",
 			"free": "Paid Nothing",
 			"lightning": "Paid with: Lightning transaction (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
 			"point-of-sale": "Paid in store"
@@ -487,7 +487,7 @@
 		"paidWithSummary": {
 			"bank-transfer": "Paid with: verified bank transfer",
 			"bitcoin": "Paid with: Bitcoin on-chain payment",
-			"card": "Paid with: bank card via Sum UP",
+			"card": "Paid with: bank card",
 			"free": "Paid Nothing",
 			"lightning": "Paid with: Lightning transaction",
 			"point-of-sale": "Paid in store"

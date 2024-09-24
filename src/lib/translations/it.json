@@ -478,7 +478,7 @@
 		"paidWith": {
 			"bank-transfer": "Pagato con: bonifico bancario verificato",
 			"bitcoin": "Pagato con: pagamento Bitcoin sulla blockchain (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento dell'ordine",
-			"card": "Pagato con: carta bancaria tramite Sum UP",
+			"card": "Pagato con: carta bancaria",
 			"free": "Nessun pagamento",
 			"lightning": "Pagato con: transazione Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento dell'ordine)",
 			"point-of-sale": "Pagato in magazzino"
@@ -486,7 +486,7 @@
 		"paidWithSummary": {
 			"bank-transfer": "Pagato con: bonifico bancario verificato",
 			"bitcoin": "Pagato con: pagamento Bitcoin sulla blockchain",
-			"card": "Pagato con: carta bancaria tramite Sum UP",
+			"card": "Pagato con: carta bancaria",
 			"free": "Nessun pagamento",
 			"lightning": "Pagato con: transazione Lightning",
 			"point-of-sale": "Pagato in magazzino"
