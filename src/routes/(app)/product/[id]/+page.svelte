@@ -103,6 +103,7 @@
 		return true;
 	}
 	const { t, locale } = useI18n();
+	let zoom = false;
 </script>
 
 <svelte:head>
@@ -174,10 +175,18 @@
 				<!-- add product name -->
 				<h2 class="text-4xl body-title">{data.product.name}</h2>
 				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
-				<div class="aspect-video w-full overflow-hidden px-4">
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+				<div
+					class="aspect-video w-full overflow-hidden px-4"
+					on:mouseover={() => (zoom = true)}
+					on:mouseout={() => (zoom = false)}
+				>
 					<Picture
 						picture={currentPicture}
-						class="mx-auto rounded h-full object-contain"
+						class="mx-auto rounded h-full object-contain {`transition-transform duration-300 ease-in-out ${
+							zoom ? 'scale-150' : ''
+						}`}"
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
