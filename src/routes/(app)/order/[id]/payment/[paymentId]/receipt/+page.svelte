@@ -4,7 +4,10 @@
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { sum } from '$lib/utils/sum.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency';
+	import { toCurrency } from '$lib/utils/toCurrency';
 	import { marked } from 'marked';
 
 	export let data;
@@ -23,9 +26,18 @@
 		data.order.billingAddress &&
 		textAddress(data.order.shippingAddress) !== textAddress(data.order.billingAddress);
 
+	const discountPercentage = data.order.currencySnapshot.main.discount?.amount
+		? data.order.currencySnapshot.main.discount.amount /
+		  (data.order.currencySnapshot.main.totalPrice.amount +
+				data.order.currencySnapshot.main.discount.amount)
+		: 0;
 	const totalVat = {
 		currency: data.order.currencySnapshot.main.totalPrice.currency,
-		amount: sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0])
+		amount: fixCurrencyRounding(
+			sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0]) *
+				(discountPercentage ? 1 - discountPercentage : 1),
+			data.order.currencySnapshot.main.totalPrice.currency
+		)
 	};
 </script>
 
@@ -158,6 +170,30 @@
 </table>
 
 <table class="mt-4 border-collapse">
+	{#if data.order.shippingPrice && data.order.currencySnapshot.main.shippingPrice?.amount}
+		<tr style:background-color="#e7e6e6">
+			<td class="border border-white px-2 text-right">{t('checkout.deliveryFees')}</td>
+			<td class="border border-white px-2 text-right whitespace-nowrap">
+				<PriceTag
+					amount={data.order.currencySnapshot.main.shippingPrice.amount}
+					currency={data.order.currencySnapshot.main.shippingPrice.currency}
+					inline
+				/>
+			</td>
+		</tr>
+	{/if}
+	{#if data.order.currencySnapshot.main.discount?.amount}
+		<tr style:background-color="#e7e6e6">
+			<td class="border border-white px-2 text-right">{t('order.discount.title')}</td>
+			<td class="border border-white px-2 text-right whitespace-nowrap">
+				<PriceTag
+					amount={-data.order.currencySnapshot.main.discount.amount}
+					currency={data.order.currencySnapshot.main.discount.currency}
+					inline
+				/>
+			</td>
+		</tr>
+	{/if}
 	<tr style:background-color="#fef2cc">
 		<td class="border border-white px-2 text-right" style="width: 70%"
 			>{t('order.receipt.totalExcVat')}</td
@@ -170,18 +206,6 @@
 			/>
 		</td>
 	</tr>
-	{#if data.order.shippingPrice && data.order.currencySnapshot.main.shippingPrice}
-		<tr style:background-color="#e7e6e6">
-			<td class="border border-white px-2 text-right">{t('checkout.deliveryFees')}</td>
-			<td class="border border-white px-2 text-right whitespace-nowrap">
-				<PriceTag
-					amount={data.order.currencySnapshot.main.shippingPrice.amount}
-					currency={data.order.currencySnapshot.main.shippingPrice.currency}
-					inline
-				/>
-			</td>
-		</tr>
-	{/if}
 	<tr style:background-color="#e7e6e6">
 		<td class="border border-white px-2 text-right">{t('order.receipt.totalVat')}</td>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
