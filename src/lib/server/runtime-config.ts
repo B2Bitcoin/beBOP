@@ -85,7 +85,7 @@ const baseConfig = {
 	viewportFor: 'no-one' as 'employee' | 'no-one' | 'visitors' | 'everyone',
 	viewportContentWidth: 1000,
 	socialNetworkIcons: [] as Array<{ name: string; svg: string; href: string }>,
-
+	cartPreviewInteractive: false,
 	vatExempted: false,
 	vatExemptionReason: '',
 	vatSingleCountry: false,
