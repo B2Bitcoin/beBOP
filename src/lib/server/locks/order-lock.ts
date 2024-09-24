@@ -13,6 +13,7 @@ import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 import { phoenixdLookupInvoice } from '../phoenixd';
 import { CURRENCIES, CURRENCY_UNIT } from '$lib/types/Currency';
 import { typedInclude } from '$lib/utils/typedIncludes';
+import { isPaypalEnabled, paypalGetCheckout } from '../paypal';
 
 const lock = new Lock('orders');
 
@@ -176,7 +177,7 @@ async function maintainOrders() {
 									const paymentId = payment.checkoutId;
 
 									if (!paymentId) {
-										throw new Error('Missing cjeckout id on stripe order');
+										throw new Error('Missing checkout id on stripe order');
 									}
 
 									// Fetch payment intent
@@ -243,10 +244,62 @@ async function maintainOrders() {
 									console.error(inspect(err, { depth: 10 }));
 								}
 								break;
+							case 'paypal':
+								try {
+									if (!isPaypalEnabled()) {
+										throw new Error('Missing PayPal credentials');
+									}
+
+									if (!payment.checkoutId) {
+										throw new Error('Missing checkout ID on PayPal order');
+									}
+
+									const checkout = await paypalGetCheckout(payment.checkoutId);
+
+									if (checkout.status === 'COMPLETED') {
+										order = await onOrderPayment(order, payment, {
+											amount: Number(checkout.purchase_units[0].amount.value),
+											currency: checkout.purchase_units[0].amount.currency_code
+										});
+									} else if (
+										checkout.status === 'VOIDED' ||
+										(payment.expiresAt && payment.expiresAt < new Date())
+									) {
+										order = await onOrderPaymentFailed(order, payment, 'expired');
+									}
+								} catch (err) {
+									console.error(inspect(err, { depth: 10 }));
+								}
 							default:
 								console.error('Unknown card processor', payment.processor);
 						}
 						break;
+					case 'paypal':
+						try {
+							if (!isPaypalEnabled()) {
+								throw new Error('Missing PayPal credentials');
+							}
+
+							if (!payment.checkoutId) {
+								throw new Error('Missing checkout ID on PayPal order');
+							}
+
+							const checkout = await paypalGetCheckout(payment.checkoutId);
+
+							if (checkout.status === 'COMPLETED') {
+								order = await onOrderPayment(order, payment, {
+									amount: Number(checkout.purchase_units[0].amount.value),
+									currency: checkout.purchase_units[0].amount.currency_code
+								});
+							} else if (
+								checkout.status === 'VOIDED' ||
+								(payment.expiresAt && payment.expiresAt < new Date())
+							) {
+								order = await onOrderPaymentFailed(order, payment, 'expired');
+							}
+						} catch (err) {
+							console.error(inspect(err, { depth: 10 }));
+						}
 					// handled by admin
 					case 'bank-transfer':
 					case 'point-of-sale':
