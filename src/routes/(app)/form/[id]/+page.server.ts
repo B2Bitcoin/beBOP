@@ -1,7 +1,6 @@
 import { ORIGIN, SMTP_USER } from '$env/static/private';
 import { collections } from '$lib/server/database';
 import { rateLimit } from '$lib/server/rateLimit';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { error, redirect } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
@@ -28,8 +27,7 @@ export const load = async ({ params, locals }) => {
 
 	return {
 		contactForm,
-		email: locals.email,
-		hideEmailOptions: runtimeConfig.hideEmailOptions
+		email: locals.email
 	};
 };
 

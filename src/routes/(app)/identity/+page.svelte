@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
+	import { includes } from 'lodash-es';
 
 	export let data;
 
@@ -94,7 +95,7 @@
 						value={data.personalInfoConnected?.address?.zip ?? ''}
 					/>
 				</label>
-				{#if !data.hideEmailOptions}
+				{#if data.contactModes.includes('email')}
 					<label class="form-label col-span-3">
 						{t('checkout.notifications.email')}
 						<input
@@ -106,7 +107,9 @@
 						/>
 					</label>
 				{/if}
-				<label class="form-label {data.hideEmailOptions ? 'col-span-6' : 'col-span-3'}">
+				<label
+					class="form-label {!data.contactModes.includes('email') ? 'col-span-6' : 'col-span-3'}"
+				>
 					{t('checkout.notifications.npub')}
 
 					<input

@@ -2,6 +2,7 @@
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage.js';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId';
+	import { includes } from 'lodash-es';
 
 	export let data;
 	let title = data.contactForm.title;
@@ -52,7 +53,7 @@
 			placeholder="Target"
 			value={data.contactForm.target}
 			required
-			pattern={data.hideEmailOptions ? '' : '^(?!.*@).*'}
+			pattern={data.contactModes.includes('email') ? '' : '^(?!.*@).*'}
 		/>
 	</label>
 	<label class="checkbox-label">

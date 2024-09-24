@@ -23,7 +23,6 @@
 		brandName={data.brandName}
 		countdowns={data.cmsData.countdowns}
 		galleries={data.cmsData.galleries}
-		hideEmailOptions={data.hideEmailOptions}
 	/>
 {:else}
 	<Catalog {...data.catalog} />

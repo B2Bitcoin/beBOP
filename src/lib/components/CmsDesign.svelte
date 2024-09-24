@@ -44,7 +44,6 @@
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
 	export let galleries: CmsGallery[];
-	export let hideEmailOptions: boolean;
 
 	let classNames = '';
 	export { classNames as class };
@@ -160,7 +159,6 @@
 				<ContactForm
 					contactForm={contactFormById[token.slug]}
 					{sessionEmail}
-					{hideEmailOptions}
 					class="not-prose my-5"
 				/>
 			{:else if token.type === 'countdownWidget' && countdownById[token.slug]}
@@ -243,7 +241,6 @@
 					<ContactForm
 						contactForm={contactFormById[token.slug]}
 						{sessionEmail}
-						{hideEmailOptions}
 						class="not-prose my-5"
 					/>
 				{:else if token.type === 'countdownWidget' && countdownById[token.slug]}

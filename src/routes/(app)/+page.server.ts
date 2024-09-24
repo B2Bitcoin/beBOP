@@ -2,7 +2,6 @@ import { collections } from '$lib/server/database';
 import { omit } from 'lodash-es';
 import { load as catalogLoad } from './catalog/+page.server';
 import { cmsFromContent } from '$lib/server/cms';
-import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const load = async ({ locals }) => {
 	const cmsPage = await collections.cmsPages.findOne(
@@ -38,7 +37,6 @@ export const load = async ({ locals }) => {
 			{ content: cmsPage.content, mobileContent: cmsPage.mobileContent },
 			locals
 		),
-		layoutReset: cmsPage.fullScreen,
-		hideEmailOptions: runtimeConfig.hideEmailOptions
+		layoutReset: cmsPage.fullScreen
 	};
 };

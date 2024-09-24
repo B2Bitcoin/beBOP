@@ -4,8 +4,4 @@
 	export let data;
 </script>
 
-<ContactForm
-	contactForm={data.contactForm}
-	sessionEmail={data.email}
-	hideEmailOptions={data.hideEmailOptions}
-/>
+<ContactForm contactForm={data.contactForm} sessionEmail={data.email} />

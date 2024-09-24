@@ -2,7 +2,6 @@ import { collections } from '$lib/server/database';
 import { omit } from 'lodash-es';
 import { cmsFromContent } from '$lib/server/cms.js';
 import { error } from '@sveltejs/kit';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export async function load({ params, locals, url }) {
 	let cmsPage = await collections.cmsPages.findOne(
@@ -68,7 +67,6 @@ export async function load({ params, locals, url }) {
 			locals
 		),
 		layoutReset: cmsPage.fullScreen,
-		websiteShortDescription: cmsPage.shortDescription,
-		hideEmailOptions: runtimeConfig.hideEmailOptions
+		websiteShortDescription: cmsPage.shortDescription
 	};
 }

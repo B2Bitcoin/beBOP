@@ -3,7 +3,7 @@
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import type { ContactForm } from '$lib/types/ContactForm';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
-
+	import { page } from '$app/stores';
 	export let contactForm: Pick<
 		ContactForm,
 		| '_id'
@@ -15,7 +15,6 @@
 		| 'disclaimer'
 	>;
 	export let sessionEmail: string | undefined = undefined;
-	export let hideEmailOptions: boolean;
 	let className = '';
 	export { className as class };
 
@@ -39,8 +38,10 @@
 				maxlength={MAX_NAME_LIMIT}
 				name="from"
 				placeholder="From"
-				value={contactForm.prefillWithSession && !hideEmailOptions ? sessionEmail ?? '' : ''}
-				pattern={hideEmailOptions ? '' : '^(?!.*@).*'}
+				value={contactForm.prefillWithSession && $page.data.contactModes.includes('email')
+					? sessionEmail ?? ''
+					: ''}
+				pattern={$page.data.contactModes.includes('email') ? '' : '^(?!.*@).*'}
 			/>
 		</label>
 	{/if}

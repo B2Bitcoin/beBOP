@@ -1,7 +1,6 @@
 import { collections } from '$lib/server/database';
 import { cmsFromContent } from '$lib/server/cms';
 import { omit } from 'lodash-es';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.countDocuments({ _id: params.id });
@@ -28,8 +27,7 @@ export const load = async ({ params, locals }) => {
 		if (errorPage) {
 			return {
 				cmsPage: omit(errorPage, ['content']),
-				cmsData: cmsFromContent({ content: errorPage.content }, locals),
-				hideEmailOptions: runtimeConfig.hideEmailOptions
+				cmsData: cmsFromContent({ content: errorPage.content }, locals)
 			};
 		}
 	}

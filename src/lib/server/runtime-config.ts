@@ -97,7 +97,6 @@ const baseConfig = {
 	defaultOnLocation: false,
 	languages: locales,
 	defaultLanguage: 'en' as LanguageKey,
-	hideEmailOptions: false,
 	checkoutButtonOnProductPage: true,
 	discovery: true,
 	orderNotificationsResumeToken: null as unknown,
@@ -163,6 +162,7 @@ const baseConfig = {
 		'wss://nos.lol',
 		'wss://relay.snort.social'
 	],
+	contactModes: ['email', 'nostr'],
 	posTouchTag: [] as Tag['_id'][],
 	hideCmsZonesOnMobile: false,
 	copyOrderEmailsToAdmin: true,

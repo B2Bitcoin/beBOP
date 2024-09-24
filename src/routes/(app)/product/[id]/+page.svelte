@@ -144,7 +144,6 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSBefore.countdowns}
 			galleries={data.productCMSBefore.galleries}
-			hideEmailOptions={data.hideEmailOptions}
 			class={data.product.mobile?.hideContentBefore || data.hideCmsZonesOnMobile
 				? 'hidden lg:contents'
 				: ''}
@@ -493,7 +492,6 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSAfter.countdowns}
 			galleries={data.productCMSAfter.galleries}
-			hideEmailOptions={data.hideEmailOptions}
 			class={data.product.mobile?.hideContentAfter || data.hideCmsZonesOnMobile
 				? 'hidden lg:contents'
 				: ''}

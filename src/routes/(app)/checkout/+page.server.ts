@@ -98,8 +98,7 @@ export async function load({ parent, locals }) {
 			cmsCheckoutBottom,
 			cmsCheckoutBottomData: cmsFromContent({ content: cmsCheckoutBottom.content }, locals)
 		}),
-		defaultOnLocation: runtimeConfig.defaultOnLocation,
-		hideEmailOptions: runtimeConfig.hideEmailOptions
+		defaultOnLocation: runtimeConfig.defaultOnLocation
 	};
 }
 

@@ -1,6 +1,5 @@
 import { cmsFromContent } from '$lib/server/cms';
 import { collections } from '$lib/server/database';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { error } from '@sveltejs/kit';
 import { omit } from 'lodash-es';
 
@@ -33,8 +32,7 @@ export async function load({ locals }) {
 				{ content: errorPage.content, mobileContent: errorPage.mobileContent },
 				locals
 			),
-			layoutReset: errorPage.fullScreen,
-			hideEmailOptions: runtimeConfig.hideEmailOptions
+			layoutReset: errorPage.fullScreen
 		};
 	} else {
 		throw error(404, 'Page not found');

@@ -9,6 +9,7 @@
 	import { exchangeRate } from '$lib/stores/exchangeRate';
 	import { useI18n } from '$lib/i18n.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
+	import MultiSelect from 'svelte-multiselect';
 
 	export let data;
 	export let form;
@@ -26,6 +27,13 @@
 	let allPaymentMethods = data.allPaymentMethods;
 
 	const { countryName, sortedCountryCodes, locale, t } = useI18n();
+	let selectedContactMode =
+		data.contactModes?.map((contact) => ({
+			value: contact,
+			label: ['email', 'nostr'].find((cont) => cont === contact) ?? contact
+		})) ?? [];
+
+	$: serializedContactModes = JSON.stringify(selectedContactMode.map((tag) => tag.value));
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -110,15 +118,18 @@
 		</div>
 	</div>
 	<h2 class="text-2xl">Notifications</h2>
-	<label class="checkbox-label">
-		<input
-			type="checkbox"
-			name="hideEmailOptions"
-			class="form-checkbox"
-			checked={data.hideEmailOptions}
+	<!-- svelte-ignore a11y-label-has-associated-control -->
+	<label class="form-label">
+		Contact Modes
+		<MultiSelect
+			options={['email', 'nostr'].map((contact) => ({
+				value: contact,
+				label: contact
+			}))}
+			bind:selected={selectedContactMode}
 		/>
-		Hide email options
 	</label>
+	<input type="hidden" name="contactModes" bind:value={serializedContactModes} />
 
 	<h2 class="text-2xl">Checkout</h2>
 

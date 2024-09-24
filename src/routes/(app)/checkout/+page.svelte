@@ -169,7 +169,6 @@
 			countdowns={data.cmsCheckoutTopData.countdowns}
 			galleries={data.cmsCheckoutTopData.galleries}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
-			hideEmailOptions={data.hideEmailOptions}
 		/>
 	{/if}
 	<div
@@ -499,7 +498,7 @@
 							{label}
 						</div>
 						<div class="p-4 flex flex-col gap-3">
-							{#if data.emailsEnabled && !data.hideEmailOptions}
+							{#if data.emailsEnabled && data.contactModes.includes('email')}
 								<label class="form-label">
 									{t('checkout.notifications.email')}
 									<input
@@ -1035,7 +1034,6 @@
 			countdowns={data.cmsCheckoutBottomData.countdowns}
 			galleries={data.cmsCheckoutBottomData.galleries}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
-			hideEmailOptions={data.hideEmailOptions}
 		/>
 	{/if}
 </main>

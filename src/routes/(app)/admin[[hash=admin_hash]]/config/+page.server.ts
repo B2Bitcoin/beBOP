@@ -6,7 +6,7 @@ import { toCurrency } from '$lib/utils/toCurrency';
 import { typedKeys } from '$lib/utils/typedKeys.js';
 import { adminPrefix } from '$lib/server/admin';
 import { z } from 'zod';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
 
 export async function load(event) {
@@ -34,8 +34,7 @@ export async function load(event) {
 		accountingCurrency: runtimeConfig.accountingCurrency,
 		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin,
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
-		defaultOnLocation: runtimeConfig.defaultOnLocation,
-		hideEmailOptions: runtimeConfig.hideEmailOptions
+		defaultOnLocation: runtimeConfig.defaultOnLocation
 	};
 }
 
@@ -43,7 +42,11 @@ export const actions = {
 	update: async function ({ request }) {
 		const formData = await request.formData();
 		const oldAdminHash = runtimeConfig.adminHash;
-
+		const contactModesString = formData.get('contactModes');
+		if (!contactModesString) {
+			throw error(400, 'No contactModes provided');
+		}
+		const contactModes = JSON.parse(String(contactModesString));
 		const result = z
 			.object({
 				isMaintenance: z.boolean({ coerce: true }),
@@ -89,11 +92,12 @@ export const actions = {
 				displayNewsletterCommercialProspection: z.boolean({ coerce: true }),
 				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0),
 				disableLanguageSelector: z.boolean({ coerce: true }),
-				hideEmailOptions: z.boolean({ coerce: true })
+				contactModes: z.string().array()
 			})
 			.parse({
 				...Object.fromEntries(formData),
-				paymentMethods: formData.getAll('paymentMethods')
+				paymentMethods: formData.getAll('paymentMethods'),
+				contactModes
 			});
 
 		const { paymentMethods: orderedPaymentMethods, ...runtimeConfigUpdates } = {
