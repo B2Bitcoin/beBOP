@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
-	import { includes } from 'lodash-es';
 
 	export let data;
 
