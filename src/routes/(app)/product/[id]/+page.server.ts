@@ -108,7 +108,6 @@ export const load = async ({ params, locals }) => {
 			sort: { percentage: -1 }
 		}
 	);
-	// Génération dynamique du script JSON-LD basé sur les données du produit
 	const jsonLd = {
 		'@context': 'https://schema.org/',
 		'@type': 'Product',
@@ -122,7 +121,7 @@ export const load = async ({ params, locals }) => {
 		},
 		offers: {
 			'@type': 'AggregateOffer',
-			price: product.price.amount, // Prix dynamique
+			price: product.price.amount,
 			priceCurrency: product.price.currency
 		}
 	};
