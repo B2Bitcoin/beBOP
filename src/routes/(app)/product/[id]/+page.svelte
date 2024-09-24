@@ -103,7 +103,6 @@
 		return true;
 	}
 	const { t, locale } = useI18n();
-	let zoom = false;
 </script>
 
 <svelte:head>
@@ -177,16 +176,10 @@
 				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-				<div
-					class="aspect-video w-full overflow-hidden px-4"
-					on:mouseover={() => (zoom = true)}
-					on:mouseout={() => (zoom = false)}
-				>
+				<div class="aspect-video w-full hover:overflow-visible overflow-hidden px-4 group">
 					<Picture
 						picture={currentPicture}
-						class="mx-auto rounded h-full object-contain {`transition-transform duration-300 ease-in-out ${
-							zoom ? 'scale-150' : ''
-						}`}"
+						class="mx-auto rounded h-full object-contain transition duration-500 transform group-hover:scale-150"
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
