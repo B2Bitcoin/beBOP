@@ -174,8 +174,6 @@
 				<!-- add product name -->
 				<h2 class="text-4xl body-title">{data.product.name}</h2>
 				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 				<div class="aspect-video w-full hover:overflow-visible overflow-hidden px-4 group">
 					<Picture
 						picture={currentPicture}
