@@ -123,6 +123,13 @@
 	<meta property="product:price:amount" content={String(data.product.price.amount)} />
 	<meta property="product:price:currency" content={data.product.price.currency} />
 	<meta property="og:type" content="og:product" />
+	{#if data.product.actionSettings.googleShopping.visible}
+		<script type="application/ld+json">
+			{
+				JSON.stringify(jsonLd);
+			}
+		</script>
+	{/if}
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
