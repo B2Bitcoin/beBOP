@@ -188,6 +188,6 @@ export async function load(params) {
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
 		hideCmsZonesOnMobile: runtimeConfig.hideCmsZonesOnMobile,
 		notResponsive: runtimeConfig.viewportFor === 'no-one' ? true : false,
-		cartPreviewReadOnly: runtimeConfig.cartPreviewReadOnly
+		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive
 	};
 }

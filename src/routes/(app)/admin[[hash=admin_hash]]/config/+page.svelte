@@ -114,9 +114,9 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
-			name="cartPreviewReadOnly"
+			name="cartPreviewInteractive"
 			class="form-checkbox"
-			checked={data.cartPreviewReadOnly}
+			checked={data.cartPreviewInteractive}
 		/>
 		Make cart preview interactive
 	</label>
