@@ -2,11 +2,12 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { collections } from '$lib/server/database';
 import { getPrivateS3DownloadLink, getPublicS3DownloadLink } from '$lib/server/s3';
+import { S3_PROXY_DOWNLOADS } from '$env/static/private';
 
 // We prefer to act as a middleman to add cache-control headers
 // Chrome could handle caching with redirects but not Firefox
 // It should also be faster if minio runs locally
-const imageRedirect = false;
+const imageRedirect = S3_PROXY_DOWNLOADS !== 'true';
 
 export const GET: RequestHandler = async ({ params }) => {
 	const picture = await collections.pictures.findOne({
@@ -33,7 +34,7 @@ export const GET: RequestHandler = async ({ params }) => {
 						ResponseCacheControl: 'max-age=31536000, public, immutable'
 					}
 				}),
-				// Helps with chrome. FF doesn't handle :(
+				// Helps with chrome. Firefox doesn't handle :(
 				'cache-control': 'max-age=31536000, public, immutable'
 			}
 		});
