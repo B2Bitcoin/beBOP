@@ -51,6 +51,10 @@
 	$: currentPicture =
 		data.pictures.find((picture) => picture._id === $page.url.searchParams.get('picture')) ??
 		data.pictures[0];
+	const googlePicture =
+		data.pictures.find((picture) => {
+			return picture.storage.formats.find((image) => image.width > 500 && image.height > 500);
+		}) ?? data.pictures[0];
 
 	$: isPreorder = isPreorderFn(data.product.availableDate, data.product.preorder);
 
@@ -109,7 +113,7 @@
 		'@context': `https://schema.org`,
 		'@type': 'Product',
 		name: data.product.name,
-		image: `${$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${data.pictures[0].storage.formats[0].width}`,
+		image: `${$page.url.origin}/picture/raw/${googlePicture._id}/format/${googlePicture.storage.formats[0].width}`,
 		description: data.product.description,
 		offers: {
 			'@type': 'Offer',
