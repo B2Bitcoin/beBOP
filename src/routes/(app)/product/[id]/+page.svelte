@@ -12,7 +12,8 @@
 	import {
 		DEFAULT_MAX_QUANTITY_PER_ORDER,
 		isPreorder as isPreorderFn,
-		oneMaxPerLine
+		oneMaxPerLine,
+		serializeSchema
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
@@ -103,6 +104,18 @@
 		return true;
 	}
 	const { t, locale } = useI18n();
+	const schema = {
+		'@context': 'https://schema.org/',
+		'@type': 'Product',
+		name: data.product.name,
+		image: `${$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${data.pictures[0].storage.formats[0].width}`,
+		description: data.product.description,
+		offers: {
+			'@type': 'Offer',
+			price: data.product.price.amount,
+			priceCurrency: data.product.price.currency
+		}
+	};
 </script>
 
 <svelte:head>
@@ -123,26 +136,27 @@
 	<meta property="product:price:amount" content={String(data.product.price.amount)} />
 	<meta property="product:price:currency" content={data.product.price.currency} />
 	<meta property="og:type" content="og:product" />
+	{#if data.product.actionSettings.googleShopping.visible}
+		{@html serializeSchema(schema)}
+	{/if}
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	{#if data.product.actionSettings.googleShopping.visible}
-		<div>
-			<div itemtype="https://schema.org/Product" itemscope>
-				<meta itemprop="name" content={data.product.name} />
-				<link
-					itemprop="image"
-					href="{$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${data.pictures[0]
-						.storage.formats[0].width}"
-				/>
-				<meta itemprop="description" content={data.product.description} />
-				<div itemprop="offers" itemtype="https://schema.org/Offer" itemscope>
-					<meta itemprop="price" content={data.product.price.amount.toString()} />
-					<meta itemprop="priceCurrency" content={data.product.price.currency} />
-				</div>
+	<div>
+		<div itemtype="https://schema.org/Product" itemscope>
+			<meta itemprop="name" content={data.product.name} />
+			<link
+				itemprop="image"
+				href="{$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${data.pictures[0]
+					.storage.formats[0].width}"
+			/>
+			<meta itemprop="description" content={data.product.description} />
+			<div itemprop="offers" itemtype="https://schema.org/Offer" itemscope>
+				<meta itemprop="price" content={data.product.price.amount.toString()} />
+				<meta itemprop="priceCurrency" content={data.product.price.currency} />
 			</div>
 		</div>
-	{/if}
+	</div>
 
 	{#if data.productCMSBefore}
 		<CmsDesign
