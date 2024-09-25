@@ -137,6 +137,7 @@
 	<meta property="product:price:currency" content={data.product.price.currency} />
 	<meta property="og:type" content="og:product" />
 	{#if data.product.actionSettings.googleShopping.visible}
+		<!-- eslint-disable svelte/no-at-html-tags -->
 		{@html serializeSchema(schema)}
 	{/if}
 </svelte:head>
