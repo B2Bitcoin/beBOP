@@ -6,8 +6,6 @@
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { sum } from '$lib/utils/sum.js';
-	import { sumCurrency } from '$lib/utils/sumCurrency';
-	import { toCurrency } from '$lib/utils/toCurrency';
 	import { marked } from 'marked';
 
 	export let data;
