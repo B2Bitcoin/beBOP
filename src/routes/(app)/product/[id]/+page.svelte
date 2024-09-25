@@ -143,22 +143,6 @@
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
-	<div>
-		<div itemtype="https://schema.org/Product" itemscope>
-			<meta itemprop="name" content={data.product.name} />
-			<link
-				itemprop="image"
-				href="{$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${data.pictures[0]
-					.storage.formats[0].width}"
-			/>
-			<meta itemprop="description" content={data.product.description} />
-			<div itemprop="offers" itemtype="https://schema.org/Offer" itemscope>
-				<meta itemprop="price" content={data.product.price.amount.toString()} />
-				<meta itemprop="priceCurrency" content={data.product.price.currency} />
-			</div>
-		</div>
-	</div>
-
 	{#if data.productCMSBefore}
 		<CmsDesign
 			challenges={data.productCMSBefore.challenges}
