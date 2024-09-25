@@ -9,7 +9,6 @@ import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
-import { ORIGIN } from '$env/static/private';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -108,23 +107,6 @@ export const load = async ({ params, locals }) => {
 			sort: { percentage: -1 }
 		}
 	);
-	const jsonLd = {
-		'@context': 'https://schema.org/',
-		'@type': 'Product',
-		name: product.name,
-		image: `${ORIGIN}/picture/raw/${pictures[0]._id}/format/${pictures[0].storage.formats[0].width}`,
-		description: product.description,
-
-		brand: {
-			'@type': 'Brand',
-			name: product.name
-		},
-		offers: {
-			'@type': 'AggregateOffer',
-			price: product.price.amount,
-			priceCurrency: product.price.currency
-		}
-	};
 
 	return {
 		product,
@@ -137,8 +119,7 @@ export const load = async ({ params, locals }) => {
 			productCMSAfter: cmsFromContent({ content: product.contentAfter }, locals)
 		}),
 		showCheckoutButton: runtimeConfig.checkoutButtonOnProductPage,
-		websiteShortDescription: product.shortDescription,
-		jsonLd
+		websiteShortDescription: product.shortDescription
 	};
 };
 

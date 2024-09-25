@@ -125,9 +125,18 @@
 	<meta property="og:type" content="og:product" />
 	{#if data.product.actionSettings.googleShopping.visible}
 		<script type="application/ld+json">
-			{
-				JSON.stringify(jsonLd);
+		{
+		"@context":"'https://schema.org/",
+		"@type":"Product",
+		"name":product.name,
+		"image":`${page.url.origin}/picture/raw/${currentPicture._id}/format/${currentPicture.storage.formats[0].width}`,
+		"description":product.description,
+		"offers":{
+			"@type":"Offer",
+			"price":product.price.amount,
+			"priceCurrency":product.price.currency
 			}
+		}
 		</script>
 	{/if}
 </svelte:head>
