@@ -21,7 +21,7 @@
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
 	import { serializeSchema } from '$lib/utils/jsonLd.js';
-	import { Thing, WithContext } from 'schema-dts';
+	import type { Product as SchemaOrgProduct, WithContext } from 'schema-dts';
 
 	export let data;
 
@@ -105,8 +105,8 @@
 		return true;
 	}
 	const { t, locale } = useI18n();
-	const schema: WithContext<Thing> = {
-		'@context': 'https://schema.org/',
+	const schema: WithContext<SchemaOrgProduct> = {
+		'@context': `https://schema.org`,
 		'@type': 'Product',
 		name: data.product.name,
 		image: `${$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${data.pictures[0].storage.formats[0].width}`,
