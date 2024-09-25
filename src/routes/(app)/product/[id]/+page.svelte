@@ -20,6 +20,7 @@
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
+	import { onMount } from 'svelte';
 
 	export let data;
 
@@ -103,6 +104,27 @@
 		return true;
 	}
 	const { t, locale } = useI18n();
+	onMount(() => {
+		const jsonLd = {
+			'@context': 'https://schema.org/',
+			'@type': 'Product',
+			name: data.product.name,
+			image: `${$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${data.pictures[0].storage.formats[0].width}`,
+			description: data.product.description,
+			offers: {
+				'@type': 'Offer',
+				price: data.product.price.amount,
+				priceCurrency: data.product.price.currency
+			}
+		};
+
+		if (data.product.actionSettings.googleShopping.visible) {
+			const script = document.createElement('script');
+			script.type = 'application/ld+json';
+			script.textContent = JSON.stringify(jsonLd);
+			document.head.appendChild(script);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -123,22 +145,6 @@
 	<meta property="product:price:amount" content={String(data.product.price.amount)} />
 	<meta property="product:price:currency" content={data.product.price.currency} />
 	<meta property="og:type" content="og:product" />
-	{#if data.product.actionSettings.googleShopping.visible}
-		<script type="application/ld+json">
-		{
-		"@context":"'https://schema.org/",
-		"@type":"Product",
-		"name":product.name,
-		"image":`${page.url.origin}/picture/raw/${currentPicture._id}/format/${currentPicture.storage.formats[0].width}`,
-		"description":product.description,
-		"offers":{
-			"@type":"Offer",
-			"price":product.price.amount,
-			"priceCurrency":product.price.currency
-			}
-		}
-		</script>
-	{/if}
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
