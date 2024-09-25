@@ -12,8 +12,7 @@
 	import {
 		DEFAULT_MAX_QUANTITY_PER_ORDER,
 		isPreorder as isPreorderFn,
-		oneMaxPerLine,
-		serializeSchema
+		oneMaxPerLine
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
@@ -21,6 +20,7 @@
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
+	import { serializeSchema } from '$lib/utils/jsonLd.js';
 
 	export let data;
 

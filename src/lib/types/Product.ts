@@ -95,11 +95,3 @@ export function isPreorder(
 export function oneMaxPerLine(p: Pick<Product, 'standalone' | 'type'>) {
 	return p.standalone || p.type === 'subscription';
 }
-type JsonLdObject = {
-	'@context': string;
-	'@type': string;
-	[key: string]: unknown;
-};
-export function serializeSchema(thing: JsonLdObject) {
-	return `<script type="application/ld+json">${JSON.stringify(thing)}</script>`;
-}

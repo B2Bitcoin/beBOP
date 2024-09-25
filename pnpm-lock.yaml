@@ -94,6 +94,9 @@ dependencies:
   qrcode:
     specifier: ^1.5.3
     version: 1.5.3
+  schema-dts:
+    specifier: ^1.1.2
+    version: 1.1.2(typescript@5.0.4)
   sharp:
     specifier: ^0.32.1
     version: 0.32.1
@@ -4340,6 +4343,14 @@ packages:
     engines: {node: '>=v12.22.7'}
     dependencies:
       xmlchars: 2.2.0
+
+  /schema-dts@1.1.2(typescript@5.0.4):
+    resolution: {integrity: sha512-MpNwH0dZJHinVxk9bT8XUdjKTxMYrA5bLtrrGmFA6PTLwlOKnhi67XoRd6/ty+Djt6ZC0slR57qFhZDNMI6DhQ==}
+    peerDependencies:
+      typescript: '>=4.1.0'
+    dependencies:
+      typescript: 5.0.4
+    dev: false
 
   /selderee@0.11.0:
     resolution: {integrity: sha512-5TF+l7p4+OsnP8BCCvSyZiSPc4x4//p5uPwK8TCnVPJYRmU2aYKMpOXvw8zM5a5JvuuCGN1jmsMwuU2W02ukfA==}
