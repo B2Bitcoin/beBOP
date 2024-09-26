@@ -527,6 +527,7 @@
 			"cancelledOrPending": "Cet appel de paiement n'a pas été honoré et est expiré ou a été annulé",
 			"create": "Télécharger la facture",
 			"createProforma": "Télécharger la pré-facture",
+			"discountExcVat": "Remise HT",
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
 			"fullyPaid": {
 				"message": "Avec ce paiement, la commande {orderNumber} est désormais entièrement payée"

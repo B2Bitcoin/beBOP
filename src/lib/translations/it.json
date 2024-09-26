@@ -527,6 +527,7 @@
 			"cancelledOrPending": "Questa richiesta di pagamento non è stata onorata ed è scaduta o annullata.",
 			"create": "Scarica fattura",
 			"createProforma": "Scarica pre-fattura",
+			"discountExcVat": "Sconto escl. \nI.V.A.",
 			"endMessage": "Rimaniamo a sua disposizione per ogni informazione complementare. <0></0> Cordialmente, <1></1> {businessName}",
 			"fullyPaid": {
 				"message": "Con questo pagamento, l'ordine {orderNumber} è interamente pagato"

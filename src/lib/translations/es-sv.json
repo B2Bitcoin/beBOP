@@ -527,6 +527,7 @@
 			"cancelledOrPending": "Esta solicitud de pago no ha sido atendida y ha expirado o fué cancelada",
 			"create": "Descargar factura",
 			"createProforma": "Descargar cotización",
+			"discountExcVat": "Descuento sin IVA",
 			"endMessage": "Quedamos a disposición para cualquier información adicional. <0></0> Saludos cordiales, <1></1> {businessName}",
 			"fullyPaid": {
 				"message": "Con este pago, el pedido {orderNumber} está completamente pagado"

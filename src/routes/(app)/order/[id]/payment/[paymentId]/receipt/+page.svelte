@@ -6,6 +6,7 @@
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { sum } from '$lib/utils/sum.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 	import { marked } from 'marked';
 
 	export let data;
@@ -24,18 +25,64 @@
 		data.order.billingAddress &&
 		textAddress(data.order.shippingAddress) !== textAddress(data.order.billingAddress);
 
+	const currency = data.order.currencySnapshot.main.totalPrice.currency;
+
+	const totalPriceWithoutDiscount = {
+		currency,
+		amount: data.order.currencySnapshot.main.discount
+			? fixCurrencyRounding(
+					data.order.currencySnapshot.main.totalPrice.amount +
+						data.order.currencySnapshot.main.discount.amount,
+					currency
+			  )
+			: data.order.currencySnapshot.main.totalPrice.amount
+	};
+
 	const discountPercentage = data.order.currencySnapshot.main.discount?.amount
-		? data.order.currencySnapshot.main.discount.amount /
-		  (data.order.currencySnapshot.main.totalPrice.amount +
-				data.order.currencySnapshot.main.discount.amount)
+		? data.order.currencySnapshot.main.discount.amount / totalPriceWithoutDiscount.amount
 		: 0;
-	const totalVat = {
-		currency: data.order.currencySnapshot.main.totalPrice.currency,
+	const totalVatWithoutDiscount = {
+		currency,
 		amount: fixCurrencyRounding(
-			sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0]) *
-				(discountPercentage ? 1 - discountPercentage : 1),
-			data.order.currencySnapshot.main.totalPrice.currency
+			sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0]),
+			currency
 		)
+	};
+	const totalVat = {
+		currency,
+		amount: fixCurrencyRounding(
+			totalVatWithoutDiscount.amount * (discountPercentage ? 1 - discountPercentage : 1),
+			currency
+		)
+	};
+
+	const totalNoTax = {
+		currency,
+		amount: data.order.currencySnapshot.main.totalPrice.amount - totalVat.amount
+	};
+
+	const totalWithoutDiscountNoTax = {
+		amount: sumCurrency(currency, [
+			...data.order.items.map(
+				(item) => item.currencySnapshot.main.customPrice ?? item.currencySnapshot.main.price
+			),
+			data.order.currencySnapshot.main.shippingPrice ?? { amount: 0, currency }
+		]),
+		currency
+	};
+
+	const vatPercentage = totalVat.amount ? totalVat.amount / totalNoTax.amount : 0;
+
+	const discountNoTax = {
+		currency,
+		// Alternative, but not as precise with decimal point:
+		// data.order.currencySnapshot.main.discount?.amount
+		// ? fixCurrencyRounding(
+		// 		data.order.currencySnapshot.main.discount.amount / (1 + vatPercentage),
+		// 		currency
+		//   )
+		// : 0
+		amount: fixCurrencyRounding(totalWithoutDiscountNoTax.amount - totalNoTax.amount, currency)
 	};
 </script>
 
@@ -180,15 +227,11 @@
 			</td>
 		</tr>
 	{/if}
-	{#if data.order.currencySnapshot.main.discount?.amount}
+	{#if discountNoTax.amount}
 		<tr style:background-color="#e7e6e6">
-			<td class="border border-white px-2 text-right">{t('order.discount.title')}</td>
+			<td class="border border-white px-2 text-right">{t('order.receipt.discountExcVat')}</td>
 			<td class="border border-white px-2 text-right whitespace-nowrap">
-				<PriceTag
-					amount={-data.order.currencySnapshot.main.discount.amount}
-					currency={data.order.currencySnapshot.main.discount.currency}
-					inline
-				/>
+				<PriceTag amount={-discountNoTax.amount} currency={discountNoTax.currency} inline />
 			</td>
 		</tr>
 	{/if}
@@ -197,11 +240,7 @@
 			>{t('order.receipt.totalExcVat')}</td
 		>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
-			<PriceTag
-				amount={data.order.currencySnapshot.main.totalPrice.amount - totalVat.amount}
-				currency={data.order.currencySnapshot.main.totalPrice.currency}
-				inline
-			/>
+			<PriceTag amount={totalNoTax.amount} {currency} inline />
 		</td>
 	</tr>
 	<tr style:background-color="#e7e6e6">
