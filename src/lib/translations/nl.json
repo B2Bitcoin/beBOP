@@ -105,6 +105,7 @@
 			"cash": "Contant geld",
 			"free": "Niets te betalen (gratis winkelwagen)",
 			"lightning": "Bliksem",
+			"paypal": "Paypal",
 			"point-of-sale": "Verkooppunt",
 			"unavailable": "Geen betaalmethoden beschikbaar."
 		},
@@ -505,6 +506,7 @@
 		"paymentExpiresAt": "Betalingstermijn: <0></0>",
 		"paymentIban": "IBAN waarnaar de overboeking moet worden verzonden",
 		"paymentLink": "Klik hier om met pin te betalen",
+		"paymentLinkGeneric": "Klik hier om mee te betalen",
 		"paymentPaidAt": "Betaling gedaan op {date}",
 		"paymentStatus": {
 			"canceled": "geannuleerd",
