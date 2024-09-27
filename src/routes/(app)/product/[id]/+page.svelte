@@ -120,6 +120,11 @@
 			priceCurrency: data.product.price.currency
 		}
 	};
+
+	let isZoomed = false;
+	function handleClick() {
+		isZoomed = !isZoomed;
+	}
 </script>
 
 <svelte:head>
@@ -193,12 +198,19 @@
 		<div class="flex flex-col lg:grid lg:grid-cols-[70%_1fr] gap-2 grow pb-12">
 			<div class="flex flex-col gap-4">
 				<!-- add product name -->
-				<h2 class="text-4xl body-title">{data.product.name}</h2>
+				<h1 class="text-4xl body-title">{data.product.name}</h1>
 				<!-- Getting this right with rounded borders on both chrome & FF is painful, chrome NEEDs overflow-hidden -->
-				<div class="aspect-video w-full overflow-hidden px-4">
+				<div
+					class="aspect-video w-full lg:hover:overflow-visible {isZoomed
+						? 'overflow-visible'
+						: 'overflow-hidden'} overflow-hidden px-4 group"
+				>
 					<Picture
 						picture={currentPicture}
-						class="mx-auto rounded h-full object-contain"
+						on:click={handleClick}
+						class="mx-auto rounded h-full object-contain transition duration-500 transform lg:group-hover:scale-150 {isZoomed
+							? 'lg:scale-100 scale-150'
+							: ''}"
 						sizes="(min-width: 1280px) 896px, 70vw"
 					/>
 				</div>
