@@ -479,7 +479,7 @@
 		"paidWith": {
 			"bank-transfer": "Pagato con: bonifico bancario verificato",
 			"bitcoin": "Pagato con: pagamento Bitcoin sulla blockchain (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento dell'ordine",
-			"card": "Pagato con: carta bancaria tramite Sum UP",
+			"card": "Pagato con: carta bancaria",
 			"free": "Nessun pagamento",
 			"lightning": "Pagato con: transazione Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento dell'ordine)",
 			"point-of-sale": "Pagato in magazzino"
@@ -487,7 +487,7 @@
 		"paidWithSummary": {
 			"bank-transfer": "Pagato con: bonifico bancario verificato",
 			"bitcoin": "Pagato con: pagamento Bitcoin sulla blockchain",
-			"card": "Pagato con: carta bancaria tramite Sum UP",
+			"card": "Pagato con: carta bancaria",
 			"free": "Nessun pagamento",
 			"lightning": "Pagato con: transazione Lightning",
 			"point-of-sale": "Pagato in magazzino"
@@ -527,6 +527,7 @@
 			"cancelledOrPending": "Questa richiesta di pagamento non è stata onorata ed è scaduta o annullata.",
 			"create": "Scarica fattura",
 			"createProforma": "Scarica pre-fattura",
+			"discountExcVat": "Sconto escl. \nI.V.A.",
 			"endMessage": "Rimaniamo a sua disposizione per ogni informazione complementare. <0></0> Cordialmente, <1></1> {businessName}",
 			"fullyPaid": {
 				"message": "Con questo pagamento, l'ordine {orderNumber} è interamente pagato"
