@@ -71,8 +71,6 @@
 		currency
 	};
 
-	const vatPercentage = totalVat.amount ? totalVat.amount / totalNoTax.amount : 0;
-
 	const discountNoTax = {
 		currency,
 		// Alternative, but not as precise with decimal point:
