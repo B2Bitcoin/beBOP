@@ -109,9 +109,9 @@
 		'@context': `https://schema.org`,
 		'@type': 'Product',
 		name: data.product.name,
-		image: `${$page.url.origin}/picture/raw/${currentPicture?._id}/format/${
-			currentPicture?.storage.formats.find((image) => image.width >= 500 && image.height >= 500)
-				?.width ?? currentPicture?.storage.formats[0].width
+		image: `${$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${
+			data.pictures[0].storage.formats.find((image) => image.width >= 500 && image.height >= 500)
+				?.width ?? data.pictures[0].storage.formats[0].width
 		}`,
 		description: data.product.description,
 		offers: {
