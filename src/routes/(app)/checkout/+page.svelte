@@ -520,7 +520,9 @@
 									bind:value={npubs[key]}
 									name="{key}NPUB"
 									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus' && !emails[key] && data.roleId !== POS_ROLE_ID}
+									required={key === 'paymentStatus' &&
+										(!emails[key] || !data.contactModes.includes('email')) &&
+										data.roleId !== POS_ROLE_ID}
 									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
 								/>
 							</label>
