@@ -479,7 +479,7 @@
 		"paidWith": {
 			"bank-transfer": "Paid with: verified bank transfer",
 			"bitcoin": "Paid with: Bitcoin on-chain payment (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
-			"card": "Paid with: bank card via Sum UP",
+			"card": "Paid with: bank card",
 			"free": "Paid Nothing",
 			"lightning": "Paid with: Lightning transaction (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
 			"point-of-sale": "Paid in store"
@@ -487,7 +487,7 @@
 		"paidWithSummary": {
 			"bank-transfer": "Paid with: verified bank transfer",
 			"bitcoin": "Paid with: Bitcoin on-chain payment",
-			"card": "Paid with: bank card via Sum UP",
+			"card": "Paid with: bank card",
 			"free": "Paid Nothing",
 			"lightning": "Paid with: Lightning transaction",
 			"point-of-sale": "Paid in store"
@@ -527,6 +527,7 @@
 			"cancelledOrPending": "This call for payment has not been honored and has expired or been canceled",
 			"create": "Download invoice",
 			"createProforma": "Download pre-invoice",
+			"discountExcVat": "Discount Excl. VAT",
 			"endMessage": "We stay at your disposal for any further information. <0></0> Best regards, <1></1> {businessName}",
 			"fullyPaid": {
 				"message": "With this payment, the order {orderNumber} is now fully paid"

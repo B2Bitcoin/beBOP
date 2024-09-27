@@ -4,7 +4,9 @@
 	import Trans from '$lib/components/Trans.svelte';
 	import { useI18n } from '$lib/i18n.js';
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding';
 	import { sum } from '$lib/utils/sum.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 	import { marked } from 'marked';
 
 	export let data;
@@ -23,9 +25,62 @@
 		data.order.billingAddress &&
 		textAddress(data.order.shippingAddress) !== textAddress(data.order.billingAddress);
 
+	const currency = data.order.currencySnapshot.main.totalPrice.currency;
+
+	const totalPriceWithoutDiscount = {
+		currency,
+		amount: data.order.currencySnapshot.main.discount
+			? fixCurrencyRounding(
+					data.order.currencySnapshot.main.totalPrice.amount +
+						data.order.currencySnapshot.main.discount.amount,
+					currency
+			  )
+			: data.order.currencySnapshot.main.totalPrice.amount
+	};
+
+	const discountPercentage = data.order.currencySnapshot.main.discount?.amount
+		? data.order.currencySnapshot.main.discount.amount / totalPriceWithoutDiscount.amount
+		: 0;
+	const totalVatWithoutDiscount = {
+		currency,
+		amount: fixCurrencyRounding(
+			sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0]),
+			currency
+		)
+	};
 	const totalVat = {
-		currency: data.order.currencySnapshot.main.totalPrice.currency,
-		amount: sum(data.order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? [0])
+		currency,
+		amount: fixCurrencyRounding(
+			totalVatWithoutDiscount.amount * (discountPercentage ? 1 - discountPercentage : 1),
+			currency
+		)
+	};
+
+	const totalNoTax = {
+		currency,
+		amount: data.order.currencySnapshot.main.totalPrice.amount - totalVat.amount
+	};
+
+	const totalWithoutDiscountNoTax = {
+		amount: sumCurrency(currency, [
+			...data.order.items.map(
+				(item) => item.currencySnapshot.main.customPrice ?? item.currencySnapshot.main.price
+			),
+			data.order.currencySnapshot.main.shippingPrice ?? { amount: 0, currency }
+		]),
+		currency
+	};
+
+	const discountNoTax = {
+		currency,
+		// Alternative, but not as precise with decimal point:
+		// data.order.currencySnapshot.main.discount?.amount
+		// ? fixCurrencyRounding(
+		// 		data.order.currencySnapshot.main.discount.amount / (1 + vatPercentage),
+		// 		currency
+		//   )
+		// : 0
+		amount: fixCurrencyRounding(totalWithoutDiscountNoTax.amount - totalNoTax.amount, currency)
 	};
 </script>
 
@@ -158,19 +213,7 @@
 </table>
 
 <table class="mt-4 border-collapse">
-	<tr style:background-color="#fef2cc">
-		<td class="border border-white px-2 text-right" style="width: 70%"
-			>{t('order.receipt.totalExcVat')}</td
-		>
-		<td class="border border-white px-2 text-right whitespace-nowrap">
-			<PriceTag
-				amount={data.order.currencySnapshot.main.totalPrice.amount - totalVat.amount}
-				currency={data.order.currencySnapshot.main.totalPrice.currency}
-				inline
-			/>
-		</td>
-	</tr>
-	{#if data.order.shippingPrice && data.order.currencySnapshot.main.shippingPrice}
+	{#if data.order.shippingPrice && data.order.currencySnapshot.main.shippingPrice?.amount}
 		<tr style:background-color="#e7e6e6">
 			<td class="border border-white px-2 text-right">{t('checkout.deliveryFees')}</td>
 			<td class="border border-white px-2 text-right whitespace-nowrap">
@@ -182,6 +225,22 @@
 			</td>
 		</tr>
 	{/if}
+	{#if discountNoTax.amount}
+		<tr style:background-color="#e7e6e6">
+			<td class="border border-white px-2 text-right">{t('order.receipt.discountExcVat')}</td>
+			<td class="border border-white px-2 text-right whitespace-nowrap">
+				<PriceTag amount={-discountNoTax.amount} currency={discountNoTax.currency} inline />
+			</td>
+		</tr>
+	{/if}
+	<tr style:background-color="#fef2cc">
+		<td class="border border-white px-2 text-right" style="width: 70%"
+			>{t('order.receipt.totalExcVat')}</td
+		>
+		<td class="border border-white px-2 text-right whitespace-nowrap">
+			<PriceTag amount={totalNoTax.amount} {currency} inline />
+		</td>
+	</tr>
 	<tr style:background-color="#e7e6e6">
 		<td class="border border-white px-2 text-right">{t('order.receipt.totalVat')}</td>
 		<td class="border border-white px-2 text-right whitespace-nowrap">
