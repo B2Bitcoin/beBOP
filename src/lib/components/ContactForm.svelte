@@ -34,18 +34,14 @@
 			{t('contactForm.from')}
 			<input
 				class="form-input"
-				type="text"
+				type={$page.data.contactModes.includes('email') ? 'email' : 'text'}
 				maxlength={MAX_NAME_LIMIT}
 				name="from"
 				placeholder="From"
 				value={contactForm.prefillWithSession && $page.data.contactModes.includes('email')
 					? sessionEmail ?? ''
 					: ''}
-				pattern={$page.data.contactModes.includes('email')
-					? ''
-					: $page.data.contactModes.includes('nostr')
-					? '^(?!.*@).*'
-					: '^(?!npub).*'}
+				pattern={$page.data.contactModes.includes('nostr') ? '' : '^(?!npub).*'}
 			/>
 		</label>
 	{/if}
