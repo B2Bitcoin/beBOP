@@ -10,8 +10,6 @@
 	import { useI18n } from '$lib/i18n.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import MultiSelect from 'svelte-multiselect';
-	import { each } from 'lodash-es';
-
 	export let data;
 	export let form;
 
