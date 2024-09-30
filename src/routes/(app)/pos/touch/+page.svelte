@@ -79,7 +79,7 @@
 </script>
 
 <div class="grid grid-cols-3 gap-4">
-	<div class="touchScreen-ticket-menu p-3">
+	<div class="touchScreen-ticket-menu h-full p-3">
 		{#if items.length}
 			<h3 class="text-3xl">TICKET n° tmp</h3>
 			{#each items as item, i}
@@ -187,56 +187,58 @@
 	</div>
 </div>
 
-<div class="grid grid-cols-3 gap-4 mt-2">
-	<button
-		class="touchScreen-ticket-menu text-3xl p-4 text-center"
-		on:click={() => alert('Not developped yet')}>TICKETS</button
-	>
-	<div class="col-span-2 grid grid-cols-3 gap-4">
+<div class="fixed w-full justify-between mr-12 bottom-0">
+	<div class="grid grid-cols-3 gap-4 mt-2">
 		<button
-			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
-			on:click={() => alert('Not developped yet')}>SAUVER</button
+			class="touchScreen-ticket-menu text-3xl p-4 text-center"
+			on:click={() => alert('Not developped yet')}>TICKETS</button
 		>
-		<button
-			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
-			on:click={() => alert('Not developped yet')}>POOL</button
-		>
-		<button
-			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
-			on:click={() => alert('Not developped yet')}>OUVRIR TIROIR</button
-		>
+		<div class="col-span-2 grid grid-cols-3 gap-4">
+			<button
+				class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+				on:click={() => alert('Not developped yet')}>SAUVER</button
+			>
+			<button
+				class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+				on:click={() => alert('Not developped yet')}>POOL</button
+			>
+			<button
+				class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+				on:click={() => alert('Not developped yet')}>OUVRIR TIROIR</button
+			>
+		</div>
 	</div>
-</div>
-<div class="grid grid-cols-2 gap-4 mt-2">
-	<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
-	<form
-		method="post"
-		class="grid grid-cols-2 gap-4"
-		use:enhance={(event) => {
-			if (!confirm(warningMessage)) {
-				event.cancel();
-				return;
-			}
-			return async ({ result }) => {
-				if (result.type === 'error') {
-					alert(result.error?.message);
-					return await applyAction(result);
+	<div class="grid grid-cols-2 gap-4 mt-2">
+		<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
+		<form
+			method="post"
+			class="grid grid-cols-2 gap-4"
+			use:enhance={(event) => {
+				if (!confirm(warningMessage)) {
+					event.cancel();
+					return;
 				}
-				await invalidate(UrlDependency.Cart);
-			};
-		}}
-	>
-		<button
-			class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center"
-			disabled={!items.length}
-			formaction="/cart/{lastItemId}/?/remove"
-			on:click={() => (warningMessage = 'Do you want to delete the last cart line ?')}>❎</button
+				return async ({ result }) => {
+					if (result.type === 'error') {
+						alert(result.error?.message);
+						return await applyAction(result);
+					}
+					await invalidate(UrlDependency.Cart);
+				};
+			}}
 		>
-		<button
-			class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center"
-			disabled={!items.length}
-			formaction="/cart/?/removeAll"
-			on:click={() => (warningMessage = 'Do you want to delete all cart line ?')}>🗑️</button
-		>
-	</form>
+			<button
+				class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center"
+				disabled={!items.length}
+				formaction="/cart/{lastItemId}/?/remove"
+				on:click={() => (warningMessage = 'Do you want to delete the last cart line ?')}>❎</button
+			>
+			<button
+				class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center"
+				disabled={!items.length}
+				formaction="/cart/?/removeAll"
+				on:click={() => (warningMessage = 'Do you want to delete all cart line ?')}>🗑️</button
+			>
+		</form>
+	</div>
 </div>
