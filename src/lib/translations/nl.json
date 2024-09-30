@@ -105,6 +105,7 @@
 			"cash": "Contant geld",
 			"free": "Niets te betalen (gratis winkelwagen)",
 			"lightning": "Bliksem",
+			"paypal": "Paypal",
 			"point-of-sale": "Verkooppunt",
 			"unavailable": "Geen betaalmethoden beschikbaar."
 		},
@@ -478,7 +479,7 @@
 		"paidWith": {
 			"bank-transfer": "Betaald met: geverifieerde bankoverschrijving",
 			"bitcoin": "Betaald met: Bitcoin on-chain betaling (1 {paymentCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
-			"card": "Betaald met: bankkaart via Sum UP",
+			"card": "Betaald met: bankkaart",
 			"free": "Niets betaald",
 			"lightning": "Betaald met: Lightning-transactie (1 {paymentCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
 			"point-of-sale": "Betaald in de winkel"
@@ -486,7 +487,7 @@
 		"paidWithSummary": {
 			"bank-transfer": "Betaald met: geverifieerde bankoverschrijving",
 			"bitcoin": "Betaald met: Bitcoin on-chain betaling",
-			"card": "Betaald met: bankkaart via Sum UP",
+			"card": "Betaald met: bankkaart",
 			"free": "Niets betaald",
 			"lightning": "Betaald met: Lightning-transactie",
 			"point-of-sale": "Betaald in de winkel"
@@ -505,6 +506,7 @@
 		"paymentExpiresAt": "Betalingstermijn: <0></0>",
 		"paymentIban": "IBAN waarnaar de overboeking moet worden verzonden",
 		"paymentLink": "Klik hier om met pin te betalen",
+		"paymentLinkGeneric": "Klik hier om mee te betalen",
 		"paymentPaidAt": "Betaling gedaan op {date}",
 		"paymentStatus": {
 			"canceled": "geannuleerd",
@@ -525,6 +527,7 @@
 			"cancelledOrPending": "Deze oproep tot betaling is niet gehonoreerd en is verlopen of geannuleerd",
 			"create": "Factuur downloaden",
 			"createProforma": "Voorfactuur downloaden",
+			"discountExcVat": "Korting Excl. \nVAT",
 			"endMessage": "Wij staan ​​tot uw beschikking voor verdere informatie. \n<0></0> Met vriendelijke groet, <1></1> {businessName}",
 			"fullyPaid": {
 				"message": "Met deze betaling is de bestelling {orderNumber} nu volledig betaald"
@@ -539,8 +542,8 @@
 			"quantity": "Aantal",
 			"remainingAmount": "Resterend bedrag te betalen",
 			"summaryTitle": "Samenvatting van de bestelling #{number}",
-			"totalExcVat": "Totaal Excl. \nVAT",
-			"totalInclVat": "Totaal Incl. \nVAT",
+			"totalExcVat": "Totaal Excl. VAT",
+			"totalInclVat": "Totaal Incl. VAT",
 			"totalVat": "Totale BTW",
 			"unitPrice": "Eenheid prijs",
 			"vatFreeReason": "Vrijgesteld van btw: {reason}"

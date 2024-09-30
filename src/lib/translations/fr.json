@@ -105,6 +105,7 @@
 			"cash": "Espèces",
 			"free": "Rien à payer (panier gratuit)",
 			"lightning": "Lightning",
+			"paypal": "Paypal",
 			"point-of-sale": "Point of sale",
 			"unavailable": "Aucun mode de paiement disponible."
 		},
@@ -478,7 +479,7 @@
 		"paidWith": {
 			"bank-transfer": "Payé avec : virement bancaire vérifié",
 			"bitcoin": "Payé avec : Paiement Bitcoin on-chain (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
-			"card": "Payé avec : carte bancaire via Sum UP",
+			"card": "Payé avec : carte bancaire",
 			"free": "N'a rien payé",
 			"lightning": "Payé avec : Transaction Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
 			"point-of-sale": "Payé en magasin"
@@ -486,7 +487,7 @@
 		"paidWithSummary": {
 			"bank-transfer": "Payé avec : virement bancaire vérifié",
 			"bitcoin": "Payé avec : Paiement Bitcoin on-chain",
-			"card": "Payé avec : carte bancaire via Sum UP",
+			"card": "Payé avec : carte bancaire",
 			"free": "N'a rien payé",
 			"lightning": "Payé avec : Transaction Lightning",
 			"point-of-sale": "Payé en magasin"
@@ -505,6 +506,7 @@
 		"paymentExpiresAt": "Date limite de paiement: <0></0>",
 		"paymentIban": "IBAN de paiement",
 		"paymentLink": "Cliquez pour payer par carte avec",
+		"paymentLinkGeneric": "Cliquez ici pour payer avec",
 		"paymentPaidAt": "Paiement effectué le {date}",
 		"paymentStatus": {
 			"canceled": "annulé",
@@ -525,6 +527,7 @@
 			"cancelledOrPending": "Cet appel de paiement n'a pas été honoré et est expiré ou a été annulé",
 			"create": "Télécharger la facture",
 			"createProforma": "Télécharger la pré-facture",
+			"discountExcVat": "Remise HT",
 			"endMessage": "Nous restons à votre disposition pour tout renseignement complémentaire. \n<0></0> Cordialement, <1></1> {businessName}",
 			"fullyPaid": {
 				"message": "Avec ce paiement, la commande {orderNumber} est désormais entièrement payée"

@@ -105,6 +105,7 @@
 			"cash": "Efectivo",
 			"free": "Nada que pagar (lista de compras de gratis)",
 			"lightning": "Lightning",
+			"paypal": "Paypal",
 			"point-of-sale": "Punto de venta",
 			"unavailable": "No hay métodos de pago disponibles."
 		},
@@ -478,7 +479,7 @@
 		"paidWith": {
 			"bank-transfer": "Pagado con: transferencia bancaria verificada",
 			"bitcoin": "Pagado con: pago en Bitcoin (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento del pedido)",
-			"card": "Pagado con: tarjeta bancaria vía Sum UP",
+			"card": "Pagado con: tarjeta bancaria",
 			"free": "No se pagó nada",
 			"lightning": "Pagado con: transacción Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento del pedido)",
 			"point-of-sale": "Pagado en tienda"
@@ -486,7 +487,7 @@
 		"paidWithSummary": {
 			"bank-transfer": "Pagado con: transferencia bancaria verificada",
 			"bitcoin": "Pagado con: transferencia de Bitcoin",
-			"card": "Pagado con: tarjeta bancaria vía Sum UP",
+			"card": "Pagado con: tarjeta bancaria",
 			"free": "No se pagó nada",
 			"lightning": "Pagado con: transacción Lightning",
 			"point-of-sale": "Pagado en tienda"
@@ -505,6 +506,7 @@
 		"paymentExpiresAt": "Fecha límite de pago: <0></0>",
 		"paymentIban": "IBAN para enviar la transferencia bancaria",
 		"paymentLink": "Clic aquí para pagar con tarjeta",
+		"paymentLinkGeneric": "Haga clic aquí para pagar con",
 		"paymentPaidAt": "Pago realizado el {date}",
 		"paymentStatus": {
 			"canceled": "cancelado",
@@ -525,6 +527,7 @@
 			"cancelledOrPending": "Esta solicitud de pago no ha sido atendida y ha expirado o fué cancelada",
 			"create": "Descargar factura",
 			"createProforma": "Descargar cotización",
+			"discountExcVat": "Descuento sin IVA",
 			"endMessage": "Quedamos a disposición para cualquier información adicional. <0></0> Saludos cordiales, <1></1> {businessName}",
 			"fullyPaid": {
 				"message": "Con este pago, el pedido {orderNumber} está completamente pagado"
