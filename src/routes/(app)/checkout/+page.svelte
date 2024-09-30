@@ -34,8 +34,13 @@
 	$: offerDeliveryFees = onLocation;
 	let addDiscount = false;
 	let offerOrder = false;
-	$: discountAmount = offerOrder ? 100 : 0;
-	$: discountType = (offerOrder ? 'percentage' : 'fiat') as DiscountType;
+	let discountAmount = 0;
+	let discountType: DiscountType;
+	$: if (offerOrder) {
+		discountType = 'percentage';
+		discountAmount = 100;
+	}
+
 	let multiplePaymentMethods = false;
 
 	const { t, locale, countryName, sortedCountryCodes } = useI18n();
