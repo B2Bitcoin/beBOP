@@ -33,8 +33,9 @@
 	let onLocation = data.defaultOnLocation;
 	$: offerDeliveryFees = onLocation;
 	let addDiscount = false;
-	let discountAmount = 0;
-	let discountType: DiscountType;
+	let offerOrder = false;
+	$: discountAmount = offerOrder ? 100 : 0;
+	$: discountType = (offerOrder ? 'percentage' : 'fiat') as DiscountType;
 	let multiplePaymentMethods = false;
 
 	const { t, locale, countryName, sortedCountryCodes } = useI18n();
@@ -959,13 +960,23 @@
 							required
 						>
 							<option value="fiat">{data.currencies.main}</option>
-							<option value="percentage">%</option>
+							<option value="percentage" selected={offerOrder}>%</option>
 						</select>
 
 						{#if discountAmount && !isDiscountValid}
 							<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
 						{/if}
-
+						<label class="checkbox-labe col-span-3">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								form="checkout"
+								name="offerOrder"
+								bind:checked={offerOrder}
+								required
+							/>
+							{t('pos.offerOrder')}
+						</label>
 						<label class="form-label col-span-3">
 							{t('pos.discountJustification')}
 							<input
