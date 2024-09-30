@@ -507,25 +507,29 @@
 										autocomplete="email"
 										name="{key}Email"
 										bind:value={emails[key]}
-										required={key === 'paymentStatus' && data.roleId !== POS_ROLE_ID && !npubs[key]}
+										required={key === 'paymentStatus' &&
+											data.roleId !== POS_ROLE_ID &&
+											(!npubs[key] || !data.contactModes.includes('nostr'))}
 									/>
 								</label>
 							{/if}
-							<label class="form-label">
-								{t('checkout.notifications.npub')}
-								<input
-									type="text"
-									class="form-input"
-									bind:this={npubInputs[key]}
-									bind:value={npubs[key]}
-									name="{key}NPUB"
-									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus' &&
-										(!emails[key] || !data.contactModes.includes('email')) &&
-										data.roleId !== POS_ROLE_ID}
-									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
-								/>
-							</label>
+							{#if data.contactModes.includes('nostr')}
+								<label class="form-label">
+									{t('checkout.notifications.npub')}
+									<input
+										type="text"
+										class="form-input"
+										bind:this={npubInputs[key]}
+										bind:value={npubs[key]}
+										name="{key}NPUB"
+										placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+										required={key === 'paymentStatus' &&
+											(!emails[key] || !data.contactModes.includes('email')) &&
+											data.roleId !== POS_ROLE_ID}
+										on:change={(ev) => ev.currentTarget.setCustomValidity('')}
+									/>
+								</label>
+							{/if}
 						</div>
 						{#if data.displayNewsletterCommercialProspection}
 							<div class="p-4 flex flex-col gap-3">

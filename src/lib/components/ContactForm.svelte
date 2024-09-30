@@ -41,7 +41,11 @@
 				value={contactForm.prefillWithSession && $page.data.contactModes.includes('email')
 					? sessionEmail ?? ''
 					: ''}
-				pattern={$page.data.contactModes.includes('email') ? '' : '^(?!.*@).*'}
+				pattern={$page.data.contactModes.includes('email')
+					? ''
+					: $page.data.contactModes.includes('nostr')
+					? '^(?!.*@).*'
+					: '^(?!npub).*'}
 			/>
 		</label>
 	{/if}

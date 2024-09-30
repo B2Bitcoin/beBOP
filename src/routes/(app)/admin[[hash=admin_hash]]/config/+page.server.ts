@@ -6,7 +6,7 @@ import { toCurrency } from '$lib/utils/toCurrency';
 import { typedKeys } from '$lib/utils/typedKeys.js';
 import { adminPrefix } from '$lib/server/admin';
 import { z } from 'zod';
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
 
 export async function load(event) {
@@ -43,11 +43,7 @@ export const actions = {
 	update: async function ({ request }) {
 		const formData = await request.formData();
 		const oldAdminHash = runtimeConfig.adminHash;
-		const contactModesString = formData.get('contactModes');
-		if (!contactModesString) {
-			throw error(400, 'No contactModes provided');
-		}
-		const contactModes = JSON.parse(String(contactModesString));
+
 		const result = z
 			.object({
 				isMaintenance: z.boolean({ coerce: true }),
@@ -99,7 +95,7 @@ export const actions = {
 			.parse({
 				...Object.fromEntries(formData),
 				paymentMethods: formData.getAll('paymentMethods'),
-				contactModes
+				contactModes: formData.getAll('contactModes')
 			});
 
 		const { paymentMethods: orderedPaymentMethods, ...runtimeConfigUpdates } = {

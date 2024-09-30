@@ -10,6 +10,7 @@
 	import { useI18n } from '$lib/i18n.js';
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import MultiSelect from 'svelte-multiselect';
+	import { each } from 'lodash-es';
 
 	export let data;
 	export let form;
@@ -32,8 +33,6 @@
 			value: contact,
 			label: ['email', 'nostr'].find((cont) => cont === contact) ?? contact
 		})) ?? [];
-
-	$: serializedContactModes = JSON.stringify(selectedContactMode.map((tag) => tag.value));
 </script>
 
 <h1 class="text-3xl">Config</h1>
@@ -127,9 +126,12 @@
 				label: contact
 			}))}
 			bind:selected={selectedContactMode}
+			required
 		/>
 	</label>
-	<input type="hidden" name="contactModes" bind:value={serializedContactModes} />
+	{#each selectedContactMode as contactMode}
+		<input type="hidden" name="contactModes" value={contactMode.value} />
+	{/each}
 	<h2 class="text-2xl">Cart preview</h2>
 
 	<label class="checkbox-label">
