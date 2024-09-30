@@ -36,9 +36,15 @@
 	let offerOrder = false;
 	let discountAmount = 0;
 	let discountType: DiscountType;
-	$: if (offerOrder) {
-		discountType = 'percentage';
-		discountAmount = 100;
+	$: {
+		if (offerOrder) {
+			discountType = 'percentage';
+			discountAmount = 100;
+		} else {
+			if (discountType !== 'percentage' || discountAmount !== 100) {
+				offerOrder = false;
+			}
+		}
 	}
 
 	let multiplePaymentMethods = false;
@@ -965,7 +971,7 @@
 							required
 						>
 							<option value="fiat">{data.currencies.main}</option>
-							<option value="percentage" selected={offerOrder}>%</option>
+							<option value="percentage">%</option>
 						</select>
 
 						{#if discountAmount && !isDiscountValid}
