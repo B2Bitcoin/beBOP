@@ -590,6 +590,7 @@
 			"title": "Últimos pedidos"
 		},
 		"offerDeliveryFees": "Anular tarifas de entrega para este pedido",
+		"offerOrder": "Orden de oferta",
 		"order": {
 			"satReceived": "recibido"
 		},

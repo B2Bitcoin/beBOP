@@ -590,6 +590,7 @@
 			"title": "Laatste bestellingen"
 		},
 		"offerDeliveryFees": "Maak de bezorgkosten voor deze bestelling ongeldig",
+		"offerOrder": "Bied bestelling aan",
 		"order": {
 			"satReceived": "ontvangen"
 		},
