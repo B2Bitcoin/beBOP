@@ -9,6 +9,7 @@
 
 		prompt('Your NostR private key is:', bech32.encode('nsec', bech32.toWords(hex)));
 	}
+	let relays = data.nostrRelays;
 </script>
 
 <h1 class="text-3xl">NostR</h1>
@@ -81,12 +82,29 @@
 </form>
 
 <h2 class="text-2xl">Relays</h2>
-
-<ul>
-	{#each data.nostrRelays as relay}
-		<li>{relay}</li>
-	{/each}
-</ul>
+<form action="?/updateRelays" method="post" class="flex flex-col gap-4">
+	<ul>
+		{#each relays as relay}
+			<li>
+				{relay}<button type="button" on:click={() => (relays = relays.filter((r) => r !== relay))}
+					>🗑️</button
+				>
+			</li>
+			<input type="hidden" name="relays" value={relay} />
+		{/each}
+	</ul>
+	<label class="form-label">
+		Relay
+		<input
+			class="form-input"
+			type="text"
+			name="relays"
+			placeholder="wss://new.relay.url"
+			pattern="wss://.*"
+		/>
+	</label>
+	<button class="btn btn-black self-start" type="submit">Update relay list</button>
+</form>
 <div class="flex items-center gap-2 text-2xl">
 	Intro Message <div
 		class="contents"

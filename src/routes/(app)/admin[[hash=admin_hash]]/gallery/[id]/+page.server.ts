@@ -7,8 +7,6 @@ import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { adminPrefix } from '$lib/server/admin';
 import { deletePicture, generatePicture } from '$lib/server/picture';
-import { S3_BUCKET } from '$env/static/private';
-import { getPrivateS3DownloadLink, s3client } from '$lib/server/s3';
 import { zodSlug } from '$lib/server/zod';
 
 export const load = async ({ params }) => {
@@ -62,35 +60,8 @@ export const actions: Actions = {
 					sec.pictureId &&
 					!gallery.secondary.find((secondGallery) => secondGallery.pictureId === sec.pictureId)
 				) {
-					const pendingPicture = await collections.pendingPictures.findOne({
-						_id: sec.pictureId
-					});
-
-					if (!pendingPicture) {
-						throw error(400, 'Error when uploading picture');
-					}
-
-					const resp = await fetch(
-						await getPrivateS3DownloadLink(pendingPicture.storage.original.key)
-					);
-
-					if (!resp.ok) {
-						throw error(400, 'Error when uploading picture');
-					}
-
-					const buffer = await resp.arrayBuffer();
-					await generatePicture(Buffer.from(buffer), sec.pictureId, {
-						galleryId: parsed.slug,
-						cb: async (session) => {
-							await s3client
-								.deleteObject({
-									Key: pendingPicture.storage.original.key,
-									Bucket: S3_BUCKET
-								})
-								.catch();
-
-							await collections.pendingPictures.deleteOne({ _id: sec.pictureId }, { session });
-						}
+					await generatePicture(sec.pictureId, {
+						galleryId: parsed.slug
 					});
 				}
 			})

@@ -126,6 +126,10 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/phoenixd',
 				label: 'PhoenixD'
+			},
+			{
+				href: '/admin/paypal',
+				label: 'Paypal'
 			}
 			// {
 			// 	href: '/admin/bity',

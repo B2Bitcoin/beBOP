@@ -206,6 +206,9 @@ async function handleOrderNotification(order: Order): Promise<void> {
 							case 'bank-transfer':
 								templateKey = 'order.payment.pending.bank-transfer';
 								break;
+							case 'paypal':
+								templateKey = 'order.payment.pending.paypal';
+								break;
 							case 'point-of-sale':
 							case 'free':
 								// no email

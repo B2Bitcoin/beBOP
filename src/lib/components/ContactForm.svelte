@@ -6,7 +6,13 @@
 
 	export let contactForm: Pick<
 		ContactForm,
-		'_id' | 'subject' | 'content' | 'target' | 'displayFromField' | 'prefillWithSession'
+		| '_id'
+		| 'subject'
+		| 'content'
+		| 'target'
+		| 'displayFromField'
+		| 'prefillWithSession'
+		| 'disclaimer'
 	>;
 	export let sessionEmail: string | undefined = undefined;
 	let className = '';
@@ -14,6 +20,7 @@
 
 	let subject = contactForm.subject;
 	let content = contactForm.content;
+	let mandatoryAgreement = false;
 	const { t } = useI18n();
 </script>
 
@@ -22,7 +29,6 @@
 	action="/form/{contactForm._id}?/sendEmail"
 	class="relative mx-auto tagWidget flex flex-col gap-4 tagWidget-main p-6 rounded {className}"
 >
-	<input class="form-input" type="hidden" name="target" bind:value={contactForm.target} />
 	{#if contactForm.displayFromField}
 		<label class="form-label">
 			{t('contactForm.from')}
@@ -60,5 +66,22 @@
 			class="form-input block w-full"
 		/>
 	</label>
-	<button type="submit" class="btn tagWidget-cta">{t('contact.form.contactUs')}</button>
+	{#if contactForm.disclaimer}
+		<h2 class="text-xl font-bold">{contactForm.disclaimer?.label}</h2>
+		<p>{contactForm.disclaimer?.content}</p>
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="mandatoryAgreement"
+				bind:checked={mandatoryAgreement}
+			/>
+			{contactForm.disclaimer?.checkboxLabel}
+		</label>
+	{/if}
+	<button
+		type="submit"
+		class="btn tagWidget-cta"
+		disabled={contactForm.disclaimer && !mandatoryAgreement}>{t('contact.form.contactUs')}</button
+	>
 </form>

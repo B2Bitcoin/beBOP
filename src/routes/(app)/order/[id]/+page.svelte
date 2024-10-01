@@ -10,7 +10,6 @@
 	import { FAKE_ORDER_INVOICE_NUMBER, orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
-	import { trimOrigin } from '$lib/utils/trimOrigin';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
 	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
@@ -142,13 +141,34 @@
 								{#if payment.status === 'pending'}
 									<li>
 										{#if payment.method === 'card'}
-											<a href={trimOrigin(payment.address ?? '')} class="body-hyperlink">
+											<a
+												href="/order/{data.order._id}/payment/{payment.id}/pay"
+												class="body-hyperlink"
+											>
 												<span>{t('order.paymentLink')}</span>
 												{#if payment.processor === 'sumup'}
 													<IconSumupWide class="h-12" />
 												{:else if payment.processor === 'stripe'}
 													<IconStripe class="h-12" />
+												{:else if payment.processor === 'paypal'}
+													<img
+														src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_200x51.png"
+														alt="PayPal"
+														class="h-12"
+													/>
 												{/if}
+											</a>
+										{:else if payment.method === 'paypal'}
+											<a
+												href="/order/{data.order._id}/payment/{payment.id}/pay"
+												class="body-hyperlink"
+											>
+												<span>{t('order.paymentLinkGeneric')}</span>
+												<img
+													src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_200x51.png"
+													alt="PayPal"
+													class="h-12"
+												/>
 											</a>
 										{:else if payment.method === 'bank-transfer'}
 											{#if data.sellerIdentity?.bank?.accountHolder}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { uploadPicture } from '$lib/types/Picture';
+	import { preUploadPicture } from '$lib/types/Picture';
 	import { generateId } from '$lib/utils/generateId';
 
 	export let data;
@@ -19,7 +19,7 @@
 			await Promise.all(
 				galleryPictures.map(async (picture, i) => {
 					if (picture[0]) {
-						const pictureId = await uploadPicture(data.adminPrefix, picture[0]);
+						const pictureId = await preUploadPicture(data.adminPrefix, picture[0]);
 						formData.set(`secondary[${i}].pictureId`, pictureId);
 					}
 				})

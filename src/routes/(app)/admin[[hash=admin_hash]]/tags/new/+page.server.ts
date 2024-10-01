@@ -5,8 +5,6 @@ import { z } from 'zod';
 import { set } from 'lodash-es';
 import { MAX_NAME_LIMIT } from '$lib/types/Product';
 import type { JsonObject } from 'type-fest';
-import { getPrivateS3DownloadLink, s3client } from '$lib/server/s3';
-import { S3_BUCKET } from '$env/static/private';
 import { generatePicture } from '$lib/server/picture';
 import type { TagType } from '$lib/types/Picture';
 import { adminPrefix } from '$lib/server/admin';
@@ -70,35 +68,8 @@ export const actions: Actions = {
 
 		await Promise.all(
 			tagPicturesFiltred.map(async (tagPicture) => {
-				const pendingPicture = await collections.pendingPictures.findOne({
-					_id: tagPicture.id
-				});
-
-				if (!pendingPicture) {
-					throw error(400, 'Error when uploading picture');
-				}
-
-				const resp = await fetch(
-					await getPrivateS3DownloadLink(pendingPicture.storage.original.key)
-				);
-
-				if (!resp.ok) {
-					throw error(400, 'Error when uploading picture');
-				}
-
-				const buffer = await resp.arrayBuffer();
-				await generatePicture(Buffer.from(buffer), parsed.name, {
-					tag: { _id: parsed.slug, type: tagPicture.type },
-					cb: async (session) => {
-						await s3client
-							.deleteObject({
-								Key: pendingPicture.storage.original.key,
-								Bucket: S3_BUCKET
-							})
-							.catch();
-
-						await collections.pendingPictures.deleteOne({ _id: tagPicture.id }, { session });
-					}
+				await generatePicture(tagPicture.id, {
+					tag: { _id: parsed.slug, type: tagPicture.type }
 				});
 			})
 		);

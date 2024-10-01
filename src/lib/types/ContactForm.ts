@@ -4,6 +4,11 @@ import type { Timestamps } from './Timestamps';
 export interface ContactFormTranslatableFields {
 	content: string;
 	subject: string;
+	disclaimer?: {
+		label: string;
+		content: string;
+		checkboxLabel: string;
+	};
 }
 
 export interface ContactForm extends Timestamps, ContactFormTranslatableFields {

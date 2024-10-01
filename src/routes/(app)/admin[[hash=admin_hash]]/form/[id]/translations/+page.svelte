@@ -17,7 +17,42 @@
 			{/each}
 		</select>
 	</label>
-
+	{#if data.contactForm.disclaimer}
+		<label class="form-label">
+			Disclaimer label
+			<input
+				class="form-input block"
+				type="text"
+				name="disclaimer.label"
+				placeholder={data.contactForm.disclaimer?.label}
+				required
+				value={data.contactForm.translations?.[language]?.disclaimer?.label ?? ''}
+			/>
+		</label>
+		Disclaimer Content
+		<label class="form-label">
+			<textarea
+				name="disclaimer.content"
+				cols="30"
+				rows="5"
+				maxlength={MAX_CONTENT_LIMIT}
+				placeholder={data.contactForm.disclaimer?.content}
+				class="form-input block w-full"
+				value={data.contactForm.translations?.[language]?.disclaimer?.content ?? ''}
+			/>
+		</label>
+		<label class="form-label">
+			Disclaimer checkbox label
+			<input
+				class="form-input block"
+				type="text"
+				name="disclaimer.checkboxLabel"
+				placeholder={data.contactForm.disclaimer?.checkboxLabel}
+				required
+				value={data.contactForm.translations?.[language]?.disclaimer?.checkboxLabel ?? ''}
+			/>
+		</label>
+	{/if}
 	<label class="form-label">
 		Subject
 		<input

@@ -85,7 +85,7 @@ const baseConfig = {
 	viewportFor: 'no-one' as 'employee' | 'no-one' | 'visitors' | 'everyone',
 	viewportContentWidth: 1000,
 	socialNetworkIcons: [] as Array<{ name: string; svg: string; href: string }>,
-
+	cartPreviewInteractive: false,
 	vatExempted: false,
 	vatExemptionReason: '',
 	vatSingleCountry: false,
@@ -154,9 +154,21 @@ const baseConfig = {
 		secretKey: '',
 		currency: 'EUR' as Currency
 	},
+	paypal: {
+		clientId: '',
+		secret: '',
+		currency: 'EUR' as Currency,
+		sandbox: false
+	},
 	bity: {
 		clientId: ''
 	},
+	nostrRelays: [
+		'wss://nostr.wine',
+		'wss://nostr.lu.ke',
+		'wss://nos.lol',
+		'wss://relay.snort.social'
+	],
 	posTouchTag: [] as Tag['_id'][],
 	hideCmsZonesOnMobile: false,
 	copyOrderEmailsToAdmin: true,
@@ -208,6 +220,12 @@ const baseConfig = {
 <p>IBAN: {{iban}}<br/>
 BIC: {{bic}}<br/>
 Amount: {{amount}} {{currency}}</p>`,
+			default: true as boolean
+		},
+		'order.payment.pending.paypal': {
+			subject: 'Order #{{orderNumber}}',
+			html: `<p>Payment for order #{{orderNumber}} is pending, see <a href="{{orderLink}}">{{orderLink}}</a></p>
+<p>Please pay using this link: <a href="{{paymentLink}}">{{paymentLink}}</a></p>`,
 			default: true as boolean
 		},
 		'order.payment.pending.lightning': {
@@ -306,6 +324,12 @@ async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<
 					addTranslations(locale, enhancedLanguages[locale]);
 				}
 			}
+		}
+	}
+
+	for (const templateKey of typedKeys(defaultConfig.emailTemplates)) {
+		if (!(templateKey in runtimeConfig.emailTemplates)) {
+			runtimeConfig.emailTemplates[templateKey] = defaultConfig.emailTemplates[templateKey];
 		}
 	}
 

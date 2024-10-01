@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { uploadPicture } from '$lib/types/Picture';
+	import { preUploadPicture } from '$lib/types/Picture';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
 	import { generateId } from '$lib/utils/generateId';
 
@@ -19,7 +19,9 @@
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
 		try {
-			const pictureId = await uploadPicture(data.adminPrefix, files[0]);
+			const pictureId = await preUploadPicture(data.adminPrefix, files[0], {
+				fileName: title
+			});
 
 			formData.set('sliderPictureId', pictureId);
 
