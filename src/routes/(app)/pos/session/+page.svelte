@@ -193,7 +193,7 @@
 						<PriceTag
 							class="text-base text-gray-600"
 							amount={payment?.price.amount || 0}
-							currency={UNDERLYING_CURRENCY}
+							currency={payment?.price.currency || UNDERLYING_CURRENCY}
 							secondary
 						/>
 					</div>
@@ -228,7 +228,7 @@
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={order.totalPrice.amount || 0}
-						currency={UNDERLYING_CURRENCY}
+						currency={order.totalPrice.currency || UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
