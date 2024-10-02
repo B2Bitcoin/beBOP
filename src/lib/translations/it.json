@@ -590,6 +590,7 @@
 			"title": "Ultimi ordini"
 		},
 		"offerDeliveryFees": "Annulla le spese di consegna per questo ordine",
+		"offerOrder": "Ordine dell'offerta",
 		"order": {
 			"satReceived": "ricevuto"
 		},

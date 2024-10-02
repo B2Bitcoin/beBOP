@@ -33,8 +33,20 @@
 	let onLocation = data.defaultOnLocation;
 	$: offerDeliveryFees = onLocation;
 	let addDiscount = false;
+	let offerOrder = false;
 	let discountAmount = 0;
 	let discountType: DiscountType;
+	$: {
+		if (offerOrder) {
+			discountType = 'percentage';
+			discountAmount = 100;
+		} else {
+			if (discountType !== 'percentage' || discountAmount !== 100) {
+				offerOrder = false;
+			}
+		}
+	}
+
 	let multiplePaymentMethods = false;
 
 	const { t, locale, countryName, sortedCountryCodes } = useI18n();
@@ -965,7 +977,17 @@
 						{#if discountAmount && !isDiscountValid}
 							<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
 						{/if}
-
+						<label class="checkbox-labe col-span-3">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								form="checkout"
+								name="offerOrder"
+								bind:checked={offerOrder}
+								required
+							/>
+							{t('pos.offerOrder')}
+						</label>
 						<label class="form-label col-span-3">
 							{t('pos.discountJustification')}
 							<input

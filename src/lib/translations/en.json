@@ -590,6 +590,7 @@
 			"title": "Last orders"
 		},
 		"offerDeliveryFees": "Void delivery fees for this order",
+		"offerOrder": "Offer order",
 		"order": {
 			"satReceived": "received"
 		},
