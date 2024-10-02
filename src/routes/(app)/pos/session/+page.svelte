@@ -204,14 +204,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={remainingAmount}
-						currency={order.totalPrice.currency}
+						currency={order.currencySnapshot.main?.totalPrice.currency || UNDERLYING_CURRENCY}
 						main
 						class="text-[28px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={remainingAmount}
-						currency={order.totalPrice.currency}
+						currency={order.currencySnapshot.secondary?.totalPrice.currency || UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
@@ -220,15 +220,15 @@
 				<h2 class="text-gray-800 text-[32px]">{t('cart.total')}:</h2>
 				<div class="flex flex-col items-end">
 					<PriceTag
-						amount={order.totalPrice.amount || 0}
-						currency={order.totalPrice.currency || UNDERLYING_CURRENCY}
+						amount={order.currencySnapshot.main?.totalPrice.amount || 0}
+						currency={order.currencySnapshot.main?.totalPrice.currency || UNDERLYING_CURRENCY}
 						main
 						class="text-[32px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
-						amount={order.totalPrice.amount || 0}
-						currency={order.totalPrice.currency || UNDERLYING_CURRENCY}
+						amount={order.currencySnapshot.secondary?.totalPrice.amount || 0}
+						currency={order.currencySnapshot.secondary?.totalPrice.currency || UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
