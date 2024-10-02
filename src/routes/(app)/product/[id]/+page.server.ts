@@ -168,9 +168,8 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			  }
 			: undefined;
 	const customProductName =
-		variations && variations.length ? product.name + '-' + variations.join('-') : undefined;
+		variations && variations.length ? product.name + ' - ' + variations.join(' - ') : undefined;
 
-	console.log(product.name);
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
 		...(product.payWhatYouWant && { customPrice }),

@@ -89,7 +89,7 @@
 		percentage: 50,
 		enforce: false
 	};
-	$: variationLines = product.variations?.length || 4;
+	$: variationLines = product.variations?.length || 2;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);

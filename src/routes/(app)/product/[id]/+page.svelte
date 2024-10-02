@@ -64,7 +64,7 @@
 		data.roleId === POS_ROLE_ID
 			? data.product.actionSettings.retail.canBeAddedToBasket
 			: data.product.actionSettings.eShop.canBeAddedToBasket;
-
+	let variations: string[] = [];
 	function addToCart() {
 		$productAddedToCart = {
 			product: data.product,
@@ -74,7 +74,10 @@
 			}),
 			picture: currentPicture,
 			depositPercentage:
-				deposit === 'partial' && data.product.deposit ? data.product.deposit.percentage : undefined
+				deposit === 'partial' && data.product.deposit ? data.product.deposit.percentage : undefined,
+			...(data.product.hasLightVariations && {
+				customProductName: data.product.name + ' - ' + variations.join(' - ')
+			})
 		};
 	}
 
@@ -395,11 +398,15 @@
 									</label>
 								</div>
 							{/if}
-							{#if data.product.hasLightVariations && data.product.variations?.length && groupedArrayVariations}
-								{#each groupedArrayVariations as variation}
+							{#if data.product.standalone && data.product.hasLightVariations && data.product.variations?.length && groupedArrayVariations}
+								{#each groupedArrayVariations as variation, i}
 									<label class="mb-2">
 										{variation.name}:
-										<select name="variations" class="form-input w-32 ml-2 inline cursor-pointer">
+										<select
+											name="variations"
+											bind:value={variations[i]}
+											class="form-input w-full inline cursor-pointer"
+										>
 											{#each variation.values as variationVal}
 												<option value={variationVal}>{variationVal}</option>
 											{/each}

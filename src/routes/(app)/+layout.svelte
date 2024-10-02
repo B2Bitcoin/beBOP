@@ -251,6 +251,7 @@
 									product={$productAddedToCart.product}
 									picture={$productAddedToCart.picture}
 									customPrice={$productAddedToCart.customPrice}
+									customProductName={$productAddedToCart.customProductName}
 									depositPercentage={$productAddedToCart.depositPercentage}
 								/>
 							</Popup>
@@ -320,7 +321,9 @@
 											</a>
 											<div class="flex flex-col">
 												<a href="/product/{item.product._id}">
-													<h3 class="text-base font-medium">{item.product.name}</h3>
+													<h3 class="text-base font-medium">
+														{item.customProductName || item.product.name}
+													</h3>
 												</a>
 												{#if item.product.type !== 'subscription' && !item.product.standalone}
 													<div class="flex items-center gap-2">
