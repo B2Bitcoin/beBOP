@@ -204,14 +204,14 @@
 				<div class="flex flex-col items-end">
 					<PriceTag
 						amount={remainingAmount}
-						currency={order.currencySnapshot.main?.totalPrice.currency || UNDERLYING_CURRENCY}
+						currency={order.totalPrice.currency || UNDERLYING_CURRENCY}
 						main
 						class="text-[28px] text-gray-800"
 					/>
 					<PriceTag
 						class="text-base text-gray-600"
 						amount={remainingAmount}
-						currency={order.currencySnapshot.secondary?.totalPrice.currency || UNDERLYING_CURRENCY}
+						currency={order.totalPrice.currency || UNDERLYING_CURRENCY}
 						secondary
 					/>
 				</div>
