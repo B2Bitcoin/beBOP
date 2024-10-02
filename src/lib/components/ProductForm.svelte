@@ -69,7 +69,9 @@
 		mobile: {
 			hideContentBefore: false,
 			hideContentAfter: false
-		}
+		},
+
+		hasLightVariations: false
 	};
 
 	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
@@ -87,7 +89,7 @@
 		percentage: 50,
 		enforce: false
 	};
-
+	$: variationLines = product.variations?.length || 4;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);
@@ -439,6 +441,42 @@
 			{/each}
 		{/if}
 
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={product.hasLightVariations}
+				name="hasLightVariations"
+				disabled={!product.standalone}
+			/>
+			Product has light variations (no stock nor price difference)
+		</label>
+		{#if product.hasLightVariations}
+			{#each [...(product.variations || []), ...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variation, i}
+				<div class="flex gap-4">
+					<label class="form-label">
+						Name
+						<input
+							type="text"
+							name="variations[{i}].name"
+							class="form-input"
+							value={variation.name}
+						/>
+					</label>
+					<label class="form-label">
+						Value <input
+							type="text"
+							name="variations[{i}].value"
+							class="form-input"
+							value={variation.value}
+						/>
+					</label>
+				</div>
+			{/each}
+			<button class="btn btn-gray" on:click={() => (variationLines += 1)} type="button"
+				>Add variation
+			</button>
+		{/if}
 		<label class="form-label">
 			Short description
 			<textarea

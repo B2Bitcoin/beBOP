@@ -174,7 +174,7 @@
 						</a>
 						<div class="flex flex-col lg:gap-2">
 							<a href="/product/{item.product._id}">
-								<h2 class="text-2xl">{item.product.name}</h2>
+								<h2 class="text-2xl">{item.customProductName || item.product.name}</h2>
 							</a>
 							<p class="text-sm hidden lg:contents">{item.product.shortDescription}</p>
 							<div class="grow" />

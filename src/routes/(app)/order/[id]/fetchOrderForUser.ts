@@ -149,7 +149,8 @@ export async function fetchOrderForUser(orderId: string) {
 			),
 			currencySnapshot: item.currencySnapshot,
 			depositPercentage: item.depositPercentage,
-			tickets: item.tickets
+			tickets: item.tickets,
+			customProductName: item.customProductName
 		})),
 		shippingPrice: order.shippingPrice && {
 			amount: order.shippingPrice.amount,

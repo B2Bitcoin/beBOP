@@ -176,6 +176,12 @@ export const actions: Actions = {
 						},
 						tagIds: parsed.tagIds,
 						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+						...(parsed.standalone && { hasLightVariations: parsed.hasLightVariations }),
+						...(parsed.hasLightVariations && {
+							variations: parsed.variations?.filter(
+								(variation) => variation.name && variation.value
+							)
+						}),
 						...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 					},
 					{ session }

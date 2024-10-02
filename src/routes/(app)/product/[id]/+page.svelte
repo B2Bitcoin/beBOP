@@ -20,6 +20,7 @@
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
+	import { each } from 'lodash-es';
 
 	export let data;
 
@@ -108,6 +109,25 @@
 	function handleClick() {
 		isZoomed = !isZoomed;
 	}
+	const groupedArrayVariations = data.product.variations?.reduce(
+		(
+			acc: {
+				name: string;
+				values: string[];
+			}[],
+			item
+		) => {
+			const existing = acc.find((group) => group.name === item.name);
+			if (existing) {
+				existing.values.push(item.value);
+			} else {
+				acc.push({ name: item.name, values: [item.value] });
+			}
+
+			return acc;
+		},
+		[]
+	);
 </script>
 
 <svelte:head>
@@ -375,6 +395,18 @@
 										/>
 									</label>
 								</div>
+							{/if}
+							{#if data.product.hasLightVariations && data.product.variations?.length && groupedArrayVariations}
+								{#each groupedArrayVariations as variation}
+									<label class="mb-2">
+										{variation.name}:
+										<select name="variations" class="form-input w-32 ml-2 inline cursor-pointer">
+											{#each variation.values as variationVal}
+												<option value={variationVal}>{variationVal}</option>
+											{/each}
+										</select>
+									</label>
+								{/each}
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">

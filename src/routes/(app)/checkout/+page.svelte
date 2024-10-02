@@ -614,7 +614,7 @@
 							<input type="hidden" name="depositPercentage" value={item.depositPercentage} />
 						{/if}
 						<a href="/product/{item.product._id}">
-							<h3 class="text-base">{item.product.name}</h3>
+							<h3 class="text-base">{item.customProductName || item.product.name}</h3>
 						</a>
 
 						<div class="flex flex-row gap-2">

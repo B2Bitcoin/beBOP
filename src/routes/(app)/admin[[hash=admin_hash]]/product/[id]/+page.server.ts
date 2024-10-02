@@ -177,6 +177,10 @@ export const actions: Actions = {
 					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) }),
 					...(parsed.restrictPaymentMethods && {
 						paymentMethods: parsed.paymentMethods ?? []
+					}),
+					...(parsed.standalone && { hasLightVariations: parsed.hasLightVariations }),
+					...(parsed.hasLightVariations && {
+						variations: parsed.variations?.filter((variation) => variation.name && variation.value)
 					})
 				},
 				$unset: {

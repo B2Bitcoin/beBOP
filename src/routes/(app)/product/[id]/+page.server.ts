@@ -36,6 +36,8 @@ export const load = async ({ params, locals }) => {
 			| 'cta'
 			| 'maximumPrice'
 			| 'mobile'
+			| 'hasLightVariations'
+			| 'variations'
 		>
 	>(
 		{ _id: params.id },
@@ -68,6 +70,8 @@ export const load = async ({ params, locals }) => {
 				},
 				deposit: 1,
 				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] },
+				hasLightVariations: 1,
+				variations: { $ifNull: [`$translations.${locals.language}.variations`, '$variations'] },
 				maximumPrice: 1,
 				mobile: 1
 			}
@@ -132,7 +136,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	}
 
 	const formData = await request.formData();
-	const { quantity, customPriceAmount, customPriceCurrency, deposit } = z
+	const { quantity, customPriceAmount, customPriceCurrency, deposit, variations } = z
 		.object({
 			quantity: z
 				.number({ coerce: true })
@@ -145,13 +149,15 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 				.regex(/^\d+(\.\d+)?$/)
 				.optional(),
 			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
-			deposit: z.enum(['partial', 'full']).optional()
+			deposit: z.enum(['partial', 'full']).optional(),
+			variations: z.string().array()
 		})
 		.parse({
 			quantity: formData.get('quantity') || undefined,
 			customPriceAmount: formData.get('customPriceAmount') || undefined,
 			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
-			deposit: formData.get('deposit') || undefined
+			deposit: formData.get('deposit') || undefined,
+			variations: formData.getAll('variations') || undefined
 		});
 
 	const customPrice =
@@ -161,10 +167,15 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 					currency: customPriceCurrency
 			  }
 			: undefined;
+	const customProductName =
+		variations && variations.length ? product.name + '-' + variations.join('-') : undefined;
+
+	console.log(product.name);
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
 		...(product.payWhatYouWant && { customPrice }),
-		deposit: deposit === 'partial'
+		deposit: deposit === 'partial',
+		...(product.hasLightVariations && { customProductName })
 	});
 }
 

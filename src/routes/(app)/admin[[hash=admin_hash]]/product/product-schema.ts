@@ -59,6 +59,16 @@ export const productBaseSchema = () => ({
 		)
 		.optional()
 		.default([]),
+	hasLightVariations: z.boolean({ coerce: true }).default(false),
+	variations: z
+		.array(
+			z.object({
+				name: z.string().trim(),
+				value: z.string().trim()
+			})
+		)
+		.optional()
+		.default([]),
 	contentBefore: z.string().max(MAX_CONTENT_LIMIT).default(''),
 	contentAfter: z.string().max(MAX_CONTENT_LIMIT).default(''),
 	hideContentBefore: z.boolean({ coerce: true }).default(false),

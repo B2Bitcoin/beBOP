@@ -83,7 +83,31 @@
 			placeholder={data.product.contentAfter ?? ''}
 		/>
 	</label>
+	<h2 class="text-2xl">Variations</h2>
 
+	{#each [...(data.product.translations?.[language]?.variations || []), ...Array(data.product.variations?.length).fill( { name: '', value: '' } )].slice(0, data.product.variations?.length) as variation, i}
+		<div class="flex gap-4">
+			<label class="form-label">
+				Name
+				<input
+					type="text"
+					name="variations[{i}].name"
+					class="form-input"
+					value={variation.name}
+					placeholder={data.product.variations?.[i].name}
+				/>
+			</label>
+			<label class="form-label">
+				Value <input
+					type="text"
+					name="variations[{i}].value"
+					class="form-input"
+					value={variation.value}
+					placeholder={data.product.variations?.[i].value}
+				/>
+			</label>
+		</div>
+	{/each}
 	<h2 class="text-2xl">CTA links</h2>
 
 	{#each [...(data.product.translations?.[language]?.cta || []), ...Array(3).fill( { href: '', label: '' } )].slice(0, 3) as link, i}

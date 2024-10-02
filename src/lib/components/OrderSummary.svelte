@@ -26,6 +26,7 @@
 					Product,
 					'_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping' | 'isTicket'
 				>;
+				customProductName?: string;
 			}
 		>;
 		payments: Array<Pick<OrderPayment, 'currencySnapshot' | 'status' | 'method'>>;
@@ -50,7 +51,7 @@
 	</div>
 	{#each order.items as item}
 		<a href="/product/{item.product._id}">
-			<h3 class="text-base">{item.product.name}</h3>
+			<h3 class="text-base">{item.customProductName || item.product.name}</h3>
 		</a>
 
 		<div class="flex flex-row gap-2">

@@ -427,6 +427,7 @@ export async function createOrder(
 		quantity: number;
 		product: Product;
 		customPrice?: { amount: number; currency: Currency };
+		customProductName?: string;
 		depositPercentage?: number;
 	}>,
 	// null when point of sale want to use multiple payment methods
@@ -666,6 +667,7 @@ export async function createOrder(
 				quantity: item.quantity,
 				product: item.product,
 				customPrice: item.customPrice,
+				customProductName: item.customProductName,
 				depositPercentage: item.depositPercentage,
 				vatRate: priceInfo.vatRates[i],
 				currencySnapshot: {

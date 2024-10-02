@@ -58,6 +58,7 @@ export async function addToCartInDb(
 		totalQuantity?: boolean;
 		customPrice?: { amount: number; currency: Currency };
 		deposit?: boolean;
+		customProductName?: string;
 	}
 ) {
 	if (
@@ -168,6 +169,9 @@ export async function addToCartInDb(
 			quantity: product.type === 'subscription' ? 1 : quantity,
 			...(params.customPrice && {
 				customPrice: params.customPrice
+			}),
+			...(params.customProductName && {
+				customProductName: params.customProductName
 			}),
 			reservedUntil: addMinutes(new Date(), runtimeConfig.reserveStockInMinutes),
 			...(depositPercentage && { depositPercentage })
