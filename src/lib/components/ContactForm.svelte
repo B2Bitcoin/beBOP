@@ -3,7 +3,7 @@
 	import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 	import type { ContactForm } from '$lib/types/ContactForm';
 	import { MAX_NAME_LIMIT } from '$lib/types/Product';
-
+	import { page } from '$app/stores';
 	export let contactForm: Pick<
 		ContactForm,
 		| '_id'
@@ -34,11 +34,14 @@
 			{t('contactForm.from')}
 			<input
 				class="form-input"
-				type="text"
+				type={$page.data.contactModes.includes('email') ? 'email' : 'text'}
 				maxlength={MAX_NAME_LIMIT}
 				name="from"
 				placeholder="From"
-				value={contactForm.prefillWithSession ? sessionEmail ?? '' : ''}
+				value={contactForm.prefillWithSession && $page.data.contactModes.includes('email')
+					? sessionEmail ?? ''
+					: ''}
+				pattern={$page.data.contactModes.includes('nostr') ? '' : '^(?!npub).*'}
 			/>
 		</label>
 	{/if}

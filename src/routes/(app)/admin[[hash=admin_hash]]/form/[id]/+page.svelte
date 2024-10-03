@@ -52,6 +52,7 @@
 			placeholder="Target"
 			value={data.contactForm.target}
 			required
+			pattern={data.contactModes.includes('email') ? '' : '^(?!.*@).*'}
 		/>
 	</label>
 	<label class="checkbox-label">

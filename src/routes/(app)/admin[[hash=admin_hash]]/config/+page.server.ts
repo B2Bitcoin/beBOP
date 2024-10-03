@@ -89,11 +89,13 @@ export const actions = {
 				displayNewsletterCommercialProspection: z.boolean({ coerce: true }),
 				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0),
 				disableLanguageSelector: z.boolean({ coerce: true }),
+				contactModes: z.string().array(),
 				cartPreviewInteractive: z.boolean({ coerce: true })
 			})
 			.parse({
 				...Object.fromEntries(formData),
-				paymentMethods: formData.getAll('paymentMethods')
+				paymentMethods: formData.getAll('paymentMethods'),
+				contactModes: formData.getAll('contactModes')
 			});
 
 		const { paymentMethods: orderedPaymentMethods, ...runtimeConfigUpdates } = {
