@@ -40,9 +40,33 @@ export const actions = {
 		if (rest.cta) {
 			rest.cta = rest.cta.filter((ctaLink) => ctaLink.label && ctaLink.href);
 		}
+		type VariationLabels = {
+			values: Record<string, Record<string, string>>;
+			names: Record<string, string>;
+		};
+		let groupedLabels: VariationLabels[] = [];
 		if (rest.variationLabels) {
-			rest.variationLabels = rest.variationLabels.filter(
-				(variationLabel) => variationLabel.name && variationLabel.value
+			groupedLabels = Object.values(
+				rest.variationLabels.reduce((acc: Record<string, VariationLabels>, { name, value }) => {
+					const lowerCaseName = name.toLowerCase(); // Make name lowercase for the keys
+
+					if (!acc[lowerCaseName]) {
+						acc[lowerCaseName] = {
+							values: {},
+							names: {}
+						};
+					}
+
+					acc[lowerCaseName].values[lowerCaseName] = acc[lowerCaseName].values[lowerCaseName] || {};
+					acc[lowerCaseName].values[lowerCaseName][value] =
+						value.charAt(0).toUpperCase() + value.slice(1);
+
+					if (!acc[lowerCaseName].names[lowerCaseName]) {
+						acc[lowerCaseName].names[lowerCaseName] = name.charAt(0).toUpperCase() + name.slice(1);
+					}
+
+					return acc;
+				}, {})
 			);
 		}
 
@@ -52,7 +76,7 @@ export const actions = {
 			},
 			{
 				$set: {
-					[`translations.${language}`]: rest,
+					[`translations.${language}`]: { variationLabels: groupedLabels, ...rest },
 					updatedAt: new Date()
 				}
 			}

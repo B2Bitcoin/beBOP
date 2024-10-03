@@ -5,6 +5,31 @@
 	export let data;
 
 	let language: LanguageKey = 'fr';
+	const flattenedVariations: {
+		name: string;
+		value: string;
+	}[] = [];
+	const flattenedVariationsLang: {
+		name: string;
+		value: string;
+	}[] = [];
+
+	$: data.product.variationLabels?.forEach((label) => {
+		const { values, names } = label;
+		for (const name in names) {
+			for (const value in values[name]) {
+				flattenedVariations.push({ name: names[name], value: values[name][value] });
+			}
+		}
+	});
+	$: data.product.translations?.[language]?.variationLabels?.forEach((label) => {
+		const { values, names } = label;
+		for (const name in names) {
+			for (const value in values[name]) {
+				flattenedVariationsLang.push({ name: names[name], value: values[name][value] });
+			}
+		}
+	});
 </script>
 
 <form method="post" class="contents">
@@ -85,7 +110,7 @@
 	</label>
 	<h2 class="text-2xl">Variations</h2>
 
-	{#each [...(data.product.translations?.[language]?.variationLabels || []), ...Array(data.product.variationLabels?.length).fill( { name: '', value: '' } )].slice(0, data.product.variationLabels?.length) as variationLabel, i}
+	{#each [...(flattenedVariationsLang || []), ...Array(flattenedVariations.length).fill( { name: '', value: '' } )].slice(0, flattenedVariations.length) as variationLabel, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Name
@@ -94,7 +119,7 @@
 					name="variationLabels[{i}].name"
 					class="form-input"
 					value={variationLabel.name}
-					placeholder={data.product.variationLabels?.[i].name}
+					placeholder={flattenedVariations?.[i].name}
 				/>
 			</label>
 			<label class="form-label">
@@ -103,7 +128,7 @@
 					name="variationLabels[{i}].value"
 					class="form-input"
 					value={variationLabel.value}
-					placeholder={data.product.variationLabels?.[i].value}
+					placeholder={flattenedVariations?.[i].value}
 				/>
 			</label>
 		</div>

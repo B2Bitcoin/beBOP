@@ -102,7 +102,33 @@ export const actions: Actions = {
 			parsed.free = true;
 		}
 		const amountInCarts = await amountOfProductReserved(params.id);
+		type VariationLabels = {
+			values: Record<string, Record<string, string>>;
+			names: Record<string, string>;
+		};
 
+		const groupedLabels: VariationLabels[] = Object.values(
+			parsed.variationLabels.reduce((acc: Record<string, VariationLabels>, { name, value }) => {
+				const lowerCaseName = name.toLowerCase(); // Make name lowercase for the keys
+
+				if (!acc[lowerCaseName]) {
+					acc[lowerCaseName] = {
+						values: {},
+						names: {}
+					};
+				}
+
+				acc[lowerCaseName].values[lowerCaseName] = acc[lowerCaseName].values[lowerCaseName] || {};
+				acc[lowerCaseName].values[lowerCaseName][value] =
+					value.charAt(0).toUpperCase() + value.slice(1);
+
+				if (!acc[lowerCaseName].names[lowerCaseName]) {
+					acc[lowerCaseName].names[lowerCaseName] = name.charAt(0).toUpperCase() + name.slice(1);
+				}
+
+				return acc;
+			}, {})
+		);
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -179,11 +205,10 @@ export const actions: Actions = {
 						paymentMethods: parsed.paymentMethods ?? []
 					}),
 					...(parsed.standalone && { hasVariations: parsed.hasVariations }),
-					...(parsed.hasVariations && {
-						variationLabels: parsed.variationLabels?.filter(
-							(variationLabel) => variationLabel.name && variationLabel.value
-						)
-					})
+					...(parsed.hasVariations &&
+						groupedLabels && {
+							variationLabels: groupedLabels
+						})
 				},
 				$unset: {
 					...(!parsed.customPreorderText && { customPreorderText: '' }),

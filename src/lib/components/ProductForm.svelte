@@ -27,6 +27,7 @@
 	import type { PojoObject } from '$lib/server/pojo';
 	import type { PaymentMethod } from '$lib/server/payment-methods';
 	import { useI18n } from '$lib/i18n';
+	import { string } from 'zod';
 
 	const { t } = useI18n();
 
@@ -89,7 +90,6 @@
 		percentage: 50,
 		enforce: false
 	};
-	$: variationLines = product.variationLabels?.length || 2;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);
@@ -192,6 +192,20 @@
 			event.preventDefault();
 		}
 	}
+	const flattenedVariations: {
+		name: string;
+		value: string;
+	}[] = [];
+
+	product.variationLabels?.forEach((label) => {
+		const { values, names } = label;
+		for (const name in names) {
+			for (const value in values[name]) {
+				flattenedVariations.push({ name: names[name], value: values[name][value] });
+			}
+		}
+	});
+	$: variationLines = flattenedVariations.length || 2;
 </script>
 
 <form
@@ -452,7 +466,7 @@
 			Product has light variations (no stock nor price difference)
 		</label>
 		{#if product.hasVariations}
-			{#each [...(product.variationLabels || []), ...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variationLabel, i}
+			{#each [...(flattenedVariations || []), ...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variationLabel, i}
 				<div class="flex gap-4">
 					<label class="form-label">
 						Name

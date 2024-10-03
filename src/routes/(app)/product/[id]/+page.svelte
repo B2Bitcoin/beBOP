@@ -111,25 +111,6 @@
 	function handleClick() {
 		isZoomed = !isZoomed;
 	}
-	const groupedArrayVariationLabels = data.product.variationLabels?.reduce(
-		(
-			acc: {
-				name: string;
-				values: string[];
-			}[],
-			item
-		) => {
-			const existing = acc.find((group) => group.name === item.name);
-			if (existing) {
-				existing.values.push(item.value);
-			} else {
-				acc.push({ name: item.name, values: [item.value] });
-			}
-
-			return acc;
-		},
-		[]
-	);
 </script>
 
 <svelte:head>
@@ -398,17 +379,17 @@
 									</label>
 								</div>
 							{/if}
-							{#if data.product.standalone && data.product.hasVariations && data.product.variationLabels?.length && groupedArrayVariationLabels}
-								{#each groupedArrayVariationLabels as variation, i}
+							{#if data.product.standalone && data.product.hasVariations && data.product.variationLabels?.length}
+								{#each data.product.variationLabels as variation, i}
 									<label class="mb-2">
-										{variation.name}:
+										{variation.names[Object.keys(variation.names)[0]]}:
 										<select
 											name="variations"
 											bind:value={variations[i]}
 											class="form-input w-full inline cursor-pointer"
 										>
-											{#each variation.values as variationVal}
-												<option value={variationVal}>{variationVal}</option>
+											{#each Object.entries(variation.values[Object.keys(variation.values)[0]]) as [key, value]}
+												<option value={key}>{value}</option>
 											{/each}
 										</select>
 									</label>

@@ -19,8 +19,8 @@ export interface ProductTranslatableFields {
 		fallback?: boolean;
 	}[];
 	variationLabels?: {
-		name: string;
-		value: string;
+		names: Record<string, string>;
+		values: Record<string, Record<string, string>>;
 	}[];
 	contentBefore?: string;
 	contentAfter?: string;
