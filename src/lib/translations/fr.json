@@ -590,6 +590,7 @@
 			"title": "Dernières commandes"
 		},
 		"offerDeliveryFees": "Enlever les frais de port pour cette commande",
+		"offerOrder": "Offrir la commande",
 		"order": {
 			"satReceived": "reçu"
 		},

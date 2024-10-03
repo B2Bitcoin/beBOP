@@ -33,8 +33,20 @@
 	let onLocation = data.defaultOnLocation;
 	$: offerDeliveryFees = onLocation;
 	let addDiscount = false;
+	let offerOrder = false;
 	let discountAmount = 0;
 	let discountType: DiscountType;
+	$: {
+		if (offerOrder) {
+			discountType = 'percentage';
+			discountAmount = 100;
+		} else {
+			if (discountType !== 'percentage' || discountAmount !== 100) {
+				offerOrder = false;
+			}
+		}
+	}
+
 	let multiplePaymentMethods = false;
 
 	const { t, locale, countryName, sortedCountryCodes } = useI18n();
@@ -498,7 +510,7 @@
 							{label}
 						</div>
 						<div class="p-4 flex flex-col gap-3">
-							{#if data.emailsEnabled}
+							{#if data.emailsEnabled && data.contactModes.includes('email')}
 								<label class="form-label">
 									{t('checkout.notifications.email')}
 									<input
@@ -507,23 +519,29 @@
 										autocomplete="email"
 										name="{key}Email"
 										bind:value={emails[key]}
-										required={key === 'paymentStatus' && data.roleId !== POS_ROLE_ID && !npubs[key]}
+										required={key === 'paymentStatus' &&
+											data.roleId !== POS_ROLE_ID &&
+											(!npubs[key] || !data.contactModes.includes('nostr'))}
 									/>
 								</label>
 							{/if}
-							<label class="form-label">
-								{t('checkout.notifications.npub')}
-								<input
-									type="text"
-									class="form-input"
-									bind:this={npubInputs[key]}
-									bind:value={npubs[key]}
-									name="{key}NPUB"
-									placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-									required={key === 'paymentStatus' && !emails[key] && data.roleId !== POS_ROLE_ID}
-									on:change={(ev) => ev.currentTarget.setCustomValidity('')}
-								/>
-							</label>
+							{#if data.contactModes.includes('nostr')}
+								<label class="form-label">
+									{t('checkout.notifications.npub')}
+									<input
+										type="text"
+										class="form-input"
+										bind:this={npubInputs[key]}
+										bind:value={npubs[key]}
+										name="{key}NPUB"
+										placeholder="npub1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+										required={key === 'paymentStatus' &&
+											(!emails[key] || !data.contactModes.includes('email')) &&
+											data.roleId !== POS_ROLE_ID}
+										on:change={(ev) => ev.currentTarget.setCustomValidity('')}
+									/>
+								</label>
+							{/if}
 						</div>
 						{#if data.displayNewsletterCommercialProspection}
 							<div class="p-4 flex flex-col gap-3">
@@ -965,7 +983,17 @@
 						{#if discountAmount && !isDiscountValid}
 							<p class="text-sm text-red-600">{t('pos.invalidDiscount')}</p>
 						{/if}
-
+						<label class="checkbox-labe col-span-3">
+							<input
+								type="checkbox"
+								class="form-checkbox"
+								form="checkout"
+								name="offerOrder"
+								bind:checked={offerOrder}
+								required
+							/>
+							{t('pos.offerOrder')}
+						</label>
 						<label class="form-label col-span-3">
 							{t('pos.discountJustification')}
 							<input
