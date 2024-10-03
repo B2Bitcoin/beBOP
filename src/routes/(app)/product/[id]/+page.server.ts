@@ -36,8 +36,8 @@ export const load = async ({ params, locals }) => {
 			| 'cta'
 			| 'maximumPrice'
 			| 'mobile'
-			| 'hasLightVariations'
-			| 'variations'
+			| 'hasVariations'
+			| 'variationLabels'
 		>
 	>(
 		{ _id: params.id },
@@ -70,8 +70,10 @@ export const load = async ({ params, locals }) => {
 				},
 				deposit: 1,
 				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] },
-				hasLightVariations: 1,
-				variations: { $ifNull: [`$translations.${locals.language}.variations`, '$variations'] },
+				hasVariations: 1,
+				variationLabels: {
+					$ifNull: [`$translations.${locals.language}.variationLabels`, '$variationLabels']
+				},
 				maximumPrice: 1,
 				mobile: 1
 			}
@@ -174,7 +176,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		user: userIdentifier(locals),
 		...(product.payWhatYouWant && { customPrice }),
 		deposit: deposit === 'partial',
-		...(product.hasLightVariations && { customProductName })
+		...(product.hasVariations && { customProductName })
 	});
 }
 

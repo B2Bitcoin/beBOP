@@ -59,8 +59,8 @@ export const productBaseSchema = () => ({
 		)
 		.optional()
 		.default([]),
-	hasLightVariations: z.boolean({ coerce: true }).default(false),
-	variations: z
+	hasVariations: z.boolean({ coerce: true }).default(false),
+	variationLabels: z
 		.array(
 			z.object({
 				name: z.string().trim(),

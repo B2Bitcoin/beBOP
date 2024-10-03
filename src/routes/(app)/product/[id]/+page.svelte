@@ -75,7 +75,7 @@
 			picture: currentPicture,
 			depositPercentage:
 				deposit === 'partial' && data.product.deposit ? data.product.deposit.percentage : undefined,
-			...(data.product.hasLightVariations && {
+			...(data.product.hasVariations && {
 				customProductName: data.product.name + ' - ' + variations.join(' - ')
 			})
 		};
@@ -111,7 +111,7 @@
 	function handleClick() {
 		isZoomed = !isZoomed;
 	}
-	const groupedArrayVariations = data.product.variations?.reduce(
+	const groupedArrayVariationLabels = data.product.variationLabels?.reduce(
 		(
 			acc: {
 				name: string;
@@ -398,8 +398,8 @@
 									</label>
 								</div>
 							{/if}
-							{#if data.product.standalone && data.product.hasLightVariations && data.product.variations?.length && groupedArrayVariations}
-								{#each groupedArrayVariations as variation, i}
+							{#if data.product.standalone && data.product.hasVariations && data.product.variationLabels?.length && groupedArrayVariationLabels}
+								{#each groupedArrayVariationLabels as variation, i}
 									<label class="mb-2">
 										{variation.name}:
 										<select

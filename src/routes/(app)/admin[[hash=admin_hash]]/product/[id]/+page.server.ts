@@ -178,9 +178,11 @@ export const actions: Actions = {
 					...(parsed.restrictPaymentMethods && {
 						paymentMethods: parsed.paymentMethods ?? []
 					}),
-					...(parsed.standalone && { hasLightVariations: parsed.hasLightVariations }),
-					...(parsed.hasLightVariations && {
-						variations: parsed.variations?.filter((variation) => variation.name && variation.value)
+					...(parsed.standalone && { hasVariations: parsed.hasVariations }),
+					...(parsed.hasVariations && {
+						variationLabels: parsed.variationLabels?.filter(
+							(variationLabel) => variationLabel.name && variationLabel.value
+						)
 					})
 				},
 				$unset: {

@@ -71,7 +71,7 @@
 			hideContentAfter: false
 		},
 
-		hasLightVariations: false
+		hasVariations: false
 	};
 
 	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
@@ -89,7 +89,7 @@
 		percentage: 50,
 		enforce: false
 	};
-	$: variationLines = product.variations?.length || 2;
+	$: variationLines = product.variationLabels?.length || 2;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);
@@ -445,30 +445,30 @@
 			<input
 				class="form-checkbox"
 				type="checkbox"
-				bind:checked={product.hasLightVariations}
-				name="hasLightVariations"
+				bind:checked={product.hasVariations}
+				name="hasVariations"
 				disabled={!product.standalone}
 			/>
 			Product has light variations (no stock nor price difference)
 		</label>
-		{#if product.hasLightVariations}
-			{#each [...(product.variations || []), ...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variation, i}
+		{#if product.hasVariations}
+			{#each [...(product.variationLabels || []), ...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variationLabel, i}
 				<div class="flex gap-4">
 					<label class="form-label">
 						Name
 						<input
 							type="text"
-							name="variations[{i}].name"
+							name="variationLabels[{i}].name"
 							class="form-input"
-							value={variation.name}
+							value={variationLabel.name}
 						/>
 					</label>
 					<label class="form-label">
 						Value <input
 							type="text"
-							name="variations[{i}].value"
+							name="variationLabels[{i}].value"
 							class="form-input"
-							value={variation.value}
+							value={variationLabel.value}
 						/>
 					</label>
 				</div>

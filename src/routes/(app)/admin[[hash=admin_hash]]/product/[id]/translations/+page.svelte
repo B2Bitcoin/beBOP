@@ -85,25 +85,25 @@
 	</label>
 	<h2 class="text-2xl">Variations</h2>
 
-	{#each [...(data.product.translations?.[language]?.variations || []), ...Array(data.product.variations?.length).fill( { name: '', value: '' } )].slice(0, data.product.variations?.length) as variation, i}
+	{#each [...(data.product.translations?.[language]?.variationLabels || []), ...Array(data.product.variationLabels?.length).fill( { name: '', value: '' } )].slice(0, data.product.variationLabels?.length) as variationLabel, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Name
 				<input
 					type="text"
-					name="variations[{i}].name"
+					name="variationLabels[{i}].name"
 					class="form-input"
-					value={variation.name}
-					placeholder={data.product.variations?.[i].name}
+					value={variationLabel.name}
+					placeholder={data.product.variationLabels?.[i].name}
 				/>
 			</label>
 			<label class="form-label">
 				Value <input
 					type="text"
-					name="variations[{i}].value"
+					name="variationLabels[{i}].value"
 					class="form-input"
-					value={variation.value}
-					placeholder={data.product.variations?.[i].value}
+					value={variationLabel.value}
+					placeholder={data.product.variationLabels?.[i].value}
 				/>
 			</label>
 		</div>
