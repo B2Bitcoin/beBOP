@@ -78,165 +78,180 @@
 	let warningMessage = '';
 </script>
 
-<div class="grid grid-cols-3 gap-4">
-	<div class="touchScreen-ticket-menu p-3">
-		{#if items.length}
-			<h3 class="text-3xl">TICKET n° tmp</h3>
-			{#each items as item, i}
-				<div class="flex flex-col py-3 gap-4">
-					<form method="post" bind:this={formNotes[i]} action="/cart/{item.product._id}/?/addNote">
-						<input type="hidden" name="note" />
-						<button
-							type="submit"
-							class="text-start text-2xl w-full justify-between"
-							on:click={(event) => addNoteToItem(event, i, item.internalNote?.value || '')}
-						>
-							{item.quantity} X {item.product.name.toUpperCase()}<br />
-							{item.internalNote?.value ? '+' + item.internalNote.value : ''}
-							<div class="flex text-2xl flex-row items-end justify-end">
-								{#if item.quantity > 1}{item.quantity}X
-								{/if}
-								<PriceTag
-									amount={item.product.price.amount}
-									currency={item.product.price.currency}
-									class="text-2xl"
-									main
-								/>
-							</div>
-							{#if item.quantity > 1}
-								<div class="text-2xl flex flex-row items-end justify-end">
-									=<PriceTag
-										amount={item.quantity * item.product.price.amount}
-										currency={item.product.price.currency}
-										class="text-2xl"
-										main
-									/>
-								</div>
-							{/if}
-							<div class="text-2xl flex flex-row items-end justify-end">
-								+<span class="font-semibold">{t('cart.vat')} {priceInfo.vatRates[i]}%</span>
-							</div>
-						</button><br />
-					</form>
-				</div>
-			{/each}
-			<div class="flex flex-col border-t border-gray-300 py-6">
-				<h2 class="text-3xl">{t('cart.total').toUpperCase()} =</h2>
-				<div class="flex flex-col items-end justify-end">
-					<PriceTag
-						amount={priceInfo.partialPriceWithVat}
-						currency={priceInfo.currency}
-						main
-						class="text-2xl"
-					/>
-				</div>
-				{#each priceInfo.vat as vat}
-					<div class="flex flex-col">
-						<h2 class="text-[28px]">Dont TVA</h2>
-						<div class="text-2xl flex flex-row items-end justify-end">
-							{vat.rate}% =
+<div class="flex flex-col h-screen justify-between">
+	<main class="mb-auto">
+		<div class="grid grid-cols-3 gap-4">
+			<div class="touchScreen-ticket-menu p-3">
+				{#if items.length}
+					<h3 class="text-3xl">TICKET n° tmp</h3>
+					{#each items as item, i}
+						<div class="flex flex-col py-3 gap-4">
+							<form
+								method="post"
+								bind:this={formNotes[i]}
+								action="/cart/{item.product._id}/?/addNote"
+							>
+								<input type="hidden" name="note" />
+								<button
+									type="submit"
+									class="text-start text-2xl w-full justify-between"
+									on:click={(event) => addNoteToItem(event, i, item.internalNote?.value || '')}
+								>
+									{item.quantity} X {item.product.name.toUpperCase()}<br />
+									{item.internalNote?.value ? '+' + item.internalNote.value : ''}
+									<div class="flex text-2xl flex-row items-end justify-end">
+										{#if item.quantity > 1}{item.quantity}X
+										{/if}
+										<PriceTag
+											amount={item.product.price.amount}
+											currency={item.product.price.currency}
+											class="text-2xl"
+											main
+										/>
+									</div>
+									{#if item.quantity > 1}
+										<div class="text-2xl flex flex-row items-end justify-end">
+											=<PriceTag
+												amount={item.quantity * item.product.price.amount}
+												currency={item.product.price.currency}
+												class="text-2xl"
+												main
+											/>
+										</div>
+									{/if}
+									<div class="text-2xl flex flex-row items-end justify-end">
+										+<span class="font-semibold">{t('cart.vat')} {priceInfo.vatRates[i]}%</span>
+									</div>
+								</button><br />
+							</form>
+						</div>
+					{/each}
+					<div class="flex flex-col border-t border-gray-300 py-6">
+						<h2 class="text-3xl">{t('cart.total').toUpperCase()} =</h2>
+						<div class="flex flex-col items-end justify-end">
 							<PriceTag
-								amount={vat.partialPrice.amount}
-								currency={vat.partialPrice.currency}
+								amount={priceInfo.partialPriceWithVat}
+								currency={priceInfo.currency}
 								main
-								class="text-[28px]"
+								class="text-2xl"
 							/>
 						</div>
+						{#each priceInfo.vat as vat}
+							<div class="flex flex-col">
+								<h2 class="text-[28px]">Dont TVA</h2>
+								<div class="text-2xl flex flex-row items-end justify-end">
+									{vat.rate}% =
+									<PriceTag
+										amount={vat.partialPrice.amount}
+										currency={vat.partialPrice.currency}
+										main
+										class="text-[28px]"
+									/>
+								</div>
+							</div>
+						{/each}
 					</div>
-				{/each}
+				{:else}
+					<p>{t('cart.empty')}</p>
+				{/if}
 			</div>
-		{:else}
-			<p>{t('cart.empty')}</p>
-		{/if}
-	</div>
-	<div class="col-span-2">
-		<div class="grid grid-cols-2 gap-4 text-3xl text-center">
-			<a class="col-span-2 touchScreen-category-cta" href="?filter=pos-favorite&skip=0">FAVORIS</a>
-			{#each data.tags as favoriteTag}
-				<a class="touchScreen-category-cta" href="?filter={favoriteTag._id}&skip=0"
-					>{favoriteTag.name}</a
-				>
-			{/each}
-			<a class="col-span-2 touchScreen-category-cta" href="?filter=all&skip=0">TOUS LES ARTICLES</a>
+			<div class="col-span-2">
+				<div class="grid grid-cols-2 gap-4 text-3xl text-center">
+					<a class="col-span-2 touchScreen-category-cta" href="?filter=pos-favorite&skip=0"
+						>FAVORIS</a
+					>
+					{#each data.tags as favoriteTag}
+						<a class="touchScreen-category-cta" href="?filter={favoriteTag._id}&skip=0"
+							>{favoriteTag.name}</a
+						>
+					{/each}
+					<a class="col-span-2 touchScreen-category-cta" href="?filter=all&skip=0"
+						>TOUS LES ARTICLES</a
+					>
 
-			<div class="col-span-2 grid grid-cols-2 gap-4">
-				{#each displayedProducts as product}
-					{#if !isPreorder(product.availableDate, product.preorder)}
-						<ProductWidgetPOS {product} pictures={picturesByProduct[product._id]} />
-					{/if}
-				{/each}
-				<div class="col-span-2 grid-cols-1 flex gap-2 justify-center">
-					{#if next > 0}
-						<a
-							class="btn touchScreen-product-secondaryCTA text-3xl"
-							on:click={() => (next = Math.max(0, next - POS_PRODUCT_PAGINATION))}
-							href={`?filter=${filter}&skip=${Math.max(0, next - POS_PRODUCT_PAGINATION)}`}>&lt;</a
-						>
-					{/if}
-					PAGE {currentPage}/{totalPages}
-					{#if next + POS_PRODUCT_PAGINATION < productFiltered.length}
-						<a
-							class="btn touchScreen-product-secondaryCTA text-3xl"
-							on:click={() => (next += POS_PRODUCT_PAGINATION)}
-							href={`?filter=${filter}&skip=${next + POS_PRODUCT_PAGINATION}`}>&gt;</a
-						>
-					{/if}
+					<div class="col-span-2 grid grid-cols-2 gap-4">
+						{#each displayedProducts as product}
+							{#if !isPreorder(product.availableDate, product.preorder)}
+								<ProductWidgetPOS {product} pictures={picturesByProduct[product._id]} />
+							{/if}
+						{/each}
+						<div class="col-span-2 grid-cols-1 flex gap-2 justify-center">
+							{#if next > 0}
+								<a
+									class="btn touchScreen-product-secondaryCTA text-3xl"
+									on:click={() => (next = Math.max(0, next - POS_PRODUCT_PAGINATION))}
+									href={`?filter=${filter}&skip=${Math.max(0, next - POS_PRODUCT_PAGINATION)}`}
+									>&lt;</a
+								>
+							{/if}
+							PAGE {currentPage}/{totalPages}
+							{#if next + POS_PRODUCT_PAGINATION < productFiltered.length}
+								<a
+									class="btn touchScreen-product-secondaryCTA text-3xl"
+									on:click={() => (next += POS_PRODUCT_PAGINATION)}
+									href={`?filter=${filter}&skip=${next + POS_PRODUCT_PAGINATION}`}>&gt;</a
+								>
+							{/if}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
-
-<div class="grid grid-cols-3 gap-4 mt-2">
-	<button
-		class="touchScreen-ticket-menu text-3xl p-4 text-center"
-		on:click={() => alert('Not developped yet')}>TICKETS</button
-	>
-	<div class="col-span-2 grid grid-cols-3 gap-4">
-		<button
-			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
-			on:click={() => alert('Not developped yet')}>SAUVER</button
-		>
-		<button
-			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
-			on:click={() => alert('Not developped yet')}>POOL</button
-		>
-		<button
-			class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
-			on:click={() => alert('Not developped yet')}>OUVRIR TIROIR</button
-		>
-	</div>
-</div>
-<div class="grid grid-cols-2 gap-4 mt-2">
-	<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
-	<form
-		method="post"
-		class="grid grid-cols-2 gap-4"
-		use:enhance={(event) => {
-			if (!confirm(warningMessage)) {
-				event.cancel();
-				return;
-			}
-			return async ({ result }) => {
-				if (result.type === 'error') {
-					alert(result.error?.message);
-					return await applyAction(result);
-				}
-				await invalidate(UrlDependency.Cart);
-			};
-		}}
-	>
-		<button
-			class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center"
-			disabled={!items.length}
-			formaction="/cart/{lastItemId}/?/remove"
-			on:click={() => (warningMessage = 'Do you want to delete the last cart line ?')}>❎</button
-		>
-		<button
-			class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center"
-			disabled={!items.length}
-			formaction="/cart/?/removeAll"
-			on:click={() => (warningMessage = 'Do you want to delete all cart line ?')}>🗑️</button
-		>
-	</form>
+	</main>
+	<footer>
+		<div class="grid grid-cols-3 gap-4 mt-2">
+			<button
+				class="touchScreen-ticket-menu text-3xl p-4 text-center"
+				on:click={() => alert('Not developped yet')}>TICKETS</button
+			>
+			<div class="col-span-2 grid grid-cols-3 gap-4">
+				<button
+					class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+					on:click={() => alert('Not developped yet')}>SAUVER</button
+				>
+				<button
+					class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+					on:click={() => alert('Not developped yet')}>POOL</button
+				>
+				<button
+					class="col-span-1 touchScreen-action-secondaryCTA text-3xl p-4"
+					on:click={() => alert('Not developped yet')}>OUVRIR TIROIR</button
+				>
+			</div>
+		</div>
+		<div class="grid grid-cols-2 gap-4 mt-2">
+			<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
+			<form
+				method="post"
+				class="grid grid-cols-2 gap-4"
+				use:enhance={(event) => {
+					if (!confirm(warningMessage)) {
+						event.cancel();
+						return;
+					}
+					return async ({ result }) => {
+						if (result.type === 'error') {
+							alert(result.error?.message);
+							return await applyAction(result);
+						}
+						await invalidate(UrlDependency.Cart);
+					};
+				}}
+			>
+				<button
+					class="col-span-1 touchScreen-action-cancel text-3xl p-4 text-center"
+					disabled={!items.length}
+					formaction="/cart/{lastItemId}/?/remove"
+					on:click={() => (warningMessage = 'Do you want to delete the last cart line ?')}
+					>❎</button
+				>
+				<button
+					class="col-span-1 touchScreen-action-delete text-3xl p-4 text-center"
+					disabled={!items.length}
+					formaction="/cart/?/removeAll"
+					on:click={() => (warningMessage = 'Do you want to delete all cart line ?')}>🗑️</button
+				>
+			</form>
+		</div>
+	</footer>
 </div>
