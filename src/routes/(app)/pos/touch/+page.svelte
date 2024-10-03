@@ -79,9 +79,9 @@
 </script>
 
 <div class="flex flex-col h-screen justify-between">
-	<main class="mb-auto">
-		<div class="grid grid-cols-3 gap-4">
-			<div class="touchScreen-ticket-menu p-3">
+	<main class="mb-auto flex-grow">
+		<div class="grid grid-cols-3 gap-4 h-full">
+			<div class="touchScreen-ticket-menu p-3 h-full">
 				{#if items.length}
 					<h3 class="text-3xl">TICKET n° tmp</h3>
 					{#each items as item, i}
