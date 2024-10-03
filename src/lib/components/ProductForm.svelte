@@ -27,7 +27,6 @@
 	import type { PojoObject } from '$lib/server/pojo';
 	import type { PaymentMethod } from '$lib/server/payment-methods';
 	import { useI18n } from '$lib/i18n';
-	import { string } from 'zod';
 
 	const { t } = useI18n();
 
