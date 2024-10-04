@@ -5,21 +5,6 @@
 	export let data;
 
 	let language: LanguageKey = 'fr';
-	let variationsLang: {
-		name: string;
-		value: string;
-	}[] = [];
-
-	$: if (data.product.translations?.[language]?.variationLabels?.values) {
-		const variationValues = data.product.translations[language]?.variationLabels?.values;
-
-		variationsLang = Object.keys(variationValues || {}).flatMap((name) =>
-			Object.keys(variationValues?.[name] || {}).map((value) => ({
-				name: name,
-				value: value
-			}))
-		);
-	}
 </script>
 
 <form method="post" class="contents">
@@ -99,29 +84,27 @@
 		/>
 	</label>
 	<h2 class="text-2xl">Variations</h2>
-
-	{#each [...(variationsLang || []), ...Array(data.product.variations?.length).fill( { name: '', value: '' } )].slice(0, data.product.variations?.length) as variation, i}
-		<div class="flex gap-4">
-			<label class="form-label">
-				Name
-				<input
-					type="text"
-					name="variationLabels[{i}].name"
-					class="form-input"
-					value={variation.name}
-					placeholder={data.product.variations?.[i].name}
-				/>
-			</label>
-			<label class="form-label">
-				Value <input
-					type="text"
-					name="variationLabels[{i}].value"
-					class="form-input"
-					value={variation.value}
-					placeholder={data.product.variations?.[i].value}
-				/>
-			</label>
-		</div>
+	{#each Object.keys(data.product.variationLabels?.values || '[]') as key}
+		<h3>{data.product.variationLabels?.names[key]}</h3>
+		{#each Object.entries(data.product.variationLabels?.values[key] || '[]') as [valueKey, valueLabel]}
+			<label for={valueKey} class="form-label">{valueLabel}</label>
+			<input
+				type="text"
+				class="form-input"
+				placeholder={valueLabel}
+				name="variationLabels.values[{key}][{valueKey}]"
+			/>
+		{/each}
+	{/each}
+	{#each Object.entries(data.product.variationLabels?.names || '[]') as [key, value]}
+		<label for={key} class="form-label">{value}</label>
+		<input
+			type="text"
+			class="form-input"
+			placeholder={value}
+			id={key}
+			name="variationLabels.names[{key}]"
+		/>
 	{/each}
 	<h2 class="text-2xl">CTA links</h2>
 

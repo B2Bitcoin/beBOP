@@ -31,7 +31,10 @@ export const actions = {
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
 				...mapObject(pick(productBaseSchema(), keys), (val) => val.optional()),
 				cta: productBaseSchema().cta.optional(),
-				variationLabels: productBaseSchema().variations.optional()
+				variationLabels: z.object({
+					names: z.record(z.string(), z.string()),
+					values: z.record(z.string(), z.record(z.string(), z.string()))
+				})
 			})
 			.parse(json);
 
@@ -40,35 +43,6 @@ export const actions = {
 		if (rest.cta) {
 			rest.cta = rest.cta.filter((ctaLink) => ctaLink.label && ctaLink.href);
 		}
-		type VariationLabels = {
-			values: Record<string, Record<string, string>>;
-			names: Record<string, string>;
-		};
-		let groupedLabels: VariationLabels[] = [];
-		if (rest.variationLabels) {
-			groupedLabels = Object.values(
-				rest.variationLabels.reduce((acc: Record<string, VariationLabels>, { name, value }) => {
-					const lowerCaseName = name.toLowerCase(); // Make name lowercase for the keys
-
-					if (!acc[lowerCaseName]) {
-						acc[lowerCaseName] = {
-							values: {},
-							names: {}
-						};
-					}
-
-					acc[lowerCaseName].values[lowerCaseName] = acc[lowerCaseName].values[lowerCaseName] || {};
-					acc[lowerCaseName].values[lowerCaseName][value] =
-						value.charAt(0).toUpperCase() + value.slice(1);
-
-					if (!acc[lowerCaseName].names[lowerCaseName]) {
-						acc[lowerCaseName].names[lowerCaseName] = name.charAt(0).toUpperCase() + name.slice(1);
-					}
-
-					return acc;
-				}, {})
-			);
-		}
 
 		await collections.products.updateOne(
 			{
@@ -76,7 +50,7 @@ export const actions = {
 			},
 			{
 				$set: {
-					[`translations.${language}`]: { variationLabels: groupedLabels, ...rest },
+					[`translations.${language}`]: rest,
 					updatedAt: new Date()
 				}
 			}
