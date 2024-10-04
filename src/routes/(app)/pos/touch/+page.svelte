@@ -180,8 +180,7 @@
 								<a
 									class="btn touchScreen-product-secondaryCTA text-3xl"
 									on:click={() => (next = Math.max(0, next - POS_PRODUCT_PAGINATION))}
-									href={`?filter=${filter}&skip=${Math.max(0, next - POS_PRODUCT_PAGINATION)}`}
-									>&lt;</a
+									href={`?filter=${filter}&skip=${Math.max(0, next)}`}>&lt;</a
 								>
 							{/if}
 							PAGE {currentPage}/{totalPages}
@@ -189,7 +188,7 @@
 								<a
 									class="btn touchScreen-product-secondaryCTA text-3xl"
 									on:click={() => (next += POS_PRODUCT_PAGINATION)}
-									href={`?filter=${filter}&skip=${next + POS_PRODUCT_PAGINATION}`}>&gt;</a
+									href={`?filter=${filter}&skip=${next}`}>&gt;</a
 								>
 							{/if}
 						</div>
