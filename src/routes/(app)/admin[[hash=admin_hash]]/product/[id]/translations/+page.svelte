@@ -1,35 +1,26 @@
 <script lang="ts">
 	import { languageNames, type LanguageKey } from '$lib/translations/index.js';
 	import { MAX_DESCRIPTION_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import { string } from 'zod';
 
 	export let data;
 
 	let language: LanguageKey = 'fr';
-	const flattenedVariations: {
-		name: string;
-		value: string;
-	}[] = [];
-	const flattenedVariationsLang: {
+	let variationsLang: {
 		name: string;
 		value: string;
 	}[] = [];
 
-	$: data.product.variationLabels?.forEach((label) => {
-		const { values, names } = label;
-		for (const name in names) {
-			for (const value in values[name]) {
-				flattenedVariations.push({ name: names[name], value: values[name][value] });
-			}
-		}
-	});
-	$: data.product.translations?.[language]?.variationLabels?.forEach((label) => {
-		const { values, names } = label;
-		for (const name in names) {
-			for (const value in values[name]) {
-				flattenedVariationsLang.push({ name: names[name], value: values[name][value] });
-			}
-		}
-	});
+	$: if (data.product.translations?.[language]?.variationLabels?.values) {
+		const variationValues = data.product.translations[language]?.variationLabels?.values;
+
+		variationsLang = Object.keys(variationValues || {}).flatMap((name) =>
+			Object.keys(variationValues?.[name] || {}).map((value) => ({
+				name: name,
+				value: value
+			}))
+		);
+	}
 </script>
 
 <form method="post" class="contents">
@@ -110,7 +101,7 @@
 	</label>
 	<h2 class="text-2xl">Variations</h2>
 
-	{#each [...(flattenedVariationsLang || []), ...Array(flattenedVariations.length).fill( { name: '', value: '' } )].slice(0, flattenedVariations.length) as variationLabel, i}
+	{#each [...(variationsLang || []), ...Array(data.product.variations?.length).fill( { name: '', value: '' } )].slice(0, data.product.variations?.length) as variation, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Name
@@ -118,8 +109,8 @@
 					type="text"
 					name="variationLabels[{i}].name"
 					class="form-input"
-					value={variationLabel.name}
-					placeholder={flattenedVariations?.[i].name}
+					value={variation.name}
+					placeholder={data.product.variations?.[i].name}
 				/>
 			</label>
 			<label class="form-label">
@@ -127,8 +118,8 @@
 					type="text"
 					name="variationLabels[{i}].value"
 					class="form-input"
-					value={variationLabel.value}
-					placeholder={flattenedVariations?.[i].value}
+					value={variation.value}
+					placeholder={data.product.variations?.[i].value}
 				/>
 			</label>
 		</div>

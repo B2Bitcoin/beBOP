@@ -85,7 +85,7 @@
 				product={$productAddedToCart.product}
 				picture={$productAddedToCart.picture}
 				customPrice={$productAddedToCart.customPrice}
-				customProductName={$productAddedToCart.customProductName}
+				chosenVariations={$productAddedToCart.chosenVariations}
 				depositPercentage={$productAddedToCart.depositPercentage}
 			/>
 		</Popup>

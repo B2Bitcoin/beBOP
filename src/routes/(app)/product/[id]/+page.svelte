@@ -76,7 +76,7 @@
 			depositPercentage:
 				deposit === 'partial' && data.product.deposit ? data.product.deposit.percentage : undefined,
 			...(data.product.hasVariations && {
-				customProductName: data.product.name + ' - ' + variations.join(' - ')
+				chosenVariations: selectedVariations
 			})
 		};
 	}
@@ -111,6 +111,26 @@
 	function handleClick() {
 		isZoomed = !isZoomed;
 	}
+	// const groupedArrayVariation = data.product.variations?.reduce(
+	// 	(
+	// 		acc: {
+	// 			name: string;
+	// 			values: string[];
+	// 		}[],
+	// 		item
+	// 	) => {
+	// 		const existing = acc.find((group) => group.name === item.name);
+	// 		if (existing) {
+	// 			existing.values.push(item.value);
+	// 		} else {
+	// 			acc.push({ name: item.name, values: [item.value] });
+	// 		}
+
+	// 		return acc;
+	// 	},
+	// 	[]
+	// );
+	let selectedVariations: Record<string, string> = {};
 </script>
 
 <svelte:head>
@@ -379,21 +399,39 @@
 									</label>
 								</div>
 							{/if}
-							{#if data.product.standalone && data.product.hasVariations && data.product.variationLabels?.length}
-								{#each data.product.variationLabels as variation, i}
+							{#if data.product.standalone && data.product.hasVariations && data.product.variations?.length && data.product.variationLabels}
+								<!-- {#each groupedArrayVariation as variation, i}
 									<label class="mb-2">
-										{variation.names[Object.keys(variation.names)[0]]}:
+										{variation.name}:
 										<select
 											name="variations"
 											bind:value={variations[i]}
 											class="form-input w-full inline cursor-pointer"
 										>
-											{#each Object.entries(variation.values[Object.keys(variation.values)[0]]) as [key, value]}
-												<option value={key}>{value}</option>
+											{#each variation.values as variationVal}
+												<option value={variationVal}>{variationVal}</option>
 											{/each}
 										</select>
 									</label>
+								{/each} -->
+								{#each Object.keys(data.product.variationLabels.values) as key}
+									<label class="mb-2" for={key}>{data.product.variationLabels.names[key]}</label>
+									<select
+										bind:value={selectedVariations[key]}
+										id={key}
+										name={key}
+										class="form-input w-full inline cursor-pointer"
+									>
+										{#each Object.entries(data.product.variationLabels.values[key]) as [valueKey, valueLabel]}
+											<option value={valueKey}>{valueLabel}</option>
+										{/each}
+									</select>
 								{/each}
+								<input
+									type="hidden"
+									name="chosenVariations"
+									value={JSON.stringify(selectedVariations)}
+								/>
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">

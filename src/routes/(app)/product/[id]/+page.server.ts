@@ -37,6 +37,7 @@ export const load = async ({ params, locals }) => {
 			| 'maximumPrice'
 			| 'mobile'
 			| 'hasVariations'
+			| 'variations'
 			| 'variationLabels'
 		>
 	>(
@@ -74,6 +75,7 @@ export const load = async ({ params, locals }) => {
 				variationLabels: {
 					$ifNull: [`$translations.${locals.language}.variationLabels`, '$variationLabels']
 				},
+				variations: 1,
 				maximumPrice: 1,
 				mobile: 1
 			}
@@ -138,7 +140,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	}
 
 	const formData = await request.formData();
-	const { quantity, customPriceAmount, customPriceCurrency, deposit, variations } = z
+	const { quantity, customPriceAmount, customPriceCurrency, deposit, chosenVariations } = z
 		.object({
 			quantity: z
 				.number({ coerce: true })
@@ -152,14 +154,14 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 				.optional(),
 			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
 			deposit: z.enum(['partial', 'full']).optional(),
-			variations: z.string().array()
+			chosenVariations: z.record(z.string())
 		})
 		.parse({
 			quantity: formData.get('quantity') || undefined,
 			customPriceAmount: formData.get('customPriceAmount') || undefined,
 			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
 			deposit: formData.get('deposit') || undefined,
-			variations: formData.getAll('variations') || undefined
+			chosenVariations: JSON.parse(formData.get('chosenVariations')?.toString() || '[]')
 		});
 
 	const customPrice =
@@ -169,14 +171,12 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 					currency: customPriceCurrency
 			  }
 			: undefined;
-	const customProductName =
-		variations && variations.length ? product.name + ' - ' + variations.join(' - ') : undefined;
 
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
 		...(product.payWhatYouWant && { customPrice }),
 		deposit: deposit === 'partial',
-		...(product.hasVariations && { customProductName })
+		...(product.hasVariations && { chosenVariations })
 	});
 }
 

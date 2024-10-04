@@ -147,7 +147,7 @@ export interface Order extends Timestamps {
 		product: Product;
 		quantity: number;
 		customPrice?: { amount: number; currency: Currency };
-		customProductName?: string;
+		chosenVariations?: Record<string, string>;
 		depositPercentage?: number;
 		currencySnapshot: {
 			main: {

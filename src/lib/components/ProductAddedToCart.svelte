@@ -12,7 +12,7 @@
 	export let picture: PictureType | undefined;
 	export let customPrice: { amount: number; currency: Currency } | undefined;
 	export let depositPercentage: number | undefined;
-	export let customProductName: string | undefined;
+	export let chosenVariations: Record<string, string> | undefined;
 
 	let className = '';
 	export { className as class };
@@ -28,7 +28,11 @@
 	<Picture {picture} class="w-[138px] h-[138px] border-gray-300 border rounded object-cover" />
 	<div class="flex flex-col grow gap-1">
 		<h2 class="body-title text-[22px] font-medium">{t('product.addedToCart')}</h2>
-		<h3 class="text-base font-light">{customProductName || product.name}</h3>
+		<h3 class="text-base font-light">
+			{chosenVariations
+				? product.name + ' - ' + Object.values(chosenVariations).join(' - ')
+				: product.name}
+		</h3>
 		<PriceTag
 			currency={price.currency}
 			class="text-xl body-secondaryText"

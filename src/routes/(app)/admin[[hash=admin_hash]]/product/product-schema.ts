@@ -60,7 +60,7 @@ export const productBaseSchema = () => ({
 		.optional()
 		.default([]),
 	hasVariations: z.boolean({ coerce: true }).default(false),
-	variationLabels: z
+	variations: z
 		.array(
 			z.object({
 				name: z.string().trim(),

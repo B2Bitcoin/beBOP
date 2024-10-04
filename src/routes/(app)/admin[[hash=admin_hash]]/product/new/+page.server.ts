@@ -105,34 +105,28 @@ export const actions: Actions = {
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;
 		}
-
 		type VariationLabels = {
 			values: Record<string, Record<string, string>>;
 			names: Record<string, string>;
 		};
+		const variationLabels: VariationLabels = {
+			values: {},
+			names: {}
+		};
+		parsed.variations.forEach((variation) => {
+			const nameLower = variation.name.toLowerCase();
+			const valueLower = variation.value.toLowerCase();
 
-		const groupedLabels: VariationLabels[] = Object.values(
-			parsed.variationLabels.reduce((acc: Record<string, VariationLabels>, { name, value }) => {
-				const lowerCaseName = name.toLowerCase(); // Make name lowercase for the keys
+			if (!variationLabels.names[nameLower]) {
+				variationLabels.names[nameLower] = variation.name;
+			}
 
-				if (!acc[lowerCaseName]) {
-					acc[lowerCaseName] = {
-						values: {},
-						names: {}
-					};
-				}
+			if (!variationLabels.values[nameLower]) {
+				variationLabels.values[nameLower] = {};
+			}
 
-				acc[lowerCaseName].values[lowerCaseName] = acc[lowerCaseName].values[lowerCaseName] || {};
-				acc[lowerCaseName].values[lowerCaseName][value] =
-					value.charAt(0).toUpperCase() + value.slice(1);
-
-				if (!acc[lowerCaseName].names[lowerCaseName]) {
-					acc[lowerCaseName].names[lowerCaseName] = name.charAt(0).toUpperCase() + name.slice(1);
-				}
-
-				return acc;
-			}, {})
-		);
+			variationLabels.values[nameLower][valueLower] = variation.value;
+		});
 
 		await generatePicture(parsed.pictureId, {
 			productId: parsed.slug,
@@ -205,9 +199,14 @@ export const actions: Actions = {
 						tagIds: parsed.tagIds,
 						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
 						...(parsed.standalone && { hasVariations: parsed.hasVariations }),
+						...(parsed.hasVariations && {
+							variations: parsed.variations?.filter(
+								(variation) => variation.name && variation.value
+							)
+						}),
 						...(parsed.hasVariations &&
-							groupedLabels && {
-								variationLabels: groupedLabels
+							variationLabels && {
+								variationLabels: variationLabels
 							}),
 						...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 					},

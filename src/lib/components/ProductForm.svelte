@@ -89,6 +89,7 @@
 		percentage: 50,
 		enforce: false
 	};
+	$: variationLines = product.variations?.length || 2;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);
@@ -191,20 +192,6 @@
 			event.preventDefault();
 		}
 	}
-	const flattenedVariations: {
-		name: string;
-		value: string;
-	}[] = [];
-
-	product.variationLabels?.forEach((label) => {
-		const { values, names } = label;
-		for (const name in names) {
-			for (const value in values[name]) {
-				flattenedVariations.push({ name: names[name], value: values[name][value] });
-			}
-		}
-	});
-	$: variationLines = flattenedVariations.length || 2;
 </script>
 
 <form
@@ -465,23 +452,23 @@
 			Product has light variations (no stock nor price difference)
 		</label>
 		{#if product.hasVariations}
-			{#each [...(flattenedVariations || []), ...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variationLabel, i}
+			{#each [...(product.variations || []), ...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variation, i}
 				<div class="flex gap-4">
 					<label class="form-label">
 						Name
 						<input
 							type="text"
-							name="variationLabels[{i}].name"
+							name="variations[{i}].name"
 							class="form-input"
-							value={variationLabel.name}
+							value={variation.name}
 						/>
 					</label>
 					<label class="form-label">
 						Value <input
 							type="text"
-							name="variationLabels[{i}].value"
+							name="variations[{i}].value"
 							class="form-input"
-							value={variationLabel.value}
+							value={variation.value}
 						/>
 					</label>
 				</div>

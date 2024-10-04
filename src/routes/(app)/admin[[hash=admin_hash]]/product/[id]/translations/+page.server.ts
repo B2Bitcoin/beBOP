@@ -31,7 +31,7 @@ export const actions = {
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
 				...mapObject(pick(productBaseSchema(), keys), (val) => val.optional()),
 				cta: productBaseSchema().cta.optional(),
-				variationLabels: productBaseSchema().variationLabels.optional()
+				variationLabels: productBaseSchema().variations.optional()
 			})
 			.parse(json);
 
