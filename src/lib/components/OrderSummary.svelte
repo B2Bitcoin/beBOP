@@ -26,7 +26,7 @@
 					Product,
 					'_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping' | 'isTicket'
 				>;
-				chosenVariations: Record<string, string>;
+				chosenVariations: Record<string, string> | undefined;
 			}
 		>;
 		payments: Array<Pick<OrderPayment, 'currencySnapshot' | 'status' | 'method'>>;
