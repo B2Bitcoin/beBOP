@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { languageNames, type LanguageKey } from '$lib/translations/index.js';
 	import { MAX_DESCRIPTION_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { string } from 'zod';
 
 	export let data;
 

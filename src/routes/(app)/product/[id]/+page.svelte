@@ -64,7 +64,6 @@
 		data.roleId === POS_ROLE_ID
 			? data.product.actionSettings.retail.canBeAddedToBasket
 			: data.product.actionSettings.eShop.canBeAddedToBasket;
-	let variations: string[] = [];
 	function addToCart() {
 		$productAddedToCart = {
 			product: data.product,
