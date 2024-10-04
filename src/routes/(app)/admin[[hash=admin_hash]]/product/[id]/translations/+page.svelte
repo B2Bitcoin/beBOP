@@ -92,6 +92,7 @@
 				type="text"
 				class="form-input"
 				placeholder={valueLabel}
+				value={data.product.translations?.[language]?.variationLabels?.values[key][valueKey] || ''}
 				name="variationLabels.values[{key}][{valueKey}]"
 			/>
 		{/each}
@@ -102,7 +103,7 @@
 			type="text"
 			class="form-input"
 			placeholder={value}
-			id={key}
+			value={data.product.translations?.[language]?.variationLabels?.names[key] || ''}
 			name="variationLabels.names[{key}]"
 		/>
 	{/each}
