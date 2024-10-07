@@ -495,9 +495,9 @@
 					</div>
 				{/each}
 			{/each}
-			{#each [...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as _, i}
+			{#each [...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variation, i}
 				<div class="flex gap-4">
-					<label class="form-label">
+					<label class="form-label" for={variation.name}>
 						Name
 						<input
 							type="text"
