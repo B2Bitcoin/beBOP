@@ -2,6 +2,8 @@
 import bip84 from 'bip84';
 import { runtimeConfig } from './runtime-config';
 import { collections } from './database';
+import { z } from 'zod';
+import { sum } from '$lib/utils/sum';
 
 export function isBitcoinNodelessConfigured(): boolean {
 	return !!runtimeConfig.bitcoinNodeless.bip84ZPub;
@@ -29,6 +31,7 @@ export async function generateDerivationIndex(): Promise<number> {
 		{ _id: 'bitcoinNodeless' },
 		{
 			$inc: { 'data.derivationIndex': 1 as never },
+			$set: { updatedAt: new Date() },
 			$setOnInsert: { data: runtimeConfig.bitcoinNodeless }
 		},
 		{ upsert: true, returnDocument: 'after' }
@@ -39,4 +42,64 @@ export async function generateDerivationIndex(): Promise<number> {
 	}
 
 	return res.value.data as number;
+}
+
+export async function getSatoshiReceivedNodeless(
+	address: string,
+	confirmations: number
+): Promise<{
+	satReceived: number;
+	transactions: Array<{
+		currency: 'SAT';
+		amount: number;
+		id: string;
+	}>;
+}> {
+	const resp = await fetch(
+		new URL(`/api/address/${address}/txs`, runtimeConfig.bitcoinNodeless.mempoolUrl)
+	);
+
+	if (!resp.ok) {
+		throw new Error('Failed to fetch transactions for ' + address);
+	}
+
+	const res = z
+		.array(
+			z.object({
+				txid: z.string(),
+				status: z.object({
+					block_height: z.number()
+				}),
+				vout: z.array(
+					z.object({
+						scriptpubkey_address: z.string(),
+						value: z.number()
+					})
+				)
+			})
+		)
+		.parse(await resp.json());
+
+	const transactions = res
+		.filter((tx) => tx.status.block_height <= runtimeConfig.bitcoinBlockHeight - confirmations)
+		.map((tx) => ({
+			currency: 'SAT' as const,
+			amount: sum(
+				tx.vout.filter((vout) => vout.scriptpubkey_address === address).map((vout) => vout.value)
+			),
+			id: tx.txid
+		}));
+
+	const total = sum(
+		res
+			.filter((tx) => tx.status.block_height <= runtimeConfig.bitcoinBlockHeight - confirmations)
+			.flatMap((tx) =>
+				tx.vout.filter((vout) => vout.scriptpubkey_address === address).map((vout) => vout.value)
+			)
+	);
+
+	return {
+		satReceived: total,
+		transactions
+	};
 }

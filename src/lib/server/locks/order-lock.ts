@@ -8,12 +8,15 @@ import { inspect } from 'node:util';
 import { lndLookupInvoice } from '../lnd';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { onOrderPayment, onOrderPaymentFailed } from '../orders';
-import { refreshPromise, runtimeConfig } from '../runtime-config';
+import { refreshPromise, runtimeConfig, runtimeConfigUpdatedAt } from '../runtime-config';
 import { getConfirmationBlocks } from '$lib/server/getConfirmationBlocks';
 import { phoenixdLookupInvoice } from '../phoenixd';
 import { CURRENCIES, CURRENCY_UNIT } from '$lib/types/Currency';
 import { typedInclude } from '$lib/utils/typedIncludes';
 import { isPaypalEnabled, paypalGetCheckout } from '../paypal';
+import { differenceInMinutes } from 'date-fns';
+import { z } from 'zod';
+import { getSatoshiReceivedNodeless } from '../bitcoin-nodeless';
 
 const lock = new Lock('orders');
 
@@ -45,27 +48,73 @@ async function maintainOrders() {
 				switch (payment.method) {
 					case 'bitcoin':
 						try {
-							const transactions = await listTransactions(
-								orderAddressLabel(order._id, payment._id)
-							);
+							let satReceived = 0;
+							if (payment.processor === 'bitcoin-nodeless') {
+								if (
+									!runtimeConfigUpdatedAt['bitcoinBlockHeight'] ||
+									differenceInMinutes(new Date(), runtimeConfigUpdatedAt['bitcoinBlockHeight']) >= 1
+								) {
+									const resp = await fetch(
+										new URL('/api/blocks/tip/height', runtimeConfig.bitcoinNodeless.mempoolUrl)
+									);
 
-							const confirmationBlocks = getConfirmationBlocks(payment.price.amount);
+									if (!resp.ok) {
+										throw new Error('Failed to fetch block height');
+									}
 
-							const received = sum(
-								transactions
-									.filter((t) => t.amount > 0 && t.confirmations >= confirmationBlocks)
-									.map((t) => t.amount)
-							);
+									const blockHeight = z.number().parse(await resp.json());
 
-							const satReceived = toSatoshis(received, 'BTC');
+									runtimeConfig.bitcoinBlockHeight = blockHeight;
+									runtimeConfigUpdatedAt['bitcoinBlockHeight'] = new Date();
 
-							if (satReceived >= toSatoshis(payment.price.amount, payment.price.currency)) {
+									await collections.runtimeConfig.updateOne(
+										{
+											_id: 'bitcoinBlockHeight'
+										},
+										{
+											$set: {
+												data: blockHeight,
+												updatedAt: new Date()
+											}
+										},
+										{
+											upsert: true
+										}
+									);
+								}
+
+								if (!payment.address) {
+									throw new Error('Missing address on bitcoin order');
+								}
+
+								const received = await getSatoshiReceivedNodeless(
+									payment.address,
+									getConfirmationBlocks(payment.price.amount)
+								);
+
+								payment.transactions = received.transactions;
+								satReceived = received.satReceived;
+							} else {
+								const transactions = await listTransactions(
+									orderAddressLabel(order._id, payment._id)
+								);
+
+								const confirmationBlocks = getConfirmationBlocks(payment.price.amount);
+
+								const received = sum(
+									transactions
+										.filter((t) => t.amount > 0 && t.confirmations >= confirmationBlocks)
+										.map((t) => t.amount)
+								);
+
+								satReceived = toSatoshis(received, 'BTC');
 								payment.transactions = transactions.map((transaction) => ({
 									id: transaction.txid,
 									amount: transaction.amount,
 									currency: 'BTC' as const
 								}));
-
+							}
+							if (satReceived >= toSatoshis(payment.price.amount, payment.price.currency)) {
 								order = await onOrderPayment(order, payment, {
 									amount: satReceived,
 									currency: 'SAT'

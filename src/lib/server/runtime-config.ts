@@ -148,9 +148,11 @@ const baseConfig = {
 	},
 	bitcoinNodeless: {
 		bip84ZPub: '',
+		mempoolUrl: 'https://mempool.space',
 		derivationPath: "m/84'/0'/0'",
 		derivationIndex: 0
 	},
+	bitcoinBlockHeight: 0,
 	stripe: {
 		/** pk_... */
 		publicKey: '',
