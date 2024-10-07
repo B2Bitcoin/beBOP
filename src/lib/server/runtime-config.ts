@@ -147,8 +147,9 @@ const baseConfig = {
 		currency: 'EUR' as Currency
 	},
 	bitcoinNodeless: {
-		zpub: '',
-		addressIndex: 0
+		bip84ZPub: '',
+		derivationPath: "m/84'/0'/0'",
+		derivationIndex: 0
 	},
 	stripe: {
 		/** pk_... */
