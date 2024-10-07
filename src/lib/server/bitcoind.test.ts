@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { orderAddressLabel } from './bitcoin';
+import { orderAddressLabel } from './bitcoind';
 import { ObjectId } from 'mongodb';
 // import { bip84Address } from './bitcoin';
 

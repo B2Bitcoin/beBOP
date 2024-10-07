@@ -1,4 +1,4 @@
-import { getNewAddress } from '$lib/server/bitcoin.js';
+import { getNewAddress } from '$lib/server/bitcoind.js';
 
 export const actions = {
 	default: async function ({}) {

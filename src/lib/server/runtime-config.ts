@@ -146,6 +146,10 @@ const baseConfig = {
 		merchantCode: '',
 		currency: 'EUR' as Currency
 	},
+	bitcoinNodeless: {
+		zpub: '',
+		addressIndex: 0
+	},
 	stripe: {
 		/** pk_... */
 		publicKey: '',

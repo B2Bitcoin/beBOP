@@ -14,7 +14,7 @@ import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
-import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
+import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoind';
 import { lndCreateInvoice } from './lnd';
 import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';

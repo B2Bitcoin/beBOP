@@ -9,7 +9,7 @@ import {
 	bitcoinRpc,
 	type BitcoinCommand,
 	loadDiskWallets
-} from '$lib/server/bitcoin';
+} from '$lib/server/bitcoind';
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import type { Order } from '$lib/types/Order.js';

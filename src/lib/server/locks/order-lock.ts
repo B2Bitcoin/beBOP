@@ -1,7 +1,7 @@
 import { collections } from '../database';
 import { setTimeout } from 'node:timers/promises';
 import { processClosed } from '../process';
-import { listTransactions, orderAddressLabel } from '../bitcoin';
+import { listTransactions, orderAddressLabel } from '../bitcoind';
 import { sum } from '$lib/utils/sum';
 import { Lock } from '../lock';
 import { inspect } from 'node:util';
