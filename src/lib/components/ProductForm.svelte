@@ -27,6 +27,7 @@
 	import type { PojoObject } from '$lib/server/pojo';
 	import type { PaymentMethod } from '$lib/server/payment-methods';
 	import { useI18n } from '$lib/i18n';
+	import { toLower } from 'lodash-es';
 
 	const { t } = useI18n();
 
@@ -89,7 +90,7 @@
 		percentage: 50,
 		enforce: false
 	};
-	$: variationLines = product.variations?.length || 2;
+	$: variationLines = product.variationLabels?.names ? 0 : 2;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);
@@ -192,6 +193,9 @@
 			event.preventDefault();
 		}
 	}
+	let variationLabelsNames: string[] = [];
+
+	let variationLabelsValues: string[] = [];
 </script>
 
 <form
@@ -452,23 +456,76 @@
 			Product has light variations (no stock nor price difference)
 		</label>
 		{#if product.hasVariations}
-			{#each [...(product.variations || []), ...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variation, i}
+			{#each Object.entries(product.variationLabels?.names || []) as [key, value]}
+				{#each Object.entries(product.variationLabels?.values[key] || []) as [valueKey, valueLabel]}
+					<div class="flex gap-4">
+						<label for={key} class="form-label"
+							>Name
+							<input
+								type="text"
+								class="form-input"
+								placeholder={value}
+								value={product.variationLabels?.names[key] || ''}
+								name="variationLabels.names[{key}]"
+							/>
+
+							<!-- <input
+								type="hidden"
+								name="variations[{i}].name"
+								class="form-input"
+								value={product.variationLabels?.names[key]}
+							/> -->
+						</label>
+						<label for={valueKey} class="form-label"
+							>Value
+							<input
+								type="text"
+								class="form-input"
+								placeholder={valueLabel}
+								value={product.variationLabels?.values[key][valueKey] || ''}
+								name="variationLabels.values[{key}][{valueKey}]"
+							/>
+							<!-- <input
+								type="hidden"
+								name="variations[{}].value"
+								class="form-input"
+								value={product.variationLabels?.values[key][valueKey]}
+							/> -->
+						</label>
+					</div>
+				{/each}
+			{/each}
+			{#each [...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as _, i}
 				<div class="flex gap-4">
 					<label class="form-label">
 						Name
 						<input
 							type="text"
+							name="variationLabels.names[{toLower(variationLabelsNames[i])}]"
+							class="form-input"
+							bind:value={variationLabelsNames[i]}
+						/>
+						<input
+							type="hidden"
 							name="variations[{i}].name"
 							class="form-input"
-							value={variation.name}
+							value={toLower(variationLabelsNames[i])}
 						/>
 					</label>
 					<label class="form-label">
 						Value <input
 							type="text"
+							name="variationLabels.values[{toLower(variationLabelsNames[i])}][{toLower(
+								variationLabelsValues[i]
+							)}"
+							class="form-input"
+							bind:value={variationLabelsValues[i]}
+						/>
+						<input
+							type="hidden"
 							name="variations[{i}].value"
 							class="form-input"
-							value={variation.value}
+							value={toLower(variationLabelsValues[i])}
 						/>
 					</label>
 				</div>

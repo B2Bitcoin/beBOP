@@ -105,28 +105,6 @@ export const actions: Actions = {
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;
 		}
-		type VariationLabels = {
-			values: Record<string, Record<string, string>>;
-			names: Record<string, string>;
-		};
-		const variationLabels: VariationLabels = {
-			values: {},
-			names: {}
-		};
-		parsed.variations.forEach((variation) => {
-			const nameLower = variation.name.toLowerCase();
-			const valueLower = variation.value.toLowerCase();
-
-			if (!variationLabels.names[nameLower]) {
-				variationLabels.names[nameLower] = variation.name;
-			}
-
-			if (!variationLabels.values[nameLower]) {
-				variationLabels.values[nameLower] = {};
-			}
-
-			variationLabels.values[nameLower][valueLower] = variation.value;
-		});
 
 		await generatePicture(parsed.pictureId, {
 			productId: parsed.slug,
@@ -205,8 +183,8 @@ export const actions: Actions = {
 							)
 						}),
 						...(parsed.hasVariations &&
-							variationLabels && {
-								variationLabels: variationLabels
+							parsed.variationLabels && {
+								variationLabels: parsed.variationLabels
 							}),
 						...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 					},

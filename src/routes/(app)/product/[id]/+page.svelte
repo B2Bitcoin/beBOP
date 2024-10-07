@@ -110,25 +110,7 @@
 	function handleClick() {
 		isZoomed = !isZoomed;
 	}
-	// const groupedArrayVariation = data.product.variations?.reduce(
-	// 	(
-	// 		acc: {
-	// 			name: string;
-	// 			values: string[];
-	// 		}[],
-	// 		item
-	// 	) => {
-	// 		const existing = acc.find((group) => group.name === item.name);
-	// 		if (existing) {
-	// 			existing.values.push(item.value);
-	// 		} else {
-	// 			acc.push({ name: item.name, values: [item.value] });
-	// 		}
 
-	// 		return acc;
-	// 	},
-	// 	[]
-	// );
 	let selectedVariations: Record<string, string> = {};
 </script>
 
@@ -399,20 +381,6 @@
 								</div>
 							{/if}
 							{#if data.product.standalone && data.product.hasVariations && data.product.variations?.length && data.product.variationLabels}
-								<!-- {#each groupedArrayVariation as variation, i}
-									<label class="mb-2">
-										{variation.name}:
-										<select
-											name="variations"
-											bind:value={variations[i]}
-											class="form-input w-full inline cursor-pointer"
-										>
-											{#each variation.values as variationVal}
-												<option value={variationVal}>{variationVal}</option>
-											{/each}
-										</select>
-									</label>
-								{/each} -->
 								{#each Object.keys(data.product.variationLabels.values) as key}
 									<label class="mb-2" for={key}>{data.product.variationLabels.names[key]}</label>
 									<select

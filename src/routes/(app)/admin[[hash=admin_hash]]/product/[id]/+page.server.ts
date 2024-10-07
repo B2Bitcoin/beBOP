@@ -102,30 +102,6 @@ export const actions: Actions = {
 			parsed.free = true;
 		}
 		const amountInCarts = await amountOfProductReserved(params.id);
-
-		type VariationLabels = {
-			values: Record<string, Record<string, string>>;
-			names: Record<string, string>;
-		};
-		const variationLabels: VariationLabels = {
-			values: {},
-			names: {}
-		};
-		parsed.variations.forEach((variation) => {
-			const nameLower = variation.name.toLowerCase();
-			const valueLower = variation.value.toLowerCase();
-
-			if (!variationLabels.names[nameLower]) {
-				variationLabels.names[nameLower] = variation.name;
-			}
-
-			if (!variationLabels.values[nameLower]) {
-				variationLabels.values[nameLower] = {};
-			}
-
-			variationLabels.values[nameLower][valueLower] = variation.value;
-		});
-
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -206,8 +182,8 @@ export const actions: Actions = {
 						variations: parsed.variations?.filter((variation) => variation.name && variation.value)
 					}),
 					...(parsed.hasVariations &&
-						variationLabels && {
-							variationLabels: variationLabels
+						parsed.variationLabels && {
+							variationLabels: parsed.variationLabels
 						})
 				},
 				$unset: {

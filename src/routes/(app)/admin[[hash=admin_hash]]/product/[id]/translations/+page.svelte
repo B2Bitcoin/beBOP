@@ -84,7 +84,7 @@
 		/>
 	</label>
 	<h2 class="text-2xl">Variations</h2>
-	{#each Object.keys(data.product.variationLabels?.values || '[]') as key}
+	{#each Object.keys(data.product.variationLabels?.values || []) as key}
 		<h3>{data.product.variationLabels?.names[key]}</h3>
 		{#each Object.entries(data.product.variationLabels?.values[key] || '[]') as [valueKey, valueLabel]}
 			<label for={valueKey} class="form-label">{valueLabel}</label>
@@ -97,7 +97,7 @@
 			/>
 		{/each}
 	{/each}
-	{#each Object.entries(data.product.variationLabels?.names || '[]') as [key, value]}
+	{#each Object.entries(data.product.variationLabels?.names || []) as [key, value]}
 		<label for={key} class="form-label">{value}</label>
 		<input
 			type="text"
