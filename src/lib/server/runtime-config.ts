@@ -147,9 +147,9 @@ const baseConfig = {
 		currency: 'EUR' as Currency
 	},
 	bitcoinNodeless: {
-		bip84ZPub: '',
 		mempoolUrl: 'https://mempool.space',
-		derivationPath: "m/84'/0'/0'",
+		format: 'bip84' as const,
+		publicKey: '',
 		derivationIndex: 0
 	},
 	bitcoinBlockHeight: 0,

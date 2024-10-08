@@ -17,6 +17,7 @@ import { isPaypalEnabled, paypalGetCheckout } from '../paypal';
 import { differenceInMinutes } from 'date-fns';
 import { z } from 'zod';
 import { getSatoshiReceivedNodeless } from '../bitcoin-nodeless';
+import { trimSuffix } from '$lib/utils/trimSuffix';
 
 const lock = new Lock('orders');
 
@@ -55,7 +56,10 @@ async function maintainOrders() {
 									differenceInMinutes(new Date(), runtimeConfigUpdatedAt['bitcoinBlockHeight']) >= 1
 								) {
 									const resp = await fetch(
-										new URL('/api/blocks/tip/height', runtimeConfig.bitcoinNodeless.mempoolUrl)
+										new URL(
+											trimSuffix(runtimeConfig.bitcoinNodeless.mempoolUrl, '/') +
+												'/api/blocks/tip/height'
+										)
 									);
 
 									if (!resp.ok) {

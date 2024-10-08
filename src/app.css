@@ -300,6 +300,13 @@
 	}
 }
 
+@layer utilities {
+	.font-mono {
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+			'Courier New', monospace;
+	}
+}
+
 /* TinyMCE upgrade button */
 .tox-promotion {
 	@apply hidden;

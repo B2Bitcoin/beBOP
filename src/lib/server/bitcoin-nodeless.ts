@@ -4,9 +4,13 @@ import { runtimeConfig } from './runtime-config';
 import { collections } from './database';
 import { z } from 'zod';
 import { sum } from '$lib/utils/sum';
+import { trimSuffix } from '$lib/utils/trimSuffix';
 
 export function isBitcoinNodelessConfigured(): boolean {
-	return !!runtimeConfig.bitcoinNodeless.bip84ZPub;
+	return (
+		!!runtimeConfig.bitcoinNodeless.publicKey &&
+		isZPubValid(runtimeConfig.bitcoinNodeless.publicKey)
+	);
 }
 
 export function bip84Address(zpub: string, index: number): string {
@@ -21,7 +25,8 @@ export function isZPubValid(zpub: string): boolean {
 	try {
 		new bip84.fromZPub(zpub).getAddress(0);
 		return true;
-	} catch {
+	} catch (err) {
+		console.error(err);
 		return false;
 	}
 }
@@ -34,7 +39,7 @@ export async function generateDerivationIndex(): Promise<number> {
 			$set: { updatedAt: new Date() },
 			$setOnInsert: { data: runtimeConfig.bitcoinNodeless }
 		},
-		{ upsert: true, returnDocument: 'after' }
+		{ returnDocument: 'before' }
 	);
 
 	if (!res.value) {
@@ -56,7 +61,9 @@ export async function getSatoshiReceivedNodeless(
 	}>;
 }> {
 	const resp = await fetch(
-		new URL(`/api/address/${address}/txs`, runtimeConfig.bitcoinNodeless.mempoolUrl)
+		new URL(
+			trimSuffix(runtimeConfig.bitcoinNodeless.mempoolUrl, '/') + `/api/address/${address}/txs`
+		)
 	);
 
 	if (!resp.ok) {

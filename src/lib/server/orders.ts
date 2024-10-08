@@ -1018,7 +1018,7 @@ async function generatePaymentInfo(params: {
 			if (isBitcoinNodelessConfigured()) {
 				return {
 					address: bip84Address(
-						runtimeConfig.bitcoinNodeless.bip84ZPub,
+						runtimeConfig.bitcoinNodeless.publicKey,
 						await generateDerivationIndex()
 					),
 					processor: 'bitcoin-nodeless'
