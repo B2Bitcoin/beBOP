@@ -9,6 +9,8 @@ import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -140,6 +142,12 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	}
 
 	const formData = await request.formData();
+
+	const json: JsonObject = {};
+	for (const [key, value] of formData) {
+		set(json, key, value);
+	}
+
 	const { quantity, customPriceAmount, customPriceCurrency, deposit, chosenVariations } = z
 		.object({
 			quantity: z
@@ -154,17 +162,9 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 				.optional(),
 			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
 			deposit: z.enum(['partial', 'full']).optional(),
-			chosenVariations: z.record(z.string()).optional()
+			chosenVariations: z.record(z.string(), z.string()).optional()
 		})
-		.parse({
-			quantity: formData.get('quantity') || undefined,
-			customPriceAmount: formData.get('customPriceAmount') || undefined,
-			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
-			deposit: formData.get('deposit') || undefined,
-			chosenVariations: formData.get('chosenVariations')
-				? JSON.parse(formData.get('chosenVariations')?.toString() || '[]')
-				: undefined
-		});
+		.parse(json);
 
 	const customPrice =
 		customPriceAmount && customPriceCurrency

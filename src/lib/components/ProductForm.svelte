@@ -469,12 +469,14 @@
 								name="variationLabels.names[{key}]"
 							/>
 
-							<!-- <input
+							<input
 								type="hidden"
-								name="variations[{i}].name"
+								name="variations[{product.variations?.findIndex(
+									(val) => val.name === key && val.value === valueKey
+								)}].name"
 								class="form-input"
-								value={product.variationLabels?.names[key]}
-							/> -->
+								value={toLower(product.variationLabels?.names[key])}
+							/>
 						</label>
 						<label for={valueKey} class="form-label"
 							>Value
@@ -485,12 +487,14 @@
 								value={product.variationLabels?.values[key][valueKey] || ''}
 								name="variationLabels.values[{key}][{valueKey}]"
 							/>
-							<!-- <input
+							<input
 								type="hidden"
-								name="variations[{}].value"
+								name="variations[{product.variations?.findIndex(
+									(val) => val.name === key && val.value === valueKey
+								)}].value"
 								class="form-input"
-								value={product.variationLabels?.values[key][valueKey]}
-							/> -->
+								value={toLower(product.variationLabels?.values[key][valueKey])}
+							/>
 						</label>
 					</div>
 				{/each}
@@ -507,7 +511,7 @@
 						/>
 						<input
 							type="hidden"
-							name="variations[{i}].name"
+							name="variations[{product.variations?.length || 0 + i}].name"
 							class="form-input"
 							value={toLower(variationLabelsNames[i])}
 						/>
@@ -523,7 +527,7 @@
 						/>
 						<input
 							type="hidden"
-							name="variations[{i}].value"
+							name="variations[{product.variations?.length || 0 + i}].value"
 							class="form-input"
 							value={toLower(variationLabelsValues[i])}
 						/>

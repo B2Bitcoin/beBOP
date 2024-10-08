@@ -386,7 +386,7 @@
 									<select
 										bind:value={selectedVariations[key]}
 										id={key}
-										name={key}
+										name="chosenVariations[{key}]"
 										class="form-input w-full inline cursor-pointer"
 									>
 										{#each Object.entries(data.product.variationLabels.values[key]) as [valueKey, valueLabel]}
@@ -394,11 +394,6 @@
 										{/each}
 									</select>
 								{/each}
-								<input
-									type="hidden"
-									name="chosenVariations"
-									value={JSON.stringify(selectedVariations)}
-								/>
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">
