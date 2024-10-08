@@ -513,7 +513,7 @@
 						Name
 						<input
 							type="text"
-							name="variationLabels.names[{variationLabelsNames[i]?.toLocaleLowerCase()}]"
+							name="variationLabels.names[{(variationLabelsNames[i] || '').toLocaleLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsNames[i]}
 						/>
@@ -521,7 +521,7 @@
 							type="hidden"
 							name="variations[{product.variations?.length || 0 + i}].name"
 							class="form-input"
-							value={variationLabelsNames[i]?.toLowerCase()}
+							value={(variationLabelsNames[i] || '').toLowerCase()}
 						/>
 					</label>
 					<label class="form-label">
@@ -530,8 +530,8 @@
 							name="variationLabels.values[{(
 								variationLabelsNames[i] || ''
 							).toLowerCase()}][{isNumber(variationLabelsValues[i])
-								? (variationLabelsNames[i] + variationLabelsValues[i])?.toLowerCase()
-								: variationLabelsValues[i]?.toLowerCase()}]"
+								? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+								: (variationLabelsValues[i] || '').toLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsValues[i]}
 						/>
@@ -540,8 +540,8 @@
 							name="variations[{product.variations?.length || 0 + i}].value"
 							class="form-input"
 							value={isNumber(variationLabelsValues[i])
-								? variationLabelsNames[i] + variationLabelsValues[i]?.toLowerCase()
-								: variationLabelsValues[i]?.toLowerCase()}
+								? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+								: (variationLabelsValues[i] || '').toLowerCase()}
 						/>
 					</label>
 				</div>
