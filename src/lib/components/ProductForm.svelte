@@ -470,15 +470,6 @@
 								value={product.variationLabels?.names[key] || ''}
 								name="variationLabels.names[{key}]"
 							/>
-
-							<!-- <input
-								type="hidden"
-								name="variations[{product.variations?.findIndex(
-									(val) => val.name === key && val.value === valueKey
-								)}].name"
-								class="form-input"
-								value={toLower(product.variationLabels?.names[key])}
-							/> -->
 						</label>
 						<label for={valueKey} class="form-label"
 							>Value
@@ -489,20 +480,6 @@
 								value={product.variationLabels?.values[key][valueKey] || ''}
 								name="variationLabels.values[{key}][{valueKey}]"
 							/>
-							<!-- <input
-								type="hidden"
-								name="variations[{product.variations?.findIndex(
-									(val) => val.name === key && val.value === valueKey
-								)}].value"
-								class="form-input"
-								value={toLower(
-									isNumber(product.variationLabels?.values[key][valueKey] || '')
-										? product.variationLabels?.names[key] ||
-												'' + product.variationLabels?.values[key][valueKey] ||
-												''
-										: product.variationLabels?.values[key][valueKey]
-								)}
-							/> -->
 						</label>
 					</div>
 				{/each}
@@ -513,15 +490,9 @@
 						Name
 						<input
 							type="text"
-							name="variationLabels.names[{variationLabelsNames[i]?.toLocaleLowerCase()}]"
+							name="variationLabels.names[{(variationLabelsNames[i] || '').toLocaleLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsNames[i]}
-						/>
-						<input
-							type="hidden"
-							name="variations[{product.variations?.length || 0 + i}].name"
-							class="form-input"
-							value={variationLabelsNames[i]?.toLowerCase()}
 						/>
 					</label>
 					<label class="form-label">
@@ -530,18 +501,10 @@
 							name="variationLabels.values[{(
 								variationLabelsNames[i] || ''
 							).toLowerCase()}][{isNumber(variationLabelsValues[i])
-								? (variationLabelsNames[i] + variationLabelsValues[i])?.toLowerCase()
-								: variationLabelsValues[i]?.toLowerCase()}]"
+								? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+								: (variationLabelsValues[i] || '').toLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsValues[i]}
-						/>
-						<input
-							type="hidden"
-							name="variations[{product.variations?.length || 0 + i}].value"
-							class="form-input"
-							value={isNumber(variationLabelsValues[i])
-								? variationLabelsNames[i] + variationLabelsValues[i]?.toLowerCase()
-								: variationLabelsValues[i]?.toLowerCase()}
 						/>
 					</label>
 				</div>
