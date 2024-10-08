@@ -380,7 +380,7 @@
 									</label>
 								</div>
 							{/if}
-							{#if data.product.standalone && data.product.hasVariations && data.product.variations?.length && data.product.variationLabels}
+							{#if data.product.standalone && data.product.hasVariations && data.product.variationLabels}
 								{#each Object.keys(data.product.variationLabels.values) as key}
 									<label class="mb-2" for={key}>{data.product.variationLabels.names[key]}</label>
 									<select
