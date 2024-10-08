@@ -517,7 +517,7 @@
 							type="text"
 							name="variationLabels.values[{toLower(variationLabelsNames[i])}][{toLower(
 								variationLabelsValues[i]
-							)}"
+							)}]"
 							class="form-input"
 							bind:value={variationLabelsValues[i]}
 						/>
