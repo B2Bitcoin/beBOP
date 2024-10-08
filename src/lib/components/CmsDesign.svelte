@@ -176,11 +176,11 @@
 					class="my-5 {token.height ? `lg:h-[${token.height}px]` : ''} {token.width
 						? `lg:w-[${token.width}px]`
 						: ''}"
-					style="{token.fit
-						? `@media (min-width: 1024px) {object-fit: ${token.fit};}`
-						: ''}{token.width
-						? `@media (min-width: 1024px) {width: ${token.width}px;}`
-						: ''}{token.height ? `@media (min-width: 1024px) {height: ${token.height}px;}` : ''}"
+					style={`@media (min-width: 1024px) {
+						${token.height ? `height: ${token.height}px;` : ''}
+						${token.width ? `width: ${token.width}px;` : ''}
+						${token.fit ? `object-fit: ${token.fit};` : ''}
+					  }`}
 				/>
 			{:else if token.type === 'html'}
 				<div class="my-5">
