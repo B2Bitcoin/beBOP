@@ -27,7 +27,6 @@
 	import type { PojoObject } from '$lib/server/pojo';
 	import type { PaymentMethod } from '$lib/server/payment-methods';
 	import { useI18n } from '$lib/i18n';
-	import { toLower } from 'lodash-es';
 
 	const { t } = useI18n();
 
@@ -514,7 +513,7 @@
 						Name
 						<input
 							type="text"
-							name="variationLabels.names[{toLower(variationLabelsNames[i])}]"
+							name="variationLabels.names[{variationLabelsNames[i]?.toLocaleLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsNames[i]}
 						/>
@@ -522,17 +521,17 @@
 							type="hidden"
 							name="variations[{product.variations?.length || 0 + i}].name"
 							class="form-input"
-							value={toLower(variationLabelsNames[i])}
+							value={variationLabelsNames[i]?.toLowerCase()}
 						/>
 					</label>
 					<label class="form-label">
 						Value <input
 							type="text"
-							name="variationLabels.values[{toLower(variationLabelsNames[i])}][{toLower(
-								isNumber(variationLabelsValues[i])
-									? variationLabelsNames[i] + variationLabelsValues[i]
-									: variationLabelsValues[i]
-							)}]"
+							name="variationLabels.values[{(
+								variationLabelsNames[i] || ''
+							).toLowerCase()}][{isNumber(variationLabelsValues[i])
+								? (variationLabelsNames[i] + variationLabelsValues[i])?.toLowerCase()
+								: variationLabelsValues[i]?.toLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsValues[i]}
 						/>
@@ -540,11 +539,9 @@
 							type="hidden"
 							name="variations[{product.variations?.length || 0 + i}].value"
 							class="form-input"
-							value={toLower(
-								isNumber(variationLabelsValues[i])
-									? variationLabelsNames[i] + variationLabelsValues[i]
-									: variationLabelsValues[i]
-							)}
+							value={isNumber(variationLabelsValues[i])
+								? variationLabelsNames[i] + variationLabelsValues[i]?.toLowerCase()
+								: variationLabelsValues[i]?.toLowerCase()}
 						/>
 					</label>
 				</div>
