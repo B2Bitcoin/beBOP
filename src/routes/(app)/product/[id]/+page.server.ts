@@ -9,6 +9,8 @@ import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -36,6 +38,9 @@ export const load = async ({ params, locals }) => {
 			| 'cta'
 			| 'maximumPrice'
 			| 'mobile'
+			| 'hasVariations'
+			| 'variations'
+			| 'variationLabels'
 		>
 	>(
 		{ _id: params.id },
@@ -68,6 +73,11 @@ export const load = async ({ params, locals }) => {
 				},
 				deposit: 1,
 				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] },
+				hasVariations: 1,
+				variationLabels: {
+					$ifNull: [`$translations.${locals.language}.variationLabels`, '$variationLabels']
+				},
+				variations: 1,
 				maximumPrice: 1,
 				mobile: 1
 			}
@@ -132,7 +142,13 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	}
 
 	const formData = await request.formData();
-	const { quantity, customPriceAmount, customPriceCurrency, deposit } = z
+
+	const json: JsonObject = {};
+	for (const [key, value] of formData) {
+		set(json, key, value);
+	}
+
+	const { quantity, customPriceAmount, customPriceCurrency, deposit, chosenVariations } = z
 		.object({
 			quantity: z
 				.number({ coerce: true })
@@ -145,14 +161,10 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 				.regex(/^\d+(\.\d+)?$/)
 				.optional(),
 			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
-			deposit: z.enum(['partial', 'full']).optional()
+			deposit: z.enum(['partial', 'full']).optional(),
+			chosenVariations: z.record(z.string(), z.string()).optional()
 		})
-		.parse({
-			quantity: formData.get('quantity') || undefined,
-			customPriceAmount: formData.get('customPriceAmount') || undefined,
-			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
-			deposit: formData.get('deposit') || undefined
-		});
+		.parse(json);
 
 	const customPrice =
 		customPriceAmount && customPriceCurrency
@@ -161,10 +173,12 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 					currency: customPriceCurrency
 			  }
 			: undefined;
+
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
 		...(product.payWhatYouWant && { customPrice }),
-		deposit: deposit === 'partial'
+		deposit: deposit === 'partial',
+		...(product.hasVariations && { chosenVariations })
 	});
 }
 

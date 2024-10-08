@@ -119,6 +119,7 @@ export async function load(params) {
 									.toArray(),
 								quantity: item.quantity,
 								...(item.customPrice && { customPrice: item.customPrice }),
+								...(item.chosenVariations && { chosenVariations: item.chosenVariations }),
 								depositPercentage: item.depositPercentage,
 								internalNote: {
 									value: item.internalNote?.value,

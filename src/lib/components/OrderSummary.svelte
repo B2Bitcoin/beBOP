@@ -26,6 +26,7 @@
 					Product,
 					'_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping' | 'isTicket'
 				>;
+				chosenVariations: Record<string, string> | undefined;
 			}
 		>;
 		payments: Array<Pick<OrderPayment, 'currencySnapshot' | 'status' | 'method'>>;
@@ -50,7 +51,11 @@
 	</div>
 	{#each order.items as item}
 		<a href="/product/{item.product._id}">
-			<h3 class="text-base">{item.product.name}</h3>
+			<h3 class="text-base">
+				{item.chosenVariations
+					? item.product.name + ' - ' + Object.values(item.chosenVariations).join(' - ')
+					: item.product.name}
+			</h3>
 		</a>
 
 		<div class="flex flex-row gap-2">

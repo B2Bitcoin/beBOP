@@ -410,6 +410,7 @@ export const actions = {
 				...(item.customPrice && {
 					customPrice: { amount: item.customPrice.amount, currency: item.customPrice.currency }
 				}),
+				...(item.chosenVariations && { chosenVariations: item.chosenVariations }),
 				depositPercentage: item.depositPercentage
 			})),
 			paymentMethod,

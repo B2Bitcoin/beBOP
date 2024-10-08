@@ -64,7 +64,6 @@
 		data.roleId === POS_ROLE_ID
 			? data.product.actionSettings.retail.canBeAddedToBasket
 			: data.product.actionSettings.eShop.canBeAddedToBasket;
-
 	function addToCart() {
 		$productAddedToCart = {
 			product: data.product,
@@ -74,7 +73,10 @@
 			}),
 			picture: currentPicture,
 			depositPercentage:
-				deposit === 'partial' && data.product.deposit ? data.product.deposit.percentage : undefined
+				deposit === 'partial' && data.product.deposit ? data.product.deposit.percentage : undefined,
+			...(data.product.hasVariations && {
+				chosenVariations: selectedVariations
+			})
 		};
 	}
 
@@ -108,6 +110,8 @@
 	function handleClick() {
 		isZoomed = !isZoomed;
 	}
+
+	let selectedVariations: Record<string, string> = {};
 </script>
 
 <svelte:head>
@@ -375,6 +379,21 @@
 										/>
 									</label>
 								</div>
+							{/if}
+							{#if data.product.standalone && data.product.hasVariations && data.product.variationLabels}
+								{#each Object.keys(data.product.variationLabels.values) as key}
+									<label class="mb-2" for={key}>{data.product.variationLabels.names[key]}</label>
+									<select
+										bind:value={selectedVariations[key]}
+										id={key}
+										name="chosenVariations[{key}]"
+										class="form-input w-full inline cursor-pointer"
+									>
+										{#each Object.entries(data.product.variationLabels.values[key]) as [valueKey, valueLabel]}
+											<option value={valueKey}>{valueLabel}</option>
+										{/each}
+									</select>
+								{/each}
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">

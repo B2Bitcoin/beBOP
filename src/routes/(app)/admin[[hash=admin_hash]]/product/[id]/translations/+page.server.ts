@@ -30,7 +30,11 @@ export const actions = {
 			.object({
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
 				...mapObject(pick(productBaseSchema(), keys), (val) => val.optional()),
-				cta: productBaseSchema().cta.optional()
+				cta: productBaseSchema().cta.optional(),
+				variationLabels: z.object({
+					names: z.record(z.string(), z.string()),
+					values: z.record(z.string(), z.record(z.string(), z.string()))
+				})
 			})
 			.parse(json);
 

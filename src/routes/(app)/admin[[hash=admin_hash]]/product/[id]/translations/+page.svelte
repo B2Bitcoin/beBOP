@@ -83,7 +83,30 @@
 			placeholder={data.product.contentAfter ?? ''}
 		/>
 	</label>
-
+	<h2 class="text-2xl">Variations</h2>
+	{#each Object.keys(data.product.variationLabels?.values || []) as key}
+		<h3>{data.product.variationLabels?.names[key]}</h3>
+		{#each Object.entries(data.product.variationLabels?.values[key] || '[]') as [valueKey, valueLabel]}
+			<label for={valueKey} class="form-label">{valueLabel}</label>
+			<input
+				type="text"
+				class="form-input"
+				placeholder={valueLabel}
+				value={data.product.translations?.[language]?.variationLabels?.values[key][valueKey] || ''}
+				name="variationLabels.values[{key}][{valueKey}]"
+			/>
+		{/each}
+	{/each}
+	{#each Object.entries(data.product.variationLabels?.names || []) as [key, value]}
+		<label for={key} class="form-label">{value}</label>
+		<input
+			type="text"
+			class="form-input"
+			placeholder={value}
+			value={data.product.translations?.[language]?.variationLabels?.names[key] || ''}
+			name="variationLabels.names[{key}]"
+		/>
+	{/each}
 	<h2 class="text-2xl">CTA links</h2>
 
 	{#each [...(data.product.translations?.[language]?.cta || []), ...Array(3).fill( { href: '', label: '' } )].slice(0, 3) as link, i}

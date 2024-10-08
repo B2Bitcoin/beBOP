@@ -117,7 +117,11 @@
 				item.currencySnapshot.main.price.currency}
 			<tr style:background-color={i % 2 === 0 ? '#fef2cc' : '#e7e6e6'}>
 				<td class="text-center border border-white px-2">{i + 1}</td>
-				<td class="text-center border border-white px-2">{item.product.name}</td>
+				<td class="text-center border border-white px-2"
+					>{item.chosenVariations
+						? item.product.name + ' - ' + Object.values(item.chosenVariations).join(' - ')
+						: item.product.name}</td
+				>
 				<td class="text-center border border-white px-2">{item.quantity}</td>
 				<td class="text-center border border-white px-2">
 					<PriceTag amount={unitPrice} currency={priceCurrency} inline />

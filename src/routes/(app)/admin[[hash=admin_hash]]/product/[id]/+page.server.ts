@@ -102,7 +102,34 @@ export const actions: Actions = {
 			parsed.free = true;
 		}
 		const amountInCarts = await amountOfProductReserved(params.id);
+		const cleanedVariationLabels: {
+			names: Record<string, string>;
+			values: Record<string, Record<string, string>>;
+		} = {
+			names: {},
+			values: {}
+		};
 
+		for (const key in parsed.variationLabels?.names) {
+			const nameValue = parsed.variationLabels.names[key];
+
+			if (nameValue.trim() !== '') {
+				cleanedVariationLabels.names[key] = nameValue;
+			}
+		}
+
+		for (const key in parsed.variationLabels?.values) {
+			const valueEntries = parsed.variationLabels.values[key];
+			cleanedVariationLabels.values[key] = {};
+			for (const valueKey in valueEntries) {
+				if (valueEntries[valueKey].trim() !== '') {
+					cleanedVariationLabels.values[key][valueKey] = valueEntries[valueKey];
+				}
+			}
+			if (Object.keys(cleanedVariationLabels.values[key]).length === 0) {
+				delete cleanedVariationLabels.values[key];
+			}
+		}
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -177,7 +204,19 @@ export const actions: Actions = {
 					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) }),
 					...(parsed.restrictPaymentMethods && {
 						paymentMethods: parsed.paymentMethods ?? []
-					})
+					}),
+					...(parsed.standalone && { hasVariations: parsed.hasVariations }),
+					...(parsed.standalone &&
+						parsed.hasVariations && {
+							variations: parsed.variations?.filter(
+								(variation) => variation.name && variation.value
+							)
+						}),
+					...(parsed.standalone &&
+						parsed.hasVariations &&
+						parsed.variationLabels && {
+							variationLabels: cleanedVariationLabels
+						})
 				},
 				$unset: {
 					...(!parsed.customPreorderText && { customPreorderText: '' }),
