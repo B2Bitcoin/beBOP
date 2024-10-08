@@ -154,14 +154,16 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 				.optional(),
 			customPriceCurrency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
 			deposit: z.enum(['partial', 'full']).optional(),
-			chosenVariations: z.record(z.string())
+			chosenVariations: z.record(z.string()).optional()
 		})
 		.parse({
 			quantity: formData.get('quantity') || undefined,
 			customPriceAmount: formData.get('customPriceAmount') || undefined,
 			customPriceCurrency: formData.get('customPriceCurrency') || undefined,
 			deposit: formData.get('deposit') || undefined,
-			chosenVariations: JSON.parse(formData.get('chosenVariations')?.toString() || '[]')
+			chosenVariations: formData.get('chosenVariations')
+				? JSON.parse(formData.get('chosenVariations')?.toString() || '[]')
+				: undefined
 		});
 
 	const customPrice =
