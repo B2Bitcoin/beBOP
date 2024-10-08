@@ -196,6 +196,9 @@
 	let variationLabelsNames: string[] = [];
 
 	let variationLabelsValues: string[] = [];
+	function isNumber(value: string) {
+		return !isNaN(Number(value)) && value.trim() !== '';
+	}
 </script>
 
 <form
@@ -469,14 +472,14 @@
 								name="variationLabels.names[{key}]"
 							/>
 
-							<input
+							<!-- <input
 								type="hidden"
 								name="variations[{product.variations?.findIndex(
 									(val) => val.name === key && val.value === valueKey
 								)}].name"
 								class="form-input"
 								value={toLower(product.variationLabels?.names[key])}
-							/>
+							/> -->
 						</label>
 						<label for={valueKey} class="form-label"
 							>Value
@@ -487,14 +490,20 @@
 								value={product.variationLabels?.values[key][valueKey] || ''}
 								name="variationLabels.values[{key}][{valueKey}]"
 							/>
-							<input
+							<!-- <input
 								type="hidden"
 								name="variations[{product.variations?.findIndex(
 									(val) => val.name === key && val.value === valueKey
 								)}].value"
 								class="form-input"
-								value={toLower(product.variationLabels?.values[key][valueKey])}
-							/>
+								value={toLower(
+									isNumber(product.variationLabels?.values[key][valueKey] || '')
+										? product.variationLabels?.names[key] ||
+												'' + product.variationLabels?.values[key][valueKey] ||
+												''
+										: product.variationLabels?.values[key][valueKey]
+								)}
+							/> -->
 						</label>
 					</div>
 				{/each}
@@ -520,7 +529,9 @@
 						Value <input
 							type="text"
 							name="variationLabels.values[{toLower(variationLabelsNames[i])}][{toLower(
-								variationLabelsValues[i]
+								isNumber(variationLabelsValues[i])
+									? variationLabelsNames[i] + variationLabelsValues[i]
+									: variationLabelsValues[i]
 							)}]"
 							class="form-input"
 							bind:value={variationLabelsValues[i]}
@@ -529,7 +540,11 @@
 							type="hidden"
 							name="variations[{product.variations?.length || 0 + i}].value"
 							class="form-input"
-							value={toLower(variationLabelsValues[i])}
+							value={toLower(
+								isNumber(variationLabelsValues[i])
+									? variationLabelsNames[i] + variationLabelsValues[i]
+									: variationLabelsValues[i]
+							)}
 						/>
 					</label>
 				</div>
