@@ -69,10 +69,12 @@ export const productBaseSchema = () => ({
 		)
 		.optional()
 		.default([]),
-	variationLabels: z.object({
-		names: z.record(z.string().trim(), z.string().trim()),
-		values: z.record(z.string().trim(), z.record(z.string().trim(), z.string().trim()))
-	}),
+	variationLabels: z
+		.object({
+			names: z.record(z.string().trim(), z.string().trim()),
+			values: z.record(z.string().trim(), z.record(z.string().trim(), z.string().trim()))
+		})
+		.optional(),
 	contentBefore: z.string().max(MAX_CONTENT_LIMIT).default(''),
 	contentAfter: z.string().max(MAX_CONTENT_LIMIT).default(''),
 	hideContentBefore: z.boolean({ coerce: true }).default(false),
