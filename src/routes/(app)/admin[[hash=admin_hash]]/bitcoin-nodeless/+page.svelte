@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { startsWith } from 'lodash-es';
-
 	export let data;
 
 	$: alreadySet = !!data.bitcoinNodeless.publicKey;
