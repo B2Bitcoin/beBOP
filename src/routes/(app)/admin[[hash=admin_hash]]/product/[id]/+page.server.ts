@@ -205,7 +205,9 @@ export const actions: Actions = {
 					...(parsed.restrictPaymentMethods && {
 						paymentMethods: parsed.paymentMethods ?? []
 					}),
-					...(parsed.standalone && { hasVariations: parsed.hasVariations }),
+					...(parsed.standalone && {
+						hasVariations: Object.entries(cleanedVariationLabels?.names || []).length !== 0
+					}),
 					...(parsed.standalone &&
 						parsed.hasVariations && {
 							variations: parsed.variations?.filter(
@@ -213,8 +215,7 @@ export const actions: Actions = {
 							)
 						}),
 					...(parsed.standalone &&
-						parsed.hasVariations &&
-						parsed.variationLabels && {
+						parsed.hasVariations && {
 							variationLabels: cleanedVariationLabels
 						})
 				},
