@@ -21,13 +21,6 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 
 - `ADMIN_LOGIN` - Automatically create an admin user with this login
 - `ADMIN_PASSWORD` - Automatically create an admin user with this password
-- `BITCOIN_RPC_URL` - The RPC url for the bitcoin node. Set to http://127.0.0.1:8332 if you run a bitcoin node locally with default configuration
-- `BITCOIN_RPC_USER` - The RPC user
-- `BITCOIN_RPC_PASSWORD` - The RPC password
-- `BIP84_XPUB` - with derivation path m/84'/0'/0'. If you have a ZPub, use https://jlopp.github.io/xpub-converter/ to convert to xpub. This enables a completely trustless setup, where the beBOP server does not need to know the private key. You can generate the xpub from the sparrow wallet, for example.
-- `LND_REST_URL` - The LND Rest interface URL. Set to http://127.0.0.1:8080 if you run a lnd node locally with default configuration
-- `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the beBOP will not work. Orders should work fine.
-- `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`. Example command: `cat .lnd/data/chain/bitcoin/mainnet/admin.macaroon | hexdump -e '16/1 "%02X"'`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the beBOP will not work. Orders should work fine.
 - `LINK_PRELOAD_HEADERS` - Set to `true` to enable the `Link rel=preload` header, see [explanation](https://nitropack.io/blog/post/link-rel-preload-explained). If you do so, you may need to configure nginx to allow bigger header with `proxy_buffer_size   16k`, see [explanation](https://www.getpagespeed.com/server-setup/nginx/tuning-proxy_buffer_size-in-nginx).
 - `MONGODB_URL` - The connection URL to the MongoDB replicaset
 - `MONGODB_DB` - The DB name, defaulting to "bebop"
@@ -43,7 +36,21 @@ Add `.env.local` or `.env.{development,test,production}.local` files for secrets
 - `SMTP_PORT` - Specify all the SMTP variables to enable email notifications
 - `SMTP_USER` - Specify all the SMTP variables to enable email notifications
 - `SMTP_FROM` - Optional, defaults to `SMTP_USER`. Sender email address for email notifications
+
+### Bitcoin and LND nodes
+
+🚨 You can use `phoenixd` for lightning and bitcoin nodeless directly from the UI, without setting up these env vars.
+
+- `BITCOIN_RPC_URL` - The RPC url for the bitcoin node. Set to http://127.0.0.1:8332 if you run a bitcoin node locally with default configuration
+- `BITCOIN_RPC_USER` - The RPC user
+- `BITCOIN_RPC_PASSWORD` - The RPC password
+- `BIP84_XPUB` - with derivation path m/84'/0'/0'. If you have a ZPub, use https://jlopp.github.io/xpub-converter/ to convert to xpub. This enables a completely trustless setup, where the beBOP server does not need to know the private key. You can generate the xpub from the sparrow wallet, for example.
+- `LND_REST_URL` - The LND Rest interface URL. Set to http://127.0.0.1:8080 if you run a lnd node locally with default configuration
+- `LND_MACAROON_PATH` - Where the credentials for lnd are located. For example, `~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_VALUE`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the beBOP will not work. Orders should work fine.
+- `LND_MACAROON_VALUE` - Upper-case hex-encoded represenetation of the LND macaroon. Leave empty if lnd runs with `--no-macaroons`, or if you're using `LND_MACAROON_PATH`. Example command: `cat .lnd/data/chain/bitcoin/mainnet/admin.macaroon | hexdump -e '16/1 "%02X"'`. You can use `invoices.macaroon` instead of `admin.macaroon`, but then the admin LND page in the beBOP will not work. Orders should work fine.
 - `TOR_PROXY_URL` - Url of the SOCKS5 proxy used to access TOR. If set, and the hostname for `BITCOIN_RPC_URL` is a `.onion` address, the app will use the proxy to access the bitcoin node. In the same manner, if `LND_REST_URL` is a `.onion` address, TOR will be used to access the lightning node.
+
+### SSO sign-in for users
 
 You can also set the following environment variables to allow SSO. Set your redirect url to `https://<...>/api/callback/<provider>`, where `<provider>` is one of `github`, `google`, `facebook`, `twitter`, when you create your app on the provider's website:
 
