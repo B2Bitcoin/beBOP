@@ -71,6 +71,8 @@ export async function getSatoshiReceivedNodeless(
 		throw new Error('Failed to fetch transactions for ' + address);
 	}
 
+	const json = await resp.json();
+
 	const res = z
 		.array(
 			z.object({
@@ -80,13 +82,13 @@ export async function getSatoshiReceivedNodeless(
 				}),
 				vout: z.array(
 					z.object({
-						scriptpubkey_address: z.string(),
+						scriptpubkey_address: z.string().optional(),
 						value: z.number()
 					})
 				)
 			})
 		)
-		.parse(await resp.json());
+		.parse(json);
 
 	const transactions = res
 		.filter((tx) => tx.status.block_height <= runtimeConfig.bitcoinBlockHeight - confirmations)
