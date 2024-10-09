@@ -393,6 +393,12 @@ const commands: Record<
 				);
 				return;
 			}
+
+			if (product.standalone && product.hasVariations) {
+				await send(`Sorry, this product has variations and cannot be ordered through Nostr`);
+				return;
+			}
+
 			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
 				async (e) => {
 					console.error(e);
