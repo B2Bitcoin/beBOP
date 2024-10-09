@@ -180,6 +180,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsCheckoutTopData.countdowns}
 			galleries={data.cmsCheckoutTopData.galleries}
+			widgetSliders={data.cmsCheckoutTopData.widgetSliders}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
@@ -1065,6 +1066,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsCheckoutBottomData.countdowns}
 			galleries={data.cmsCheckoutBottomData.galleries}
+			widgetSliders={data.cmsCheckoutBottomData.widgetSliders}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
