@@ -68,7 +68,7 @@ export async function getSatoshiReceivedNodeless(
 	);
 
 	if (!resp.ok) {
-		throw new Error('Failed to fetch transactions for ' + address);
+		throw new Error('Failed to fetch transactions for ' + address + ': ' + resp.status);
 	}
 
 	const json = await resp.json();

@@ -68,36 +68,50 @@ async function maintainOrders() {
 
 									const blockHeight = z.number().parse(await resp.json());
 
-									runtimeConfig.bitcoinBlockHeight = blockHeight;
-									runtimeConfigUpdatedAt['bitcoinBlockHeight'] = new Date();
+									if (runtimeConfig.bitcoinBlockHeight !== blockHeight) {
+										console.log('Updating bitcoin block height to', blockHeight);
+										runtimeConfig.bitcoinBlockHeight = blockHeight;
+										runtimeConfigUpdatedAt['bitcoinBlockHeight'] = new Date();
 
-									await collections.runtimeConfig.updateOne(
-										{
-											_id: 'bitcoinBlockHeight'
-										},
-										{
-											$set: {
-												data: blockHeight,
-												updatedAt: new Date()
+										await collections.runtimeConfig.updateOne(
+											{
+												_id: 'bitcoinBlockHeight'
+											},
+											{
+												$set: {
+													data: blockHeight,
+													updatedAt: new Date()
+												}
+											},
+											{
+												upsert: true
 											}
-										},
-										{
-											upsert: true
-										}
-									);
+										);
+									}
 								}
 
 								if (!payment.address) {
 									throw new Error('Missing address on bitcoin order');
 								}
 
-								const received = await getSatoshiReceivedNodeless(
-									payment.address,
-									getConfirmationBlocks(payment.price.amount)
-								);
+								const nConfirmations = getConfirmationBlocks(payment.price.amount);
+
+								const received = await getSatoshiReceivedNodeless(payment.address, nConfirmations);
 
 								payment.transactions = received.transactions;
 								satReceived = received.satReceived;
+
+								if (satReceived) {
+									console.log(
+										'Received',
+										satReceived,
+										'SAT for order',
+										order._id,
+										nConfirmations,
+										'out of',
+										toSatoshis(payment.price.amount, payment.price.currency)
+									);
+								}
 							} else {
 								const transactions = await listTransactions(
 									orderAddressLabel(order._id, payment._id)
