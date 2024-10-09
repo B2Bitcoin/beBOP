@@ -87,6 +87,7 @@
 		"nostr-relaypool": "^0.6.28",
 		"nostr-tools": "^1.11.1",
 		"qrcode": "^1.5.3",
+		"schema-dts": "^1.1.2",
 		"sharp": "^0.32.1",
 		"tinymce": "^6.7.0",
 		"ts-node": "^10.9.1",
