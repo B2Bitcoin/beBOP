@@ -78,7 +78,7 @@ export async function getSatoshiReceivedNodeless(
 			z.object({
 				txid: z.string(),
 				status: z.object({
-					block_height: z.number()
+					block_height: z.number().optional()
 				}),
 				vout: z.array(
 					z.object({
@@ -91,7 +91,13 @@ export async function getSatoshiReceivedNodeless(
 		.parse(json);
 
 	const transactions = res
-		.filter((tx) => tx.status.block_height <= runtimeConfig.bitcoinBlockHeight - confirmations)
+		.filter((tx) =>
+			confirmations === 0
+				? true
+				: tx.status.block_height &&
+				  tx.status.block_height <= runtimeConfig.bitcoinBlockHeight - confirmations + 1
+		)
+		.filter((tx) => tx.vout.some((vout) => vout.scriptpubkey_address === address))
 		.map((tx) => ({
 			currency: 'SAT' as const,
 			amount: sum(
@@ -100,13 +106,7 @@ export async function getSatoshiReceivedNodeless(
 			id: tx.txid
 		}));
 
-	const total = sum(
-		res
-			.filter((tx) => tx.status.block_height <= runtimeConfig.bitcoinBlockHeight - confirmations)
-			.flatMap((tx) =>
-				tx.vout.filter((vout) => vout.scriptpubkey_address === address).map((vout) => vout.value)
-			)
-	);
+	const total = sum(transactions.map((tx) => tx.amount));
 
 	return {
 		satReceived: total,
