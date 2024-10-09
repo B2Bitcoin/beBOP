@@ -14,7 +14,7 @@ import { generateSubscriptionNumber } from './subscriptions';
 import type { Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
-import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoin';
+import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoind';
 import { lndCreateInvoice } from './lnd';
 import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
@@ -39,6 +39,11 @@ import { isPhoenixdConfigured, phoenixdCreateInvoice } from './phoenixd';
 import { isSumupEnabled } from './sumup';
 import { isStripeEnabled } from './stripe';
 import { isPaypalEnabled, paypalAccessToken, paypalApiOrigin } from './paypal';
+import {
+	bip84Address,
+	generateDerivationIndex,
+	isBitcoinNodelessConfigured
+} from './bitcoin-nodeless';
 
 async function generateOrderNumber(): Promise<number> {
 	const res = await collections.runtimeConfig.findOneAndUpdate(
@@ -1012,6 +1017,15 @@ async function generatePaymentInfo(params: {
 }> {
 	switch (params.method) {
 		case 'bitcoin':
+			if (isBitcoinNodelessConfigured()) {
+				return {
+					address: bip84Address(
+						runtimeConfig.bitcoinNodeless.publicKey,
+						await generateDerivationIndex()
+					),
+					processor: 'bitcoin-nodeless'
+				};
+			}
 			return {
 				address: await getNewAddress(orderAddressLabel(params.orderId, params.paymentId)),
 				wallet: await currentWallet(),
@@ -1057,7 +1071,6 @@ async function generatePaymentInfo(params: {
 			}
 		}
 		case 'point-of-sale': {
-			return {};
 		}
 		case 'free': {
 			return {};

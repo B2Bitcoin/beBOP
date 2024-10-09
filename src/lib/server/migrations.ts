@@ -485,6 +485,20 @@ export async function runMigrations() {
 	try {
 		const migrationsInDb = await collections.migrations.find().toArray();
 
+		if (!migrationsInDb.length) {
+			console.log("marking all migrations as done, since there's no record of them in the db");
+			await collections.migrations.insertMany(
+				migrations.map((migration) => ({
+					_id: migration._id,
+					name: migration.name,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}))
+			);
+			console.log('done');
+			return;
+		}
+
 		const migrationsToRun = migrations.filter(
 			(migration) =>
 				!migrationsInDb.find((migrationInDb) => migrationInDb._id.equals(migration._id))

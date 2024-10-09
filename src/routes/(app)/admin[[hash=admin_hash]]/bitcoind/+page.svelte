@@ -27,7 +27,7 @@
 	}
 
 	async function dump(wallet: string) {
-		const response = await fetch(`${data.adminPrefix}/bitcoin/dump`, {
+		const response = await fetch(`${data.adminPrefix}/bitcoind/dump`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

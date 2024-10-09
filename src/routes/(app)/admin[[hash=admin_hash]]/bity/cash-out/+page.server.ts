@@ -1,4 +1,4 @@
-import { getBalance } from '$lib/server/bitcoin';
+import { getBalance } from '$lib/server/bitcoind';
 
 export function load() {
 	return {

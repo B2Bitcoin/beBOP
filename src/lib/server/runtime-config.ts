@@ -146,6 +146,13 @@ const baseConfig = {
 		merchantCode: '',
 		currency: 'EUR' as Currency
 	},
+	bitcoinNodeless: {
+		mempoolUrl: 'https://mempool.space',
+		format: 'bip84' as const,
+		publicKey: '',
+		derivationIndex: 0
+	},
+	bitcoinBlockHeight: 0,
 	stripe: {
 		/** pk_... */
 		publicKey: '',

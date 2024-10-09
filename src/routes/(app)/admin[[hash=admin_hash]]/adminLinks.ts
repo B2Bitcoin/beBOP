@@ -92,29 +92,12 @@ export const adminLinks: AdminLinks = [
 		]
 	},
 	{
-		section: 'Node Management',
+		section: 'Payment Settings',
 		links: [
 			{
-				href: '/admin/bitcoin',
-				label: 'Bitcoin node'
+				href: '/admin/bitcoin-nodeless',
+				label: 'Bitcoin nodeless'
 			},
-			{
-				href: '/admin/lightning',
-				label: 'Lightning node'
-			},
-			{
-				href: '/admin/nostr',
-				label: 'NostR'
-			},
-			{
-				href: '/admin/email',
-				label: 'Emails'
-			}
-		]
-	},
-	{
-		section: 'Payment Partners',
-		links: [
 			{
 				href: '/admin/sumup',
 				label: 'SumUp'
@@ -130,11 +113,15 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/paypal',
 				label: 'Paypal'
+			},
+			{
+				href: '/admin/bitcoind',
+				label: 'Bitcoin core node'
+			},
+			{
+				href: '/admin/lnd',
+				label: 'Lightning LND node'
 			}
-			// {
-			// 	href: '/admin/bity',
-			// 	label: 'Bity'
-			// }
 		]
 	},
 	{
@@ -147,6 +134,19 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/reporting',
 				label: 'Reporting'
+			}
+		]
+	},
+	{
+		section: 'Node Management',
+		links: [
+			{
+				href: '/admin/nostr',
+				label: 'NostR'
+			},
+			{
+				href: '/admin/email',
+				label: 'Emails'
 			}
 		]
 	},

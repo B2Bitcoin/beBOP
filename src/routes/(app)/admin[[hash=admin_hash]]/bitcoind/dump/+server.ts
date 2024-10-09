@@ -1,5 +1,5 @@
 import { ALLOW_DUMPING_WALLET } from '$env/static/private';
-import { dumpWalletInfo } from '$lib/server/bitcoin';
+import { dumpWalletInfo } from '$lib/server/bitcoind';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 
