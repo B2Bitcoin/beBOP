@@ -21,6 +21,7 @@ export interface ProductTranslatableFields {
 	variationLabels?: {
 		names: Record<string, string>;
 		values: Record<string, Record<string, string>>;
+		prices: Record<string, Record<string, string>>;
 	};
 	contentBefore?: string;
 	contentAfter?: string;
