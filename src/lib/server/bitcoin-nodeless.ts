@@ -1,6 +1,6 @@
 // @ts-expect-error no types
 import bip84 from 'bip84';
-import { runtimeConfig } from './runtime-config';
+import { defaultConfig, runtimeConfig } from './runtime-config';
 import { collections } from './database';
 import { z } from 'zod';
 import { sum } from '$lib/utils/sum';
@@ -45,7 +45,9 @@ export async function generateDerivationIndex(): Promise<number> {
 		throw new Error('Failed to increment derivation index');
 	}
 
-	return res.value.data as number;
+	const val = res.value.data as typeof defaultConfig.bitcoinNodeless;
+
+	return val.derivationIndex;
 }
 
 export async function getSatoshiReceivedNodeless(
