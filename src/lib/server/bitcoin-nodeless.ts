@@ -36,8 +36,7 @@ export async function generateDerivationIndex(): Promise<number> {
 		{ _id: 'bitcoinNodeless' },
 		{
 			$inc: { 'data.derivationIndex': 1 as never },
-			$set: { updatedAt: new Date() },
-			$setOnInsert: { data: runtimeConfig.bitcoinNodeless }
+			$set: { updatedAt: new Date() }
 		},
 		{ returnDocument: 'before' }
 	);
