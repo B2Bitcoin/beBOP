@@ -222,7 +222,7 @@ export const actions: Actions = {
 					...(!parsed.depositPercentage && { deposit: '' }),
 					...(!parsed.vatProfileId && { vatProfileId: '' }),
 					...(!parsed.restrictPaymentMethods && { paymentMethods: '' }),
-					...(!parsed.hasVariations && { variations: '', variationLabels: '' })
+					...(!hasVariations && { variations: '', variationLabels: '' })
 				}
 			}
 		);
