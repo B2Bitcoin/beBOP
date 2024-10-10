@@ -36,6 +36,6 @@ export async function load(event) {
 			runtimeConfig.websiteShortDescription,
 		viewportWidth,
 		contactModes: runtimeConfig.contactModes,
-		enableSEO: runtimeConfig.enableSEO
+		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines
 	};
 }

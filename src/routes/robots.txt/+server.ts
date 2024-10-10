@@ -1,7 +1,7 @@
 import { runtimeConfig } from '$lib/server/runtime-config';
 
 export function GET() {
-	if (runtimeConfig.enableSEO) {
+	if (!runtimeConfig.hideFromSearchEngines) {
 		return new Response(
 			`User-agent: *
 Disallow: /order/

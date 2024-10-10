@@ -9,8 +9,13 @@
 {/if}
 <form method="post" class="flex flex-col gap-4" action="?/update">
 	<label class="checkbox-label">
-		<input type="checkbox" name="enableSEO" class="form-checkbox" checked={data.enableSEO} />
-		Enable SEO cloak
+		<input
+			type="checkbox"
+			name="hideFromSearchEngines"
+			class="form-checkbox"
+			checked={data.hideFromSearchEngines}
+		/>
+		Disable SEO cloak
 	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>

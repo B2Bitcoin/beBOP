@@ -10,21 +10,21 @@ export const actions = {
 
 		const result = z
 			.object({
-				enableSEO: z.boolean({ coerce: true })
+				hideFromSearchEngines: z.boolean({ coerce: true })
 			})
 			.parse({
-				enableSEO: formData.get('enableSEO')
+				hideFromSearchEngines: formData.get('hideFromSearchEngines')
 			});
 
 		await collections.runtimeConfig.updateOne(
-			{ _id: 'enableSEO' },
+			{ _id: 'hideFromSearchEngines' },
 			{
-				$set: { data: result.enableSEO, updatedAt: new Date() },
+				$set: { data: result.hideFromSearchEngines, updatedAt: new Date() },
 				$setOnInsert: { createdAt: new Date() }
 			},
 			{ upsert: true }
 		);
-		runtimeConfig.enableSEO = result.enableSEO;
+		runtimeConfig.hideFromSearchEngines = result.hideFromSearchEngines;
 		return {
 			success: 'SEO configuration updated.'
 		};
