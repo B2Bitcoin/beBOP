@@ -513,19 +513,21 @@
 							/>
 						</label>
 						<label for={valueKey} class="form-label"
-							>Price
+							>Price difference
 							<input
-								type="text"
+								type="number"
 								class="form-input"
-								placeholder={product.variationLabels?.prices[key][valueKey]}
-								value={product.variationLabels?.prices[key][valueKey] || ''}
+								placeholder="price difference"
+								value={variationLabelsToUpdate?.prices
+									? variationLabelsToUpdate?.prices[key]
+										? variationLabelsToUpdate?.prices[key][valueKey]
+										: 0
+									: 0}
 								name="variationLabels.prices[{key}][{valueKey}]"
 							/>
-							<label for={valueKey} class="form-label mt-8">
-								<button type="button" on:click={() => deleteVariationLabel(key, valueKey)}
-									>🗑️</button
-								>
-							</label>
+						</label>
+						<label for={valueKey} class="form-label mt-8">
+							<button type="button" on:click={() => deleteVariationLabel(key, valueKey)}>🗑️</button>
 						</label>
 					</div>
 				{/each}

@@ -109,7 +109,7 @@ export const actions: Actions = {
 		const cleanedVariationLabels: {
 			names: Record<string, string>;
 			values: Record<string, Record<string, string>>;
-			prices: Record<string, Record<string, string>>;
+			prices: Record<string, Record<string, number>>;
 		} = {
 			names: {},
 			values: {},
@@ -139,7 +139,7 @@ export const actions: Actions = {
 			cleanedVariationLabels.prices[key] = {};
 			for (const priceKey in priceEntries) {
 				if (priceEntries[priceKey].trim() !== '') {
-					cleanedVariationLabels.prices[key][priceKey] = priceEntries[priceKey];
+					cleanedVariationLabels.prices[key][priceKey] = Number(priceEntries[priceKey]);
 				}
 			}
 			if (Object.keys(cleanedVariationLabels.prices[key]).length === 0) {
