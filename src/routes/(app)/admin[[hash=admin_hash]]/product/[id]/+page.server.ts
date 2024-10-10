@@ -130,6 +130,7 @@ export const actions: Actions = {
 				delete cleanedVariationLabels.values[key];
 			}
 		}
+		const hasVariations = Object.entries(cleanedVariationLabels?.names || []).length !== 0;
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -206,10 +207,10 @@ export const actions: Actions = {
 						paymentMethods: parsed.paymentMethods ?? []
 					}),
 					...(parsed.standalone && {
-						hasVariations: Object.entries(cleanedVariationLabels?.names || []).length !== 0
+						hasVariations: hasVariations
 					}),
 					...(parsed.standalone &&
-						parsed.hasVariations && {
+						hasVariations && {
 							variations: parsed.variations?.filter(
 								(variation) => variation.name && variation.value
 							)
