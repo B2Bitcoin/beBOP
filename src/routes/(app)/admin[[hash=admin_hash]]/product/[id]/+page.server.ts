@@ -209,12 +209,9 @@ export const actions: Actions = {
 					...(parsed.standalone && {
 						hasVariations: hasVariations
 					}),
-					...(parsed.standalone &&
-						hasVariations && {
-							variations: parsed.variations?.filter(
-								(variation) => variation.name && variation.value
-							)
-						}),
+					...(parsed.standalone && {
+						variations: parsed.variations?.filter((variation) => variation.name && variation.value)
+					}),
 					...(parsed.standalone && {
 						variationLabels: cleanedVariationLabels
 					})
