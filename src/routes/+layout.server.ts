@@ -35,6 +35,7 @@ export async function load(event) {
 			runtimeConfig[`translations.${event.locals.language}.config`]?.websiteShortDescription ||
 			runtimeConfig.websiteShortDescription,
 		viewportWidth,
-		contactModes: runtimeConfig.contactModes
+		contactModes: runtimeConfig.contactModes,
+		enableSEO: runtimeConfig.enableSEO
 	};
 }

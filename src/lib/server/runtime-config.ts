@@ -185,6 +185,7 @@ const baseConfig = {
 	displayCompanyInfo: false,
 	displayMainShopInfo: false,
 	disableNostrBotIntro: false,
+	enableSEO: false,
 	displayNewsletterCommercialProspection: false,
 	cartMaxSeparateItems: null as null | number,
 	websiteTitle: 'B2Bitcoin be-BOP',
