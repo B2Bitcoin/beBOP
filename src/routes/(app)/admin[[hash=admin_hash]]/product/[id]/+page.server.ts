@@ -105,11 +105,12 @@ export const actions: Actions = {
 		const cleanedVariationLabels: {
 			names: Record<string, string>;
 			values: Record<string, Record<string, string>>;
+			prices: Record<string, Record<string, number>>;
 		} = {
 			names: {},
-			values: {}
+			values: {},
+			prices: {}
 		};
-
 		for (const key in parsed.variationLabels?.names) {
 			const nameValue = parsed.variationLabels.names[key];
 
@@ -117,7 +118,6 @@ export const actions: Actions = {
 				cleanedVariationLabels.names[key] = nameValue;
 			}
 		}
-
 		for (const key in parsed.variationLabels?.values) {
 			const valueEntries = parsed.variationLabels.values[key];
 			cleanedVariationLabels.values[key] = {};
@@ -130,6 +130,20 @@ export const actions: Actions = {
 				delete cleanedVariationLabels.values[key];
 			}
 		}
+		for (const key in parsed.variationLabels?.prices) {
+			const priceEntries = parsed.variationLabels.prices[key];
+			cleanedVariationLabels.prices[key] = {};
+			for (const priceKey in priceEntries) {
+				if (priceEntries[priceKey].trim() !== '') {
+					cleanedVariationLabels.prices[key][priceKey] = Number(priceEntries[priceKey]);
+				}
+			}
+			if (Object.keys(cleanedVariationLabels.prices[key]).length === 0) {
+				delete cleanedVariationLabels.prices[key];
+			}
+		}
+		const hasVariations =
+			parsed.standalone && Object.entries(cleanedVariationLabels?.names || []).length !== 0;
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -205,18 +219,11 @@ export const actions: Actions = {
 					...(parsed.restrictPaymentMethods && {
 						paymentMethods: parsed.paymentMethods ?? []
 					}),
-					...(parsed.standalone && { hasVariations: parsed.hasVariations }),
-					...(parsed.standalone &&
-						parsed.hasVariations && {
-							variations: parsed.variations?.filter(
-								(variation) => variation.name && variation.value
-							)
-						}),
-					...(parsed.standalone &&
-						parsed.hasVariations &&
-						parsed.variationLabels && {
-							variationLabels: cleanedVariationLabels
-						})
+					hasVariations,
+					...(hasVariations && {
+						variations: parsed.variations?.filter((variation) => variation.name && variation.value),
+						variationLabels: cleanedVariationLabels
+					})
 				},
 				$unset: {
 					...(!parsed.customPreorderText && { customPreorderText: '' }),
@@ -226,7 +233,8 @@ export const actions: Actions = {
 					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' }),
 					...(!parsed.depositPercentage && { deposit: '' }),
 					...(!parsed.vatProfileId && { vatProfileId: '' }),
-					...(!parsed.restrictPaymentMethods && { paymentMethods: '' })
+					...(!parsed.restrictPaymentMethods && { paymentMethods: '' }),
+					...(!hasVariations && { variations: '', variationLabels: '' })
 				}
 			}
 		);

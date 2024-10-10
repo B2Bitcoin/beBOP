@@ -95,6 +95,16 @@
 				value={data.product.translations?.[language]?.variationLabels?.values[key][valueKey] || ''}
 				name="variationLabels.values[{key}][{valueKey}]"
 			/>
+			<input
+				type="hidden"
+				class="form-input"
+				value={data.product.variationLabels?.prices
+					? data.product.variationLabels?.prices[key]
+						? data.product.variationLabels?.prices[key][valueKey]
+						: 0
+					: 0}
+				name="variationLabels.prices[{key}][{valueKey}]"
+			/>
 		{/each}
 	{/each}
 	{#each Object.entries(data.product.variationLabels?.names || []) as [key, value]}
