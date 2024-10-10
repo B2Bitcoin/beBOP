@@ -130,7 +130,8 @@ export const actions: Actions = {
 				delete cleanedVariationLabels.values[key];
 			}
 		}
-		const hasVariations = Object.entries(cleanedVariationLabels?.names || []).length !== 0;
+		const hasVariations =
+			parsed.standalone && Object.entries(cleanedVariationLabels?.names || []).length !== 0;
 		const res = await collections.products.updateOne(
 			{ _id: params.id },
 			{
@@ -206,13 +207,11 @@ export const actions: Actions = {
 					...(parsed.restrictPaymentMethods && {
 						paymentMethods: parsed.paymentMethods ?? []
 					}),
-					...(parsed.standalone && {
-						hasVariations: hasVariations
-					}),
-					...(parsed.standalone && {
+					hasVariations,
+					...(hasVariations && {
 						variations: parsed.variations?.filter((variation) => variation.name && variation.value)
 					}),
-					...(parsed.standalone && {
+					...(hasVariations && {
 						variationLabels: cleanedVariationLabels
 					})
 				},
@@ -224,7 +223,9 @@ export const actions: Actions = {
 					...(!parsed.maxQuantityPerOrder && { maxQuantityPerOrder: '' }),
 					...(!parsed.depositPercentage && { deposit: '' }),
 					...(!parsed.vatProfileId && { vatProfileId: '' }),
-					...(!parsed.restrictPaymentMethods && { paymentMethods: '' })
+					...(!parsed.restrictPaymentMethods && { paymentMethods: '' }),
+					...(!parsed.hasVariations && { variations: '' }),
+					...(!parsed.hasVariations && { variationLabels: '' })
 				}
 			}
 		);
