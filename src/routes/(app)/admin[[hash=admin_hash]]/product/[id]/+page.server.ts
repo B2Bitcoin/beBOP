@@ -209,9 +209,7 @@ export const actions: Actions = {
 					}),
 					hasVariations,
 					...(hasVariations && {
-						variations: parsed.variations?.filter((variation) => variation.name && variation.value)
-					}),
-					...(hasVariations && {
+						variations: parsed.variations?.filter((variation) => variation.name && variation.value),
 						variationLabels: cleanedVariationLabels
 					})
 				},
