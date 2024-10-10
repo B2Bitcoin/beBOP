@@ -195,6 +195,9 @@
 	let variationLabelsNames: string[] = [];
 	let variationLabelsValues: string[] = [];
 	let variationLabelsPrice: number[] = [];
+	function isNumber(value: string) {
+		return !isNaN(Number(value)) && value.trim() !== '';
+	}
 </script>
 
 <form
@@ -505,9 +508,11 @@
 					<label class="form-label">
 						Value <input
 							type="text"
-							name="variationLabels.values[{(variationLabelsNames[i] || '').toLowerCase()}][{(
-								variationLabelsNames[i] + variationLabelsValues[i]
-							)?.toLowerCase()}]"
+							name="variationLabels.values[{(
+								variationLabelsNames[i] || ''
+							).toLowerCase()}][{isNumber(variationLabelsValues[i])
+								? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+								: (variationLabelsValues[i] || '').toLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsValues[i]}
 						/>
@@ -515,9 +520,11 @@
 					<label class="form-label">
 						Price difference<input
 							type="text"
-							name="variationLabels.prices[{(variationLabelsNames[i] || '').toLowerCase()}][{(
-								variationLabelsNames[i] + variationLabelsValues[i] || ''
-							).toLowerCase()}]"
+							name="variationLabels.prices[{(
+								variationLabelsNames[i] || ''
+							).toLowerCase()}][{isNumber(variationLabelsValues[i])
+								? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+								: (variationLabelsValues[i] || '').toLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsPrice[i]}
 						/>
