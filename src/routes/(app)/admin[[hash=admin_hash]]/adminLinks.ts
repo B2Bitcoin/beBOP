@@ -55,6 +55,10 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/digital-file',
 				label: 'Files'
+			},
+			{
+				href: '/admin/seo',
+				label: 'SEO'
 			}
 		]
 	},
