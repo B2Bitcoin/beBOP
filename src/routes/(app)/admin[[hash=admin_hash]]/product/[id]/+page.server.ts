@@ -214,10 +214,9 @@ export const actions: Actions = {
 								(variation) => variation.name && variation.value
 							)
 						}),
-					...(parsed.standalone &&
-						parsed.hasVariations && {
-							variationLabels: cleanedVariationLabels
-						})
+					...(parsed.standalone && {
+						variationLabels: cleanedVariationLabels
+					})
 				},
 				$unset: {
 					...(!parsed.customPreorderText && { customPreorderText: '' }),
