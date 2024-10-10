@@ -117,6 +117,7 @@ export const load = async ({ params, locals }) => {
 			sort: { percentage: -1 }
 		}
 	);
+
 	return {
 		product,
 		pictures,

@@ -20,6 +20,8 @@
 	import { useI18n } from '$lib/i18n';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
+	import { serializeSchema } from '$lib/utils/jsonLd.js';
+	import type { Product as SchemaOrgProduct, WithContext } from 'schema-dts';
 
 	export let data;
 
@@ -105,6 +107,21 @@
 		return true;
 	}
 	const { t, locale } = useI18n();
+	const schema: WithContext<SchemaOrgProduct> = {
+		'@context': `https://schema.org`,
+		'@type': 'Product',
+		name: data.product.name,
+		image: `${$page.url.origin}/picture/raw/${data.pictures[0]._id}/format/${
+			data.pictures[0].storage.formats.find((image) => image.width >= 500 && image.height >= 500)
+				?.width ?? data.pictures[0].storage.formats[0].width
+		}`,
+		description: data.product.description,
+		offers: {
+			'@type': 'Offer',
+			price: data.product.price.amount,
+			priceCurrency: data.product.price.currency
+		}
+	};
 
 	let isZoomed = false;
 	function handleClick() {
@@ -132,6 +149,10 @@
 	<meta property="product:price:amount" content={String(data.product.price.amount)} />
 	<meta property="product:price:currency" content={data.product.price.currency} />
 	<meta property="og:type" content="og:product" />
+	{#if data.product.actionSettings.googleShopping.visible}
+		<!-- eslint-disable svelte/no-at-html-tags -->
+		{@html serializeSchema(schema)}
+	{/if}
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
