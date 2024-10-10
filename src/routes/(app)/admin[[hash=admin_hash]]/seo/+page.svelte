@@ -15,7 +15,7 @@
 			class="form-checkbox"
 			checked={data.hideFromSearchEngines}
 		/>
-		Disable SEO cloak
+		Hide from search engines
 	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>
