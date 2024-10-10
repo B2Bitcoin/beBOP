@@ -1,12 +1,13 @@
 import { env } from '$env/dynamic/private';
 import { POS_ROLE_ID } from '$lib/types/User';
-import { isBitcoinConfigured } from './bitcoin';
-import { isLightningConfigured } from './lnd';
+import { isBitcoinConfigured as isBitcoindConfigured } from './bitcoind';
+import { isLightningConfigured as isLndConfigured } from './lnd';
 import { isPhoenixdConfigured } from './phoenixd';
 import { runtimeConfig } from './runtime-config';
 import { isSumupEnabled } from './sumup';
 import { isStripeEnabled } from './stripe';
 import { isPaypalEnabled } from './paypal';
+import { isBitcoinNodelessConfigured } from './bitcoin-nodeless';
 
 const ALL_PAYMENT_METHODS = [
 	'card',
@@ -19,7 +20,14 @@ const ALL_PAYMENT_METHODS = [
 ] as const;
 export type PaymentMethod = (typeof ALL_PAYMENT_METHODS)[number];
 
-export type PaymentProcessor = 'sumup' | 'bitcoind' | 'lnd' | 'phoenixd' | 'stripe' | 'paypal';
+export type PaymentProcessor =
+	| 'sumup'
+	| 'bitcoind'
+	| 'lnd'
+	| 'phoenixd'
+	| 'stripe'
+	| 'paypal'
+	| 'bitcoin-nodeless';
 
 export const paymentMethods = (opts?: {
 	role?: string;
@@ -45,9 +53,9 @@ export const paymentMethods = (opts?: {
 						case 'bank-transfer':
 							return runtimeConfig.sellerIdentity?.bank;
 						case 'bitcoin':
-							return isBitcoinConfigured;
+							return isBitcoindConfigured || isBitcoinNodelessConfigured();
 						case 'lightning':
-							return isLightningConfigured || isPhoenixdConfigured();
+							return isLndConfigured || isPhoenixdConfigured();
 						case 'point-of-sale':
 							return opts?.role === POS_ROLE_ID || opts?.includePOS;
 						case 'free':
