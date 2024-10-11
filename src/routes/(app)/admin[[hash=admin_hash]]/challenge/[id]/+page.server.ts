@@ -21,11 +21,38 @@ export async function load({ params }) {
 		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
 		.toArray();
 
+	const orders = await collections.orders
+		.find({
+			createdAt: {
+				$lt: endsAt,
+				$gt: beginsAt
+			},
+			'items.product._id': { $in: [...challenge.productIds] }
+		})
+		.toArray();
+
 	return {
 		challenge,
 		beginsAt,
 		endsAt,
-		products
+		products,
+		orders: orders.map((order) => ({
+			_id: order._id,
+			payments: order.payments.map((payment) => ({
+				id: payment._id.toString(),
+				status: payment.status,
+				method: payment.method
+			})),
+			number: order.number,
+			createdAt: order.createdAt,
+			status: order.status,
+			notes:
+				order.notes?.map((note) => ({
+					content: note.content,
+					createdAt: note.createdAt
+				})) || [],
+			currencySnapshot: order.currencySnapshot
+		}))
 	};
 }
 
