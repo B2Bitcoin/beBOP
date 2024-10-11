@@ -129,6 +129,20 @@
 	}
 
 	let selectedVariations: Record<string, string> = {};
+	$: if (data.product.hasVariations && data.product.variationLabels) {
+		customAmount = toCurrency(
+			data.currencies.main,
+			data.product.price.amount,
+			data.product.price.currency
+		);
+		for (const [key, value] of Object.entries(selectedVariations)) {
+			customAmount += toCurrency(
+				data.currencies.main,
+				data.product.variationLabels?.prices[key][value] ?? 0,
+				data.product.price.currency
+			);
+		}
+	}
 </script>
 
 <svelte:head>
@@ -415,6 +429,19 @@
 										{/each}
 									</select>
 								{/each}
+								<input type="hidden" name="customPriceCurrency" value={data.currencies.main} />
+								<label class="w-full form-label">
+									{t('product.variationPriceLabel')}
+									<input
+										class="form-input"
+										type="number"
+										readonly
+										name="customPriceAmount"
+										bind:value={customAmount}
+										required
+										step="any"
+									/>
+								</label>
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">

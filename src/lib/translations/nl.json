@@ -646,6 +646,7 @@
 			"subscription": "Abonnement",
 			"ticket": "Ticket"
 		},
+		"variationPriceLabel": "Variatie Prijs",
 		"vatExcluded": "Exclusief BTW"
 	},
 	"subscription": {

@@ -177,7 +177,9 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
-		...(product.payWhatYouWant && { customPrice }),
+		...((product.payWhatYouWant || (product.hasVariations && product.standalone)) && {
+			customPrice
+		}),
 		deposit: deposit === 'partial',
 		...(product.hasVariations && { chosenVariations })
 	});

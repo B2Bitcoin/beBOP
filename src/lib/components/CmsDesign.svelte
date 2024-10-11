@@ -173,13 +173,14 @@
 			{:else if token.type === 'pictureWidget'}
 				<PictureComponent
 					picture={pictureById[token.slug]}
-					class="my-5 {token.height ? `h-[${token.height}px]` : ''} {token.width
+					class="my-5 lg:block hidden {token.height ? `h-[${token.height}px]` : ''} {token.width
 						? `w-[${token.width}px]`
 						: ''}"
 					style="{token.fit ? `object-fit: ${token.fit};` : ''}{token.width
 						? `width: ${token.width}px;`
 						: ''}{token.height ? `height: ${token.height}px;` : ''}"
 				/>
+				<PictureComponent picture={pictureById[token.slug]} class="my-5 lg:hidden block" />
 			{:else if token.type === 'html'}
 				<div class="my-5">
 					<!-- eslint-disable svelte/no-at-html-tags -->
@@ -253,15 +254,7 @@
 						class="not-prose my-5"
 					/>
 				{:else if token.type === 'pictureWidget'}
-					<PictureComponent
-						picture={pictureById[token.slug]}
-						class="my-5 {token.height ? `h-[${token.height}px]` : ''} {token.width
-							? `w-[${token.width}px]`
-							: ''}"
-						style="{token.fit ? `object-fit: ${token.fit};` : ''}{token.width
-							? `width: ${token.width}px;`
-							: ''}{token.height ? `height: ${token.height}px;` : ''}"
-					/>
+					<PictureComponent picture={pictureById[token.slug]} class="my-5" />
 				{:else if token.type === 'html'}
 					<div class="my-5">
 						<!-- eslint-disable svelte/no-at-html-tags -->

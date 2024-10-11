@@ -69,7 +69,7 @@ export async function addToCartInDb(
 		throw error(400, "Product can't be added to basket");
 	}
 
-	if (params.customPrice && !product.payWhatYouWant) {
+	if (params.customPrice && !product.payWhatYouWant && !product.hasVariations) {
 		throw error(400, 'Product is not pay what you want');
 	}
 
