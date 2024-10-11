@@ -4,6 +4,8 @@ import { parsePriceAmount } from '$lib/types/Currency';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import type { Filter } from 'mongodb';
+import type { Order } from '$lib/types/Order';
 
 export async function load({ params }) {
 	const challenge = await collections.challenges.findOne({
@@ -20,16 +22,16 @@ export async function load({ params }) {
 		.find({})
 		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
 		.toArray();
-
-	const orders = await collections.orders
-		.find({
-			createdAt: {
-				$lt: endsAt,
-				$gt: beginsAt
-			},
-			'items.product._id': { $in: [...challenge.productIds] }
-		})
-		.toArray();
+	const query: Filter<Order> = {
+		createdAt: {
+			$lt: endsAt,
+			$gt: beginsAt
+		}
+	};
+	if (challenge.productIds.length > 0) {
+		query['items.product._id'] = { $in: [...challenge.productIds] };
+	}
+	const orders = await collections.orders.find(query).toArray();
 
 	return {
 		challenge,
