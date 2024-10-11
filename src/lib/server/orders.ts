@@ -1517,7 +1517,14 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 		await collections.challenges.updateOne(
 			{ _id: challenge._id },
 			{
-				$inc: { progress: increase }
+				$inc: { progress: increase },
+				$push: {
+					incrementation: {
+						incrementedDate: new Date(),
+						order: order._id,
+						increment: increase
+					}
+				}
 			},
 			{ session }
 		);
