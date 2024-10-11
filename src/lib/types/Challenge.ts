@@ -15,10 +15,11 @@ export type Challenge = Timestamps & {
 
 	beginsAt: Date;
 	endsAt: Date;
-	incrementation?: {
-		incrementedDate: Date;
+	event?: {
+		type: 'progress';
+		at: Date;
 		order: Order['_id'];
-		increment: number;
+		amount: number;
 	}[];
 } & (
 		| {
