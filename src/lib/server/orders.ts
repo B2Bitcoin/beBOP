@@ -1519,12 +1519,14 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 			{
 				$inc: { progress: increase },
 				$push: {
-					event: {
-						type: 'progress',
-						at: new Date(),
-						order: order._id,
-						amount: increase
-					}
+					...(increase && {
+						event: {
+							type: 'progress',
+							at: new Date(),
+							order: order._id,
+							amount: increase
+						}
+					})
 				}
 			},
 			{ session }
