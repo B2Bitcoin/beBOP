@@ -1514,23 +1514,23 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 						}))
 				  );
 
-		await collections.challenges.updateOne(
-			{ _id: challenge._id },
-			{
-				$inc: { progress: increase },
-				$push: {
-					...(increase && {
+		if (increase) {
+			await collections.challenges.updateOne(
+				{ _id: challenge._id },
+				{
+					$inc: { progress: increase },
+					$push: {
 						event: {
 							type: 'progress',
 							at: new Date(),
 							order: order._id,
 							amount: increase
 						}
-					})
-				}
-			},
-			{ session }
-		);
+					}
+				},
+				{ session }
+			);
+		}
 	}
 	//#endregion
 
