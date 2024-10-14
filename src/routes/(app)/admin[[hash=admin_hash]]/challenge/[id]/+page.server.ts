@@ -26,12 +26,13 @@ export async function load({ params }) {
 		createdAt: {
 			$lt: endsAt,
 			$gt: beginsAt
-		}
+		},
+		status: 'paid'
 	};
 	if (challenge.productIds.length > 0) {
 		query['items.product._id'] = { $in: [...challenge.productIds] };
 	}
-	const orders = await collections.orders.find(query).toArray();
+	const orders = await collections.orders.find(query).sort({ createdAt: -1 }).toArray();
 
 	return {
 		challenge,
