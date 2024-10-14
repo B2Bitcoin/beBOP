@@ -2,7 +2,6 @@
 	import { generateId } from '$lib/utils/generateId';
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import PictureComponent from '$lib/components/Picture.svelte';
-	import { slice } from 'lodash-es';
 
 	export let data;
 	let name = data.tag.name;

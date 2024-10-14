@@ -5,7 +5,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import { preUploadPicture } from '$lib/types/Picture.js';
 	import { page } from '$app/stores';
-	import { slice } from 'lodash-es';
 
 	export let data;
 	let pageId = $page.url.searchParams.get('id') || null;
