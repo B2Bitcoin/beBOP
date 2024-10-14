@@ -486,7 +486,7 @@
 				name="hasVariations"
 				disabled={!product.standalone}
 			/>
-			Product has light variations (no stock nor price difference)
+			Product has light variations (no stock difference)
 		</label>
 		{#if product.hasVariations}
 			{#each Object.entries(variationLabelsToUpdate?.names || []) as [key, value]}
