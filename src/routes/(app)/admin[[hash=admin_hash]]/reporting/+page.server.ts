@@ -2,14 +2,14 @@ import { collections } from '$lib/server/database';
 import { countryFromIp } from '$lib/server/geoip';
 import { sum } from '$lib/utils/sum';
 import { pojo } from '$lib/server/pojo.js';
-import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
+import { endOfMonth, startOfMonth } from 'date-fns';
 
 export async function load() {
 	const orders = await collections.orders
 		.find({
 			createdAt: {
-				$gt: startOfMonth(subMonths(new Date(), 1)),
-				$lt: endOfMonth(subMonths(new Date(), 1))
+				$gte: startOfMonth(new Date()),
+				$lt: endOfMonth(new Date())
 			}
 		})
 		.sort({ createdAt: -1 })
