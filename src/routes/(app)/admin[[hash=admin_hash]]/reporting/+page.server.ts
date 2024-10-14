@@ -2,16 +2,16 @@ import { collections } from '$lib/server/database';
 import { countryFromIp } from '$lib/server/geoip';
 import { sum } from '$lib/utils/sum';
 import { pojo } from '$lib/server/pojo.js';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 
 export async function load() {
-	const now = new Date();
-
-	const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-	const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-	const endOfLastMonth = new Date(startOfCurrentMonth.getTime() - 1);
-
 	const orders = await collections.orders
-		.find({ createdAt: { $gt: startOfLastMonth, $lt: endOfLastMonth } })
+		.find({
+			createdAt: {
+				$gt: startOfMonth(subMonths(new Date(), 1)),
+				$lt: endOfMonth(subMonths(new Date(), 1))
+			}
+		})
 		.sort({ createdAt: -1 })
 		.toArray();
 
