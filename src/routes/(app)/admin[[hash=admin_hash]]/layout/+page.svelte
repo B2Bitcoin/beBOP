@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product.js';
-	import { upperFirst } from 'lodash-es';
+	import { slice, upperFirst } from 'lodash-es';
 
 	export let data;
 	let viewportContentWidth = data.viewportContentWidth;
@@ -31,6 +31,10 @@
 			event.preventDefault();
 		}
 	}
+	let navbarLinkLine = data.links.navbar.length || 2;
+	let linkLine = data.links.topbar.length || 2;
+	let footerLinkLine = data.links.footer.length || 2;
+	let socialLinkLine = data.links.socialNetworkIcons.length || 2;
 </script>
 
 <form method="post" class="flex flex-col gap-4">
@@ -91,7 +95,7 @@
 
 	<h3 class="text-xl">Links</h3>
 
-	{#each [...data.links.topbar, { href: '', label: '' }] as link, i}
+	{#each [...data.links.topbar, ...Array(linkLine).fill( { href: '', label: '' } )].slice(0, linkLine) as link, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text
@@ -101,14 +105,27 @@
 				Url
 				<input type="text" name="topbarLinks[{i}].href" class="form-input" value={link.href} />
 			</label>
+			<button
+				type="button"
+				class="self-start mt-10"
+				on:click={() => {
+					(data.links.topbar = data.links.topbar.filter(
+						(li) => link.href !== li.href && link.label !== li.label
+					)),
+						(linkLine -= 1);
+				}}>🗑️</button
+			>
 		</div>
 	{/each}
+	<button class="btn btn-gray self-start" on:click={() => (linkLine += 1)} type="button"
+		>Add topbar link
+	</button>
 
 	<h2 class="text-2xl">Nav bar</h2>
 
 	<h3 class="text-xl">Links</h3>
 
-	{#each [...data.links.navbar, { href: '', label: '' }] as link, i}
+	{#each [...data.links.navbar, ...Array(navbarLinkLine).fill( { href: '', label: '' } )].slice(0, navbarLinkLine) as link, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text
@@ -118,8 +135,21 @@
 				Url
 				<input type="text" name="navbarLinks[{i}].href" class="form-input" value={link.href} />
 			</label>
+			<button
+				type="button"
+				class="self-start mt-10"
+				on:click={() => {
+					(data.links.navbar = data.links.navbar.filter(
+						(li) => link.href !== li.href && link.label !== li.label
+					)),
+						(navbarLinkLine -= 1);
+				}}>🗑️</button
+			>
 		</div>
 	{/each}
+	<button class="btn btn-gray self-start" on:click={() => (navbarLinkLine += 1)} type="button"
+		>Add navbar link
+	</button>
 
 	<h2 class="text-2xl">Footer</h2>
 	<label class="checkbox-label">
@@ -152,7 +182,7 @@
 
 	<h3 class="text-xl">Links</h3>
 
-	{#each [...data.links.footer, { href: '', label: '' }] as link, i}
+	{#each [...data.links.footer, ...Array(footerLinkLine).fill( { href: '', label: '' } )].slice(0, footerLinkLine) as link, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text
@@ -162,14 +192,27 @@
 				Url
 				<input type="text" name="footerLinks[{i}].href" class="form-input" value={link.href} />
 			</label>
+			<button
+				type="button"
+				class="self-start mt-10"
+				on:click={() => {
+					(data.links.footer = data.links.footer.filter(
+						(li) => link.href !== li.href && link.label !== li.label
+					)),
+						(footerLinkLine -= 1);
+				}}>🗑️</button
+			>
 		</div>
 	{/each}
+	<button class="btn btn-gray self-start" on:click={() => (footerLinkLine += 1)} type="button"
+		>Add footer link
+	</button>
 
 	<h2 class="text-2xl">Social network icons</h2>
 
 	<h3 class="text-xl">Links</h3>
 
-	{#each [...data.links.socialNetworkIcons, { name: '', svg: '', href: '' }] as icon, i}
+	{#each [...data.links.socialNetworkIcons, ...Array(socialLinkLine).fill( { name: '', svg: '', href: '' } )].slice(0, socialLinkLine) as icon, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Name
@@ -200,8 +243,21 @@
 					value={icon.href}
 				/>
 			</label>
+			<button
+				type="button"
+				class="self-start mt-10"
+				on:click={() => {
+					(data.links.socialNetworkIcons = data.links.socialNetworkIcons.filter(
+						(li) => icon.href !== li.href && icon.name !== li.name && icon.svg !== li.svg
+					)),
+						(socialLinkLine -= 1);
+				}}>🗑️</button
+			>
 		</div>
 	{/each}
+	<button class="btn btn-gray self-start" on:click={() => (socialLinkLine += 1)} type="button"
+		>Add social network link
+	</button>
 	<h2 class="text-2xl">Mobile Display</h2>
 	<h2>Allow you to customize be-bop default behavior on mobile</h2>
 	<h2>Default configuration is:</h2>
