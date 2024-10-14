@@ -22,6 +22,7 @@
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
 	import { serializeSchema } from '$lib/utils/jsonLd.js';
 	import type { Product as SchemaOrgProduct, WithContext } from 'schema-dts';
+	import { currencies } from '$lib/stores/currencies';
 
 	export let data;
 
@@ -297,12 +298,16 @@
 						currency={data.product.price.currency}
 						class="text-2xl lg:text-4xl truncate max-w-full"
 						short={false}
-						amount={data.product.price.amount}
+						amount={data.product.hasVariations
+							? toCurrency(data.product.price.currency, customAmount, data.currencies.main)
+							: data.product.price.amount}
 						main
 					/>
 					<PriceTag
 						currency={data.product.price.currency}
-						amount={data.product.price.amount}
+						amount={data.product.hasVariations
+							? toCurrency(data.product.price.currency, customAmount, data.currencies.main)
+							: data.product.price.amount}
 						secondary
 						class="text-xl"
 					/>
@@ -431,15 +436,11 @@
 								{/each}
 								<input type="hidden" name="customPriceCurrency" value={data.currencies.main} />
 								<label class="w-full form-label">
-									{t('product.variationPriceLabel')}
 									<input
 										class="form-input"
-										type="number"
-										readonly
+										type="hidden"
 										name="customPriceAmount"
 										bind:value={customAmount}
-										required
-										step="any"
 									/>
 								</label>
 							{/if}
