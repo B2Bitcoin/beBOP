@@ -4,7 +4,16 @@ import { sum } from '$lib/utils/sum';
 import { pojo } from '$lib/server/pojo.js';
 
 export async function load() {
-	const orders = await collections.orders.find().sort({ createdAt: -1 }).toArray();
+	const now = new Date();
+
+	const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+	const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+	const endOfLastMonth = new Date(startOfCurrentMonth.getTime() - 1);
+
+	const orders = await collections.orders
+		.find({ createdAt: { $gt: startOfLastMonth, $lt: endOfLastMonth } })
+		.sort({ createdAt: -1 })
+		.toArray();
 
 	return {
 		orders: orders.map((order) => ({
