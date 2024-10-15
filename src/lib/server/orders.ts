@@ -1521,6 +1521,35 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 			},
 			{ session }
 		);
+		if (items) {
+			const content = `Dear be-BOP owner,
+	
+			The order #${order.number} ${ORIGIN}/order/${order._id} was successfully paid.
+			
+			It contains the following product(s) that increase the challenge ${challenge.name} :
+			${items.forEach((item) => {
+				`- ${item.product.name} - price ${item.product.price} - qty ${
+					item.quantity
+				} - total addition to challenge : ${
+					challenge.mode === 'totalProducts'
+						? item.quantity
+						: (item.customPrice?.amount || item.product.price.amount) * item.quantity
+				}`;
+			})}
+			
+			Total increase : ${increase}
+			
+			Challenge current level : ${challenge.progress}`;
+
+			await collections.emailNotifications.insertOne({
+				_id: new ObjectId(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				subject: 'Challenge Update',
+				htmlContent: content,
+				dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
+			});
+		}
 	}
 	//#endregion
 
