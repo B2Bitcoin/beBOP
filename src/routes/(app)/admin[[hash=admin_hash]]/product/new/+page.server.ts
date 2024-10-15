@@ -109,11 +109,9 @@ export const actions: Actions = {
 		const cleanedVariationLabels: {
 			names: Record<string, string>;
 			values: Record<string, Record<string, string>>;
-			prices: Record<string, Record<string, number>>;
 		} = {
 			names: {},
-			values: {},
-			prices: {}
+			values: {}
 		};
 		for (const key in parsed.variationLabels?.names) {
 			const nameValue = parsed.variationLabels.names[key];
@@ -132,18 +130,6 @@ export const actions: Actions = {
 			}
 			if (Object.keys(cleanedVariationLabels.values[key]).length === 0) {
 				delete cleanedVariationLabels.values[key];
-			}
-		}
-		for (const key in parsed.variationLabels?.prices) {
-			const priceEntries = parsed.variationLabels.prices[key];
-			cleanedVariationLabels.prices[key] = {};
-			for (const priceKey in priceEntries) {
-				if (priceEntries[priceKey].trim() !== '') {
-					cleanedVariationLabels.prices[key][priceKey] = Number(priceEntries[priceKey]);
-				}
-			}
-			if (Object.keys(cleanedVariationLabels.prices[key]).length === 0) {
-				delete cleanedVariationLabels.prices[key];
 			}
 		}
 
@@ -220,9 +206,7 @@ export const actions: Actions = {
 						...(parsed.standalone && { hasVariations: parsed.hasVariations }),
 						...(parsed.standalone &&
 							parsed.hasVariations && {
-								variations: parsed.variations?.filter(
-									(variation) => variation.name && variation.value
-								)
+								variationPrices: parsed.variationPrices
 							}),
 						...(parsed.standalone &&
 							parsed.hasVariations &&

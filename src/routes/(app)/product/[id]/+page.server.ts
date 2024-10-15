@@ -39,7 +39,7 @@ export const load = async ({ params, locals }) => {
 			| 'maximumPrice'
 			| 'mobile'
 			| 'hasVariations'
-			| 'variations'
+			| 'variationPrices'
 			| 'variationLabels'
 		>
 	>(
@@ -77,7 +77,7 @@ export const load = async ({ params, locals }) => {
 				variationLabels: {
 					$ifNull: [`$translations.${locals.language}.variationLabels`, '$variationLabels']
 				},
-				variations: 1,
+				variationPrices: 1,
 				maximumPrice: 1,
 				mobile: 1
 			}

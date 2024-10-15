@@ -138,7 +138,7 @@
 		for (const [key, value] of Object.entries(selectedVariations)) {
 			customAmount += toCurrency(
 				data.currencies.main,
-				data.product.variationLabels?.prices[key][value] ?? 0,
+				data.product.variationPrices?.[key][value] ?? 0,
 				data.product.price.currency
 			);
 		}

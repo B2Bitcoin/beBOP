@@ -21,7 +21,6 @@ export interface ProductTranslatableFields {
 	variationLabels?: {
 		names: Record<string, string>;
 		values: Record<string, Record<string, string>>;
-		prices: Record<string, Record<string, number>>;
 	};
 	contentBefore?: string;
 	contentAfter?: string;
@@ -79,10 +78,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 		hideContentAfter: boolean;
 	};
 	hasVariations?: boolean;
-	variations?: {
-		name: string;
-		value: string;
-	}[];
+	variationPrices?: Record<string, Record<string, number>>;
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;

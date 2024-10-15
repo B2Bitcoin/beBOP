@@ -199,7 +199,7 @@
 		return !isNaN(Number(value)) && value.trim() !== '';
 	}
 
-	$: variationLabelsToUpdate = product.variationLabels || { names: {}, values: {}, prices: {} };
+	$: variationLabelsToUpdate = product.variationLabels || { names: {}, values: {} };
 	function deleteVariationLabel(key: string, valueKey: string) {
 		variationLabelsToUpdate = {
 			...variationLabelsToUpdate,
@@ -208,25 +208,15 @@
 				[key]: {
 					...variationLabelsToUpdate?.values[key]
 				}
-			},
-			prices: {
-				...variationLabelsToUpdate?.prices,
-				[key]: {
-					...variationLabelsToUpdate?.prices[key]
-				}
 			}
 		};
 
 		delete variationLabelsToUpdate?.values[key][valueKey];
-		delete variationLabelsToUpdate?.prices[key][valueKey];
+		delete product.variationPrices?.[key][valueKey];
 
-		if (
-			Object.keys(variationLabelsToUpdate?.values[key] || []).length === 0 &&
-			Object.keys(variationLabelsToUpdate?.prices[key] || []).length === 0
-		) {
+		if (Object.keys(variationLabelsToUpdate?.values[key] || []).length === 0) {
 			delete variationLabelsToUpdate?.names[key];
 			delete variationLabelsToUpdate?.values[key];
-			delete variationLabelsToUpdate?.prices[key];
 		}
 	}
 </script>
@@ -518,12 +508,9 @@
 								type="number"
 								class="form-input"
 								placeholder="price difference"
-								value={variationLabelsToUpdate?.prices
-									? variationLabelsToUpdate?.prices[key]
-										? variationLabelsToUpdate?.prices[key][valueKey]
-										: 0
-									: 0}
-								name="variationLabels.prices[{key}][{valueKey}]"
+								name="variationPrices[{key}][{valueKey}]"
+								min="0"
+								value={product.variationPrices?.[key][valueKey] || 0}
 							/>
 						</label>
 						<label for={valueKey} class="form-label mt-8">
@@ -557,14 +544,15 @@
 					</label>
 					<label class="form-label">
 						Price difference<input
-							type="text"
-							name="variationLabels.prices[{(
-								variationLabelsNames[i] || ''
-							).toLowerCase()}][{isNumber(variationLabelsValues[i])
+							type="number"
+							name="variationPrices[{(variationLabelsNames[i] || '').toLowerCase()}][{isNumber(
+								variationLabelsValues[i]
+							)
 								? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
 								: (variationLabelsValues[i] || '').toLowerCase()}]"
 							class="form-input"
 							bind:value={variationLabelsPrice[i]}
+							min="0"
 						/>
 					</label>
 				</div>

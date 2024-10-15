@@ -33,17 +33,7 @@ export const actions = {
 				cta: productBaseSchema().cta.optional(),
 				variationLabels: z.object({
 					names: z.record(z.string().trim(), z.string().trim()),
-					values: z.record(z.string().trim(), z.record(z.string().trim(), z.string().trim())),
-					prices: z.record(
-						z.string().trim(),
-						z.record(
-							z.string().trim(),
-							z
-								.string()
-								.default('0')
-								.transform((val) => Number(val))
-						)
-					)
+					values: z.record(z.string().trim(), z.record(z.string().trim(), z.string().trim()))
 				})
 			})
 			.parse(json);
