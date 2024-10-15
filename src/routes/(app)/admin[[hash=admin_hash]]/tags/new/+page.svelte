@@ -16,7 +16,7 @@
 	let fileWideBanner: FileList;
 	let fileSlimBanner: FileList;
 	let fileAvatar: FileList;
-
+	let tagCtaLines = 2;
 	let submitting = false;
 	async function handleSubmit() {
 		try {
@@ -192,7 +192,7 @@
 	</label>
 
 	<h3 class="text-xl">CTAs</h3>
-	{#each [0, 1, 2] as i}
+	{#each [...Array(tagCtaLines).fill('tag')].slice(0, tagCtaLines) as i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text
@@ -208,6 +208,9 @@
 			</label>
 		</div>
 	{/each}
+	<button class="btn btn-gray self-start" on:click={() => (tagCtaLines += 1)} type="button"
+		>Add CTAs
+	</button>
 	{#if 0}
 		<h3 class="text-xl">Links menu</h3>
 		{#each [0, 1, 2, 3, 4] as i}
