@@ -11,7 +11,6 @@ import { amountOfProductReserved, amountOfProductSold } from '$lib/server/produc
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
 import { ObjectId } from 'mongodb';
-import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const load = async ({ params }) => {
 	const pictures = await collections.pictures
@@ -97,14 +96,7 @@ export const actions: Actions = {
 			parsed.shipping = false;
 		}
 
-		const priceAmount = parsed.free
-			? 0
-			: parsePriceAmount(
-					parsed.priceAmount,
-					priceCurrency,
-					runtimeConfig.fractionDigits[priceCurrency],
-					runtimeConfig.currencyUnits[priceCurrency]
-			  );
+		const priceAmount = parsed.free ? 0 : parsePriceAmount(parsed.priceAmount, priceCurrency);
 
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;
@@ -162,12 +154,7 @@ export const actions: Actions = {
 					...(parsed.hasMaximumPrice &&
 						parsed.maxPriceAmount && {
 							maximumPrice: {
-								amount: parsePriceAmount(
-									parsed.maxPriceAmount,
-									parsed.priceCurrency,
-									runtimeConfig.fractionDigits[parsed.priceCurrency],
-									runtimeConfig.currencyUnits[parsed.priceCurrency]
-								),
+								amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency),
 								currency: parsed.priceCurrency
 							}
 						}),

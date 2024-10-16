@@ -170,12 +170,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	const customPrice =
 		customPriceAmount && customPriceCurrency
 			? {
-					amount: parsePriceAmount(
-						customPriceAmount,
-						customPriceCurrency,
-						runtimeConfig.fractionDigits[customPriceCurrency],
-						runtimeConfig.currencyUnits[customPriceCurrency]
-					),
+					amount: parsePriceAmount(customPriceAmount, customPriceCurrency),
 					currency: customPriceCurrency
 			  }
 			: undefined;

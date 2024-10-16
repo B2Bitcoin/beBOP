@@ -1,6 +1,5 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { parsePriceAmount } from '$lib/types/Currency';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
@@ -87,30 +86,15 @@ export const actions = {
 
 		const amount =
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
-				? parsePriceAmount(
-						goalAmount,
-						challenge.goal.currency,
-						runtimeConfig.fractionDigits[challenge.goal.currency],
-						runtimeConfig.currencyUnits[challenge.goal.currency]
-				  )
+				? parsePriceAmount(goalAmount, challenge.goal.currency)
 				: parseInt(goalAmount);
 		const parsedProgress =
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
-				? parsePriceAmount(
-						progress,
-						challenge.goal.currency,
-						runtimeConfig.fractionDigits[challenge.goal.currency],
-						runtimeConfig.currencyUnits[challenge.goal.currency]
-				  )
+				? parsePriceAmount(progress, challenge.goal.currency)
 				: parseInt(goalAmount);
 		const parsedOldProgress =
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
-				? parsePriceAmount(
-						oldProgress,
-						challenge.goal.currency,
-						runtimeConfig.fractionDigits[challenge.goal.currency],
-						runtimeConfig.currencyUnits[challenge.goal.currency]
-				  )
+				? parsePriceAmount(oldProgress, challenge.goal.currency)
 				: parseInt(goalAmount);
 		if (amount < 0 || isNaN(amount)) {
 			throw error(400, 'Invalid amount');

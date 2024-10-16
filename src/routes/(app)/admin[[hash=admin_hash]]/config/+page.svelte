@@ -114,31 +114,6 @@
 			<IconInfo class="cursor-pointer"></IconInfo>
 		</div>
 	</div>
-	{#each CURRENCIES as currency}
-		<div class="flex gap-4">
-			<label class="form-label"
-				>Currency
-				<input type="text" class="form-input" value={currency} readonly />
-			</label>
-			<label class="form-label"
-				>Decimal Digit
-				<input
-					type="number"
-					class="form-input"
-					value={data.fractionDigits[currency]}
-					name="fractionDigits[{currency}]"
-					min="0"
-				/>
-				<input
-					type="hidden"
-					class="form-input"
-					value={data.currencyUnits[currency]}
-					name="currencyUnits[{currency}]"
-					min="0"
-				/>
-			</label>
-		</div>
-	{/each}
 	<h2 class="text-2xl">Notifications</h2>
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">

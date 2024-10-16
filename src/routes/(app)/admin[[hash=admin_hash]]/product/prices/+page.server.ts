@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
-import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export const load = async () => {
 	const products = await collections.products.find({}).toArray();
@@ -34,12 +33,7 @@ export const actions = {
 				})
 				.parse(value);
 
-			const priceAmount = parsePriceAmount(
-				price,
-				currency,
-				runtimeConfig.fractionDigits[currency],
-				runtimeConfig.currencyUnits[currency]
-			);
+			const priceAmount = parsePriceAmount(price, currency);
 
 			await collections.products.updateOne(
 				{ _id: key },

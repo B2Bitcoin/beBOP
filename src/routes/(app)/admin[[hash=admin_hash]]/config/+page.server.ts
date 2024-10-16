@@ -37,9 +37,7 @@ export async function load(event) {
 		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin,
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
 		defaultOnLocation: runtimeConfig.defaultOnLocation,
-		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive,
-		fractionDigits: runtimeConfig.fractionDigits,
-		currencyUnits: runtimeConfig.currencyUnits
+		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive
 	};
 }
 
@@ -99,15 +97,7 @@ export const actions = {
 				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0),
 				disableLanguageSelector: z.boolean({ coerce: true }),
 				contactModes: z.string().array(),
-				cartPreviewInteractive: z.boolean({ coerce: true }),
-				fractionDigits: z.record(
-					z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
-					z.number({ coerce: true }).int().default(0)
-				),
-				currencyUnits: z.record(
-					z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
-					z.number({ coerce: true }).default(0)
-				)
+				cartPreviewInteractive: z.boolean({ coerce: true })
 			})
 			.parse({
 				...json,

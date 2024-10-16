@@ -6,7 +6,6 @@ import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { generateId } from '$lib/utils/generateId';
 import { adminPrefix } from '$lib/server/admin';
 import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
-import { runtimeConfig } from '$lib/server/runtime-config';
 
 export const load = async () => {
 	const products = await collections.products
@@ -50,12 +49,7 @@ export const actions: Actions = {
 
 		const amount =
 			currency && mode === 'moneyAmount'
-				? parsePriceAmount(
-						goalAmount,
-						currency,
-						runtimeConfig.fractionDigits[currency],
-						runtimeConfig.currencyUnits[currency]
-				  )
+				? parsePriceAmount(goalAmount, currency)
 				: parseInt(goalAmount);
 
 		if (amount < 0 || isNaN(amount)) {

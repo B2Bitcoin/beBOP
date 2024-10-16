@@ -87,12 +87,7 @@ export const actions: Actions = {
 
 		const priceAmount = parsed.free
 			? 0
-			: parsePriceAmount(
-					parsed.priceAmount,
-					parsed.priceCurrency,
-					runtimeConfig.fractionDigits[parsed.priceCurrency],
-					runtimeConfig.currencyUnits[parsed.priceCurrency]
-			  );
+			: parsePriceAmount(parsed.priceAmount, parsed.priceCurrency);
 
 		if (parsed.type !== 'resource') {
 			delete parsed.availableDate;
@@ -164,12 +159,7 @@ export const actions: Actions = {
 						...(parsed.hasMaximumPrice &&
 							parsed.maxPriceAmount && {
 								maximumPrice: {
-									amount: parsePriceAmount(
-										parsed.maxPriceAmount,
-										parsed.priceCurrency,
-										runtimeConfig.fractionDigits[parsed.priceCurrency],
-										runtimeConfig.currencyUnits[parsed.priceCurrency]
-									),
+									amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency),
 									currency: parsed.priceCurrency
 								}
 							}),
@@ -310,12 +300,7 @@ export const actions: Actions = {
 					...(parsed.hasMaximumPrice &&
 						parsed.maxPriceAmount && {
 							maximumPrice: {
-								amount: parsePriceAmount(
-									parsed.maxPriceAmount,
-									parsed.priceCurrency,
-									runtimeConfig.fractionDigits[parsed.priceCurrency],
-									runtimeConfig.currencyUnits[parsed.priceCurrency]
-								),
+								amount: parsePriceAmount(parsed.maxPriceAmount, parsed.priceCurrency),
 								currency: parsed.priceCurrency
 							}
 						}),

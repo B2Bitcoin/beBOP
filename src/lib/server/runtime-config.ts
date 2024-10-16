@@ -59,28 +59,6 @@ const baseConfig = {
 	 *
 	 * For Phoenixd max value is 60 minutes
 	 */
-	fractionDigits: {
-		BTC: 8,
-		CHF: 2,
-		EUR: 2,
-		USD: 2,
-		ZAR: 2,
-		XOF: 2,
-		XAF: 2,
-		CDF: 2,
-		SAT: 0
-	},
-	currencyUnits: {
-		BTC: Math.pow(10, -8),
-		CHF: Math.pow(10, -2),
-		EUR: Math.pow(10, -2),
-		USD: Math.pow(10, -2),
-		ZAR: Math.pow(10, -2),
-		XOF: Math.pow(10, -2),
-		XAF: Math.pow(10, -2),
-		CDF: Math.pow(10, -2),
-		SAT: Math.pow(10, -0)
-	},
 	desiredPaymentTimeout: 120,
 	bitcoinWallet: '',
 	logo: { isWide: false, pictureId: '', darkModePictureId: '' },
