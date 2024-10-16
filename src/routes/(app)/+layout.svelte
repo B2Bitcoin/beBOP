@@ -121,7 +121,7 @@
 -->
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
-	{#if data.ageRestriction && data.session?.acceptAgeLimitation}
+	{#if data.ageRestriction && !data.sessionAcceptAgeLimitation}
 		<form class="mx-auto max-w-7xl mt-8" method="POST" action="?/navigate">
 			<h1 class="text-xl">Attention</h1>
 			<p class="my-4">

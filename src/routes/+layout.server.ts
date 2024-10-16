@@ -43,6 +43,6 @@ export async function load(event) {
 		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines,
 		ageRestriction: runtimeConfig.ageRestriction,
 		ageLegalReason: runtimeConfig.ageLegalReason,
-		session
+		sessionAcceptAgeLimitation: session?.acceptAgeLimitation
 	};
 }
