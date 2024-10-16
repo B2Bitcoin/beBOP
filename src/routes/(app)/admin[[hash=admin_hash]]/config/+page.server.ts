@@ -8,6 +8,8 @@ import { adminPrefix } from '$lib/server/admin';
 import { z } from 'zod';
 import { redirect } from '@sveltejs/kit';
 import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
 
 export async function load(event) {
 	return {
@@ -42,6 +44,11 @@ export async function load(event) {
 export const actions = {
 	update: async function ({ request }) {
 		const formData = await request.formData();
+
+		const json: JsonObject = {};
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 		const oldAdminHash = runtimeConfig.adminHash;
 
 		const result = z
@@ -93,7 +100,7 @@ export const actions = {
 				cartPreviewInteractive: z.boolean({ coerce: true })
 			})
 			.parse({
-				...Object.fromEntries(formData),
+				...json,
 				paymentMethods: formData.getAll('paymentMethods'),
 				contactModes: formData.getAll('contactModes')
 			});
