@@ -29,13 +29,17 @@ export const CURRENCY_UNIT = Object.freeze({
 	SAT: Math.pow(10, -FRACTION_DIGITS_PER_CURRENCY.SAT)
 }) satisfies Record<Currency, number>;
 
-export function parsePriceAmount(amount: string, currency: Currency): number {
+export function parsePriceAmount(
+	amount: string,
+	currency: Currency,
+	fractionDigit: number,
+	currencyUnit: number
+): number {
 	//deleted Math.round()
 	const priceAmount =
-		(parseFloat(amount) * Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency])) /
-		Math.pow(10, FRACTION_DIGITS_PER_CURRENCY[currency]);
-	if (priceAmount > 0 && priceAmount < CURRENCY_UNIT[currency]) {
-		throw error(400, `Price must be zero or greater than ${CURRENCY_UNIT[currency]} ${currency}`);
+		(parseFloat(amount) * Math.pow(10, fractionDigit)) / Math.pow(10, fractionDigit);
+	if (priceAmount > 0 && priceAmount < currencyUnit) {
+		throw error(400, `Price must be zero or greater than ${currencyUnit} ${currency}`);
 	}
 
 	return priceAmount;

@@ -8,6 +8,8 @@ import { adminPrefix } from '$lib/server/admin';
 import { z } from 'zod';
 import { redirect } from '@sveltejs/kit';
 import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
+import type { JsonObject } from 'type-fest';
+import { set } from 'lodash-es';
 
 export async function load(event) {
 	return {
@@ -35,13 +37,20 @@ export async function load(event) {
 		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin,
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
 		defaultOnLocation: runtimeConfig.defaultOnLocation,
-		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive
+		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive,
+		fractionDigits: runtimeConfig.fractionDigits,
+		currencyUnits: runtimeConfig.currencyUnits
 	};
 }
 
 export const actions = {
 	update: async function ({ request }) {
 		const formData = await request.formData();
+
+		const json: JsonObject = {};
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 		const oldAdminHash = runtimeConfig.adminHash;
 
 		const result = z
@@ -90,10 +99,18 @@ export const actions = {
 				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0),
 				disableLanguageSelector: z.boolean({ coerce: true }),
 				contactModes: z.string().array(),
-				cartPreviewInteractive: z.boolean({ coerce: true })
+				cartPreviewInteractive: z.boolean({ coerce: true }),
+				fractionDigits: z.record(
+					z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
+					z.number({ coerce: true }).int().default(0)
+				),
+				currencyUnits: z.record(
+					z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]),
+					z.number({ coerce: true }).default(0)
+				)
 			})
 			.parse({
-				...Object.fromEntries(formData),
+				...json,
 				paymentMethods: formData.getAll('paymentMethods'),
 				contactModes: formData.getAll('contactModes')
 			});

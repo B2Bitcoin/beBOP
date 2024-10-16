@@ -1,6 +1,7 @@
 import { collections } from '$lib/server/database';
 import { addOrderPayment } from '$lib/server/orders';
 import { paymentMethods, type PaymentMethod } from '$lib/server/payment-methods.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 import { userIdentifier } from '$lib/server/user';
 import { parsePriceAmount } from '$lib/types/Currency.js';
 import { orderAmountWithNoPaymentsCreated as orderAmountWithNoPayments } from '$lib/types/Order.js';
@@ -51,7 +52,12 @@ export const actions = {
 				method: formData.get('method')
 			});
 
-		const amount = parsePriceAmount(parsed.amount, order.currencySnapshot.main.totalPrice.currency);
+		const amount = parsePriceAmount(
+			parsed.amount,
+			order.currencySnapshot.main.totalPrice.currency,
+			runtimeConfig.fractionDigits[order.currencySnapshot.main.totalPrice.currency],
+			runtimeConfig.currencyUnits[order.currencySnapshot.main.totalPrice.currency]
+		);
 		if (amount <= 0) {
 			throw error(400, 'Invalid amount');
 		}
