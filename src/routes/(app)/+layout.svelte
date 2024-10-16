@@ -113,6 +113,7 @@
 
 	$: logoClass = data.logo.isWide ? 'h-[60px] w-auto' : 'h-[60px] w-[60px] rounded-full';
 	const { t, locale, textAddress } = useI18n();
+	let ageWarning: false;
 </script>
 
 <!--
@@ -120,7 +121,33 @@
 -->
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
-	{#if $page.data.layoutReset || $page.url.searchParams.get('display') === 'headless'}
+	{#if data.ageRestriction && data.session?.acceptAgeLimitation}
+		<form class="mx-auto max-w-7xl mt-8" method="POST" action="?/navigate">
+			<h1 class="text-xl">Attention</h1>
+			<p class="my-4">
+				Ce site vend du cul, des clopes, de l'alcool, et des streamings de Ghostbusters avec des
+				protagonistes qui fument, boivent, se font faire des fellations par des fantômes, et
+				prononcent des injures.
+			</p>
+			<p class="my-4">
+				En validant ce formulaire pour continuer la navigation, vous admettez avoir l'âge légal dans
+				votre pays.
+			</p>
+			<p class="my-4">
+				On fait ça parce que <a href={data.ageLegalReason} class="underline">telle page</a> nous le demande
+			</p>
+			<label class="label-checkbox my-4">
+				<input type="checkbox" class="form-checkbox" bind:checked={ageWarning} />
+				Compris chef
+			</label>
+			<input
+				type="submit"
+				class="btn btn-gray my-4 w-full"
+				value="Continuer la navigation"
+				disabled={!ageWarning}
+			/>
+		</form>
+	{:else if $page.data.layoutReset || $page.url.searchParams.get('display') === 'headless'}
 		<slot />
 	{:else}
 		<header class="header items-center flex h-[100px] print:hidden">

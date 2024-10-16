@@ -2,6 +2,7 @@ import { collections } from '$lib/server/database';
 import { omit } from 'lodash-es';
 import { load as catalogLoad } from './catalog/+page.server';
 import { cmsFromContent } from '$lib/server/cms';
+import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
 	const cmsPage = await collections.cmsPages.findOne(
@@ -39,4 +40,21 @@ export const load = async ({ locals }) => {
 		),
 		layoutReset: cmsPage.fullScreen
 	};
+};
+
+export const actions = {
+	navigate: async ({ locals }) => {
+		await collections.sessions.updateOne(
+			{
+				sessionId: locals.sessionId
+			},
+			{
+				$set: {
+					updatedAt: new Date(),
+					acceptAgeLimitation: true
+				}
+			}
+		);
+		throw redirect(303, `/`);
+	}
 };
