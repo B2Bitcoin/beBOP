@@ -11,15 +11,15 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
-			name="ageRestriction"
+			name="age.restriction"
 			class="form-checkbox"
-			checked={data.ageRestriction}
+			checked={data.age.restriction}
 		/>
 		My online business needs age limitation & validation
 	</label>
 	<label class="form-label">
 		Legal reason
-		<input type="input" name="ageLegalReason" class="form-input" value={data.ageLegalReason} />
+		<input type="input" name="age.legalReason" class="form-input" value={data.age.legalReason} />
 	</label>
 	<input type="submit" value="Update" class="btn btn-gray self-start" />
 </form>

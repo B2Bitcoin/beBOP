@@ -1,45 +1,37 @@
 import { collections } from '$lib/server/database';
 import { runtimeConfig } from '$lib/server/runtime-config.js';
+import { set } from 'lodash-es';
+import type { JsonObject } from 'type-fest';
 import { z } from 'zod';
 
-export async function load() {
-	return {
-		ageLegalReason: runtimeConfig.ageLegalReason
-	};
-}
+export async function load() {}
 
 export const actions = {
 	update: async function ({ request }) {
 		const formData = await request.formData();
+		const json: JsonObject = {};
 
+		for (const [key, value] of formData) {
+			if (value) {
+				set(json, key, value);
+			}
+		}
 		const result = z
 			.object({
-				ageRestriction: z.boolean({ coerce: true }),
-				ageLegalReason: z.string()
+				age: z.object({ restriction: z.boolean({ coerce: true }), legalReason: z.string() })
 			})
-			.parse({
-				ageRestriction: formData.get('ageRestriction'),
-				ageLegalReason: formData.get('ageLegalReason')
-			});
+			.parse(json);
 
 		await collections.runtimeConfig.updateOne(
-			{ _id: 'ageRestriction' },
+			{ _id: 'age' },
 			{
-				$set: { data: result.ageRestriction, updatedAt: new Date() },
+				$set: { data: result.age, updatedAt: new Date() },
 				$setOnInsert: { createdAt: new Date() }
 			},
 			{ upsert: true }
 		);
-		await collections.runtimeConfig.updateOne(
-			{ _id: 'ageLegalReason' },
-			{
-				$set: { data: result.ageLegalReason, updatedAt: new Date() },
-				$setOnInsert: { createdAt: new Date() }
-			},
-			{ upsert: true }
-		);
-		runtimeConfig.ageRestriction = result.ageRestriction;
-		runtimeConfig.ageLegalReason = result.ageLegalReason;
+
+		runtimeConfig.age = result.age;
 
 		return {
 			success: 'Age restriction updated.'
