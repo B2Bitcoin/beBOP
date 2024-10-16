@@ -22,6 +22,10 @@
 		shortDescription: string;
 		fullScreen: boolean;
 		hideFromSEO?: boolean | undefined;
+		metas?: {
+			name: string;
+			content: string;
+		}[];
 	};
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -46,6 +50,11 @@
 	<title>{cmsPage.title}</title>
 	{#if cmsPage.hideFromSEO}
 		<meta name="robots" content="noindex" />
+	{/if}
+	{#if cmsPage.metas}
+		{#each cmsPage.metas as meta}
+			<meta name={meta.name} content={meta.content} />
+		{/each}
 	{/if}
 </svelte:head>
 

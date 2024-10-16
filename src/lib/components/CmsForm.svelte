@@ -17,6 +17,10 @@
 		maintenanceDisplay: boolean;
 		content: string;
 		mobileContent?: string;
+		metas: {
+			name: string;
+			content: string;
+		}[];
 	} | null;
 
 	export let slug = cmsPage?._id || '';
@@ -26,7 +30,7 @@
 	let fullScreen = cmsPage?.fullScreen || false;
 	let maintenanceDisplay = cmsPage?.maintenanceDisplay || false;
 	let hideFromSEO = cmsPage?.hideFromSEO || false;
-
+	let hasCustomMeta = !!cmsPage?.metas.length;
 	let hasMobileContent = cmsPage?.hasMobileContent || false;
 	let mobileContent = cmsPage?.mobileContent || '';
 	function confirmDelete(event: Event) {
@@ -34,6 +38,7 @@
 			event.preventDefault();
 		}
 	}
+	let cmsMetaLine = cmsPage?.metas.length || 2;
 </script>
 
 <form method="post" class="flex flex-col gap-4">
@@ -94,7 +99,47 @@
 		<input type="checkbox" name="hideFromSEO" checked={hideFromSEO} class="form-checkbox" />
 		Hide this page from search engines
 	</label>
-
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="hasCustomMeta"
+			bind:checked={hasCustomMeta}
+			class="form-checkbox"
+		/>
+		Add custom meta tag
+	</label>
+	{#if hasCustomMeta}
+		{#each [...(cmsPage?.metas || []), ...Array(cmsMetaLine).fill( { name: '', content: '' } )].slice(0, cmsMetaLine) as meta, i}
+			<div class="flex gap-4">
+				<label class="form-label">
+					Name
+					<input type="text" name="metas[{i}].name" class="form-input" value={meta.name} />
+				</label>
+				<label class="form-label">
+					Content <input
+						type="text"
+						name="metas[{i}].content"
+						class="form-input"
+						value={meta.content}
+					/>
+				</label>
+				{#if cmsPage?.metas.length}
+					<button
+						type="button"
+						class="self-start mt-8"
+						on:click={() => {
+							(cmsPage.metas = cmsPage?.metas.filter(
+								(m) => m.name !== meta.name && m.content == meta.content
+							)),
+								(cmsMetaLine -= 1);
+						}}>🗑️</button
+					>{/if}
+			</div>
+		{/each}
+		<button class="btn btn-gray" on:click={() => (cmsMetaLine += 1)} type="button"
+			>Add variation
+		</button>
+	{/if}
 	<label class="block w-full mt-4">
 		Content
 		<Editor
