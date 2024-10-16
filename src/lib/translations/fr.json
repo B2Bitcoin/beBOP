@@ -13,6 +13,10 @@
 		"vatNumber": "Numéro TVA",
 		"zipCode": "Code postal"
 	},
+	"ageWarning": {
+		"agreement": "Compris chef",
+		"navigate": "Continuer la navigation"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Commander",

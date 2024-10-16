@@ -13,6 +13,10 @@
 		"vatNumber": "Número de IVA",
 		"zipCode": "Código postal"
 	},
+	"ageWarning": {
+		"agreement": "chef incluido",
+		"navigate": "Continuar la navegación"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Pagar",

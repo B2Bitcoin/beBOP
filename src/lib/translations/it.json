@@ -13,6 +13,10 @@
 		"vatNumber": "Numero IVA",
 		"zipCode": "Codice d'avviamento postale"
 	},
+	"ageWarning": {
+		"agreement": "Chef Compris",
+		"navigate": "Continua la navigazione"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Pagamento",

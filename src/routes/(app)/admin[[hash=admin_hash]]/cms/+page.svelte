@@ -24,7 +24,8 @@
 		'cart-top':
 			'This page will be embed at the top of the cart page. It can be used to explain the cart process.',
 		'cart-bottom':
-			'This page will be embed at the bottom of the cart page. It can be used to explain the cart process.'
+			'This page will be embed at the bottom of the cart page. It can be used to explain the cart process.',
+		agewall: 'This page will be embed in age limit form'
 	};
 
 	const cmsPageMap = new Map(data.cmsPages.map((cmsPage) => [cmsPage._id, cmsPage]));

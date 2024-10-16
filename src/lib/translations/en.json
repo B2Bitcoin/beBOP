@@ -13,6 +13,10 @@
 		"vatNumber": "VAT number",
 		"zipCode": "Zip code"
 	},
+	"ageWarning": {
+		"agreement": "Compris chef",
+		"navigate": "Continuer la navigation"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Checkout",

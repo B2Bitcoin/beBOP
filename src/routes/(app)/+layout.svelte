@@ -33,6 +33,7 @@
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 	import { LARGE_SCREEN } from '$lib/types/Theme.js';
+	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
 
@@ -121,29 +122,37 @@
 -->
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
-	{#if data.ageRestriction && !data.sessionAcceptAgeLimitation}
+	{#if data.ageRestriction}
 		<form class="mx-auto max-w-7xl mt-8" method="POST" action="?/navigate">
-			<h1 class="text-xl">Attention</h1>
-			<p class="my-4">
-				Ce site vend du cul, des clopes, de l'alcool, et des streamings de Ghostbusters avec des
-				protagonistes qui fument, boivent, se font faire des fellations par des fantômes, et
-				prononcent des injures.
-			</p>
-			<p class="my-4">
-				En validant ce formulaire pour continuer la navigation, vous admettez avoir l'âge légal dans
-				votre pays.
-			</p>
-			<p class="my-4">
-				On fait ça parce que <a href={data.ageLegalReason} class="underline">telle page</a> nous le demande
-			</p>
+			{#if data.cmsAgewall && data.cmsAgewallData}
+				<CmsDesign
+					challenges={data.cmsAgewallData.challenges}
+					tokens={data.cmsAgewallData.tokens}
+					sliders={data.cmsAgewallData.sliders}
+					products={data.cmsAgewallData.products}
+					pictures={data.cmsAgewallData.pictures}
+					tags={data.cmsAgewallData.tags}
+					digitalFiles={data.cmsAgewallData.digitalFiles}
+					roleId={data.roleId ? data.roleId : ''}
+					specifications={data.cmsAgewallData.specifications}
+					contactForms={data.cmsAgewallData.contactForms}
+					pageName={data.cmsAgewall?.title}
+					websiteLink={data.websiteLink}
+					brandName={data.brandName}
+					sessionEmail={data.email}
+					countdowns={data.cmsAgewallData.countdowns}
+					galleries={data.cmsAgewallData.galleries}
+					class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
+				/>
+			{/if}
 			<label class="label-checkbox my-4">
 				<input type="checkbox" class="form-checkbox" bind:checked={ageWarning} />
-				Compris chef
+				{t('ageWarning.agreement')}
 			</label>
 			<input
 				type="submit"
 				class="btn btn-gray my-4 w-full"
-				value="Continuer la navigation"
+				value={t('ageWarning.navigate')}
 				disabled={!ageWarning}
 			/>
 		</form>

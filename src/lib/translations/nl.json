@@ -13,6 +13,10 @@
 		"vatNumber": "btw-nummer",
 		"zipCode": "Postcode"
 	},
+	"ageWarning": {
+		"agreement": "Inclusief chef-kok",
+		"navigate": "Vervolg de navigatie"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Uitchecken",
