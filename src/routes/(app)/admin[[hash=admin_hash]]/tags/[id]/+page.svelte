@@ -11,6 +11,7 @@
 			event.preventDefault();
 		}
 	}
+	let tagCtaLines = data.tag.cta.length || 2;
 </script>
 
 <form method="post" class="flex flex-col gap-4" action="?/update">
@@ -123,37 +124,40 @@
 	</label>
 
 	<h3 class="text-xl">CTAs</h3>
-	{#each [0, 1, 2] as i}
+	{#each [...data.tag.cta, ...Array(tagCtaLines).fill( { label: '', href: '', openNewTab: false } )].slice(0, tagCtaLines) as cta, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text
-				<input
-					type="text"
-					name="cta[{i}].label"
-					class="form-input"
-					value={data.tag.cta[i]?.label || ''}
-				/>
+				<input type="text" name="cta[{i}].label" class="form-input" value={cta.label || ''} />
 			</label>
 			<label class="form-label">
 				Url
-				<input
-					type="text"
-					name="cta[{i}].href"
-					class="form-input"
-					value={data.tag.cta[i]?.href || ''}
-				/>
+				<input type="text" name="cta[{i}].href" class="form-input" value={cta.href || ''} />
 			</label>
 			<label class="checkbox-label mt-4">
 				<input
 					class="form-checkbox"
 					type="checkbox"
 					name="cta[{i}].openNewTab"
-					checked={data.tag.cta[i]?.openNewTab}
+					checked={cta.openNewTab}
 				/>
 				Open in new tab
 			</label>
+			<button
+				type="button"
+				class="self-start mt-8"
+				on:click={() => {
+					(data.tag.cta = data.tag.cta.filter(
+						(ctaLink) => ctaLink.href !== cta.href && ctaLink.label !== cta.label
+					)),
+						(tagCtaLines -= 1);
+				}}>🗑️</button
+			>
 		</div>
 	{/each}
+	<button class="btn btn-gray self-start" on:click={() => (tagCtaLines += 1)} type="button"
+		>Add CTAs
+	</button>
 	{#if 0}
 		<h3 class="text-xl">Links menu</h3>
 		{#each [0, 1, 2, 3, 4] as i}
