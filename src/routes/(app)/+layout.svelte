@@ -123,7 +123,7 @@
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
 	{#if data.ageRestriction}
-		<form class="mx-auto max-w-7xl mt-8" method="POST" action="?/navigate">
+		<form class="mx-auto max-w-7xl" method="POST" action="?/navigate">
 			{#if data.cmsAgewall && data.cmsAgewallData}
 				<CmsDesign
 					challenges={data.cmsAgewallData.challenges}
