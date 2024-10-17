@@ -109,7 +109,6 @@ export const actions: Actions = {
 			names: {},
 			values: {}
 		};
-
 		for (const key in parsed.variationLabels?.names) {
 			const nameValue = parsed.variationLabels.names[key];
 
@@ -117,7 +116,6 @@ export const actions: Actions = {
 				cleanedVariationLabels.names[key] = nameValue;
 			}
 		}
-
 		for (const key in parsed.variationLabels?.values) {
 			const valueEntries = parsed.variationLabels.values[key];
 			cleanedVariationLabels.values[key] = {};
@@ -209,7 +207,7 @@ export const actions: Actions = {
 					}),
 					hasVariations,
 					...(hasVariations && {
-						variations: parsed.variations?.filter((variation) => variation.name && variation.value),
+						variations: parsed.variations.filter((variation) => variation.name && variation.value),
 						variationLabels: cleanedVariationLabels
 					})
 				},
@@ -222,7 +220,7 @@ export const actions: Actions = {
 					...(!parsed.depositPercentage && { deposit: '' }),
 					...(!parsed.vatProfileId && { vatProfileId: '' }),
 					...(!parsed.restrictPaymentMethods && { paymentMethods: '' }),
-					...(!hasVariations && { variations: '', variationLabels: '' })
+					...(!hasVariations && { variationPrices: '', variationLabels: '' })
 				}
 			}
 		);

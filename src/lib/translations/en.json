@@ -646,6 +646,7 @@
 			"subscription": "Subscription",
 			"ticket": "Ticket"
 		},
+		"variationPriceLabel": "Variation Price",
 		"vatExcluded": "VAT excluded"
 	},
 	"subscription": {
