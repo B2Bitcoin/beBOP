@@ -1,4 +1,5 @@
 import type { Currency } from './Currency';
+import type { Order } from './Order';
 import type { Timestamps } from './Timestamps';
 
 export type Challenge = Timestamps & {
@@ -14,6 +15,12 @@ export type Challenge = Timestamps & {
 
 	beginsAt: Date;
 	endsAt: Date;
+	event?: {
+		type: 'progress';
+		at: Date;
+		order: Order['_id'];
+		amount: number;
+	}[];
 } & (
 		| {
 				goal: {

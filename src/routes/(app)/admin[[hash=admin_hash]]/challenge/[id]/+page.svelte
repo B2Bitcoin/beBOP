@@ -4,6 +4,7 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { MultiSelect } from 'svelte-multiselect';
 	import { formatInTimeZone } from 'date-fns-tz';
+	import OrdersList from '$lib/components/OrdersList.svelte';
 
 	export let data;
 
@@ -173,4 +174,14 @@
 			on:click={confirmDelete}
 		/>
 	</div>
+	<h1 class="text-3xl">List of orders</h1>
+	<p>
+		Those are full orders made and fully paid during the challenge periods, and including at least
+		one product whitelisted on the Challenge
+	</p>
+	<p>
+		The display amounts are those from order total. It's not necessarily the amount added to the
+		challenge gauge
+	</p>
+	<OrdersList orders={data.orders} />
 </form>
