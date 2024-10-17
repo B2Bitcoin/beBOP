@@ -122,41 +122,7 @@
 -->
 
 <div data-sveltekit-preload-data={data.isMaintenance ? 'tap' : 'hover'} style="display: contents;">
-	{#if data.age.restriction && !data.sessionAcceptAgeLimitation}
-		<form class="mx-auto max-w-7xl" method="POST" action="?/navigate">
-			{#if data.cmsAgewall && data.cmsAgewallData}
-				<CmsDesign
-					challenges={data.cmsAgewallData.challenges}
-					tokens={data.cmsAgewallData.tokens}
-					sliders={data.cmsAgewallData.sliders}
-					products={data.cmsAgewallData.products}
-					pictures={data.cmsAgewallData.pictures}
-					tags={data.cmsAgewallData.tags}
-					digitalFiles={data.cmsAgewallData.digitalFiles}
-					roleId={data.roleId ? data.roleId : ''}
-					specifications={data.cmsAgewallData.specifications}
-					contactForms={data.cmsAgewallData.contactForms}
-					pageName={data.cmsAgewall?.title}
-					websiteLink={data.websiteLink}
-					brandName={data.brandName}
-					sessionEmail={data.email}
-					countdowns={data.cmsAgewallData.countdowns}
-					galleries={data.cmsAgewallData.galleries}
-					class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
-				/>
-			{/if}
-			<label class="label-checkbox my-4">
-				<input type="checkbox" class="form-checkbox" bind:checked={ageWarning} />
-				{t('ageWarning.agreement')}
-			</label>
-			<input
-				type="submit"
-				class="btn btn-gray my-4 w-full"
-				value={t('ageWarning.navigate')}
-				disabled={!ageWarning}
-			/>
-		</form>
-	{:else if $page.data.layoutReset || $page.url.searchParams.get('display') === 'headless'}
+	{#if $page.data.layoutReset || $page.url.searchParams.get('display') === 'headless'}
 		<slot />
 	{:else}
 		<header class="header items-center flex h-[100px] print:hidden">
@@ -524,7 +490,33 @@
 			</div>
 		{:else}
 			<div class="grow body-mainPlan">
-				<slot />
+				{#if data.ageRestriction.enabled && !data.sessionAcceptAgeLimitation && !$page.url.pathname.startsWith('/admin')}
+					<form class="mx-auto max-w-7xl" method="POST" action="{data.websiteLink}?/navigate">
+						{#if data.cmsAgewall && data.cmsAgewallData}
+							<CmsDesign
+								{...data.cmsAgewallData}
+								roleId={data.roleId ? data.roleId : ''}
+								pageName={data.cmsAgewall?.title}
+								websiteLink={data.websiteLink}
+								brandName={data.brandName}
+								sessionEmail={data.email}
+								class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
+							/>
+						{/if}
+						<label class="label-checkbox my-4">
+							<input type="checkbox" class="form-checkbox" bind:checked={ageWarning} />
+							{t('ageWarning.agreement')}
+						</label>
+						<input
+							type="submit"
+							class="btn btn-gray my-4 w-full"
+							value={t('ageWarning.navigate')}
+							disabled={!ageWarning}
+						/>
+					</form>
+				{:else}
+					<slot />
+				{/if}
 			</div>
 		{/if}
 

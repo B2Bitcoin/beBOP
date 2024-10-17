@@ -59,8 +59,8 @@ const baseConfig = {
 	 *
 	 * For Phoenixd max value is 60 minutes
 	 */
-	age: {
-		restriction: false,
+	ageRestriction: {
+		enabled: false,
 		legalReason: ''
 	},
 	desiredPaymentTimeout: 120,

@@ -41,7 +41,7 @@ export async function load(event) {
 		viewportWidth,
 		contactModes: runtimeConfig.contactModes,
 		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines,
-		age: runtimeConfig.age,
+		ageRestriction: runtimeConfig.ageRestriction,
 		sessionAcceptAgeLimitation: session?.acceptAgeLimitation
 	};
 }

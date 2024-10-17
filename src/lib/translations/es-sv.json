@@ -14,8 +14,8 @@
 		"zipCode": "Código postal"
 	},
 	"ageWarning": {
-		"agreement": "chef incluido",
-		"navigate": "Continuar la navegación"
+		"agreement": "He leído las condiciones de acceso, las cumplo y las respeto",
+		"navigate": "Continuar navegando"
 	},
 	"cart": {
 		"cta": {

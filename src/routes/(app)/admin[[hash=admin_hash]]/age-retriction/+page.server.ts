@@ -18,20 +18,20 @@ export const actions = {
 		}
 		const result = z
 			.object({
-				age: z.object({ restriction: z.boolean({ coerce: true }), legalReason: z.string() })
+				ageRestriction: z.object({ enabled: z.boolean({ coerce: true }), legalReason: z.string() })
 			})
 			.parse(json);
 
 		await collections.runtimeConfig.updateOne(
-			{ _id: 'age' },
+			{ _id: 'ageRestriction' },
 			{
-				$set: { data: result.age, updatedAt: new Date() },
+				$set: { data: result.ageRestriction, updatedAt: new Date() },
 				$setOnInsert: { createdAt: new Date() }
 			},
 			{ upsert: true }
 		);
 
-		runtimeConfig.age = result.age;
+		runtimeConfig.ageRestriction = result.ageRestriction;
 
 		return {
 			success: 'Age restriction updated.'

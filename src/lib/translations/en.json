@@ -14,8 +14,8 @@
 		"zipCode": "Zip code"
 	},
 	"ageWarning": {
-		"agreement": "Compris chef",
-		"navigate": "Continuer la navigation"
+		"agreement": "I have read the access conditions, fulfill them and respect them",
+		"navigate": "Continue browsing"
 	},
 	"cart": {
 		"cta": {
