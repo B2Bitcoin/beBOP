@@ -51,7 +51,7 @@
 	{#if cmsPage.hideFromSEO}
 		<meta name="robots" content="noindex" />
 	{/if}
-	{#if cmsPage.metas}
+	{#if cmsPage.metas?.length}
 		{#each cmsPage.metas as meta}
 			<meta name={meta.name} content={meta.content} />
 		{/each}
