@@ -1,8 +1,10 @@
 import { adminPrefix } from '$lib/server/admin.js';
 import { collections } from '$lib/server/database';
+import type { JsonObject } from 'type-fest';
 import { cmsTranslatableSchema } from './cms-schema';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import { set } from 'lodash-es';
 
 export const actions = {
 	update: async function ({ request, params }) {
@@ -14,7 +16,12 @@ export const actions = {
 			throw error(404, 'Page not found');
 		}
 
-		const data = await request.formData();
+		const formData = await request.formData();
+		const json: JsonObject = {};
+
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 
 		const {
 			title,
@@ -24,7 +31,9 @@ export const actions = {
 			maintenanceDisplay,
 			hideFromSEO,
 			hasMobileContent,
-			mobileContent
+			mobileContent,
+			hasCustomMeta,
+			metas
 		} = z
 			.object({
 				...cmsTranslatableSchema,
@@ -33,9 +42,19 @@ export const actions = {
 				hideFromSEO: z.boolean({ coerce: true }),
 				desktopDisplayOnly: z.boolean({ coerce: true }),
 				mobileDisplaySubstitution: z.boolean({ coerce: true }),
-				hasMobileContent: z.boolean({ coerce: true })
+				hasMobileContent: z.boolean({ coerce: true }),
+				hasCustomMeta: z.boolean({ coerce: true }),
+				metas: z
+					.array(
+						z.object({
+							content: z.string().trim(),
+							name: z.string().trim()
+						})
+					)
+					.optional()
+					.default([])
 			})
-			.parse(Object.fromEntries(data));
+			.parse(json);
 
 		await collections.cmsPages.updateOne(
 			{
@@ -51,6 +70,7 @@ export const actions = {
 					hideFromSEO,
 					hasMobileContent,
 					...(hasMobileContent && mobileContent && { mobileContent }),
+					...(hasCustomMeta && { metas: metas.filter((meta) => meta.name && meta.content) }),
 					updatedAt: new Date()
 				}
 			}
