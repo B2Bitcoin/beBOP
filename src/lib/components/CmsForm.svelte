@@ -38,6 +38,7 @@
 			event.preventDefault();
 		}
 	}
+	let metas = cmsPage?.metas || undefined;
 	let cmsMetaLine = cmsPage?.metas?.length || 2;
 </script>
 
@@ -109,7 +110,7 @@
 		Add custom meta tag
 	</label>
 	{#if hasCustomMeta}
-		{#each [...(cmsPage?.metas || []), ...Array(cmsMetaLine).fill( { name: '', content: '' } )].slice(0, cmsMetaLine) as meta, i}
+		{#each [...(metas || []), ...Array(cmsMetaLine).fill( { name: '', content: '' } )].slice(0, cmsMetaLine) as meta, i}
 			<div class="flex gap-4">
 				<label class="form-label">
 					Name
@@ -123,13 +124,13 @@
 						value={meta.content}
 					/>
 				</label>
-				{#if cmsPage !== null && cmsPage?.metas?.length}
+				{#if cmsPage && cmsPage?.metas?.length}
 					<button
 						type="button"
 						class="self-start mt-8"
 						on:click={() => {
-							(cmsPage.metas = cmsPage?.metas?.filter(
-								(m) => m.name !== meta.name && m.content !== meta.content
+							(metas = cmsPage?.metas?.filter(
+								(m) => !(m.name === meta.name && m.content === meta.content)
 							)),
 								(cmsMetaLine -= 1);
 						}}>🗑️</button
