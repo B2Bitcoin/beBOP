@@ -17,7 +17,7 @@
 		maintenanceDisplay: boolean;
 		content: string;
 		mobileContent?: string;
-		metas: {
+		metas?: {
 			name: string;
 			content: string;
 		}[];
@@ -30,7 +30,7 @@
 	let fullScreen = cmsPage?.fullScreen || false;
 	let maintenanceDisplay = cmsPage?.maintenanceDisplay || false;
 	let hideFromSEO = cmsPage?.hideFromSEO || false;
-	let hasCustomMeta = !!cmsPage?.metas.length;
+	let hasCustomMeta = !!cmsPage?.metas?.length;
 	let hasMobileContent = cmsPage?.hasMobileContent || false;
 	let mobileContent = cmsPage?.mobileContent || '';
 	function confirmDelete(event: Event) {
@@ -38,7 +38,7 @@
 			event.preventDefault();
 		}
 	}
-	let cmsMetaLine = cmsPage?.metas.length || 2;
+	let cmsMetaLine = cmsPage?.metas?.length || 2;
 </script>
 
 <form method="post" class="flex flex-col gap-4">
@@ -123,12 +123,12 @@
 						value={meta.content}
 					/>
 				</label>
-				{#if cmsPage?.metas.length}
+				{#if cmsPage && cmsPage?.metas?.length}
 					<button
 						type="button"
 						class="self-start mt-8"
 						on:click={() => {
-							(cmsPage.metas = cmsPage?.metas.filter(
+							(cmsPage.metas = cmsPage?.metas?.filter(
 								(m) => m.name !== meta.name && m.content !== meta.content
 							)),
 								(cmsMetaLine -= 1);
