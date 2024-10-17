@@ -90,6 +90,7 @@
 		enforce: false
 	};
 	$: variationLines = product.variations?.length ? product.variations?.length : 2;
+	let productCtaLines = product.cta?.length ? product.cta.length : 3;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);
@@ -885,7 +886,7 @@
 		</table>
 
 		<h3 class="text-xl">Add custom CTA</h3>
-		{#each [...(product.cta || []), ...Array(3).fill( { href: '', label: '', fallback: false } )].slice(0, 3) as link, i}
+		{#each [...(product.cta || []), ...Array(productCtaLines).fill( { href: '', label: '', fallback: false } )].slice(0, productCtaLines) as link, i}
 			<div class="flex gap-4">
 				<label class="form-label">
 					Text
@@ -903,9 +904,21 @@
 						bind:checked={link.fallback}
 					/> Show only if Add to cart / Order button aren't available
 				</label>
+				<button
+					type="button"
+					class="self-start mt-8"
+					on:click={() => {
+						(product.cta = product.cta?.filter(
+							(ctaLink) => link.href !== ctaLink.href && link.label !== ctaLink.label
+						)),
+							(productCtaLines -= 1);
+					}}>🗑️</button
+				>
 			</div>
 		{/each}
-
+		<button class="btn btn-gray self-start" on:click={() => (productCtaLines += 1)} type="button"
+			>Add CTAs
+		</button>
 		{#if !isNew}
 			<label class="block w-full mt-4">
 				Add CMS code and widgets before product page core

@@ -84,7 +84,7 @@ export const actions = {
 		const parsed = z
 			.object(
 				typedFromEntries(
-					locales.map((locale) => [
+					runtimeConfig.languages.map((locale) => [
 						locale,
 						z.record(
 							z
