@@ -105,7 +105,6 @@ export const actions: Actions = {
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;
 		}
-
 		const cleanedVariationLabels: {
 			names: Record<string, string>;
 			values: Record<string, Record<string, string>>;
@@ -206,7 +205,9 @@ export const actions: Actions = {
 						...(parsed.standalone && { hasVariations: parsed.hasVariations }),
 						...(parsed.standalone &&
 							parsed.hasVariations && {
-								variationPrices: parsed.variationPrices
+								variations: parsed.variations.filter(
+									(variation) => variation.name && variation.value
+								)
 							}),
 						...(parsed.standalone &&
 							parsed.hasVariations &&

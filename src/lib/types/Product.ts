@@ -78,7 +78,11 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 		hideContentAfter: boolean;
 	};
 	hasVariations?: boolean;
-	variationPrices?: Record<string, Record<string, number>>;
+	variations?: {
+		name: string;
+		value: string;
+		price?: number;
+	}[];
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;

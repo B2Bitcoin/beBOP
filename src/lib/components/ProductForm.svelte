@@ -89,7 +89,7 @@
 		percentage: 50,
 		enforce: false
 	};
-	$: variationLines = product.variationLabels?.names ? 0 : 2;
+	$: variationLines = product.variations?.length ? product.variations?.length : 2;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);
@@ -194,11 +194,9 @@
 	}
 	let variationLabelsNames: string[] = [];
 	let variationLabelsValues: string[] = [];
-	let variationLabelsPrice: number[] = [];
 	function isNumber(value: string) {
 		return !isNaN(Number(value)) && value.trim() !== '';
 	}
-
 	$: variationLabelsToUpdate = product.variationLabels || { names: {}, values: {} };
 	function deleteVariationLabel(key: string, valueKey: string) {
 		variationLabelsToUpdate = {
@@ -210,13 +208,15 @@
 				}
 			}
 		};
-
 		delete variationLabelsToUpdate?.values[key][valueKey];
-		delete product.variationPrices?.[key][valueKey];
+		variationLines -= 1;
 
 		if (Object.keys(variationLabelsToUpdate?.values[key] || []).length === 0) {
 			delete variationLabelsToUpdate?.names[key];
 			delete variationLabelsToUpdate?.values[key];
+			product.variations = product.variations?.filter(
+				(vari) => key !== vari.name && valueKey !== vari.value
+			);
 		}
 	}
 </script>
@@ -479,82 +479,95 @@
 			Product has light variations (no stock difference)
 		</label>
 		{#if product.hasVariations}
-			{#each Object.entries(variationLabelsToUpdate?.names || []) as [key, value]}
-				{#each Object.entries(variationLabelsToUpdate?.values[key] || []) as [valueKey, valueLabel]}
-					<div class="flex gap-4">
-						<label for={key} class="form-label"
-							>Name
-							<input
-								type="text"
-								class="form-input"
-								placeholder={value}
-								value={variationLabelsToUpdate?.names[key] || ''}
-								name="variationLabels.names[{key}]"
-							/>
-						</label>
-						<label for={valueKey} class="form-label"
-							>Value
-							<input
-								type="text"
-								class="form-input"
-								placeholder={valueLabel}
-								value={variationLabelsToUpdate?.values[key][valueKey] || ''}
-								name="variationLabels.values[{key}][{valueKey}]"
-							/>
-						</label>
-						<label for={valueKey} class="form-label"
-							>Price difference
-							<input
-								type="number"
-								class="form-input"
-								placeholder="price difference"
-								name="variationPrices[{key}][{valueKey}]"
-								min="0"
-								value={product.variationPrices?.[key][valueKey] || 0}
-							/>
-						</label>
-						<label for={valueKey} class="form-label mt-8">
-							<button type="button" on:click={() => deleteVariationLabel(key, valueKey)}>🗑️</button>
-						</label>
-					</div>
-				{/each}
-			{/each}
-			{#each [...Array(variationLines).fill( { name: '', value: '' } )].slice(0, variationLines) as variation, i}
+			{#each [...(product.variations || []), ...Array(variationLines).fill( { name: '', value: '', price: 0 } )].slice(0, variationLines) as variation, i}
 				<div class="flex gap-4">
-					<label class="form-label" for={variation.name}>
-						Name
-						<input
-							type="text"
-							name="variationLabels.names[{(variationLabelsNames[i] || '').toLocaleLowerCase()}]"
-							class="form-input"
-							bind:value={variationLabelsNames[i]}
-						/>
-					</label>
+					{#if variation.name && variation.value}
+						<label class="form-label">
+							Name
+							<input
+								type="text"
+								name="variationLabels.names[{variation.name}]"
+								class="form-input"
+								value={product.variationLabels?.names[variation.name]}
+							/>
+						</label>
+						<label class="form-label">
+							Value <input
+								type="text"
+								name="variationLabels.values[{variation.name}][{variation.value}]"
+								class="form-input"
+								value={product.variationLabels?.values[variation.name][variation.value]}
+							/>
+						</label>
+					{:else}
+						<label class="form-label">
+							Name
+							<input
+								type="text"
+								name="variationLabels.names[{(variationLabelsNames[i] || '').toLowerCase()}]"
+								class="form-input"
+								bind:value={variationLabelsNames[i]}
+							/>
+						</label>
+						<label class="form-label">
+							Value <input
+								type="text"
+								name="variationLabels.values[{(
+									variationLabelsNames[i] || ''
+								).toLowerCase()}][{isNumber(variationLabelsValues[i])
+									? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+									: (variationLabelsValues[i] || '').toLowerCase()}]"
+								class="form-input"
+								bind:value={variationLabelsValues[i]}
+							/>
+						</label>
+					{/if}
+
 					<label class="form-label">
-						Value <input
-							type="text"
-							name="variationLabels.values[{(
-								variationLabelsNames[i] || ''
-							).toLowerCase()}][{isNumber(variationLabelsValues[i])
-								? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
-								: (variationLabelsValues[i] || '').toLowerCase()}]"
-							class="form-input"
-							bind:value={variationLabelsValues[i]}
-						/>
-					</label>
-					<label class="form-label">
+						{#if variation.name && variation.value}
+							<input
+								type="hidden"
+								name="variations[{i}].name"
+								class="form-input"
+								value={variation.name}
+							/>
+							<input
+								type="hidden"
+								name="variations[{i}].value"
+								class="form-input"
+								value={variation.value}
+							/>
+						{:else}
+							<input
+								type="hidden"
+								name="variations[{i}].name"
+								class="form-input"
+								value={(variationLabelsNames[i] || '').toLowerCase()}
+							/>
+							<input
+								type="hidden"
+								name="variations[{i}].value"
+								class="form-input"
+								value={isNumber(variationLabelsValues[i])
+									? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+									: (variationLabelsValues[i] || '').toLowerCase()}
+							/>
+						{/if}
 						Price difference<input
 							type="number"
-							name="variationPrices[{(variationLabelsNames[i] || '').toLowerCase()}][{isNumber(
-								variationLabelsValues[i]
-							)
-								? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
-								: (variationLabelsValues[i] || '').toLowerCase()}]"
+							name="variations[{i}].price"
 							class="form-input"
-							bind:value={variationLabelsPrice[i]}
+							value={variation.price}
 							min="0"
 						/>
 					</label>
+					{#if variation.name && variation.value}
+						<label class="form-label mt-8">
+							<button
+								type="button"
+								on:click={() => deleteVariationLabel(variation.name, variation.value)}>🗑️</button
+							>
+						</label>{/if}
 				</div>
 			{/each}
 			<button class="btn btn-gray" on:click={() => (variationLines += 1)} type="button"

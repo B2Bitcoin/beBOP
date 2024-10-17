@@ -207,7 +207,7 @@ export const actions: Actions = {
 					}),
 					hasVariations,
 					...(hasVariations && {
-						variationPrices: parsed.variationPrices,
+						variations: parsed.variations.filter((variation) => variation.name && variation.value),
 						variationLabels: cleanedVariationLabels
 					})
 				},

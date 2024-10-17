@@ -60,18 +60,19 @@ export const productBaseSchema = () => ({
 		.optional()
 		.default([]),
 	hasVariations: z.boolean({ coerce: true }).default(false),
-	variationPrices: z
-		.record(
-			z.string().trim(),
-			z.record(
-				z.string().trim(),
-				z
+	variations: z
+		.array(
+			z.object({
+				name: z.string().trim(),
+				value: z.string().trim(),
+				price: z
 					.string()
 					.default('0')
 					.transform((val) => Number(val))
-			)
+			})
 		)
-		.optional(),
+		.optional()
+		.default([]),
 	variationLabels: z
 		.object({
 			names: z.record(z.string().trim(), z.string().trim()),

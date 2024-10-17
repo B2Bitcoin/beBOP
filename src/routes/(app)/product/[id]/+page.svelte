@@ -138,7 +138,9 @@
 		for (const [key, value] of Object.entries(selectedVariations)) {
 			customAmount += toCurrency(
 				data.currencies.main,
-				data.product.variationPrices?.[key][value] ?? 0,
+				data.product.variations?.find(
+					(variation) => variation.name === key && variation.value === value
+				)?.price ?? 0,
 				data.product.price.currency
 			);
 		}
