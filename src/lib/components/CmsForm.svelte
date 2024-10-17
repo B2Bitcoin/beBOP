@@ -123,14 +123,14 @@
 						value={meta.content}
 					/>
 				</label>
-				{#if cmsPage && cmsPage?.metas?.length}
+				{#if cmsPage?.metas?.length}
 					<button
 						type="button"
 						class="self-start mt-8"
 						on:click={() => {
-							(cmsPage.metas = cmsPage?.metas?.filter(
-								(m) => m.name !== meta.name && m.content !== meta.content
-							)),
+							(cmsPage.metas = cmsPage
+								? cmsPage?.metas?.filter((m) => m.name !== meta.name && m.content !== meta.content)
+								: []),
 								(cmsMetaLine -= 1);
 						}}>🗑️</button
 					>{/if}
