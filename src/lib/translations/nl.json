@@ -13,6 +13,10 @@
 		"vatNumber": "btw-nummer",
 		"zipCode": "Postcode"
 	},
+	"ageWarning": {
+		"agreement": "Ik heb de toegangsvoorwaarden gelezen, voldoe eraan en respecteer ze",
+		"navigate": "Vervolg de navigatie"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Uitchecken",

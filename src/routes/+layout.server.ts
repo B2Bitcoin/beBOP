@@ -1,3 +1,4 @@
+import { collections } from '$lib/server/database.js';
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
@@ -20,6 +21,9 @@ export async function load(event) {
 				return `width=${runtimeConfig.viewportContentWidth}`;
 		}
 	})();
+	const session = await collections.sessions.findOne({
+		sessionId: event.locals.sessionId
+	});
 	return {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		language: event.locals.language,
@@ -36,6 +40,8 @@ export async function load(event) {
 			runtimeConfig.websiteShortDescription,
 		viewportWidth,
 		contactModes: runtimeConfig.contactModes,
-		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines
+		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines,
+		ageRestriction: runtimeConfig.ageRestriction,
+		sessionAcceptAgeLimitation: session?.acceptAgeLimitation
 	};
 }

@@ -20,4 +20,5 @@ export interface Session extends Timestamps {
 	pos?: {
 		countryCodeOverwrite?: CountryAlpha2;
 	};
+	acceptAgeLimitation?: boolean;
 }
