@@ -211,13 +211,12 @@
 		};
 		delete variationLabelsToUpdate?.values[key][valueKey];
 		variationLines -= 1;
-
+		product.variations = product.variations?.filter(
+			(vari) => !(key === vari.name && valueKey === vari.value)
+		);
 		if (Object.keys(variationLabelsToUpdate?.values[key] || []).length === 0) {
 			delete variationLabelsToUpdate?.names[key];
 			delete variationLabelsToUpdate?.values[key];
-			product.variations = product.variations?.filter(
-				(vari) => key !== vari.name && valueKey !== vari.value
-			);
 		}
 	}
 </script>

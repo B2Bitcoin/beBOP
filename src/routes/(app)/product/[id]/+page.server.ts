@@ -166,6 +166,17 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			chosenVariations: z.record(z.string(), z.string()).optional()
 		})
 		.parse(json);
+	const variationPrice =
+		product.hasVariations && chosenVariations
+			? Object.entries(chosenVariations).reduce((total, variation) => {
+					return (
+						total +
+						(product.variations?.find(
+							(vari) => vari.name === variation[0] && variation[1] === vari.value
+						)?.price || 0)
+					);
+			  }, 0)
+			: 0;
 
 	const customPrice =
 		customPriceAmount && customPriceCurrency
@@ -173,8 +184,12 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 					amount: parsePriceAmount(customPriceAmount, customPriceCurrency),
 					currency: customPriceCurrency
 			  }
+			: variationPrice > 0
+			? {
+					amount: parsePriceAmount(variationPrice.toString(), runtimeConfig.mainCurrency),
+					currency: product.price.currency
+			  }
 			: undefined;
-
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
 		...((product.payWhatYouWant || (product.hasVariations && product.standalone)) && {
