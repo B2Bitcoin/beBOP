@@ -114,7 +114,14 @@
 			<div class="flex gap-4">
 				<label class="form-label">
 					Name
-					<input type="text" name="metas[{i}].name" class="form-input" value={meta.name} />
+					<input
+						type="text"
+						name="metas[{i}].name"
+						class="form-input"
+						value={meta.name}
+						pattern="^(?!.*\b(description|viewport)\b).*$"
+						title="Les mots 'description' et 'viewport' ne sont pas autorisés."
+					/>
 				</label>
 				<label class="form-label">
 					Content <input
