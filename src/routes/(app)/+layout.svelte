@@ -33,6 +33,7 @@
 	import IconInfo from '$lib/components/icons/IconInfo.svelte';
 	import { computeDeliveryFees, computePriceInfo } from '$lib/types/Cart.js';
 	import { LARGE_SCREEN } from '$lib/types/Theme.js';
+	import CmsDesign from '$lib/components/CmsDesign.svelte';
 
 	export let data;
 
@@ -113,6 +114,7 @@
 
 	$: logoClass = data.logo.isWide ? 'h-[60px] w-auto' : 'h-[60px] w-[60px] rounded-full';
 	const { t, locale, textAddress } = useI18n();
+	let ageWarning: false;
 </script>
 
 <!--
@@ -488,7 +490,33 @@
 			</div>
 		{:else}
 			<div class="grow body-mainPlan">
-				<slot />
+				{#if data.ageRestriction.enabled && !data.sessionAcceptAgeLimitation && !$page.url.pathname.startsWith('/admin')}
+					<form class="mx-auto max-w-7xl" method="POST" action="{data.websiteLink}?/navigate">
+						{#if data.cmsAgewall && data.cmsAgewallData}
+							<CmsDesign
+								{...data.cmsAgewallData}
+								roleId={data.roleId ? data.roleId : ''}
+								pageName={data.cmsAgewall?.title}
+								websiteLink={data.websiteLink}
+								brandName={data.brandName}
+								sessionEmail={data.email}
+								class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
+							/>
+						{/if}
+						<label class="label-checkbox my-4">
+							<input type="checkbox" class="form-checkbox" bind:checked={ageWarning} />
+							{t('ageWarning.agreement')}
+						</label>
+						<input
+							type="submit"
+							class="btn btn-gray my-4 w-full"
+							value={t('ageWarning.navigate')}
+							disabled={!ageWarning}
+						/>
+					</form>
+				{:else}
+					<slot />
+				{/if}
 			</div>
 		{/if}
 

@@ -20,6 +20,7 @@ export async function load(event) {
 				return `width=${runtimeConfig.viewportContentWidth}`;
 		}
 	})();
+
 	return {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
 		language: event.locals.language,
@@ -36,6 +37,7 @@ export async function load(event) {
 			runtimeConfig.websiteShortDescription,
 		viewportWidth,
 		contactModes: runtimeConfig.contactModes,
-		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines
+		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines,
+		ageRestriction: runtimeConfig.ageRestriction
 	};
 }
