@@ -25,7 +25,6 @@ export const actions = {
 			maintenanceDisplay,
 			hasMobileContent,
 			mobileContent,
-			hasCustomMeta,
 			metas
 		} = z
 			.object({
@@ -37,7 +36,6 @@ export const actions = {
 				maintenanceDisplay: z.boolean({ coerce: true }),
 				hasMobileContent: z.boolean({ coerce: true }),
 				mobileContent: z.string().max(MAX_CONTENT_LIMIT).optional(),
-				hasCustomMeta: z.boolean({ coerce: true }),
 				metas: z
 					.array(z.object({ name: z.string().trim(), content: z.string().trim() }))
 					.optional()
@@ -64,7 +62,7 @@ export const actions = {
 			maintenanceDisplay,
 			hasMobileContent,
 			...(hasMobileContent && mobileContent && { mobileContent }),
-			...(hasCustomMeta && { metas: metas.filter((meta) => meta.name && meta.content) }),
+			...(metas.length && { metas: metas.filter((meta) => meta.name && meta.content) }),
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});

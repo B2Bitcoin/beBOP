@@ -138,7 +138,7 @@
 			</div>
 		{/each}
 		<button class="btn btn-gray" on:click={() => (cmsMetaLine += 1)} type="button"
-			>Add variation
+			>Add custom meta balise
 		</button>
 	{/if}
 	<label class="block w-full mt-4">

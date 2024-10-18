@@ -32,7 +32,6 @@ export const actions = {
 			hideFromSEO,
 			hasMobileContent,
 			mobileContent,
-			hasCustomMeta,
 			metas
 		} = z
 			.object({
@@ -43,7 +42,6 @@ export const actions = {
 				desktopDisplayOnly: z.boolean({ coerce: true }),
 				mobileDisplaySubstitution: z.boolean({ coerce: true }),
 				hasMobileContent: z.boolean({ coerce: true }),
-				hasCustomMeta: z.boolean({ coerce: true }),
 				metas: z
 					.array(
 						z.object({
@@ -70,8 +68,11 @@ export const actions = {
 					hideFromSEO,
 					hasMobileContent,
 					...(hasMobileContent && mobileContent && { mobileContent }),
-					...(hasCustomMeta && { metas: metas.filter((meta) => meta.name && meta.content) }),
+					...(metas.length && { metas: metas.filter((meta) => meta.name && meta.content) }),
 					updatedAt: new Date()
+				},
+				$unset: {
+					...(!metas.length && { metas: '' })
 				}
 			}
 		);
