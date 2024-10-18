@@ -15,7 +15,7 @@ import type { Currency } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { sum } from '$lib/utils/sum';
 import { sumCurrency } from '$lib/utils/sumCurrency';
-import { Price } from '$lib/types/Order';
+import type { Price } from '$lib/types/Order';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	let res = await collections.carts.findOne(userQuery(params.user), { sort: { _id: -1 } });
@@ -137,7 +137,6 @@ export async function addToCartInDb(
 						currency: product.price.currency
 				  }))
 				: [];
-			variationPriceArray.push(product.price);
 		} else {
 			throw error(400, 'error matching on variations choice');
 		}
@@ -174,7 +173,10 @@ export async function addToCartInDb(
 			toCurrency(params.customPrice.currency, product.price.amount, product.price.currency)
 		);
 	} else if (variationPriceDelta > 0) {
-		params.customPrice = { amount: variationPriceDelta, currency: runtimeConfig.mainCurrency };
+		params.customPrice = {
+			amount: variationPriceDelta + product.price.amount,
+			currency: runtimeConfig.mainCurrency
+		};
 	}
 
 	if (existingItem && !product.standalone) {
