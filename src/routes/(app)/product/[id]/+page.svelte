@@ -435,15 +435,6 @@
 										{/each}
 									</select>
 								{/each}
-								<input type="hidden" name="customPriceCurrency" value={data.currencies.main} />
-								<label class="w-full form-label">
-									<input
-										class="form-input"
-										type="hidden"
-										name="customPriceAmount"
-										bind:value={customAmount}
-									/>
-								</label>
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">

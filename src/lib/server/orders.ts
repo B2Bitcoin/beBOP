@@ -659,6 +659,20 @@ export async function createOrder(
 		throw error(400, "You can't use free payment method on this order");
 	}
 
+	items.forEach((item) => {
+		if (item.chosenVariations) {
+			const variationNamesInDB =
+				Object.keys(item.product.variationLabels?.names || []).map((key) => key) || [];
+			const chosenVariationNames = Object.keys(item.chosenVariations);
+			const allVariationsChosen =
+				variationNamesInDB.length === chosenVariationNames.length &&
+				variationNamesInDB.every((name) => chosenVariationNames.includes(name));
+
+			if (!allVariationsChosen) {
+				throw error(400, 'error matching on variations choice');
+			}
+		}
+	});
 	await withTransaction(async (session) => {
 		const order: Order = {
 			_id: orderId,

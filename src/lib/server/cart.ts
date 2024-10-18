@@ -15,6 +15,7 @@ import type { Currency } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { sum } from '$lib/utils/sum';
 import { sumCurrency } from '$lib/utils/sumCurrency';
+import { Price } from '$lib/types/Order';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	let res = await collections.carts.findOne(userQuery(params.user), { sort: { _id: -1 } });
@@ -115,16 +116,32 @@ export async function addToCartInDb(
 	) {
 		throw error(400, 'Cart has too many items');
 	}
-	const variationPriceArray = params.chosenVariations
-		? Object.entries(params.chosenVariations).map((variation) => ({
-				amount:
-					product.variations?.find(
-						(vari) => variation[0] === vari.name && variation[1] === vari.value
-					)?.price ?? 0,
-				currency: runtimeConfig.mainCurrency
-		  }))
-		: [];
-	variationPriceArray.push(product.price);
+	let variationPriceArray: Price[] = [];
+	if (params.chosenVariations) {
+		const variationNamesInDB =
+			Object.keys(product.variationLabels?.names || []).map((key) => key) || [];
+
+		const chosenVariationNames = Object.keys(params.chosenVariations);
+
+		const allVariationsChosen =
+			variationNamesInDB.length === chosenVariationNames.length &&
+			variationNamesInDB.every((name) => chosenVariationNames.includes(name));
+
+		if (allVariationsChosen) {
+			variationPriceArray = params.chosenVariations
+				? Object.entries(params.chosenVariations).map((variation) => ({
+						amount:
+							product.variations?.find(
+								(vari) => variation[0] === vari.name && variation[1] === vari.value
+							)?.price ?? 0,
+						currency: product.price.currency
+				  }))
+				: [];
+			variationPriceArray.push(product.price);
+		} else {
+			throw error(400, 'error matching on variations choice');
+		}
+	}
 	const variationPriceDelta =
 		product.hasVariations && params.chosenVariations
 			? sumCurrency(runtimeConfig.mainCurrency, variationPriceArray)
