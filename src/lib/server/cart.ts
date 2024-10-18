@@ -14,6 +14,8 @@ import { addMinutes } from 'date-fns';
 import type { Currency } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { sum } from '$lib/utils/sum';
+import { sumCurrency } from '$lib/utils/sumCurrency';
+import type { Price } from '$lib/types/Order';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	let res = await collections.carts.findOne(userQuery(params.user), { sort: { _id: -1 } });
@@ -114,7 +116,34 @@ export async function addToCartInDb(
 	) {
 		throw error(400, 'Cart has too many items');
 	}
+	let variationPriceArray: Price[] = [];
+	if (product.variations?.length) {
+		const variationNamesInDB = [...new Set(product.variations.map((vari) => vari.name))];
 
+		const chosenVariationNames = Object.keys(params.chosenVariations || []);
+
+		const allVariationsChosen =
+			variationNamesInDB.length === chosenVariationNames.length &&
+			variationNamesInDB.every((name) => chosenVariationNames.includes(name));
+
+		if (allVariationsChosen) {
+			variationPriceArray = params.chosenVariations
+				? Object.entries(params.chosenVariations).map((variation) => ({
+						amount:
+							product.variations?.find(
+								(vari) => variation[0] === vari.name && variation[1] === vari.value
+							)?.price ?? 0,
+						currency: product.price.currency
+				  }))
+				: [];
+		} else {
+			throw error(400, 'error matching on variations choice');
+		}
+	}
+	const variationPriceDelta =
+		product.hasVariations && params.chosenVariations
+			? sumCurrency(product.price.currency, variationPriceArray)
+			: 0;
 	const existingItem = cart.items.find(
 		(item) =>
 			item.productId === product._id &&
@@ -142,6 +171,14 @@ export async function addToCartInDb(
 			params.customPrice.amount,
 			toCurrency(params.customPrice.currency, product.price.amount, product.price.currency)
 		);
+	} else if (variationPriceDelta > 0) {
+		params.customPrice = {
+			amount: sumCurrency(product.price.currency, [
+				{ amount: variationPriceDelta, currency: product.price.currency },
+				product.price
+			]),
+			currency: product.price.currency
+		};
 	}
 
 	if (existingItem && !product.standalone) {

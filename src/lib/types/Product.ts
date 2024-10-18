@@ -81,6 +81,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 	variations?: {
 		name: string;
 		value: string;
+		price?: number;
 	}[];
 }
 

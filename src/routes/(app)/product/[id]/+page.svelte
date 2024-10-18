@@ -129,6 +129,22 @@
 	}
 
 	let selectedVariations: Record<string, string> = {};
+	$: if (data.product.hasVariations && data.product.variationLabels) {
+		customAmount = toCurrency(
+			data.currencies.main,
+			data.product.price.amount,
+			data.product.price.currency
+		);
+		for (const [key, value] of Object.entries(selectedVariations)) {
+			customAmount += toCurrency(
+				data.currencies.main,
+				data.product.variations?.find(
+					(variation) => variation.name === key && variation.value === value
+				)?.price ?? 0,
+				data.product.price.currency
+			);
+		}
+	}
 </script>
 
 <svelte:head>
@@ -283,12 +299,16 @@
 						currency={data.product.price.currency}
 						class="text-2xl lg:text-4xl truncate max-w-full"
 						short={false}
-						amount={data.product.price.amount}
+						amount={data.product.hasVariations
+							? toCurrency(data.product.price.currency, customAmount, data.currencies.main)
+							: data.product.price.amount}
 						main
 					/>
 					<PriceTag
 						currency={data.product.price.currency}
-						amount={data.product.price.amount}
+						amount={data.product.hasVariations
+							? toCurrency(data.product.price.currency, customAmount, data.currencies.main)
+							: data.product.price.amount}
 						secondary
 						class="text-xl"
 					/>
