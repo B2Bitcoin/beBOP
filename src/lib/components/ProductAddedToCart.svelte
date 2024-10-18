@@ -44,8 +44,10 @@
 		>
 
 		<div class="flex gap-2">
-			<a href="/cart" class="grow basis-0 btn cartPreview-mainCTA"> {t('cart.cta.view')} </a>
-			<a href="/checkout" class="grow basis-0 btn cartPreview-secondaryCTA">
+			<a href="/cart" class="grow basis-0 btn cartPreview-mainCTA min-h-[2em] h-auto">
+				{t('cart.cta.view')}
+			</a>
+			<a href="/checkout" class="grow basis-0 btn cartPreview-secondaryCTA h-auto">
 				{t('cart.cta.checkout')}
 			</a>
 		</div>
