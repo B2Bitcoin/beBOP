@@ -117,11 +117,11 @@ export async function addToCartInDb(
 		throw error(400, 'Cart has too many items');
 	}
 	let variationPriceArray: Price[] = [];
-	if (params.chosenVariations) {
+	if (product.variations?.length) {
 		const variationNamesInDB =
 			Object.keys(product.variationLabels?.names || []).map((key) => key) || [];
 
-		const chosenVariationNames = Object.keys(params.chosenVariations);
+		const chosenVariationNames = Object.keys(params.chosenVariations || []);
 
 		const allVariationsChosen =
 			variationNamesInDB.length === chosenVariationNames.length &&
@@ -174,7 +174,10 @@ export async function addToCartInDb(
 		);
 	} else if (variationPriceDelta > 0) {
 		params.customPrice = {
-			amount: variationPriceDelta + product.price.amount,
+			amount: sumCurrency(runtimeConfig.mainCurrency, [
+				{ amount: variationPriceDelta, currency: runtimeConfig.mainCurrency },
+				product.price
+			]),
 			currency: runtimeConfig.mainCurrency
 		};
 	}
