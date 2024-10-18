@@ -142,7 +142,7 @@ export async function addToCartInDb(
 	}
 	const variationPriceDelta =
 		product.hasVariations && params.chosenVariations
-			? sumCurrency(runtimeConfig.mainCurrency, variationPriceArray)
+			? sumCurrency(product.price.currency, variationPriceArray)
 			: 0;
 	const existingItem = cart.items.find(
 		(item) =>
@@ -173,11 +173,11 @@ export async function addToCartInDb(
 		);
 	} else if (variationPriceDelta > 0) {
 		params.customPrice = {
-			amount: sumCurrency(runtimeConfig.mainCurrency, [
-				{ amount: variationPriceDelta, currency: runtimeConfig.mainCurrency },
+			amount: sumCurrency(product.price.currency, [
+				{ amount: variationPriceDelta, currency: product.price.currency },
 				product.price
 			]),
-			currency: runtimeConfig.mainCurrency
+			currency: product.price.currency
 		};
 	}
 
