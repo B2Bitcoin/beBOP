@@ -132,22 +132,29 @@ export async function load(params) {
 			  ).then((res) => filterUndef(res))
 			: null
 	]);
-	const cmsAgewall = await collections.cmsPages.findOne(
-		{
-			_id: 'agewall'
-		},
-		{
-			projection: {
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				shortDescription: {
-					$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
-				},
-				fullScreen: 1,
-				maintenanceDisplay: 1
+	let cmsAgewall = null;
+	const session = await collections.sessions.findOne({
+		sessionId: params.locals.sessionId
+	});
+	if (runtimeConfig.ageRestriction.enabled && !session?.acceptAgeLimitation) {
+		cmsAgewall = await collections.cmsPages.findOne(
+			{
+				_id: 'agewall'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
 			}
-		}
-	);
+		);
+	}
+
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
 		vatExempted: runtimeConfig.vatExempted,
@@ -209,6 +216,7 @@ export async function load(params) {
 		...(cmsAgewall && {
 			cmsAgewall,
 			cmsAgewallData: cmsFromContent({ content: cmsAgewall.content }, locals)
-		})
+		}),
+		sessionAcceptAgeLimitation: session?.acceptAgeLimitation
 	};
 }

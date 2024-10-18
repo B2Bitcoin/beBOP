@@ -44,7 +44,7 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	navigate: async ({ locals }) => {
-		await collections.sessions.updateOne(
+		await collections.sessions.findOneAndUpdate(
 			{
 				sessionId: locals.sessionId
 			},
@@ -53,7 +53,8 @@ export const actions = {
 					updatedAt: new Date(),
 					acceptAgeLimitation: true
 				}
-			}
+			},
+			{ upsert: true }
 		);
 		throw redirect(303, `/`);
 	}
