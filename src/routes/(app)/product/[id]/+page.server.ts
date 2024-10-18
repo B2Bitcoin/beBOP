@@ -11,7 +11,6 @@ import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
-import { sumCurrency } from '$lib/utils/sumCurrency';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -167,30 +166,12 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			chosenVariations: z.record(z.string(), z.string()).optional()
 		})
 		.parse(json);
-	const variationPriceDelta =
-		product.hasVariations && chosenVariations
-			? sumCurrency(
-					runtimeConfig.mainCurrency,
-					Object.entries(chosenVariations).map((variation) => ({
-						amount:
-							product.variations?.find(
-								(vari) => variation[0] === vari.name && variation[1] === vari.value
-							)?.price ?? 0,
-						currency: runtimeConfig.mainCurrency
-					}))
-			  )
-			: 0;
 
 	const customPrice =
 		customPriceAmount && customPriceCurrency
 			? {
 					amount: parsePriceAmount(customPriceAmount, customPriceCurrency),
 					currency: customPriceCurrency
-			  }
-			: variationPriceDelta > 0
-			? {
-					amount: variationPriceDelta,
-					currency: runtimeConfig.mainCurrency
 			  }
 			: undefined;
 	await addToCartInDb(product, quantity, {

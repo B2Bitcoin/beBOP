@@ -14,6 +14,7 @@ import { addMinutes } from 'date-fns';
 import type { Currency } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { sum } from '$lib/utils/sum';
+import { sumCurrency } from '$lib/utils/sumCurrency';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	let res = await collections.carts.findOne(userQuery(params.user), { sort: { _id: -1 } });
@@ -114,7 +115,20 @@ export async function addToCartInDb(
 	) {
 		throw error(400, 'Cart has too many items');
 	}
-
+	const variationPriceArray = params.chosenVariations
+		? Object.entries(params.chosenVariations).map((variation) => ({
+				amount:
+					product.variations?.find(
+						(vari) => variation[0] === vari.name && variation[1] === vari.value
+					)?.price ?? 0,
+				currency: runtimeConfig.mainCurrency
+		  }))
+		: [];
+	variationPriceArray.push(product.price);
+	const variationPriceDelta =
+		product.hasVariations && params.chosenVariations
+			? sumCurrency(runtimeConfig.mainCurrency, variationPriceArray)
+			: 0;
 	const existingItem = cart.items.find(
 		(item) =>
 			item.productId === product._id &&
@@ -142,6 +156,8 @@ export async function addToCartInDb(
 			params.customPrice.amount,
 			toCurrency(params.customPrice.currency, product.price.amount, product.price.currency)
 		);
+	} else if (variationPriceDelta > 0) {
+		params.customPrice = { amount: variationPriceDelta, currency: runtimeConfig.mainCurrency };
 	}
 
 	if (existingItem && !product.standalone) {
