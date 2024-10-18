@@ -38,8 +38,8 @@
 			event.preventDefault();
 		}
 	}
-	let metas = cmsPage?.metas || undefined;
-	let cmsMetaLine = cmsPage?.metas?.length || 2;
+	let metas = cmsPage?.metas;
+	let cmsMetaLine = cmsPage?.metas?.length ?? 2;
 </script>
 
 <form method="post" class="flex flex-col gap-4">
@@ -110,7 +110,7 @@
 		Add custom meta tag
 	</label>
 	{#if hasCustomMeta}
-		{#each [...(metas || []), ...Array(cmsMetaLine).fill( { name: '', content: '' } )].slice(0, cmsMetaLine) as meta, i}
+		{#each [...(metas ?? []), ...Array(cmsMetaLine).fill( { name: '', content: '' } )].slice(0, cmsMetaLine) as meta, i}
 			<div class="flex gap-4">
 				<label class="form-label">
 					Name
