@@ -5,12 +5,13 @@ import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product
 import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
-import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
+import { CURRENCIES } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
+import { sumCurrency } from '$lib/utils/sumCurrency';
 
 export const load = async ({ params, locals }) => {
 	const product = await collections.products.findOne<
@@ -168,26 +169,28 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 		.parse(json);
 	const variationPrice =
 		product.hasVariations && chosenVariations
-			? Object.entries(chosenVariations).reduce((total, variation) => {
-					return (
-						total +
-						(product.variations?.find(
-							(vari) => vari.name === variation[0] && variation[1] === vari.value
-						)?.price || 0)
-					);
-			  }, 0)
+			? sumCurrency(
+					runtimeConfig.mainCurrency,
+					Object.entries(chosenVariations).map((variation) => ({
+						amount:
+							product.variations?.find(
+								(vari) => variation[0] === vari.name && variation[1] === vari.value
+							)?.price ?? 0,
+						currency: runtimeConfig.mainCurrency
+					}))
+			  )
 			: 0;
 
 	const customPrice =
 		customPriceAmount && customPriceCurrency
 			? {
-					amount: parsePriceAmount(customPriceAmount, customPriceCurrency),
+					amount: Number(customPriceAmount),
 					currency: customPriceCurrency
 			  }
 			: variationPrice > 0
 			? {
-					amount: parsePriceAmount(variationPrice.toString(), runtimeConfig.mainCurrency),
-					currency: product.price.currency
+					amount: variationPrice,
+					currency: runtimeConfig.mainCurrency
 			  }
 			: undefined;
 	await addToCartInDb(product, quantity, {
