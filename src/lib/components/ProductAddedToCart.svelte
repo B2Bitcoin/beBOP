@@ -27,7 +27,7 @@
 <div class="{className} cartPreview flex flex-wrap p-2 gap-4 relative">
 	<Picture {picture} class="w-[138px] h-[138px] border-gray-300 border rounded object-cover" />
 	<div class="flex flex-col grow gap-1">
-		<h2 class="body-title text-[22px] font-medium">{t('product.addedToCart')}</h2>
+		<h2 class="body-title text-[18px] font-medium">{t('product.addedToCart')}</h2>
 		<h3 class="text-base font-light">
 			{chosenVariations
 				? product.name + ' - ' + Object.values(chosenVariations).join(' - ')
@@ -44,8 +44,10 @@
 		>
 
 		<div class="flex gap-2">
-			<a href="/cart" class="grow basis-0 btn cartPreview-mainCTA"> {t('cart.cta.view')} </a>
-			<a href="/checkout" class="grow basis-0 btn cartPreview-secondaryCTA">
+			<a href="/cart" class="grow basis-0 btn cartPreview-mainCTA min-h-[2em] h-auto">
+				{t('cart.cta.view')}
+			</a>
+			<a href="/checkout" class="grow basis-0 btn cartPreview-secondaryCTA h-auto">
 				{t('cart.cta.checkout')}
 			</a>
 		</div>
