@@ -4,12 +4,18 @@ import { zodSlug } from '$lib/server/zod.js';
 import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
+import { set } from 'lodash-es';
+import type { JsonObject } from 'type-fest';
 import { z } from 'zod';
 
 export const actions = {
 	default: async function ({ request }) {
-		const data = await request.formData();
+		const formData = await request.formData();
+		const json: JsonObject = {};
 
+		for (const [key, value] of formData) {
+			set(json, key, value);
+		}
 		const {
 			slug,
 			title,
@@ -18,7 +24,8 @@ export const actions = {
 			fullScreen,
 			maintenanceDisplay,
 			hasMobileContent,
-			mobileContent
+			mobileContent,
+			metas
 		} = z
 			.object({
 				slug: zodSlug(),
@@ -28,9 +35,13 @@ export const actions = {
 				fullScreen: z.boolean({ coerce: true }),
 				maintenanceDisplay: z.boolean({ coerce: true }),
 				hasMobileContent: z.boolean({ coerce: true }),
-				mobileContent: z.string().max(MAX_CONTENT_LIMIT).optional()
+				mobileContent: z.string().max(MAX_CONTENT_LIMIT).optional(),
+				metas: z
+					.array(z.object({ name: z.string().trim(), content: z.string().trim() }))
+					.optional()
+					.default([])
 			})
-			.parse(Object.fromEntries(data));
+			.parse(json);
 
 		if (slug === 'catalog') {
 			throw error(409, 'Page with same slug already exists');
@@ -51,6 +62,7 @@ export const actions = {
 			maintenanceDisplay,
 			hasMobileContent,
 			...(hasMobileContent && mobileContent && { mobileContent }),
+			...(metas.length && { metas: metas.filter((meta) => meta.name && meta.content) }),
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});
