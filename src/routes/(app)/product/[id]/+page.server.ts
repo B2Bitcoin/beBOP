@@ -167,7 +167,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			chosenVariations: z.record(z.string(), z.string()).optional()
 		})
 		.parse(json);
-	const variationPrice =
+	const variationPriceDelta =
 		product.hasVariations && chosenVariations
 			? sumCurrency(
 					runtimeConfig.mainCurrency,
@@ -187,9 +187,9 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 					amount: parsePriceAmount(customPriceAmount, customPriceCurrency),
 					currency: customPriceCurrency
 			  }
-			: variationPrice > 0
+			: variationPriceDelta > 0
 			? {
-					amount: variationPrice,
+					amount: variationPriceDelta,
 					currency: runtimeConfig.mainCurrency
 			  }
 			: undefined;
