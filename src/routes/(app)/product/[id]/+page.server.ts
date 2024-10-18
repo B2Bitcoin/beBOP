@@ -5,7 +5,7 @@ import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product
 import { z } from 'zod';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { addToCartInDb } from '$lib/server/cart';
-import { CURRENCIES } from '$lib/types/Currency';
+import { CURRENCIES, parsePriceAmount } from '$lib/types/Currency';
 import { userIdentifier, userQuery } from '$lib/server/user';
 import { POS_ROLE_ID } from '$lib/types/User';
 import { cmsFromContent } from '$lib/server/cms';
@@ -184,7 +184,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 	const customPrice =
 		customPriceAmount && customPriceCurrency
 			? {
-					amount: Number(customPriceAmount),
+					amount: parsePriceAmount(customPriceAmount, customPriceCurrency),
 					currency: customPriceCurrency
 			  }
 			: variationPrice > 0
@@ -195,9 +195,7 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 			: undefined;
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
-		...((product.payWhatYouWant || (product.hasVariations && product.standalone)) && {
-			customPrice
-		}),
+		...(customPrice && { customPrice }),
 		deposit: deposit === 'partial',
 		...(product.hasVariations && { chosenVariations })
 	});

@@ -220,7 +220,7 @@ export const actions: Actions = {
 					...(!parsed.depositPercentage && { deposit: '' }),
 					...(!parsed.vatProfileId && { vatProfileId: '' }),
 					...(!parsed.restrictPaymentMethods && { paymentMethods: '' }),
-					...(!hasVariations && { variationPrices: '', variationLabels: '' })
+					...(!hasVariations && { variations: '', variationLabels: '' })
 				}
 			}
 		);
