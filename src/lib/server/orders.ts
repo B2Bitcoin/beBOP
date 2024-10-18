@@ -660,9 +660,8 @@ export async function createOrder(
 	}
 
 	items.forEach((item) => {
-		if (item.chosenVariations) {
-			const variationNamesInDB =
-				Object.keys(item.product.variationLabels?.names || []).map((key) => key) || [];
+		if (item.chosenVariations && item.product.variations) {
+			const variationNamesInDB = [...new Set(item.product.variations.map((vari) => vari.name))];
 			const chosenVariationNames = Object.keys(item.chosenVariations);
 			const allVariationsChosen =
 				variationNamesInDB.length === chosenVariationNames.length &&

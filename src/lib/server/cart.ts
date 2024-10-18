@@ -118,8 +118,7 @@ export async function addToCartInDb(
 	}
 	let variationPriceArray: Price[] = [];
 	if (product.variations?.length) {
-		const variationNamesInDB =
-			Object.keys(product.variationLabels?.names || []).map((key) => key) || [];
+		const variationNamesInDB = [...new Set(product.variations.map((vari) => vari.name))];
 
 		const chosenVariationNames = Object.keys(params.chosenVariations || []);
 
