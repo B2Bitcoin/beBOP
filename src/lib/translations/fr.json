@@ -20,6 +20,7 @@
 			"view": "Voir le panier"
 		},
 		"empty": "Le panier est vide",
+		"fillProductAlias": "Remplir l'alias du produit",
 		"items": "Produits",
 		"quantity": "Quantité",
 		"reachedMaxPerLine": "Votre panier a atteint la taille maximale. Veuillez supprimer des lignes de votre panier pour ajouter plus d'articles.",
