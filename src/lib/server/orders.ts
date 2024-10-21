@@ -1515,7 +1515,7 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 				  );
 
 		if (increase) {
-			await collections.challenges.updateOne(
+			await collections.challenges.updateMany(
 				{ _id: challenge._id },
 				{
 					$inc: { progress: increase },
@@ -1537,7 +1537,7 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 			The order #${order.number} ${ORIGIN}/order/${order._id} was successfully paid.
 			
 			It contains the following product(s) that increase the challenge ${challenge.name} :
-			${items.forEach((item) => {
+			${items.map((item) => {
 				`- ${item.product.name} - price ${item.product.price} - qty ${
 					item.quantity
 				} - total addition to challenge : ${
