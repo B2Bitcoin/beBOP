@@ -171,7 +171,7 @@ export async function addToCartInDb(
 			params.customPrice.amount,
 			toCurrency(params.customPrice.currency, product.price.amount, product.price.currency)
 		);
-	} else if (variationPriceDelta > 0) {
+	} else if (product.variations?.length) {
 		params.customPrice = {
 			amount: sumCurrency(product.price.currency, [
 				{ amount: variationPriceDelta, currency: product.price.currency },
