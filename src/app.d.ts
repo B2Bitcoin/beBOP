@@ -29,6 +29,7 @@ declare global {
 				id: string;
 			}>;
 			clientIp?: string;
+			acceptAgeLimitation?: boolean;
 			language: LanguageKey;
 		}
 		// interface PageData {}

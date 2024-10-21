@@ -11,7 +11,7 @@
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
-			name="ageRestriction.enabled"
+			name="ageRestrictionEnabled"
 			class="form-checkbox"
 			checked={data.ageRestriction.enabled}
 		/>
@@ -21,7 +21,7 @@
 		Legal reason
 		<input
 			type="input"
-			name="ageRestriction.legalReason"
+			name="legalReason"
 			class="form-input"
 			value={data.ageRestriction.legalReason}
 		/>

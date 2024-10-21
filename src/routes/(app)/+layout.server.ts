@@ -133,10 +133,8 @@ export async function load(params) {
 			: null
 	]);
 	let cmsAgewall = null;
-	const session = await collections.sessions.findOne({
-		sessionId: params.locals.sessionId
-	});
-	if (runtimeConfig.ageRestriction.enabled && !session?.acceptAgeLimitation) {
+
+	if (runtimeConfig.ageRestriction.enabled && !locals.acceptAgeLimitation) {
 		cmsAgewall = await collections.cmsPages.findOne(
 			{
 				_id: 'agewall'
@@ -217,6 +215,6 @@ export async function load(params) {
 			cmsAgewall,
 			cmsAgewallData: cmsFromContent({ content: cmsAgewall.content }, locals)
 		}),
-		sessionAcceptAgeLimitation: session?.acceptAgeLimitation
+		sessionAcceptAgeLimitation: locals.acceptAgeLimitation
 	};
 }

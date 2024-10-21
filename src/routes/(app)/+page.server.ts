@@ -3,6 +3,8 @@ import { omit } from 'lodash-es';
 import { load as catalogLoad } from './catalog/+page.server';
 import { cmsFromContent } from '$lib/server/cms';
 import { redirect } from '@sveltejs/kit';
+import { addYears } from 'date-fns';
+import { ObjectId } from 'mongodb';
 
 export const load = async ({ locals }) => {
 	const cmsPage = await collections.cmsPages.findOne(
@@ -51,7 +53,12 @@ export const actions = {
 			{
 				$set: {
 					updatedAt: new Date(),
-					acceptAgeLimitation: true
+					acceptAgeLimitation: true,
+					expiresAt: addYears(new Date(), 1)
+				},
+				$setOnInsert: {
+					createdAt: new Date(),
+					_id: new ObjectId()
 				}
 			},
 			{ upsert: true }
