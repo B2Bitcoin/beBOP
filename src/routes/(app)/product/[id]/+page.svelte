@@ -144,7 +144,7 @@
 			});
 		}
 		variationPricesArray.push(data.product.price);
-		customAmount = sumCurrency(data.currencies.main, variationPricesArray);
+		customAmount = sumCurrency(data.product.price.currency, variationPricesArray);
 	}
 </script>
 
@@ -300,16 +300,12 @@
 						currency={data.product.price.currency}
 						class="text-2xl lg:text-4xl truncate max-w-full"
 						short={false}
-						amount={data.product.hasVariations
-							? toCurrency(data.product.price.currency, customAmount, data.currencies.main)
-							: data.product.price.amount}
+						amount={data.product.hasVariations ? customAmount : data.product.price.amount}
 						main
 					/>
 					<PriceTag
 						currency={data.product.price.currency}
-						amount={data.product.hasVariations
-							? toCurrency(data.product.price.currency, customAmount, data.currencies.main)
-							: data.product.price.amount}
+						amount={data.product.hasVariations ? customAmount : data.product.price.amount}
 						secondary
 						class="text-xl"
 					/>
