@@ -6,6 +6,7 @@ import { collections } from '$lib/server/database';
 import { pojo } from '$lib/server/pojo.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier } from '$lib/server/user.js';
+import type { CMSPage } from '$lib/types/CmsPage.js';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import type { VatProfile } from '$lib/types/VatProfile.js';
@@ -132,8 +133,7 @@ export async function load(params) {
 			  ).then((res) => filterUndef(res))
 			: null
 	]);
-	let cmsAgewall = null;
-
+	let cmsAgewall: CMSPage | null = null;
 	if (runtimeConfig.ageRestriction.enabled && !locals.acceptAgeLimitation) {
 		cmsAgewall = await collections.cmsPages.findOne(
 			{
