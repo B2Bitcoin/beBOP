@@ -46,7 +46,7 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	navigate: async ({ locals }) => {
-		await collections.sessions.findOneAndUpdate(
+		await collections.sessions.updateOne(
 			{
 				sessionId: locals.sessionId
 			},
@@ -57,8 +57,7 @@ export const actions = {
 					expiresAt: addYears(new Date(), 1)
 				},
 				$setOnInsert: {
-					createdAt: new Date(),
-					_id: new ObjectId()
+					createdAt: new Date()
 				}
 			},
 			{ upsert: true }
