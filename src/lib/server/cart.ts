@@ -120,7 +120,7 @@ export async function addToCartInDb(
 	if (product.variations?.length) {
 		const variationNamesInDB = [...new Set(product.variations.map((vari) => vari.name))];
 
-		const chosenVariationNames = Object.keys(params.chosenVariations || []);
+		const chosenVariationNames = Object.keys(params.chosenVariations ?? {});
 
 		const allVariationsChosen =
 			variationNamesInDB.length === chosenVariationNames.length &&

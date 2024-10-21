@@ -22,6 +22,8 @@
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
 	import { serializeSchema } from '$lib/utils/jsonLd.js';
 	import type { Product as SchemaOrgProduct, WithContext } from 'schema-dts';
+	import type { Price } from '$lib/types/Order.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 
 	export let data;
 
@@ -130,20 +132,19 @@
 
 	let selectedVariations: Record<string, string> = {};
 	$: if (data.product.hasVariations && data.product.variationLabels) {
-		customAmount = toCurrency(
-			data.currencies.main,
-			data.product.price.amount,
-			data.product.price.currency
-		);
+		let variationPricesArray: Price[] = [];
+
 		for (const [key, value] of Object.entries(selectedVariations)) {
-			customAmount += toCurrency(
-				data.currencies.main,
-				data.product.variations?.find(
-					(variation) => variation.name === key && variation.value === value
-				)?.price ?? 0,
-				data.product.price.currency
-			);
+			variationPricesArray.push({
+				amount:
+					data.product.variations?.find(
+						(variation) => variation.name === key && variation.value === value
+					)?.price ?? 0,
+				currency: data.product.price.currency
+			});
 		}
+		variationPricesArray.push(data.product.price);
+		customAmount = sumCurrency(data.currencies.main, variationPricesArray);
 	}
 </script>
 

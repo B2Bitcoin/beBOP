@@ -659,19 +659,46 @@ export async function createOrder(
 		throw error(400, "You can't use free payment method on this order");
 	}
 
-	items.forEach((item) => {
-		if (item.chosenVariations && item.product.variations) {
+	let variationPriceArray: Price[] = [];
+
+	for (const item of items) {
+		if (item.product.variations) {
 			const variationNamesInDB = [...new Set(item.product.variations.map((vari) => vari.name))];
-			const chosenVariationNames = Object.keys(item.chosenVariations);
+			const chosenVariationNames = Object.keys(item.chosenVariations ?? {});
+
 			const allVariationsChosen =
 				variationNamesInDB.length === chosenVariationNames.length &&
 				variationNamesInDB.every((name) => chosenVariationNames.includes(name));
 
 			if (!allVariationsChosen) {
+				variationPriceArray = item.chosenVariations
+					? Object.entries(item.chosenVariations).map((variation) => ({
+							amount:
+								item.product.variations?.find(
+									(vari) => variation[0] === vari.name && variation[1] === vari.value
+								)?.price ?? 0,
+							currency: item.product.price.currency
+					  }))
+					: [];
+			} else {
 				throw error(400, 'error matching on variations choice');
 			}
 		}
-	});
+		const variationPriceDelta =
+			item.product.hasVariations && item.chosenVariations
+				? sumCurrency(item.product.price.currency, variationPriceArray)
+				: 0;
+		if (variationPriceDelta > 0) {
+			item.customPrice = {
+				amount: sumCurrency(item.product.price.currency, [
+					{ amount: variationPriceDelta, currency: item.product.price.currency },
+					item.product.price
+				]),
+				currency: item.product.price.currency
+			};
+		}
+	}
+
 	await withTransaction(async (session) => {
 		const order: Order = {
 			_id: orderId,
