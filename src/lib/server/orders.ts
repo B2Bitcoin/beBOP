@@ -661,14 +661,15 @@ export async function createOrder(
 
 	for (const item of items) {
 		if (item.product.variations?.length && item.product.payWhatYouWant) {
-		const variationPriceDelta = sumVariationDeltaProduct(item.product, item.chosenVariations)
-		item.customPrice = {
-			amount: sumCurrency(item.product.price.currency, [
-				{ amount: variationPriceDelta, currency: item.product.price.currency },
-				item.product.price
-			]),
-			currency: item.product.price.currency
-		};
+			const variationPriceDelta = sumVariationDeltaProduct(item.product, item.chosenVariations);
+			item.customPrice = {
+				amount: sumCurrency(item.product.price.currency, [
+					{ amount: variationPriceDelta, currency: item.product.price.currency },
+					item.product.price
+				]),
+				currency: item.product.price.currency
+			};
+		}
 	}
 
 	await withTransaction(async (session) => {

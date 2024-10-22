@@ -160,9 +160,9 @@ export async function amountOfProductSold(productId: string): Promise<number> {
 	);
 }
 
-export async function sumVariationDeltaProduct(
+export function sumVariationDeltaProduct(
 	product: Product,
-	chosenVariations: Record<string, string>
+	chosenVariations: Record<string, string> | undefined
 ) {
 	let variationPriceArray: Price[] = [];
 	const variationNamesInDB = [...new Set(product.variations?.map((vari) => vari.name))];
@@ -172,7 +172,7 @@ export async function sumVariationDeltaProduct(
 		variationNamesInDB.length === chosenVariationNames.length &&
 		variationNamesInDB.every((name) => chosenVariationNames.includes(name));
 
-	if (!allVariationsChosen) {
+	if (allVariationsChosen) {
 		variationPriceArray = chosenVariations
 			? Object.entries(chosenVariations).map((variation) => ({
 					amount:

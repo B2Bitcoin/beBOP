@@ -3,7 +3,11 @@ import { collections, withTransaction } from './database';
 import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
-import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
+import {
+	amountOfProductReserved,
+	refreshAvailableStockInDb,
+	sumVariationDeltaProduct
+} from './product';
 import type { Cart } from '$lib/types/Cart';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { isEqual } from 'lodash-es';
@@ -15,7 +19,6 @@ import type { Currency } from '$lib/types/Currency';
 import { toCurrency } from '$lib/utils/toCurrency';
 import { sum } from '$lib/utils/sum';
 import { sumCurrency } from '$lib/utils/sumCurrency';
-import type { Price } from '$lib/types/Order';
 
 export async function getCartFromDb(params: { user: UserIdentifier }): Promise<Cart> {
 	let res = await collections.carts.findOne(userQuery(params.user), { sort: { _id: -1 } });
@@ -116,34 +119,11 @@ export async function addToCartInDb(
 	) {
 		throw error(400, 'Cart has too many items');
 	}
-	let variationPriceArray: Price[] = [];
+	let variationPriceDelta = 0;
 	if (product.variations?.length) {
-		const variationNamesInDB = [...new Set(product.variations.map((vari) => vari.name))];
-
-		const chosenVariationNames = Object.keys(params.chosenVariations ?? {});
-
-		const allVariationsChosen =
-			variationNamesInDB.length === chosenVariationNames.length &&
-			variationNamesInDB.every((name) => chosenVariationNames.includes(name));
-
-		if (allVariationsChosen) {
-			variationPriceArray = params.chosenVariations
-				? Object.entries(params.chosenVariations).map((variation) => ({
-						amount:
-							product.variations?.find(
-								(vari) => variation[0] === vari.name && variation[1] === vari.value
-							)?.price ?? 0,
-						currency: product.price.currency
-				  }))
-				: [];
-		} else {
-			throw error(400, 'error matching on variations choice');
-		}
+		variationPriceDelta = sumVariationDeltaProduct(product, params.chosenVariations);
 	}
-	const variationPriceDelta =
-		product.hasVariations && params.chosenVariations
-			? sumCurrency(product.price.currency, variationPriceArray)
-			: 0;
+
 	const existingItem = cart.items.find(
 		(item) =>
 			item.productId === product._id &&
