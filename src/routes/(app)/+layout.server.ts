@@ -74,6 +74,7 @@ export async function load(params) {
 								| 'isTicket'
 								| 'vatProfileId'
 								| 'paymentMethods'
+								| 'variationLabels'
 							>
 						>(
 							{ _id: item.productId },
@@ -101,7 +102,13 @@ export async function load(params) {
 									stock: 1,
 									vatProfileId: 1,
 									paymentMethods: 1,
-									isTicket: 1
+									isTicket: 1,
+									variationLabels: {
+										$ifNull: [
+											`$translations.${locals.language}.variationLabels`,
+											'$variationLabels'
+										]
+									}
 								}
 							}
 						);

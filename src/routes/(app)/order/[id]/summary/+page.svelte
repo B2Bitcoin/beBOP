@@ -119,7 +119,11 @@
 				<td class="text-center border border-white px-2">{i + 1}</td>
 				<td class="text-center border border-white px-2"
 					>{item.chosenVariations
-						? item.product.name + ' - ' + Object.values(item.chosenVariations).join(' - ')
+						? item.product.name +
+						  ' - ' +
+						  Object.entries(item.chosenVariations)
+								.map(([key, value]) => item.product.variationLabels?.values[key][value])
+								.join(' - ')
 						: item.product.name}</td
 				>
 				<td class="text-center border border-white px-2">{item.quantity}</td>

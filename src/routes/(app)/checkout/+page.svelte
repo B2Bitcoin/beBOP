@@ -634,7 +634,11 @@
 						<a href="/product/{item.product._id}">
 							<h3 class="text-base">
 								{item.chosenVariations
-									? item.product.name + ' - ' + Object.values(item.chosenVariations).join(' - ')
+									? item.product.name +
+									  ' - ' +
+									  Object.entries(item.chosenVariations)
+											.map(([key, value]) => item.product.variationLabels?.values[key][value])
+											.join(' - ')
 									: item.product.name}
 							</h3>
 						</a>
