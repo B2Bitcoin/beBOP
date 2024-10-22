@@ -11,7 +11,11 @@ import { collections, withTransaction } from './database';
 import { add, addHours, addMinutes, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
-import type { Product } from '$lib/types/Product';
+import {
+	checkProductVariationsIntegrity,
+	productPriceWithVariations,
+	type Product
+} from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoind';
@@ -22,7 +26,7 @@ import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
 import { CURRENCY_UNIT, FRACTION_DIGITS_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
-import { productPriceWithVariations, refreshAvailableStockInDb } from './product';
+import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
 import { userQuery } from './user';
 import { SMTP_USER } from '$env/static/private';
@@ -660,11 +664,17 @@ export async function createOrder(
 	}
 
 	for (const item of items) {
-		if (item.product.variations?.length && !item.product.payWhatYouWant) {
+		if (
+			item.product.variations?.length &&
+			!item.product.payWhatYouWant &&
+			checkProductVariationsIntegrity(item.product, item.chosenVariations)
+		) {
 			item.customPrice = {
 				amount: productPriceWithVariations(item.product, item.chosenVariations),
 				currency: item.product.price.currency
 			};
+		} else if (item.product.variations?.length && !item.product.payWhatYouWant) {
+			throw error(400, 'error matching on variations choice');
 		}
 	}
 

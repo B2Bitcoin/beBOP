@@ -12,7 +12,8 @@
 	import {
 		DEFAULT_MAX_QUANTITY_PER_ORDER,
 		isPreorder as isPreorderFn,
-		oneMaxPerLine
+		oneMaxPerLine,
+		productPriceWithVariations
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
@@ -22,8 +23,6 @@
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
 	import { serializeSchema } from '$lib/utils/jsonLd.js';
 	import type { Product as SchemaOrgProduct, WithContext } from 'schema-dts';
-	import type { Price } from '$lib/types/Order.js';
-	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 
 	export let data;
 
@@ -132,19 +131,7 @@
 
 	let selectedVariations: Record<string, string> = {};
 	$: if (data.product.hasVariations && data.product.variationLabels) {
-		let variationPricesArray: Price[] = [];
-
-		for (const [key, value] of Object.entries(selectedVariations)) {
-			variationPricesArray.push({
-				amount:
-					data.product.variations?.find(
-						(variation) => variation.name === key && variation.value === value
-					)?.price ?? 0,
-				currency: data.product.price.currency
-			});
-		}
-		variationPricesArray.push(data.product.price);
-		customAmount = sumCurrency(data.product.price.currency, variationPricesArray);
+		customAmount = productPriceWithVariations(data.product, selectedVariations);
 	}
 </script>
 

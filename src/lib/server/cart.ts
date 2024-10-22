@@ -1,13 +1,14 @@
 import { ObjectId } from 'mongodb';
 import { collections, withTransaction } from './database';
-import { DEFAULT_MAX_QUANTITY_PER_ORDER, type Product } from '$lib/types/Product';
+import {
+	checkProductVariationsIntegrity,
+	DEFAULT_MAX_QUANTITY_PER_ORDER,
+	productPriceWithVariations,
+	type Product
+} from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
-import {
-	amountOfProductReserved,
-	productPriceWithVariations,
-	refreshAvailableStockInDb
-} from './product';
+import { amountOfProductReserved, refreshAvailableStockInDb } from './product';
 import type { Cart } from '$lib/types/Cart';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
 import { isEqual } from 'lodash-es';
@@ -145,11 +146,16 @@ export async function addToCartInDb(
 			params.customPrice.amount,
 			toCurrency(params.customPrice.currency, product.price.amount, product.price.currency)
 		);
-	} else if (product.variations?.length) {
+	} else if (
+		product.variations?.length &&
+		checkProductVariationsIntegrity(product, params.chosenVariations)
+	) {
 		params.customPrice = {
 			amount: productPriceWithVariations(product, params.chosenVariations),
 			currency: product.price.currency
 		};
+	} else if (product.variations?.length) {
+		throw error(400, 'error matching on variations choice');
 	}
 
 	if (existingItem && !product.standalone) {
