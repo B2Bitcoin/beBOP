@@ -22,7 +22,7 @@ import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
 import { CURRENCY_UNIT, FRACTION_DIGITS_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
-import { refreshAvailableStockInDb, sumVariationDeltaProduct } from './product';
+import { productPriceWithVariations, refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
 import { userQuery } from './user';
 import { SMTP_USER } from '$env/static/private';
@@ -661,12 +661,8 @@ export async function createOrder(
 
 	for (const item of items) {
 		if (item.product.variations?.length && !item.product.payWhatYouWant) {
-			const variationPriceDelta = sumVariationDeltaProduct(item.product, item.chosenVariations);
 			item.customPrice = {
-				amount: sumCurrency(item.product.price.currency, [
-					{ amount: variationPriceDelta, currency: item.product.price.currency },
-					item.product.price
-				]),
+				amount: productPriceWithVariations(item.product, item.chosenVariations),
 				currency: item.product.price.currency
 			};
 		}

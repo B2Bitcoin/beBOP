@@ -160,7 +160,7 @@ export async function amountOfProductSold(productId: string): Promise<number> {
 	);
 }
 
-export function sumVariationDeltaProduct(
+export function productPriceWithVariations(
 	product: Product,
 	chosenVariations: Record<string, string> | undefined
 ) {
@@ -187,6 +187,6 @@ export function sumVariationDeltaProduct(
 	}
 
 	return product.hasVariations && chosenVariations
-		? sumCurrency(product.price.currency, variationPriceArray)
+		? sumCurrency(product.price.currency, [...variationPriceArray, product.price])
 		: 0;
 }

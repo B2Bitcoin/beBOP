@@ -5,8 +5,8 @@ import { error } from '@sveltejs/kit';
 import { runtimeConfig } from './runtime-config';
 import {
 	amountOfProductReserved,
-	refreshAvailableStockInDb,
-	sumVariationDeltaProduct
+	productPriceWithVariations,
+	refreshAvailableStockInDb
 } from './product';
 import type { Cart } from '$lib/types/Cart';
 import type { UserIdentifier } from '$lib/types/UserIdentifier';
@@ -119,11 +119,6 @@ export async function addToCartInDb(
 	) {
 		throw error(400, 'Cart has too many items');
 	}
-	let variationPriceDelta = 0;
-	if (product.variations?.length) {
-		variationPriceDelta = sumVariationDeltaProduct(product, params.chosenVariations);
-	}
-
 	const existingItem = cart.items.find(
 		(item) =>
 			item.productId === product._id &&
@@ -153,10 +148,7 @@ export async function addToCartInDb(
 		);
 	} else if (product.variations?.length) {
 		params.customPrice = {
-			amount: sumCurrency(product.price.currency, [
-				{ amount: variationPriceDelta, currency: product.price.currency },
-				product.price
-			]),
+			amount: productPriceWithVariations(product, params.chosenVariations),
 			currency: product.price.currency
 		};
 	}
