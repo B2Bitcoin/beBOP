@@ -5,7 +5,7 @@ import { getCartFromDb } from './cart';
 import type { Product } from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { sumCurrency } from '$lib/utils/sumCurrency';
-import { Price } from '$lib/types/Order';
+import type { Price } from '$lib/types/Order';
 
 /**
  * Amount of product reserved in carts and pending orders
