@@ -22,7 +22,7 @@ import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
 import { CURRENCY_UNIT, FRACTION_DIGITS_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
-import { refreshAvailableStockInDb } from './product';
+import { refreshAvailableStockInDb, sumVariationDeltaProduct } from './product';
 import { checkCartItems } from './cart';
 import { userQuery } from './user';
 import { SMTP_USER } from '$env/static/private';
@@ -659,44 +659,16 @@ export async function createOrder(
 		throw error(400, "You can't use free payment method on this order");
 	}
 
-	let variationPriceArray: Price[] = [];
-
 	for (const item of items) {
-		if (item.product.variations) {
-			const variationNamesInDB = [...new Set(item.product.variations.map((vari) => vari.name))];
-			const chosenVariationNames = Object.keys(item.chosenVariations ?? {});
-
-			const allVariationsChosen =
-				variationNamesInDB.length === chosenVariationNames.length &&
-				variationNamesInDB.every((name) => chosenVariationNames.includes(name));
-
-			if (!allVariationsChosen) {
-				variationPriceArray = item.chosenVariations
-					? Object.entries(item.chosenVariations).map((variation) => ({
-							amount:
-								item.product.variations?.find(
-									(vari) => variation[0] === vari.name && variation[1] === vari.value
-								)?.price ?? 0,
-							currency: item.product.price.currency
-					  }))
-					: [];
-			} else {
-				throw error(400, 'error matching on variations choice');
-			}
-		}
-		const variationPriceDelta =
-			item.product.hasVariations && item.chosenVariations
-				? sumCurrency(item.product.price.currency, variationPriceArray)
-				: 0;
-		if (variationPriceDelta > 0) {
-			item.customPrice = {
-				amount: sumCurrency(item.product.price.currency, [
-					{ amount: variationPriceDelta, currency: item.product.price.currency },
-					item.product.price
-				]),
-				currency: item.product.price.currency
-			};
-		}
+		if (item.product.variations?.length && item.product.payWhatYouWant) {
+		const variationPriceDelta = sumVariationDeltaProduct(item.product, item.chosenVariations)
+		item.customPrice = {
+			amount: sumCurrency(item.product.price.currency, [
+				{ amount: variationPriceDelta, currency: item.product.price.currency },
+				item.product.price
+			]),
+			currency: item.product.price.currency
+		};
 	}
 
 	await withTransaction(async (session) => {
