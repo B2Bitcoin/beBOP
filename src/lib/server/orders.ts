@@ -11,7 +11,11 @@ import { collections, withTransaction } from './database';
 import { add, addHours, addMinutes, differenceInSeconds, max, subSeconds } from 'date-fns';
 import { runtimeConfig } from './runtime-config';
 import { generateSubscriptionNumber } from './subscriptions';
-import type { Product } from '$lib/types/Product';
+import {
+	checkProductVariationsIntegrity,
+	productPriceWithVariations,
+	type Product
+} from '$lib/types/Product';
 import { error } from '@sveltejs/kit';
 import { toSatoshis } from '$lib/utils/toSatoshis';
 import { currentWallet, getNewAddress, orderAddressLabel } from './bitcoind';
@@ -657,6 +661,21 @@ export async function createOrder(
 
 	if (paymentMethod === 'free' && totalSatoshis !== 0) {
 		throw error(400, "You can't use free payment method on this order");
+	}
+
+	for (const item of items) {
+		if (
+			item.product.variations?.length &&
+			!item.product.payWhatYouWant &&
+			checkProductVariationsIntegrity(item.product, item.chosenVariations)
+		) {
+			item.customPrice = {
+				amount: productPriceWithVariations(item.product, item.chosenVariations),
+				currency: item.product.price.currency
+			};
+		} else if (item.product.variations?.length && !item.product.payWhatYouWant) {
+			throw error(400, 'error matching on variations choice');
+		}
 	}
 
 	await withTransaction(async (session) => {
@@ -1510,17 +1529,59 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 						challenge.goal.currency,
 						items.map((item) => ({
 							amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
-							currency: item.product.price.currency
+							currency: item.customPrice?.currency || item.product.price.currency
 						}))
 				  );
-
-		await collections.challenges.updateOne(
-			{ _id: challenge._id },
-			{
-				$inc: { progress: increase }
-			},
-			{ session }
-		);
+		if (increase > 0) {
+			await collections.challenges.updateOne(
+				{ _id: challenge._id },
+				{
+					$inc: { progress: increase },
+					$push: {
+						event: {
+							type: 'progress',
+							at: new Date(),
+							order: order._id,
+							amount: increase
+						}
+					}
+				},
+				{ session }
+			);
+		}
+		if (items.length) {
+			const content = `Dear be-BOP owner,
+	
+			The order #${order.number} ${ORIGIN}/order/${order._id} was successfully paid.
+			
+			It contains the following product(s) that increase the challenge ${challenge.name} :
+			${items
+				.map(
+					(item) =>
+						`- ${item.product.name} - price ${
+							item.customPrice?.amount || item.product.price.amount
+						} ${item.customPrice?.currency || item.product.price.currency} - qty ${
+							item.quantity
+						} - total addition to challenge: ${
+							challenge.mode === 'totalProducts'
+								? item.quantity
+								: (item.customPrice?.amount || item.product.price.amount) * item.quantity
+						}`
+				)
+				.join('\n')}			  
+			
+			Total increase : ${increase}
+			
+			Challenge current level : ${challenge.progress}`;
+			await collections.emailNotifications.insertOne({
+				_id: new ObjectId(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				subject: 'Challenge Update',
+				htmlContent: content,
+				dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
+			});
+		}
 	}
 	//#endregion
 

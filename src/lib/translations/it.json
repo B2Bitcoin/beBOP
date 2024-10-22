@@ -13,6 +13,10 @@
 		"vatNumber": "Numero IVA",
 		"zipCode": "Codice d'avviamento postale"
 	},
+	"ageWarning": {
+		"agreement": "Ho letto le condizioni di accesso, le adempio e le rispetto",
+		"navigate": "Continua la navigazione"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Pagamento",
@@ -647,6 +651,7 @@
 			"subscription": "Abbonamento",
 			"ticket": "ticket"
 		},
+		"variationPriceLabel": "Prezzo di variazione",
 		"vatExcluded": "IVA esclusa"
 	},
 	"subscription": {

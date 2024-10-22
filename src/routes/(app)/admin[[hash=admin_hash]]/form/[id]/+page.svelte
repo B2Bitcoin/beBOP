@@ -51,8 +51,13 @@
 			name="target"
 			placeholder="Target"
 			value={data.contactForm.target}
-			required
-			pattern={data.contactModes.includes('email') ? '' : '^(?!.*@).*'}
+			pattern={data.contactModes.includes('email') && data.contactModes.includes('nostr')
+				? '^npub.*|^.*@.*'
+				: data.contactModes.includes('email')
+				? '^.*@.*'
+				: data.contactModes.includes('nostr')
+				? '^npub.*'
+				: '^(?!npub).*'}
 		/>
 	</label>
 	<label class="checkbox-label">

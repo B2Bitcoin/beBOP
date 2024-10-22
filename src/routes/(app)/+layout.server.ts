@@ -1,10 +1,12 @@
 import { ORIGIN } from '$env/static/private';
 import { adminPrefix } from '$lib/server/admin.js';
 import { getCartFromDb } from '$lib/server/cart.js';
+import { cmsFromContent } from '$lib/server/cms.js';
 import { collections } from '$lib/server/database';
 import { pojo } from '$lib/server/pojo.js';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { userIdentifier } from '$lib/server/user.js';
+import type { CMSPage } from '$lib/types/CmsPage.js';
 import type { Product } from '$lib/types/Product';
 import { UrlDependency } from '$lib/types/UrlDependency';
 import type { VatProfile } from '$lib/types/VatProfile.js';
@@ -138,6 +140,25 @@ export async function load(params) {
 			  ).then((res) => filterUndef(res))
 			: null
 	]);
+	let cmsAgewall: CMSPage | null = null;
+	if (runtimeConfig.ageRestriction.enabled && !locals.acceptAgeLimitation) {
+		cmsAgewall = await collections.cmsPages.findOne(
+			{
+				_id: 'agewall'
+			},
+			{
+				projection: {
+					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+					shortDescription: {
+						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
+					},
+					fullScreen: 1,
+					maintenanceDisplay: 1
+				}
+			}
+		);
+	}
 
 	return {
 		isMaintenance: runtimeConfig.isMaintenance,
@@ -196,6 +217,11 @@ export async function load(params) {
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
 		hideCmsZonesOnMobile: runtimeConfig.hideCmsZonesOnMobile,
 		notResponsive: runtimeConfig.viewportFor === 'no-one' ? true : false,
-		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive
+		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive,
+		...(cmsAgewall && {
+			cmsAgewall,
+			cmsAgewallData: cmsFromContent({ content: cmsAgewall.content }, locals)
+		}),
+		sessionAcceptAgeLimitation: locals.acceptAgeLimitation
 	};
 }

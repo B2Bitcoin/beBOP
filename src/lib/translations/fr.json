@@ -13,6 +13,10 @@
 		"vatNumber": "Numéro TVA",
 		"zipCode": "Code postal"
 	},
+	"ageWarning": {
+		"agreement": "J'ai pris connaissance des conditions d'accès, les remplis et les respecte.",
+		"navigate": "Continuer la navigation"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Commander",
@@ -647,6 +651,7 @@
 			"subscription": "Abonnement",
 			"ticket": "Ticket"
 		},
+		"variationPriceLabel": "Variation de prix",
 		"vatExcluded": "Hors TVA"
 	},
 	"subscription": {

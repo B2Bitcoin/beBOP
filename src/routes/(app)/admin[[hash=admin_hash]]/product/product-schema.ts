@@ -64,7 +64,11 @@ export const productBaseSchema = () => ({
 		.array(
 			z.object({
 				name: z.string().trim(),
-				value: z.string().trim()
+				value: z.string().trim(),
+				price: z
+					.string()
+					.regex(/^\d+(\.\d+)?$/)
+					.default('0')
 			})
 		)
 		.optional()

@@ -101,11 +101,13 @@ export const actions: Actions = {
 		if (parsed.type === 'donation') {
 			parsed.shipping = false;
 		}
-
+		const variationsParsedPrice = parsed.variations.map((variation) => ({
+			...variation,
+			price: Math.max(parsePriceAmount(variation.price, parsed.priceCurrency), 0)
+		}));
 		if (!parsed.free && !parsed.payWhatYouWant && parsed.priceAmount === '0') {
 			parsed.free = true;
 		}
-
 		const cleanedVariationLabels: {
 			names: Record<string, string>;
 			values: Record<string, Record<string, string>>;
@@ -206,7 +208,7 @@ export const actions: Actions = {
 						...(parsed.standalone && { hasVariations: parsed.hasVariations }),
 						...(parsed.standalone &&
 							parsed.hasVariations && {
-								variations: parsed.variations?.filter(
+								variations: variationsParsedPrice.filter(
 									(variation) => variation.name && variation.value
 								)
 							}),
