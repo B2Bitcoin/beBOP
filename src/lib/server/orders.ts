@@ -1554,7 +1554,6 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 			Total increase : ${increase}
 			
 			Challenge current level : ${challenge.progress}`;
-			console.log(content);
 			await collections.emailNotifications.insertOne({
 				_id: new ObjectId(),
 				createdAt: new Date(),
