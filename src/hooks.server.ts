@@ -217,6 +217,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		event.locals.email = session.email;
 		event.locals.npub = session.npub;
 		event.locals.sso = session.sso;
+		event.locals.acceptAgeLimitation = session.acceptAgeLimitation;
 		if (session.pos?.countryCodeOverwrite) {
 			event.locals.countryCode = session.pos.countryCodeOverwrite;
 		}
