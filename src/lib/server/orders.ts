@@ -660,7 +660,7 @@ export async function createOrder(
 	}
 
 	for (const item of items) {
-		if (item.product.variations?.length && item.product.payWhatYouWant) {
+		if (item.product.variations?.length && !item.product.payWhatYouWant) {
 			const variationPriceDelta = sumVariationDeltaProduct(item.product, item.chosenVariations);
 			item.customPrice = {
 				amount: sumCurrency(item.product.price.currency, [
