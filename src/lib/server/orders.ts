@@ -1514,7 +1514,7 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 						}))
 				  );
 		if (increase > 0) {
-			await collections.challenges.updateMany(
+			await collections.challenges.updateOne(
 				{ _id: challenge._id },
 				{
 					$inc: { progress: increase },
