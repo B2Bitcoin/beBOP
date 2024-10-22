@@ -174,10 +174,9 @@ async function addToCart({ params, request, locals }: RequestEvent) {
 					currency: customPriceCurrency
 			  }
 			: undefined;
-
 	await addToCartInDb(product, quantity, {
 		user: userIdentifier(locals),
-		...(product.payWhatYouWant && { customPrice }),
+		...(customPrice && { customPrice }),
 		deposit: deposit === 'partial',
 		...(product.hasVariations && { chosenVariations })
 	});
