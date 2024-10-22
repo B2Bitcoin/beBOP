@@ -84,7 +84,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 	}[];
 }
 
-export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name'>;
+export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name' | 'variationLabels'>;
 
 export const MAX_NAME_LIMIT = 70;
 

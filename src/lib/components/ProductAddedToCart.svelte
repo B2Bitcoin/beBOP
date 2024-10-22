@@ -30,7 +30,11 @@
 		<h2 class="body-title text-[18px] font-medium">{t('product.addedToCart')}</h2>
 		<h3 class="text-base font-light">
 			{chosenVariations
-				? product.name + ' - ' + Object.values(chosenVariations).join(' - ')
+				? product.name +
+				  ' - ' +
+				  Object.entries(chosenVariations)
+						.map(([key, value]) => product.variationLabels?.values[key][value])
+						.join(' - ')
 				: product.name}
 		</h3>
 		<PriceTag

@@ -325,7 +325,12 @@
 														{item.chosenVariations
 															? item.product.name +
 															  ' - ' +
-															  Object.values(item.chosenVariations).join(' - ')
+															  Object.entries(item.chosenVariations)
+																	.map(
+																		([key, value]) =>
+																			item.product.variationLabels?.values[key][value]
+																	)
+																	.join(' - ')
 															: item.product.name}
 													</h3>
 												</a>
