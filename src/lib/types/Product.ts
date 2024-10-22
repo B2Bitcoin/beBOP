@@ -110,9 +110,7 @@ export function productPriceWithVariations(
 	product: Pick<Product, 'name' | '_id' | 'price' | 'variations'>,
 	chosenVariations: Record<string, string> | undefined
 ) {
-	let variationPriceArray: Price[] = [];
-
-	variationPriceArray = chosenVariations
+	const variationPriceArray: Price[] = chosenVariations
 		? Object.entries(chosenVariations).map((variation) => ({
 				amount:
 					product.variations?.find(

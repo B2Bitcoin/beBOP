@@ -130,7 +130,7 @@
 	}
 
 	let selectedVariations: Record<string, string> = {};
-	$: if (data.product.hasVariations && data.product.variationLabels) {
+	$: if (data.product.hasVariations) {
 		customAmount = productPriceWithVariations(data.product, selectedVariations);
 	}
 </script>
