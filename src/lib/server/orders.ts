@@ -1510,11 +1510,10 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 						challenge.goal.currency,
 						items.map((item) => ({
 							amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
-							currency: item.product.price.currency
+							currency: item.customPrice?.currency || item.product.price.currency
 						}))
 				  );
-
-		if (increase) {
+		if (increase > 0) {
 			await collections.challenges.updateMany(
 				{ _id: challenge._id },
 				{
@@ -1538,21 +1537,24 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 			
 			It contains the following product(s) that increase the challenge ${challenge.name} :
 			${items
-				.map((item) => {
-					`- ${item.product.name} - price ${item.product.price} - qty ${
-						item.quantity
-					} - total addition to challenge : ${
-						challenge.mode === 'totalProducts'
-							? item.quantity
-							: (item.customPrice?.amount || item.product.price.amount) * item.quantity
-					}`;
-				})
-				.join('\n')}
+				.map(
+					(item) =>
+						`- ${item.product.name} - price ${
+							item.customPrice?.amount || item.product.price.amount
+						} ${item.customPrice?.currency || item.product.price.currency} - qty ${
+							item.quantity
+						} - total addition to challenge: ${
+							challenge.mode === 'totalProducts'
+								? item.quantity
+								: (item.customPrice?.amount || item.product.price.amount) * item.quantity
+						}`
+				)
+				.join('\n')}			  
 			
 			Total increase : ${increase}
 			
 			Challenge current level : ${challenge.progress}`;
-
+			console.log(content);
 			await collections.emailNotifications.insertOne({
 				_id: new ObjectId(),
 				createdAt: new Date(),

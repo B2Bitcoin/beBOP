@@ -121,11 +121,11 @@ export const actions = {
 		const parsedProgress =
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
 				? parsePriceAmount(progress, challenge.goal.currency)
-				: parseInt(goalAmount);
+				: parseInt(progress);
 		const parsedOldProgress =
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
 				? parsePriceAmount(oldProgress, challenge.goal.currency)
-				: parseInt(goalAmount);
+				: parseInt(oldProgress);
 		if (amount < 0 || isNaN(amount)) {
 			throw error(400, 'Invalid amount');
 		}
