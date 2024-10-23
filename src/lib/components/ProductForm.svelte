@@ -128,17 +128,13 @@
 			} else {
 				priceAmountElement.setCustomValidity('');
 			}
-			let seen = new Set();
-			for (let i = 0; i < variationLabelsValues.length; i++) {
-				const key = `${(
-					variationLabelsNames[i] ||
-					product.variations?.[i].name ||
-					''
-				).toLowerCase()}-${(
-					variationLabelsValues[i] ||
-					product.variations?.[i].value ||
-					''
-				).toLowerCase()}`;
+			const seen = new Set<string>();
+			for (const [i, value] of variationLabelsValues.entries()) {
+				const key = JSON.stringify(
+					`${variationLabelsNames[i] || product.variations?.[i].name}, ${
+						value || product.variations?.[i].value
+					}`
+				).toLowerCase();
 
 				if (seen.has(key)) {
 					variationInput[i].setCustomValidity(`Duplicate variations found ${key}`);
