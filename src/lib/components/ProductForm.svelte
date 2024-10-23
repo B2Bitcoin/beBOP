@@ -507,6 +507,7 @@
 								name="variationLabels.names[{(variationLabelsNames[i] || '').toLowerCase()}]"
 								class="form-input"
 								bind:value={variationLabelsNames[i]}
+								required={!!variationLabelsValues[i]}
 							/>
 						</label>
 						<label class="form-label">
@@ -519,6 +520,7 @@
 									: (variationLabelsValues[i] || '').toLowerCase()}]"
 								class="form-input"
 								bind:value={variationLabelsValues[i]}
+								required={!!variationLabelsNames[i]}
 							/>
 						</label>
 					{/if}
