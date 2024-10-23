@@ -489,6 +489,7 @@
 								name="variationLabels.names[{variation.name}]"
 								class="form-input"
 								value={product.variationLabels?.names[variation.name]}
+								required={!!product.variationLabels?.values[variation.name][variation.value]}
 							/>
 						</label>
 						<label class="form-label">
@@ -497,6 +498,7 @@
 								name="variationLabels.values[{variation.name}][{variation.value}]"
 								class="form-input"
 								value={product.variationLabels?.values[variation.name][variation.value]}
+								required={!!product.variationLabels?.names[variation.name]}
 							/>
 						</label>
 					{:else}
@@ -516,7 +518,11 @@
 								name="variationLabels.values[{(
 									variationLabelsNames[i] || ''
 								).toLowerCase()}][{isNumber(variationLabelsValues[i])
-									? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+									? (
+											variationLabelsNames[i] +
+												(isNumber(variationLabelsNames[i]) ? '-' : '') +
+												variationLabelsValues[i] || ''
+									  ).toLowerCase()
 									: (variationLabelsValues[i] || '').toLowerCase()}]"
 								class="form-input"
 								bind:value={variationLabelsValues[i]}
@@ -551,7 +557,11 @@
 								name="variations[{i}].value"
 								class="form-input"
 								value={isNumber(variationLabelsValues[i])
-									? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+									? (
+											variationLabelsNames[i] +
+												(isNumber(variationLabelsNames[i]) ? '-' : '') +
+												variationLabelsValues[i] || ''
+									  ).toLowerCase()
 									: (variationLabelsValues[i] || '').toLowerCase()}
 							/>
 						{/if}

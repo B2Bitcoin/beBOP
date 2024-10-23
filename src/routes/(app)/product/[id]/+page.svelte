@@ -419,6 +419,7 @@
 										{/each}
 									</select>
 								{/each}
+								{JSON.stringify(selectedVariations)}
 							{/if}
 							{#if !oneMaxPerLine(data.product) && amountAvailable > 0}
 								<label class="mb-2">
