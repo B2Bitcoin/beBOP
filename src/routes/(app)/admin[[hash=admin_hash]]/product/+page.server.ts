@@ -5,9 +5,21 @@ import { set } from 'lodash-es';
 import type { Actions } from './$types';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { pojo } from '$lib/server/pojo';
+import { PRODUCT_PAGINATION_LIMIT } from '$lib/types/Product';
 
-export const load = async () => {
-	const products = await collections.products.find({}).toArray();
+export const load = async ({ url }) => {
+	const querySchema = z.object({
+		skip: z.number({ coerce: true }).int().min(0).optional().default(0)
+	});
+	const searchParams = Object.fromEntries(url.searchParams.entries());
+	const result = querySchema.parse(searchParams);
+	const { skip } = result;
+	const products = await collections.products
+		.find({})
+		.skip(skip)
+		.limit(PRODUCT_PAGINATION_LIMIT)
+		.sort({ updatedAt: -1 })
+		.toArray();
 
 	return {
 		products: products.map((product) => pojo(product)),
