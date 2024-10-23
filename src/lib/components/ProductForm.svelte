@@ -506,7 +506,9 @@
 							Name
 							<input
 								type="text"
-								name="variationLabels.names[{(variationLabelsNames[i] || '').toLowerCase()}]"
+								name="variationLabels.names[{(
+									(isNumber(variationLabelsNames[i]) ? 'name' : '') + variationLabelsNames[i] || ''
+								).toLowerCase()}]"
 								class="form-input"
 								bind:value={variationLabelsNames[i]}
 								required={!!variationLabelsValues[i]}
@@ -516,7 +518,7 @@
 							Value <input
 								type="text"
 								name="variationLabels.values[{(
-									variationLabelsNames[i] || ''
+									(isNumber(variationLabelsNames[i]) ? 'name' : '') + variationLabelsNames[i] || ''
 								).toLowerCase()}][{isNumber(variationLabelsValues[i])
 									? (
 											variationLabelsNames[i] +
@@ -550,7 +552,9 @@
 								type="hidden"
 								name="variations[{i}].name"
 								class="form-input"
-								value={(variationLabelsNames[i] || '').toLowerCase()}
+								value={(
+									(isNumber(variationLabelsNames[i]) ? 'name' : '') + variationLabelsNames[i] || ''
+								).toLowerCase()}
 							/>
 							<input
 								type="hidden"
