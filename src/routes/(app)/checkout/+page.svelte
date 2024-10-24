@@ -31,7 +31,7 @@
 
 	let isFreeVat = false;
 	let onLocation = data.defaultOnLocation;
-	$: offerDeliveryFees = onLocation;
+	$: offerDeliveryFees = data.roleId === POS_ROLE_ID && onLocation;
 	let addDiscount = false;
 	let offerOrder = false;
 	let discountAmount = 0;
