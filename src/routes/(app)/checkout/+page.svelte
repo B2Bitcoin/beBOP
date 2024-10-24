@@ -30,7 +30,7 @@
 	let country = defaultShippingCountry;
 
 	let isFreeVat = false;
-	let onLocation = data.defaultOnLocation;
+	let onLocation = data.roleId === POS_ROLE_ID && data.defaultOnLocation;
 	$: offerDeliveryFees = onLocation;
 	let addDiscount = false;
 	let offerOrder = false;
