@@ -489,6 +489,7 @@
 								name="variationLabels.names[{variation.name}]"
 								class="form-input"
 								value={product.variationLabels?.names[variation.name]}
+								required={!!product.variationLabels?.values[variation.name][variation.value]}
 							/>
 						</label>
 						<label class="form-label">
@@ -497,6 +498,7 @@
 								name="variationLabels.values[{variation.name}][{variation.value}]"
 								class="form-input"
 								value={product.variationLabels?.values[variation.name][variation.value]}
+								required={!!product.variationLabels?.names[variation.name]}
 							/>
 						</label>
 					{:else}
@@ -504,21 +506,29 @@
 							Name
 							<input
 								type="text"
-								name="variationLabels.names[{(variationLabelsNames[i] || '').toLowerCase()}]"
+								name="variationLabels.names[{(
+									(isNumber(variationLabelsNames[i]) ? 'name' : '') + variationLabelsNames[i] || ''
+								).toLowerCase()}]"
 								class="form-input"
 								bind:value={variationLabelsNames[i]}
+								required={!!variationLabelsValues[i]}
 							/>
 						</label>
 						<label class="form-label">
 							Value <input
 								type="text"
 								name="variationLabels.values[{(
-									variationLabelsNames[i] || ''
+									(isNumber(variationLabelsNames[i]) ? 'name' : '') + variationLabelsNames[i] || ''
 								).toLowerCase()}][{isNumber(variationLabelsValues[i])
-									? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+									? (
+											variationLabelsNames[i] +
+												(isNumber(variationLabelsNames[i]) ? '-' : '') +
+												variationLabelsValues[i] || ''
+									  ).toLowerCase()
 									: (variationLabelsValues[i] || '').toLowerCase()}]"
 								class="form-input"
 								bind:value={variationLabelsValues[i]}
+								required={!!variationLabelsNames[i]}
 							/>
 						</label>
 					{/if}
@@ -542,14 +552,20 @@
 								type="hidden"
 								name="variations[{i}].name"
 								class="form-input"
-								value={(variationLabelsNames[i] || '').toLowerCase()}
+								value={(
+									(isNumber(variationLabelsNames[i]) ? 'name' : '') + variationLabelsNames[i] || ''
+								).toLowerCase()}
 							/>
 							<input
 								type="hidden"
 								name="variations[{i}].value"
 								class="form-input"
 								value={isNumber(variationLabelsValues[i])
-									? (variationLabelsNames[i] + variationLabelsValues[i] || '').toLowerCase()
+									? (
+											variationLabelsNames[i] +
+												(isNumber(variationLabelsNames[i]) ? '-' : '') +
+												variationLabelsValues[i] || ''
+									  ).toLowerCase()
 									: (variationLabelsValues[i] || '').toLowerCase()}
 							/>
 						{/if}
