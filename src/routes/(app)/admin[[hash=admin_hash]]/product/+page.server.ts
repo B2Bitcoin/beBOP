@@ -6,6 +6,7 @@ import type { Actions } from './$types';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { pojo } from '$lib/server/pojo';
 import { PRODUCT_PAGINATION_LIMIT } from '$lib/types/Product';
+import { picturesForProducts } from '$lib/server/picture';
 
 export const load = async ({ url }) => {
 	const querySchema = z.object({
@@ -22,33 +23,9 @@ export const load = async ({ url }) => {
 		.toArray();
 	const productIds = products.map((product) => product._id);
 
-	const pictures = await collections.pictures
-		.aggregate([
-			{
-				$match: {
-					productId: { $exists: true, $in: productIds }
-				}
-			},
-			{
-				$sort: { createdAt: 1 }
-			},
-			{
-				$group: {
-					_id: '$productId',
-					picture: { $first: '$$ROOT' }
-				}
-			},
-			{
-				$replaceRoot: {
-					newRoot: '$picture'
-				}
-			}
-		])
-		.toArray();
-
 	return {
 		products: products.map((product) => pojo(product)),
-		pictures
+		pictures: await picturesForProducts(productIds)
 	};
 };
 
