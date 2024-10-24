@@ -48,7 +48,6 @@
 			class="form-input"
 			rows="2"
 			cols="30"
-			required
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
 			placeholder={data.defaultConfig.websiteShortDescription}
 			>{data.config?.[language]?.websiteShortDescription ?? ''}</textarea
