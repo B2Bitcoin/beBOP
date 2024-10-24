@@ -4,6 +4,8 @@ import { parsePriceAmount } from '$lib/types/Currency';
 import { MAX_NAME_LIMIT, type Product } from '$lib/types/Product';
 import { error, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import type { Filter } from 'mongodb';
+import type { Order } from '$lib/types/Order';
 
 export async function load({ params }) {
 	const challenge = await collections.challenges.findOne({
@@ -20,12 +22,40 @@ export async function load({ params }) {
 		.find({})
 		.project<Pick<Product, 'name' | '_id'>>({ name: 1 })
 		.toArray();
+	const query: Filter<Order> = {
+		createdAt: {
+			$lt: endsAt,
+			$gt: beginsAt
+		},
+		status: 'paid'
+	};
+	if (challenge.productIds.length > 0) {
+		query['items.product._id'] = { $in: [...challenge.productIds] };
+	}
+	const orders = await collections.orders.find(query).sort({ createdAt: -1 }).toArray();
 
 	return {
 		challenge,
 		beginsAt,
 		endsAt,
-		products
+		products,
+		orders: orders.map((order) => ({
+			_id: order._id,
+			payments: order.payments.map((payment) => ({
+				id: payment._id.toString(),
+				status: payment.status,
+				method: payment.method
+			})),
+			number: order.number,
+			createdAt: order.createdAt,
+			status: order.status,
+			notes:
+				order.notes?.map((note) => ({
+					content: note.content,
+					createdAt: note.createdAt
+				})) || [],
+			currencySnapshot: order.currencySnapshot
+		}))
 	};
 }
 
@@ -91,11 +121,11 @@ export const actions = {
 		const parsedProgress =
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
 				? parsePriceAmount(progress, challenge.goal.currency)
-				: parseInt(goalAmount);
+				: parseInt(progress);
 		const parsedOldProgress =
 			challenge.mode === 'moneyAmount' && challenge.goal.currency
 				? parsePriceAmount(oldProgress, challenge.goal.currency)
-				: parseInt(goalAmount);
+				: parseInt(oldProgress);
 		if (amount < 0 || isNaN(amount)) {
 			throw error(400, 'Invalid amount');
 		}

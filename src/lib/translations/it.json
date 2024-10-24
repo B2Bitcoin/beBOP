@@ -13,6 +13,10 @@
 		"vatNumber": "Numero IVA",
 		"zipCode": "Codice d'avviamento postale"
 	},
+	"ageWarning": {
+		"agreement": "Ho letto le condizioni di accesso, le adempio e le rispetto",
+		"navigate": "Continua la navigazione"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Pagamento",
@@ -20,6 +24,7 @@
 			"view": "Guarda il carrello"
 		},
 		"empty": "Il cartello è vuoto",
+		"fillProductAlias": "Compila l'alias del prodotto",
 		"items": "Prodotti",
 		"quantity": "Quantità",
 		"reachedMaxPerLine": "Il tuo carrello ha raggiunto la quantità massima. Per aggiungere altri articoli, ti preghiamo di toglierne alcuni",
@@ -646,6 +651,7 @@
 			"subscription": "Abbonamento",
 			"ticket": "ticket"
 		},
+		"variationPriceLabel": "Prezzo di variazione",
 		"vatExcluded": "IVA esclusa"
 	},
 	"subscription": {

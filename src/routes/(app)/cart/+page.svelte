@@ -97,7 +97,7 @@
 			>
 				<div class="gap-4 flex flex-col md:flex-row">
 					<label class="form-label w-[20em]">
-						Fill product alias
+						{t('cart.fillProductAlias')}
 						<!-- svelte-ignore a11y-autofocus -->
 						<input
 							bind:this={formAlias}
@@ -176,7 +176,11 @@
 							<a href="/product/{item.product._id}">
 								<h2 class="text-2xl">
 									{item.chosenVariations
-										? item.product.name + ' - ' + Object.values(item.chosenVariations).join(' - ')
+										? item.product.name +
+										  ' - ' +
+										  Object.entries(item.chosenVariations)
+												.map(([key, value]) => item.product.variationLabels?.values[key][value])
+												.join(' - ')
 										: item.product.name}
 								</h2>
 							</a>

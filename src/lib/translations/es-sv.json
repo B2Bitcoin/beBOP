@@ -13,6 +13,10 @@
 		"vatNumber": "Número de IVA",
 		"zipCode": "Código postal"
 	},
+	"ageWarning": {
+		"agreement": "He leído las condiciones de acceso, las cumplo y las respeto",
+		"navigate": "Continuar navegando"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Pagar",
@@ -20,6 +24,7 @@
 			"view": "Lista de compras"
 		},
 		"empty": "La lista de compras está vacía",
+		"fillProductAlias": "Rellenar alias de producto",
 		"items": "Productos",
 		"quantity": "Cantidad",
 		"reachedMaxPerLine": "La lista de compras está llena. Para agregar más artículos, elimina elementos de la lista",
@@ -646,6 +651,7 @@
 			"subscription": "Suscripción",
 			"ticket": "Ticket"
 		},
+		"variationPriceLabel": "Precio de variación",
 		"vatExcluded": "IVA excluido"
 	},
 	"subscription": {

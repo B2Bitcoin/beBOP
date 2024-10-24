@@ -13,6 +13,10 @@
 		"vatNumber": "btw-nummer",
 		"zipCode": "Postcode"
 	},
+	"ageWarning": {
+		"agreement": "Ik heb de toegangsvoorwaarden gelezen, voldoe eraan en respecteer ze",
+		"navigate": "Vervolg de navigatie"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Uitchecken",
@@ -20,6 +24,7 @@
 			"view": "Bekijk winkelwagen"
 		},
 		"empty": "Winkelwagen is leeg",
+		"fillProductAlias": "Productalias invullen",
 		"items": "Producten",
 		"quantity": "Hoeveelheid",
 		"reachedMaxPerLine": "Uw winkelwagen heeft de maximale grootte bereikt. \nOm meer artikelen toe te voegen, verwijdert u artikelen uit uw winkelwagen",
@@ -646,6 +651,7 @@
 			"subscription": "Abonnement",
 			"ticket": "Ticket"
 		},
+		"variationPriceLabel": "Variatie Prijs",
 		"vatExcluded": "Exclusief BTW"
 	},
 	"subscription": {

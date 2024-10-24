@@ -35,7 +35,7 @@ export const actions = {
 			.parse(json);
 
 		for (const linkKey of ['topbarLinks', 'navbarLinks', 'footerLinks'] as const) {
-			res[linkKey] = res[linkKey]?.filter((item) => item.href && item.label);
+			res[linkKey] = res[linkKey]?.filter((item) => item.href && item.label) ?? [];
 		}
 		res.socialNetworkIcons = res.socialNetworkIcons?.filter(
 			(item) => item.href && item.svg && item.name

@@ -13,6 +13,10 @@
 		"vatNumber": "Numéro TVA",
 		"zipCode": "Code postal"
 	},
+	"ageWarning": {
+		"agreement": "J'ai pris connaissance des conditions d'accès, les remplis et les respecte.",
+		"navigate": "Continuer la navigation"
+	},
 	"cart": {
 		"cta": {
 			"checkout": "Commander",
@@ -20,6 +24,7 @@
 			"view": "Voir le panier"
 		},
 		"empty": "Le panier est vide",
+		"fillProductAlias": "Remplir l'alias du produit",
 		"items": "Produits",
 		"quantity": "Quantité",
 		"reachedMaxPerLine": "Votre panier a atteint la taille maximale. Veuillez supprimer des lignes de votre panier pour ajouter plus d'articles.",
@@ -646,6 +651,7 @@
 			"subscription": "Abonnement",
 			"ticket": "Ticket"
 		},
+		"variationPriceLabel": "Variation de prix",
 		"vatExcluded": "Hors TVA"
 	},
 	"subscription": {

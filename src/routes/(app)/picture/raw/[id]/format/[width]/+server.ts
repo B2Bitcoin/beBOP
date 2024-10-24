@@ -25,17 +25,20 @@ export const GET: RequestHandler = async ({ params }) => {
 		throw error(500, "Error when finding picture's format");
 	}
 
+	const redirectExpiresIn = 7 * 24 * 3600; // 1 year
+
 	if (imageRedirect) {
 		return new Response(null, {
 			status: 302,
 			headers: {
 				location: await getPublicS3DownloadLink(format.key, {
 					input: {
-						ResponseCacheControl: 'max-age=31536000, public, immutable'
-					}
+						ResponseCacheControl: `max-age=31536000, public, immutable`
+					},
+					expiresIn: redirectExpiresIn
 				}),
 				// Helps with chrome. Firefox doesn't handle :(
-				'cache-control': 'max-age=31536000, public, immutable'
+				'cache-control': `max-age=${redirectExpiresIn}, public, immutable`
 			}
 		});
 	} else {

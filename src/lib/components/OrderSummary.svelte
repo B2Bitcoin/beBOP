@@ -24,7 +24,14 @@
 				picture?: Picture;
 				product: Pick<
 					Product,
-					'_id' | 'name' | 'preorder' | 'availableDate' | 'type' | 'shipping' | 'isTicket'
+					| '_id'
+					| 'name'
+					| 'preorder'
+					| 'availableDate'
+					| 'type'
+					| 'shipping'
+					| 'isTicket'
+					| 'variationLabels'
 				>;
 				chosenVariations: Record<string, string> | undefined;
 			}
@@ -53,7 +60,11 @@
 		<a href="/product/{item.product._id}">
 			<h3 class="text-base">
 				{item.chosenVariations
-					? item.product.name + ' - ' + Object.values(item.chosenVariations).join(' - ')
+					? item.product.name +
+					  ' - ' +
+					  Object.entries(item.chosenVariations)
+							.map(([key, value]) => item.product.variationLabels?.values[key][value])
+							.join(' - ')
 					: item.product.name}
 			</h3>
 		</a>

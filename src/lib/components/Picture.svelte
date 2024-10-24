@@ -110,7 +110,7 @@
 		width={picture.storage.formats[0].width}
 		height={picture.storage.formats[0].height}
 		srcset={picture.storage.formats
-			.map((format) => `/picture/raw/${picture?._id}/format/${format.width} ${format.width}w`)
+			.map((format) => `/picture/raw/${picture?._id}/format/${format.width}?v=1 ${format.width}w`)
 			.join(', ')}
 		sizes={sizeHint !== null ? `${sizeHint}px` : undefined}
 		class={className}

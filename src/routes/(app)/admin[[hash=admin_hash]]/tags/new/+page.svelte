@@ -192,15 +192,15 @@
 	</label>
 
 	<h3 class="text-xl">CTAs</h3>
-	{#each [...Array(tagCtaLines).fill('tag')].slice(0, tagCtaLines) as i}
+	{#each [...Array(tagCtaLines).fill( { label: '', href: '', openNewTab: false } )].slice(0, tagCtaLines) as cta, i}
 		<div class="flex gap-4">
 			<label class="form-label">
 				Text
-				<input type="text" name="cta[{i}].label" class="form-input" />
+				<input type="text" name="cta[{i}].label" class="form-input" value={cta.label} />
 			</label>
 			<label class="form-label">
 				Url
-				<input type="text" name="cta[{i}].href" class="form-input" />
+				<input type="text" name="cta[{i}].href" class="form-input" value={cta.href} />
 			</label>
 			<label class="checkbox-label mt-4">
 				<input class="form-checkbox" type="checkbox" name="cta[{i}].openNewTab" />

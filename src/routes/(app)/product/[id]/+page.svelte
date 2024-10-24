@@ -12,7 +12,8 @@
 	import {
 		DEFAULT_MAX_QUANTITY_PER_ORDER,
 		isPreorder as isPreorderFn,
-		oneMaxPerLine
+		oneMaxPerLine,
+		productPriceWithVariations
 	} from '$lib/types/Product';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { differenceInHours } from 'date-fns';
@@ -129,6 +130,9 @@
 	}
 
 	let selectedVariations: Record<string, string> = {};
+	$: if (data.product.hasVariations) {
+		customAmount = productPriceWithVariations(data.product, selectedVariations);
+	}
 </script>
 
 <svelte:head>
@@ -283,12 +287,12 @@
 						currency={data.product.price.currency}
 						class="text-2xl lg:text-4xl truncate max-w-full"
 						short={false}
-						amount={data.product.price.amount}
+						amount={data.product.hasVariations ? customAmount : data.product.price.amount}
 						main
 					/>
 					<PriceTag
 						currency={data.product.price.currency}
-						amount={data.product.price.amount}
+						amount={data.product.hasVariations ? customAmount : data.product.price.amount}
 						secondary
 						class="text-xl"
 					/>

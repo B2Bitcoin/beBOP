@@ -21,7 +21,8 @@ export async function load({ params, locals, url }) {
 				fullScreen: 1,
 				maintenanceDisplay: 1,
 				hideFromSEO: 1,
-				hasMobileContent: 1
+				hasMobileContent: 1,
+				metas: 1
 			}
 		}
 	);

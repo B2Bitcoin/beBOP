@@ -30,7 +30,7 @@
 	let country = defaultShippingCountry;
 
 	let isFreeVat = false;
-	let onLocation = data.defaultOnLocation;
+	let onLocation = data.roleId === POS_ROLE_ID && data.defaultOnLocation;
 	$: offerDeliveryFees = onLocation;
 	let addDiscount = false;
 	let offerOrder = false;
@@ -634,7 +634,11 @@
 						<a href="/product/{item.product._id}">
 							<h3 class="text-base">
 								{item.chosenVariations
-									? item.product.name + ' - ' + Object.values(item.chosenVariations).join(' - ')
+									? item.product.name +
+									  ' - ' +
+									  Object.entries(item.chosenVariations)
+											.map(([key, value]) => item.product.variationLabels?.values[key][value])
+											.join(' - ')
 									: item.product.name}
 							</h3>
 						</a>

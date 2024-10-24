@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { useI18n } from '$lib/i18n.js';
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
@@ -10,8 +11,8 @@
 	let tablePayment: HTMLTableElement;
 	let tableOrderSynthesis: HTMLTableElement;
 	let tablePaymentSynthesis: HTMLTableElement;
-	let monthValue = 1;
-	let yearValue = 2023;
+	$: monthValue = Number($page.url.searchParams.get('month')) || new Date().getMonth() + 1;
+	$: yearValue = Number($page.url.searchParams.get('year')) || new Date().getFullYear();
 	let tableProductSynthesis: HTMLTableElement;
 	let includePending = false;
 	let includeExpired = false;
@@ -19,7 +20,6 @@
 	let includePartiallyPaid = false;
 
 	const { locale, textAddress, countryName, t } = useI18n();
-
 	$: orderFiltered = data.orders.filter(
 		(order) =>
 			order.status === 'paid' ||
@@ -385,32 +385,39 @@
 			</table>
 		</div>
 	</div>
-	<div class="col-span-6">
-		<label class="form-label">
-			Month
-			<input
-				class="form-input"
-				type="number"
-				min="1"
-				max="12"
-				bind:value={monthValue}
-				placeholder="month (example:1)"
-			/>
-		</label>
-	</div>
-	<div class="col-span-6">
-		<label class="form-label">
-			Year
-			<input
-				class="form-input"
-				type="number"
-				min="2000"
-				max="3000"
-				bind:value={yearValue}
-				placeholder="year (example 2024)"
-			/>
-		</label>
-	</div>
+	<form method="GET" class="grid grid-cols-12 gap-2 col-span-12">
+		<div class="col-span-5">
+			<label class="form-label">
+				Month
+				<input
+					class="form-input"
+					name="month"
+					type="number"
+					min="1"
+					max="12"
+					value={monthValue}
+					placeholder="month (example:1)"
+				/>
+			</label>
+		</div>
+		<div class="col-span-5">
+			<label class="form-label">
+				Year
+				<input
+					class="form-input"
+					type="number"
+					name="year"
+					min="2000"
+					max="3000"
+					value={yearValue}
+					placeholder="year (example 2024)"
+				/>
+			</label>
+		</div>
+		<div class="col-span-2">
+			<button class="submit btn btn-gray mt-8">🔍</button>
+		</div>
+	</form>
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order synthesis</h1>
 		<button
