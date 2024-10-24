@@ -14,7 +14,7 @@
 	let nostrBasket = data.productActionSettings.nostr.canBeAddedToBasket;
 	$: next = 0;
 
-	let picturesByProduct = Object.fromEntries(
+	$: picturesByProduct = Object.fromEntries(
 		[...data.pictures].reverse().map((picture) => [picture.productId, picture])
 	);
 
@@ -117,12 +117,12 @@
 			<button
 				class="btn btn-blue"
 				type="submit"
-				on:click={() => (next = Math.max(0, next - PRODUCT_PAGINATION_LIMIT))}>&lt Previous</button
+				on:click={() => (next = Math.max(0, next - PRODUCT_PAGINATION_LIMIT))}>&lt; Previous</button
 			>
 		{/if}
 		{#if data.products.length >= PRODUCT_PAGINATION_LIMIT}
 			<button class="btn btn-blue" type="submit" on:click={() => (next += PRODUCT_PAGINATION_LIMIT)}
-				>Next &gt</button
+				>Next &gt;</button
 			>
 		{/if}
 	</div>

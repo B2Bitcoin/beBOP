@@ -20,13 +20,35 @@ export const load = async ({ url }) => {
 		.limit(PRODUCT_PAGINATION_LIMIT)
 		.sort({ updatedAt: -1 })
 		.toArray();
+	const productIds = products.map((product) => product._id);
+
+	const pictures = await collections.pictures
+		.aggregate([
+			{
+				$match: {
+					productId: { $exists: true, $in: productIds }
+				}
+			},
+			{
+				$sort: { createdAt: 1 }
+			},
+			{
+				$group: {
+					_id: '$productId',
+					picture: { $first: '$$ROOT' }
+				}
+			},
+			{
+				$replaceRoot: {
+					newRoot: '$picture'
+				}
+			}
+		])
+		.toArray();
 
 	return {
 		products: products.map((product) => pojo(product)),
-		pictures: await collections.pictures
-			.find({ productId: { $exists: true } })
-			.sort({ createdAt: 1 })
-			.toArray()
+		pictures
 	};
 };
 
