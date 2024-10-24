@@ -81,7 +81,7 @@
 		<label class="form-label">
 			PhoenixD http password (from phoenix.conf)
 			<input
-				type="text"
+				type="password"
 				name="password"
 				class="form-input"
 				value={data.phoenixd.password}
