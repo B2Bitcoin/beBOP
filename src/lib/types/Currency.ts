@@ -38,7 +38,7 @@ export function parsePriceAmount(amount: string, currency: Currency): number {
 		throw error(400, `Price must be zero or greater than ${CURRENCY_UNIT[currency]} ${currency}`);
 	}
 
-	return Number(priceAmount.toFixed(FRACTION_DIGITS_PER_CURRENCY[currency]));
+	return priceAmount;
 }
 
 /**
