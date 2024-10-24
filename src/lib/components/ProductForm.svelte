@@ -79,6 +79,7 @@
 	let vatProfileId = product.vatProfileId || '';
 	let formElement: HTMLFormElement;
 	let priceAmountElement: HTMLInputElement;
+	let variationInput: HTMLInputElement[] = [];
 	let disableDateChange = !isNew;
 	let displayPreorderCustomText = !!product.customPreorderText;
 	let hasStock = !!product.stock;
@@ -101,6 +102,7 @@
 
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
+
 		try {
 			if (
 				priceAmountElement.value &&
@@ -126,7 +128,22 @@
 			} else {
 				priceAmountElement.setCustomValidity('');
 			}
+			const seen = new Set<string>();
+			for (const [i, value] of variationLabelsValues.entries()) {
+				const key = JSON.stringify(
+					`${variationLabelsNames[i] || product.variations?.[i].name}, ${
+						value || product.variations?.[i].value
+					}`
+				).toLowerCase();
 
+				if (seen.has(key)) {
+					variationInput[i].setCustomValidity(`Duplicate variations found ${key}`);
+					variationInput[i].reportValidity();
+					event.preventDefault();
+					return;
+				}
+				seen.add(key);
+			}
 			if (!duplicateFromId && isNew) {
 				const pictureId = await preUploadPicture(adminPrefix, files[0], { fileName: product.name });
 
@@ -498,6 +515,8 @@
 								name="variationLabels.values[{variation.name}][{variation.value}]"
 								class="form-input"
 								value={product.variationLabels?.values[variation.name][variation.value]}
+								bind:this={variationInput[i]}
+								on:input={() => variationInput[i]?.setCustomValidity('')}
 								required={!!product.variationLabels?.names[variation.name]}
 							/>
 						</label>
@@ -528,6 +547,8 @@
 									: (variationLabelsValues[i] || '').toLowerCase()}]"
 								class="form-input"
 								bind:value={variationLabelsValues[i]}
+								bind:this={variationInput[i]}
+								on:input={() => variationInput[i]?.setCustomValidity('')}
 								required={!!variationLabelsNames[i]}
 							/>
 						</label>
