@@ -86,6 +86,7 @@
 			name="websiteShortDescription"
 			cols="30"
 			rows="2"
+			required
 			placeholder="Shown in social media previews"
 			maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
 			class="form-input block w-full"
