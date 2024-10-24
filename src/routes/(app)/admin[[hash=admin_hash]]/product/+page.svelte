@@ -1,7 +1,8 @@
 <script lang="ts">
 	import ProductItem from '$lib/components/ProductItem.svelte';
 	import { downloadFile } from '$lib/utils/downloadFile.js';
-
+	import { page } from '$app/stores';
+	import { PRODUCT_PAGINATION_LIMIT } from '$lib/types/Product.js';
 	export let data;
 
 	let eshopVisible = data.productActionSettings.eShop.visible;
@@ -11,8 +12,9 @@
 	let eshopBasket = data.productActionSettings.eShop.canBeAddedToBasket;
 	let retailBasket = data.productActionSettings.retail.canBeAddedToBasket;
 	let nostrBasket = data.productActionSettings.nostr.canBeAddedToBasket;
+	$: next = 0;
 
-	let picturesByProduct = Object.fromEntries(
+	$: picturesByProduct = Object.fromEntries(
 		[...data.pictures].reverse().map((picture) => [picture.productId, picture])
 	);
 
@@ -102,8 +104,26 @@
 
 <h1 class="text-3xl">List of products</h1>
 
-<div class="flex flex-row flex-wrap gap-6">
-	{#each data.products as product}
-		<ProductItem {product} picture={picturesByProduct[product._id]} isAdmin />
-	{/each}
-</div>
+<form class="flex flex-col" method="GET">
+	<div class="flex flex-row flex-wrap gap-6">
+		{#each data.products as product}
+			<ProductItem {product} picture={picturesByProduct[product._id]} isAdmin />
+		{/each}
+	</div>
+
+	<div class="flex flex-row mx-auto mt-4 gap-4">
+		<input type="hidden" value={next} name="skip" />
+		{#if Number($page.url.searchParams.get('skip'))}
+			<button
+				class="btn btn-blue"
+				type="submit"
+				on:click={() => (next = Math.max(0, next - PRODUCT_PAGINATION_LIMIT))}>&lt; Previous</button
+			>
+		{/if}
+		{#if data.products.length >= PRODUCT_PAGINATION_LIMIT}
+			<button class="btn btn-blue" type="submit" on:click={() => (next += PRODUCT_PAGINATION_LIMIT)}
+				>Next &gt;</button
+			>
+		{/if}
+	</div>
+</form>
