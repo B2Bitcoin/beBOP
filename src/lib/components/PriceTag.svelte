@@ -66,7 +66,9 @@
 							? undefined
 							: displayedCurrency,
 					maximumFractionDigits: displayedCurrency === 'BTC' ? 8 : 2,
-					minimumFractionDigits: FRACTION_DIGITS_PER_CURRENCY[displayedCurrency]
+					minimumFractionDigits: !Number.isInteger(displayedAmount)
+						? FRACTION_DIGITS_PER_CURRENCY[displayedCurrency]
+						: 0
 			  }) + (displayedCurrency === 'SAT' && !short ? ' SAT' : '');
 </script>
 
