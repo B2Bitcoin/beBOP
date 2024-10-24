@@ -11,7 +11,7 @@
 		API Key
 		<input
 			class="form-input"
-			type="text"
+			type="password"
 			name="apiKey"
 			value={data.sumUp.apiKey}
 			placeholder="sup_sk_..."

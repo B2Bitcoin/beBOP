@@ -11,7 +11,7 @@
 		Secret Key
 		<input
 			class="form-input"
-			type="text"
+			type="password"
 			name="secretKey"
 			value={data.stripe.secretKey}
 			placeholder="sk_..."

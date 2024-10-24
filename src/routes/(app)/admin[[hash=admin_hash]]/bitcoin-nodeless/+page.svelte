@@ -25,7 +25,7 @@
 	<label class="form-label">
 		Public key (ZPub)
 		<input
-			type="text"
+			type="password"
 			name="publicKey"
 			class="form-input"
 			required
