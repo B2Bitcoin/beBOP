@@ -59,11 +59,13 @@
 	{#if !data.emailToLogin && !data.npubToLogin}
 		<p>{t('login.session.identityPrefill')}</p>
 		<div class="flex gap-4">
-			<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
+			<a class="btn body-mainCTA min-h-[2em] h-auto" href="/identity">{t('login.cta.identity')}</a>
 			{#if data.email || data.npub || data.sso?.length}
-				<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
+				<a class="btn body-mainCTA min-h-[2em] h-auto" href="/orders">{t('login.cta.orders')}</a>
 				<form method="post" action="?/clearAll" use:enhance>
-					<button class="btn body-secondaryCTA">{t('login.cta.clearSession')}</button>
+					<button class="btn body-secondaryCTA min-h-[2em] h-auto"
+						>{t('login.cta.clearSession')}</button
+					>
 				</form>
 			{/if}
 		</div>
@@ -93,7 +95,9 @@
 			{/if}
 			<div class="flex gap-4">
 				<input type="submit" class="btn body-mainCTA" value={t('login.authenticate.ctaLabel')} />
-				<button class="btn body-secondaryCTA"><a href="/">{t('login.authenticate.ctaCancelLabel')}</a></button>
+				<button class="btn body-secondaryCTA"
+					><a href="/">{t('login.authenticate.ctaCancelLabel')}</a></button
+				>
 			</div>
 		</form>
 
