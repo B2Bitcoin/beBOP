@@ -25,13 +25,13 @@
 		{#if data.userId}
 			<li class="flex gap-2 items-center">
 				{t('login.session.userId', { userId: data.userId })}
-				<form action="?/clearUserId" class="contents hidden" use:enhance method="post">
+				<form action="?/clearUserId" class="contents" use:enhance method="post">
 					<button class="text-red-500 hover:underline"><IconTrash /></button>
 				</form>
 			</li>
 		{/if}
 		{#if data.email && !data.emailFromSso}
-			<li class="flex gap-2 items-center">
+			<li class="flex gap-2 items-center break-words break-all">
 				{t('login.session.email', { email: data.email })}
 				<form action="?/clearEmail" class="contents" use:enhance method="post">
 					<button class="text-red-500 hover:underline"><IconTrash /></button>
@@ -39,7 +39,7 @@
 			</li>
 		{/if}
 		{#if data.npub}
-			<li class="flex gap-2 items-center">
+			<li class="flex gap-2 items-center break-words break-all">
 				{t('login.session.npub', { npub: data.npub })}
 				<form action="?/clearNpub" class="contents" use:enhance method="post">
 					<button class="text-red-500 hover:underline"><IconTrash /></button>
@@ -58,7 +58,7 @@
 	</ul>
 	{#if !data.emailToLogin && !data.npubToLogin}
 		<p>{t('login.session.identityPrefill')}</p>
-		<div class="flex gap-4">
+		<div class="flex flex-wrap gap-4">
 			<a class="btn body-mainCTA" href="/identity">{t('login.cta.identity')}</a>
 			{#if data.email || data.npub || data.sso?.length}
 				<a class="btn body-mainCTA" href="/orders">{t('login.cta.orders')}</a>
@@ -70,7 +70,7 @@
 	{/if}
 	{#if data.emailToLogin || data.npubToLogin}
 		<form method="post" action="?/validate&token={$page.url.searchParams.get('token')}">
-			<button class="btn btn-blue text-white">
+			<button class="btn btn-blue text-white break-words break-all h-auto">
 				{t('login.cta.authenticateAs', { as: data.emailToLogin || data.npubToLogin })}
 			</button>
 		</form>
@@ -93,7 +93,9 @@
 			{/if}
 			<div class="flex gap-4">
 				<input type="submit" class="btn body-mainCTA" value={t('login.authenticate.ctaLabel')} />
-				<button class="btn body-secondaryCTA"><a href="/">{t('login.authenticate.ctaCancelLabel')}</a></button>
+				<button class="btn body-secondaryCTA"
+					><a href="/">{t('login.authenticate.ctaCancelLabel')}</a></button
+				>
 			</div>
 		</form>
 
