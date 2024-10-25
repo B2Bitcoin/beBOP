@@ -926,7 +926,13 @@
 			<div class="flex gap-4">
 				<label class="form-label">
 					Text
-					<input type="text" name="cta[{i}].label" class="form-input" value={link.label} />
+					<input
+						type="text"
+						name="cta[{i}].label"
+						class="form-input"
+						maxlength="60"
+						value={link.label}
+					/>
 				</label>
 				<label class="form-label">
 					Url
