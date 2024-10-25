@@ -93,7 +93,7 @@
 				subject: contactForm.subject.replace(/{{([^}]+)}}/g, (match, p1) => {
 					return lowerVars[p1.toLowerCase()] || match;
 				}),
-				content: contactForm.content.replace(/{{([^}]+)}}/g, (match, p1) => {
+				content: contactForm.content?.replace(/{{([^}]+)}}/g, (match, p1) => {
 					return lowerVars[p1.toLowerCase()] || match;
 				})
 			}
