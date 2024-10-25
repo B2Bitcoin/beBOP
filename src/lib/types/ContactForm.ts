@@ -2,7 +2,7 @@ import type { LanguageKey } from '$lib/translations';
 import type { Timestamps } from './Timestamps';
 
 export interface ContactFormTranslatableFields {
-	content?: string;
+	content: string;
 	subject: string;
 	disclaimer?: {
 		label: string;

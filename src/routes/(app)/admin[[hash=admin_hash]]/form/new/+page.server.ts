@@ -27,7 +27,7 @@ export const actions: Actions = {
 				title: z.string().trim().min(1).max(MAX_NAME_LIMIT),
 				target: z.string().trim().min(1).max(100),
 				subject: z.string().trim().min(1).max(100),
-				content: z.string().trim().min(1).max(MAX_CONTENT_LIMIT).optional(),
+				content: z.string().trim().min(1).max(MAX_CONTENT_LIMIT).default(''),
 				displayFromField: z.boolean({ coerce: true }).default(false),
 				prefillWithSession: z.boolean({ coerce: true }).default(false),
 				disclaimer: z

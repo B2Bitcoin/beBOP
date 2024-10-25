@@ -41,7 +41,7 @@ export const actions = {
 		const parsed = z
 			.object({
 				title: z.string().min(1).max(MAX_NAME_LIMIT),
-				content: z.string().max(MAX_CONTENT_LIMIT).optional(),
+				content: z.string().max(MAX_CONTENT_LIMIT).default(''),
 				target: z.string().max(100),
 				subject: z.string().max(100),
 				displayFromField: z.boolean({ coerce: true }).default(false),
