@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { SATOSHIS_PER_BTC, type Currency } from '$lib/types/Currency';
+	import {
+		FRACTION_DIGITS_PER_CURRENCY,
+		SATOSHIS_PER_BTC,
+		type Currency
+	} from '$lib/types/Currency';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import IconBitcoin from './icons/IconBitcoin.svelte';
 	import IconSatoshi from './icons/IconSatoshi.svelte';
@@ -62,7 +66,10 @@
 							? undefined
 							: displayedCurrency,
 					maximumFractionDigits: displayedCurrency === 'BTC' ? 8 : 2,
-					minimumFractionDigits: 0
+					minimumFractionDigits:
+						!Number.isInteger(displayedAmount) && displayedCurrency !== 'BTC'
+							? FRACTION_DIGITS_PER_CURRENCY[displayedCurrency]
+							: 0
 			  }) + (displayedCurrency === 'SAT' && !short ? ' SAT' : '');
 </script>
 
