@@ -2,7 +2,7 @@ import { MAX_CONTENT_LIMIT } from '$lib/types/CmsPage';
 import { z } from 'zod';
 
 export const contactFormTranslatableSchema = {
-	content: z.string().max(MAX_CONTENT_LIMIT),
+	content: z.string().max(MAX_CONTENT_LIMIT).optional(),
 	subject: z.string().max(100),
 	disclaimer: z
 		.object({
