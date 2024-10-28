@@ -31,13 +31,21 @@ export const load = async ({ url }) => {
 
 	if (productId) {
 		query._id = productId;
-	} else if (productName) {
+	}
+
+	if (productName) {
 		query.name = productName;
-	} else if (productType) {
+	}
+
+	if (productType) {
 		query.type = productType as 'resource' | 'donation' | 'subscription';
-	} else if (productAttribute) {
+	}
+
+	if (productAttribute) {
 		query[productAttribute] = true;
-	} else if (stock) {
+	}
+
+	if (stock) {
 		switch (stock) {
 			case 'no-stock-management':
 				query.stock = { $exists: false };
@@ -47,10 +55,10 @@ export const load = async ({ url }) => {
 				break;
 			case 'no-stock':
 				query['stock.available'] = { $lte: 0 };
-
 				break;
 		}
 	}
+
 	const products = await collections.products
 		.find(query)
 		.skip(skip)
