@@ -5,18 +5,54 @@ import { set } from 'lodash-es';
 import type { Actions } from './$types';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { pojo } from '$lib/server/pojo';
-import { PRODUCT_PAGINATION_LIMIT } from '$lib/types/Product';
+import { type Product, PRODUCT_PAGINATION_LIMIT } from '$lib/types/Product';
 import { picturesForProducts } from '$lib/server/picture';
+import type { Filter } from 'mongodb';
 
 export const load = async ({ url }) => {
 	const querySchema = z.object({
-		skip: z.number({ coerce: true }).int().min(0).optional().default(0)
+		skip: z.number({ coerce: true }).int().min(0).optional().default(0),
+		productId: z.string().optional(),
+		productName: z.string().optional(),
+		productType: z.enum(['' as const, ...['resource', 'donation', 'subscription']]).optional(),
+		productAttribute: z
+			.enum([
+				'' as const,
+				...['shipping', 'standalone', 'payWhatYouWant', 'free', 'isTicket', 'preorder']
+			])
+			.optional(),
+		stock: z.enum(['' as const, ...['no-stock-management', 'with-stock', 'no-stock']]).optional()
 	});
 	const searchParams = Object.fromEntries(url.searchParams.entries());
 	const result = querySchema.parse(searchParams);
-	const { skip } = result;
+	const { skip, productId, productName, productType, productAttribute, stock } = result;
+
+	const query: Filter<Product> = {};
+
+	if (productId) {
+		query._id = productId;
+	} else if (productName) {
+		query.name = productName;
+	} else if (productType) {
+		query.type = productType as 'resource' | 'donation' | 'subscription';
+	} else if (productAttribute) {
+		query[productAttribute] = true;
+	} else if (stock) {
+		switch (stock) {
+			case 'no-stock-management':
+				query.stock = { $exists: false };
+				break;
+			case 'with-stock':
+				query['stock.available'] = { $gt: 0 };
+				break;
+			case 'no-stock':
+				query['stock.available'] = { $lte: 0 };
+
+				break;
+		}
+	}
 	const products = await collections.products
-		.find({})
+		.find(query)
 		.skip(skip)
 		.limit(PRODUCT_PAGINATION_LIMIT)
 		.sort({ updatedAt: -1 })
