@@ -56,7 +56,7 @@
 				{product.shortDescription}
 			</p>
 		</a>
-		{#if canAddToCart}
+		{#if canAddToCart && !product.hasSellDisclaimer}
 			<div class="flex flex-row items-end justify-end">
 				<AddToCart {product} picture={pictures[0]} class="btn cartPreview-mainCTA" />
 			</div>

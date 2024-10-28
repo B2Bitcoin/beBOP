@@ -47,7 +47,7 @@
 			<a href="/product/{product._id}">
 				<p class="mb-4">{product.shortDescription}</p>
 			</a>
-			{#if canAddToCart}
+			{#if canAddToCart && !product.hasSellDisclaimer}
 				<div class="relative">
 					<div class="flex flex-wrap gap-6">
 						<AddToCart

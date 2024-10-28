@@ -286,6 +286,7 @@ export async function cmsFromContent(
 				| 'tagIds'
 				| 'alias'
 				| 'isTicket'
+				| 'hasSellDisclaimer'
 			>
 		>({
 			price: 1,
@@ -301,7 +302,8 @@ export async function cmsFromContent(
 			stock: 1,
 			tagIds: 1,
 			alias: 1,
-			isTicket: 1
+			isTicket: 1,
+			hasSellDisclaimer: 1
 		})
 		.toArray();
 	const challenges = await collections.challenges
