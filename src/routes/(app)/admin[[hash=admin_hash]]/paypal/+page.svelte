@@ -14,7 +14,7 @@
 
 	<label class="form-label">
 		Secret
-		<input class="form-input" type="text" name="secret" value={data.paypal.secret} required />
+		<input class="form-input" type="password" name="secret" value={data.paypal.secret} required />
 	</label>
 
 	<label class="checkbox-label">
