@@ -7,7 +7,7 @@ export const contactFormTranslatableSchema = {
 	disclaimer: z
 		.object({
 			label: z.string().min(1).max(100).trim(),
-			content: z.string().min(1).max(MAX_CONTENT_LIMIT).trim(),
+			content: z.string().max(MAX_CONTENT_LIMIT).trim(),
 			checkboxLabel: z.string().min(1).max(100).trim()
 		})
 		.optional()
