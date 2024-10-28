@@ -215,7 +215,16 @@ export const actions: Actions = {
 							(variation) => variation.name && variation.value
 						),
 						variationLabels: cleanedVariationLabels
-					})
+					}),
+					hasSellDisclaimer: parsed.hasSellDisclaimer,
+					...(parsed.hasSellDisclaimer &&
+						parsed.sellDisclaimerTitle &&
+						parsed.sellDisclaimerReason && {
+							sellDisclaimer: {
+								title: parsed.sellDisclaimerTitle,
+								reason: parsed.sellDisclaimerReason
+							}
+						})
 				},
 				$unset: {
 					...(!parsed.customPreorderText && { customPreorderText: '' }),
@@ -226,7 +235,8 @@ export const actions: Actions = {
 					...(!parsed.depositPercentage && { deposit: '' }),
 					...(!parsed.vatProfileId && { vatProfileId: '' }),
 					...(!parsed.restrictPaymentMethods && { paymentMethods: '' }),
-					...(!hasVariations && { variations: '', variationLabels: '' })
+					...(!hasVariations && { variations: '', variationLabels: '' }),
+					...(!parsed.hasSellDisclaimer && { sellDisclaimer: '' })
 				}
 			}
 		);

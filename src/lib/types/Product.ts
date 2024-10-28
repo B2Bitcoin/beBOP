@@ -25,6 +25,10 @@ export interface ProductTranslatableFields {
 	};
 	contentBefore?: string;
 	contentAfter?: string;
+	sellDisclaimer?: {
+		title: string;
+		reason: string;
+	};
 }
 
 export interface Product extends Timestamps, ProductTranslatableFields {
@@ -84,6 +88,7 @@ export interface Product extends Timestamps, ProductTranslatableFields {
 		value: string;
 		price?: number;
 	}[];
+	hasSellDisclaimer?: boolean;
 }
 
 export type BasicProductFrontend = Pick<Product, '_id' | 'price' | 'name' | 'variationLabels'>;

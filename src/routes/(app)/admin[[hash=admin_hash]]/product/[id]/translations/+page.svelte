@@ -134,5 +134,30 @@
 		</div>
 	{/each}
 
+	{#if data.product.hasSellDisclaimer}
+		<label class="form-label">
+			Disclaimer title
+			<input
+				name="sellDisclaimer.title"
+				type="text"
+				maxlength="60"
+				value={data.product.translations?.[language]?.sellDisclaimer?.title || ''}
+				placeholder={data.product.sellDisclaimer?.title ?? ''}
+				class="form-input"
+			/>
+		</label>
+		<label class="form-label">
+			Disclaimer description
+			<textarea
+				name="sellDisclaimer.reason"
+				cols="30"
+				rows="2"
+				maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+				value={data.product.translations?.[language]?.sellDisclaimer?.reason || ''}
+				placeholder={data.product.sellDisclaimer?.reason ?? ''}
+				class="form-input"
+			/>
+		</label>
+	{/if}
 	<button class="btn btn-black self-start" type="submit">Save</button>
 </form>

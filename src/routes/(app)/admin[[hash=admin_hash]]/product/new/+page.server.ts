@@ -217,7 +217,16 @@ export const actions: Actions = {
 							parsed.variationLabels && {
 								variationLabels: cleanedVariationLabels
 							}),
-						...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
+						...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) }),
+						hasSellDisclaimer: parsed.hasSellDisclaimer,
+						...(parsed.hasSellDisclaimer &&
+							parsed.sellDisclaimerTitle &&
+							parsed.sellDisclaimerReason && {
+								sellDisclaimer: {
+									title: parsed.sellDisclaimerTitle,
+									reason: parsed.sellDisclaimerReason
+								}
+							})
 					},
 					{ session }
 				);
