@@ -287,7 +287,36 @@ export const actions: Actions = {
 		}
 
 		const insertedS3Keys: string[] = [];
+		const variationsParsedPrice = parsed.variations.map((variation) => ({
+			...variation,
+			price: Math.max(parsePriceAmount(variation.price, parsed.priceCurrency), 0)
+		}));
+		const cleanedVariationLabels: {
+			names: Record<string, string>;
+			values: Record<string, Record<string, string>>;
+		} = {
+			names: {},
+			values: {}
+		};
+		for (const key in parsed.variationLabels?.names) {
+			const nameValue = parsed.variationLabels.names[key];
 
+			if (nameValue.trim() !== '') {
+				cleanedVariationLabels.names[key] = nameValue;
+			}
+		}
+		for (const key in parsed.variationLabels?.values) {
+			const valueEntries = parsed.variationLabels.values[key];
+			cleanedVariationLabels.values[key] = {};
+			for (const valueKey in valueEntries) {
+				if (valueEntries[valueKey].trim() !== '') {
+					cleanedVariationLabels.values[key][valueKey] = valueEntries[valueKey];
+				}
+			}
+			if (Object.keys(cleanedVariationLabels.values[key]).length === 0) {
+				delete cleanedVariationLabels.values[key];
+			}
+		}
 		await withTransaction(async (session) => {
 			await collections.products.insertOne(
 				{
@@ -352,6 +381,27 @@ export const actions: Actions = {
 					}),
 					tagIds: product.tagIds,
 					cta: product.cta,
+					...(parsed.standalone && { hasVariations: parsed.hasVariations }),
+					...(parsed.standalone &&
+						parsed.hasVariations && {
+							variations: variationsParsedPrice.filter(
+								(variation) => variation.name && variation.value
+							)
+						}),
+					...(parsed.standalone &&
+						parsed.hasVariations &&
+						parsed.variationLabels && {
+							variationLabels: cleanedVariationLabels
+						}),
+					hasSellDisclaimer: parsed.hasSellDisclaimer,
+					...(parsed.hasSellDisclaimer &&
+						parsed.sellDisclaimerTitle &&
+						parsed.sellDisclaimerReason && {
+							sellDisclaimer: {
+								title: parsed.sellDisclaimerTitle,
+								reason: parsed.sellDisclaimerReason
+							}
+						}),
 					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
 				},
 				{ session }
