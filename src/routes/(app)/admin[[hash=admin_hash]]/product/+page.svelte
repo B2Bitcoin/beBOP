@@ -149,7 +149,7 @@
 			</select>
 		</label>
 		<label class="form-label w-auto mt-8 flex flex-row">
-			<input type="submit" value="🔍" class="btn btn-gray" />
+			<input type="submit" value="🔍" class="btn btn-gray" on:click={() => (next = 0)} />
 			<a href="/admin/product" class="btn btn-gray">🧹</a>
 		</label>
 	</div>

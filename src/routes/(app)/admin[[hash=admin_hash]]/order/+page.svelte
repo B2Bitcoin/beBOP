@@ -37,7 +37,10 @@
 			<select name="paymentMethod" class="form-input" disabled={data.paymentMethods.length === 0}>
 				<option></option>
 				{#each data.paymentMethods as paymentMethod}
-					<option value={paymentMethod}>
+					<option
+						value={paymentMethod}
+						selected={$page.url.searchParams.get('paymentMethod') === paymentMethod}
+					>
 						{t('checkout.paymentMethod.' + paymentMethod)}
 					</option>
 				{/each}
@@ -74,7 +77,7 @@
 			<input class="form-input" type="text" name="npub" placeholder="search order npub" />
 		</label>
 		<label class="form-label w-auto mt-8 flex flex-row">
-			<input type="submit" value="🔍" class="btn btn-gray" />
+			<input type="submit" value="🔍" class="btn btn-gray" on:click={() => (next = 0)} />
 			<a href="/admin/order" class="btn btn-gray">🧹</a>
 		</label>
 	</div>

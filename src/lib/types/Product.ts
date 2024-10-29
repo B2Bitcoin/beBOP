@@ -95,7 +95,7 @@ export const MAX_DESCRIPTION_LIMIT = 10000;
 
 export const DEFAULT_MAX_QUANTITY_PER_ORDER = 10;
 export const POS_PRODUCT_PAGINATION = 10;
-export const PRODUCT_PAGINATION_LIMIT = 25;
+export const PRODUCT_PAGINATION_LIMIT = 5;
 
 export function isPreorder(
 	availableDate: Date | undefined,
