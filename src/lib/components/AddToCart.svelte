@@ -22,6 +22,7 @@
 		| 'shipping'
 		| 'type'
 		| 'stock'
+		| 'hasSellDisclaimer'
 	>;
 	const widget = {};
 
@@ -59,7 +60,7 @@
 		};
 	}}
 >
-	{#if hasStock}
+	{#if hasStock && !product.hasSellDisclaimer}
 		<button
 			type="submit"
 			disabled={loading}
