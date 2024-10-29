@@ -1,3 +1,3 @@
 export function escapeForRegex(value: string) {
-	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Échappe tous les caractères spéciaux
+	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); //Escape all special characters
 }
