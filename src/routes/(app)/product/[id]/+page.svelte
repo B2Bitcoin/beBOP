@@ -514,7 +514,7 @@
 						{#if !cta.fallback}
 							<a
 								href={cta.href}
-								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-word text-center {!cta.label.includes(
+								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-words text-center {!cta.label.includes(
 									' '
 								)
 									? 'break-all'
