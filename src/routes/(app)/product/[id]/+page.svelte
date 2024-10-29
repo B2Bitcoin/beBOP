@@ -525,7 +525,7 @@
 						{:else if !canBuy || amountAvailable <= 0 || (data.cartMaxSeparateItems && data.cart?.length === data.cartMaxSeparateItems)}
 							<a
 								href={cta.href}
-								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] text-center hyphens-auto break-words {!cta.label.includes(
+								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-words hyphens-auto text-center {!cta.label.includes(
 									' '
 								)
 									? 'break-all'
