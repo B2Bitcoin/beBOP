@@ -28,17 +28,23 @@ export async function load({ url, locals }) {
 
 	if (orderNumber) {
 		query.number = orderNumber;
-	} else if (productAlias) {
+	}
+	if (productAlias) {
 		query['items.product.alias'] = productAlias;
-	} else if (paymentMethod) {
+	}
+	if (paymentMethod) {
 		query['payments.method'] = paymentMethod;
-	} else if (country) {
+	}
+	if (country) {
 		query['shippingAddress.country'] = country;
-	} else if (email) {
+	}
+	if (email) {
 		query['user.email'] = email;
-	} else if (npub) {
+	}
+	if (npub) {
 		query['user.npub'] = npub;
-	} else if (label) {
+	}
+	if (label) {
 		query['orderLabelIds'] = label;
 	}
 
