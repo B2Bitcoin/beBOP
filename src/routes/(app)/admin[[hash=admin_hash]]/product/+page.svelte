@@ -3,6 +3,7 @@
 	import { downloadFile } from '$lib/utils/downloadFile.js';
 	import { page } from '$app/stores';
 	import { PRODUCT_PAGINATION_LIMIT } from '$lib/types/Product.js';
+	import { upperFirst } from '$lib/utils/upperFirst.js';
 	export let data;
 
 	let eshopVisible = data.productActionSettings.eShop.visible;
@@ -105,6 +106,53 @@
 <h1 class="text-3xl">List of products</h1>
 
 <form class="flex flex-col" method="GET">
+	<div class="gap-4 flex flex-col md:flex-row mb-4">
+		<label class="form-label w-[15em]">
+			Product Id
+			<input class="form-input" type="text" name="productId" placeholder="search product by id" />
+		</label>
+		<label class="form-label w-[15em]">
+			Product Name
+			<input
+				class="form-input"
+				type="text"
+				name="productName"
+				value={$page.url.searchParams.get('productName')}
+				placeholder="search product by name"
+			/>
+		</label>
+		<label class="form-label w-[15em]">
+			Product Type
+			<select name="productType" class="form-input">
+				<option></option>
+				{#each ['resource', 'subscription', 'donation'] as type}
+					<option value={type}>{upperFirst(type)}</option>
+				{/each}
+			</select>
+		</label>
+		<label class="form-label w-[15em]">
+			Product Attribute
+			<select name="productAttribute" class="form-input">
+				<option></option>
+				{#each ['shipping', 'standalone', 'payWhatYouWant', 'free', 'isTicket', 'preorder'] as attribute}
+					<option value={attribute}>{upperFirst(attribute)}</option>
+				{/each}
+			</select>
+		</label>
+		<label class="form-label w-[15em]">
+			Stock
+			<select name="stock" class="form-input">
+				<option></option>
+				{#each ['no-stock-management', 'with-stock', 'no-stock'] as attribute}
+					<option value={attribute}>{upperFirst(attribute)}</option>
+				{/each}
+			</select>
+		</label>
+		<label class="form-label w-auto mt-8 flex flex-row">
+			<input type="submit" value="🔍" class="btn btn-gray" />
+			<a href="/admin/product" class="btn btn-gray">🧹</a>
+		</label>
+	</div>
 	<div class="flex flex-row flex-wrap gap-6">
 		{#each data.products as product}
 			<ProductItem {product} picture={picturesByProduct[product._id]} isAdmin />
