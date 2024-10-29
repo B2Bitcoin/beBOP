@@ -37,19 +37,24 @@ const publicS3Client =
 		  });
 
 if (s3client) {
-	const buckets = await s3client.listBuckets({});
+	try {
+		console.log('Checking S3 bucket...');
+		const buckets = await s3client.listBuckets({});
 
-	if (!buckets.Buckets?.some((b) => b.Name === S3_BUCKET)) {
-		console.log('Creating S3 bucket...');
-		await s3client.send(
-			new AWS.CreateBucketCommand({
-				Bucket: S3_BUCKET,
-				CreateBucketConfiguration: {
-					LocationConstraint: S3_REGION
-				}
-			})
-		);
-		console.log('S3 bucket created');
+		if (!buckets.Buckets?.some((b) => b.Name === S3_BUCKET)) {
+			console.log('Creating S3 bucket...');
+			await s3client.send(
+				new AWS.CreateBucketCommand({
+					Bucket: S3_BUCKET,
+					CreateBucketConfiguration: {
+						LocationConstraint: S3_REGION
+					}
+				})
+			);
+			console.log('S3 bucket created');
+		}
+	} catch (err) {
+		console.error('S3 bucket error: ', err);
 	}
 
 	await s3client
