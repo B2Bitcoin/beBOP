@@ -487,7 +487,8 @@
 			"card": "Pagado con: tarjeta bancaria",
 			"free": "No se pagó nada",
 			"lightning": "Pagado con: transacción Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento del pedido)",
-			"point-of-sale": "Pagado en tienda"
+			"point-of-sale": "Pagado en tienda",
+			"paypal": "Pagado con: paypal"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Pagado con: transferencia bancaria verificada",

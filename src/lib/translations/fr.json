@@ -487,7 +487,8 @@
 			"card": "Payé avec : carte bancaire",
 			"free": "N'a rien payé",
 			"lightning": "Payé avec : Transaction Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
-			"point-of-sale": "Payé en magasin"
+			"point-of-sale": "Payé en magasin",
+			"paypal": "Payé avec: paypal"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Payé avec : virement bancaire vérifié",
