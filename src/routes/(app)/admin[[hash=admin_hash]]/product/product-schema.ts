@@ -82,5 +82,8 @@ export const productBaseSchema = () => ({
 	contentBefore: z.string().max(MAX_CONTENT_LIMIT).default(''),
 	contentAfter: z.string().max(MAX_CONTENT_LIMIT).default(''),
 	hideContentBefore: z.boolean({ coerce: true }).default(false),
-	hideContentAfter: z.boolean({ coerce: true }).default(false)
+	hideContentAfter: z.boolean({ coerce: true }).default(false),
+	hasSellDisclaimer: z.boolean({ coerce: true }).default(false),
+	sellDisclaimerTitle: z.string().trim().max(60).optional(),
+	sellDisclaimerReason: z.string().trim().max(10_000).optional()
 });

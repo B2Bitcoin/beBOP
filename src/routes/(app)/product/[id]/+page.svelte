@@ -84,7 +84,7 @@
 	}
 
 	let PWYWInput: HTMLInputElement | null = null;
-
+	let acceptRestriction = data.product.hasSellDisclaimer ? false : true;
 	function checkPWYW() {
 		if (!PWYWInput) {
 			return true;
@@ -471,12 +471,27 @@
 									{t('cart.reachedMaxPerLine')}
 								</p>
 							{:else if data.showCheckoutButton}
-								<button class="btn body-cta body-mainCTA" disabled={loading}
+								{#if data.product.hasSellDisclaimer && data.product.sellDisclaimer}
+									<p class="text-xl font-bold">{data.product.sellDisclaimer.title}</p>
+									<p>{data.product.sellDisclaimer.reason}</p>
+									<label class="checkbox-labe col-span-3">
+										<input
+											type="checkbox"
+											class="form-checkbox"
+											form="checkout"
+											name="acceptRestriction"
+											bind:checked={acceptRestriction}
+											required
+										/>
+										{t('ageWarning.agreement')}
+									</label>
+								{/if}
+								<button class="btn body-cta body-mainCTA" disabled={!acceptRestriction || loading}
 									>{t(`product.cta.${verb}`)}</button
 								>
 								<button
 									formaction="?/addToCart"
-									disabled={loading}
+									disabled={!acceptRestriction || loading}
 									class="btn body-cta body-secondaryCTA"
 								>
 									{t('product.cta.add')}
@@ -484,7 +499,7 @@
 							{:else}
 								<button
 									formaction="?/addToCart"
-									disabled={loading}
+									disabled={!acceptRestriction || loading}
 									class="btn body-cta body-mainCTA"
 								>
 									{t(`product.cta.${verb}`)}

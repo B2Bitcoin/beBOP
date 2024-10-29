@@ -41,6 +41,8 @@ export const load = async ({ params, locals }) => {
 			| 'hasVariations'
 			| 'variations'
 			| 'variationLabels'
+			| 'sellDisclaimer'
+			| 'hasSellDisclaimer'
 		>
 	>(
 		{ _id: params.id },
@@ -79,7 +81,11 @@ export const load = async ({ params, locals }) => {
 				},
 				variations: 1,
 				maximumPrice: 1,
-				mobile: 1
+				mobile: 1,
+				sellDisclaimer: {
+					$ifNull: [`$translations.${locals.language}.sellDisclaimer`, '$sellDisclaimer']
+				},
+				hasSellDisclaimer: 1
 			}
 		}
 	);

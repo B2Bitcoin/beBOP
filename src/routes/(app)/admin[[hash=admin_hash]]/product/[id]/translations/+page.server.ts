@@ -31,10 +31,18 @@ export const actions = {
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
 				...mapObject(pick(productBaseSchema(), keys), (val) => val.optional()),
 				cta: productBaseSchema().cta.optional(),
-				variationLabels: z.object({
-					names: z.record(z.string().trim(), z.string().trim()),
-					values: z.record(z.string().trim(), z.record(z.string().trim(), z.string().trim()))
-				})
+				variationLabels: z
+					.object({
+						names: z.record(z.string().trim(), z.string().trim()),
+						values: z.record(z.string().trim(), z.record(z.string().trim(), z.string().trim()))
+					})
+					.optional(),
+				sellDisclaimer: z
+					.object({
+						title: productBaseSchema().sellDisclaimerTitle.optional(),
+						reason: productBaseSchema().sellDisclaimerReason.optional()
+					})
+					.optional()
 			})
 			.parse(json);
 

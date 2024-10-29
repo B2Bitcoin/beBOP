@@ -71,7 +71,8 @@
 			hideContentAfter: false
 		},
 
-		hasVariations: false
+		hasVariations: false,
+		hasSellDisclaimer: false
 	};
 
 	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
@@ -85,6 +86,8 @@
 	let hasStock = !!product.stock;
 	let allowDeposit = !!product.deposit;
 	let submitting = false;
+	let sellDisclaimerTitle = product.sellDisclaimer?.title || '';
+	let sellDisclaimerReason = product.sellDisclaimer?.reason || '';
 	let files: FileList;
 	let deposit = product.deposit || {
 		percentage: 50,
@@ -610,6 +613,40 @@
 			<button class="btn btn-gray" on:click={() => (variationLines += 1)} type="button"
 				>Add variation
 			</button>
+		{/if}
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				bind:checked={product.hasSellDisclaimer}
+				name="hasSellDisclaimer"
+			/>
+			Sell with disclaimer
+		</label>
+		{#if product.hasSellDisclaimer}
+			<label class="form-label">
+				Disclaimer title
+				<input
+					name="sellDisclaimerTitle"
+					type="text"
+					maxlength="60"
+					value={sellDisclaimerTitle}
+					class="form-input"
+					required
+				/>
+			</label>
+			<label class="form-label">
+				Disclaimer description
+				<textarea
+					name="sellDisclaimerReason"
+					cols="30"
+					rows="2"
+					maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+					value={sellDisclaimerReason}
+					class="form-input"
+					required
+				/>
+			</label>
 		{/if}
 		<label class="form-label">
 			Short description

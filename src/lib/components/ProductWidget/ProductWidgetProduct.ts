@@ -13,4 +13,5 @@ export type ProductWidgetProduct = Pick<
 	| 'actionSettings'
 	| 'stock'
 	| 'isTicket'
+	| 'hasSellDisclaimer'
 >;
