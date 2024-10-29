@@ -514,7 +514,7 @@
 						{#if !cta.fallback}
 							<a
 								href={cta.href}
-								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-words {!cta.label.includes(
+								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-word text-center {!cta.label.includes(
 									' '
 								)
 									? 'break-all'
@@ -525,7 +525,7 @@
 						{:else if !canBuy || amountAvailable <= 0 || (data.cartMaxSeparateItems && data.cart?.length === data.cartMaxSeparateItems)}
 							<a
 								href={cta.href}
-								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-words {!cta.label.includes(
+								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] text-center break-words {!cta.label.includes(
 									' '
 								)
 									? 'break-all'
