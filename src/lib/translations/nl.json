@@ -487,7 +487,8 @@
 			"card": "Betaald met: bankkaart",
 			"free": "Niets betaald",
 			"lightning": "Betaald met: Lightning-transactie (1 {paymentCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
-			"point-of-sale": "Betaald in de winkel"
+			"point-of-sale": "Betaald in de winkel",
+			"paypal": "Betaald met: paypal"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Betaald met: geverifieerde bankoverschrijving",
