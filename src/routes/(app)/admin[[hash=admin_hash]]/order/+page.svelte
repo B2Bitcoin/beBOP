@@ -5,7 +5,7 @@
 	import { useI18n } from '$lib/i18n.js';
 
 	export let data;
-	$: next = 0;
+	let next = 0;
 
 	const { t, countryName, sortedCountryCodes } = useI18n();
 </script>

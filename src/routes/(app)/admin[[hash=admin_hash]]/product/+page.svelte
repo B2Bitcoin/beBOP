@@ -13,7 +13,7 @@
 	let eshopBasket = data.productActionSettings.eShop.canBeAddedToBasket;
 	let retailBasket = data.productActionSettings.retail.canBeAddedToBasket;
 	let nostrBasket = data.productActionSettings.nostr.canBeAddedToBasket;
-	$: next = 0;
+	let next = 0;
 
 	$: picturesByProduct = Object.fromEntries(
 		[...data.pictures].reverse().map((picture) => [picture.productId, picture])
@@ -126,7 +126,9 @@
 			<select name="productType" class="form-input">
 				<option></option>
 				{#each ['resource', 'subscription', 'donation'] as type}
-					<option value={type}>{upperFirst(type)}</option>
+					<option value={type} selected={$page.url.searchParams.get('productType') === type}
+						>{upperFirst(type)}</option
+					>
 				{/each}
 			</select>
 		</label>
@@ -135,7 +137,11 @@
 			<select name="productAttribute" class="form-input">
 				<option></option>
 				{#each ['shipping', 'standalone', 'payWhatYouWant', 'free', 'isTicket', 'preorder'] as attribute}
-					<option value={attribute}>{upperFirst(attribute)}</option>
+					<option
+						value={attribute}
+						selected={$page.url.searchParams.get('productAttribute') === attribute}
+						>{upperFirst(attribute)}</option
+					>
 				{/each}
 			</select>
 		</label>
@@ -143,8 +149,10 @@
 			Stock
 			<select name="stock" class="form-input">
 				<option></option>
-				{#each ['no-stock-management', 'with-stock', 'no-stock'] as attribute}
-					<option value={attribute}>{upperFirst(attribute)}</option>
+				{#each ['no-stock-management', 'with-stock', 'no-stock'] as stock}
+					<option value={stock} selected={$page.url.searchParams.get('stock') === stock}
+						>{upperFirst(stock)}</option
+					>
 				{/each}
 			</select>
 		</label>
