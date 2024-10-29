@@ -8,6 +8,7 @@ import { pojo } from '$lib/server/pojo';
 import { type Product, PRODUCT_PAGINATION_LIMIT } from '$lib/types/Product';
 import { picturesForProducts } from '$lib/server/picture';
 import type { Filter } from 'mongodb';
+import { escapeForRegex } from '$lib/utils/escapeForRegex';
 
 export const load = async ({ url }) => {
 	const querySchema = z.object({
@@ -34,7 +35,7 @@ export const load = async ({ url }) => {
 	}
 
 	if (productName) {
-		query.name = productName;
+		query.name = { $regex: escapeForRegex(productName), $options: 'i' };
 	}
 
 	if (productType) {
