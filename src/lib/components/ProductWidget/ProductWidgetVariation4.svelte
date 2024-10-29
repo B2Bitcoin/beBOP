@@ -56,7 +56,7 @@
 			<span class="font-semibold">{t('product.vatExcluded')}</span>
 		</div>
 
-		{#if canAddToCart && !product.hasSellDisclaimer}
+		{#if canAddToCart}
 			<div class="flex flex-row items-end justify-end">
 				<AddToCart {product} picture={pictures[0]} class="btn cartPreview-mainCTA" />
 			</div>
