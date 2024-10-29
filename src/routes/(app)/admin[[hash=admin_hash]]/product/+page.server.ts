@@ -34,7 +34,7 @@ export const load = async ({ url }) => {
 	}
 
 	if (productName) {
-		query.name = productName;
+		query.name = { $regex: productName, $options: 'i' };
 	}
 
 	if (productType) {
