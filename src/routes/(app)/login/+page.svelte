@@ -25,13 +25,13 @@
 		{#if data.userId}
 			<li class="flex gap-2 items-center">
 				{t('login.session.userId', { userId: data.userId })}
-				<form action="?/clearUserId" class="contents hidden" use:enhance method="post">
+				<form action="?/clearUserId" class="contents" use:enhance method="post">
 					<button class="text-red-500 hover:underline"><IconTrash /></button>
 				</form>
 			</li>
 		{/if}
 		{#if data.email && !data.emailFromSso}
-			<li class="flex gap-2 items-center">
+			<li class="flex gap-2 items-center break-words break-all">
 				{t('login.session.email', { email: data.email })}
 				<form action="?/clearEmail" class="contents" use:enhance method="post">
 					<button class="text-red-500 hover:underline"><IconTrash /></button>
@@ -39,7 +39,7 @@
 			</li>
 		{/if}
 		{#if data.npub}
-			<li class="flex gap-2 items-center">
+			<li class="flex gap-2 items-center break-words break-all">
 				{t('login.session.npub', { npub: data.npub })}
 				<form action="?/clearNpub" class="contents" use:enhance method="post">
 					<button class="text-red-500 hover:underline"><IconTrash /></button>
@@ -72,7 +72,7 @@
 	{/if}
 	{#if data.emailToLogin || data.npubToLogin}
 		<form method="post" action="?/validate&token={$page.url.searchParams.get('token')}">
-			<button class="btn btn-blue text-white">
+			<button class="btn btn-blue text-white break-words break-all h-auto">
 				{t('login.cta.authenticateAs', { as: data.emailToLogin || data.npubToLogin })}
 			</button>
 		</form>
