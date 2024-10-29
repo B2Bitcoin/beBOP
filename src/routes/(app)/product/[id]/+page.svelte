@@ -514,12 +514,23 @@
 						{#if !cta.fallback}
 							<a
 								href={cta.href}
-								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-words break-all"
+								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-words {!cta.label.includes(
+									' '
+								)
+									? 'break-all'
+									: ''} "
 							>
 								{cta.label}
 							</a>
 						{:else if !canBuy || amountAvailable <= 0 || (data.cartMaxSeparateItems && data.cart?.length === data.cartMaxSeparateItems)}
-							<a href={cta.href} class="btn body-cta body-secondaryCTA">
+							<a
+								href={cta.href}
+								class="btn body-cta body-secondaryCTA h-auto min-h-[2em] break-words {!cta.label.includes(
+									' '
+								)
+									? 'break-all'
+									: ''} "
+							>
 								{cta.label}
 							</a>
 						{/if}

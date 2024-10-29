@@ -943,7 +943,7 @@
 						type="checkbox"
 						class="form-checkbox"
 						name="cta[{i}].fallback"
-						bind:checked={link.fallback}
+						checked={link.fallback}
 					/> Show only if Add to cart / Order button aren't available
 				</label>
 				<button
