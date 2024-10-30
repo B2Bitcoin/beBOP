@@ -998,7 +998,6 @@
 								form="checkout"
 								name="offerOrder"
 								bind:checked={offerOrder}
-								required
 							/>
 							{t('pos.offerOrder')}
 						</label>
