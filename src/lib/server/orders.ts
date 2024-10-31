@@ -1306,10 +1306,11 @@ async function generatePaypalPaymentInfo(params: {
 function paymentMethodExpiration(paymentMethod: PaymentMethod, opts?: { paymentTimeout?: number }) {
 	return paymentMethod === 'point-of-sale' || paymentMethod === 'bank-transfer'
 		? undefined
-		: (paymentMethod === 'lightning' && isPhoenixdConfigured() && opts?.paymentTimeout) ||
-		  runtimeConfig.desiredPaymentTimeout > 60
+		: paymentMethod === 'lightning' &&
+		  isPhoenixdConfigured() &&
+		  (opts?.paymentTimeout ?? runtimeConfig.desiredPaymentTimeout) > 60
 		? addHours(new Date(), 1)
-		: addMinutes(new Date(), opts?.paymentTimeout || runtimeConfig.desiredPaymentTimeout);
+		: addMinutes(new Date(), opts?.paymentTimeout ?? runtimeConfig.desiredPaymentTimeout);
 }
 
 function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
