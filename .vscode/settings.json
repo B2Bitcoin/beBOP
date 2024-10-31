@@ -12,7 +12,12 @@
 	},
 	"githubPullRequests.ignoredPullRequestBranches": ["main", "main"],
 	"i18n-ally.keystyle": "nested",
-	"i18n-ally.localesPaths": ["src/lib/translations"],
+	"i18n-ally.localesPaths": [
+		"src/lib/translations",
+		"src/routes/script/language",
+		"src/routes/(app)/admin[[hash=admin_hash]]/language",
+		"static/tinymce/plugins/help/js/i18n"
+	],
 	"i18n-ally.sourceLanguage": "en",
 	"i18n-ally.tabStyle": "tab",
 	"i18n-ally.sortKeys": true,
