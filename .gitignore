@@ -11,4 +11,3 @@ build.zip
 # Copied in vite.config.ts
 static/tinymce
 lib/utils/timeZoneOffset.ts
-.vscode/settings.json
