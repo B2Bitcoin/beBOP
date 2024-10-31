@@ -159,6 +159,7 @@
 		(discountType === 'percentage' && discountAmount <= 100);
 	let showBillingInfo = false;
 	let isProfessionalOrder = false;
+	let changePaymentTimeOut = false;
 </script>
 
 <main class="mx-auto max-w-7xl py-10 px-6 body-mainPlan">
@@ -493,6 +494,30 @@
 							{#if 0}
 								<a href="/connect" class="underline body-hyperlink"> Connect another wallet </a>
 							{/if}
+						</div>
+					</label>
+				{/if}
+				{#if paymentMethod !== 'point-of-sale' && paymentMethod !== 'bank-transfer'}
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							name="changePaymentTimeOut"
+							class="form-checkbox"
+							bind:checked={changePaymentTimeOut}
+						/>
+						{t('checkout.changePaymentExpiration')}
+					</label>
+					<label class="form-label col-span-6">
+						<div class="grid grid-cols-2 gap-4 items-center">
+							<input
+								type="number"
+								name="paymentTimeOut"
+								class="form-input"
+								min="1"
+								value={data.desiredPaymentTimeout}
+								disabled={!changePaymentTimeOut}
+								required={changePaymentTimeOut}
+							/>
 						</div>
 					</label>
 				{/if}

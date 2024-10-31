@@ -221,70 +221,70 @@ export async function onOrderPayment(
 					},
 					...(payment.currencySnapshot.secondary &&
 						order.currencySnapshot.secondary && {
-							'payments.$.currencySnapshot.secondary.previouslyPaid': {
-								currency: payment.currencySnapshot.secondary.price.currency,
-								amount: sumCurrency(
-									payment.currencySnapshot.secondary.price.currency,
-									filterUndef(
-										order.payments
-											.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt < paidAt)
-											.map((p) => p.currencySnapshot.secondary?.price)
-									)
+						'payments.$.currencySnapshot.secondary.previouslyPaid': {
+							currency: payment.currencySnapshot.secondary.price.currency,
+							amount: sumCurrency(
+								payment.currencySnapshot.secondary.price.currency,
+								filterUndef(
+									order.payments
+										.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt < paidAt)
+										.map((p) => p.currencySnapshot.secondary?.price)
 								)
-							},
-							'payments.$.currencySnapshot.secondary.remainingToPay': {
-								currency: payment.currencySnapshot.secondary.price.currency,
-								amount: sumCurrency(payment.currencySnapshot.secondary.price.currency, [
-									order.currencySnapshot.secondary.totalPrice,
-									...filterUndef(
-										order.payments
-											.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
-											.map((p) => p.currencySnapshot.secondary?.price)
-									).map((p) => ({ currency: p.currency, amount: -p.amount }))
-								])
-							},
-							'payments.$.currencySnapshot.secondary.received': {
-								currency: payment.currencySnapshot.secondary.price.currency,
-								amount: toCurrency(
-									payment.currencySnapshot.secondary.price.currency,
-									received.amount,
-									received.currency
-								)
-							}
-						}),
+							)
+						},
+						'payments.$.currencySnapshot.secondary.remainingToPay': {
+							currency: payment.currencySnapshot.secondary.price.currency,
+							amount: sumCurrency(payment.currencySnapshot.secondary.price.currency, [
+								order.currencySnapshot.secondary.totalPrice,
+								...filterUndef(
+									order.payments
+										.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+										.map((p) => p.currencySnapshot.secondary?.price)
+								).map((p) => ({ currency: p.currency, amount: -p.amount }))
+							])
+						},
+						'payments.$.currencySnapshot.secondary.received': {
+							currency: payment.currencySnapshot.secondary.price.currency,
+							amount: toCurrency(
+								payment.currencySnapshot.secondary.price.currency,
+								received.amount,
+								received.currency
+							)
+						}
+					}),
 					...(payment.currencySnapshot.accounting &&
 						order.currencySnapshot.accounting && {
-							'payments.$.currencySnapshot.accounting.previouslyPaid': {
-								currency: payment.currencySnapshot.accounting.price.currency,
-								amount: sumCurrency(
-									payment.currencySnapshot.accounting.price.currency,
-									filterUndef(
-										order.payments
-											.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt < paidAt)
-											.map((p) => p.currencySnapshot.accounting?.price)
-									)
+						'payments.$.currencySnapshot.accounting.previouslyPaid': {
+							currency: payment.currencySnapshot.accounting.price.currency,
+							amount: sumCurrency(
+								payment.currencySnapshot.accounting.price.currency,
+								filterUndef(
+									order.payments
+										.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt < paidAt)
+										.map((p) => p.currencySnapshot.accounting?.price)
 								)
-							},
-							'payments.$.currencySnapshot.accounting.remainingToPay': {
-								currency: payment.currencySnapshot.accounting.price.currency,
-								amount: sumCurrency(payment.currencySnapshot.accounting.price.currency, [
-									order.currencySnapshot.accounting.totalPrice,
-									...filterUndef(
-										order.payments
-											.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
-											.map((p) => p.currencySnapshot.accounting?.price)
-									).map((p) => ({ currency: p.currency, amount: -p.amount }))
-								])
-							},
-							'payments.$.currencySnapshot.accounting.received': {
-								currency: payment.currencySnapshot.accounting.price.currency,
-								amount: toCurrency(
-									payment.currencySnapshot.accounting.price.currency,
-									received.amount,
-									received.currency
-								)
-							}
-						}),
+							)
+						},
+						'payments.$.currencySnapshot.accounting.remainingToPay': {
+							currency: payment.currencySnapshot.accounting.price.currency,
+							amount: sumCurrency(payment.currencySnapshot.accounting.price.currency, [
+								order.currencySnapshot.accounting.totalPrice,
+								...filterUndef(
+									order.payments
+										.filter((p) => p.status === 'paid' && p.paidAt && p.paidAt <= paidAt)
+										.map((p) => p.currencySnapshot.accounting?.price)
+								).map((p) => ({ currency: p.currency, amount: -p.amount }))
+							])
+						},
+						'payments.$.currencySnapshot.accounting.received': {
+							currency: payment.currencySnapshot.accounting.price.currency,
+							amount: toCurrency(
+								payment.currencySnapshot.accounting.price.currency,
+								received.amount,
+								received.currency
+							)
+						}
+					}),
 					'payments.$.transactions': payment.transactions,
 					'currencySnapshot.main.totalReceived': {
 						amount:
@@ -301,7 +301,7 @@ export async function onOrderPayment(
 							amount:
 								toCurrency(
 									order.currencySnapshot.secondary?.totalReceived?.currency ??
-										runtimeConfig.secondaryCurrency,
+									runtimeConfig.secondaryCurrency,
 									received.amount,
 									received.currency
 								) + (order.currencySnapshot.secondary?.totalReceived?.amount ?? 0),
@@ -314,7 +314,7 @@ export async function onOrderPayment(
 						amount:
 							toCurrency(
 								order.currencySnapshot.priceReference.totalReceived?.currency ??
-									runtimeConfig.priceReferenceCurrency,
+								runtimeConfig.priceReferenceCurrency,
 								received.amount,
 								received.currency
 							) + (order.currencySnapshot.priceReference.totalReceived?.amount ?? 0),
@@ -366,8 +366,8 @@ export async function onOrderPaymentFailed(
 						(payment) => payment.status === 'canceled' || payment.status === 'expired'
 					) &&
 						order.status === 'pending' && {
-							status: reason
-						})
+						status: reason
+					})
 				}
 			},
 			{ returnDocument: 'after', session }
@@ -476,6 +476,7 @@ export async function createOrder(
 			acceptedExportationAndVATObligation?: boolean;
 		};
 		onLocation?: boolean;
+		paymentTimeOut?: number
 	}
 ): Promise<Order['_id']> {
 	const npubAddress = params.notifications?.paymentStatus?.npub;
@@ -501,13 +502,13 @@ export async function createOrder(
 		throw error(
 			400,
 			'Cart contains products that are not yet available: ' +
-				products
-					.filter(
-						(product) =>
-							product.availableDate && !product.preorder && product.availableDate > new Date()
-					)
-					.map((product) => product.name)
-					.join(', ')
+			products
+				.filter(
+					(product) =>
+						product.availableDate && !product.preorder && product.availableDate > new Date()
+				)
+				.map((product) => product.name)
+				.join(', ')
 		);
 	}
 
@@ -544,8 +545,8 @@ export async function createOrder(
 
 	const vatProfiles = products.some((p) => p.vatProfileId)
 		? await collections.vatProfiles
-				.find({ _id: { $in: filterNullish(products.map((p) => p.vatProfileId)) } })
-				.toArray()
+			.find({ _id: { $in: filterNullish(products.map((p) => p.vatProfileId)) } })
+			.toArray()
 		: [];
 
 	const vatExempted = runtimeConfig.vatExempted || !!params.reasonFreeVat;
@@ -584,19 +585,17 @@ export async function createOrder(
 			createdAt: new Date(),
 			updatedAt: new Date(),
 			subject: 'NEW DISCOUNT',
-			htmlContent: `A discount of ${params?.discount?.amount}${
-				params.discount.type === 'fiat' ? runtimeConfig.mainCurrency : '%'
-			} (${toCurrency(
-				'SAT',
-				priceInfo.discount,
-				priceInfo.currency
-			)} SAT) has been applied to the <a href="${ORIGIN}/order/${orderId}">order ${orderNumber}</a> (${toCurrency(
-				runtimeConfig.mainCurrency,
-				totalSatoshis,
-				'SAT'
-			)}${runtimeConfig.mainCurrency}). The discount was applied by ${
-				params.user.userLogin
-			}. Justification: ${params?.discount?.justification ?? '-'} `,
+			htmlContent: `A discount of ${params?.discount?.amount}${params.discount.type === 'fiat' ? runtimeConfig.mainCurrency : '%'
+				} (${toCurrency(
+					'SAT',
+					priceInfo.discount,
+					priceInfo.currency
+				)} SAT) has been applied to the <a href="${ORIGIN}/order/${orderId}">order ${orderNumber}</a> (${toCurrency(
+					runtimeConfig.mainCurrency,
+					totalSatoshis,
+					'SAT'
+				)}${runtimeConfig.mainCurrency}). The discount was applied by ${params.user.userLogin
+				}. Justification: ${params?.discount?.justification ?? '-'} `,
 			dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
 		});
 	}
@@ -630,8 +629,8 @@ export async function createOrder(
 				throw error(
 					400,
 					'You already have an active subscription for this product: ' +
-						product.name +
-						', which is not due for renewal yet.'
+					product.name +
+					', which is not due for renewal yet.'
 				);
 			}
 		}
@@ -786,8 +785,8 @@ export async function createOrder(
 			...(priceInfo.vat.length && { vat: priceInfo.vat }),
 			...(shippingPrice
 				? {
-						shippingPrice
-				  }
+					shippingPrice
+				}
 				: undefined),
 			payments: [],
 			notifications: {
@@ -811,12 +810,12 @@ export async function createOrder(
 			}),
 			...(discount &&
 				params.discount && {
-					discount: {
-						price: discount,
-						justification: params.discount.justification,
-						type: params.discount.type
-					}
-				}),
+				discount: {
+					price: discount,
+					justification: params.discount.justification,
+					type: params.discount.type
+				}
+			}),
 			...(params.clientIp && { clientIp: params.clientIp }),
 			currencySnapshot: {
 				main: {
@@ -989,7 +988,9 @@ export async function createOrder(
 
 		let orderPayment: OrderPayment | undefined = undefined;
 		if (paymentMethod) {
-			const expiresAt = paymentMethodExpiration(paymentMethod);
+			const expiresAt = params.paymentTimeOut
+				? paymentMethodExpiration(paymentMethod, { paymentTimeout: params.paymentTimeOut })
+				: paymentMethodExpiration(paymentMethod);
 
 			orderPayment = await addOrderPayment(
 				order,
@@ -1175,7 +1176,7 @@ async function generateCardPaymentInfo(params: {
 			body: toUrlEncoded({
 				amount: Math.round(
 					toCurrency(runtimeConfig.stripe.currency, params.toPay.amount, params.toPay.currency) /
-						CURRENCY_UNIT[runtimeConfig.stripe.currency]
+					CURRENCY_UNIT[runtimeConfig.stripe.currency]
 				),
 				currency: runtimeConfig.stripe.currency.toLowerCase(),
 				automatic_payment_methods: {
@@ -1300,14 +1301,14 @@ async function generatePaypalPaymentInfo(params: {
 	};
 }
 
-function paymentMethodExpiration(paymentMethod: PaymentMethod) {
+function paymentMethodExpiration(paymentMethod: PaymentMethod, opts?: { paymentTimeout?: number }) {
 	return paymentMethod === 'point-of-sale' || paymentMethod === 'bank-transfer'
 		? undefined
 		: paymentMethod === 'lightning' &&
-		  isPhoenixdConfigured() &&
-		  runtimeConfig.desiredPaymentTimeout > 60
-		? addHours(new Date(), 1)
-		: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
+			isPhoenixdConfigured() &&
+			opts?.paymentTimeout || runtimeConfig.desiredPaymentTimeout > 60
+			? addHours(new Date(), 1)
+			: addMinutes(new Date(), opts?.paymentTimeout || runtimeConfig.desiredPaymentTimeout);
 }
 
 function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
@@ -1385,12 +1386,12 @@ export async function addOrderPayment(
 
 	const priceToPay =
 		toCurrency(mainCurrency, price.amount, price.currency) <=
-		orderAmountWithNoPaymentsCreated(order)
+			orderAmountWithNoPaymentsCreated(order)
 			? price
 			: {
-					amount: orderAmountWithNoPaymentsCreated(order),
-					currency: mainCurrency
-			  };
+				amount: orderAmountWithNoPaymentsCreated(order),
+				currency: mainCurrency
+			};
 
 	if (paymentMethod !== 'free' && priceToPay.amount < CURRENCY_UNIT[priceToPay.currency]) {
 		throw error(400, 'Order already fully paid with pending payments');
@@ -1526,12 +1527,12 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 			challenge.mode === 'totalProducts'
 				? sum(items.map((item) => item.quantity))
 				: sumCurrency(
-						challenge.goal.currency,
-						items.map((item) => ({
-							amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
-							currency: item.customPrice?.currency || item.product.price.currency
-						}))
-				  );
+					challenge.goal.currency,
+					items.map((item) => ({
+						amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
+						currency: item.customPrice?.currency || item.product.price.currency
+					}))
+				);
 		if (increase > 0) {
 			await collections.challenges.updateOne(
 				{ _id: challenge._id },
@@ -1556,19 +1557,16 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 			
 			It contains the following product(s) that increase the challenge ${challenge.name} :
 			${items
-				.map(
-					(item) =>
-						`- ${item.product.name} - price ${
-							item.customPrice?.amount || item.product.price.amount
-						} ${item.customPrice?.currency || item.product.price.currency} - qty ${
-							item.quantity
-						} - total addition to challenge: ${
-							challenge.mode === 'totalProducts'
+					.map(
+						(item) =>
+							`- ${item.product.name} - price ${item.customPrice?.amount || item.product.price.amount
+							} ${item.customPrice?.currency || item.product.price.currency} - qty ${item.quantity
+							} - total addition to challenge: ${challenge.mode === 'totalProducts'
 								? item.quantity
 								: (item.customPrice?.amount || item.product.price.amount) * item.quantity
-						}`
-				)
-				.join('\n')}			  
+							}`
+					)
+					.join('\n')}			  
 			
 			Total increase : ${increase}
 			

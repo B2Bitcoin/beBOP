@@ -98,7 +98,8 @@ export async function load({ parent, locals }) {
 			cmsCheckoutBottom,
 			cmsCheckoutBottomData: cmsFromContent({ content: cmsCheckoutBottom.content }, locals)
 		}),
-		defaultOnLocation: runtimeConfig.defaultOnLocation
+		defaultOnLocation: runtimeConfig.defaultOnLocation,
+		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout
 	};
 }
 
@@ -154,51 +155,51 @@ export const actions = {
 		const shippingInfo = isDigital
 			? null
 			: z
-					.object({
-						shipping: z.object(
-							locals.user?.roleId === POS_ROLE_ID
-								? {
-										firstName: z.string().default(''),
-										lastName: z.string().default(''),
-										address: z.string().default(''),
-										city: z.string().default(''),
-										state: z.string().optional(),
-										zip: z.string().default(''),
-										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
-										phone: z.string().optional()
-								  }
-								: {
-										firstName: z.string().min(1),
-										lastName: z.string().min(1),
-										address: z.string().min(1),
-										city: z.string().min(1),
-										state: z.string().optional(),
-										zip: z.string().min(1),
-										country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
-										phone: z.string().optional()
-								  }
-						)
-					})
-					.parse(json);
+				.object({
+					shipping: z.object(
+						locals.user?.roleId === POS_ROLE_ID
+							? {
+								firstName: z.string().default(''),
+								lastName: z.string().default(''),
+								address: z.string().default(''),
+								city: z.string().default(''),
+								state: z.string().optional(),
+								zip: z.string().default(''),
+								country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+								phone: z.string().optional()
+							}
+							: {
+								firstName: z.string().min(1),
+								lastName: z.string().min(1),
+								address: z.string().min(1),
+								city: z.string().min(1),
+								state: z.string().optional(),
+								zip: z.string().min(1),
+								country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+								phone: z.string().optional()
+							}
+					)
+				})
+				.parse(json);
 
 		const billingInfo = json.billing
 			? z
-					.object({
-						billing: z.object({
-							firstName: z.string().min(1),
-							lastName: z.string().min(1),
-							address: z.string().min(1),
-							city: z.string().min(1),
-							state: z.string().optional(),
-							zip: z.string().min(1),
-							country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
-							isCompany: z.boolean({ coerce: true }).default(false),
-							vatNumber: z.string().optional(),
-							companyName: z.string().optional(),
-							phone: z.string().optional()
-						})
+				.object({
+					billing: z.object({
+						firstName: z.string().min(1),
+						lastName: z.string().min(1),
+						address: z.string().min(1),
+						city: z.string().min(1),
+						state: z.string().optional(),
+						zip: z.string().min(1),
+						country: z.enum([...COUNTRY_ALPHA2S] as [CountryAlpha2, ...CountryAlpha2[]]),
+						isCompany: z.boolean({ coerce: true }).default(false),
+						vatNumber: z.string().optional(),
+						companyName: z.string().optional(),
+						phone: z.string().optional()
 					})
-					.parse(json)
+				})
+				.parse(json)
 			: null;
 
 		if (runtimeConfig.noProBilling) {
@@ -226,45 +227,45 @@ export const actions = {
 		}
 		const newsletterProspection = runtimeConfig.displayNewsletterCommercialProspection
 			? z
-					.object({
-						newsletter: z
-							.object({
-								seller: z.boolean({ coerce: true }).default(false),
-								partner: z.boolean({ coerce: true }).default(false)
-							})
-							.optional()
-					})
-					.parse(json)
+				.object({
+					newsletter: z
+						.object({
+							seller: z.boolean({ coerce: true }).default(false),
+							partner: z.boolean({ coerce: true }).default(false)
+						})
+						.optional()
+				})
+				.parse(json)
 			: null;
 		const note = json.noteContent
 			? z
-					.object({
-						noteContent: z.string().min(1)
-					})
-					.parse(json)
+				.object({
+					noteContent: z.string().min(1)
+				})
+				.parse(json)
 			: null;
 		const receiptNote = json.receiptNoteContent
 			? z
-					.object({
-						receiptNoteContent: z.string().min(1)
-					})
-					.parse(json)
+				.object({
+					receiptNoteContent: z.string().min(1)
+				})
+				.parse(json)
 			: null;
 
 		const multiplePaymentMethods =
 			locals.user?.roleId === POS_ROLE_ID
 				? z
-						.object({ multiplePaymentMethods: z.coerce.boolean().optional() })
-						.parse(Object.fromEntries(formData)).multiplePaymentMethods
+					.object({ multiplePaymentMethods: z.coerce.boolean().optional() })
+					.parse(Object.fromEntries(formData)).multiplePaymentMethods
 				: false;
 
 		const paymentMethod = multiplePaymentMethods
 			? null
 			: z
-					.object({
-						paymentMethod: z.enum([methods[0], ...methods.slice(1)])
-					})
-					.parse(Object.fromEntries(formData)).paymentMethod;
+				.object({
+					paymentMethod: z.enum([methods[0], ...methods.slice(1)])
+				})
+				.parse(Object.fromEntries(formData)).paymentMethod;
 
 		const { discountAmount, discountType, discountJustification } = z
 			.object({
@@ -339,12 +340,12 @@ export const actions = {
 		const physicalFullyPaid =
 			locals.user?.roleId === POS_ROLE_ID && runtimeConfig.defaultOnLocation
 				? z
-						.object({
-							onLocation: z.boolean({ coerce: true }).default(false)
-						})
-						.parse({
-							onLocation: formData.get('onLocation')
-						})
+					.object({
+						onLocation: z.boolean({ coerce: true }).default(false)
+					})
+					.parse({
+						onLocation: formData.get('onLocation')
+					})
 				: null;
 		const agreements = z
 			.object({
@@ -373,7 +374,13 @@ export const actions = {
 				delete billingInfo.billing.vatNumber;
 			}
 		}
-
+		const desiredPayment = z
+			.object({
+				paymentTimeOut: z.number({ coerce: true }).optional()
+			})
+			.parse({
+				paymentTimeOut: formData.get('paymentTimeOut')
+			});
 		const vatCountry =
 			shippingInfo?.shipping?.country ??
 			locals.countryCode ??
@@ -437,12 +444,12 @@ export const actions = {
 					discountAmount &&
 					discountType &&
 					discountJustification && {
-						discount: {
-							amount: discountAmount,
-							type: discountType,
-							justification: discountJustification
-						}
-					}),
+					discount: {
+						amount: discountAmount,
+						type: discountType,
+						justification: discountJustification
+					}
+				}),
 				...(note && { note: note.noteContent }),
 				...(agreements.allowCollectIP && { clientIp: locals.clientIp }),
 				...(locals.user?.roleId === POS_ROLE_ID &&
@@ -459,7 +466,9 @@ export const actions = {
 						acceptedExportationAndVATObligation: agreements.isVATNullForeigner
 					})
 				},
-				...(physicalFullyPaid?.onLocation && { onLocation: physicalFullyPaid.onLocation })
+				...(physicalFullyPaid?.onLocation && { onLocation: physicalFullyPaid.onLocation }),
+				...(desiredPayment.paymentTimeOut && { paymentTimeOut: desiredPayment.paymentTimeOut })
+
 			}
 		);
 		const displayHeadless =
