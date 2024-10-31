@@ -1,0 +1,11 @@
+{
+	"recommendations": [
+		"bradlc.vscode-tailwindcss",
+		"svelte.svelte-vscode",
+		"csstools.postcss",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"antfu.iconify",
+		"lokalise.i18n-ally"
+	]
+}
