@@ -497,7 +497,7 @@
 						</div>
 					</label>
 				{/if}
-				{#if paymentMethod !== 'point-of-sale' && paymentMethod !== 'bank-transfer'}
+				{#if data.roleId === POS_ROLE_ID && paymentMethod !== 'point-of-sale' && paymentMethod !== 'bank-transfer'}
 					<label class="checkbox-label">
 						<input
 							type="checkbox"

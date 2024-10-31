@@ -990,9 +990,9 @@ export async function createOrder(
 
 		let orderPayment: OrderPayment | undefined = undefined;
 		if (paymentMethod) {
-			const expiresAt = params.paymentTimeOut
-				? paymentMethodExpiration(paymentMethod, { paymentTimeout: params.paymentTimeOut })
-				: paymentMethodExpiration(paymentMethod);
+			const expiresAt = paymentMethodExpiration(paymentMethod, {
+				paymentTimeout: params.paymentTimeOut
+			});
 
 			orderPayment = await addOrderPayment(
 				order,

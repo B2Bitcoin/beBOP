@@ -376,7 +376,7 @@ export const actions = {
 		}
 		const desiredPayment = z
 			.object({
-				paymentTimeOut: z.number({ coerce: true }).optional()
+				paymentTimeOut: z.number({ coerce: true }).int().optional()
 			})
 			.parse({
 				paymentTimeOut: formData.get('paymentTimeOut')
