@@ -185,8 +185,8 @@ export const actions = {
 			? z
 					.object({
 						billing: z.object({
-							firstName: z.string().min(1),
-							lastName: z.string().min(1),
+							firstName: z.string().optional().default(''),
+							lastName: z.string().optional().default(''),
 							address: z.string().min(1),
 							city: z.string().min(1),
 							state: z.string().optional(),

@@ -361,7 +361,7 @@
 							name="billing.firstName"
 							autocomplete="given-name"
 							value={data.personalInfoConnected?.firstName ?? ''}
-							required
+							required={!isProfessionalOrder}
 						/>
 					</label>
 
@@ -373,7 +373,7 @@
 							name="billing.lastName"
 							autocomplete="family-name"
 							value={data.personalInfoConnected?.lastName ?? ''}
-							required
+							required={!isProfessionalOrder}
 						/>
 					</label>
 
