@@ -1,3 +1,4 @@
+import { phoenixdGetBolt12 } from '$lib/server/phoenixd';
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
@@ -38,6 +39,7 @@ export async function load(event) {
 		viewportWidth,
 		contactModes: runtimeConfig.contactModes,
 		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines,
-		ageRestriction: runtimeConfig.ageRestriction
+		ageRestriction: runtimeConfig.ageRestriction,
+		bolt12Address: phoenixdGetBolt12()
 	};
 }
