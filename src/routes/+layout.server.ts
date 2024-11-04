@@ -21,6 +21,13 @@ export async function load(event) {
 				return `width=${runtimeConfig.viewportContentWidth}`;
 		}
 	})();
+	let bolt12Address = '';
+
+	try {
+		bolt12Address = await phoenixdGetBolt12();
+	} catch (error) {
+		bolt12Address = 'Bolt12';
+	}
 
 	return {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
@@ -40,6 +47,6 @@ export async function load(event) {
 		contactModes: runtimeConfig.contactModes,
 		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines,
 		ageRestriction: runtimeConfig.ageRestriction,
-		bolt12Address: phoenixdGetBolt12()
+		bolt12Address
 	};
 }

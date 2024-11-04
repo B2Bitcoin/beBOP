@@ -41,7 +41,8 @@ export const load = async () => {
 		return {
 			phoenixd: runtimeConfig.phoenixd,
 			nodeInfo: null,
-			balance: null
+			balance: null,
+			bolt12Address: null
 		};
 	}
 };
