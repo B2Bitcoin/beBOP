@@ -37,7 +37,7 @@ export const actions = {
 		}
 		const result = z
 			.object({
-				orderLabelIds: z.string().array()
+				orderLabelIds: z.string().array().optional()
 			})
 			.parse(json);
 		await collections.orders.updateOne(
