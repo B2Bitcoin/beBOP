@@ -46,8 +46,11 @@ export const actions = {
 			},
 			{
 				$set: {
-					orderLabelIds: result.orderLabelIds,
+					...(result.orderLabelIds !== undefined && { orderLabelIds: result.orderLabelIds }),
 					updatedAt: new Date()
+				},
+				$unset: {
+					...(result.orderLabelIds === undefined && { orderLabelIds: '' })
 				}
 			}
 		);
