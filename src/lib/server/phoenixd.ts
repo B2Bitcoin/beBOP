@@ -34,6 +34,18 @@ export async function phoenixdBalance(): Promise<{ balanceSat: number; feeCredit
 	return await res.json();
 }
 
+export async function phoenixdLndAddress(): Promise<string> {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/getlnaddress`, {
+		headers: {
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`
+		}
+	});
+
+	return await res.text();
+}
+
 export async function phoenixdDetected(url?: string): Promise<boolean> {
 	return await Promise.race<boolean>([
 		fetch(`${url || runtimeConfig.phoenixd.url}/getinfo`).then(
