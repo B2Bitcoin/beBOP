@@ -7,7 +7,6 @@ import {
 	phoenixdDetected,
 	phoenixdGetBolt12,
 	phoenixdInfo,
-	phoenixdLnAddress,
 	phoenixdPayInvoice,
 	phoenixdSendOnChain
 } from '$lib/server/phoenixd.js';
