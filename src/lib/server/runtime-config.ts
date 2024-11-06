@@ -124,7 +124,7 @@ const baseConfig = {
 		url: 'http://localhost:9740',
 		enabled: false,
 		password: '',
-		lndAddress: ''
+		lnAddress: ''
 	},
 	productActionSettings: {
 		eShop: {

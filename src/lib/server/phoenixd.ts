@@ -46,7 +46,7 @@ export async function phoenixdGetBolt12(): Promise<string> {
 	return await res.text();
 }
 
-export async function phoenixdLndAddress(): Promise<string> {
+export async function phoenixdLnAddress(): Promise<string> {
 	const res = await fetch(`${runtimeConfig.phoenixd.url}/getlnaddress`, {
 		headers: {
 			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
