@@ -17,6 +17,7 @@
 	import { bitcoinPaymentQrCodeString } from '$lib/utils/bitcoinPaymentQr.js';
 	import Picture from '$lib/components/Picture.svelte';
 	import IconStripe from '$lib/components/icons/IconStripe.svelte';
+	import { lightningPaymentQrCodeString } from '$lib/utils/lightningPaymentQr';
 
 	let currentDate = new Date();
 	export let data;
@@ -276,11 +277,19 @@
 
 						{#if payment.status === 'pending'}
 							{#if payment.method === 'lightning' || payment.method === 'card'}
-								<img
-									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
-									class="w-96 h-96"
-									alt="QR code"
-								/>
+								<a
+									href={lightningPaymentQrCodeString(
+										payment.address ?? '',
+										payment.price.amount,
+										payment.price.currency
+									)}
+								>
+									<img
+										src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+										class="w-96 h-96"
+										alt="QR code"
+									/></a
+								>
 							{/if}
 							{#if payment.method === 'bitcoin' && payment.address}
 								<span class="body-hyperlink font-light italic">{t('order.clickQR')}</span>
