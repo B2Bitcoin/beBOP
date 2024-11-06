@@ -56,6 +56,8 @@ export const actions = {
 				display_name: runtimeConfig.brandName,
 				website: ORIGIN,
 				...(lnAddress && { lud16: `ln@${domainName}` }),
+				...(!lnAddress &&
+					runtimeConfig.phoenixd.lndAddress && { lud16: runtimeConfig.phoenixd.lndAddress }),
 				// about: '',
 				...(runtimeConfig.logo && { picture: pictureUrl }),
 				nip05: `_@${domainName}`,
