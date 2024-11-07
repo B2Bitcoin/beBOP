@@ -31,7 +31,7 @@ jobs:
           echo $DOT_ENV > .env.local
           pnpm build
         env:
-          DOT_ENV: ${{ vars.DOT_ENV }}
+          DOT_ENV: ${{ secrets.DOT_ENV }}
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
