@@ -28,10 +28,10 @@ jobs:
           cache: 'pnpm'
       - run: |
           pnpm install --frozen-lockfile
-          echo $DOT_ENV > .env.local
+          cat << EOF > .env.local
+          ${{ secrets.DOT_ENV }}
+          EOF
           pnpm build
-        env:
-          DOT_ENV: ${{ secrets.DOT_ENV }}
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
