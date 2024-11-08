@@ -22,19 +22,21 @@ export const GET = async ({ url }) => {
 		throw error(400, 'Lightning is not configured');
 	}
 
-	const { amount, metadata: metadataJwt } = z
+	const {
+		amount,
+		metadata: metadataJwt,
+		comment
+	} = z
 		.object({
 			amount: z
 				.number({ coerce: true })
 				.int()
 				.min(1)
 				.max(SATOSHIS_PER_BTC * 1000),
-			metadata: z.string()
+			metadata: z.string(),
+			comment: z.string().default('Zap !')
 		})
 		.parse(Object.fromEntries(url.searchParams));
-	console.log(
-		'OBJEEEEEEEEEEEEEEEEEECT LOG ' + JSON.stringify(Object.fromEntries(url.searchParams))
-	);
 	const result = await jwtVerify(
 		metadataJwt,
 		Buffer.from(runtimeConfig.lnurlPayMetadataJwtSigningKey)
@@ -50,7 +52,7 @@ export const GET = async ({ url }) => {
 				descriptionHash: await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata)),
 				milliSatoshis: true
 		  })
-		: await phoenixdCreateInvoice(amount / 1000, 'Zap !', new ObjectId().toString());
+		: await phoenixdCreateInvoice(amount / 1000, comment, new ObjectId().toString());
 
 	return new Response(
 		JSON.stringify({
