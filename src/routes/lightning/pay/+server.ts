@@ -43,13 +43,16 @@ export const GET = async ({ url }) => {
 			metadata: z.string()
 		})
 		.parse(result.payload);
-	console.log('FROOOOOOOOOOOOOOOOOOM ZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP ! ' + amount);
 	const invoice = isLightningConfigured
 		? await lndCreateInvoice(amount, {
 				descriptionHash: await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata)),
 				milliSatoshis: true
 		  })
-		: await phoenixdCreateInvoice(amount, 'invoice zap phoenixd !', new ObjectId().toString());
+		: await phoenixdCreateInvoice(
+				amount / 1000,
+				'invoice zap phoenixd !',
+				new ObjectId().toString()
+		  );
 
 	return new Response(
 		JSON.stringify({
