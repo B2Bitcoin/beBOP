@@ -2,7 +2,6 @@ import { isLightningConfigured, lndCreateInvoice } from '$lib/server/lnd';
 import { phoenixdCreateInvoice } from '$lib/server/phoenixd';
 import { runtimeConfig } from '$lib/server/runtime-config';
 import { SATOSHIS_PER_BTC } from '$lib/types/Currency';
-import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
 import { jwtVerify } from 'jose';
 import { ObjectId } from 'mongodb';
@@ -44,17 +43,13 @@ export const GET = async ({ url }) => {
 			metadata: z.string()
 		})
 		.parse(result.payload);
-
+	console.log('FROOOOOOOOOOOOOOOOOOM ZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP ! ' + amount);
 	const invoice = isLightningConfigured
 		? await lndCreateInvoice(amount, {
 				descriptionHash: await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata)),
 				milliSatoshis: true
 		  })
-		: await phoenixdCreateInvoice(
-				toSatoshis({ amount, currency: 'BTC' }),
-				'invoice',
-				new ObjectId().toString()
-		  );
+		: await phoenixdCreateInvoice(amount, 'invoice zap phoenixd !', new ObjectId().toString());
 
 	return new Response(
 		JSON.stringify({
