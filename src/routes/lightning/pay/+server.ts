@@ -32,7 +32,9 @@ export const GET = async ({ url }) => {
 			metadata: z.string()
 		})
 		.parse(Object.fromEntries(url.searchParams));
-	console.log('OBJEEEEEEEEEEEEEEEEEECT LOG ' + Object.fromEntries(url.searchParams));
+	console.log(
+		'OBJEEEEEEEEEEEEEEEEEECT LOG ' + JSON.stringify(Object.fromEntries(url.searchParams))
+	);
 	const result = await jwtVerify(
 		metadataJwt,
 		Buffer.from(runtimeConfig.lnurlPayMetadataJwtSigningKey)
