@@ -22,14 +22,19 @@ export const GET = async ({ url }) => {
 		throw error(400, 'Lightning is not configured');
 	}
 
-	const { amount, metadata: metadataJwt } = z
+	const {
+		amount,
+		metadata: metadataJwt,
+		description
+	} = z
 		.object({
 			amount: z
 				.number({ coerce: true })
 				.int()
 				.min(1)
 				.max(SATOSHIS_PER_BTC * 1000),
-			metadata: z.string()
+			metadata: z.string(),
+			description: z.string()
 		})
 		.parse(Object.fromEntries(url.searchParams));
 
@@ -48,13 +53,7 @@ export const GET = async ({ url }) => {
 				descriptionHash: await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata)),
 				milliSatoshis: true
 		  })
-		: await phoenixdCreateInvoice(
-				amount / 1000,
-				Buffer.from(
-					await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata))
-				).toString('base64'),
-				new ObjectId().toString()
-		  );
+		: await phoenixdCreateInvoice(amount / 1000, description, new ObjectId().toString());
 
 	return new Response(
 		JSON.stringify({
