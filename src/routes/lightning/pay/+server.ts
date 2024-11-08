@@ -50,7 +50,9 @@ export const GET = async ({ url }) => {
 		  })
 		: await phoenixdCreateInvoice(
 				amount / 1000,
-				'invoice zap phoenixd !',
+				Buffer.from(
+					await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata))
+				).toString('base64'),
 				new ObjectId().toString()
 		  );
 
