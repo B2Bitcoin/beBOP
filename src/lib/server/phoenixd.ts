@@ -72,7 +72,7 @@ export async function phoenixdCreateInvoice(
 	satoshis: number,
 	description: string,
 	externalId: string
-): Promise<{ paymentHash: string; paymentAddress: string }> {
+): Promise<{ payment_request: string; r_hash: string; payment_address: string }> {
 	const res = await fetch(`${runtimeConfig.phoenixd.url}/createinvoice`, {
 		method: 'POST',
 		headers: {
@@ -102,8 +102,9 @@ export async function phoenixdCreateInvoice(
 		.parse(await res.json());
 
 	return {
-		paymentHash: json.paymentHash,
-		paymentAddress: json.serialized
+		payment_request: json.serialized,
+		r_hash: json.paymentHash,
+		payment_address: json.serialized
 	};
 }
 

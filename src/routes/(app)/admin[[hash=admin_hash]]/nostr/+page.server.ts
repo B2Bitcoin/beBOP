@@ -58,7 +58,7 @@ export const actions = {
 				...(lnAddress && { lud16: `ln@${domainName}` }),
 				...(!lnAddress &&
 					runtimeConfig.phoenixd.lnAddress && {
-						lud16: runtimeConfig.phoenixd.lnAddress
+						lud16: runtimeConfig.phoenixd.lnAddress.split('@')[0] + '@' + domainName
 					}),
 				// about: '',
 				...(runtimeConfig.logo && { picture: pictureUrl }),
