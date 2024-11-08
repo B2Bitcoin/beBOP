@@ -50,11 +50,7 @@ export const GET = async ({ url }) => {
 				descriptionHash: await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metadata)),
 				milliSatoshis: true
 		  })
-		: await phoenixdCreateInvoice(
-				toSatoshis({ amount, currency: 'SAT' }),
-				'invoice',
-				new ObjectId().toString()
-		  );
+		: await phoenixdCreateInvoice(100, 'invoice', new ObjectId().toString());
 
 	return new Response(
 		JSON.stringify({
