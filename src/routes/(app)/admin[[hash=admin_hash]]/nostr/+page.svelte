@@ -134,7 +134,7 @@
 				<span title="Encrypted message">'⚡'</span>
 			{/if}
 			<time datetime={message.createdAt.toJSON()}>{message.createdAt.toLocaleString('en-UK')}</time>
-			| You were zapped | 21 sats
+			| {JSON.stringify(message)}
 		</li>
 	{/each}
 </ul>

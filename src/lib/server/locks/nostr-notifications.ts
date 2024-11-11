@@ -95,7 +95,7 @@ function initRelayPool() {
 		[
 			// Messages sent to us
 			{
-				kinds: [Kind.EncryptedDirectMessage, Kind.Text],
+				kinds: [Kind.EncryptedDirectMessage, Kind.Text, Kind.Zap],
 				'#p': [nostrPublicKeyHex]
 			}
 		],
