@@ -8,7 +8,6 @@ import { isStripeEnabled } from '$lib/server/stripe';
 import { isSumupEnabled } from '$lib/server/sumup';
 import { FAKE_ORDER_INVOICE_NUMBER } from '$lib/types/Order';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
-import { toSatoshis } from '$lib/utils/toSatoshis';
 import { error } from '@sveltejs/kit';
 
 export async function fetchOrderForUser(orderId: string) {
