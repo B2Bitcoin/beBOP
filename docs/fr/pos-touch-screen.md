@@ -33,11 +33,39 @@ L'ecran pos est composé :
 
   ![image](https://github.com/user-attachments/assets/0fd64e7c-8de8-4212-827c-0d3f53a72f37)
 
-- d'un bloc pour afficher les articles ajouter au panier et leur total
+- d'un bloc pour afficher les articles ajouter au panier et leur total (bloc ticket)
 
   ![image](https://github.com/user-attachments/assets/25fdc955-0d89-4699-9288-3724f222f712)
 
 - de boutons pour :
+
   - payer
   - supprimer le dernier article ajouté
   - vider le panier
+
+  ![image](https://github.com/user-attachments/assets/5cc869d9-0d29-44cd-9f9f-67d73d24e6f6)
+
+- il existe d'autres boutons notament :
+  - tickets
+  - sauver
+  - pool
+  - ouvrir tiroir
+    qui sont des fonctionnalités à venir
+
+![image](https://github.com/user-attachments/assets/ca874166-bad5-4a69-babe-7fc4940e88e9)
+
+## Fonctionnement ajout panier
+
+Pour ajouter au panier sur un ecran de point de vente il suffit de cliquer sur l'article
+
+![image](https://github.com/user-attachments/assets/e757ef03-d455-4c91-8cdf-f383e210777c)
+
+et l'article sera ajouter au panier et afficher sur le bloc ticket
+
+![image](https://github.com/user-attachments/assets/25fdc955-0d89-4699-9288-3724f222f712)
+
+lorsqu'un article est ajouter au panier on peut y ajouter une note en cliquant sur le nom de l'article
+
+![image](https://github.com/user-attachments/assets/21a9b760-3cc5-42af-8f18-fea374ea573d)
+
+![image](https://github.com/user-attachments/assets/9e2c764a-40fc-44d4-b112-c8a3e6334946)
