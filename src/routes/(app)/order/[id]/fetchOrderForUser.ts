@@ -121,9 +121,7 @@ export async function fetchOrderForUser(orderId: string) {
 			price: payment.price,
 			currencySnapshot: payment.currencySnapshot,
 			confirmationBlocksRequired:
-				payment.method === 'bitcoin'
-					? getConfirmationBlocks(toSatoshis(payment.price.amount, payment.price.currency))
-					: 0,
+				payment.method === 'bitcoin' ? getConfirmationBlocks(payment.price) : 0,
 			...(payment.bankTransferNumber && { bankTransferNumber: payment.bankTransferNumber }),
 			...(payment.detail && { detail: payment.detail })
 		})),
