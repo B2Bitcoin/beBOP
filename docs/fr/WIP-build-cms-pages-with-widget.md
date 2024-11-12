@@ -86,11 +86,11 @@ Les widgets permettent d'ajouter des éléments dynamiques à votre page. Pour l
 
 ## Exemples de Contenu
 
+### Home
+
 ![image](https://github.com/user-attachments/assets/0009001c-f8a5-4eef-aceb-9f2914b02e9f)
 
 ```markdown
-# Home
-
 Découvrez nos produits en vedette
 
 [Product=peluche-enfant?display=img-3]
