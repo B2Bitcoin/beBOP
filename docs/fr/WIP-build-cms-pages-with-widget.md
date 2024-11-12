@@ -49,7 +49,7 @@ Les widgets permettent d'ajouter des éléments dynamiques à votre page. Pour l
 
 - **autoplay** : Temps en millisecondes pour le défilement automatique.
 
-### Afficher un Widget de Balise
+### Afficher un Tag
 
 ```markdown
 [Tag=slug?display=var-1]
@@ -57,7 +57,7 @@ Les widgets permettent d'ajouter des éléments dynamiques à votre page. Pour l
 
 - **display** : Modifie l'affichage de la balise.
 
-### Afficher les Produits d’une Balise
+### Afficher les Produits d'un Tag
 
 ```markdown
 [TagProducts=slug?display=img-3 sort=desc by=price]
