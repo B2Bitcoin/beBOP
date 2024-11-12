@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Définit dans Admin > Merch > CMS les pages CMS sont utilisés pour créer, modifier et organiser des pages avec du contenu dynamique. Les pages CMS permetten d'ajouter des produits, des images, des galeries, et bien plus à vos pages.
+Définis dans Admin > Merch > CMS les pages CMS sont utilisés pour créer, modifier et organiser des pages avec du contenu dynamique. Les pages CMS permetten d'ajouter des produits, des images, des galeries, et bien plus à vos pages.
 
 ## Paramètres de la Page
 
