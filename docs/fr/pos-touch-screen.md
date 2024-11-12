@@ -89,3 +89,9 @@ Cette section regroupe les boutons pour gérer le panier, sauvegarder, ou finali
 - **❎** : Permet de supprimer la dernière ligne du panier.
 
   ![image](https://github.com/user-attachments/assets/20b9fc00-b128-4bb4-9ed7-ae207f63931f)
+
+### 5. Theme
+
+Par défaut POS Touch screen utilise le design présenté sur les captures précedenetes, mais il est possible de changer ce design en modifiant le themes sur **Admin** > **Merch** > **Themes**
+
+![image](https://github.com/user-attachments/assets/f5913dc9-2d5a-4232-b11a-f48b0461e93c)
