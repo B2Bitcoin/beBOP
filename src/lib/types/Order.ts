@@ -321,7 +321,7 @@ export const PAYMENT_METHOD_EMOJI: Record<PaymentMethod, string> = {
 	free: '🆓'
 };
 
-export const ORDER_PAGINATION_LIMIT = 5;
+export const ORDER_PAGINATION_LIMIT = 50;
 export const MIN_SATOSHIS_FOR_BITCOIN_PAYMENT = 10_000;
 
 export function invoiceNumberVariables(
