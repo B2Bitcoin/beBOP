@@ -8,13 +8,13 @@ La section de gestion des commandes vous permet de visualiser, filtrer, et mettr
 
 Pour accéder à la liste des commandes, allez sur Admin > Transaction > Orders.
 
-![Image](https://github.com/user-attachments/assets/de9d05f5-323c-4e40-9754-60e55ba8e605)
+![image](https://github.com/user-attachments/assets/de9d05f5-323c-4e40-9754-60e55ba8e605)
 
 ## Fonctionnalités de la Liste des Commandes
 
 ### Filtrer les Commandes
 
-![Image](https://github.com/user-attachments/assets/2c67be84-b339-4c91-863e-9e8e609ecd59)
+![image](https://github.com/user-attachments/assets/2c67be84-b339-4c91-863e-9e8e609ecd59)
 
 - Vous pouvez filtrer les commandes par :
   - `Order Number` : Numero de la commande.
@@ -39,27 +39,3 @@ Par defaut les commandes sont triés par date de creation et on affiche les 50 p
 Cliquez sur le numéro d'une commande pour voir les détails complets, y compris les produits commandés, les informations du client, l'adresse de livraison, et le statut.
 
 ![image](https://github.com/user-attachments/assets/54804c80-3707-456f-95b1-0d77c5e02a19)
-
-### Mettre à Jour le Statut d'une Commande
-
-- Depuis la page de détails de la commande, vous pouvez mettre à jour le statut (par exemple, passer de "En attente" à "En préparation").
-
-### Exporter les Commandes
-
-- Pour exporter la liste des commandes, cliquez sur le bouton **Exporter** et choisissez le format souhaité (CSV, Excel).
-
-## Notifications et Alertes
-
-Les notifications peuvent être activées pour vous avertir lors de la réception de nouvelles commandes ou lorsque le statut d'une commande change. Configurez les alertes depuis le menu des paramètres.
-
-## FAQ
-
-**Q : Comment puis-je annuler une commande ?**  
-R : Depuis la page des détails de la commande, utilisez l'option "Annuler la commande".
-
-**Q : Puis-je exporter uniquement certaines commandes ?**  
-R : Oui, appliquez des filtres avant d'exporter pour limiter les commandes exportées.
-
-## Support
-
-Si vous avez des questions ou besoin d'assistance, veuillez contacter notre équipe de support technique à [support@example.com](mailto:support@example.com).
