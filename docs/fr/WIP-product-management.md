@@ -36,7 +36,7 @@
     - **Value** : Définissez l'option de variation (ex. : Rouge).
     - **Price difference** : Définissez la différence de prix pour chaque variation.
 
-- [*] **Sell with disclaimer** : Ajouter une prévention à la vente.
+- [x] **Sell with disclaimer** : Ajouter une prévention à la vente.
 
   - **Disclaimer title** : Titre de la prévention.
   - **Disclaimer description** : Description de la prévention
