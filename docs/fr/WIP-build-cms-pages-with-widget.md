@@ -98,3 +98,7 @@ Découvrez nos produits en vedette
 ```
 
 ![image](https://github.com/user-attachments/assets/16e06d46-ca63-44d0-a1ff-dc5c67d30594)
+
+## Les cms pages suggéres
+
+![image](https://github.com/user-attachments/assets/37852837-e7d2-4a43-9366-d05b671e7fc5)
