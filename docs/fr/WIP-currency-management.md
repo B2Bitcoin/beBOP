@@ -1,4 +1,4 @@
-# Documentation de l'Interface de Configuration des Devises
+# Documentation de l'interface de configuration des cevises
 
 ![image](https://github.com/user-attachments/assets/13e4bd2d-07d2-4173-8561-7fd2e04f8a04)
 
