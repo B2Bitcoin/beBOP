@@ -47,6 +47,6 @@ Sauvegarder et apres vous avez les informations de votre phoenixd.
 
 ## Payer en lightning
 
-Apres avoir configurer phoenixd vous pouvez maintenant recevoir des paiements lightning sur votre be-bop
+Apres avoir configurer phoenixd vous pouvez recevoir des paiements lightning sur votre be-bop sans besoin de noeud lnd.
 
 ![image](https://github.com/user-attachments/assets/3e877413-90ef-44cf-8074-3206145b1fc1)
