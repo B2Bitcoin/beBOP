@@ -49,4 +49,4 @@ Sauvegarder et apres vous avez les informations de votre phoenixd.
 
 Apres avoir configurer phoenixd vous pouvez maintenant recevoir des paiements lightning sur votre be-bop
 
-![image](https://github.com/user-attachments/assets/8741ed7a-ee49-4023-a97d-50ee58034694)
+![image](https://github.com/user-attachments/assets/3e877413-90ef-44cf-8074-3206145b1fc1)
