@@ -23,6 +23,6 @@ Disponible au niveau des pages CMS suggéré, la page agewall est une page CMS d
 
 ## Affichage page restriction
 
-Si la restriction d'age est ajouté à votre be-bop les utilisateurs auront un formulaire de restriction qui les empeche d'acceder tant qu'il n'accepte pas les restrictions sur l'age.
+Si la restriction d'age est ajouté à votre be-bop les utilisateurs auront un formulaire de restriction qui les empêche d'acceder tant qu'il n'accepte pas les restrictions sur l'age.
 
 ![image](https://github.com/user-attachments/assets/7fc24d85-ef7a-48b5-af48-9a98d21dd1e5)
