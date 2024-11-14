@@ -30,14 +30,19 @@ Aprés detection de votre phoenixd vous etes invité à ajouter votre PhoenixD h
 Sauvegarder et apres vous avez les informations de votre phoenixd.
 
 - le noeud
+
   ![image](https://github.com/user-attachments/assets/58bb671c-0981-4bca-9889-79cc7f11c8d9)
 
 - la balance
+
   ![image](https://github.com/user-attachments/assets/36be219f-be48-4cf0-9bb9-09b0d77fd956)
 
 - vous pouvez payer vos invoice en cliquant sur withdraw
+
   ![image](https://github.com/user-attachments/assets/b6c059eb-14cc-4bc8-bc2f-24e632ffc931)
+
   et remplir les informations ici
+
   ![image](https://github.com/user-attachments/assets/698ce241-d859-47ea-9b66-de33ddc7d4ba)
 
 ## Payer en lightning
