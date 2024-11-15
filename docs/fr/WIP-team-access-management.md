@@ -45,13 +45,13 @@ Lorsqu'on ajoute ou modifie un utilisateur on a les parametres suivants:
 
 - **Login** : Identifiant de connexion de l'utilisateur.
 - **Alias** : Alias ou nom d'affichage de l'utilisateur.
-- **Email de récupération** : Adresse e-mail pour la récupération de compte.
-- **Npub de récupération** : Clé publique de récupération, si utilisée dans votre système.
-- **Rôle** : Sélectionnez le rôle attribué à l'utilisateur (ex. "Super Admin", "Point of sale").
-- **Statut** : État du compte utilisateur, activé ou désactivé.
-- **Mot de passe** : Réinitialisez le mot de passe de l'utilisateur en cliquant sur l'icône de réinitialisation.
+- **Recovery email** : Adresse e-mail pour la récupération de compte.
+- **Recovery npub** : Clé publique de récupération, si utilisée dans votre système.
+- **Role** : Sélectionnez le rôle attribué à l'utilisateur (ex. "Super Admin", "Point of sale").
+- **Status** : État du compte utilisateur, activé ou désactivé.
+- **password** : Réinitialisez le mot de passe de l'utilisateur en cliquant sur l'icône de réinitialisation. Cet option enverra un message avec un lien pour réinitialiser le mot de passe
 
-Chaque utilisateur peut être modifié, sauvegardé ou supprimé en utilisant les options dans les colonnes **Save**, **Password**, et **Delete**.
+Chaque utilisateur peut être modifié ou supprimé en utilisant les options dans les colonnes **Save** et **Delete**.
 
 ---
 
