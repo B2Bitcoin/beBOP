@@ -38,4 +38,6 @@ Pour intégrer Stripe comme méthode de paiement dans votre application **be-bop
 
 - **Exemple** : `EUR`
 
+![image](https://github.com/user-attachments/assets/50d3e3d8-1006-4e80-bc74-5d06614ece2d)
+
 Une fois ces étapes complétées, Stripe sera ajouté comme moyen de paiement sur votre plateforme.
