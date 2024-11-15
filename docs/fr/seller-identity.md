@@ -47,3 +47,13 @@ Aprés avoir rempli vos information bancaire votre be-bop aura un nouveau moyen 
 Cliquez sur **Update** pour enregistrer toutes les informations saisies. Ces informations seront utilisées pour l'émission des factures et la présentation des coordonnées de votre entreprise.
 
 ![image](https://github.com/user-attachments/assets/d222402e-f2be-41d2-95a2-c6f16a6c14e0)
+
+## Afficher l'identité du vendeur au footer de mon be-bop
+
+Pour cela, allez sur **Admin** > **Merch** > **Layout** et sur la section **footer** cochez [x] `Display company identity & company contact` et update pour enregistrer.
+
+![image](https://github.com/user-attachments/assets/f3adba2c-262b-42d1-951e-7a250343f2c4)
+
+Et vous aurez maintenant sur votre footer les infos de l'entreprise.
+
+![image](https://github.com/user-attachments/assets/624bf24d-88fd-4d3c-b14f-77872dd56b1c)
