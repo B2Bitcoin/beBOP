@@ -38,15 +38,6 @@ Pour intégrer SumUp comme méthode de paiement dans votre application **be-bop*
 
 - **Exemple** : `EUR`
 
-## Instructions d'Intégration
-
-1. **Accédez aux paramètres de SumUp dans l'application be-bop.**
-2. **Entrez les informations fournies dans les champs correspondants :**
-   - **API Key** : Saisissez votre clé API.
-   - **Merchant Code** : Saisissez votre code de marchand.
-   - **Currency** : Sélectionnez la devise souhaitée pour les transactions.
-3. **Sauvegardez les modifications** pour activer SumUp comme option de paiement.
-
 ![image](https://github.com/user-attachments/assets/d79fa78e-1ec9-4f71-b19e-5cea9861f278)
 
 ## Payer ave cart bancaire
