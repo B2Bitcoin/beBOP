@@ -1,6 +1,6 @@
 # Identité du vendeur
 
-Cette section vous permet de configurer les informations légales et de contact de votre entreprise pour apparaître sur les factures et documents officiels.
+Cette section (sur **Admin** > **Config** > **Seller Identity**) vous permet de configurer les informations légales et de contact de votre entreprise pour apparaître sur les factures et documents officiels.
 
 ## Informations légales
 

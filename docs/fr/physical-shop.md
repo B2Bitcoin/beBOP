@@ -1,6 +1,6 @@
 # Informations du magasin
 
-Cette section vous permet de configurer les informations légales, l'adresse, les coordonnées, et les informations bancaires de votre magasin. Ces informations apparaîtront sur les factures et documents officiels.
+Cette section (sur **Admin** > **Config** > **Physical Shop**) vous permet de configurer les informations légales, l'adresse, les coordonnées, et les informations bancaires de votre magasin. Ces informations apparaîtront sur les factures et documents officiels.
 
 ## Informations légales
 
