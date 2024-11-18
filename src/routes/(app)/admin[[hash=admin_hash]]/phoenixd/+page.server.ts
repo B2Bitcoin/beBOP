@@ -6,7 +6,6 @@ import {
 	phoenixdBalance,
 	phoenixdDetected,
 	phoenixdInfo,
-	phoenixdLndAddress,
 	phoenixdPayInvoice,
 	phoenixdSendOnChain
 } from '$lib/server/phoenixd.js';
