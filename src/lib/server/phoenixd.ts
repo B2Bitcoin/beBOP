@@ -43,6 +43,10 @@ export async function phoenixdGetBolt12(): Promise<string> {
 		}
 	});
 
+	if (!res.ok) {
+		throw error(500, `Error fetching Bolt12 offer: ${res.status} ${res.statusText}`);
+	}
+
 	return await res.text();
 }
 export async function phoenixdDetected(url?: string): Promise<boolean> {

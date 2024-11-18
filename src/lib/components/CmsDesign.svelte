@@ -261,6 +261,16 @@
 					/>
 				{:else if token.type === 'pictureWidget'}
 					<PictureComponent picture={pictureById[token.slug]} class="my-5" />
+				{:else if token.type === 'qrCode'}
+					{#if token.slug === 'Bolt12'}
+						<a href="lightning:{$page.data.bolt12Address}">
+							<img
+								src="{$page.url.origin}/phoenixd/bolt12/qrcode"
+								class="w-96 h-96"
+								alt="QR code"
+							/>
+						</a>
+					{/if}
 				{:else if token.type === 'html'}
 					<div class="my-5">
 						<!-- eslint-disable svelte/no-at-html-tags -->
