@@ -77,7 +77,6 @@ export const actions = {
 			.parse(Object.fromEntries(await event.request.formData()));
 
 		runtimeConfig.phoenixd.password = parsed.password;
-		runtimeConfig.phoenixd.lndAddress = await phoenixdLndAddress();
 
 		await collections.runtimeConfig.updateOne(
 			{ _id: 'phoenixd' },
