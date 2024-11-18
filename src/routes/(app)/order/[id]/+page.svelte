@@ -7,17 +7,20 @@
 	import IconCopy from '~icons/ant-design/copy-outlined';
 	import IconCheckmark from '~icons/ant-design/check-outlined';
 	import { useI18n } from '$lib/i18n';
-	import { FAKE_ORDER_INVOICE_NUMBER, orderAmountWithNoPaymentsCreated } from '$lib/types/Order';
+	import {
+		bitcoinPaymentQrCodeString,
+		FAKE_ORDER_INVOICE_NUMBER,
+		lightningPaymentQrCodeString,
+		orderAmountWithNoPaymentsCreated
+	} from '$lib/types/Order';
 	import { UrlDependency } from '$lib/types/UrlDependency';
 	import { CUSTOMER_ROLE_ID, POS_ROLE_ID } from '$lib/types/User.js';
 	import { differenceInMinutes } from 'date-fns';
 	import { onMount } from 'svelte';
 	import IconSumupWide from '$lib/components/icons/IconSumupWide.svelte';
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
-	import { bitcoinPaymentQrCodeString } from '$lib/utils/bitcoinPaymentQr.js';
 	import Picture from '$lib/components/Picture.svelte';
 	import IconStripe from '$lib/components/icons/IconStripe.svelte';
-	import { lightningPaymentQrCodeString } from '$lib/utils/lightningPaymentQr';
 
 	let currentDate = new Date();
 	export let data;
