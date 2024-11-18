@@ -1,4 +1,3 @@
-import { phoenixdGetBolt12 } from '$lib/server/phoenixd';
 import { runtimeConfig, runtimeConfigUpdatedAt } from '$lib/server/runtime-config';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User';
 
@@ -21,13 +20,6 @@ export async function load(event) {
 				return `width=${runtimeConfig.viewportContentWidth}`;
 		}
 	})();
-	let bolt12Address = '';
-
-	try {
-		bolt12Address = await phoenixdGetBolt12();
-	} catch (error) {
-		bolt12Address = 'Bolt12';
-	}
 
 	return {
 		plausibleScriptUrl: runtimeConfig.plausibleScriptUrl,
@@ -47,6 +39,6 @@ export async function load(event) {
 		contactModes: runtimeConfig.contactModes,
 		hideFromSearchEngines: runtimeConfig.hideFromSearchEngines,
 		ageRestriction: runtimeConfig.ageRestriction,
-		bolt12Address
+		bolt12Address: runtimeConfig.phoenixd.bolt12Address
 	};
 }
