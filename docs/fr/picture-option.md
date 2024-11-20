@@ -24,7 +24,7 @@ Cochez cette case si le logo est un format large. Activez si votre logo doit êt
 
 ---
 
-### **2. Set as logo **
+### **2. Set as logo**
 
 Remplacer par un bouton **Remove from logo** (quand l'image est deja definit comme logo), cet option permet de definir l'image actuelle en tant que logo par défaut.
 
