@@ -1,6 +1,6 @@
 # Documentation Contact Form Widget
 
-Accessible sur **Admin** > **Widgets** > **Form**, les widgets form peuvent être utilisés dans votre be-bop pout integrer des formulaires de contact dans des zones ou pages CMS.
+Accessible sur **Admin** > **Widgets** > **Form**, les widgets form peuvent être utilisés dans votre be-bop pour intégrer des formulaires de contact dans des zones ou pages CMS.
 
 ![image](https://github.com/user-attachments/assets/52d57248-1651-459b-9470-beb3ec671478)
 
