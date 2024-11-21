@@ -30,7 +30,7 @@ Pour ajouter un formulaire de contact cliquer sur **Add contact form**.
 - **Subject** : Le sujet du formulaire de contact.
 - **Content** : Le contenu du formulaire de contact.
 
-Idéalement, les sujets et messages doivent permettre l’utilisation des balises suivantes dans le texte :
+Sur les subjects et contents on peut utiliser les balises suivantes dans le texte :
 
 `{{productLink}}` et `{{productName}}` lorsqu’ils sont utilisés sur une page produit.
 
