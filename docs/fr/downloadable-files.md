@@ -26,28 +26,15 @@ Ce guide explique comment ajouter des fichiers téléchargeables (par exemple, d
 ![image](https://github.com/user-attachments/assets/2687f745-4c29-4c85-8c92-6df71c041b91)
 
 4. **Gérer un fichier existant :**
+
    - Une fois le fichier ajouté, vous pouvez le visualiser dans la liste des fichiers.
-   - Cliquez sur un fichier pour modifier son nom, obtenir un lien ou le supprimer.
-
----
-
-## Partager un fichier
-
-- **Lien permanent :**  
-  Une fois le fichier ajouté, un lien permanent valide est généré. Vous pouvez le copier en cliquant sur l'icône "Copier" située à côté du lien.
-
-  Exemple de lien :  
-  `http://localhost:5173/digital-file/raw/<file-name>?key=<unique-key>`
-
-  Vous pouvez utiliser ce lien dans vos pages CMS pour patagre vos fichier.
-
-- **Télécharger directement :**  
-  Les utilisateurs peuvent cliquer sur le bouton **"Download file"** pour accéder immédiatement au fichier.
-
----
-
-## Supprimer un fichier
-
-- Si un fichier n'est plus nécessaire, ouvrez-le depuis la liste et cliquez sur **"Delete"**. Une confirmation vous sera demandée avant la suppression définitive.
-
----
+   - Cliquez sur un fichier pour modifier son nom, obtenir un lien ou le supprimer
+   - **Lien permanent :**  
+      Une fois le fichier ajouté, un lien permanent valide est généré. Vous pouvez le copier en cliquant sur l'icône "Copier" située à côté du lien.
+     Exemple de lien :  
+      `http://localhost:5173/digital-file/raw/<file-name>?key=<unique-key>`
+     Vous pouvez utiliser ce lien dans vos pages CMS pour patagre vos fichier.
+   - **Télécharger directement :**  
+     Les utilisateurs peuvent cliquer sur le bouton **"Download file"** pour accéder immédiatement au fichier.
+   - **Supprimer un fichier**
+     Si un fichier n'est plus nécessaire, ouvrez-le depuis la liste et cliquez sur **"Delete"**. Une confirmation vous sera demandée avant la suppression définitive.
