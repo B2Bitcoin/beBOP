@@ -44,6 +44,6 @@ Pour intégrer votre formulaire de contact dans une zone ou page CMS vous pouvez
 
 ![image](https://github.com/user-attachments/assets/4826c9c0-a58a-4ebe-80de-fb6828d48635)
 
-Et votre formulaire de contact sera afficher pour vos utilisateur comme suit.
+Et votre formulaire de contact sera afficher pour vos utilisateurs comme suit.
 
 ![image](https://github.com/user-attachments/assets/a66fd0ff-1a53-40b2-9310-f12949121305)
