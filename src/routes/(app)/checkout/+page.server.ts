@@ -98,7 +98,8 @@ export async function load({ parent, locals }) {
 			cmsCheckoutBottom,
 			cmsCheckoutBottomData: cmsFromContent({ content: cmsCheckoutBottom.content }, locals)
 		}),
-		defaultOnLocation: runtimeConfig.defaultOnLocation
+		defaultOnLocation: runtimeConfig.defaultOnLocation,
+		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout
 	};
 }
 
@@ -373,7 +374,13 @@ export const actions = {
 				delete billingInfo.billing.vatNumber;
 			}
 		}
-
+		const desiredPayment = z
+			.object({
+				paymentTimeOut: z.number({ coerce: true }).int().optional()
+			})
+			.parse({
+				paymentTimeOut: formData.get('paymentTimeOut')
+			});
 		const vatCountry =
 			shippingInfo?.shipping?.country ??
 			locals.countryCode ??
@@ -459,7 +466,8 @@ export const actions = {
 						acceptedExportationAndVATObligation: agreements.isVATNullForeigner
 					})
 				},
-				...(physicalFullyPaid?.onLocation && { onLocation: physicalFullyPaid.onLocation })
+				...(physicalFullyPaid?.onLocation && { onLocation: physicalFullyPaid.onLocation }),
+				...(desiredPayment.paymentTimeOut && { paymentTimeOut: desiredPayment.paymentTimeOut })
 			}
 		);
 		const displayHeadless =
