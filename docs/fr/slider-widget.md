@@ -30,7 +30,7 @@ Pour ajouter un slider cliquer sur **Add slider**.
   - Un champ pour parcourir et télécharger un fichier depuis l'ordinateur.
   - Accepte uniquement les formats d'image (JPG, PNG, etc.).
 
-![image](https://github.com/user-attachments/assets/6852f1a0-f9ec-4838-9eeb-048e7e17e4af)
+![image](https://github.com/user-attachments/assets/226847f0-3c05-4b8a-8620-8a42015444f6)
 
 ## Editer un slider
 
@@ -44,7 +44,7 @@ Au clique de **Add picture** vous aurez une nouvelle page pour associer des imag
 
 Chaque slide peut etre asssocié à un url qui sera l'url qui s'ouvre lorsque vous cliquer sur le slide. Et une option **Open in new tab** pour ouvrir l'url dans une nouvelle fênêtre.
 
-![image](https://github.com/user-attachments/assets/ab1d7a19-6ed2-4011-a507-3595a3118260)
+![image](https://github.com/user-attachments/assets/a57e06b1-6a64-4311-a9c3-5458cfcda1bc)
 
 ## Intégration CMS
 
