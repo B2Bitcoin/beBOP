@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 import { addYears } from 'date-fns';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import { flatten } from 'flat';
-import { adminPrefix } from '$lib/server/admin';
+import { adminPrefix as _adminPrefix } from '$lib/server/admin';
 import '$lib/server/locks';
 import { refreshPromise, runtimeConfig } from '$lib/server/runtime-config';
 import type { CMSPage } from '$lib/types/CmsPage';
@@ -110,7 +110,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		? countryFromIp(event.locals.clientIp)
 		: undefined;
 
-	const admin = adminPrefix();
+	const adminPrefix = _adminPrefix();
 
 	const isAdminLoginLogoutUrl = /^\/admin(-[a-zA-Z0-9]+)?\/(login|logout)(\/|$)/.test(
 		event.url.pathname
@@ -122,7 +122,8 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 		rateLimit(event.locals.clientIp, 'method.' + method, 30, { minutes: 1 });
 	}
 
-	const isAdminUrl = /^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname);
+	const adminPath = /^(\/admin(-.+?)?)(\/|$)/.exec(event.url.pathname);
+	const isAdminUrl = !!adminPath;
 
 	const slug = event.url.pathname.split('/')[1] ? event.url.pathname.split('/')[1] : 'home';
 
@@ -222,17 +223,14 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 			event.locals.countryCode = session.pos.countryCodeOverwrite;
 		}
 	}
-	if (
-		/^\/admin(-[a-zA-Z0-9]+)?(\/|$)/.test(event.url.pathname) &&
-		!event.url.pathname.startsWith(admin)
-	) {
+	if (adminPath && adminPath[1] !== adminPrefix) {
 		if (!event.locals.user || event.locals.user.roleId === CUSTOMER_ROLE_ID) {
 			throw error(403, 'Wrong admin prefix. Make sure to type the correct admin URL.');
 		}
 		return new Response(null, {
 			status: 307,
 			headers: {
-				location: event.url.href.replace(/\/admin(-[a-zA-Z0-9]+)?/, admin)
+				location: event.url.href.replace(adminPath[1], adminPrefix)
 			}
 		});
 	}
@@ -250,7 +248,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 	// Protect any routes under /admin
 	if (isAdminUrl && !isAdminLoginLogoutUrl) {
 		if (!event.locals.user) {
-			throw redirect(303, `${admin}/login`);
+			throw redirect(303, `${adminPrefix}/login`);
 		}
 
 		if (event.locals.user.roleId === CUSTOMER_ROLE_ID) {
