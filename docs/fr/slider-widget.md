@@ -27,14 +27,17 @@ Pour ajouter un slider cliquer sur **Add slider**.
 
 - **Description** : Image principale à afficher dans le slider.
 - **Fonctionnalité** :
+
   - Un champ pour parcourir et télécharger un fichier depuis l'ordinateur.
   - Accepte uniquement les formats d'image (JPG, PNG, etc.).
 
-![image](https://github.com/user-attachments/assets/226847f0-3c05-4b8a-8620-8a42015444f6)
+![image](https://github.com/user-attachments/assets/1cf9c9c4-4e19-4093-b5cb-1b1d88ffaf88)
 
 ## Editer un slider
 
 Lorsqu'on clique sur le titre d'un slider vous pouvez l'editer en rajoutant de nouvelles images.
+
+![image](https://github.com/user-attachments/assets/226847f0-3c05-4b8a-8620-8a42015444f6)
 
 ### 1. **Add Picture**
 
