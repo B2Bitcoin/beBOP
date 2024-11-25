@@ -6,7 +6,7 @@ Accessible sur **Admin** > **Widgets** > **Specifications**, les widgets spécif
 
 ## Créer une spécification
 
-Pour ajouter une cliquer sur **Add specification**.
+Pour ajouter une cliquez sur **Add specification**.
 
 ![image](https://github.com/user-attachments/assets/892889ef-9bcc-484e-abe2-b8615d9ff9f0)
 

@@ -6,7 +6,7 @@ Accessible sur **Admin** > **Widgets** > **Form**, les widgets form peuvent êtr
 
 ## Ajouter un formulaire de contact
 
-Pour ajouter un formulaire de contact cliquer sur **Add contact form**.
+Pour ajouter un formulaire de contact cliquez sur **Add contact form**.
 
 ![image](https://github.com/user-attachments/assets/5a253ccf-be0c-4888-a27f-a20f65a641ea)
 

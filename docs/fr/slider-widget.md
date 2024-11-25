@@ -54,4 +54,4 @@ Pour intégrer votre slider dans une zone ou page CMS vous pouvez l'ajoutez comm
 
 Et votre slider sera afficher pour vos utilisateurs comme suit.
 
-![image](https://github.com/user-attachments/assets/bfc61443-4367-4eb4-80cc-b4720e30b79c)
+[vidéo](https://github.com/user-attachments/assets/d55efda5-6097-4283-a536-782294a0ef54)

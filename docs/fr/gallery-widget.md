@@ -6,11 +6,11 @@ Disponible sur **Admin** > **Widgets** > **Gallery**, les gallery widgets peuven
 
 ## Ajouter une Galerie
 
-Pour ajouter une gallerie cliquer sur **Add contact form**.
+Pour ajouter une gallerie cliquez sur **Add contact form**.
 
 ![image](https://github.com/user-attachments/assets/9730f949-57a2-4508-aff9-edc3edcfa84c)
 
-L'interface "Ajouter une Galerie" permet aux utilisateurs d'ajouter une nouvelle galerie avec des informations spécifiques, telles que le nom, le slug, le contenu principal et le contenu secondaire.
+L'interface **"Add a gallery"** permet aux utilisateurs d'ajouter une nouvelle galerie avec des informations spécifiques, telles que le nom, le slug, le contenu principal et le contenu secondaire.
 
 ### Champs du formulaire
 
@@ -19,7 +19,7 @@ L'interface "Ajouter une Galerie" permet aux utilisateurs d'ajouter une nouvelle
   _Exemple : "Galerie d'Automne"_
 
 - **Gallery Slug** (Slug de la galerie) :  
-  Identifiant unique de la galerie utilisé dans l'URL.  
+  Identifiant unique de la galerie utilisé dans l'URL, pour l'intégration CMS...
   _Exemple : "galerie-automne"_
 
 - **Principal Gallery** (Galerie principale) :

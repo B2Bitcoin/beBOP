@@ -8,7 +8,7 @@ Disponible sur **Admin** > **Widgets** > **Countdowns**, cette interface permet 
 
 ## Ajouter un compte à rebours
 
-Pour ajouter un compte à rebours cliquer sur **Add countdown**.
+Pour ajouter un compte à rebours cliquez sur **Add countdown**.
 
 ![image](https://github.com/user-attachments/assets/7982d6d9-3086-4187-9231-96cb1a89a59e)
 
