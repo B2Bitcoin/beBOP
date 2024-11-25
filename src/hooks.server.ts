@@ -112,9 +112,7 @@ const handleGlobal: Handle = async ({ event, resolve }) => {
 
 	const adminPrefix = _adminPrefix();
 
-	const isAdminLoginLogoutUrl = /^\/admin(-[a-zA-Z0-9]+)?\/(login|logout)(\/|$)/.test(
-		event.url.pathname
-	);
+	const isAdminLoginLogoutUrl = /^\/admin(-.+?)?\/(login|logout)(\/|$)/.test(event.url.pathname);
 
 	const method = event.request.method.toLowerCase();
 
