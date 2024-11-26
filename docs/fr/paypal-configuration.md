@@ -24,8 +24,8 @@ Cette section permet de configurer les paramètres de paiement via PayPal pour v
 
 - **Description :** Cochez cette case si les identifiants fournis sont pour l'environnement de test (sandbox) de PayPal.
 - **Valeurs possibles :**
-  - ✅ Activé (Test dans l'environnement sandbox)
-  - ❌ Désactivé (Environnement de production)
+  - [x] Activé (Test dans l'environnement sandbox)
+  - [ ] Désactivé (Environnement de production)
 
 ### **4. Currency**
 
