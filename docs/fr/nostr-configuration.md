@@ -111,3 +111,8 @@ Aprés enregistrement vous pourrez maintenant envoyer de notifactions avec nostr
       - Message : `Hello`
 
 ## Nostr-bot
+
+Maintenant vous aurez la possibilité d'interagir avec le bot nostr en envoyant des commandes à votre adresse nostr.
+Pour avoir la liste des commandes tapez `!help`
+
+![image](https://github.com/user-attachments/assets/c038ecbf-022a-4d41-9440-a6414f9ee7be)
