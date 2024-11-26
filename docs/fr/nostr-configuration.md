@@ -84,8 +84,6 @@ Aprés enregistrement vous pourrez maintenant envoyer de notifactions avec nostr
 2. **Bouton "Update relay list":**
    - Appuyez sur ce bouton pour ajouter le relais spécifié à la liste existante.
 
----
-
 ## **6. Intro Message**
 
 ![image](https://github.com/user-attachments/assets/ecb84a14-725c-4776-9728-d616acc47538)
