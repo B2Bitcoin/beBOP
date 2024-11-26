@@ -8,7 +8,7 @@ Pour configurer votre messagerie nostr cliquez sur **Create NostR private key**.
 
 ![image](https://github.com/user-attachments/assets/5582f837-5afc-47a3-b434-8e639fc07422)
 
-Copier la clé et ajouter cette clé dans votre .env.local comme suit:
+Copier la clé et ajouter cette clé dans votre **.env** comme suit:
 
 ```markdown
 # To send NostR notifications for order status changes, specify the following. Eg nsecXXXX...
