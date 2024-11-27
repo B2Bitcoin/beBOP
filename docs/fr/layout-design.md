@@ -1,6 +1,6 @@
 # Configuration Layout
 
-Accessible sur Admin > Merch > Layout, cette section permet de gérer le layout de votre site (menus, logo, footer).
+Accessible sur **Admin** > **Merch** > **Layout**, cette section permet de gérer le layout de votre site (menus, logo, footer).
 
 ## Top Bar
 
