@@ -2,8 +2,8 @@
 
 ![image](https://github.com/user-attachments/assets/203847fe-887b-4d0f-86d6-00a490770a7d)
 
-Ce guide explique comment activer le mode de maintenance, spécifier les IP qui peuvent accéder au site pendant la maintenance.
-Il explique aussi comment crée un page CMS de maintenance
+Cette section explique comment activer le mode de maintenance, spécifier les IP qui peuvent accéder au site pendant la maintenance.
+Il explique aussi comment crée un page CMS de maintenance.
 
 ## Activer le Mode de Maintenance
 
@@ -49,7 +49,7 @@ Pour configurer une page maintenance vous pouvez cliquer sur le lien (voir image
 
 Comme pour créer une page CMS (cf [WIP-build-cms-pages-with-widget.md]) la page maintenance fait partie des CMS pages suggéres.
 
-Lors de la creation il est suggéré de cocher ces parametres :
+Lors de la création il est suggéré de cocher ces paramêtres :
 
 - **Full Screen** : ☑️ (Activé)
 - **Hide this page from search engines** : ☑️ (Activé)

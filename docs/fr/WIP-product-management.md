@@ -1,5 +1,7 @@
 # Interface de gestion des produits
 
+Accessible via **Admin** > **Merch** > **Product**, cette section vous permet d'ajouter des produits à votre be-bop.
+
 ## Ajouter ou editer un nouveau produit
 
 ### Informations de Base

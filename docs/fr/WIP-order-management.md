@@ -6,7 +6,7 @@ La section de gestion des commandes vous permet de visualiser, filtrer, et mettr
 
 ## Accès à la Liste des Commandes
 
-Pour accéder à la liste des commandes, allez sur Admin > Transaction > Orders.
+Pour accéder à la liste des commandes, allez sur **Admin** > **Transaction** > **Orders**.
 
 ![image](https://github.com/user-attachments/assets/de9d05f5-323c-4e40-9754-60e55ba8e605)
 
