@@ -9,6 +9,7 @@ Accessible sur Admin > Merch > Products **Products price**, cette section permet
 Pour chaque produits vous pouvez changer :
 
 **Price amount** : le prix actuel du produit.
+
 **Price currency** : la devise actuelle du produit.
 
 Exemple

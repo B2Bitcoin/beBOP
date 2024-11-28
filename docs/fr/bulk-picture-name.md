@@ -9,6 +9,7 @@ Accessible sur Admin > Merch > Pictures **Bulk picture name editor**, cette sect
 Le formulaire contient les champs suivant :
 
 **Current slug** : L'identifiant de l'image (non editable).
+
 **Name** : Le nom actuelle de l'image.
 
 Exemple
