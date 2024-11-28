@@ -1,4 +1,4 @@
-# Configuration des prix produits
+# Configuration Bulk Products Prices
 
 Accessible sur Admin > Merch > Products **Products price**, cette section permet de changer en masse le prix des produits disponibles
 
