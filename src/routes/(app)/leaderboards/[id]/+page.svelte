@@ -2,8 +2,6 @@
 	import LeaderBoardWidget from '$lib/components/LeaderBoardWidget.svelte';
 	import { useI18n } from '$lib/i18n';
 
-	const { t } = useI18n();
-
 	export let data;
 </script>
 
