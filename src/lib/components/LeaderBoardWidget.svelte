@@ -5,7 +5,7 @@
 	import Trans from './Trans.svelte';
 	import type { Leaderboard } from '$lib/types/Leaderboard';
 	import type { Product } from '$lib/types/Product';
-	import type { Picture } from '$lib/types/Picture.ts';
+	import type { Picture } from '$lib/types/Picture';
 	import { groupBy } from 'lodash-es';
 	import type { SetRequired } from 'type-fest';
 	import PictureComponent from './Picture.svelte';
