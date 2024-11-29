@@ -1,9 +1,5 @@
 <script lang="ts">
-	import { useI18n } from '$lib/i18n.js';
-
 	export let data;
-
-	const { locale } = useI18n();
 </script>
 
 <a href="{data.adminPrefix}/leaderboard/new" class="underline block">Add leaderboard</a>

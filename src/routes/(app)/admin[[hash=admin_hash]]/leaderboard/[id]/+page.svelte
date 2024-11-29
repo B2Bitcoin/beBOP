@@ -4,7 +4,6 @@
 	import { upperFirst } from '$lib/utils/upperFirst';
 	import { MultiSelect } from 'svelte-multiselect';
 	import { formatInTimeZone } from 'date-fns-tz';
-	import OrdersList from '$lib/components/OrdersList.svelte';
 
 	export let data;
 
@@ -74,16 +73,7 @@
 		</select>
 	</label>
 
-	{#if data.leaderboard.mode === 'moneyAmount'}
-		<label class="form-label w-full">
-			Currency
-			<select name="currency" class="form-input" value={data.leaderboard.currency} disabled>
-				{#each CURRENCIES as currency}
-					<option value={currency}>{currency}</option>
-				{/each}
-			</select>
-		</label>
-	{/if}
+	<h2 class="text-2xl">Progress</h2>
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
@@ -93,18 +83,41 @@
 		/>
 		Edit progress
 	</label>
-	<input type="hidden" name="oldProgress" value={data.leaderboard.progress} />
-	<label class="form-label">
-		Progress
-		<input
-			class="form-input"
-			name="progress"
-			type="number"
-			value={data.leaderboard.progress}
-			readonly={!progressChanged}
-			step="any"
-		/>
-	</label>
+	{#each data.leaderboard.progress as progress, i}
+		<h2 class="text-xl">{progress.product}</h2>
+		<div class="gap-4 flex flex-col md:flex-row">
+			<input type="hidden" name="progress[{i}].product" value={progress.product} />
+
+			<label class="w-full">
+				amount
+				<input
+					class="form-input"
+					type="number"
+					name="progress[{i}].amount"
+					placeholder="Price"
+					step="any"
+					value={progress.amount
+						.toLocaleString('en', { maximumFractionDigits: 8 })
+						.replace(/,/g, '')}
+					required
+					disabled={!progressChanged}
+				/>
+			</label>
+			{#if data.leaderboard.mode === 'moneyAmount'}
+				<label class="w-full">
+					currency
+
+					<select name="progress[{i}].currency" class="form-input" disabled={!progressChanged}>
+						{#each CURRENCIES as currency}
+							<option value={currency} selected={progress.currency === currency}>
+								{currency}
+							</option>
+						{/each}
+					</select>
+				</label>
+			{/if}
+		</div>
+	{/each}
 
 	<label class="form-label">
 		Beginning date

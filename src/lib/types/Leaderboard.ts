@@ -1,4 +1,5 @@
 import { Currency } from './Currency';
+import { Product } from './Product';
 import type { Timestamps } from './Timestamps';
 
 export type Leaderboard = Timestamps & {
@@ -8,10 +9,12 @@ export type Leaderboard = Timestamps & {
 	/* If empty, works on all products */
 	productIds: string[];
 
-	progress: number;
-
 	beginsAt: Date;
 	endsAt: Date;
 	mode: 'moneyAmount' | 'totalProducts';
-	currency?: Currency;
+	progress: {
+		product: Product['_id'];
+		amount: number;
+		currency?: Currency;
+	}[];
 };

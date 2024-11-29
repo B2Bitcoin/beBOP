@@ -26,10 +26,6 @@ export const actions: Actions = {
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				productIds: z.string().array(),
-				goalAmount: z
-					.string()
-					.regex(/^\d+(\.\d+)?$/)
-					.default('0'),
 				mode: z.enum(['totalProducts', 'moneyAmount']),
 				currency: z.enum([CURRENCIES[0], ...CURRENCIES.slice(1)]).optional(),
 				beginsAt: z.date({ coerce: true }),
@@ -56,13 +52,16 @@ export const actions: Actions = {
 			_id: slug,
 			name,
 			productIds: productIds,
-			progress: 0,
+			progress: productIds.map((productId) => ({
+				product: productId,
+				amount: 0,
+				...(mode === 'moneyAmount' && { currency: currency })
+			})),
 			beginsAt,
 			endsAt,
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			mode,
-			currency
+			mode
 		});
 
 		throw redirect(303, `${adminPrefix()}/leaderboard`);
