@@ -181,13 +181,17 @@ export const actions = {
 						)
 					})
 					.parse(json);
-
+		const billingIsCompany = z
+			.object({ isCompany: z.boolean({ coerce: true }).default(false) })
+			.parse({
+				isCompany: formData.get('billing.isCompany')
+			});
 		const billingInfo = json.billing
 			? z
 					.object({
 						billing: z.object({
-							firstName: z.string().min(1),
-							lastName: z.string().min(1),
+							firstName: billingIsCompany.isCompany ? z.string().default('') : z.string().min(1),
+							lastName: billingIsCompany.isCompany ? z.string().default('') : z.string().min(1),
 							address: z.string().min(1),
 							city: z.string().min(1),
 							state: z.string().optional(),
