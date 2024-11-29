@@ -1587,7 +1587,39 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 		}
 	}
 	//#endregion
-
+	//#region leaderboard
+	const leaderboards = await collections.leaderboards
+		.find({
+			beginsAt: { $lt: new Date() },
+			endsAt: { $gt: new Date() }
+		})
+		.toArray();
+	for (const leaderboard of leaderboards) {
+		const productIds = new Set(leaderboard.productIds);
+		const items = productIds.size
+			? order.items.filter((item) => productIds.has(item.product._id))
+			: order.items;
+		const increase =
+			leaderboard.mode === 'totalProducts'
+				? sum(items.map((item) => item.quantity))
+				: sumCurrency(
+						leaderboard.progress[0].currency ?? 'SAT',
+						items.map((item) => ({
+							amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
+							currency: item.customPrice?.currency || item.product.price.currency
+						}))
+				  );
+		if (increase > 0) {
+			await collections.leaderboards.updateOne(
+				{ _id: leaderboard._id },
+				{
+					$inc: { 'progress.amount': increase }
+				},
+				{ session }
+			);
+		}
+	}
+	//#endregion
 	//#region tickets
 	let i = 0;
 	for (const item of order.items) {

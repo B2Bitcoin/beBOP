@@ -4,6 +4,11 @@
 	import { useI18n } from '$lib/i18n';
 	import Trans from './Trans.svelte';
 	import type { Leaderboard } from '$lib/types/Leaderboard';
+	import type { Product } from '$lib/types/Product';
+	import type { Picture } from '$lib/types/Picture.ts';
+	import { groupBy } from 'lodash-es';
+	import type { SetRequired } from 'type-fest';
+	import PictureComponent from './Picture.svelte';
 
 	let className = '';
 	export { className as class };
@@ -11,16 +16,32 @@
 		Leaderboard,
 		'_id' | 'name' | 'progress' | 'endsAt' | 'mode' | 'beginsAt'
 	>;
-
+	export let products: Pick<Product, '_id' | 'name' | 'shortDescription'>[];
+	export let pictures: Picture[];
 	const { t, locale } = useI18n();
+	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
+	$: picturesByProduct = groupBy(
+		pictures.filter((picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId),
+		'productId'
+	);
 </script>
 
 {#each leaderboard.progress as progress}
 	<div class="rounded p-4 flex flex-col {className}">
 		<div class="flex justify-between items-center">
-			<h3 class="font-medium text-[22px] body-title">
-				{progress.product}
-			</h3>
+			<div class="flex flex-row gap-4">
+				<PictureComponent
+					picture={picturesByProduct[productById[progress.product]._id][0]}
+					class="my-5 w-[90px] h-[90px]"
+				/>
+				<div class="flex flex-col gap-4">
+					<h3 class="font-medium text-[22px] body-title">
+						{productById[progress.product].name}
+					</h3>
+
+					{productById[progress.product].shortDescription}
+				</div>
+			</div>
 			<span class="text-base font-light body-secondaryText"
 				>{#if leaderboard.beginsAt > new Date()}
 					{t('challenge.beginsAt', {
