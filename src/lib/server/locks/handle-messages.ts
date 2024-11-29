@@ -18,7 +18,7 @@ import { userQuery } from '../user';
 import { rateLimit } from '../rateLimit';
 import { computePriceInfo } from '$lib/types/Cart';
 import { filterNullish } from '$lib/utils/fillterNullish';
-import { Price } from '$lib/types/Order';
+import type { Price } from '$lib/types/Order';
 
 const lock = new Lock('received-messages');
 
