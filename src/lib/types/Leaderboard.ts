@@ -1,5 +1,5 @@
-import { Currency } from './Currency';
-import { Product } from './Product';
+import { type Currency } from './Currency';
+import type { Product } from './Product';
 import type { Timestamps } from './Timestamps';
 
 export type Leaderboard = Timestamps & {
