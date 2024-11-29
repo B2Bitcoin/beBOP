@@ -1,6 +1,5 @@
 <script lang="ts">
 	import LeaderBoardWidget from '$lib/components/LeaderBoardWidget.svelte';
-	import { useI18n } from '$lib/i18n';
 
 	export let data;
 </script>
