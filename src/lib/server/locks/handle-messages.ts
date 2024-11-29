@@ -412,18 +412,18 @@ const commands: Record<
 
 				if (product.maximumPrice && toSatoshis(customPrice) > toSatoshis(product.maximumPrice)) {
 					await send(
-						`Product price must be less than ${product.maximumPrice.amount.toLocaleString(
+						`Product price must be less than ${toSatoshis(product.maximumPrice).toLocaleString(
 							'en-US'
-						)} ${product.maximumPrice.currency}`
+						)} SAT.`
 					);
 					return;
 				}
 
 				if (toSatoshis(customPrice) < toSatoshis(product.price)) {
 					await send(
-						`Product price must be greater than ${product.price.amount.toLocaleString('en-US')} ${
-							product.price.currency
-						}`
+						`Product price must be greater than ${toSatoshis(product.price).toLocaleString(
+							'en-US'
+						)} SAT. For example, !add ${ref} ${toSatoshis(product.price)}`
 					);
 					return;
 				}
