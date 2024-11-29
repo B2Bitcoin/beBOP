@@ -18,6 +18,7 @@ import { userQuery } from '../user';
 import { rateLimit } from '../rateLimit';
 import { computePriceInfo } from '$lib/types/Cart';
 import { filterNullish } from '$lib/utils/fillterNullish';
+import { Price } from '$lib/types/Order';
 
 const lock = new Lock('received-messages');
 
@@ -336,7 +337,10 @@ const commands: Record<
 					.filter((item) => productById[item.productId])
 					.map((item) => {
 						const product = productById[item.productId];
-						const price = toSatoshis(product.price.amount * item.quantity, product.price.currency);
+						const price = toSatoshis(
+							(item.customPrice?.amount ?? product.price.amount) * item.quantity,
+							item.customPrice?.currency ?? product.price.currency
+						);
 						totalPrice += price;
 						return `- ref: "${product._id}" / ${price.toLocaleString('en-US')} SAT / Quantity: ${
 							item.quantity
@@ -355,7 +359,7 @@ const commands: Record<
 		args: [{ name: 'ref' }, { name: 'quantity', default: '1' }],
 		execute: async (send, { senderNpub, args }) => {
 			const ref = args.ref;
-			const quantity = parseInt(args.quantity);
+			let quantity = parseInt(args.quantity);
 
 			if (isNaN(quantity) || quantity <= 0) {
 				await send('Invalid quantity: ' + args.quantity);
@@ -399,13 +403,42 @@ const commands: Record<
 				return;
 			}
 
-			const cart = await addToCartInDb(product, quantity, { user: { npub: senderNpub } }).catch(
-				async (e) => {
-					console.error(e);
-					await send(e.message);
+			let customPrice: Price | undefined = undefined;
+			if (product.payWhatYouWant) {
+				customPrice = {
+					amount: quantity,
+					currency: 'SAT'
+				};
+
+				if (product.maximumPrice && toSatoshis(customPrice) > toSatoshis(product.maximumPrice)) {
+					await send(
+						`Product price must be less than ${product.maximumPrice.amount.toLocaleString(
+							'en-US'
+						)} ${product.maximumPrice.currency}`
+					);
 					return;
 				}
-			);
+
+				if (toSatoshis(customPrice) < toSatoshis(product.price)) {
+					await send(
+						`Product price must be greater than ${product.price.amount.toLocaleString('en-US')} ${
+							product.price.currency
+						}`
+					);
+					return;
+				}
+
+				quantity = 1;
+			}
+
+			const cart = await addToCartInDb(product, quantity, {
+				user: { npub: senderNpub },
+				customPrice
+			}).catch(async (e) => {
+				console.error(e);
+				await send(e.message);
+				return;
+			});
 
 			if (!cart) {
 				return;
