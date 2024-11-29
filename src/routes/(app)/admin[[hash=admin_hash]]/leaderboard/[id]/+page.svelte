@@ -94,7 +94,7 @@
 					class="form-input"
 					type="number"
 					name="progress[{i}].amount"
-					placeholder="Price"
+					placeholder="amount"
 					step="any"
 					value={progress.amount
 						.toLocaleString('en', { maximumFractionDigits: 8 })
@@ -106,7 +106,6 @@
 			{#if data.leaderboard.mode === 'moneyAmount'}
 				<label class="w-full">
 					currency
-
 					<select name="progress[{i}].currency" class="form-input" disabled={!progressChanged}>
 						{#each CURRENCIES as currency}
 							<option value={currency} selected={progress.currency === currency}>
@@ -153,6 +152,7 @@
 	<label class="form-label">
 		Products
 		<MultiSelect
+			disabled
 			name="productIds"
 			options={data.products.map((p) => ({ label: p.name, value: p._id }))}
 			selected={data.leaderboard.productIds.map((productId) => ({

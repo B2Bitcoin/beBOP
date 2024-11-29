@@ -48,10 +48,9 @@ export const actions = {
 		}
 
 		// We don't allow changing the currency, or the mode
-		const { name, progress, productIds, beginsAt, endsAt, progressChanged } = z
+		const { name, progress, beginsAt, endsAt, progressChanged } = z
 			.object({
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
-				productIds: z.string().array(),
 				progress: z.array(
 					z.object({
 						product: z.string().trim(),
@@ -72,10 +71,13 @@ export const actions = {
 					(x: { value: string }) => x.value
 				)
 			});
-		const progressParsed = progress.map((prog) => ({
-			...prog,
-			amount: Math.max(parsePriceAmount(prog.amount, prog.currency), 0)
-		}));
+		const progressParsed = progress
+			.filter((prog) => leaderboard.productIds.includes(prog.product))
+			.map((prog) => ({
+				...prog,
+				amount: Math.max(parsePriceAmount(prog.amount, prog.currency), 0)
+			}));
+
 		const updateResult = await collections.leaderboards.updateOne(
 			{
 				_id: leaderboard._id
@@ -83,8 +85,7 @@ export const actions = {
 			{
 				$set: {
 					name,
-					productIds,
-					progress: progressParsed,
+					...(progressChanged && { progress: progressParsed }),
 					beginsAt,
 					endsAt,
 					updatedAt: new Date()

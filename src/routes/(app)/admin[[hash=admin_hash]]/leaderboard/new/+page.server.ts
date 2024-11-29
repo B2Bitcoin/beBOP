@@ -64,6 +64,6 @@ export const actions: Actions = {
 			mode
 		});
 
-		throw redirect(303, `${adminPrefix()}/leaderboard`);
+		throw redirect(303, `${adminPrefix()}/leaderboard/${slug}`);
 	}
 };
