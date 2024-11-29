@@ -1,4 +1,4 @@
-import { type Currency } from './Currency';
+import type { Currency } from './Currency';
 import type { Product } from './Product';
 import type { Timestamps } from './Timestamps';
 
