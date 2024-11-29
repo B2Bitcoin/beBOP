@@ -94,7 +94,7 @@ async function maintainOrders() {
 									throw new Error('Missing address on bitcoin order');
 								}
 
-								const nConfirmations = getConfirmationBlocks(payment.price.amount);
+								const nConfirmations = getConfirmationBlocks(payment.price);
 
 								const received = await getSatoshiReceivedNodeless(payment.address, nConfirmations);
 
@@ -117,7 +117,7 @@ async function maintainOrders() {
 									orderAddressLabel(order._id, payment._id)
 								);
 
-								const confirmationBlocks = getConfirmationBlocks(payment.price.amount);
+								const confirmationBlocks = getConfirmationBlocks(payment.price);
 
 								const received = sum(
 									transactions
