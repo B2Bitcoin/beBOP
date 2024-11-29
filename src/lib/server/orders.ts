@@ -1596,9 +1596,7 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 		.toArray();
 	for (const leaderboard of leaderboards) {
 		const productIds = new Set(leaderboard.productIds);
-		const items = productIds.size
-			? order.items.filter((item) => productIds.has(item.product._id))
-			: order.items;
+		const items = order.items.filter((item) => productIds.has(item.product._id));
 		const increase =
 			leaderboard.mode === 'totalProducts'
 				? sum(items.map((item) => item.quantity))
