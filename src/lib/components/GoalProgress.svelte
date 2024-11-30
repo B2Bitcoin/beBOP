@@ -6,7 +6,7 @@
 	let className = '';
 	export { className as class };
 
-	$: percentage = (progress * 100) / goal;
+	$: percentage = goal !== 0 ? (progress * 100) / goal : 0;
 	$: newPercentage = (goal * 100) / progress;
 </script>
 
