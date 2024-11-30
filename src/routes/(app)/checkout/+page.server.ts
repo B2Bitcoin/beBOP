@@ -98,7 +98,8 @@ export async function load({ parent, locals }) {
 			cmsCheckoutBottom,
 			cmsCheckoutBottomData: cmsFromContent({ content: cmsCheckoutBottom.content }, locals)
 		}),
-		defaultOnLocation: runtimeConfig.defaultOnLocation
+		defaultOnLocation: runtimeConfig.defaultOnLocation,
+		desiredPaymentTimeout: runtimeConfig.desiredPaymentTimeout
 	};
 }
 
@@ -180,13 +181,17 @@ export const actions = {
 						)
 					})
 					.parse(json);
-
+		const billingIsCompany = z
+			.object({ isCompany: z.boolean({ coerce: true }).default(false) })
+			.parse({
+				isCompany: formData.get('billing.isCompany')
+			});
 		const billingInfo = json.billing
 			? z
 					.object({
 						billing: z.object({
-							firstName: z.string().min(1),
-							lastName: z.string().min(1),
+							firstName: billingIsCompany.isCompany ? z.string().default('') : z.string().min(1),
+							lastName: billingIsCompany.isCompany ? z.string().default('') : z.string().min(1),
 							address: z.string().min(1),
 							city: z.string().min(1),
 							state: z.string().optional(),
@@ -373,7 +378,13 @@ export const actions = {
 				delete billingInfo.billing.vatNumber;
 			}
 		}
-
+		const desiredPayment = z
+			.object({
+				paymentTimeOut: z.number({ coerce: true }).int().optional()
+			})
+			.parse({
+				paymentTimeOut: formData.get('paymentTimeOut')
+			});
 		const vatCountry =
 			shippingInfo?.shipping?.country ??
 			locals.countryCode ??
@@ -459,7 +470,8 @@ export const actions = {
 						acceptedExportationAndVATObligation: agreements.isVATNullForeigner
 					})
 				},
-				...(physicalFullyPaid?.onLocation && { onLocation: physicalFullyPaid.onLocation })
+				...(physicalFullyPaid?.onLocation && { onLocation: physicalFullyPaid.onLocation }),
+				...(desiredPayment.paymentTimeOut && { paymentTimeOut: desiredPayment.paymentTimeOut })
 			}
 		);
 		const displayHeadless =

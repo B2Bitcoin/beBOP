@@ -476,6 +476,7 @@ export async function createOrder(
 			acceptedExportationAndVATObligation?: boolean;
 		};
 		onLocation?: boolean;
+		paymentTimeOut?: number;
 	}
 ): Promise<Order['_id']> {
 	const npubAddress = params.notifications?.paymentStatus?.npub;
@@ -989,7 +990,9 @@ export async function createOrder(
 
 		let orderPayment: OrderPayment | undefined = undefined;
 		if (paymentMethod) {
-			const expiresAt = paymentMethodExpiration(paymentMethod);
+			const expiresAt = paymentMethodExpiration(paymentMethod, {
+				paymentTimeout: params.paymentTimeOut
+			});
 
 			orderPayment = await addOrderPayment(
 				order,
@@ -1300,14 +1303,14 @@ async function generatePaypalPaymentInfo(params: {
 	};
 }
 
-function paymentMethodExpiration(paymentMethod: PaymentMethod) {
+function paymentMethodExpiration(paymentMethod: PaymentMethod, opts?: { paymentTimeout?: number }) {
 	return paymentMethod === 'point-of-sale' || paymentMethod === 'bank-transfer'
 		? undefined
 		: paymentMethod === 'lightning' &&
 		  isPhoenixdConfigured() &&
-		  runtimeConfig.desiredPaymentTimeout > 60
+		  (opts?.paymentTimeout ?? runtimeConfig.desiredPaymentTimeout) > 60
 		? addHours(new Date(), 1)
-		: addMinutes(new Date(), runtimeConfig.desiredPaymentTimeout);
+		: addMinutes(new Date(), opts?.paymentTimeout ?? runtimeConfig.desiredPaymentTimeout);
 }
 
 function paymentPrice(paymentMethod: PaymentMethod, price: Price): Price {
