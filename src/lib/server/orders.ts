@@ -24,12 +24,7 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
-import {
-	CURRENCY_UNIT,
-	FRACTION_DIGITS_PER_CURRENCY,
-	parsePriceAmount,
-	type Currency
-} from '$lib/types/Currency';
+import { CURRENCY_UNIT, FRACTION_DIGITS_PER_CURRENCY, type Currency } from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
