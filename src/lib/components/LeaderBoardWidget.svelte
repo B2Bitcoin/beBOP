@@ -16,7 +16,7 @@
 	>;
 	export let products: Pick<Product, '_id' | 'name' | 'shortDescription'>[];
 	export let pictures: Picture[];
-	const { t, locale } = useI18n();
+	const { locale } = useI18n();
 	$: productById = Object.fromEntries(products.map((product) => [product._id, product]));
 	$: picturesByProduct = groupBy(
 		pictures.filter((picture): picture is SetRequired<Picture, 'productId'> => !!picture.productId),
@@ -26,17 +26,17 @@
 </script>
 
 {#each leaderboard.progress as progress}
-	<div class="items-center {className}">
-		<div class="flex flex-row gap-4">
+	<div class="flex items-center {className}">
+		<div class="flex items-center flex-row gap-4">
 			<PictureComponent
 				picture={picturesByProduct[productById[progress.product]._id][0]}
-				class="w-[90px] h-[90px]"
+				class="max-w-[68px] max-h-[68px]"
 			/>
 			<div class="flex flex-col">
 				<span class="font-medium text-[22px] body-title">
 					{productById[progress.product].name}
 				</span>
-				{productById[progress.product].shortDescription}
+				<p class="hidden lg:contents">{productById[progress.product].shortDescription}</p>
 			</div>
 		</div>
 	</div>

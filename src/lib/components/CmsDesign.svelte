@@ -189,7 +189,12 @@
 				/>
 				<PictureComponent picture={pictureById[token.slug]} class="my-5 lg:hidden block" />
 			{:else if token.type === 'leaderboardWidget'}
-				<LeaderBoardWidget leaderboard={leaderboardById[token.slug]} {pictures} {products} />
+				<LeaderBoardWidget
+					leaderboard={leaderboardById[token.slug]}
+					{pictures}
+					{products}
+					class="not-prose"
+				/>
 			{:else if token.type === 'html'}
 				<div class="my-5">
 					<!-- eslint-disable svelte/no-at-html-tags -->
@@ -265,7 +270,12 @@
 				{:else if token.type === 'pictureWidget'}
 					<PictureComponent picture={pictureById[token.slug]} class="my-5" />
 				{:else if token.type === 'leaderboardWidget'}
-					<LeaderBoardWidget leaderboard={leaderboardById[token.slug]} {pictures} {products} />
+					<LeaderBoardWidget
+						leaderboard={leaderboardById[token.slug]}
+						{pictures}
+						{products}
+						class="not-prose"
+					/>
 				{:else if token.type === 'html'}
 					<div class="my-5">
 						<!-- eslint-disable svelte/no-at-html-tags -->

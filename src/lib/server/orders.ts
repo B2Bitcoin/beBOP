@@ -24,7 +24,12 @@ import { ORIGIN } from '$env/static/private';
 import { emailsEnabled } from './email';
 import { sum } from '$lib/utils/sum';
 import { computeDeliveryFees, type Cart, computePriceInfo } from '$lib/types/Cart';
-import { CURRENCY_UNIT, FRACTION_DIGITS_PER_CURRENCY, type Currency } from '$lib/types/Currency';
+import {
+	CURRENCY_UNIT,
+	FRACTION_DIGITS_PER_CURRENCY,
+	parsePriceAmount,
+	type Currency
+} from '$lib/types/Currency';
 import { sumCurrency } from '$lib/utils/sumCurrency';
 import { refreshAvailableStockInDb } from './product';
 import { checkCartItems } from './cart';
@@ -1597,21 +1602,19 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 	for (const leaderboard of leaderboards) {
 		const productIds = new Set(leaderboard.productIds);
 		const items = order.items.filter((item) => productIds.has(item.product._id));
-		const increase =
-			leaderboard.mode === 'totalProducts'
-				? sum(items.map((item) => item.quantity))
-				: sumCurrency(
-						leaderboard.progress[0].currency ?? 'SAT',
-						items.map((item) => ({
-							amount: (item.customPrice?.amount || item.product.price.amount) * item.quantity,
-							currency: item.customPrice?.currency || item.product.price.currency
-						}))
-				  );
-		if (increase > 0) {
+
+		for (const item of items) {
+			const increase =
+				leaderboard.mode === 'totalProducts'
+					? item.quantity
+					: parsePriceAmount(
+							((item.customPrice?.amount || item.product.price.amount) * item.quantity).toString(),
+							leaderboard.progress[0].currency || 'BTC'
+					  );
 			await collections.leaderboards.updateOne(
-				{ _id: leaderboard._id },
+				{ _id: leaderboard._id, 'progress.product': item.product._id },
 				{
-					$inc: { 'progress.amount': increase }
+					$inc: { 'progress.$.amount': increase }
 				},
 				{ session }
 			);
