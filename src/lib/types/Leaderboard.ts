@@ -22,6 +22,7 @@ export type Leaderboard = Timestamps & {
 		type: 'progress';
 		at: Date;
 		order: Order['_id'];
+		product: Product['_id'];
 		amount: number;
 	}[];
 };
