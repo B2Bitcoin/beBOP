@@ -1,3 +1,4 @@
+import { LIGHTNING_INBOUND_LIQUIDITY_WARNING_THRESHOLD } from '$env/static/private';
 import { collections } from '../database';
 import { setTimeout } from 'node:timers/promises';
 import { processClosed } from '../process';
@@ -22,6 +23,9 @@ import { ObjectId } from 'mongodb';
 
 const lock = new Lock('orders');
 
+const INBOUND_LIQUIDITY_THRESHOLD: number =
+	parseFloat(LIGHTNING_INBOUND_LIQUIDITY_WARNING_THRESHOLD) || 0.3;
+
 async function notifyAdminOnLowPhoenixdInboundLiquidity(): Promise<void> {
 	const contactEmail: string | undefined = runtimeConfig.sellerIdentity?.contact.email;
 	if (!contactEmail) {
@@ -29,7 +33,7 @@ async function notifyAdminOnLowPhoenixdInboundLiquidity(): Promise<void> {
 	}
 	const nodeInfo = await phoenixdInfo();
 	for (const channel of nodeInfo.channels) {
-		if (channel.inboundLiquiditySat / channel.capacitySat < 0.3) {
+		if (channel.inboundLiquiditySat / channel.capacitySat < INBOUND_LIQUIDITY_THRESHOLD) {
 			const templateKey = `<p>This message was sent to you because your Lightning Network channel
 			capacity is about to reach its maximum limit. Once full, you may incur unexpected processing fees
 			for incoming payments.</p>
