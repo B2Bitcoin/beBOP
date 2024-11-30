@@ -12,6 +12,7 @@ import type { User } from './User';
 import { getWeek, getWeekOfMonth } from 'date-fns';
 import type { Ticket } from './Ticket';
 import type { OrderLabel } from './OrderLabel';
+import { toBitcoins } from '$lib/utils/toBitcoins';
 
 export type OrderPaymentStatus = 'pending' | 'paid' | 'expired' | 'canceled';
 
@@ -377,4 +378,24 @@ export function invoiceNumberVariables(
 		...(dates.paymentPaid && dateVars('paymentPaid', dates.paymentPaid)),
 		...(dates.paymentPaidOrCreated && dateVars('paymentDynamic', dates.paymentPaidOrCreated))
 	};
+}
+
+export function bitcoinPaymentQrCodeString(
+	paymentAddress: string,
+	paymentAmount: number,
+	paymentCurrency: Currency
+) {
+	return `bitcoin:${paymentAddress}?amount=${toBitcoins(paymentAmount, paymentCurrency)
+		.toLocaleString('en-US', { maximumFractionDigits: 8 })
+		.replaceAll(',', '')}`;
+}
+
+export function lightningPaymentQrCodeString(
+	paymentAddress: string,
+	paymentAmount: number,
+	paymentCurrency: Currency
+) {
+	return `lightning:${paymentAddress}?amount=${toBitcoins(paymentAmount, paymentCurrency)
+		.toLocaleString('en-US', { maximumFractionDigits: 8 })
+		.replaceAll(',', '')}`;
 }
