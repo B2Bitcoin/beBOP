@@ -454,8 +454,8 @@ const commands: Record<
 				`"${product.name}" added to cart for a total quantity of ${
 					item.quantity
 				} and price of ${toSatoshis(
-					product.price.amount * item.quantity,
-					product.price.currency
+					(item.customPrice ?? product.price).amount * item.quantity,
+					(item.customPrice ?? product.price).currency
 				).toLocaleString('en-US')} SAT`
 			);
 		}
@@ -538,7 +538,9 @@ const commands: Record<
 							.map((i) => ({
 								quantity: i.quantity,
 								product: productById[i.productId],
-								depositPercentage: i.depositPercentage
+								depositPercentage: i.depositPercentage,
+								customPrice: i.customPrice,
+								chosenVariations: i.chosenVariations
 							}))
 							.filter((i) => !!i.product);
 
@@ -608,7 +610,9 @@ const commands: Record<
 				.map((i) => ({
 					quantity: i.quantity,
 					product: productById[i.productId],
-					depositPercentage: i.depositPercentage
+					depositPercentage: i.depositPercentage,
+					customPrice: i.customPrice,
+					chosenVariations: i.chosenVariations
 				}));
 
 			// Should not happen
