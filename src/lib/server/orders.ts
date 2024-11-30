@@ -1610,10 +1610,48 @@ export async function updateAfterOrderPaid(order: Order, session: ClientSession)
 			await collections.leaderboards.updateOne(
 				{ _id: leaderboard._id, 'progress.product': item.product._id },
 				{
-					$inc: { 'progress.$.amount': increase }
+					$inc: { 'progress.$.amount': increase },
+					$push: {
+						event: {
+							type: 'progress',
+							at: new Date(),
+							order: order._id,
+							amount: increase
+						}
+					}
 				},
 				{ session }
 			);
+		}
+		if (items.length) {
+			const content = `Dear be-BOP owner,
+	
+			The order #${order.number} ${ORIGIN}/order/${order._id} was successfully paid.
+			
+			It contains the following product(s) that increase the leaderboard ${leaderboard.name} :
+			${items
+				.map(
+					(item) =>
+						`- ${item.product.name} - price ${
+							item.customPrice?.amount || item.product.price.amount
+						} ${item.customPrice?.currency || item.product.price.currency} - qty ${
+							item.quantity
+						} - total addition to leaderboard: ${
+							leaderboard.mode === 'totalProducts'
+								? item.quantity
+								: (item.customPrice?.amount || item.product.price.amount) * item.quantity
+						}`
+				)
+				.join('\n')}			  
+			`;
+			await collections.emailNotifications.insertOne({
+				_id: new ObjectId(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				subject: 'Challenge Update',
+				htmlContent: content,
+				dest: runtimeConfig.sellerIdentity?.contact.email || SMTP_USER
+			});
 		}
 	}
 	//#endregion

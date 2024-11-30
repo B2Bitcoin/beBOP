@@ -1,4 +1,5 @@
 import type { Currency } from './Currency';
+import type { Order } from './Order';
 import type { Product } from './Product';
 import type { Timestamps } from './Timestamps';
 
@@ -16,5 +17,11 @@ export type Leaderboard = Timestamps & {
 		product: Product['_id'];
 		amount: number;
 		currency?: Currency;
+	}[];
+	event?: {
+		type: 'progress';
+		at: Date;
+		order: Order['_id'];
+		amount: number;
 	}[];
 };

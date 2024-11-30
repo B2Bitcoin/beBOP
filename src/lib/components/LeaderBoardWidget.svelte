@@ -28,14 +28,16 @@
 {#each leaderboard.progress as progress}
 	<div class="flex items-center {className}">
 		<div class="flex items-center flex-row gap-4">
-			<PictureComponent
-				picture={picturesByProduct[productById[progress.product]._id][0]}
-				class="max-w-[68px] max-h-[68px]"
-			/>
+			<a href="/product/{progress.product}">
+				<PictureComponent
+					picture={picturesByProduct[productById[progress.product]._id][0]}
+					class="max-w-[68px] max-h-[68px]"
+				/>
+			</a>
 			<div class="flex flex-col">
-				<span class="font-medium text-[22px] body-title">
+				<a href="/product/{progress.product}" class="font-medium text-[22px] body-title">
 					{productById[progress.product].name}
-				</span>
+				</a>
 				<p class="hidden lg:contents">{productById[progress.product].shortDescription}</p>
 			</div>
 		</div>
