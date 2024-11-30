@@ -71,6 +71,7 @@
 		"agreeOnlyDeposit": "I agree that I need to pay the remainder in the future (<0>why?</0>)",
 		"backToCart": "Back to cart",
 		"billingInfo": "Billing address",
+		"changePaymentExpiration": "Change payment expiration value (in minutes)",
 		"cta": {
 			"submit": "Proceed"
 		},
@@ -487,8 +488,8 @@
 			"card": "Paid with: bank card",
 			"free": "Paid Nothing",
 			"lightning": "Paid with: Lightning transaction (1 {paymentCurrency} = {exchangeRate} {mainCurrency} at the time of the order)",
-			"point-of-sale": "Paid in store",
-			"paypal": "Paid with: paypal"
+			"paypal": "Paid with: paypal",
+			"point-of-sale": "Paid in store"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Paid with: verified bank transfer",
