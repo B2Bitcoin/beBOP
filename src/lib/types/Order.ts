@@ -395,7 +395,5 @@ export function lightningPaymentQrCodeString(
 	paymentAmount: number,
 	paymentCurrency: Currency
 ) {
-	return `lightning:${paymentAddress}
-		.toLocaleString('en-US', { maximumFractionDigits: 8 })
-		.replaceAll(',', '')}`;
+	return `lightning:${paymentAddress}`;
 }
