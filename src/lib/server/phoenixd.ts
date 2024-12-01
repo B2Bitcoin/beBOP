@@ -8,7 +8,10 @@ export const isPhoenixdConfigured = () =>
 export async function phoenixdInfo(): Promise<{
 	nodeId: string;
 	chain: 'mainnet' | 'testnet';
-	channels: string[];
+	channels: {
+		capacitySat: number;
+		inboundLiquiditySat: number;
+	}[];
 	version: string;
 }> {
 	const res = await fetch(`${runtimeConfig.phoenixd.url}/getinfo`, {
@@ -32,6 +35,21 @@ export async function phoenixdBalance(): Promise<{ balanceSat: number; feeCredit
 	});
 
 	return await res.json();
+}
+
+export async function phoenixdLndAddress(): Promise<string> {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/getlnaddress`, {
+		headers: {
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`
+		}
+	});
+	if (!res.ok) {
+		throw error(500, `Could not get lnaddress: ${res.status} ${await res.text()}`);
+	}
+
+	return await res.text();
 }
 
 export async function phoenixdDetected(url?: string): Promise<boolean> {
