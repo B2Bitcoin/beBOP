@@ -42,12 +42,12 @@
 
 <form method="post" class="flex flex-col gap-4" on:submit={checkForm}>
 	<label class="form-label">
-		leaderboard slug for CMS integration
+		Leaderboard slug for CMS integration
 		<input type="text" disabled class="form-input" value={data.leaderboard._id} />
 	</label>
 
 	<label class="form-label">
-		leaderboard name
+		Leaderboard name
 		<input
 			class="form-input"
 			type="text"

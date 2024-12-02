@@ -27,7 +27,7 @@
 
 <form method="post" class="flex flex-col gap-4" on:submit={checkForm}>
 	<label class="form-label">
-		leaderboard name
+		Leaderboard name
 		<input
 			class="form-input"
 			type="text"
