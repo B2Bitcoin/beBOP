@@ -12,7 +12,8 @@
 		CmsSpecification,
 		CmsContactForm,
 		CmsCountdown,
-		CmsGallery
+		CmsGallery,
+		CmsWidgetSlider
 	} from '$lib/server/cms';
 	import CmsDesign from './CmsDesign.svelte';
 
@@ -43,6 +44,8 @@
 	export let contactForms: CmsContactForm[];
 	export let countdowns: CmsCountdown[];
 	export let galleries: CmsGallery[];
+	export let widgetSliders: CmsWidgetSlider[];
+
 	const { t } = useI18n();
 </script>
 
@@ -76,6 +79,7 @@
 		{brandName}
 		{countdowns}
 		{galleries}
+		{widgetSliders}
 		class="body body-mainPlan"
 	/>
 {:else}
@@ -102,6 +106,7 @@
 			{brandName}
 			{countdowns}
 			{galleries}
+			{widgetSliders}
 			class="body"
 		/>
 	</main>

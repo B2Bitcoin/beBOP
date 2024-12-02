@@ -76,6 +76,11 @@ type TokenObject =
 			slug: string;
 			display: string | undefined;
 			raw: string;
+	  }
+	| {
+			type: 'widgetSlider';
+			slug: string;
+			raw: string;
 	  };
 export async function cmsFromContent(
 	{ content, mobileContent }: { content: string; mobileContent?: string },
@@ -98,6 +103,7 @@ export async function cmsFromContent(
 		/\[TagProducts=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const GALLERY_WIDGET_REGEX =
 		/\[Gallery=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
+	const WIDGET_SLIDER_REGEX = /\[WidgetSlider=(?<slug>[\p{L}\d_-]+)\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -109,6 +115,7 @@ export async function cmsFromContent(
 	const countdownFormSlugs = new Set<string>();
 	const tagProductsSlugs = new Set<string>();
 	const gallerySlugs = new Set<string>();
+	const widgetSlidersSlugs = new Set<string>();
 
 	const tokens: {
 		desktop: Array<TokenObject>;
@@ -138,7 +145,8 @@ export async function cmsFromContent(
 			...matchAndSort(content, PICTURE_WIDGET_REGEX, 'pictureWidget'),
 			...matchAndSort(content, COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
 			...matchAndSort(content, TAG_PRODUCTS_REGEX, 'tagProducts'),
-			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget')
+			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget'),
+			...matchAndSort(content, WIDGET_SLIDER_REGEX, 'widgetSlider')
 		].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 		for (const match of matches) {
 			const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
@@ -242,6 +250,14 @@ export async function cmsFromContent(
 							type: 'galleryWidget',
 							slug: match.groups.slug,
 							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'widgetSlider':
+						widgetSlidersSlugs.add(match.groups.slug);
+						token.push({
+							type: 'widgetSlider',
+							slug: match.groups.slug,
 							raw: match[0]
 						});
 						break;
@@ -407,6 +423,11 @@ export async function cmsFromContent(
 			secondary: { $ifNull: [`$translations.${locals.language}.secondary`, '$secondary'] }
 		})
 		.toArray();
+	const widgetSliders = await collections.widgetSliders
+		.find({
+			_id: { $in: [...widgetSlidersSlugs] }
+		})
+		.toArray();
 	return {
 		tokens,
 		challenges,
@@ -417,6 +438,7 @@ export async function cmsFromContent(
 		contactForms,
 		countdowns,
 		galleries,
+		widgetSliders,
 		pictures: await collections.pictures
 			.find({
 				$or: [
@@ -455,4 +477,5 @@ export type CmsSpecification = Awaited<ReturnType<typeof cmsFromContent>>['speci
 export type CmsContactForm = Awaited<ReturnType<typeof cmsFromContent>>['contactForms'][number];
 export type CmsCountdown = Awaited<ReturnType<typeof cmsFromContent>>['countdowns'][number];
 export type CmsGallery = Awaited<ReturnType<typeof cmsFromContent>>['galleries'][number];
+export type CmsWidgetSlider = Awaited<ReturnType<typeof cmsFromContent>>['widgetSliders'][number];
 export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens']['desktop'][number];

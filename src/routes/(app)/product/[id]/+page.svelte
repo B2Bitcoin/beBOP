@@ -178,6 +178,7 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSBefore.countdowns}
 			galleries={data.productCMSBefore.galleries}
+			widgetSliders={data.productCMSBefore.widgetSliders}
 			class={data.product.mobile?.hideContentBefore || data.hideCmsZonesOnMobile
 				? 'hidden lg:contents'
 				: ''}
@@ -577,6 +578,7 @@
 			sessionEmail={data.email}
 			countdowns={data.productCMSAfter.countdowns}
 			galleries={data.productCMSAfter.galleries}
+			widgetSliders={data.productCMSAfter.widgetSliders}
 			class={data.product.mobile?.hideContentAfter || data.hideCmsZonesOnMobile
 				? 'hidden lg:contents'
 				: ''}
