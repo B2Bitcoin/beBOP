@@ -88,6 +88,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsOrderTopData.countdowns}
 			galleries={data.cmsOrderTopData.galleries}
+			leaderboards={data.cmsOrderTopData.leaderboards}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
@@ -626,6 +627,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsOrderBottomData.countdowns}
 			galleries={data.cmsOrderBottomData.galleries}
+			leaderboards={data.cmsOrderBottomData.leaderboards}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}

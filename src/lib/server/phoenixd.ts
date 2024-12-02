@@ -8,7 +8,10 @@ export const isPhoenixdConfigured = () =>
 export async function phoenixdInfo(): Promise<{
 	nodeId: string;
 	chain: 'mainnet' | 'testnet';
-	channels: string[];
+	channels: {
+		capacitySat: number;
+		inboundLiquiditySat: number;
+	}[];
 	version: string;
 }> {
 	const res = await fetch(`${runtimeConfig.phoenixd.url}/getinfo`, {
@@ -34,6 +37,7 @@ export async function phoenixdBalance(): Promise<{ balanceSat: number; feeCredit
 	return await res.json();
 }
 
+<<<<<<< HEAD
 export async function phoenixdGetBolt12(): Promise<string> {
 	const res = await fetch(`${runtimeConfig.phoenixd.url}/getoffer`, {
 		headers: {
@@ -51,6 +55,9 @@ export async function phoenixdGetBolt12(): Promise<string> {
 }
 
 export async function phoenixdLnAddress(): Promise<string> {
+=======
+export async function phoenixdLndAddress(): Promise<string> {
+>>>>>>> 93867cad651059354cdbde4779f97e8b5491c31d
 	const res = await fetch(`${runtimeConfig.phoenixd.url}/getlnaddress`, {
 		headers: {
 			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
