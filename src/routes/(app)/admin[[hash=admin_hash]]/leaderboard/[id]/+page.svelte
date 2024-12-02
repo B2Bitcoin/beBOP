@@ -18,11 +18,6 @@
 		'yyyy-MM-dd HH:mm'
 	);
 
-	$: beginsAtISO = new Date(beginsAt).toISOString();
-	$: endsAtISO = new Date(endsAt).toISOString();
-
-	$: console.log(beginsAtISO, endsAtISO);
-
 	let endsAtElement: HTMLInputElement;
 	let progressChanged = false;
 	function checkForm(event: SubmitEvent) {
@@ -124,13 +119,11 @@
 		<input
 			class="form-input"
 			type="datetime-local"
-			name="beginsAtDisplay"
+			name="beginsAt"
 			bind:value={beginsAt}
 			required
 		/>
 	</label>
-
-	<input type="hidden" name="beginsAt" value={beginsAtISO} />
 
 	<label class="form-label">
 		Ending date
@@ -139,14 +132,12 @@
 			class="form-input"
 			type="datetime-local"
 			required
-			name="endsAtDisplay"
+			name="endsAt"
 			bind:value={endsAt}
 			bind:this={endsAtElement}
 			on:input={() => endsAtElement?.setCustomValidity('')}
 		/>
 	</label>
-
-	<input type="hidden" name="endsAt" value={endsAtISO} />
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">
