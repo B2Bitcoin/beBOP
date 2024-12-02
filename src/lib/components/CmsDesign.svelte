@@ -275,7 +275,6 @@
 					/>
 				{:else if token.type === 'pictureWidget'}
 					<PictureComponent picture={pictureById[token.slug]} class="my-5" />
-<<<<<<< HEAD
 				{:else if token.type === 'qrCode'}
 					{#if token.slug === 'Bolt12'}
 						<a href="lightning:{$page.data.bolt12Address}">
@@ -286,7 +285,6 @@
 							/>
 						</a>
 					{/if}
-=======
 				{:else if token.type === 'leaderboardWidget'}
 					<LeaderBoardWidget
 						leaderboard={leaderboardById[token.slug]}
@@ -294,7 +292,6 @@
 						{products}
 						class="not-prose"
 					/>
->>>>>>> 93867cad651059354cdbde4779f97e8b5491c31d
 				{:else if token.type === 'html'}
 					<div class="my-5">
 						<!-- eslint-disable svelte/no-at-html-tags -->
