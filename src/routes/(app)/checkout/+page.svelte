@@ -181,6 +181,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsCheckoutTopData.countdowns}
 			galleries={data.cmsCheckoutTopData.galleries}
+			leaderboards={data.cmsCheckoutTopData.leaderboards}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
@@ -1093,6 +1094,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsCheckoutBottomData.countdowns}
 			galleries={data.cmsCheckoutBottomData.galleries}
+			leaderboards={data.cmsCheckoutBottomData.leaderboards}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
