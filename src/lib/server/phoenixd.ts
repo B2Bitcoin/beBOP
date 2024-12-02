@@ -54,6 +54,9 @@ export async function phoenixdLnAddress(): Promise<string> {
 			)}`
 		}
 	});
+	if (!res.ok) {
+		throw error(500, `Could not get lnaddress: ${res.status} ${await res.text()}`);
+	}
 
 	return await res.text();
 }

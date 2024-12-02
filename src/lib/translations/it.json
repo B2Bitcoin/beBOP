@@ -71,6 +71,7 @@
 		"agreeOnlyDeposit": "Accetto che dovrò pagare il resto in futuro (<0>why?</0>)",
 		"backToCart": "Ritornare al cartello",
 		"billingInfo": "Indirizzo di fatturazione",
+		"changePaymentExpiration": "Modifica il valore di scadenza del pagamento (in minuti)",
 		"cta": {
 			"submit": "Procedi"
 		},
@@ -487,8 +488,8 @@
 			"card": "Pagato con: carta bancaria",
 			"free": "Nessun pagamento",
 			"lightning": "Pagato con: transazione Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento dell'ordine)",
-			"point-of-sale": "Pagato in magazzino",
-			"paypal": "Pagato con:  paypal"
+			"paypal": "Pagato con:  paypal",
+			"point-of-sale": "Pagato in magazzino"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Pagato con: bonifico bancario verificato",

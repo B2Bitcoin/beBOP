@@ -71,6 +71,7 @@
 		"agreeOnlyDeposit": "Acepto la Responsabilidad de pagar el resto después (<0>¿por qué?</0>)",
 		"backToCart": "Regresar a la lista de compras",
 		"billingInfo": "Dirección de facturación",
+		"changePaymentExpiration": "Cambiar el valor de vencimiento del pago (en minutos)",
 		"cta": {
 			"submit": "Proceder"
 		},
@@ -487,8 +488,8 @@
 			"card": "Pagado con: tarjeta bancaria",
 			"free": "No se pagó nada",
 			"lightning": "Pagado con: transacción Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} al momento del pedido)",
-			"point-of-sale": "Pagado en tienda",
-			"paypal": "Pagado con: paypal"
+			"paypal": "Pagado con: paypal",
+			"point-of-sale": "Pagado en tienda"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Pagado con: transferencia bancaria verificada",
