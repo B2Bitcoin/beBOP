@@ -21,7 +21,6 @@
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import IconStripe from '$lib/components/icons/IconStripe.svelte';
-	import { lightningPaymentQrCodeString } from '$lib/utils/lightningPaymentQr';
 
 	let currentDate = new Date();
 	export let data;
