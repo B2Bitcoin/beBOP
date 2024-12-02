@@ -31,3 +31,13 @@ La date limite de fin du leaderboard.
 ### 6. **Products**
 
 Une liste de produits dont la vente fait evoluer le leaderboard.
+
+## Intégration leaderboard dans CMS
+
+Pour ajouter un leaderboard dans une page ou zone CMS vous pouvez utiliser `[Leaderboard=slug]`
+
+![image](https://github.com/user-attachments/assets/d5cfc39b-558c-428e-a067-9f3d1e3a0b7c)
+
+Et ça sera affiché comme suit :
+
+![image](https://github.com/user-attachments/assets/41b28a8f-aef6-4fe6-b708-19481e3822a0)
