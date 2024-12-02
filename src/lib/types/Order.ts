@@ -390,12 +390,6 @@ export function bitcoinPaymentQrCodeString(
 		.replaceAll(',', '')}`;
 }
 
-export function lightningPaymentQrCodeString(
-	paymentAddress: string,
-	paymentAmount: number,
-	paymentCurrency: Currency
-) {
-	return `lightning:${paymentAddress}?amount=${toBitcoins(paymentAmount, paymentCurrency)
-		.toLocaleString('en-US', { maximumFractionDigits: 8 })
-		.replaceAll(',', '')}`;
+export function lightningPaymentQrCodeString(paymentAddress: string) {
+	return `lightning:${paymentAddress}`;
 }

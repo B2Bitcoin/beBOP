@@ -87,6 +87,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsOrderTopData.countdowns}
 			galleries={data.cmsOrderTopData.galleries}
+			leaderboards={data.cmsOrderTopData.leaderboards}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
@@ -280,13 +281,7 @@
 
 						{#if payment.status === 'pending'}
 							{#if payment.method === 'lightning' || payment.method === 'card'}
-								<a
-									href={lightningPaymentQrCodeString(
-										payment.address ?? '',
-										payment.price.amount,
-										payment.price.currency
-									)}
-								>
+								<a href={lightningPaymentQrCodeString(payment.address ?? '')}>
 									<img
 										src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 										class="w-96 h-96"
@@ -625,6 +620,7 @@
 			sessionEmail={data.email}
 			countdowns={data.cmsOrderBottomData.countdowns}
 			galleries={data.cmsOrderBottomData.galleries}
+			leaderboards={data.cmsOrderBottomData.leaderboards}
 			class={data.hideCmsZonesOnMobile ? 'hidden lg:contents' : ''}
 		/>
 	{/if}
