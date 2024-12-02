@@ -36,8 +36,8 @@ Une liste de produits dont la vente fait evoluer le leaderboard.
 
 Pour ajouter un leaderboard dans une page ou zone CMS vous pouvez utiliser `[Leaderboard=slug]`
 
-![image](https://github.com/user-attachments/assets/d5cfc39b-558c-428e-a067-9f3d1e3a0b7c)
+![image](https://github.com/user-attachments/assets/af0565ec-a927-46fe-9fa4-1bf0039e0b89)
 
 Et ça sera affiché comme suit :
 
-![image](https://github.com/user-attachments/assets/41b28a8f-aef6-4fe6-b708-19481e3822a0)
+![image](https://github.com/user-attachments/assets/551b7283-edb6-41eb-8d13-1c220c530839)
