@@ -82,6 +82,7 @@ export const actions = {
 		runtimeConfig.phoenixd.password = parsed.password;
 		runtimeConfig.phoenixd.lnAddress = await phoenixdLnAddress();
 
+		runtimeConfig.phoenixd.bolt12Address = await phoenixdGetBolt12();
 		await collections.runtimeConfig.updateOne(
 			{ _id: 'phoenixd' },
 			{

@@ -1,9 +1,9 @@
-import { phoenixdGetBolt12 } from '$lib/server/phoenixd';
+import { runtimeConfig } from '$lib/server/runtime-config';
 import qrcode from 'qrcode';
 
 export async function GET({}) {
 	try {
-		const bolt12Address = await phoenixdGetBolt12();
+		const bolt12Address = runtimeConfig.phoenixd.bolt12Address;
 
 		const svgQRCode = await qrcode.toString('lightning:' + bolt12Address, { type: 'svg' });
 

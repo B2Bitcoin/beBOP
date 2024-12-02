@@ -124,7 +124,8 @@ const baseConfig = {
 		url: 'http://localhost:9740',
 		enabled: false,
 		password: '',
-		lnAddress: ''
+		lnAddress: '',
+		bolt12Address: ''
 	},
 	productActionSettings: {
 		eShop: {
