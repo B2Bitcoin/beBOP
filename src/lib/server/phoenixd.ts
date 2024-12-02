@@ -37,7 +37,23 @@ export async function phoenixdBalance(): Promise<{ balanceSat: number; feeCredit
 	return await res.json();
 }
 
-export async function phoenixdLndAddress(): Promise<string> {
+export async function phoenixdGetBolt12(): Promise<string> {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/getoffer`, {
+		headers: {
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`
+		}
+	});
+
+	if (!res.ok) {
+		throw error(500, `Error fetching Bolt12 offer: ${res.status} ${res.statusText}`);
+	}
+
+	return await res.text();
+}
+
+export async function phoenixdLnAddress(): Promise<string> {
 	const res = await fetch(`${runtimeConfig.phoenixd.url}/getlnaddress`, {
 		headers: {
 			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
@@ -66,7 +82,7 @@ export async function phoenixdCreateInvoice(
 	satoshis: number,
 	description: string,
 	externalId: string
-): Promise<{ paymentHash: string; paymentAddress: string }> {
+): Promise<{ payment_request: string; r_hash: string; payment_address: string }> {
 	const res = await fetch(`${runtimeConfig.phoenixd.url}/createinvoice`, {
 		method: 'POST',
 		headers: {
@@ -96,8 +112,9 @@ export async function phoenixdCreateInvoice(
 		.parse(await res.json());
 
 	return {
-		paymentHash: json.paymentHash,
-		paymentAddress: json.serialized
+		payment_request: json.serialized,
+		r_hash: json.paymentHash,
+		payment_address: json.serialized
 	};
 }
 
