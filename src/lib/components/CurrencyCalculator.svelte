@@ -24,7 +24,7 @@
 			bind:value={firstDevise}
 		>
 			{#each CURRENCIES as currency}
-				<option value={currency} selected={currency == firstDevise}>{currency}</option>
+				<option value={currency} selected={currency === firstDevise}>{currency}</option>
 			{/each}
 		</select>
 	</div>
@@ -45,7 +45,7 @@
 			bind:value={secondDevise}
 		>
 			{#each CURRENCIES as currency}
-				<option value={currency} selected={currency == secondDevise}>{currency}</option>
+				<option value={currency} selected={currency === secondDevise}>{currency}</option>
 			{/each}
 		</select>
 	</div>
