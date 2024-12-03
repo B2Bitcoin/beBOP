@@ -9,7 +9,7 @@
 	import { computePriceInfo } from '$lib/types/Cart.js';
 	import { orderRemainingToPay } from '$lib/types/Order.js';
 	import Trans from '$lib/components/Trans.svelte';
-	import BEBOP_LOGO from '$lib/assets/logo-bebop.svg';
+	import BEBOP_LOGO from '$lib/assets/logo-bebop.png';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
