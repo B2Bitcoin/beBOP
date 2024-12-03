@@ -300,9 +300,9 @@
 		top: 30%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		width: 100px; /* Largeur et hauteur identiques */
-		height: 100px; /* Hauteur égale à la largeur */
-		object-fit: contain; /* S'assure que l'image s'adapte bien dans le carré */
-		border-radius: 10px; /* Facultatif : donne des coins arrondis */
+		width: 100px;
+		height: 100px;
+		object-fit: contain;
+		border-radius: 10px;
 	}
 </style>
