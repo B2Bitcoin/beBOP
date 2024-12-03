@@ -35,7 +35,8 @@ export async function load(event) {
 		copyOrderEmailsToAdmin: runtimeConfig.copyOrderEmailsToAdmin,
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
 		defaultOnLocation: runtimeConfig.defaultOnLocation,
-		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive
+		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive,
+		removeBebopLogoPOS: runtimeConfig.removeBebopLogoPOS
 	};
 }
 
@@ -90,7 +91,8 @@ export const actions = {
 				cartMaxSeparateItems: z.number({ coerce: true }).int().default(0),
 				disableLanguageSelector: z.boolean({ coerce: true }),
 				contactModes: z.string().array(),
-				cartPreviewInteractive: z.boolean({ coerce: true })
+				cartPreviewInteractive: z.boolean({ coerce: true }),
+				removeBebopLogoPOS: z.boolean({ coerce: true })
 			})
 			.parse({
 				...Object.fromEntries(formData),

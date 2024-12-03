@@ -179,6 +179,7 @@ const baseConfig = {
 		'wss://nos.lol',
 		'wss://relay.snort.social'
 	],
+	removeBebopLogoPOS: false,
 	contactModes: ['email', 'nostr'],
 	posTouchTag: [] as Tag['_id'][],
 	hideCmsZonesOnMobile: false,

@@ -9,6 +9,7 @@
 	import { computePriceInfo } from '$lib/types/Cart.js';
 	import { orderRemainingToPay } from '$lib/types/Order.js';
 	import Trans from '$lib/components/Trans.svelte';
+	import BEBOP_LOGO from '$lib/assets/logo-bebop.svg';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -157,6 +158,9 @@
 					alt="QR code"
 					class="h-96 w-96"
 				/>
+				{#if !data.removeBebopLogoPOS}
+					<img src={BEBOP_LOGO} alt="Logo" class="logo" />
+				{/if}
 			</div>
 		{/if}
 	{:else if view === 'canceled'}
@@ -288,3 +292,17 @@
 		</div>
 	{/if}
 </main>
+
+<style>
+	.logo {
+		background-color: white;
+		position: absolute;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 100px; /* Largeur et hauteur identiques */
+		height: 100px; /* Hauteur égale à la largeur */
+		object-fit: contain; /* S'assure que l'image s'adapte bien dans le carré */
+		border-radius: 10px; /* Facultatif : donne des coins arrondis */
+	}
+</style>
