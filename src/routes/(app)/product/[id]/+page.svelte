@@ -23,6 +23,7 @@
 	import { FRACTION_DIGITS_PER_CURRENCY, CURRENCY_UNIT } from '$lib/types/Currency.js';
 	import { serializeSchema } from '$lib/utils/jsonLd.js';
 	import type { Product as SchemaOrgProduct, WithContext } from 'schema-dts';
+	import CurrencyCalculator from '$lib/components/CurrencyCalculator.svelte';
 
 	export let data;
 
