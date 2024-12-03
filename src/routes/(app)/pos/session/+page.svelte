@@ -300,8 +300,8 @@
 		top: 30%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		width: 100px;
-		height: 100px;
+		width: 90px;
+		height: 90px;
 		object-fit: contain;
 		border-radius: 10px;
 	}
