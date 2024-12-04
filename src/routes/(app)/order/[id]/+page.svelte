@@ -299,7 +299,7 @@
 							{#if payment.method === 'card'}
 								<img
 									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
-									class="w-96 h-96"
+									class="w-96 h-96 {data.hideCbQrCode ? 'hidden' : ''}"
 									alt="QR code"
 								/>
 							{/if}
