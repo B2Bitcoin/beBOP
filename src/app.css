@@ -46,6 +46,7 @@
 	--tagWidget-cta-color: #ffffff;
 	--tagWidget-color: #000000;
 	--tagWidget-hyperlink-color: #2271b1;
+	--order-creditCard-svg-color: #2271b1;
 }
 
 @layer base {
@@ -297,6 +298,9 @@
 		--tw-prose-headings: var(--body-title-color);
 		--tw-prose-bold: inherit;
 		--tw-prose-links: var(--body-hyperlink-color);
+	}
+	.credit-card-svg-fill {
+		color: var(--order-creditCard-svg-color);
 	}
 }
 

@@ -181,6 +181,8 @@ const baseConfig = {
 	],
 	contactModes: ['email', 'nostr'],
 	posTouchTag: [] as Tag['_id'][],
+	hideCbQrCode: false,
+	overwriteCbSvgColor: false,
 	hideCmsZonesOnMobile: false,
 	copyOrderEmailsToAdmin: true,
 	usersDarkDefaultTheme: false,
