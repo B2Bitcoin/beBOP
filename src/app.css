@@ -299,7 +299,7 @@
 		--tw-prose-bold: inherit;
 		--tw-prose-links: var(--body-hyperlink-color);
 	}
-	.credit-card-svg-fill {
+	.order-creditCard-svg {
 		color: var(--order-creditCard-svg-color);
 	}
 }

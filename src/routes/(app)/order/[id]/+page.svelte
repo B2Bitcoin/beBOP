@@ -152,7 +152,7 @@
 												<span>{t('order.paymentLink')}</span>
 												{#if payment.processor === 'sumup'}
 													<IconSumupWide
-														class="h-12 {data.overwriteCbSvgColor ? 'credit-card-svg-fill' : ''} "
+														class="h-12 {data.overwriteCbSvgColor ? 'order-creditCard-svg' : ''} "
 													/>
 												{:else if payment.processor === 'stripe'}
 													<IconStripe class="h-12" />
