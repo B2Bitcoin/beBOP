@@ -9,7 +9,7 @@
 	import { computePriceInfo } from '$lib/types/Cart.js';
 	import { orderRemainingToPay } from '$lib/types/Order.js';
 	import Trans from '$lib/components/Trans.svelte';
-	import BEBOP_LOGO from '$lib/assets/logo-bebop.png';
+	import BEBOP_B_LOGO from '$lib/assets/bebop-b.svg';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -159,7 +159,11 @@
 					class="h-96 w-96"
 				/>
 				{#if !data.removeBebopLogoPOS}
-					<img src={BEBOP_LOGO} alt="Logo" class="logo" />
+					<img
+						src={BEBOP_B_LOGO}
+						alt=""
+						class="bg-white absolute top-[30%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 object-contain rounded-lg"
+					/>
 				{/if}
 			</div>
 		{/if}
@@ -292,17 +296,3 @@
 		</div>
 	{/if}
 </main>
-
-<style>
-	.logo {
-		background-color: white;
-		position: absolute;
-		top: 30%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		width: 90px;
-		height: 90px;
-		object-fit: contain;
-		border-radius: 10px;
-	}
-</style>
