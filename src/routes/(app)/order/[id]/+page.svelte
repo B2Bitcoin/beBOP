@@ -279,7 +279,7 @@
 						{/if}
 
 						{#if payment.status === 'pending'}
-							{#if payment.method === 'lightning' || payment.method === 'card'}
+							{#if payment.method === 'lightning'}
 								<a
 									href={lightningPaymentQrCodeString(
 										payment.address ?? '',
@@ -293,6 +293,13 @@
 										alt="QR code"
 									/></a
 								>
+							{/if}
+							{#if payment.method === 'card'}
+								<img
+									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+									class="w-96 h-96"
+									alt="QR code"
+								/>
 							{/if}
 							{#if payment.method === 'bitcoin' && payment.address}
 								<span class="body-hyperlink font-light italic">{t('order.clickQR')}</span>
