@@ -36,8 +36,8 @@ export async function load(event) {
 		disableLanguageSelector: runtimeConfig.disableLanguageSelector,
 		defaultOnLocation: runtimeConfig.defaultOnLocation,
 		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive,
-		overwriteCbSvgColor: runtimeConfig.overwriteCbSvgColor,
-		hideCbQrCode: runtimeConfig.hideCbQrCode
+		overwriteCreditCardSvgColor: runtimeConfig.overwriteCreditCardSvgColor,
+		hideCreditCardQrCode: runtimeConfig.hideCreditCardQrCode
 	};
 }
 
@@ -93,8 +93,8 @@ export const actions = {
 				disableLanguageSelector: z.boolean({ coerce: true }),
 				contactModes: z.string().array(),
 				cartPreviewInteractive: z.boolean({ coerce: true }),
-				hideCbQrCode: z.boolean({ coerce: true }),
-				overwriteCbSvgColor: z.boolean({ coerce: true })
+				hideCreditCardQrCode: z.boolean({ coerce: true }),
+				overwriteCreditCardSvgColor: z.boolean({ coerce: true })
 			})
 			.parse({
 				...Object.fromEntries(formData),

@@ -77,8 +77,8 @@ export async function load({ params, depends, locals }) {
 			cmsOrderBottom,
 			cmsOrderBottomData: cmsFromContent({ content: cmsOrderBottom.content }, locals)
 		}),
-		overwriteCbSvgColor: runtimeConfig.overwriteCbSvgColor,
-		hideCbQrCode: runtimeConfig.hideCbQrCode
+		overwriteCreditCardSvgColor: runtimeConfig.overwriteCreditCardSvgColor,
+		hideCreditCardQrCode: runtimeConfig.hideCreditCardQrCode
 	};
 }
 

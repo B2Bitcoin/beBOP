@@ -220,15 +220,20 @@
 	{/if}
 	<h2 class="text-2xl">Order</h2>
 	<label class="checkbox-label">
-		<input type="checkbox" name="hideCbQrCode" class="form-checkbox" checked={data.hideCbQrCode} />
+		<input
+			type="checkbox"
+			name="hideCreditCardQrCode"
+			class="form-checkbox"
+			checked={data.hideCreditCardQrCode}
+		/>
 		Don't display order URL qr code on order paid with credit card
 	</label>
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
-			name="overwriteCbSvgColor"
+			name="overwriteCreditCardSvgColor"
 			class="form-checkbox"
-			checked={data.overwriteCbSvgColor}
+			checked={data.overwriteCreditCardSvgColor}
 		/>
 		Overwrite credit card payment processor SVG color with custom color
 	</label>
