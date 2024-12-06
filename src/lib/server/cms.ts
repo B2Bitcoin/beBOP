@@ -266,6 +266,10 @@ export async function cmsFromContent(
 						currencyCalculatorSlugs.add(match.groups.slug);
 						token.push({
 							type: 'currencyCalculatorWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
 					case 'qrCode':
 						qrCodeSlugs.add(match.groups.slug);
 						token.push({
