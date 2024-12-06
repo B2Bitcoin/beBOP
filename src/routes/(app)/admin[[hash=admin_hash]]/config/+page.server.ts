@@ -37,6 +37,8 @@ export async function load(event) {
 		defaultOnLocation: runtimeConfig.defaultOnLocation,
 		cartPreviewInteractive: runtimeConfig.cartPreviewInteractive,
 		removeBebopLogoPOS: runtimeConfig.removeBebopLogoPOS
+		overwriteCreditCardSvgColor: runtimeConfig.overwriteCreditCardSvgColor,
+		hideCreditCardQrCode: runtimeConfig.hideCreditCardQrCode
 	};
 }
 
@@ -93,6 +95,8 @@ export const actions = {
 				contactModes: z.string().array(),
 				cartPreviewInteractive: z.boolean({ coerce: true }),
 				removeBebopLogoPOS: z.boolean({ coerce: true })
+				hideCreditCardQrCode: z.boolean({ coerce: true }),
+				overwriteCreditCardSvgColor: z.boolean({ coerce: true })
 			})
 			.parse({
 				...Object.fromEntries(formData),

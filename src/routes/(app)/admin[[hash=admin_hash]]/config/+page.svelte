@@ -227,6 +227,29 @@
 			/>
 		</label>
 	{/if}
+	<h2 class="text-2xl">Order</h2>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="hideCreditCardQrCode"
+			class="form-checkbox"
+			checked={data.hideCreditCardQrCode}
+		/>
+		Don't display order URL qr code on order paid with credit card
+	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="overwriteCreditCardSvgColor"
+			class="form-checkbox"
+			checked={data.overwriteCreditCardSvgColor}
+		/>
+		Overwrite credit card payment processor SVG color with custom color
+	</label>
+	<p>
+		Target color can be changed in <a href="/admin/theme" class="underline">theme</a>("Order" then
+		"Credit card svg fill color" in theme)
+	</p>
 	<h2 class="text-2xl">VAT</h2>
 
 	<label class="checkbox-label">
