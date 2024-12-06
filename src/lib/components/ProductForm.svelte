@@ -1016,9 +1016,9 @@
 					conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
 				/>
 				<p class="text-gray-700 my-3">
-					To include tags, add a paragraph with only <code class="font-mono">[Tag=slug]</code>,
-					where
-					<code class="font-mono">slug</code> is the slug of your tag
+					To include currency calculator, add a paragraph with only <code class="font-mono"
+						>[CurrencyCalculator=currency-calculator]</code
+					>
 				</p>
 				<textarea
 					name="contentBefore"
@@ -1047,9 +1047,9 @@
 					conf={{ plugins: TINYMCE_PLUGINS, toolbar: TINYMCE_TOOLBAR }}
 				/>
 				<p class="text-gray-700 my-3">
-					To include tags, add a paragraph with only <code class="font-mono">[Tag=slug]</code>,
-					where
-					<code class="font-mono">slug</code> is the slug of your tag
+					To include currency calculator, add a paragraph with only <code class="font-mono"
+						>[CurrencyCalculator=currency-calculator]</code
+					>
 				</p>
 				<textarea
 					name="contentAfter"

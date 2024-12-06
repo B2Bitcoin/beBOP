@@ -7,7 +7,7 @@
 	let slug: string;
 </script>
 
-<h1 class="text-3xl">Add a contact form</h1>
+<h1 class="text-3xl">Add a label</h1>
 
 <form method="post" class="flex flex-col gap-4">
 	<label class="form-label">
