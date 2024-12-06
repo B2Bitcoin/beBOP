@@ -21,7 +21,6 @@
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import IconStripe from '$lib/components/icons/IconStripe.svelte';
-	import BEBOP_B_LOGO from '$lib/assets/bebop-b.svg';
 
 	let currentDate = new Date();
 	export let data;
