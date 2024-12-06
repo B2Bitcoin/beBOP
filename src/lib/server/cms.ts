@@ -14,6 +14,7 @@ import type { Tag } from '$lib/types/Tag';
 import type { ContactForm } from '$lib/types/ContactForm';
 import type { Countdown } from '$lib/types/Countdown';
 import type { Gallery } from '$lib/types/Gallery';
+import type { Leaderboard } from '$lib/types/Leaderboard';
 
 const window = new JSDOM('').window;
 
@@ -79,6 +80,12 @@ type TokenObject =
 	  }
 	| { type: 'currencyCalculatorWidget'; slug: string; raw: string };
 
+	| { type: 'qrCode'; slug: string; raw: string }
+	| {
+			type: 'leaderboardWidget';
+			slug: string;
+			raw: string;
+	  };
 export async function cmsFromContent(
 	{ content, mobileContent }: { content: string; mobileContent?: string },
 	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email' | 'sso'>>
@@ -86,6 +93,7 @@ export async function cmsFromContent(
 	const PRODUCT_WIDGET_REGEX =
 		/\[Product=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/giu;
+	const LEADERBOARD_WIDGET_REGEX = /\[Leaderboard=(?<slug>[a-z0-9-]+)\]/giu;
 	const SLIDER_WIDGET_REGEX =
 		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:[?\s]autoplay=(?<autoplay>[\d]+))?\]/giu;
 	const TAG_WIDGET_REGEX =
@@ -101,6 +109,7 @@ export async function cmsFromContent(
 	const GALLERY_WIDGET_REGEX =
 		/\[Gallery=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const CURRENCY_CALCULATOR_WIDGET_REGEX = /\[CurrencyCalculator=(?<slug>[a-z0-9-]+)\]/giu;
+	const QRCODE_REGEX = /\[QRCode=(?<slug>[\p{L}\d_-]+)\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -113,6 +122,8 @@ export async function cmsFromContent(
 	const tagProductsSlugs = new Set<string>();
 	const gallerySlugs = new Set<string>();
 	const currencyCalculatorSlugs = new Set<string>();
+	const qrCodeSlugs = new Set<string>();
+	const leaderboardSlugs = new Set<string>();
 
 	const tokens: {
 		desktop: Array<TokenObject>;
@@ -144,6 +155,8 @@ export async function cmsFromContent(
 			...matchAndSort(content, TAG_PRODUCTS_REGEX, 'tagProducts'),
 			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget'),
 			...matchAndSort(content, CURRENCY_CALCULATOR_WIDGET_REGEX, 'currencyCalculatorWidget')
+			...matchAndSort(content, QRCODE_REGEX, 'qrCode'),
+			...matchAndSort(content, LEADERBOARD_WIDGET_REGEX, 'leaderboardWidget')
 		].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 		for (const match of matches) {
 			const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
@@ -254,6 +267,18 @@ export async function cmsFromContent(
 						currencyCalculatorSlugs.add(match.groups.slug);
 						token.push({
 							type: 'currencyCalculatorWidget',
+					case 'qrCode':
+						qrCodeSlugs.add(match.groups.slug);
+						token.push({
+							type: 'qrCode',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
+					case 'leaderboardWidget':
+						leaderboardSlugs.add(match.groups.slug);
+						token.push({
+							type: 'leaderboardWidget',
 							slug: match.groups.slug,
 							raw: match[0]
 						});
@@ -277,10 +302,28 @@ export async function cmsFromContent(
 		locals.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
 			: { 'actionSettings.eShop.visible': true };
-
+	const leaderboards = await collections.leaderboards
+		.find({
+			_id: { $in: [...leaderboardSlugs] }
+		})
+		.project<Pick<Leaderboard, '_id' | 'name' | 'progress' | 'endsAt' | 'mode' | 'beginsAt'>>({
+			name: 1,
+			goal: 1,
+			progress: 1,
+			endsAt: 1,
+			beginsAt: 1,
+			mode: 1
+		})
+		.toArray();
+	const allProductsLead = leaderboards
+		.flatMap((leaderboard) => leaderboard.progress || [])
+		.map((progressItem) => progressItem.product);
 	const products = await collections.products
 		.find({
-			$or: [{ tagIds: { $in: [...tagProductsSlugs] } }, { _id: { $in: [...productSlugs] } }],
+			$or: [
+				{ tagIds: { $in: [...tagProductsSlugs] } },
+				{ _id: { $in: [...productSlugs, ...allProductsLead] } }
+			],
 			...query
 		})
 		.project<
@@ -420,6 +463,7 @@ export async function cmsFromContent(
 			secondary: { $ifNull: [`$translations.${locals.language}.secondary`, '$secondary'] }
 		})
 		.toArray();
+
 	return {
 		tokens,
 		challenges,
@@ -430,6 +474,7 @@ export async function cmsFromContent(
 		contactForms,
 		countdowns,
 		galleries,
+		leaderboards,
 		pictures: await collections.pictures
 			.find({
 				$or: [
@@ -469,3 +514,4 @@ export type CmsContactForm = Awaited<ReturnType<typeof cmsFromContent>>['contact
 export type CmsCountdown = Awaited<ReturnType<typeof cmsFromContent>>['countdowns'][number];
 export type CmsGallery = Awaited<ReturnType<typeof cmsFromContent>>['galleries'][number];
 export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens']['desktop'][number];
+export type CmsLeaderboard = Awaited<ReturnType<typeof cmsFromContent>>['leaderboards'][number];

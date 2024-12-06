@@ -123,7 +123,9 @@ const baseConfig = {
 	phoenixd: {
 		url: 'http://localhost:9740',
 		enabled: false,
-		password: ''
+		password: '',
+		lnAddress: '',
+		bolt12Address: ''
 	},
 	productActionSettings: {
 		eShop: {
