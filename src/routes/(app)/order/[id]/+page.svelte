@@ -310,7 +310,7 @@
 									)}
 								>
 									<img
-										src="{$page.url.pathname}/payment/{payment.id}/qrcode?logo=true"
+										src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 										class="w-96 h-96"
 										alt="QR code"
 									/>
