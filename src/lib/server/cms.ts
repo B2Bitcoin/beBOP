@@ -153,7 +153,7 @@ export async function cmsFromContent(
 			...matchAndSort(content, COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
 			...matchAndSort(content, TAG_PRODUCTS_REGEX, 'tagProducts'),
 			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget'),
-			...matchAndSort(content, CURRENCY_CALCULATOR_WIDGET_REGEX, 'currencyCalculatorWidget')
+			...matchAndSort(content, CURRENCY_CALCULATOR_WIDGET_REGEX, 'currencyCalculatorWidget'),
 			...matchAndSort(content, QRCODE_REGEX, 'qrCode'),
 			...matchAndSort(content, LEADERBOARD_WIDGET_REGEX, 'leaderboardWidget')
 		].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
