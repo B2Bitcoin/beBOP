@@ -9,7 +9,6 @@
 	import { computePriceInfo } from '$lib/types/Cart.js';
 	import { orderRemainingToPay } from '$lib/types/Order.js';
 	import Trans from '$lib/components/Trans.svelte';
-	import BEBOP_B_LOGO from '$lib/assets/bebop-b.svg';
 
 	interface CustomEventSource {
 		onerror?: ((this: CustomEventSource, ev: Event) => unknown) | null;
@@ -154,17 +153,10 @@
 			<div class="flex flex-col items-center gap-3">
 				<h1 class="text-3xl text-center">{t('order.singleTitle', { number: order?.number })}</h1>
 				<img
-					src="/order/{order?._id}/payment/{payment?.id}/qrcode"
+					src="/order/{order?._id}/payment/{payment?.id}/qrcode?logo={!data.removeBebopLogoPOS}"
 					alt="QR code"
 					class="h-96 w-96"
 				/>
-				{#if !data.removeBebopLogoPOS}
-					<img
-						src={BEBOP_B_LOGO}
-						alt=""
-						class="bg-white absolute top-[30%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 object-contain rounded-lg"
-					/>
-				{/if}
 			</div>
 		{/if}
 	{:else if view === 'canceled'}
