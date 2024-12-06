@@ -102,6 +102,11 @@ export const themeValidator = z.object({
 			cancel: z.object({ backgroundColor }),
 			delete: z.object({ backgroundColor })
 		})
+	}),
+	order: z.object({
+		creditCard: z.object({
+			svg: z.object({ color })
+		})
 	})
 });
 
