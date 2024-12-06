@@ -205,6 +205,15 @@
 		/>
 		Default enable "this is a fully-paid on-location physical order"
 	</label>
+	<label class="checkbox-label">
+		<input
+			type="checkbox"
+			name="removeBebopLogoPOS"
+			class="form-checkbox"
+			checked={data.removeBebopLogoPOS}
+		/>
+		Remove be-BOP logo from POS QR code
+	</label>
 
 	{#if hasCartLimitProductLine}
 		<label class="form-label">
