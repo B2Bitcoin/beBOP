@@ -78,8 +78,8 @@ type TokenObject =
 			display: string | undefined;
 			raw: string;
 	  }
-	| { type: 'currencyCalculatorWidget'; slug: string; raw: string };
-	| { type: 'qrCode'; slug: string; raw: string };
+	| { type: 'currencyCalculatorWidget'; slug: string; raw: string }
+	| { type: 'qrCode'; slug: string; raw: string }
 	| {
 			type: 'leaderboardWidget';
 			slug: string;
