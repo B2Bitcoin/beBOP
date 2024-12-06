@@ -28,6 +28,7 @@
 	import CountdownWidget from './CountdownWidget.svelte';
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
 	import { page } from '$app/stores';
+	import CurrencyCalculator from './CurrencyCalculator.svelte';
 	import LeaderBoardWidget from './LeaderBoardWidget.svelte';
 
 	export let products: CmsProduct[];
@@ -188,6 +189,8 @@
 						: ''}{token.height ? `height: ${token.height}px;` : ''}"
 				/>
 				<PictureComponent picture={pictureById[token.slug]} class="my-5 lg:hidden block" />
+			{:else if token.type === 'currencyCalculatorWidget'}
+				<CurrencyCalculator />
 			{:else if token.type === 'qrCode'}
 				{#if token.slug === 'Bolt12'}
 					<a href="lightning:{$page.data.bolt12Address}">
@@ -275,6 +278,8 @@
 					/>
 				{:else if token.type === 'pictureWidget'}
 					<PictureComponent picture={pictureById[token.slug]} class="my-5" />
+				{:else if token.type === 'currencyCalculatorWidget'}
+					<CurrencyCalculator />
 				{:else if token.type === 'qrCode'}
 					{#if token.slug === 'Bolt12'}
 						<a href="lightning:{$page.data.bolt12Address}">

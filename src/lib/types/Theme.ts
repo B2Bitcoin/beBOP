@@ -242,6 +242,15 @@ export const themeFormStructure = {
 				name: 'action.delete.backgroundColor'
 			}
 		]
+	},
+	order: {
+		label: 'Order',
+		elements: [
+			{
+				label: 'Credit card svg fill color',
+				name: 'creditCard.svg.color'
+			}
+		]
 	}
 } satisfies {
 	[key in keyof Omit<ThemeData, 'name'>]: {
