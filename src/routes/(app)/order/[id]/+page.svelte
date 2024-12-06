@@ -280,13 +280,7 @@
 
 						{#if payment.status === 'pending'}
 							{#if payment.method === 'lightning'}
-								<a
-									href={lightningPaymentQrCodeString(
-										payment.address ?? '',
-										payment.price.amount,
-										payment.price.currency
-									)}
-								>
+								<a href={lightningPaymentQrCodeString(payment.address ?? '')}>
 									<img
 										src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 										class="w-96 h-96"
