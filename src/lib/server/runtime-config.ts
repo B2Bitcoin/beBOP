@@ -181,6 +181,7 @@ const baseConfig = {
 		'wss://nos.lol',
 		'wss://relay.snort.social'
 	],
+	removeBebopLogoPOS: false,
 	contactModes: ['email', 'nostr'],
 	posTouchTag: [] as Tag['_id'][],
 	hideCreditCardQrCode: false,
@@ -319,6 +320,9 @@ if (!building) {
 }
 process.on('SIGINT', () => {
 	changeStream?.close().catch(console.error);
+
+	// Todo: keep track of everything instead and close ASAP
+	setTimeout(() => process.exit(0), 8000);
 });
 
 async function refresh(item?: ChangeStreamDocument<RuntimeConfigItem>): Promise<void> {
