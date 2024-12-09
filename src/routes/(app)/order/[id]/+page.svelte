@@ -151,7 +151,11 @@
 											>
 												<span>{t('order.paymentLink')}</span>
 												{#if payment.processor === 'sumup'}
-													<IconSumupWide class="h-12" />
+													<IconSumupWide
+														class="h-12 {data.overwriteCreditCardSvgColor
+															? 'order-creditCard-svg'
+															: ''} "
+													/>
 												{:else if payment.processor === 'stripe'}
 													<IconStripe class="h-12" />
 												{:else if payment.processor === 'paypal'}
@@ -279,20 +283,21 @@
 						{/if}
 
 						{#if payment.status === 'pending'}
-							{#if payment.method === 'lightning' || payment.method === 'card'}
-								<a
-									href={lightningPaymentQrCodeString(
-										payment.address ?? '',
-										payment.price.amount,
-										payment.price.currency
-									)}
-								>
+							{#if payment.method === 'lightning'}
+								<a href={lightningPaymentQrCodeString(payment.address ?? '')}>
 									<img
 										src="{$page.url.pathname}/payment/{payment.id}/qrcode"
 										class="w-96 h-96"
 										alt="QR code"
 									/></a
 								>
+							{/if}
+							{#if payment.method === 'card' && !data.hideCreditCardQrCode}
+								<img
+									src="{$page.url.pathname}/payment/{payment.id}/qrcode"
+									class="w-96 h-96"
+									alt="QR code"
+								/>
 							{/if}
 							{#if payment.method === 'bitcoin' && payment.address}
 								<span class="body-hyperlink font-light italic">{t('order.clickQR')}</span>

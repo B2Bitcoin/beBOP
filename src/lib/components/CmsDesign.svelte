@@ -27,6 +27,7 @@
 	import CountdownWidget from './CountdownWidget.svelte';
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
 	import { page } from '$app/stores';
+	import CurrencyCalculator from './CurrencyCalculator.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -187,6 +188,8 @@
 						<img src="{$page.url.origin}/phoenixd/bolt12/qrcode" class="w-96 h-96" alt="QR code" />
 					</a>
 				{/if}
+			{:else if token.type === 'currencyCalculatorWidget'}
+				<CurrencyCalculator />
 			{:else if token.type === 'html'}
 				<div class="my-5">
 					<!-- eslint-disable svelte/no-at-html-tags -->
@@ -271,6 +274,8 @@
 							/>
 						</a>
 					{/if}
+				{:else if token.type === 'currencyCalculatorWidget'}
+					<CurrencyCalculator />
 				{:else if token.type === 'html'}
 					<div class="my-5">
 						<!-- eslint-disable svelte/no-at-html-tags -->
