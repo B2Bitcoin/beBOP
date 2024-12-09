@@ -37,7 +37,7 @@ export const actions = {
 		}
 		const result = z
 			.object({
-				orderLabelIds: z.string().array()
+				orderLabelIds: z.string().array().optional()
 			})
 			.parse(json);
 		await collections.orders.updateOne(
@@ -46,8 +46,11 @@ export const actions = {
 			},
 			{
 				$set: {
-					orderLabelIds: result.orderLabelIds,
+					...(result.orderLabelIds !== undefined && { orderLabelIds: result.orderLabelIds }),
 					updatedAt: new Date()
+				},
+				$unset: {
+					...(result.orderLabelIds === undefined && { orderLabelIds: '' })
 				}
 			}
 		);

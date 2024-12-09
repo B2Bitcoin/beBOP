@@ -44,7 +44,7 @@ export async function phoenixdGetBolt12(): Promise<string> {
 	});
 
 	if (!res.ok) {
-		throw error(500, `Error fetching Bolt12 offer: ${res.status} ${res.statusText}`);
+		throw error(500, `Error fetching Bolt12 offer: ${res.status} ${await res.text()}`);
 	}
 
 	return await res.text();
