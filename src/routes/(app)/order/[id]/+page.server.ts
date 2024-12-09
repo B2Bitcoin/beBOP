@@ -6,6 +6,7 @@ import { getPublicS3DownloadLink } from '$lib/server/s3.js';
 import { uniqBy } from '$lib/utils/uniqBy.js';
 import { paymentMethods } from '$lib/server/payment-methods.js';
 import { cmsFromContent } from '$lib/server/cms.js';
+import { CUSTOMER_ROLE_ID } from '$lib/types/User.js';
 
 export async function load({ params, depends, locals }) {
 	depends(UrlDependency.Order);
@@ -24,6 +25,10 @@ export async function load({ params, depends, locals }) {
 			{
 				projection: {
 					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					employeeContent: {
+						$ifNull: [`$translations.${locals.language}.employeeContent`, '$employeeContent']
+					},
+					hasEmployeeContent: 1,
 					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 					shortDescription: {
 						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
@@ -40,6 +45,10 @@ export async function load({ params, depends, locals }) {
 			{
 				projection: {
 					content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+					employeeContent: {
+						$ifNull: [`$translations.${locals.language}.employeeContent`, '$employeeContent']
+					},
+					hasEmployeeContent: 1,
 					title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
 					shortDescription: {
 						$ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription']
@@ -70,11 +79,31 @@ export async function load({ params, depends, locals }) {
 		),
 		...(cmsOrderTop && {
 			cmsOrderTop,
-			cmsOrderTopData: cmsFromContent({ content: cmsOrderTop.content }, locals)
+			cmsOrderTopData: cmsFromContent(
+				{
+					content:
+						locals.user.roleId !== CUSTOMER_ROLE_ID &&
+						cmsOrderTop.hasEmployeeContent &&
+						cmsOrderTop.employeeContent
+							? cmsOrderTop.employeeContent
+							: cmsOrderTop.content
+				},
+				locals
+			)
 		}),
 		...(cmsOrderBottom && {
 			cmsOrderBottom,
-			cmsOrderBottomData: cmsFromContent({ content: cmsOrderBottom.content }, locals)
+			cmsOrderBottomData: cmsFromContent(
+				{
+					content:
+						locals.user.roleId !== CUSTOMER_ROLE_ID &&
+						cmsOrderBottom.hasEmployeeContent &&
+						cmsOrderBottom.employeeContent
+							? cmsOrderBottom.employeeContent
+							: cmsOrderBottom.content
+				},
+				locals
+			)
 		})
 	};
 }
