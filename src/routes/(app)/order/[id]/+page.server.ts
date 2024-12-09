@@ -7,6 +7,7 @@ import { uniqBy } from '$lib/utils/uniqBy.js';
 import { paymentMethods } from '$lib/server/payment-methods.js';
 import { cmsFromContent } from '$lib/server/cms.js';
 import { CUSTOMER_ROLE_ID } from '$lib/types/User.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export async function load({ params, depends, locals }) {
 	depends(UrlDependency.Order);
@@ -104,7 +105,9 @@ export async function load({ params, depends, locals }) {
 				},
 				locals
 			)
-		})
+		}),
+		overwriteCreditCardSvgColor: runtimeConfig.overwriteCreditCardSvgColor,
+		hideCreditCardQrCode: runtimeConfig.hideCreditCardQrCode
 	};
 }
 
