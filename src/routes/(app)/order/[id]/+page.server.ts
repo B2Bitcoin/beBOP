@@ -83,7 +83,7 @@ export async function load({ params, depends, locals }) {
 			cmsOrderTopData: cmsFromContent(
 				{
 					content:
-						locals.user.roleId !== CUSTOMER_ROLE_ID &&
+						locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 						cmsOrderTop.hasEmployeeContent &&
 						cmsOrderTop.employeeContent
 							? cmsOrderTop.employeeContent
@@ -97,7 +97,7 @@ export async function load({ params, depends, locals }) {
 			cmsOrderBottomData: cmsFromContent(
 				{
 					content:
-						locals.user.roleId !== CUSTOMER_ROLE_ID &&
+						locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 						cmsOrderBottom.hasEmployeeContent &&
 						cmsOrderBottom.employeeContent
 							? cmsOrderBottom.employeeContent

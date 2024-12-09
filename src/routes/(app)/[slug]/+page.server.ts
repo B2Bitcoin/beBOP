@@ -68,7 +68,7 @@ export async function load({ params, locals, url }) {
 				!cmsPage.mobileContent
 				? {
 						content:
-							locals.user.roleId !== CUSTOMER_ROLE_ID &&
+							locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 							cmsPage.hasEmployeeContent &&
 							cmsPage.employeeContent
 								? cmsPage.employeeContent
@@ -78,7 +78,7 @@ export async function load({ params, locals, url }) {
 				? { content: cmsPage.mobileContent }
 				: {
 						content:
-							locals.user.roleId !== CUSTOMER_ROLE_ID &&
+							locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 							cmsPage.hasEmployeeContent &&
 							cmsPage.employeeContent
 								? cmsPage.employeeContent
