@@ -6,6 +6,7 @@ import { getPublicS3DownloadLink } from '$lib/server/s3.js';
 import { uniqBy } from '$lib/utils/uniqBy.js';
 import { paymentMethods } from '$lib/server/payment-methods.js';
 import { cmsFromContent } from '$lib/server/cms.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export async function load({ params, depends, locals }) {
 	depends(UrlDependency.Order);
@@ -75,7 +76,9 @@ export async function load({ params, depends, locals }) {
 		...(cmsOrderBottom && {
 			cmsOrderBottom,
 			cmsOrderBottomData: cmsFromContent({ content: cmsOrderBottom.content }, locals)
-		})
+		}),
+		overwriteCreditCardSvgColor: runtimeConfig.overwriteCreditCardSvgColor,
+		hideCreditCardQrCode: runtimeConfig.hideCreditCardQrCode
 	};
 }
 

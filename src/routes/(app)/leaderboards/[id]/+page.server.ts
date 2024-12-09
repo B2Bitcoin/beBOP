@@ -25,7 +25,7 @@ export const load = async ({ params, locals }) => {
 	}
 	const products = await collections.products
 		.find({
-			_id: { $in: [...leaderboard.progress.map((prog) => prog.product)] }
+			_id: { $in: [...leaderboard.progress.map((prog) => prog.productId)] }
 		})
 		.project<Pick<Product, '_id' | 'name' | 'shortDescription'>>({
 			name: locals.language ? { $ifNull: [`$translations.${locals.language}.name`, '$name'] } : 1,

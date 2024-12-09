@@ -79,9 +79,9 @@
 		Edit progress
 	</label>
 	{#each data.leaderboard.progress as progress, i}
-		<h2 class="text-xl">{progress.product}</h2>
+		<h2 class="text-xl">{progress.productId}</h2>
 		<div class="gap-4 flex flex-col md:flex-row">
-			<input type="hidden" name="progress[{i}].product" value={progress.product} />
+			<input type="hidden" name="progress[{i}].productId" value={progress.productId} />
 
 			<label class="w-full">
 				amount

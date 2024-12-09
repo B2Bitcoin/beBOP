@@ -1,6 +1,7 @@
 import { collections } from '$lib/server/database';
 import { redirect } from '@sveltejs/kit';
 import { formatCart, formatOrder } from './formatCartOrder.js';
+import { runtimeConfig } from '$lib/server/runtime-config.js';
 
 export const load = async ({ locals }) => {
 	if (!locals.user) {
@@ -22,6 +23,7 @@ export const load = async ({ locals }) => {
 	return {
 		cart: formattedCart,
 		order: order && formatOrder(order),
-		layoutReset: true
+		layoutReset: true,
+		removeBebopLogoPOS: runtimeConfig.removeBebopLogoPOS
 	};
 };

@@ -14,15 +14,15 @@ export type Leaderboard = Timestamps & {
 	endsAt: Date;
 	mode: 'moneyAmount' | 'totalProducts';
 	progress: {
-		product: Product['_id'];
+		productId: Product['_id'];
 		amount: number;
 		currency?: Currency;
 	}[];
 	event?: {
 		type: 'progress';
 		at: Date;
-		order: Order['_id'];
-		product: Product['_id'];
+		orderId: Order['_id'];
+		productId: Product['_id'];
 		amount: number;
 	}[];
 };

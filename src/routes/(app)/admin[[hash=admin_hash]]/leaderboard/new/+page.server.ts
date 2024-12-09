@@ -53,7 +53,7 @@ export const actions: Actions = {
 			name,
 			productIds: productIds,
 			progress: productIds.map((productId) => ({
-				product: productId,
+				productId: productId,
 				amount: 0,
 				...(mode === 'moneyAmount' && { currency: currency })
 			})),

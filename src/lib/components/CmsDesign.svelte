@@ -29,6 +29,7 @@
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
 	import { page } from '$app/stores';
 	import LeaderBoardWidget from './LeaderBoardWidget.svelte';
+	import CurrencyCalculator from './CurrencyCalculator.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -195,6 +196,8 @@
 					{products}
 					class="not-prose"
 				/>
+			{:else if token.type === 'currencyCalculatorWidget'}
+				<CurrencyCalculator />
 			{:else if token.type === 'html'}
 				<div class="my-5">
 					<!-- eslint-disable svelte/no-at-html-tags -->
@@ -276,6 +279,8 @@
 						{products}
 						class="not-prose"
 					/>
+				{:else if token.type === 'currencyCalculatorWidget'}
+					<CurrencyCalculator />
 				{:else if token.type === 'html'}
 					<div class="my-5">
 						<!-- eslint-disable svelte/no-at-html-tags -->

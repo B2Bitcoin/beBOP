@@ -53,7 +53,7 @@ export const actions = {
 				name: z.string().min(1).max(MAX_NAME_LIMIT),
 				progress: z.array(
 					z.object({
-						product: z.string().trim(),
+						productId: z.string().trim(),
 						amount: z
 							.string()
 							.regex(/^\d+(\.\d+)?$/)
@@ -72,7 +72,7 @@ export const actions = {
 				)
 			});
 		const progressParsed = progress
-			.filter((prog) => leaderboard.productIds.includes(prog.product))
+			.filter((prog) => leaderboard.productIds.includes(prog.productId))
 			.map((prog) => ({
 				...prog,
 				amount: Math.max(parsePriceAmount(prog.amount, prog.currency), 0)
