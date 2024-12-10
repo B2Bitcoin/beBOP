@@ -110,7 +110,7 @@
 
 		const sortedProducts = sortBy(filteredProducts, by);
 
-		return sort === 'asc' ? sortedProducts : sortedProducts.reverse();
+		return sort === 'asc' ? sortedProducts.reverse() : sortedProducts;
 	}
 	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
 </script>
