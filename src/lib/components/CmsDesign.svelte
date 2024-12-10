@@ -27,6 +27,7 @@
 	import CountdownWidget from './CountdownWidget.svelte';
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
 	import { page } from '$app/stores';
+	import CurrencyCalculator from './CurrencyCalculator.svelte';
 
 	export let products: CmsProduct[];
 	export let pictures: CmsPicture[];
@@ -186,6 +187,8 @@
 						: ''}{token.height ? `height: ${token.height}px;` : ''}"
 				/>
 				<PictureComponent picture={pictureById[token.slug]} class="my-5 lg:hidden block" />
+			{:else if token.type === 'currencyCalculatorWidget'}
+				<CurrencyCalculator />
 			{:else if token.type === 'html'}
 				<div class="my-5">
 					<!-- eslint-disable svelte/no-at-html-tags -->
@@ -260,6 +263,8 @@
 					/>
 				{:else if token.type === 'pictureWidget'}
 					<PictureComponent picture={pictureById[token.slug]} class="my-5" />
+				{:else if token.type === 'currencyCalculatorWidget'}
+					<CurrencyCalculator />
 				{:else if token.type === 'html'}
 					<div class="my-5">
 						<!-- eslint-disable svelte/no-at-html-tags -->

@@ -83,7 +83,9 @@ type TokenObject =
 			slug: string;
 			display: string | undefined;
 			raw: string;
-	  };
+	  }
+	| { type: 'currencyCalculatorWidget'; slug: string; raw: string };
+
 export async function cmsFromContent(
 	{ content, mobileContent }: { content: string; mobileContent?: string },
 	locals: Partial<PickDeep<App.Locals, 'user.roleId' | 'language' | 'email' | 'sso'>>
@@ -106,6 +108,7 @@ export async function cmsFromContent(
 
 	const GALLERY_WIDGET_REGEX =
 		/\[Gallery=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
+	const CURRENCY_CALCULATOR_WIDGET_REGEX = /\[CurrencyCalculator=(?<slug>[a-z0-9-]+)\]/giu;
 
 	const productSlugs = new Set<string>();
 	const challengeSlugs = new Set<string>();
@@ -117,6 +120,7 @@ export async function cmsFromContent(
 	const countdownFormSlugs = new Set<string>();
 	const tagProductsSlugs = new Set<string>();
 	const gallerySlugs = new Set<string>();
+	const currencyCalculatorSlugs = new Set<string>();
 
 	const tokens: {
 		desktop: Array<TokenObject>;
@@ -146,7 +150,8 @@ export async function cmsFromContent(
 			...matchAndSort(content, PICTURE_WIDGET_REGEX, 'pictureWidget'),
 			...matchAndSort(content, COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
 			...matchAndSort(content, TAG_PRODUCTS_REGEX, 'tagProducts'),
-			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget')
+			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget'),
+			...matchAndSort(content, CURRENCY_CALCULATOR_WIDGET_REGEX, 'currencyCalculatorWidget')
 		].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 		for (const match of matches) {
 			const html = trimPrefix(trimSuffix(content.slice(index, match.index), '<p>'), '</p>');
@@ -256,6 +261,14 @@ export async function cmsFromContent(
 							type: 'galleryWidget',
 							slug: match.groups.slug,
 							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'currencyCalculatorWidget':
+						currencyCalculatorSlugs.add(match.groups.slug);
+						token.push({
+							type: 'currencyCalculatorWidget',
+							slug: match.groups.slug,
 							raw: match[0]
 						});
 						break;

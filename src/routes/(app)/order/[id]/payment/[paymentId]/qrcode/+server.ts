@@ -1,5 +1,5 @@
 import { collections } from '$lib/server/database';
-import { bitcoinPaymentQrCodeString } from '$lib/utils/bitcoinPaymentQr';
+import { bitcoinPaymentQrCodeString } from '$lib/types/Order';
 import { error } from '@sveltejs/kit';
 import qrcode from 'qrcode';
 
