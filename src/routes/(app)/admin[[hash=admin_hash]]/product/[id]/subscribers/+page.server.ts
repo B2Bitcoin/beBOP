@@ -15,11 +15,8 @@ export const load = async ({ params }) => {
 	return {
 		product: pojo(product),
 		subscriptions: subscriptions.map((subscription) => ({
-			...subscription,
-			user: {
-				...subscription.user,
-				userId: subscription.user.userId?.toString()
-			},
+			...pojo(subscription),
+			user: pojo(subscription.user),
 			notifications: subscription.notifications.map(pojo)
 		}))
 	};
