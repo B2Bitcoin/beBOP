@@ -109,7 +109,7 @@
 		try {
 			if (
 				priceAmountElement.value &&
-				+priceAmountElement.value <= CURRENCY_UNIT[product.price.currency] &&
+				+priceAmountElement.value < CURRENCY_UNIT[product.price.currency] &&
 				!product.payWhatYouWant &&
 				!product.free
 			) {
