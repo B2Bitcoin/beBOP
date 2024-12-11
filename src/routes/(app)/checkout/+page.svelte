@@ -91,6 +91,7 @@
 				input.reportValidity();
 
 				event.preventDefault();
+				submitting = false;
 				return;
 			}
 		}
