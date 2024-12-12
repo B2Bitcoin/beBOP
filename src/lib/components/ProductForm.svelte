@@ -74,12 +74,14 @@
 		hasVariations: false,
 		hasSellDisclaimer: false
 	};
+	export let listAliases: string[] | undefined;
 
 	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
 	let restrictPaymentMethods = !!product.paymentMethods;
 	let vatProfileId = product.vatProfileId || '';
 	let formElement: HTMLFormElement;
 	let priceAmountElement: HTMLInputElement;
+	let aliasElement: HTMLInputElement;
 	let variationInput: HTMLInputElement[] = [];
 	let disableDateChange = !isNew;
 	let displayPreorderCustomText = !!product.customPreorderText;
@@ -131,6 +133,15 @@
 			} else {
 				priceAmountElement.setCustomValidity('');
 			}
+			if (listAliases?.includes(aliasElement.value)) {
+				aliasElement.setCustomValidity('Duplicated alias');
+				aliasElement.reportValidity();
+				event.preventDefault();
+				return;
+			} else {
+				aliasElement.setCustomValidity('');
+			}
+
 			const seen = new Set<string>();
 			for (const [i, value] of variationLabelsValues.entries()) {
 				const key = JSON.stringify(
@@ -290,6 +301,8 @@
 					placeholder="alias"
 					step="any"
 					value={duplicateFromId ? '' : product.alias?.[1] ?? ''}
+					bind:this={aliasElement}
+					on:input={() => aliasElement?.setCustomValidity('')}
 				/>
 			</label>
 		</div>

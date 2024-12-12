@@ -16,6 +16,7 @@
 	scanned={data.scanned}
 	vatProfiles={data.vatProfiles}
 	availablePaymentMethods={data.availablePaymentMethods}
+	listAliases={data.products?.flatMap((product) => product.alias?.[1])}
 />
 
 <h2 class="text-2xl my-4">Photos</h2>
