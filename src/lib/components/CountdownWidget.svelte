@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Countdown } from '$lib/types/Countdown';
-	import { addHours, differenceInMilliseconds } from 'date-fns';
+	import { differenceInMilliseconds } from 'date-fns';
 	import { onMount } from 'svelte';
 
 	let className = '';
