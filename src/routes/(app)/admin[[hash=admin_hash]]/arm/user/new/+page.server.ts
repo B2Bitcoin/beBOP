@@ -51,11 +51,11 @@ export const actions = {
 			await sendResetPasswordNotification(user);
 
 			throw redirect(303, `${adminPrefix()}/arm`);
-		} catch (error) {
-			if (isUniqueConstraintError(error)) {
-				return;
+		} catch (err) {
+			if (isUniqueConstraintError(err)) {
+				throw error(409, 'A user with the same email or npub already exists');
 			}
-			throw error;
+			throw err;
 		}
 	}
 };
