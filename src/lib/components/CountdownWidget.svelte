@@ -6,9 +6,8 @@
 	let className = '';
 	export { className as class };
 	export let countdown: Pick<Countdown, '_id' | 'title' | 'description' | 'endsAt'>;
-	const timezoneOffsetHours = new Date().getTimezoneOffset() / 60;
-	let endsAt = addHours(countdown.endsAt, timezoneOffsetHours);
-	$: distance = differenceInMilliseconds(endsAt, new Date());
+	let endsAt = countdown.endsAt;
+	$: distance = differenceInMilliseconds(endsAt.toISOString(), new Date(new Date().toISOString()));
 	function updateCountdown() {
 		distance = Math.max(differenceInMilliseconds(endsAt, new Date()), 0);
 	}
