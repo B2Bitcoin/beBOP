@@ -184,7 +184,8 @@ async function handleReceivedMessage(message: NostRReceivedMessage): Promise<voi
 		if (
 			!matched &&
 			!message.tags?.some(([key]) => key === 'bootikVersion') &&
-			!runtimeConfig.disableNostrBotIntro
+			!runtimeConfig.disableNostrBotIntro &&
+			message.kind === 4
 		) {
 			await send(
 				`Hello ${
