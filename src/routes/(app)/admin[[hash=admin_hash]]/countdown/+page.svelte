@@ -4,7 +4,7 @@
 
 <a href="{data.adminPrefix}/countdown/new" class="underline block">Add countdown</a>
 
-<h1 class="text-3xl">List of specification</h1>
+<h1 class="text-3xl">List of Countdown</h1>
 
 <ul>
 	{#each data.countdowns as countdown}
