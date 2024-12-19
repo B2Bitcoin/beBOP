@@ -219,9 +219,7 @@
 			</div>
 		</div>
 		<div class="grid grid-cols-2 gap-4 mt-2">
-			<a class="touchScreen-action-cta text-3xl p-4 text-center" href="/checkout?display=headless"
-				>PAYER</a
-			>
+			<div class="touchScreen-action-cta text-3xl p-4 text-center">PAYER</div>
 			<form
 				method="post"
 				class="grid grid-cols-2 gap-4"
