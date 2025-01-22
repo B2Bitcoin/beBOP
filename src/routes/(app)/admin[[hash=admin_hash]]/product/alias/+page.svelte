@@ -2,9 +2,8 @@
 	import { enhance } from '$app/forms';
 
 	export let data;
-	let listAliases = data.products.flatMap((product) => product.alias?.[1]);
 
-	let errorDuplicateAlias = false;
+	let errorMessage = '';
 	let loading = false;
 </script>
 
@@ -14,12 +13,12 @@
 	class="flex flex-col gap-2"
 	method="post"
 	use:enhance={() => {
-		errorDuplicateAlias = false;
+		errorMessage = '';
 		return async ({ result }) => {
 			loading = false;
 
 			if (result.type === 'error') {
-				errorDuplicateAlias = true;
+				errorMessage = result.error.message;
 				return;
 			}
 		};
@@ -41,13 +40,13 @@
 					type="text"
 					name="{product._id}.alias"
 					placeholder="alias"
-					bind:value={listAliases[i]}
+					value={product.alias?.[1] ?? ''}
 				/>
 			</label>
 		</div>
 	{/each}
-	{#if errorDuplicateAlias}
-		<span class="text-red-500">Error : Alias must be unique</span>
+	{#if errorMessage}
+		<span class="text-red-500">{errorMessage}</span>
 	{/if}
 	<button class="btn btn-black self-start mt-4" type="submit" disabled={loading}>Update</button>
 </form>
