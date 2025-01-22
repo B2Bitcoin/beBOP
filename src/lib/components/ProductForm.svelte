@@ -171,8 +171,7 @@
 				await invalidateAll();
 			}
 			if (result.type === 'error') {
-				errorMessage =
-					result.error.message === 'Internal Error' ? 'Duplicate alias' : 'Error on submission';
+				errorMessage = result.error.message;
 				return;
 			}
 
