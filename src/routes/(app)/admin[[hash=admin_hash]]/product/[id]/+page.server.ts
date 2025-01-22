@@ -11,7 +11,6 @@ import { amountOfProductReserved, amountOfProductSold } from '$lib/server/produc
 import type { Tag } from '$lib/types/Tag';
 import { adminPrefix } from '$lib/server/admin';
 import { ObjectId } from 'mongodb';
-import type { Product } from '$lib/types/Product';
 
 export const load = async ({ params }) => {
 	const pictures = await collections.pictures
@@ -26,10 +25,6 @@ export const load = async ({ params }) => {
 		.find({})
 		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
-	const products = await collections.products
-		.find({})
-		.project<Pick<Product, '_id' | 'name' | 'alias'>>({ _id: 1, name: 1, alias: 1 })
-		.toArray();
 	const [reserved, sold, scanned] = await Promise.all([
 		amountOfProductReserved(params.id),
 		amountOfProductSold(params.id),
@@ -42,8 +37,7 @@ export const load = async ({ params }) => {
 		tags,
 		reserved,
 		sold,
-		scanned,
-		products
+		scanned
 	};
 };
 

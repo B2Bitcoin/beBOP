@@ -17,7 +17,6 @@
 	defaultActionSettings={data.productActionSettings}
 	vatProfiles={data.vatProfiles}
 	availablePaymentMethods={data.availablePaymentMethods}
-	listAliases={data.products?.flatMap((product) => product.alias?.[1])}
 />
 
 {#if data.pictures?.length}

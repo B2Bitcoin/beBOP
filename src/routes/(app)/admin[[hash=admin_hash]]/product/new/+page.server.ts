@@ -27,10 +27,6 @@ export const load = async ({ url }) => {
 		.find({})
 		.project<Pick<Tag, '_id' | 'name'>>({ _id: 1, name: 1 })
 		.toArray();
-	const products = await collections.products
-		.find({})
-		.project<Pick<Product, '_id' | 'name' | 'alias'>>({ _id: 1, name: 1, alias: 1 })
-		.toArray();
 	if (productId) {
 		const product = await collections.products.findOne({ _id: productId });
 
@@ -51,14 +47,12 @@ export const load = async ({ url }) => {
 				pictures,
 				digitalFiles,
 				tags,
-				currency: runtimeConfig.priceReferenceCurrency,
-				products
+				currency: runtimeConfig.priceReferenceCurrency
 			};
 		}
 	}
 	return {
-		tags,
-		products
+		tags
 	};
 };
 
