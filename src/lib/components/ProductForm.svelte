@@ -93,6 +93,7 @@
 		percentage: 50,
 		enforce: false
 	};
+	let errorMessage = '';
 	$: variationLines = product.variations?.length ? product.variations?.length : 2;
 	let productCtaLines = product.cta?.length ? product.cta.length : 3;
 	if (product._id && isNew) {
@@ -102,7 +103,7 @@
 
 	async function checkForm(event: SubmitEvent) {
 		submitting = true;
-
+		errorMessage = '';
 		// Need to load here, or for some reason, some inputs disappear afterwards
 		const formData = new FormData(formElement);
 
@@ -131,6 +132,7 @@
 			} else {
 				priceAmountElement.setCustomValidity('');
 			}
+
 			const seen = new Set<string>();
 			for (const [i, value] of variationLabelsValues.entries()) {
 				const key = JSON.stringify(
@@ -167,6 +169,10 @@
 			if (result.type === 'success') {
 				// rerun all `load` functions, following the successful update
 				await invalidateAll();
+			}
+			if (result.type === 'error') {
+				errorMessage = result.error.message;
+				return;
 			}
 
 			applyAction(result);
@@ -1078,7 +1084,9 @@
 				</label>
 			{/if}
 		{/if}
-
+		{#if errorMessage}
+			<p class="text-red-500">{errorMessage}</p>
+		{/if}
 		<div class="flex justify-between gap-2">
 			<button
 				type="submit"
