@@ -71,6 +71,7 @@
 		"agreeOnlyDeposit": "Ik ga ermee akkoord dat ik het restant in de toekomst moet betalen (<0>waarom?</0>)",
 		"backToCart": "Terug naar winkelwagen",
 		"billingInfo": "Facturatie adres",
+		"changePaymentExpiration": "Vervaldatum van betaling wijzigen (in minuten)",
 		"cta": {
 			"submit": "Doorgaan"
 		},
@@ -487,8 +488,8 @@
 			"card": "Betaald met: bankkaart",
 			"free": "Niets betaald",
 			"lightning": "Betaald met: Lightning-transactie (1 {paymentCurrency} = {exchangeRate} {mainCurrency} op het moment van de bestelling)",
-			"point-of-sale": "Betaald in de winkel",
-			"paypal": "Betaald met: paypal"
+			"paypal": "Betaald met: paypal",
+			"point-of-sale": "Betaald in de winkel"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Betaald met: geverifieerde bankoverschrijving",

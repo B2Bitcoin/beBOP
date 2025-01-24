@@ -71,6 +71,7 @@
 		"agreeOnlyDeposit": "Je comprends que je dois m'acquitter du solde hors-acompte (<0>pourquoi ?</0>)",
 		"backToCart": "Retour au panier",
 		"billingInfo": "Adresse de facturation",
+		"changePaymentExpiration": "Modifier la valeur d'expiration du paiement (en minutes)",
 		"cta": {
 			"submit": "Payer"
 		},
@@ -487,8 +488,8 @@
 			"card": "Payé avec : carte bancaire",
 			"free": "N'a rien payé",
 			"lightning": "Payé avec : Transaction Lightning (1 {paymentCurrency} = {exchangeRate} {mainCurrency} au moment de la commande)",
-			"point-of-sale": "Payé en magasin",
-			"paypal": "Payé avec: paypal"
+			"paypal": "Payé avec: paypal",
+			"point-of-sale": "Payé en magasin"
 		},
 		"paidWithSummary": {
 			"bank-transfer": "Payé avec : virement bancaire vérifié",
