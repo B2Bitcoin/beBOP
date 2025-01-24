@@ -774,7 +774,6 @@
 					placeholder="Max quantity per order"
 					step="1"
 					min="1"
-					max="99"
 					value={product.maxQuantityPerOrder || DEFAULT_MAX_QUANTITY_PER_ORDER}
 				/>
 			</label>
