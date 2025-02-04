@@ -4,6 +4,7 @@
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
+	import { subMonths } from 'date-fns';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
@@ -11,8 +12,8 @@
 	let tablePayment: HTMLTableElement;
 	let tableOrderSynthesis: HTMLTableElement;
 	let tablePaymentSynthesis: HTMLTableElement;
-	$: monthValue = Number($page.url.searchParams.get('month')) || new Date().getMonth() + 1;
-	$: yearValue = Number($page.url.searchParams.get('year')) || new Date().getFullYear();
+	$: beginsAtValue = new Date($page.url.searchParams.get('beginsAt') || subMonths(new Date(), 2));
+	$: endsAtValue = new Date($page.url.searchParams.get('endsAt') || subMonths(new Date(), 1));
 	let tableProductSynthesis: HTMLTableElement;
 	let includePending = false;
 	let includeExpired = false;
@@ -28,9 +29,9 @@
 			(includeCanceled && order.status === 'canceled') ||
 			(includePartiallyPaid && order.payments.find((payment) => payment.status === 'paid'))
 	);
-	$: orderByMonthYear = getOrderByMonthYear(monthValue - 1, yearValue);
-	$: quantityOfPaymentMeanMonthYear = quantityOfPaymentMean(monthValue, yearValue);
-	$: quantityOfProductMonthYear = quantityOfProduct(monthValue, yearValue);
+	$: orderByMonthYear = getOrderByDate(beginsAtValue, endsAtValue);
+	$: quantityOfPaymentMeanMonthYear = quantityOfPaymentMean(beginsAtValue, endsAtValue);
+	$: quantityOfProductMonthYear = quantityOfProduct(beginsAtValue, endsAtValue);
 	$: orderSynthesis = {
 		orderQuantity: sum(orderByMonthYear.map((order) => order.quantityOrder)),
 		orderNumber: orderByMonthYear.length,
@@ -73,18 +74,15 @@
 		downloadCSV(csvData, filename);
 	}
 
-	function getOrderByMonthYear(month: number, year: number) {
+	function getOrderByDate(beginsAt: Date, endsAt: Date) {
 		return data.orders.filter(
-			(order) =>
-				order.status === 'paid' &&
-				order.createdAt.getMonth() === month &&
-				order.createdAt.getFullYear() === year
+			(order) => order.status === 'paid' && order.createdAt >= beginsAt && order.createdAt <= endsAt
 		);
 	}
 
-	function quantityOfProduct(month: number, year: number) {
+	function quantityOfProduct(beginsAt: Date, endsAt: Date) {
 		const productQuantities: Record<string, { quantity: number; total: number }> = {};
-		getOrderByMonthYear(month - 1, year).forEach((order) => {
+		getOrderByDate(beginsAt, endsAt).forEach((order) => {
 			order.items.forEach((item) => {
 				if (productQuantities[item.product._id]) {
 					productQuantities[item.product._id].quantity += item.quantity;
@@ -107,9 +105,9 @@
 		});
 		return productQuantities;
 	}
-	function quantityOfPaymentMean(month: number, year: number) {
+	function quantityOfPaymentMean(beginsAt: Date, endsAt: Date) {
 		const paymentMeanQuantities: Record<string, { quantity: number; total: number }> = {};
-		getOrderByMonthYear(month - 1, year).forEach((order) => {
+		getOrderByDate(beginsAt, endsAt).forEach((order) => {
 			order.payments.forEach((payment) => {
 				if (paymentMeanQuantities[payment.method]) {
 					paymentMeanQuantities[payment.method].quantity += 1;
@@ -160,6 +158,33 @@
 		paid orders
 	</label>
 </div>
+<form method="GET" class="grid grid-cols-12 gap-2 col-span-12">
+	<div class="col-span-5">
+		<label class="form-label">
+			BeginsAt
+			<input
+				class="form-input"
+				name="beginsAt"
+				type="date"
+				value={beginsAtValue.toISOString().split('T')[0]}
+			/>
+		</label>
+	</div>
+	<div class="col-span-5">
+		<label class="form-label">
+			EndsAt
+			<input
+				class="form-input"
+				type="date"
+				name="endsAt"
+				value={endsAtValue.toISOString().split('T')[0]}
+			/>
+		</label>
+	</div>
+	<div class="col-span-2">
+		<button class="submit btn btn-gray mt-8">🔍</button>
+	</div>
+</form>
 <div class="gap-4 grid grid-cols-12 mx-auto">
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order detail</h1>
@@ -385,39 +410,7 @@
 			</table>
 		</div>
 	</div>
-	<form method="GET" class="grid grid-cols-12 gap-2 col-span-12">
-		<div class="col-span-5">
-			<label class="form-label">
-				Month
-				<input
-					class="form-input"
-					name="month"
-					type="number"
-					min="1"
-					max="12"
-					value={monthValue}
-					placeholder="month (example:1)"
-				/>
-			</label>
-		</div>
-		<div class="col-span-5">
-			<label class="form-label">
-				Year
-				<input
-					class="form-input"
-					type="number"
-					name="year"
-					min="2000"
-					max="3000"
-					value={yearValue}
-					placeholder="year (example 2024)"
-				/>
-			</label>
-		</div>
-		<div class="col-span-2">
-			<button class="submit btn btn-gray mt-8">🔍</button>
-		</div>
-	</form>
+
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order synthesis</h1>
 		<button
@@ -442,7 +435,15 @@
 				</thead>
 				<tbody>
 					<tr class="hover:bg-gray-100 whitespace-nowrap">
-						<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
+						<td class="border border-gray-300 px-4 py-2">
+							<time datetime={beginsAtValue.toISOString()}>
+								{beginsAtValue.toLocaleDateString('fr-FR')}
+							</time>
+							--
+							<time datetime={endsAtValue.toISOString()}>
+								{endsAtValue.toLocaleDateString('fr-FR')}
+							</time></td
+						>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderNumber}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderTotal}</td>
 						<td class="border border-gray-300 px-4 py-2"
@@ -483,7 +484,15 @@
 					<!-- Order rows -->
 					{#each Object.entries(quantityOfProductMonthYear).sort((a, b) => b[1].quantity - a[1].quantity) as [productId, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
-							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
+							<td class="border border-gray-300 px-4 py-2"
+								><time datetime={beginsAtValue.toISOString()}>
+									{beginsAtValue.toLocaleDateString('fr-FR')}
+								</time>
+								--
+								<time datetime={endsAtValue.toISOString()}>
+									{endsAtValue.toLocaleDateString('fr-FR')}
+								</time></td
+							>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
 							<td class="border border-gray-300 px-4 py-2">{fetchProductById(productId)?.name}</td>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
@@ -522,7 +531,15 @@
 					<!-- Order rows -->
 					{#each Object.entries(quantityOfPaymentMeanMonthYear).sort((a, b) => b[1].quantity - a[1].quantity) as [method, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
-							<td class="border border-gray-300 px-4 py-2">{monthValue}/{yearValue}</td>
+							<td class="border border-gray-300 px-4 py-2"
+								><time datetime={beginsAtValue.toISOString()}>
+									{beginsAtValue.toLocaleDateString('fr-FR')}
+								</time>
+								--
+								<time datetime={endsAtValue.toISOString()}>
+									{endsAtValue.toLocaleDateString('fr-FR')}
+								</time></td
+							>
 							<td class="border border-gray-300 px-4 py-2">{method}</td>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
 							<td class="border border-gray-300 px-4 py-2">{total}</td>
