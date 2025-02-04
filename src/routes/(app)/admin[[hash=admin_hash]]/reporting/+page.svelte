@@ -28,7 +28,7 @@
 			(includeCanceled && order.status === 'canceled') ||
 			(includePartiallyPaid && order.payments.find((payment) => payment.status === 'paid'))
 	);
-	$: orderByMonthYear = getOrderByMonthYear(beginsAtValue, endsAtValue);
+	$: orderByMonthYear = getOrderByDate(beginsAtValue, endsAtValue);
 	$: quantityOfPaymentMeanMonthYear = quantityOfPaymentMean(beginsAtValue, endsAtValue);
 	$: quantityOfProductMonthYear = quantityOfProduct(beginsAtValue, endsAtValue);
 	$: orderSynthesis = {
@@ -73,7 +73,7 @@
 		downloadCSV(csvData, filename);
 	}
 
-	function getOrderByMonthYear(beginsAt: Date, endsAt: Date) {
+	function getOrderByDate(beginsAt: Date, endsAt: Date) {
 		return data.orders.filter(
 			(order) => order.status === 'paid' && order.createdAt >= beginsAt && order.createdAt <= endsAt
 		);
@@ -81,7 +81,7 @@
 
 	function quantityOfProduct(beginsAt: Date, endsAt: Date) {
 		const productQuantities: Record<string, { quantity: number; total: number }> = {};
-		getOrderByMonthYear(beginsAt, endsAt).forEach((order) => {
+		getOrderByDate(beginsAt, endsAt).forEach((order) => {
 			order.items.forEach((item) => {
 				if (productQuantities[item.product._id]) {
 					productQuantities[item.product._id].quantity += item.quantity;
@@ -106,7 +106,7 @@
 	}
 	function quantityOfPaymentMean(beginsAt: Date, endsAt: Date) {
 		const paymentMeanQuantities: Record<string, { quantity: number; total: number }> = {};
-		getOrderByMonthYear(beginsAt, endsAt).forEach((order) => {
+		getOrderByDate(beginsAt, endsAt).forEach((order) => {
 			order.payments.forEach((payment) => {
 				if (paymentMeanQuantities[payment.method]) {
 					paymentMeanQuantities[payment.method].quantity += 1;
