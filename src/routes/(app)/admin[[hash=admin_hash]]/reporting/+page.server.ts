@@ -2,16 +2,23 @@ import { collections } from '$lib/server/database';
 import { countryFromIp } from '$lib/server/geoip';
 import { sum } from '$lib/utils/sum';
 import { pojo } from '$lib/server/pojo.js';
+import { subMonths } from 'date-fns';
+import { z } from 'zod';
 
 export async function load({ url }) {
-	const beginsDate = new Date(url.searchParams.get('beginsAt') || new Date());
-	const endsDate = new Date(url.searchParams.get('endsAt') || new Date());
+	const querySchema = z.object({
+		beginsAt: z.date({ coerce: true }).default(subMonths(new Date(), 2)),
+		endsAt: z.date({ coerce: true }).default(subMonths(new Date(), 1))
+	});
+	const queryParams = Object.fromEntries(url.searchParams.entries());
+	const result = querySchema.parse(queryParams);
+	const { beginsAt, endsAt } = result;
 
 	const orders = await collections.orders
 		.find({
 			createdAt: {
-				$gte: beginsDate,
-				$lt: endsDate
+				$gte: beginsAt,
+				$lt: endsAt
 			}
 		})
 		.sort({ createdAt: -1 })

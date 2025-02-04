@@ -4,6 +4,7 @@
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
+	import { subMonths } from 'date-fns';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
@@ -11,8 +12,8 @@
 	let tablePayment: HTMLTableElement;
 	let tableOrderSynthesis: HTMLTableElement;
 	let tablePaymentSynthesis: HTMLTableElement;
-	$: beginsAtValue = new Date($page.url.searchParams.get('beginsAt') || new Date());
-	$: endsAtValue = new Date($page.url.searchParams.get('endsAt') || new Date());
+	$: beginsAtValue = new Date($page.url.searchParams.get('beginsAt') || subMonths(new Date(), 2));
+	$: endsAtValue = new Date($page.url.searchParams.get('endsAt') || subMonths(new Date(), 1));
 	let tableProductSynthesis: HTMLTableElement;
 	let includePending = false;
 	let includeExpired = false;
@@ -165,7 +166,7 @@
 				class="form-input"
 				name="beginsAt"
 				type="date"
-				value={$page.url.searchParams.get('beginsAt')}
+				value={beginsAtValue.toISOString().split('T')[0]}
 			/>
 		</label>
 	</div>
@@ -176,7 +177,7 @@
 				class="form-input"
 				type="date"
 				name="endsAt"
-				value={$page.url.searchParams.get('endsAt')}
+				value={endsAtValue.toISOString().split('T')[0]}
 			/>
 		</label>
 	</div>
@@ -434,10 +435,14 @@
 				</thead>
 				<tbody>
 					<tr class="hover:bg-gray-100 whitespace-nowrap">
-						<td class="border border-gray-300 px-4 py-2"
-							>{beginsAtValue.toLocaleDateString('fr-FR')} -- {endsAtValue.toLocaleDateString(
-								'fr-FR'
-							)}</td
+						<td class="border border-gray-300 px-4 py-2">
+							<time datetime={beginsAtValue.toISOString()}>
+								{beginsAtValue.toLocaleDateString('fr-FR')}
+							</time>
+							--
+							<time datetime={endsAtValue.toISOString()}>
+								{endsAtValue.toLocaleDateString('fr-FR')}
+							</time></td
 						>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderNumber}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderTotal}</td>
@@ -480,9 +485,13 @@
 					{#each Object.entries(quantityOfProductMonthYear).sort((a, b) => b[1].quantity - a[1].quantity) as [productId, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2"
-								>{beginsAtValue.toLocaleDateString('fr-FR')} -- {endsAtValue.toLocaleDateString(
-									'fr-FR'
-								)}</td
+								><time datetime={beginsAtValue.toISOString()}>
+									{beginsAtValue.toLocaleDateString('fr-FR')}
+								</time>
+								--
+								<time datetime={endsAtValue.toISOString()}>
+									{endsAtValue.toLocaleDateString('fr-FR')}
+								</time></td
 							>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
 							<td class="border border-gray-300 px-4 py-2">{fetchProductById(productId)?.name}</td>
@@ -523,9 +532,13 @@
 					{#each Object.entries(quantityOfPaymentMeanMonthYear).sort((a, b) => b[1].quantity - a[1].quantity) as [method, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2"
-								>{beginsAtValue.toLocaleDateString('fr-FR')} -- {endsAtValue.toLocaleDateString(
-									'fr-FR'
-								)}</td
+								><time datetime={beginsAtValue.toISOString()}>
+									{beginsAtValue.toLocaleDateString('fr-FR')}
+								</time>
+								--
+								<time datetime={endsAtValue.toISOString()}>
+									{endsAtValue.toLocaleDateString('fr-FR')}
+								</time></td
 							>
 							<td class="border border-gray-300 px-4 py-2">{method}</td>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
