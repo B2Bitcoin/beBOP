@@ -7,8 +7,8 @@ import { z } from 'zod';
 
 export async function load({ url }) {
 	const querySchema = z.object({
-		beginsAt: z.date({ coerce: true }).default(subMonths(new Date(), 2)),
-		endsAt: z.date({ coerce: true }).default(subMonths(new Date(), 1))
+		beginsAt: z.date({ coerce: true }).default(subMonths(new Date(), 1)),
+		endsAt: z.date({ coerce: true }).default(new Date())
 	});
 	const queryParams = Object.fromEntries(url.searchParams.entries());
 	const result = querySchema.parse(queryParams);
@@ -45,6 +45,8 @@ export async function load({ url }) {
 			billingAddress: order.billingAddress,
 			shippingAddress: order.shippingAddress,
 			ipCountry: countryFromIp(order.clientIp ?? '')
-		}))
+		})),
+		beginsAt,
+		endsAt
 	};
 }

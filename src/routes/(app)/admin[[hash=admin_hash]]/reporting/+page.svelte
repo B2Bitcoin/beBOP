@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { useI18n } from '$lib/i18n.js';
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
-	import { subMonths } from 'date-fns';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
@@ -12,8 +10,6 @@
 	let tablePayment: HTMLTableElement;
 	let tableOrderSynthesis: HTMLTableElement;
 	let tablePaymentSynthesis: HTMLTableElement;
-	$: beginsAtValue = new Date($page.url.searchParams.get('beginsAt') || subMonths(new Date(), 2));
-	$: endsAtValue = new Date($page.url.searchParams.get('endsAt') || subMonths(new Date(), 1));
 	let tableProductSynthesis: HTMLTableElement;
 	let includePending = false;
 	let includeExpired = false;
@@ -21,6 +17,8 @@
 	let includePartiallyPaid = false;
 
 	const { locale, textAddress, countryName, t } = useI18n();
+	$: orders = data.orders;
+	$: paidOrders = orders.filter((order) => order.status === 'paid');
 	$: orderFiltered = data.orders.filter(
 		(order) =>
 			order.status === 'paid' ||
@@ -29,14 +27,13 @@
 			(includeCanceled && order.status === 'canceled') ||
 			(includePartiallyPaid && order.payments.find((payment) => payment.status === 'paid'))
 	);
-	$: orderByMonthYear = getOrderByDate(beginsAtValue, endsAtValue);
-	$: quantityOfPaymentMeanMonthYear = quantityOfPaymentMean(beginsAtValue, endsAtValue);
-	$: quantityOfProductMonthYear = quantityOfProduct(beginsAtValue, endsAtValue);
+	$: quantityOfPaymentMeanMonthYear = quantityOfPaymentMean(paidOrders);
+	$: quantityOfProductMonthYear = quantityOfProduct(paidOrders);
 	$: orderSynthesis = {
-		orderQuantity: sum(orderByMonthYear.map((order) => order.quantityOrder)),
-		orderNumber: orderByMonthYear.length,
+		orderQuantity: sum(paidOrders.map((order) => order.quantityOrder)),
+		orderNumber: paidOrders.length,
 		orderTotal: sum(
-			orderByMonthYear.map((order) =>
+			paidOrders.map((order) =>
 				toCurrency(
 					data.currencies.main,
 					order.currencySnapshot.main.totalPrice.amount,
@@ -74,16 +71,10 @@
 		downloadCSV(csvData, filename);
 	}
 
-	function getOrderByDate(beginsAt: Date, endsAt: Date) {
-		return data.orders.filter(
-			(order) => order.status === 'paid' && order.createdAt >= beginsAt && order.createdAt <= endsAt
-		);
-	}
-
-	function quantityOfProduct(beginsAt: Date, endsAt: Date) {
+	function quantityOfProduct(orders: typeof paidOrders) {
 		const productQuantities: Record<string, { quantity: number; total: number }> = {};
-		getOrderByDate(beginsAt, endsAt).forEach((order) => {
-			order.items.forEach((item) => {
+		for (const order of orders) {
+			for (const item of order.items) {
 				if (productQuantities[item.product._id]) {
 					productQuantities[item.product._id].quantity += item.quantity;
 					productQuantities[item.product._id].total += toCurrency(
@@ -101,14 +92,14 @@
 						)
 					};
 				}
-			});
-		});
+			}
+		}
 		return productQuantities;
 	}
-	function quantityOfPaymentMean(beginsAt: Date, endsAt: Date) {
+	function quantityOfPaymentMean(orders: typeof paidOrders) {
 		const paymentMeanQuantities: Record<string, { quantity: number; total: number }> = {};
-		getOrderByDate(beginsAt, endsAt).forEach((order) => {
-			order.payments.forEach((payment) => {
+		for (const order of orders) {
+			for (const payment of order.payments) {
 				if (paymentMeanQuantities[payment.method]) {
 					paymentMeanQuantities[payment.method].quantity += 1;
 					paymentMeanQuantities[payment.method].total += toCurrency(
@@ -126,12 +117,12 @@
 						)
 					};
 				}
-			});
-		});
+			}
+		}
 		return paymentMeanQuantities;
 	}
 	function fetchProductById(productId: string) {
-		for (const order of orderByMonthYear) {
+		for (const order of paidOrders) {
 			for (const item of order.items) {
 				if (item.product._id === productId) {
 					return item.product;
@@ -166,7 +157,7 @@
 				class="form-input"
 				name="beginsAt"
 				type="date"
-				value={beginsAtValue.toISOString().split('T')[0]}
+				value={data.beginsAt.toISOString().slice(0, 10)}
 			/>
 		</label>
 	</div>
@@ -177,7 +168,7 @@
 				class="form-input"
 				type="date"
 				name="endsAt"
-				value={endsAtValue.toISOString().split('T')[0]}
+				value={data.endsAt.toISOString().slice(0, 10)}
 			/>
 		</label>
 	</div>
@@ -436,12 +427,12 @@
 				<tbody>
 					<tr class="hover:bg-gray-100 whitespace-nowrap">
 						<td class="border border-gray-300 px-4 py-2">
-							<time datetime={beginsAtValue.toISOString()}>
-								{beginsAtValue.toLocaleDateString('fr-FR')}
+							<time datetime={data.beginsAt.toISOString()}>
+								{data.endsAt.toLocaleDateString('fr-FR')}
 							</time>
 							--
-							<time datetime={endsAtValue.toISOString()}>
-								{endsAtValue.toLocaleDateString('fr-FR')}
+							<time datetime={data.endsAt.toISOString()}>
+								{data.endsAt.toLocaleDateString('fr-FR')}
 							</time></td
 						>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderNumber}</td>
@@ -485,12 +476,12 @@
 					{#each Object.entries(quantityOfProductMonthYear).sort((a, b) => b[1].quantity - a[1].quantity) as [productId, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2"
-								><time datetime={beginsAtValue.toISOString()}>
-									{beginsAtValue.toLocaleDateString('fr-FR')}
+								><time datetime={data.beginsAt.toISOString()}>
+									{data.beginsAt.toLocaleDateString('fr-FR')}
 								</time>
 								--
-								<time datetime={endsAtValue.toISOString()}>
-									{endsAtValue.toLocaleDateString('fr-FR')}
+								<time datetime={data.endsAt.toISOString()}>
+									{data.endsAt.toLocaleDateString('fr-FR')}
 								</time></td
 							>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
@@ -532,12 +523,12 @@
 					{#each Object.entries(quantityOfPaymentMeanMonthYear).sort((a, b) => b[1].quantity - a[1].quantity) as [method, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2"
-								><time datetime={beginsAtValue.toISOString()}>
-									{beginsAtValue.toLocaleDateString('fr-FR')}
+								><time datetime={data.beginsAt.toISOString()}>
+									{data.beginsAt.toLocaleDateString('fr-FR')}
 								</time>
 								--
-								<time datetime={endsAtValue.toISOString()}>
-									{endsAtValue.toLocaleDateString('fr-FR')}
+								<time datetime={data.endsAt.toISOString()}>
+									{data.endsAt.toLocaleDateString('fr-FR')}
 								</time></td
 							>
 							<td class="border border-gray-300 px-4 py-2">{method}</td>
