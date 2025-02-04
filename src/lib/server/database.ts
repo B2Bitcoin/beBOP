@@ -128,6 +128,7 @@ const indexes: Array<[Collection<any>, IndexSpecification, CreateIndexesOptions?
 	[collections.carts, { 'user.ssoIds': 1 }],
 	[collections.carts, { 'items.productId': 1 }],
 	[collections.challenges, { beginsAt: 1, endsAt: 1 }],
+	[collections.orders, { createdAt: 1 }],
 	[collections.orders, { 'user.userId': 1 }],
 	[collections.orders, { 'user.sessionId': 1 }],
 	[collections.orders, { 'user.npub': 1 }],
