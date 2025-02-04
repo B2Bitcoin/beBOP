@@ -102,11 +102,16 @@
 	);
 	$: countdownById = Object.fromEntries(countdowns.map((countdown) => [countdown._id, countdown]));
 
-	function productsByTag(searchTag: string) {
-		return sortBy(
-			products.filter((product) => product.tagIds?.includes(searchTag)),
-			['alias.1', 'alias.0']
-		);
+	function productsByTag(
+		searchTag: string,
+		by: string[] = ['alias.1', 'alias.0'],
+		sort: 'asc' | 'desc' = 'asc'
+	) {
+		const filteredProducts = products.filter((product) => product.tagIds?.includes(searchTag));
+
+		const sortedProducts = sortBy(filteredProducts, by);
+
+		return sort === 'asc' ? sortedProducts.reverse() : sortedProducts;
 	}
 	$: galleryById = Object.fromEntries(galleries.map((gallery) => [gallery._id, gallery]));
 </script>
@@ -126,7 +131,7 @@
 					class="not-prose my-5"
 				/>
 			{:else if token.type === 'tagProducts' && productsByTag(token.slug)}
-				{#each productsByTag(token.slug) as product}
+				{#each productsByTag(token.slug, ['alias.1', 'alias.0', token.by ?? ''], token.sort) as product}
 					<ProductWidget
 						{product}
 						pictures={picturesByProduct[product._id]}
