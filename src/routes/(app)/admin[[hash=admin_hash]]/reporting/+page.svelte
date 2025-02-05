@@ -177,7 +177,7 @@
 		<button class="submit btn btn-gray mt-8">🔍</button>
 	</div>
 </form>
-<div class="gap-4 grid grid-cols-12 mx-auto">
+<div class="gap-4 grid grid-cols-12 mr-auto">
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order detail</h1>
 		<button on:click={() => exportcsv(tableOrder, 'order-detail.csv')} class="btn btn-blue mb-2">
