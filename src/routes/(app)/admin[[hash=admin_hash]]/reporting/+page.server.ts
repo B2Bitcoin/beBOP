@@ -2,7 +2,7 @@ import { collections } from '$lib/server/database';
 import { countryFromIp } from '$lib/server/geoip';
 import { sum } from '$lib/utils/sum';
 import { pojo } from '$lib/server/pojo.js';
-import { subMonths } from 'date-fns';
+import { addDays, subDays, subMonths } from 'date-fns';
 import { z } from 'zod';
 
 export async function load({ url }) {
@@ -17,8 +17,9 @@ export async function load({ url }) {
 	const orders = await collections.orders
 		.find({
 			createdAt: {
-				$gte: beginsAt,
-				$lt: endsAt
+				// Expand the search window a bit so that timezone differences between the client and the server do not impact the user's experience
+				$gte: subDays(beginsAt, 1),
+				$lt: addDays(endsAt, 1)
 			}
 		})
 		.sort({ createdAt: -1 })
