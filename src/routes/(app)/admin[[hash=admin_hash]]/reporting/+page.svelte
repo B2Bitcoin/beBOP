@@ -150,6 +150,8 @@
 
 	async function exportPdf() {
 		html = '';
+		loadedHtml = false;
+		htmlStatus = '';
 
 		const paymentCount = sum(
 			orderFiltered.map(
