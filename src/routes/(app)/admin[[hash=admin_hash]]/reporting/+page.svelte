@@ -215,9 +215,14 @@
 							<td class="border border-gray-300 px-4 py-2"
 								>{data.websiteLink + '/order/' + order._id}</td
 							>
-							<td class="border border-gray-300 px-4 py-2"
-								>{order.createdAt.toLocaleDateString($locale)}</td
-							>
+							<td class="border border-gray-300 px-4 py-2">
+								<time
+									datetime={order.createdAt.toISOString()}
+									title={order.createdAt.toLocaleString($locale)}
+								>
+									{order.createdAt.toLocaleDateString($locale)}
+								</time>
+							</td>
 							<td class="border border-gray-300 px-4 py-2">{order.status}</td>
 
 							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
@@ -289,8 +294,14 @@
 								<td class="border border-gray-300 px-4 py-2">{item.depositPercentage ?? 100}</td>
 								<td class="border border-gray-300 px-4 py-2">{order.number}</td><td
 									class="border border-gray-300 px-4 py-2"
-									>{order.createdAt.toLocaleDateString($locale)}</td
 								>
+									<time
+										datetime={order.createdAt.toISOString()}
+										title={order.createdAt.toLocaleString($locale)}
+									>
+										{order.createdAt.toLocaleDateString($locale)}
+									</time>
+								</td>
 								<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 								<td class="border border-gray-300 px-4 py-2"
 									>{(toCurrency(
@@ -353,9 +364,16 @@
 									)}</td
 								>
 
-								<td class="border border-gray-300 px-4 py-2"
-									>{payment.paidAt?.toLocaleDateString($locale)}</td
-								>
+								<td class="border border-gray-300 px-4 py-2">
+									{#if payment.paidAt}
+										<time
+											datetime={payment.paidAt.toISOString()}
+											title={payment.paidAt.toLocaleString($locale)}
+										>
+											{payment.paidAt.toLocaleDateString($locale)}
+										</time>
+									{/if}
+								</td>
 								<td class="border border-gray-300 px-4 py-2">{order.status}</td>
 								<td class="border border-gray-300 px-4 py-2">{payment.method}</td>
 								<td class="border border-gray-300 px-4 py-2">
@@ -428,12 +446,12 @@
 				<tbody>
 					<tr class="hover:bg-gray-100 whitespace-nowrap">
 						<td class="border border-gray-300 px-4 py-2">
-							<time datetime={beginsAt.toISOString()}>
-								{beginsAt.toLocaleDateString()}
+							<time datetime={beginsAt.toISOString()} title={beginsAt.toLocaleString($locale)}>
+								{beginsAt.toLocaleDateString($locale)}
 							</time>
 							—
-							<time datetime={endsAt.toISOString()}>
-								{endsAt.toLocaleDateString()}
+							<time datetime={endsAt.toISOString()} title={endsAt.toLocaleString($locale)}>
+								{endsAt.toLocaleDateString($locale)}
 							</time>
 						</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderNumber}</td>
@@ -477,12 +495,12 @@
 					{#each Object.entries(quantityOfProduct(paidOrders)).sort((a, b) => b[1].quantity - a[1].quantity) as [productId, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">
-								<time datetime={beginsAt.toISOString()}>
-									{beginsAt.toLocaleDateString()}
+								<time datetime={beginsAt.toISOString()} title={beginsAt.toLocaleString($locale)}>
+									{beginsAt.toLocaleDateString($locale)}
 								</time>
 								—
-								<time datetime={endsAt.toISOString()}>
-									{endsAt.toLocaleDateString()}
+								<time datetime={endsAt.toISOString()} title={endsAt.toLocaleString($locale)}>
+									{endsAt.toLocaleDateString($locale)}
 								</time>
 							</td>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
@@ -525,11 +543,11 @@
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
 							<td class="border border-gray-300 px-4 py-2">
 								<time datetime={beginsAt.toISOString()}>
-									{beginsAt.toLocaleDateString()}
+									{beginsAt.toLocaleDateString($locale)}
 								</time>
 								—
 								<time datetime={endsAt.toISOString()}>
-									{endsAt.toLocaleDateString()}
+									{endsAt.toLocaleDateString($locale)}
 								</time>
 							</td>
 							<td class="border border-gray-300 px-4 py-2">{method}</td>
