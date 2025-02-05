@@ -6,8 +6,8 @@ import { addDays, subDays, subMonths } from 'date-fns';
 import { z } from 'zod';
 import { paymentMethods } from '$lib/server/payment-methods';
 
-export async function load({ url, locals }) {
-	const methods = paymentMethods({ role: locals.user?.roleId });
+export async function load({ url }) {
+	const methods = paymentMethods({ includePOS: true });
 
 	const querySchema = z.object({
 		beginsAt: z.date({ coerce: true }).default(subMonths(new Date(), 1)),
