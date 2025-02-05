@@ -16,6 +16,9 @@
 	let includeExpired = false;
 	let includeCanceled = false;
 	let includePartiallyPaid = false;
+	let html = '';
+	let loadedHtml = false;
+	let htmlStatus = '';
 
 	$: beginsAt = startOfDay(data.beginsAt);
 	$: endsAt = endOfDay(data.endsAt);
@@ -32,7 +35,7 @@
 		(order) => order.createdAt >= beginsAt && order.createdAt <= endsAt
 	);
 	$: paidOrders = orders.filter((order) => order.status === 'paid');
-	$: orderFiltered = data.orders.filter(
+	$: orderFiltered = orders.filter(
 		(order) =>
 			order.status === 'paid' ||
 			(includePending && order.status === 'pending') ||
@@ -142,6 +145,51 @@
 		}
 		return null;
 	}
+
+	let iframePrint: HTMLIFrameElement;
+
+	async function exportPdf() {
+		html = '';
+
+		const paymentCount = sum(
+			orderFiltered.map(
+				(order) => order.payments.filter((payment) => payment.status === 'paid').length
+			)
+		);
+
+		if (paymentCount === 0) {
+			alert('No paid orders to print');
+			return;
+		}
+
+		let index = 0;
+
+		for (const order of orderFiltered) {
+			for (const payment of order.payments.filter((payment) => payment.status === 'paid')) {
+				htmlStatus = `Preparing invoice ${index + 1}/${paymentCount}`;
+				index++;
+
+				const htmlResp = await fetch(`/order/${order._id}/payment/${payment.id}/receipt`);
+
+				if (!htmlResp.ok) {
+					alert('Error while fetching pdf');
+					return;
+				}
+				html += await htmlResp.text();
+			}
+		}
+
+		iframePrint.addEventListener(
+			'load',
+			() => {
+				loadedHtml = true;
+				htmlStatus = '';
+			},
+			{
+				once: true
+			}
+		);
+	}
 </script>
 
 <h1 class="text-3xl">Reporting</h1>
@@ -180,9 +228,11 @@
 <div class="gap-4 grid grid-cols-12 mr-auto">
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order detail</h1>
-		<button on:click={() => exportcsv(tableOrder, 'order-detail.csv')} class="btn btn-blue mb-2">
-			Export CSV
-		</button>
+		<div class="flex gap-2">
+			<button on:click={() => exportcsv(tableOrder, 'order-detail.csv')} class="btn btn-blue mb-2">
+				Export CSV
+			</button>
+		</div>
 
 		<div class="overflow-x-auto max-h-[500px]">
 			<table class="min-w-full table-auto border border-gray-300 bg-white" bind:this={tableOrder}>
@@ -223,8 +273,11 @@
 									{order.createdAt.toLocaleDateString($locale)}
 								</time>
 							</td>
-							<td class="border border-gray-300 px-4 py-2">{order.status}</td>
-
+							<td class="border border-gray-300 px-4 py-2">
+								<a href="/order/{order._id}" target="_blank" class="underline body-hyperlink">
+									{order.status}
+								</a>
+							</td>
 							<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
 							<td class="border border-gray-300 px-4 py-2"
 								>{toCurrency(
@@ -249,9 +302,9 @@
 									? textAddress(order.shippingAddress).replace(',', '/')
 									: ''}</td
 							>
-							<td class="border border-gray-300 px-4 py-2"
-								>{order.items.map((item) => item.product.name).join('|')}</td
-							>
+							<td class="border border-gray-300 px-4 py-2">
+								{order.items.map((item) => item.product.name).join('|')}
+							</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -323,13 +376,21 @@
 	</div>
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Payment Detail</h1>
-		<button
-			on:click={() => exportcsv(tablePayment, 'payment-detail.csv')}
-			class="btn btn-blue mb-2"
-		>
-			Export CSV
-		</button>
-
+		<div class="flex gap-2">
+			<button
+				on:click={() => exportcsv(tablePayment, 'payment-detail.csv')}
+				class="btn btn-blue mb-2"
+			>
+				Export CSV
+			</button>
+			<button
+				disabled={!!htmlStatus}
+				class="btn btn-blue mb-2"
+				on:click={loadedHtml ? () => iframePrint.contentWindow?.print() : exportPdf}
+			>
+				{loadedHtml ? 'Print' : htmlStatus || 'Prepare PDF'}
+			</button>
+		</div>
 		<div class="overflow-x-auto max-h-[500px]">
 			<table class="min-w-full table-auto border border-gray-300 bg-white" bind:this={tablePayment}>
 				<thead class="bg-gray-200">
@@ -351,7 +412,7 @@
 				</thead>
 				<tbody>
 					<!-- Order rows -->
-					{#each data.orders.filter((order) => order.status === 'paid' || (includePartiallyPaid && order.payments.some((payment) => payment.status === 'paid'))) as order}
+					{#each orders.filter((order) => order.status === 'paid' || (includePartiallyPaid && order.payments.some((payment) => payment.status === 'paid'))) as order}
 						{#each order.payments as payment}
 							<tr class="hover:bg-gray-100 whitespace-nowrap">
 								<td class="border border-gray-300 px-4 py-2">{order.number}</td>
@@ -421,6 +482,13 @@
 		</div>
 	</div>
 
+	<iframe
+		srcdoc={html}
+		bind:this={iframePrint}
+		title=""
+		on:load={() => console.log('loaded')}
+		style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+	/>
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order synthesis</h1>
 		<button
