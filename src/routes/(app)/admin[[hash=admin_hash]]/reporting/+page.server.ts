@@ -2,13 +2,13 @@ import { collections } from '$lib/server/database';
 import { countryFromIp } from '$lib/server/geoip';
 import { sum } from '$lib/utils/sum';
 import { pojo } from '$lib/server/pojo.js';
-import { subMonths } from 'date-fns';
+import { addDays, subDays, subMonths } from 'date-fns';
 import { z } from 'zod';
 
 export async function load({ url }) {
 	const querySchema = z.object({
-		beginsAt: z.date({ coerce: true }).default(subMonths(new Date(), 2)),
-		endsAt: z.date({ coerce: true }).default(subMonths(new Date(), 1))
+		beginsAt: z.date({ coerce: true }).default(subMonths(new Date(), 1)),
+		endsAt: z.date({ coerce: true }).default(new Date())
 	});
 	const queryParams = Object.fromEntries(url.searchParams.entries());
 	const result = querySchema.parse(queryParams);
@@ -17,8 +17,9 @@ export async function load({ url }) {
 	const orders = await collections.orders
 		.find({
 			createdAt: {
-				$gte: beginsAt,
-				$lt: endsAt
+				// Expand the search window a bit so that timezone differences between the client and the server do not impact the user's experience
+				$gte: subDays(beginsAt, 1),
+				$lt: addDays(endsAt, 1)
 			}
 		})
 		.sort({ createdAt: -1 })
@@ -45,6 +46,8 @@ export async function load({ url }) {
 			billingAddress: order.billingAddress,
 			shippingAddress: order.shippingAddress,
 			ipCountry: countryFromIp(order.clientIp ?? '')
-		}))
+		})),
+		beginsAt,
+		endsAt
 	};
 }
