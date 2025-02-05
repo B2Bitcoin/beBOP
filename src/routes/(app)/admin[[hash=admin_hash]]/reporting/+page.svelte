@@ -3,6 +3,7 @@
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
+	import { endOfDay, startOfDay } from 'date-fns';
 
 	export let data;
 	let tableOrder: HTMLTableElement;
@@ -16,8 +17,20 @@
 	let includeCanceled = false;
 	let includePartiallyPaid = false;
 
+	$: beginsAt = startOfDay(data.beginsAt);
+	$: endsAt = endOfDay(data.endsAt);
+
+	function dateString(date: Date) {
+		return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date
+			.getDate()
+			.toString()
+			.padStart(2, '0')}`;
+	}
+
 	const { locale, textAddress, countryName, t } = useI18n();
-	$: orders = data.orders;
+	$: orders = data.orders.filter(
+		(order) => order.createdAt >= beginsAt && order.createdAt <= endsAt
+	);
 	$: paidOrders = orders.filter((order) => order.status === 'paid');
 	$: orderFiltered = data.orders.filter(
 		(order) =>
@@ -151,23 +164,13 @@
 	<div class="col-span-5">
 		<label class="form-label">
 			BeginsAt
-			<input
-				class="form-input"
-				name="beginsAt"
-				type="date"
-				value={data.beginsAt.toISOString().slice(0, 10)}
-			/>
+			<input class="form-input" name="beginsAt" type="date" value={dateString(beginsAt)} />
 		</label>
 	</div>
 	<div class="col-span-5">
 		<label class="form-label">
 			EndsAt
-			<input
-				class="form-input"
-				type="date"
-				name="endsAt"
-				value={data.endsAt.toISOString().slice(0, 10)}
-			/>
+			<input class="form-input" type="date" name="endsAt" value={dateString(endsAt)} />
 		</label>
 	</div>
 	<div class="col-span-2">
@@ -425,14 +428,14 @@
 				<tbody>
 					<tr class="hover:bg-gray-100 whitespace-nowrap">
 						<td class="border border-gray-300 px-4 py-2">
-							<time datetime={data.beginsAt.toISOString()}>
-								{data.endsAt.toLocaleDateString('fr-FR')}
+							<time datetime={beginsAt.toISOString()}>
+								{beginsAt.toLocaleDateString()}
 							</time>
-							--
-							<time datetime={data.endsAt.toISOString()}>
-								{data.endsAt.toLocaleDateString('fr-FR')}
-							</time></td
-						>
+							—
+							<time datetime={endsAt.toISOString()}>
+								{endsAt.toLocaleDateString()}
+							</time>
+						</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderNumber}</td>
 						<td class="border border-gray-300 px-4 py-2">{orderSynthesis.orderTotal}</td>
 						<td class="border border-gray-300 px-4 py-2"
@@ -473,15 +476,15 @@
 					<!-- Order rows -->
 					{#each Object.entries(quantityOfProduct(paidOrders)).sort((a, b) => b[1].quantity - a[1].quantity) as [productId, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
-							<td class="border border-gray-300 px-4 py-2"
-								><time datetime={data.beginsAt.toISOString()}>
-									{data.beginsAt.toLocaleDateString('fr-FR')}
+							<td class="border border-gray-300 px-4 py-2">
+								<time datetime={beginsAt.toISOString()}>
+									{beginsAt.toLocaleDateString()}
 								</time>
-								--
-								<time datetime={data.endsAt.toISOString()}>
-									{data.endsAt.toLocaleDateString('fr-FR')}
-								</time></td
-							>
+								—
+								<time datetime={endsAt.toISOString()}>
+									{endsAt.toLocaleDateString()}
+								</time>
+							</td>
 							<td class="border border-gray-300 px-4 py-2">{productId}</td>
 							<td class="border border-gray-300 px-4 py-2">{fetchProductById(productId)?.name}</td>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
@@ -520,15 +523,15 @@
 					<!-- Order rows -->
 					{#each Object.entries(quantityOfPaymentMean(paidOrders)).sort((a, b) => b[1].quantity - a[1].quantity) as [method, { quantity, total }]}
 						<tr class="hover:bg-gray-100 whitespace-nowrap">
-							<td class="border border-gray-300 px-4 py-2"
-								><time datetime={data.beginsAt.toISOString()}>
-									{data.beginsAt.toLocaleDateString('fr-FR')}
+							<td class="border border-gray-300 px-4 py-2">
+								<time datetime={beginsAt.toISOString()}>
+									{beginsAt.toLocaleDateString()}
 								</time>
-								--
-								<time datetime={data.endsAt.toISOString()}>
-									{data.endsAt.toLocaleDateString('fr-FR')}
-								</time></td
-							>
+								—
+								<time datetime={endsAt.toISOString()}>
+									{endsAt.toLocaleDateString()}
+								</time>
+							</td>
 							<td class="border border-gray-300 px-4 py-2">{method}</td>
 							<td class="border border-gray-300 px-4 py-2">{quantity}</td>
 							<td class="border border-gray-300 px-4 py-2">{total}</td>
