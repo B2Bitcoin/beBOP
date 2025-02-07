@@ -211,16 +211,29 @@
 	</label>
 </div>
 <form method="GET" class="grid grid-cols-12 gap-2 col-span-12">
-	<div class="col-span-5">
+	<div class="col-span-3">
 		<label class="form-label">
 			BeginsAt
 			<input class="form-input" name="beginsAt" type="date" value={dateString(beginsAt)} />
 		</label>
 	</div>
-	<div class="col-span-5">
+	<div class="col-span-3">
 		<label class="form-label">
 			EndsAt
 			<input class="form-input" type="date" name="endsAt" value={dateString(endsAt)} />
+		</label>
+	</div>
+	<div class="col-span-4">
+		<label class="form-label">
+			Payment Mean
+			<select name="paymentMethod" class="form-input" disabled={data.paymentMethods.length === 0}>
+				<option></option>
+				{#each data.paymentMethods as paymentMethod}
+					<option value={paymentMethod} selected={data.paymentMethod === paymentMethod}>
+						{t('checkout.paymentMethod.' + paymentMethod)}
+					</option>
+				{/each}
+			</select>
 		</label>
 	</div>
 	<div class="col-span-2">
