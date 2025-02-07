@@ -217,7 +217,10 @@
 					layout: 'tabs'
 				})
 				.mount('#payment-element');
-			stripeLoading = false;
+			// Delay to give time for UI to render
+			setTimeout(() => {
+				stripeLoading = false;
+			}, 3000);
 
 			handleSubmit = async () => {
 				try {
