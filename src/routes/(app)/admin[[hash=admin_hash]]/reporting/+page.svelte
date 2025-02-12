@@ -59,6 +59,20 @@
 		),
 		averageCart: 0
 	};
+	$: orderVATSynthesis = {
+		orderQuantity: sum(paidOrders.map((order) => order.quantityOrder)),
+		orderNumber: paidOrders.length,
+		orderVATTotal: sum(
+			paidOrders.map((order) =>
+				toCurrency(
+					data.currencies.main,
+					sum(order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? []),
+					order.currencySnapshot.main.totalPrice.currency
+				)
+			)
+		),
+		averageCart: 0
+	};
 
 	function downloadCSV(csvData: string, filename: string) {
 		const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvData);
@@ -660,35 +674,36 @@
 				bind:this={tableVATSynthesis}
 			>
 				<thead class="bg-gray-200">
-					<tr>
-						<th class="border border-gray-300 px-4 py-2">Order ID</th>
-						<th class="border border-gray-300 px-4 py-2">Order Date</th>
-						<th class="border border-gray-300 px-4 py-2">Quantity</th>
-						<th class="border border-gray-300 px-4 py-2">Total VAT</th>
+					<tr class="whitespace-nowrap">
+						<th class="border border-gray-300 px-4 py-2">Period</th>
+						<th class="border border-gray-300 px-4 py-2">Order Quantity</th>
+						<th class="border border-gray-300 px-4 py-2">order VAT Total</th>
+						<th class="border border-gray-300 px-4 py-2">Average VAT Cart</th>
+						<th class="border border-gray-300 py-2">Currency</th>
 					</tr>
 				</thead>
 				<tbody>
-					<!-- Order rows -->
-					{#each orderFiltered as order}
-						<tr class="hover:bg-gray-100 whitespace-nowrap">
-							<td class="border border-gray-300 px-4 py-2">{order.number}</td>
-							<td class="border border-gray-300 px-4 py-2">
-								<time
-									datetime={order.createdAt.toISOString()}
-									title={order.createdAt.toLocaleString($locale)}
-								>
-									{order.createdAt.toLocaleDateString($locale)}
-								</time>
-							</td>
-							<td class="border border-gray-300 px-4 py-2"
-								>{sum(order.items.map((item) => item.quantity))}</td
-							>
-
-							<td class="border border-gray-300 px-4 py-2"
-								>{sum(order.vat?.map((vat) => vat.price.amount) ?? [])}</td
-							>
-						</tr>
-					{/each}
+					<tr class="hover:bg-gray-100 whitespace-nowrap">
+						<td class="border border-gray-300 px-4 py-2">
+							<time datetime={beginsAt.toISOString()} title={beginsAt.toLocaleString($locale)}>
+								{beginsAt.toLocaleDateString($locale)}
+							</time>
+							—
+							<time datetime={endsAt.toISOString()} title={endsAt.toLocaleString($locale)}>
+								{endsAt.toLocaleDateString($locale)}
+							</time>
+						</td>
+						<td class="border border-gray-300 px-4 py-2">{orderVATSynthesis.orderNumber}</td>
+						<td class="border border-gray-300 px-4 py-2"
+							>{orderVATSynthesis.orderVATTotal.toFixed(2)}</td
+						>
+						<td class="border border-gray-300 px-4 py-2"
+							>{orderVATSynthesis.orderNumber
+								? (orderVATSynthesis.orderVATTotal / orderSynthesis.orderNumber).toFixed(2)
+								: 0}</td
+						>
+						<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
