@@ -2,6 +2,7 @@
 	import { useI18n } from '$lib/i18n.js';
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { endOfDay, startOfDay } from 'date-fns';
 
@@ -64,10 +65,9 @@
 		orderNumber: paidOrders.length,
 		orderVATTotal: sum(
 			paidOrders.map((order) =>
-				toCurrency(
+				sumCurrency(
 					data.currencies.main,
-					sum(order.currencySnapshot.main.vat?.map((vat) => vat.amount) ?? []),
-					order.currencySnapshot.main.totalPrice.currency
+					order.currencySnapshot.main.vat ?? [{ amount: 0, currency: 'SAT' }]
 				)
 			)
 		),
