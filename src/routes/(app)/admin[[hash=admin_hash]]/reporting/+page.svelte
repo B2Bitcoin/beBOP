@@ -2,6 +2,7 @@
 	import { useI18n } from '$lib/i18n.js';
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
 	import { sum } from '$lib/utils/sum.js';
+	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
 	import { endOfDay, startOfDay } from 'date-fns';
 
@@ -61,13 +62,11 @@
 	$: orderDeliveryFeesSynthesis = {
 		orderQuantity: sum(paidOrders.map((order) => order.quantityOrder)),
 		orderNumber: paidOrders.length,
-		orderFeesTotal: sum(
-			paidOrders.map((order) =>
-				toCurrency(
-					data.currencies.main,
-					order.currencySnapshot.main.shippingPrice?.amount || 0,
-					order.currencySnapshot.main.shippingPrice?.currency || data.currencies.main
-				)
+		orderFeesTotal: sumCurrency(
+			data.currencies.main,
+			paidOrders.map(
+				(order) =>
+					order.currencySnapshot.main.shippingPrice ?? { amount: 0, currency: data.currencies.main }
 			)
 		),
 		averageFeesCart: 0
