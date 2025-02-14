@@ -1095,7 +1095,7 @@
 				}}>{isNew ? 'Create' : 'Update'}</button
 			>
 			{#if !isNew}
-				<a href="/product/{product._id}" class="btn btn-gray">View</a>
+				<a href="/product/{product._id}" class="btn btn-gray" target="_blank">View</a>
 				<a href="{adminPrefix}/product/new?duplicate_from={product._id}" class="btn btn-gray">
 					Duplicate
 				</a>
