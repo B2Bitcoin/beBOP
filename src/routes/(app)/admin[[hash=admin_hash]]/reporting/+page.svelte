@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
@@ -695,11 +696,14 @@
 						</td>
 						<td class="border border-gray-300 px-4 py-2">{orderVATSynthesis.orderNumber}</td>
 						<td class="border border-gray-300 px-4 py-2"
-							>{orderVATSynthesis.orderVATTotal.toFixed(2)}</td
+							>{fixCurrencyRounding(orderVATSynthesis.orderVATTotal, data.currencies.main)}</td
 						>
 						<td class="border border-gray-300 px-4 py-2"
 							>{orderVATSynthesis.orderNumber
-								? (orderVATSynthesis.orderVATTotal / orderSynthesis.orderNumber).toFixed(2)
+								? fixCurrencyRounding(
+										orderVATSynthesis.orderVATTotal / orderSynthesis.orderNumber,
+										data.currencies.main
+								  )
 								: 0}</td
 						>
 						<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
