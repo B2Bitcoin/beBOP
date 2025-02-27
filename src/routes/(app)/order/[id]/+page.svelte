@@ -21,6 +21,8 @@
 	import CmsDesign from '$lib/components/CmsDesign.svelte';
 	import Picture from '$lib/components/Picture.svelte';
 	import IconStripe from '$lib/components/icons/IconStripe.svelte';
+	import IconDownloadWindow from '$lib/components/icons/IconDownloadWindow.svelte';
+	import IconExternalNewWindowOpen from '$lib/components/icons/IconExternalNewWindowOpen.svelte';
 
 	let currentDate = new Date();
 	export let data;
@@ -473,7 +475,8 @@
 				<h2 class="text-2xl">{t('product.digitalFiles.title')}</h2>
 				<ul>
 					{#each data.digitalFiles as digitalFile}
-						<li>
+						<li class="flex flex-row gap-2">
+							<IconDownloadWindow class="mt-1 body-hyperlink" />
 							{#if digitalFile.link}
 								<a href={digitalFile.link} class="body-hyperlink hover:underline" target="_blank"
 									>{digitalFile.name}</a
@@ -489,7 +492,8 @@
 				<h2 class="text-2xl">{t('order.externalResource.title')}</h2>
 				<ul>
 					{#each data.order.items.flatMap((item) => item.product.externalResource) as externalResource}
-						<li>
+						<li class="flex flex-row gap-2">
+							<IconExternalNewWindowOpen class="mt-1 body-hyperlink" />
 							{#if data.order.status === 'paid'}
 								<a
 									href={externalResource?.href}
