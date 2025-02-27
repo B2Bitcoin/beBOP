@@ -199,6 +199,9 @@ export const actions: Actions = {
 						},
 						tagIds: parsed.tagIds,
 						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+						externalResource: parsed.externalResource?.filter(
+							(externalResourceLink) => externalResourceLink.label && externalResourceLink.href
+						),
 						contentBefore: parsed.contentBefore,
 						contentAfter: parsed.contentAfter,
 						mobile: {

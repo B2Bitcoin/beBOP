@@ -485,7 +485,24 @@
 					{/each}
 				</ul>
 			{/if}
-
+			{#if data.order.items.flatMap((item) => item.product.externalResource).length}
+				<h2 class="text-2xl">{t('order.externalResource.title')}</h2>
+				<ul>
+					{#each data.order.items.flatMap((item) => item.product.externalResource) as externalResource}
+						<li>
+							{#if data.order.status === 'paid'}
+								<a
+									href={externalResource?.href}
+									class="body-hyperlink hover:underline"
+									target="_blank">{externalResource?.label}</a
+								>
+							{:else}
+								{externalResource?.label}
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			{/if}
 			{#if data.order.vatFree}
 				<p>{t('order.vatFree', { reason: data.order.vatFree.reason })}</p>
 			{/if}

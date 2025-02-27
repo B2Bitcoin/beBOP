@@ -133,6 +133,32 @@
 			</label>
 		</div>
 	{/each}
+	<h2 class="text-2xl">External Resource Hyperlinks</h2>
+
+	{#each [...(data.product.translations?.[language]?.externalResource || []), ...Array(3).fill( { href: '', label: '' } )].slice(0, 3) as link, i}
+		<div class="flex gap-4">
+			<label class="form-label">
+				Text
+				<input
+					type="text"
+					name="externalResource[{i}].label"
+					class="form-input"
+					value={link.label}
+					placeholder={data.product.externalResource?.[i]?.label}
+				/>
+			</label>
+			<label class="form-label">
+				Url
+				<input
+					type="text"
+					name="externalResource[{i}].href"
+					class="form-input"
+					value={link.href}
+					placeholder={data.product.externalResource?.[i]?.href}
+				/>
+			</label>
+		</div>
+	{/each}
 
 	{#if data.product.hasSellDisclaimer}
 		<label class="form-label">

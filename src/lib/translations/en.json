@@ -467,6 +467,9 @@
 		"discount": {
 			"title": "Discount"
 		},
+		"externalResource": {
+			"title": "External resource téléchargeables"
+		},
 		"informSeller": "Inform seller",
 		"linkReminder": "Keep this link: <0></0> to access the order later.",
 		"list": {

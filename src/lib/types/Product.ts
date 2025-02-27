@@ -19,6 +19,10 @@ export interface ProductTranslatableFields {
 		href: string;
 		fallback?: boolean;
 	}[];
+	externalResource?: {
+		label: string;
+		href: string;
+	}[];
 	variationLabels?: {
 		names: Record<string, string>;
 		values: Record<string, Record<string, string>>;

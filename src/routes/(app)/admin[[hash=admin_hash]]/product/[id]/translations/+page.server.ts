@@ -31,6 +31,7 @@ export const actions = {
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
 				...mapObject(pick(productBaseSchema(), keys), (val) => val.optional()),
 				cta: productBaseSchema().cta.optional(),
+				externalResource: productBaseSchema().externalResource.optional(),
 				variationLabels: z
 					.object({
 						names: z.record(z.string().trim(), z.string().trim()),
@@ -50,6 +51,12 @@ export const actions = {
 
 		if (rest.cta) {
 			rest.cta = rest.cta.filter((ctaLink) => ctaLink.label && ctaLink.href);
+		}
+
+		if (rest.externalResource) {
+			rest.externalResource = rest.externalResource.filter(
+				(externalResourceLink) => externalResourceLink.label && externalResourceLink.href
+			);
 		}
 
 		await collections.products.updateOne(

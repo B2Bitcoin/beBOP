@@ -467,6 +467,9 @@
 		"discount": {
 			"title": "Rabais"
 		},
+		"externalResource": {
+			"title": "Ressource externe Téléchargeables"
+		},
 		"informSeller": "Notifier le vendeur",
 		"linkReminder": "Conservez ce lien : <0></0> pour accéder à la commande ultérieurement.",
 		"list": {

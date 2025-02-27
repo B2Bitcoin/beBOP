@@ -206,6 +206,9 @@ export const actions: Actions = {
 							},
 							tagIds: parsed.tagIds,
 							cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+							externalResource: parsed.externalResource?.filter(
+								(externalResourceLink) => externalResourceLink.label && externalResourceLink.href
+							),
 							...(parsed.standalone && { hasVariations: parsed.hasVariations }),
 							...(parsed.standalone &&
 								parsed.hasVariations && {
@@ -389,6 +392,7 @@ export const actions: Actions = {
 					}),
 					tagIds: product.tagIds,
 					cta: product.cta,
+					externalResource: product.externalResource,
 					...(parsed.standalone && { hasVariations: parsed.hasVariations }),
 					...(parsed.standalone &&
 						parsed.hasVariations && {
