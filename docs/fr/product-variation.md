@@ -17,7 +17,8 @@ Pour ajouter une variation remplissez le :
 
 - **Name** : qui est le titre de la variation (exemple : Size)
 - **Value** : qui est une valeur de name (exemple : XL)
-- **Price difference** : qui est la valeur en nombre, au meme currency que le prix du produit, qu'on doit rajouter lorsqu'un utilisateur soit cette variation. ( exemple : un t-shirt XL va couter 2 euro de plus que le prix de base d'un t-shirt)
+- **Price difference** : qui est la valeur en nombre (au meme currency que le prix du produit) qu'on doit rajouter lorsqu'un utilisateur choisit cette variation.
+  (exemple : un t-shirt XL va couter 2 euro de plus que le prix de base d'un t-shirt)
 
 Cliquez sur **add variation** pour ajouter une nouvelle variation. l'icone '🗑️' permet de supprimer une variation deja ajouté en base
 
