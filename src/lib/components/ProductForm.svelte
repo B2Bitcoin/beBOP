@@ -96,6 +96,9 @@
 	let errorMessage = '';
 	$: variationLines = product.variations?.length ? product.variations?.length : 2;
 	let productCtaLines = product.cta?.length ? product.cta.length : 3;
+	let externalResourcesLines = product.externalResources?.length
+		? product.externalResources?.length
+		: 3;
 	if (product._id && isNew) {
 		product.name = product.name + ' (duplicate)';
 		product._id = generateId(product.name, false);
@@ -1002,6 +1005,52 @@
 		{/each}
 		<button class="btn btn-gray self-start" on:click={() => (productCtaLines += 1)} type="button"
 			>Add CTAs
+		</button>
+
+		<h3 class="text-xl">Add external resource</h3>
+		<p class="font-light">
+			Resources from hyperlink will be treated as digital file(The link will be displayed on
+			checkout and will clickable once the order is fully paid)
+		</p>
+		{#each [...(product.externalResources || []), ...Array(externalResourcesLines).fill( { href: '', label: '' } )].slice(0, externalResourcesLines) as link, i}
+			<div class="flex gap-4">
+				<label class="form-label">
+					Text
+					<input
+						type="text"
+						name="externalResources[{i}].label"
+						class="form-input"
+						maxlength="60"
+						value={link.label}
+					/>
+				</label>
+				<label class="form-label">
+					Url
+					<input
+						type="text"
+						name="externalResources[{i}].href"
+						class="form-input"
+						value={link.href}
+					/>
+				</label>
+				<button
+					type="button"
+					class="self-start mt-8"
+					on:click={() => {
+						(product.externalResources = product.externalResources?.filter(
+							(externalResourceLink) =>
+								link.href !== externalResourceLink.href && link.label !== externalResourceLink.label
+						)),
+							(externalResourcesLines -= 1);
+					}}>🗑️</button
+				>
+			</div>
+		{/each}
+		<button
+			class="btn btn-gray self-start"
+			on:click={() => (externalResourcesLines += 1)}
+			type="button"
+			>Add external resource
 		</button>
 		{#if !isNew}
 			<label class="block w-full mt-4">
