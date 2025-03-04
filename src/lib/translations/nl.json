@@ -467,7 +467,7 @@
 		"discount": {
 			"title": "Korting"
 		},
-		"externalResource": {
+		"externalResources": {
 			"title": "Externe bron"
 		},
 		"informSeller": "Verkoper informeren",

@@ -31,7 +31,7 @@ export const actions = {
 				language: z.enum(locales as [LanguageKey, ...LanguageKey[]]),
 				...mapObject(pick(productBaseSchema(), keys), (val) => val.optional()),
 				cta: productBaseSchema().cta.optional(),
-				externalResource: productBaseSchema().externalResource.optional(),
+				externalResources: productBaseSchema().externalResources.optional(),
 				variationLabels: z
 					.object({
 						names: z.record(z.string().trim(), z.string().trim()),
@@ -53,8 +53,8 @@ export const actions = {
 			rest.cta = rest.cta.filter((ctaLink) => ctaLink.label && ctaLink.href);
 		}
 
-		if (rest.externalResource) {
-			rest.externalResource = rest.externalResource.filter(
+		if (rest.externalResources) {
+			rest.externalResources = rest.externalResources.filter(
 				(externalResourceLink) => externalResourceLink.label && externalResourceLink.href
 			);
 		}

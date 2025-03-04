@@ -467,7 +467,7 @@
 		"discount": {
 			"title": "Rabais"
 		},
-		"externalResource": {
+		"externalResources": {
 			"title": "Ressource externe"
 		},
 		"informSeller": "Notifier le vendeur",

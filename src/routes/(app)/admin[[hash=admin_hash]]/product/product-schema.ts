@@ -59,7 +59,7 @@ export const productBaseSchema = () => ({
 		)
 		.optional()
 		.default([]),
-	externalResource: z
+	externalResources: z
 		.array(
 			z.object({
 				href: z.string().trim(),

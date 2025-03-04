@@ -467,7 +467,7 @@
 		"discount": {
 			"title": "Discount"
 		},
-		"externalResource": {
+		"externalResources": {
 			"title": "External resource"
 		},
 		"informSeller": "Inform seller",
