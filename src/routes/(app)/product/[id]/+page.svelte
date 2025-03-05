@@ -38,6 +38,8 @@
 		data.currencies.main === 'BTC' &&
 		toCurrency('BTC', data.product.price.amount, data.product.price.currency) < 0.01
 			? 'SAT'
+			: data.product.hasVariations
+			? data.product.price.currency
 			: data.currencies.main;
 	const PWYWMinimum = toCurrency(
 		PWYWCurrency,

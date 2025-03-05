@@ -37,6 +37,7 @@
 						.join(' - ')
 				: product.name}
 		</h3>
+
 		<PriceTag
 			currency={price.currency}
 			class="text-xl body-secondaryText"
