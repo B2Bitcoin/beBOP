@@ -1,4 +1,4 @@
-import { LanguageKey } from '$lib/translations';
+import type { LanguageKey } from '$lib/translations';
 import type { Timestamps } from './Timestamps';
 
 export interface EventSchedule {
