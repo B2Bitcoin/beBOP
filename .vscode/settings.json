@@ -17,6 +17,6 @@
 	"i18n-ally.tabStyle": "tab",
 	"i18n-ally.sortKeys": true,
 	"[typescript]": {
-		"editor.defaultFormatter": "hb432.prettier-eslint-typescript"
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	}
 }
