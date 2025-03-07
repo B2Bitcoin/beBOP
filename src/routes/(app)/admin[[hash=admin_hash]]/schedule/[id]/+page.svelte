@@ -81,7 +81,7 @@
 			name="sortByEventDateDesc"
 			bind:checked={data.schedule.sortByEventDateDesc}
 		/>
-		sort by event date des (default:asc)
+		sort by event date desc (default:asc)
 	</label>
 	{#each [...Array(eventLines).keys()] as i}
 		<h1 class="text-xl font-bold">Event #{i + 1}</h1>
