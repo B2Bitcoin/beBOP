@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
-	import { addDays, addMonths } from 'date-fns';
+	import { addMonths } from 'date-fns';
 
 	export let data;
 
