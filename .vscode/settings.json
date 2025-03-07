@@ -5,7 +5,7 @@
 		"source.fixAll": "explicit"
 	},
 	"[svelte]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
+		"editor.defaultFormatter": "svelte.svelte-vscode"
 	},
 	"yaml.schemas": {
 		"https://json.schemastore.org/github-workflow.json": ".github/workflows/deploy.yml"
