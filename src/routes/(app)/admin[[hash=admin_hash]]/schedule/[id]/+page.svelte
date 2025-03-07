@@ -1,0 +1,246 @@
+<script lang="ts">
+	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
+	import { addDays, addMonths } from 'date-fns';
+
+	export let data;
+
+	let name = data.schedule.name;
+	let slug = data.schedule._id;
+	let displayPastEvents = data.schedule.displayPastEvents;
+	let eventLines = data.schedule.events.length || 1;
+	let beginsAt = new Date().toISOString().slice(0, 16);
+	let endsAt = addMonths(new Date(), 30).toISOString().slice(0, 16);
+
+	function confirmDelete(event: Event) {
+		if (!confirm('Would you like to delete this schedule?')) {
+			event.preventDefault();
+		}
+	}
+</script>
+
+<h1 class="text-3xl">Edit a schedule</h1>
+
+<form method="post" class="flex flex-col gap-4">
+	<label class="form-label">
+		Name
+		<input
+			class="form-input"
+			type="text"
+			maxlength={MAX_NAME_LIMIT}
+			name="name"
+			placeholder="schedule name"
+			bind:value={name}
+			required
+		/>
+	</label>
+	<label class="form-label">
+		Slug
+		<input
+			class="form-input block"
+			type="text"
+			name="slug"
+			placeholder="Slug"
+			bind:value={slug}
+			title="Only lowercase letters, numbers and dashes are allowed"
+			disabled
+		/>
+	</label>
+	<label class="form-label">
+		Set desired delay for event with no end time (in minutes)
+		<input
+			class="form-input block"
+			type="number"
+			name="pastEventDelay"
+			value={data.schedule.pastEventDelay}
+		/>
+	</label>
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			name="displayPastEvents"
+			bind:checked={displayPastEvents}
+		/>
+		Display past events
+	</label>
+	{#if displayPastEvents}
+		<label class="checkbox-label">
+			<input
+				class="form-checkbox"
+				type="checkbox"
+				name="displayPastEventsAfterFuture"
+				bind:checked={data.schedule.displayPastEventsAfterFuture}
+			/>
+			Show past events after future events
+		</label>
+	{/if}
+	<label class="checkbox-label">
+		<input
+			class="form-checkbox"
+			type="checkbox"
+			name="sortByEventDateDesc"
+			bind:checked={data.schedule.sortByEventDateDesc}
+		/>
+		sort by event date des (default:asc)
+	</label>
+	{#each [...Array(eventLines).keys()] as i}
+		<h1 class="text-xl font-bold">Event #{i + 1}</h1>
+		{#if data.schedule.events && data.schedule.events.length >= i + 1}
+			<label class="form-label">
+				Title
+				<input
+					type="text"
+					name="events[{i}].title"
+					class="form-input"
+					required
+					value={data.schedule.events[i].title}
+				/>
+			</label>
+			<label class="form-label">
+				Short description
+				<textarea
+					name="events[{i}].shortDescription"
+					cols="30"
+					rows="2"
+					maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+					class="form-input"
+					value={data.schedule.events[i].shortDescription}
+				/>
+			</label>
+			<label class="form-label">
+				Description
+				<textarea
+					name="events[{i}].description"
+					cols="30"
+					rows="10"
+					maxlength="10000"
+					class="block form-input"
+					value={data.schedule.events[i].description}
+				/>
+			</label>
+			<div class="flex flex-wrap gap-4">
+				<label class="form-label">
+					<input
+						class="form-input"
+						type="datetime-local"
+						name="events[{i}].beginsAt"
+						value={new Date(data.schedule.events[i].beginsAt).toISOString().slice(0, 16)}
+						required
+					/>
+				</label>
+			</div>
+			<div class="flex flex-wrap gap-4">
+				<label class="form-label">
+					Ends at
+					<input
+						class="form-input"
+						type="datetime-local"
+						name="events[{i}].endsAt"
+						value={new Date(data.schedule.events[i].endsAt ?? '').toISOString().slice(0, 16)}
+					/>
+				</label>
+			</div>
+			<label class="form-label">
+				Location name
+				<input
+					type="text"
+					name="events[{i}].location.name"
+					class="form-input"
+					value={data.schedule.events[i].location?.name}
+				/>
+			</label>
+			<label class="form-label">
+				Location link
+				<input
+					type="text"
+					name="events[{i}].location.link"
+					class="form-input"
+					value={data.schedule.events[i].location?.link}
+				/>
+			</label>
+			<label class="form-label">
+				Event url
+				<input
+					type="text"
+					name="events[{i}].url"
+					class="form-input"
+					value={data.schedule.events[i].url}
+				/>
+			</label>
+		{:else}
+			<label class="form-label">
+				Title
+				<input type="text" name="events[{i}].title" class="form-input" required />
+			</label>
+			<label class="form-label">
+				Short description
+				<textarea
+					name="events[{i}].shortDescription"
+					cols="30"
+					rows="2"
+					maxlength={MAX_SHORT_DESCRIPTION_LIMIT}
+					class="form-input"
+				/>
+			</label>
+			<label class="form-label">
+				Description
+				<textarea
+					name="events[{i}].description"
+					cols="30"
+					rows="10"
+					maxlength="10000"
+					class="block form-input"
+				/>
+			</label>
+			<div class="flex flex-wrap gap-4">
+				<label class="form-label">
+					Begins at
+					<input
+						class="form-input"
+						type="datetime-local"
+						name="events[{i}].beginsAt"
+						bind:value={beginsAt}
+					/>
+				</label>
+			</div>
+			<div class="flex flex-wrap gap-4">
+				<label class="form-label">
+					Ends at
+					<input
+						class="form-input"
+						type="datetime-local"
+						name="events[{i}].endsAt"
+						bind:value={endsAt}
+					/>
+				</label>
+			</div>
+			<label class="form-label">
+				Location name
+				<input type="text" name="events[{i}].location.name" class="form-input" />
+			</label>
+			<label class="form-label">
+				Location link
+				<input type="text" name="events[{i}].location.link" class="form-input" />
+			</label>
+			<label class="form-label">
+				Event url
+				<input type="text" name="events[{i}].url" class="form-input" />
+			</label>
+		{/if}
+	{/each}
+	<button class="btn btn-gray self-start" on:click={() => (eventLines += 1)} type="button"
+		>Add another event
+	</button>
+	<div class="flex flex-row justify-between gap-2">
+		<input type="submit" class="btn btn-blue text-white" formaction="?/update" value="Update" />
+		<a href="/schedule/{data.schedule._id}" class="btn btn-gray">View</a>
+
+		<input
+			type="submit"
+			class="btn btn-red text-white ml-auto"
+			formaction="?/delete"
+			value="Delete"
+			on:click={confirmDelete}
+		/>
+	</div>
+</form>
