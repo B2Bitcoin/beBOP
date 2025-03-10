@@ -31,6 +31,11 @@ services:
         required: true
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "100m" # file size
   mongo:
     image: mongo:6.0.9
     hostname: mongodb
@@ -42,6 +47,11 @@ services:
       interval: 5s
     volumes:
       - mongo-data:/data/db
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "100m" # file size
   minio:
     image: quay.io/minio/minio:latest
     hostname: minio
@@ -59,6 +69,11 @@ services:
         required: true
       - path: .env.local
         required: true
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "100m" # file size
 volumes:
   mongo-data:
   minio-data:
