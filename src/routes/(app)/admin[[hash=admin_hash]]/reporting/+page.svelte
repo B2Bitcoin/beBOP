@@ -14,6 +14,7 @@
 	let tableOrderSynthesis: HTMLTableElement;
 	let tablePaymentSynthesis: HTMLTableElement;
 	let tableProductSynthesis: HTMLTableElement;
+	let tableDeliveryFeesSynthesis: HTMLTableElement;
 	let tableVATSynthesis: HTMLTableElement;
 
 	let includePending = false;
@@ -60,6 +61,18 @@
 			)
 		),
 		averageCart: 0
+	};
+	$: orderDeliveryFeesSynthesis = {
+		orderQuantity: sum(paidOrders.map((order) => order.quantityOrder)),
+		orderNumber: paidOrders.length,
+		orderFeesTotal: sumCurrency(
+			data.currencies.main,
+			paidOrders.map(
+				(order) =>
+					order.currencySnapshot.main.shippingPrice ?? { amount: 0, currency: data.currencies.main }
+			)
+		),
+		averageFeesCart: 0
 	};
 	$: orderVATSynthesis = {
 		orderQuantity: sum(paidOrders.map((order) => order.quantityOrder)),
@@ -703,6 +716,56 @@
 										orderVATSynthesis.orderVATTotal / orderSynthesis.orderNumber,
 										data.currencies.main
 								  )
+								: 0}</td
+						>
+						<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-span-12">
+		<h1 class="text-2xl font-bold mb-4">Delivery Fees</h1>
+		<button
+			on:click={() => exportcsv(tableDeliveryFeesSynthesis, 'deliveryFeesSynthesisExport.csv')}
+			class="btn btn-blue mb-2"
+		>
+			Export CSV
+		</button>
+		<div class="overflow-x-auto max-h-[500px]">
+			<table
+				class="min-w-full table-auto border border-gray-300 bg-white"
+				bind:this={tableDeliveryFeesSynthesis}
+			>
+				<thead class="bg-gray-200">
+					<tr class="whitespace-nowrap">
+						<th class="border border-gray-300 px-4 py-2">Period</th>
+						<th class="border border-gray-300 px-4 py-2">Order Quantity</th>
+						<th class="border border-gray-300 px-4 py-2">order Fees Total</th>
+						<th class="border border-gray-300 px-4 py-2">Average Fees Cart</th>
+						<th class="border border-gray-300 py-2">Currency</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="hover:bg-gray-100 whitespace-nowrap">
+						<td class="border border-gray-300 px-4 py-2">
+							<time datetime={beginsAt.toISOString()} title={beginsAt.toLocaleString($locale)}>
+								{beginsAt.toLocaleDateString($locale)}
+							</time>
+							—
+							<time datetime={endsAt.toISOString()} title={endsAt.toLocaleString($locale)}>
+								{endsAt.toLocaleDateString($locale)}
+							</time>
+						</td>
+						<td class="border border-gray-300 px-4 py-2"
+							>{orderDeliveryFeesSynthesis.orderNumber}</td
+						>
+						<td class="border border-gray-300 px-4 py-2"
+							>{orderDeliveryFeesSynthesis.orderFeesTotal}</td
+						>
+						<td class="border border-gray-300 px-4 py-2"
+							>{orderDeliveryFeesSynthesis.orderNumber
+								? orderDeliveryFeesSynthesis.orderFeesTotal / orderDeliveryFeesSynthesis.orderNumber
 								: 0}</td
 						>
 						<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
