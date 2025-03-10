@@ -569,7 +569,6 @@
 											(!emails[key] || !data.contactModes.includes('email')) &&
 											data.roleId !== POS_ROLE_ID}
 										on:change={(ev) => ev.currentTarget.setCustomValidity('')}
-										autocomplete="off"
 									/>
 								</label>
 							{/if}
