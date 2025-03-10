@@ -206,6 +206,9 @@ export const actions: Actions = {
 							},
 							tagIds: parsed.tagIds,
 							cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+							externalResources: parsed.externalResources?.filter(
+								(externalResourceLink) => externalResourceLink.label && externalResourceLink.href
+							),
 							...(parsed.standalone && { hasVariations: parsed.hasVariations }),
 							...(parsed.standalone &&
 								parsed.hasVariations && {
@@ -227,7 +230,8 @@ export const actions: Actions = {
 										title: parsed.sellDisclaimerTitle,
 										reason: parsed.sellDisclaimerReason
 									}
-								})
+								}),
+							hideFromSEO: parsed.hideFromSEO
 						},
 						{ session }
 					);
@@ -389,6 +393,7 @@ export const actions: Actions = {
 					}),
 					tagIds: product.tagIds,
 					cta: product.cta,
+					externalResources: product.externalResources,
 					...(parsed.standalone && { hasVariations: parsed.hasVariations }),
 					...(parsed.standalone &&
 						parsed.hasVariations && {
@@ -410,7 +415,8 @@ export const actions: Actions = {
 								reason: parsed.sellDisclaimerReason
 							}
 						}),
-					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) })
+					...(parsed.vatProfileId && { vatProfileId: new ObjectId(parsed.vatProfileId) }),
+					hideFromSEO: parsed.hideFromSEO
 				},
 				{ session }
 			);

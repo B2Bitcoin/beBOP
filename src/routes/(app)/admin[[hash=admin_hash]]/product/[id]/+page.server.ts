@@ -199,6 +199,9 @@ export const actions: Actions = {
 						},
 						tagIds: parsed.tagIds,
 						cta: parsed.cta?.filter((ctaLink) => ctaLink.label && ctaLink.href),
+						externalResources: parsed.externalResources?.filter(
+							(externalResourceLink) => externalResourceLink.label && externalResourceLink.href
+						),
 						contentBefore: parsed.contentBefore,
 						contentAfter: parsed.contentAfter,
 						mobile: {
@@ -225,7 +228,8 @@ export const actions: Actions = {
 									title: parsed.sellDisclaimerTitle,
 									reason: parsed.sellDisclaimerReason
 								}
-							})
+							}),
+						hideFromSEO: parsed.hideFromSEO
 					},
 					$unset: {
 						...(!parsed.customPreorderText && { customPreorderText: '' }),
