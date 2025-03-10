@@ -535,6 +535,7 @@
 								)
 									? 'break-all'
 									: ''} "
+								target={cta.href.startsWith('http') ? '_blank' : '_self'}
 							>
 								{cta.label}
 							</a>
@@ -546,6 +547,7 @@
 								)
 									? 'break-all'
 									: ''} "
+								target={cta.href.startsWith('http') ? '_blank' : '_self'}
 							>
 								{cta.label}
 							</a>
