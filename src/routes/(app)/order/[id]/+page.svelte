@@ -488,10 +488,10 @@
 					{/each}
 				</ul>
 			{/if}
-			{#if data.order.items.flatMap((item) => item.product.externalResources).length}
+			{#if data.order.items.flatMap((item) => item.product.externalResources || []).length}
 				<h2 class="text-2xl">{t('order.externalResources.title')}</h2>
 				<ul>
-					{#each data.order.items.flatMap((item) => item.product.externalResources) as externalResource}
+					{#each data.order.items.flatMap((item) => item.product.externalResources || []) as externalResource}
 						<li class="flex flex-row gap-2">
 							<IconExternalNewWindowOpen class="mt-1 body-hyperlink" />
 							{#if externalResource?.href}
