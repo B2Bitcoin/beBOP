@@ -5,6 +5,19 @@ import { adminPrefix } from '$lib/server/admin';
 import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 import { set } from 'lodash-es';
 import type { JsonObject } from 'type-fest';
+import { generateId } from '$lib/utils/generateId';
+import { deletePicture } from '$lib/server/picture';
+
+export const load = async ({ params }) => {
+	const pictures = await collections.pictures
+		.find({ 'schedule._id': params.id })
+		.sort({ createdAt: 1 })
+		.toArray();
+
+	return {
+		pictures
+	};
+};
 
 export const actions = {
 	update: async function ({ request, params }) {
@@ -33,6 +46,7 @@ export const actions = {
 				events: z.array(
 					z.object({
 						title: z.string().min(1),
+						slug: z.string().min(1).optional(),
 						shortDescription: z.string().max(MAX_SHORT_DESCRIPTION_LIMIT).optional(),
 						description: z.string().max(10000).optional(),
 						beginsAt: z.date({ coerce: true }),
@@ -43,12 +57,22 @@ export const actions = {
 								link: z.string()
 							})
 							.optional(),
-						url: z.string().optional()
+						url: z.string().optional(),
+						unavailabity: z
+							.object({
+								label: z.enum(['postponed', 'canceled', 'soldOut']),
+								isUnavailable: z.boolean({ coerce: true }).default(false)
+							})
+							.optional(),
+						is_archived: z.boolean({ coerce: true }).default(false).optional()
 					})
 				)
 			})
 			.parse(json);
-
+		const eventWithSlug = parsed.events.map((parsedEvent) => ({
+			...parsedEvent,
+			slug: parsedEvent.slug || generateId(parsedEvent.title, true)
+		}));
 		await collections.schedules.updateOne(
 			{
 				_id: schedule._id
@@ -61,13 +85,17 @@ export const actions = {
 					displayPastEventsAfterFuture: parsed.displayPastEventsAfterFuture,
 					sortByEventDateDesc: parsed.sortByEventDateDesc,
 					updatedAt: new Date(),
-					events: parsed.events
+					events: eventWithSlug
 				}
 			}
 		);
 	},
 
 	delete: async function ({ params }) {
+		for await (const picture of collections.pictures.find({ 'schedule._id': params.id })) {
+			await deletePicture(picture._id);
+		}
+
 		await collections.schedules.deleteOne({
 			_id: params.id
 		});

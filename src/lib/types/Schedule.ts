@@ -3,6 +3,7 @@ import type { Timestamps } from './Timestamps';
 
 export interface EventSchedule {
 	title: string;
+	slug: string;
 	shortDescription?: string;
 	description?: string;
 	beginsAt: Date;

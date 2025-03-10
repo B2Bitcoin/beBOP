@@ -7,6 +7,7 @@ import { adminPrefix } from '$lib/server/admin';
 import { zodSlug } from '$lib/server/zod';
 import type { JsonObject } from 'type-fest';
 import { set } from 'lodash-es';
+import { generateId } from '$lib/utils/generateId';
 
 export const load = async () => {};
 
@@ -50,7 +51,10 @@ export const actions: Actions = {
 		if (await collections.schedules.countDocuments({ _id: parsed.slug })) {
 			throw error(409, 'Schedule with same slug already exists');
 		}
-		console.log(parsed.events);
+		const eventWithSlug = parsed.events.map((parsedEvent) => ({
+			...parsedEvent,
+			slug: generateId(parsedEvent.title, true)
+		}));
 
 		await collections.schedules.insertOne({
 			_id: parsed.slug,
@@ -61,7 +65,7 @@ export const actions: Actions = {
 			sortByEventDateDesc: parsed.sortByEventDateDesc,
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			events: parsed.events
+			events: eventWithSlug
 		});
 
 		throw redirect(303, `${adminPrefix()}/schedule/${parsed.slug}`);

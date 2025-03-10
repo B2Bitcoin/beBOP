@@ -4,7 +4,7 @@
 
 <a href="{data.adminPrefix}/schedule/new" class="underline block">Add schedule</a>
 
-<h1 class="text-3xl">List of Schedule</h1>
+<h1 class="text-3xl">List of Schedules</h1>
 
 <ul>
 	{#each data.schedules as schedule}

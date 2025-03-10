@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { MAX_NAME_LIMIT, MAX_SHORT_DESCRIPTION_LIMIT } from '$lib/types/Product';
 	import { addMonths } from 'date-fns';
+	import PictureComponent from '$lib/components/Picture.svelte';
+	import { find } from 'lodash-es';
 
 	export let data;
 
@@ -15,6 +17,13 @@
 		if (!confirm('Would you like to delete this schedule?')) {
 			event.preventDefault();
 		}
+	}
+
+	function deleteEventSchedule(title: string) {
+		data.schedule.events = data.schedule.events.filter(
+			(eventSchedule) => !(eventSchedule.title === title)
+		);
+		eventLines -= 1;
 	}
 </script>
 
@@ -84,7 +93,12 @@
 		sort by event date desc (default:asc)
 	</label>
 	{#each [...Array(eventLines).keys()] as i}
-		<h1 class="text-xl font-bold">Event #{i + 1}</h1>
+		<h1 class="text-xl font-bold">
+			Event #{i + 1}
+			<button type="button" on:click={() => deleteEventSchedule(data.schedule.events[i].title)}
+				>🗑️</button
+			>
+		</h1>
 		{#if data.schedule.events && data.schedule.events.length >= i + 1}
 			<label class="form-label">
 				Title
@@ -94,6 +108,12 @@
 					class="form-input"
 					required
 					value={data.schedule.events[i].title}
+				/>
+				<input
+					type="hidden"
+					name="events[{i}].slug"
+					class="form-input"
+					value={data.schedule.events[i].slug}
 				/>
 			</label>
 			<label class="form-label">
@@ -167,6 +187,49 @@
 					value={data.schedule.events[i].url}
 				/>
 			</label>
+			<label class="checkbox-label">
+				<input
+					class="form-checkbox"
+					type="checkbox"
+					name="events[{i}].unavailabity.isUnavailable"
+					checked={data.schedule.events[i].unavailabity?.isUnavailable}
+				/>
+				Make event unavailable (postponed, cancelled, sold out)
+			</label>
+			<select class="form-input" name="events[{i}].unavailabity.label">
+				{#each ['postponed', 'canceled', 'soldOut'] as label}
+					<option value={label} selected={data.schedule.events[i].unavailabity?.label === label}>
+						{label}
+					</option>
+				{/each}
+			</select>
+			<label class="checkbox-label">
+				<input
+					class="form-checkbox"
+					type="checkbox"
+					name="events[{i}].is_archived"
+					checked={data.schedule.events[i].is_archived}
+				/>
+				Archive event
+			</label>
+			<a
+				href="{data.adminPrefix}/picture/new?scheduleId={data.schedule._id}&eventScheduleSlug={data
+					.schedule.events[i].slug}"
+				class="underline"
+			>
+				Add picture
+			</a>
+
+			<div class="flex flex-row flex-wrap gap-6 mt-6">
+				{#each data.pictures.filter((pic) => pic.schedule && pic.schedule.eventSlug === data.schedule.events[i].slug) as picture}
+					<div class="flex flex-col text-center">
+						<a href="{data.adminPrefix}/picture/{picture._id}" class="flex flex-col items-center">
+							<PictureComponent {picture} class="h-36 block" style="object-fit: scale-down;" />
+							<span>{picture.name}</span>
+						</a>
+					</div>
+				{/each}
+			</div>
 		{:else}
 			<label class="form-label">
 				Title
