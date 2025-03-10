@@ -70,7 +70,14 @@ type TokenObject =
 	  }
 	| { type: 'contactFormWidget'; slug: string; raw: string }
 	| { type: 'countdownWidget'; slug: string; raw: string }
-	| { type: 'tagProducts'; slug: string; display: string | undefined; raw: string }
+	| {
+			type: 'tagProducts';
+			slug: string;
+			display: string | undefined;
+			sort?: 'asc' | 'desc';
+			by?: string;
+			raw: string;
+	  }
 	| {
 			type: 'galleryWidget';
 			slug: string;
@@ -98,7 +105,8 @@ export async function cmsFromContent(
 	const CONTACTFORM_WIDGET_REGEX = /\[Form=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const COUNTDOWN_WIDGET_REGEX = /\[Countdown=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const TAG_PRODUCTS_REGEX =
-		/\[TagProducts=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
+		/\[TagProducts=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?(?:[?\s]sort=(?<sort>asc|desc))?(?:[?\s]by=(?<by>[a-z0-9-]+))?\]/giu;
+
 	const GALLERY_WIDGET_REGEX =
 		/\[Gallery=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const QRCODE_REGEX = /\[QRCode=(?<slug>[\p{L}\d_-]+)\]/giu;
@@ -238,10 +246,16 @@ export async function cmsFromContent(
 						break;
 					case 'tagProducts':
 						tagProductsSlugs.add(match.groups.slug);
+						const sort = /[?\s]sort=(?<sort>(asc|desc))/.exec(match[0])?.groups?.sort as
+							| 'asc'
+							| 'desc'
+							| undefined;
 						token.push({
 							type: 'tagProducts',
 							slug: match.groups.slug,
 							display: match.groups?.display,
+							sort,
+							by: match.groups.by,
 							raw: match[0]
 						});
 						break;
