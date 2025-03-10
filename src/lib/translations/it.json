@@ -467,6 +467,9 @@
 		"discount": {
 			"title": "Sconto"
 		},
+		"externalResources": {
+			"title": "Risorsa esterna"
+		},
 		"informSeller": "Informa il commerciante",
 		"linkReminder": "Conserva questo link: <0></0> per accedere all'ordine in seguito.",
 		"list": {
