@@ -103,6 +103,7 @@ export async function load({ parent, locals }) {
 			cmsCheckoutTopData: cmsFromContent(
 				{
 					content:
+						locals.user?.roleId !== undefined &&
 						locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 						cmsCheckoutTop.hasEmployeeContent &&
 						cmsCheckoutTop.employeeContent
@@ -117,6 +118,7 @@ export async function load({ parent, locals }) {
 			cmsCheckoutBottomData: cmsFromContent(
 				{
 					content:
+						locals.user?.roleId !== undefined &&
 						locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 						cmsCheckoutBottom.hasEmployeeContent &&
 						cmsCheckoutBottom.employeeContent

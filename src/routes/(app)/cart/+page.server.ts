@@ -74,6 +74,7 @@ export async function load({ parent, locals }) {
 			cmsBasketTopData: cmsFromContent(
 				{
 					content:
+						locals.user?.roleId !== undefined &&
 						locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 						cmsBasketTop.hasEmployeeContent &&
 						cmsBasketTop.employeeContent
@@ -88,6 +89,7 @@ export async function load({ parent, locals }) {
 			cmsBasketBottomData: cmsFromContent(
 				{
 					content:
+						locals.user?.roleId !== undefined &&
 						locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 						cmsBasketBottom.hasEmployeeContent &&
 						cmsBasketBottom.employeeContent

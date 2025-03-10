@@ -68,6 +68,7 @@ export async function load({ params, locals, url }) {
 				!cmsPage.mobileContent
 				? {
 						content:
+							locals.user?.roleId !== undefined &&
 							locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 							cmsPage.hasEmployeeContent &&
 							cmsPage.employeeContent

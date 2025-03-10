@@ -43,6 +43,7 @@ export const load = async ({ locals }) => {
 		cmsData: cmsFromContent(
 			{
 				content:
+					locals.user?.roleId !== undefined &&
 					locals.user?.roleId !== CUSTOMER_ROLE_ID &&
 					cmsPage.hasEmployeeContent &&
 					cmsPage.employeeContent
