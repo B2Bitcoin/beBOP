@@ -5,6 +5,7 @@ import {
 	isPhoenixdConfigured,
 	phoenixdBalance,
 	phoenixdDetected,
+	phoenixdGetBolt12,
 	phoenixdInfo,
 	phoenixdPayInvoice,
 	phoenixdSendOnChain
@@ -29,17 +30,19 @@ export const load = async () => {
 	try {
 		const nodeInfo = await phoenixdInfo();
 		const balance = await phoenixdBalance();
-
+		const bolt12Address = await phoenixdGetBolt12();
 		return {
 			phoenixd: runtimeConfig.phoenixd,
 			nodeInfo,
-			balance
+			balance,
+			bolt12Address
 		};
 	} catch (err) {
 		return {
 			phoenixd: runtimeConfig.phoenixd,
 			nodeInfo: null,
-			balance: null
+			balance: null,
+			bolt12Address: null
 		};
 	}
 };
@@ -76,7 +79,7 @@ export const actions = {
 			.parse(Object.fromEntries(await event.request.formData()));
 
 		runtimeConfig.phoenixd.password = parsed.password;
-
+		runtimeConfig.phoenixd.bolt12Address = await phoenixdGetBolt12();
 		await collections.runtimeConfig.updateOne(
 			{ _id: 'phoenixd' },
 			{

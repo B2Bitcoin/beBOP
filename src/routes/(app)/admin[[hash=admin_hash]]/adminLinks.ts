@@ -192,6 +192,10 @@ export const adminLinks: AdminLinks = [
 			{
 				href: '/admin/schedule',
 				label: 'Schedules'
+			},
+			{
+				href: '/admin/leaderboard',
+				label: 'Leaderboards'
 			}
 		]
 	}
