@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { useI18n } from '$lib/i18n.js';
 	import { invoiceNumberVariables } from '$lib/types/Order.js';
+	import { fixCurrencyRounding } from '$lib/utils/fixCurrencyRounding.js';
 	import { sum } from '$lib/utils/sum.js';
 	import { sumCurrency } from '$lib/utils/sumCurrency.js';
 	import { toCurrency } from '$lib/utils/toCurrency';
@@ -14,6 +15,8 @@
 	let tablePaymentSynthesis: HTMLTableElement;
 	let tableProductSynthesis: HTMLTableElement;
 	let tableDeliveryFeesSynthesis: HTMLTableElement;
+	let tableVATSynthesis: HTMLTableElement;
+
 	let includePending = false;
 	let includeExpired = false;
 	let includeCanceled = false;
@@ -70,6 +73,19 @@
 			)
 		),
 		averageFeesCart: 0
+	};
+	$: orderVATSynthesis = {
+		orderQuantity: sum(paidOrders.map((order) => order.quantityOrder)),
+		orderNumber: paidOrders.length,
+		orderVATTotal: sum(
+			paidOrders.map((order) =>
+				sumCurrency(
+					data.currencies.main,
+					order.currencySnapshot.main.vat ?? [{ amount: 0, currency: 'SAT' }]
+				)
+			)
+		),
+		averageCart: 0
 	};
 
 	function downloadCSV(csvData: string, filename: string) {
@@ -261,6 +277,13 @@
 			<button on:click={() => exportcsv(tableOrder, 'order-detail.csv')} class="btn btn-blue mb-2">
 				Export CSV
 			</button>
+			<button
+				disabled={!!htmlStatus}
+				class="btn btn-blue mb-2"
+				on:click={loadedHtml ? () => iframePrint.contentWindow?.print() : exportPdf}
+			>
+				{loadedHtml ? 'Print' : htmlStatus || 'Prepare PDF'}
+			</button>
 		</div>
 
 		<div class="overflow-x-auto max-h-[500px]">
@@ -340,6 +363,13 @@
 			</table>
 		</div>
 	</div>
+	<iframe
+		srcdoc={html}
+		bind:this={iframePrint}
+		title=""
+		on:load={() => console.log('loaded')}
+		style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+	/>
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Product detail</h1>
 		<button
@@ -411,13 +441,6 @@
 				class="btn btn-blue mb-2"
 			>
 				Export CSV
-			</button>
-			<button
-				disabled={!!htmlStatus}
-				class="btn btn-blue mb-2"
-				on:click={loadedHtml ? () => iframePrint.contentWindow?.print() : exportPdf}
-			>
-				{loadedHtml ? 'Print' : htmlStatus || 'Prepare PDF'}
 			</button>
 		</div>
 		<div class="overflow-x-auto max-h-[500px]">
@@ -510,14 +533,6 @@
 			</table>
 		</div>
 	</div>
-
-	<iframe
-		srcdoc={html}
-		bind:this={iframePrint}
-		title=""
-		on:load={() => console.log('loaded')}
-		style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
-	/>
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order synthesis</h1>
 		<button
@@ -659,9 +674,60 @@
 		</div>
 	</div>
 	<div class="col-span-12">
+		<h1 class="text-2xl font-bold mb-4">VAT Synthesis</h1>
+		<button
+			on:click={() => exportcsv(tableVATSynthesis, 'vat-synthesis.csv')}
+			class="btn btn-blue mb-2"
+		>
+			Export CSV
+		</button>
+		<div class="overflow-x-auto max-h-[500px]">
+			<table
+				class="min-w-full table-auto border border-gray-300 bg-white"
+				bind:this={tableVATSynthesis}
+			>
+				<thead class="bg-gray-200">
+					<tr class="whitespace-nowrap">
+						<th class="border border-gray-300 px-4 py-2">Period</th>
+						<th class="border border-gray-300 px-4 py-2">Order Quantity</th>
+						<th class="border border-gray-300 px-4 py-2">order VAT Total</th>
+						<th class="border border-gray-300 px-4 py-2">Average VAT Cart</th>
+						<th class="border border-gray-300 py-2">Currency</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="hover:bg-gray-100 whitespace-nowrap">
+						<td class="border border-gray-300 px-4 py-2">
+							<time datetime={beginsAt.toISOString()} title={beginsAt.toLocaleString($locale)}>
+								{beginsAt.toLocaleDateString($locale)}
+							</time>
+							—
+							<time datetime={endsAt.toISOString()} title={endsAt.toLocaleString($locale)}>
+								{endsAt.toLocaleDateString($locale)}
+							</time>
+						</td>
+						<td class="border border-gray-300 px-4 py-2">{orderVATSynthesis.orderNumber}</td>
+						<td class="border border-gray-300 px-4 py-2"
+							>{fixCurrencyRounding(orderVATSynthesis.orderVATTotal, data.currencies.main)}</td
+						>
+						<td class="border border-gray-300 px-4 py-2"
+							>{orderVATSynthesis.orderNumber
+								? fixCurrencyRounding(
+										orderVATSynthesis.orderVATTotal / orderSynthesis.orderNumber,
+										data.currencies.main
+								  )
+								: 0}</td
+						>
+						<td class="border border-gray-300 px-4 py-2">{data.currencies.main}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Delivery Fees</h1>
 		<button
-			on:click={() => exportcsv(tableDeliveryFeesSynthesis, 'orderSythesisExport.csv')}
+			on:click={() => exportcsv(tableDeliveryFeesSynthesis, 'deliveryFeesSynthesisExport.csv')}
 			class="btn btn-blue mb-2"
 		>
 			Export CSV

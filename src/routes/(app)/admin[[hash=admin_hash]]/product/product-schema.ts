@@ -59,6 +59,15 @@ export const productBaseSchema = () => ({
 		)
 		.optional()
 		.default([]),
+	externalResources: z
+		.array(
+			z.object({
+				href: z.string().trim(),
+				label: z.string().trim()
+			})
+		)
+		.optional()
+		.default([]),
 	hasVariations: z.boolean({ coerce: true }).default(false),
 	variations: z
 		.array(
@@ -85,5 +94,6 @@ export const productBaseSchema = () => ({
 	hideContentAfter: z.boolean({ coerce: true }).default(false),
 	hasSellDisclaimer: z.boolean({ coerce: true }).default(false),
 	sellDisclaimerTitle: z.string().trim().max(60).optional(),
-	sellDisclaimerReason: z.string().trim().max(10_000).optional()
+	sellDisclaimerReason: z.string().trim().max(10_000).optional(),
+	hideFromSEO: z.boolean({ coerce: true }).default(false)
 });
