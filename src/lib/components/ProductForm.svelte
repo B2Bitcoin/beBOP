@@ -72,7 +72,8 @@
 		},
 
 		hasVariations: false,
-		hasSellDisclaimer: false
+		hasSellDisclaimer: false,
+		hideFromSEO: false
 	};
 
 	let paymentMethods = product.paymentMethods || [...availablePaymentMethods];
@@ -657,6 +658,15 @@
 				/>
 			</label>
 		{/if}
+		<label class="checkbox-label">
+			<input
+				type="checkbox"
+				name="hideFromSEO"
+				checked={product.hideFromSEO}
+				class="form-checkbox"
+			/>
+			Hide this product from search engines
+		</label>
 		<label class="form-label">
 			Short description
 			<textarea

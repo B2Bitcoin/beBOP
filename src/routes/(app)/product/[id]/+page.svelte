@@ -157,6 +157,9 @@
 		<!-- eslint-disable svelte/no-at-html-tags -->
 		{@html serializeSchema(schema)}
 	{/if}
+	{#if data.product.hideFromSEO}
+		<meta name="robots" content="noindex" />
+	{/if}
 </svelte:head>
 
 <main class="mx-auto max-w-7xl py-10 px-6">
