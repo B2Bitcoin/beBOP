@@ -247,6 +247,13 @@
 			<button on:click={() => exportcsv(tableOrder, 'order-detail.csv')} class="btn btn-blue mb-2">
 				Export CSV
 			</button>
+			<button
+				disabled={!!htmlStatus}
+				class="btn btn-blue mb-2"
+				on:click={loadedHtml ? () => iframePrint.contentWindow?.print() : exportPdf}
+			>
+				{loadedHtml ? 'Print' : htmlStatus || 'Prepare PDF'}
+			</button>
 		</div>
 
 		<div class="overflow-x-auto max-h-[500px]">
@@ -326,6 +333,13 @@
 			</table>
 		</div>
 	</div>
+	<iframe
+		srcdoc={html}
+		bind:this={iframePrint}
+		title=""
+		on:load={() => console.log('loaded')}
+		style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
+	/>
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Product detail</h1>
 		<button
@@ -397,13 +411,6 @@
 				class="btn btn-blue mb-2"
 			>
 				Export CSV
-			</button>
-			<button
-				disabled={!!htmlStatus}
-				class="btn btn-blue mb-2"
-				on:click={loadedHtml ? () => iframePrint.contentWindow?.print() : exportPdf}
-			>
-				{loadedHtml ? 'Print' : htmlStatus || 'Prepare PDF'}
 			</button>
 		</div>
 		<div class="overflow-x-auto max-h-[500px]">
@@ -496,14 +503,6 @@
 			</table>
 		</div>
 	</div>
-
-	<iframe
-		srcdoc={html}
-		bind:this={iframePrint}
-		title=""
-		on:load={() => console.log('loaded')}
-		style="width: 1px; height: 1px; position: absolute; left: -1000px; top: -1000px;"
-	/>
 	<div class="col-span-12">
 		<h1 class="text-2xl font-bold mb-4">Order synthesis</h1>
 		<button

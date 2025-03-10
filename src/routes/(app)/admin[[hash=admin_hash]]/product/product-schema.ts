@@ -59,6 +59,15 @@ export const productBaseSchema = () => ({
 		)
 		.optional()
 		.default([]),
+	externalResources: z
+		.array(
+			z.object({
+				href: z.string().trim(),
+				label: z.string().trim()
+			})
+		)
+		.optional()
+		.default([]),
 	hasVariations: z.boolean({ coerce: true }).default(false),
 	variations: z
 		.array(
