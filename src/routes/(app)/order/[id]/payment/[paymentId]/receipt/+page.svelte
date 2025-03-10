@@ -80,7 +80,9 @@
 		// 		currency
 		//   )
 		// : 0
-		amount: fixCurrencyRounding(totalWithoutDiscountNoTax.amount - totalNoTax.amount, currency)
+		amount: data.order.currencySnapshot.main.discount?.amount
+			? fixCurrencyRounding(totalWithoutDiscountNoTax.amount - totalNoTax.amount, currency)
+			: 0
 	};
 </script>
 
