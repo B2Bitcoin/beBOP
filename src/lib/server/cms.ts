@@ -14,6 +14,7 @@ import type { Tag } from '$lib/types/Tag';
 import type { ContactForm } from '$lib/types/ContactForm';
 import type { Countdown } from '$lib/types/Countdown';
 import type { Gallery } from '$lib/types/Gallery';
+import type { Leaderboard } from '$lib/types/Leaderboard';
 
 const window = new JSDOM('').window;
 
@@ -84,6 +85,11 @@ type TokenObject =
 			display: string | undefined;
 			raw: string;
 	  }
+	| {
+			type: 'leaderboardWidget';
+			slug: string;
+			raw: string;
+	  }
 	| { type: 'qrCode'; slug: string; raw: string }
 	| { type: 'currencyCalculatorWidget'; slug: string; raw: string };
 
@@ -94,6 +100,7 @@ export async function cmsFromContent(
 	const PRODUCT_WIDGET_REGEX =
 		/\[Product=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const CHALLENGE_WIDGET_REGEX = /\[Challenge=(?<slug>[a-z0-9-]+)\]/giu;
+	const LEADERBOARD_WIDGET_REGEX = /\[Leaderboard=(?<slug>[a-z0-9-]+)\]/giu;
 	const SLIDER_WIDGET_REGEX =
 		/\[Slider=(?<slug>[\p{L}\d_-]+)(?:[?\s]autoplay=(?<autoplay>[\d]+))?\]/giu;
 	const TAG_WIDGET_REGEX =
@@ -122,6 +129,7 @@ export async function cmsFromContent(
 	const countdownFormSlugs = new Set<string>();
 	const tagProductsSlugs = new Set<string>();
 	const gallerySlugs = new Set<string>();
+	const leaderboardSlugs = new Set<string>();
 	const qrCodeSlugs = new Set<string>();
 	const currencyCalculatorSlugs = new Set<string>();
 
@@ -154,6 +162,7 @@ export async function cmsFromContent(
 			...matchAndSort(content, COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
 			...matchAndSort(content, TAG_PRODUCTS_REGEX, 'tagProducts'),
 			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget'),
+			...matchAndSort(content, LEADERBOARD_WIDGET_REGEX, 'leaderboardWidget'),
 			...matchAndSort(content, QRCODE_REGEX, 'qrCode'),
 			...matchAndSort(content, CURRENCY_CALCULATOR_WIDGET_REGEX, 'currencyCalculatorWidget')
 		].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
@@ -268,6 +277,14 @@ export async function cmsFromContent(
 							raw: match[0]
 						});
 						break;
+					case 'leaderboardWidget':
+						leaderboardSlugs.add(match.groups.slug);
+						token.push({
+							type: 'leaderboardWidget',
+							slug: match.groups.slug,
+							raw: match[0]
+						});
+						break;
 					case 'qrCode':
 						qrCodeSlugs.add(match.groups.slug);
 						token.push({
@@ -303,149 +320,210 @@ export async function cmsFromContent(
 		locals.user?.roleId === POS_ROLE_ID
 			? { 'actionSettings.retail.visible': true }
 			: { 'actionSettings.eShop.visible': true };
+	const leaderboards =
+		leaderboardSlugs.size > 0
+			? await collections.leaderboards
+					.find({
+						_id: { $in: [...leaderboardSlugs] }
+					})
+					.project<Pick<Leaderboard, '_id' | 'name' | 'progress' | 'endsAt' | 'mode' | 'beginsAt'>>(
+						{
+							name: 1,
+							goal: 1,
+							progress: 1,
+							endsAt: 1,
+							beginsAt: 1,
+							mode: 1
+						}
+					)
+					.toArray()
+			: [];
+	const allProductsLead = leaderboards
+		.flatMap((leaderboard) => leaderboard.progress || [])
+		.map((progressItem) => progressItem.productId);
 
-	const products = await collections.products
-		.find({
-			$or: [{ tagIds: { $in: [...tagProductsSlugs] } }, { _id: { $in: [...productSlugs] } }],
-			...query
-		})
-		.project<
-			Pick<
-				Product,
-				| '_id'
-				| 'price'
-				| 'name'
-				| 'shortDescription'
-				| 'preorder'
-				| 'availableDate'
-				| 'type'
-				| 'shipping'
-				| 'actionSettings'
-				| 'stock'
-				| 'tagIds'
-				| 'alias'
-				| 'isTicket'
-				| 'hasSellDisclaimer'
-			>
-		>({
-			price: 1,
-			shortDescription: locals.language
-				? { $ifNull: [`$translations.${locals.language}.shortDescription`, '$shortDescription'] }
-				: 1,
-			preorder: 1,
-			name: locals.language ? { $ifNull: [`$translations.${locals.language}.name`, '$name'] } : 1,
-			availableDate: 1,
-			type: 1,
-			shipping: 1,
-			actionSettings: 1,
-			stock: 1,
-			tagIds: 1,
-			alias: 1,
-			isTicket: 1,
-			hasSellDisclaimer: 1
-		})
-		.toArray();
-	const challenges = await collections.challenges
-		.find({
-			_id: { $in: [...challengeSlugs] }
-		})
-		.project<
-			Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt' | 'mode' | 'beginsAt'>
-		>({
-			name: 1,
-			goal: 1,
-			progress: 1,
-			endsAt: 1,
-			beginsAt: 1,
-			mode: 1
-		})
-		.toArray();
-	const sliders = await collections.sliders
-		.find({
-			_id: { $in: [...sliderSlugs] }
-		})
-		.toArray();
+	const products =
+		tagProductsSlugs.size > 0 || productSlugs.size > 0 || allProductsLead.length > 0
+			? await collections.products
+					.find({
+						$or: [
+							{ tagIds: { $in: [...tagProductsSlugs] } },
+							{ _id: { $in: [...productSlugs, ...allProductsLead] } }
+						],
+						...query
+					})
+					.project<
+						Pick<
+							Product,
+							| '_id'
+							| 'price'
+							| 'name'
+							| 'shortDescription'
+							| 'preorder'
+							| 'availableDate'
+							| 'type'
+							| 'shipping'
+							| 'actionSettings'
+							| 'stock'
+							| 'tagIds'
+							| 'alias'
+							| 'isTicket'
+							| 'hasSellDisclaimer'
+						>
+					>({
+						price: 1,
+						shortDescription: locals.language
+							? {
+									$ifNull: [
+										`$translations.${locals.language}.shortDescription`,
+										'$shortDescription'
+									]
+							  }
+							: 1,
+						preorder: 1,
+						name: locals.language
+							? { $ifNull: [`$translations.${locals.language}.name`, '$name'] }
+							: 1,
+						availableDate: 1,
+						type: 1,
+						shipping: 1,
+						actionSettings: 1,
+						stock: 1,
+						tagIds: 1,
+						alias: 1,
+						isTicket: 1,
+						hasSellDisclaimer: 1
+					})
+					.toArray()
+			: [];
+	const challenges =
+		challengeSlugs.size > 0
+			? await collections.challenges
+					.find({
+						_id: { $in: [...challengeSlugs] }
+					})
+					.project<
+						Pick<Challenge, '_id' | 'name' | 'goal' | 'progress' | 'endsAt' | 'mode' | 'beginsAt'>
+					>({
+						name: 1,
+						goal: 1,
+						progress: 1,
+						endsAt: 1,
+						beginsAt: 1,
+						mode: 1
+					})
+					.toArray()
+			: [];
+	const sliders =
+		sliderSlugs.size > 0
+			? await collections.sliders
+					.find({
+						_id: { $in: [...sliderSlugs] }
+					})
+					.toArray()
+			: [];
 
-	const digitalFiles = await collections.digitalFiles
-		.find({ productId: { $in: products.map((product) => product._id) } })
-		.project<Pick<DigitalFile, '_id' | 'name' | 'productId'>>({
-			name: 1,
-			productId: 1
-		})
-		.sort({ createdAt: 1 })
-		.toArray();
-	const tags = await collections.tags
-		.find({
-			_id: { $in: [...tagSlugs] }
-		})
-		.project<Pick<Tag, '_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'>>(
-			{
-				name: 1,
-				title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-				subtitle: { $ifNull: [`$translations.${locals.language}.subtitle`, '$subtitle'] },
-				content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-				shortContent: {
-					$ifNull: [`$translations.${locals.language}.shortContent`, '$shortContent']
-				},
-				cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] }
-			}
-		)
-		.toArray();
-	const specifications = await collections.specifications
-		.find({
-			_id: { $in: [...specificationSlugs] }
-		})
-		.project<Pick<Specification, '_id' | 'content' | 'title'>>({
-			title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
-			content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] }
-		})
-		.toArray();
-	const contactForms = await collections.contactForms
-		.find({
-			_id: { $in: [...contactFormSlugs] }
-		})
-		.project<
-			Pick<
-				ContactForm,
-				| '_id'
-				| 'content'
-				| 'target'
-				| 'subject'
-				| 'displayFromField'
-				| 'prefillWithSession'
-				| 'disclaimer'
-			>
-		>({
-			content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
-			target: 1,
-			displayFromField: 1,
-			prefillWithSession: 1,
-			subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] },
-			disclaimer: { $ifNull: [`$translations.${locals.language}.disclaimer`, '$disclaimer'] }
-		})
-		.toArray();
-	const countdowns = await collections.countdowns
-		.find({
-			_id: { $in: [...countdownFormSlugs] }
-		})
-		.project<Pick<Countdown, '_id' | 'title' | 'description' | 'endsAt'>>({
-			title: {
-				$ifNull: [`$translations.${locals.language}.title`, '$title']
-			},
-			description: { $ifNull: [`$translations.${locals.language}.description`, '$description'] },
-			endsAt: 1
-		})
-		.toArray();
-	const galleries = await collections.galleries
-		.find({
-			_id: { $in: [...gallerySlugs] }
-		})
-		.project<Pick<Gallery, '_id' | 'name' | 'principal' | 'secondary'>>({
-			name: 1,
-			principal: { $ifNull: [`$translations.${locals.language}.principal`, '$principal'] },
-			secondary: { $ifNull: [`$translations.${locals.language}.secondary`, '$secondary'] }
-		})
-		.toArray();
+	const digitalFiles =
+		products.length > 0
+			? await collections.digitalFiles
+					.find({ productId: { $in: products.map((product) => product._id) } })
+					.project<Pick<DigitalFile, '_id' | 'name' | 'productId'>>({
+						name: 1,
+						productId: 1
+					})
+					.sort({ createdAt: 1 })
+					.toArray()
+			: [];
+	const tags =
+		tagSlugs.size > 0
+			? await collections.tags
+					.find({
+						_id: { $in: [...tagSlugs] }
+					})
+					.project<
+						Pick<Tag, '_id' | 'name' | 'title' | 'subtitle' | 'content' | 'shortContent' | 'cta'>
+					>({
+						name: 1,
+						title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+						subtitle: { $ifNull: [`$translations.${locals.language}.subtitle`, '$subtitle'] },
+						content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+						shortContent: {
+							$ifNull: [`$translations.${locals.language}.shortContent`, '$shortContent']
+						},
+						cta: { $ifNull: [`$translations.${locals.language}.cta`, '$cta'] }
+					})
+					.toArray()
+			: [];
+	const specifications =
+		specificationSlugs.size > 0
+			? await collections.specifications
+					.find({
+						_id: { $in: [...specificationSlugs] }
+					})
+					.project<Pick<Specification, '_id' | 'content' | 'title'>>({
+						title: { $ifNull: [`$translations.${locals.language}.title`, '$title'] },
+						content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] }
+					})
+					.toArray()
+			: [];
+	const contactForms =
+		contactFormSlugs.size > 0
+			? await collections.contactForms
+					.find({
+						_id: { $in: [...contactFormSlugs] }
+					})
+					.project<
+						Pick<
+							ContactForm,
+							| '_id'
+							| 'content'
+							| 'target'
+							| 'subject'
+							| 'displayFromField'
+							| 'prefillWithSession'
+							| 'disclaimer'
+						>
+					>({
+						content: { $ifNull: [`$translations.${locals.language}.content`, '$content'] },
+						target: 1,
+						displayFromField: 1,
+						prefillWithSession: 1,
+						subject: { $ifNull: [`$translations.${locals.language}.subject`, '$subject'] },
+						disclaimer: { $ifNull: [`$translations.${locals.language}.disclaimer`, '$disclaimer'] }
+					})
+					.toArray()
+			: [];
+	const countdowns =
+		countdownFormSlugs.size > 0
+			? await collections.countdowns
+					.find({
+						_id: { $in: [...countdownFormSlugs] }
+					})
+					.project<Pick<Countdown, '_id' | 'title' | 'description' | 'endsAt'>>({
+						title: {
+							$ifNull: [`$translations.${locals.language}.title`, '$title']
+						},
+						description: {
+							$ifNull: [`$translations.${locals.language}.description`, '$description']
+						},
+						endsAt: 1
+					})
+					.toArray()
+			: [];
+	const galleries =
+		gallerySlugs.size > 0
+			? await collections.galleries
+					.find({
+						_id: { $in: [...gallerySlugs] }
+					})
+					.project<Pick<Gallery, '_id' | 'name' | 'principal' | 'secondary'>>({
+						name: 1,
+						principal: { $ifNull: [`$translations.${locals.language}.principal`, '$principal'] },
+						secondary: { $ifNull: [`$translations.${locals.language}.secondary`, '$secondary'] }
+					})
+					.toArray()
+			: [];
+
 	return {
 		tokens,
 		challenges,
@@ -456,6 +534,7 @@ export async function cmsFromContent(
 		contactForms,
 		countdowns,
 		galleries,
+		leaderboards,
 		pictures: await collections.pictures
 			.find({
 				$or: [
@@ -495,3 +574,4 @@ export type CmsContactForm = Awaited<ReturnType<typeof cmsFromContent>>['contact
 export type CmsCountdown = Awaited<ReturnType<typeof cmsFromContent>>['countdowns'][number];
 export type CmsGallery = Awaited<ReturnType<typeof cmsFromContent>>['galleries'][number];
 export type CmsToken = Awaited<ReturnType<typeof cmsFromContent>>['tokens']['desktop'][number];
+export type CmsLeaderboard = Awaited<ReturnType<typeof cmsFromContent>>['leaderboards'][number];

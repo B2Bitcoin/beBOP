@@ -19,7 +19,8 @@
 		CmsTokens,
 		CmsContactForm,
 		CmsCountdown,
-		CmsGallery
+		CmsGallery,
+		CmsLeaderboard
 	} from '$lib/server/cms';
 	import SpecificationWidget from './SpecificationWidget.svelte';
 	import ContactForm from './ContactForm.svelte';
@@ -27,6 +28,7 @@
 	import CountdownWidget from './CountdownWidget.svelte';
 	import GalleryWidget from './GalleryWidget/GalleryWidget.svelte';
 	import { page } from '$app/stores';
+	import LeaderBoardWidget from './LeaderBoardWidget.svelte';
 	import CurrencyCalculator from './CurrencyCalculator.svelte';
 
 	export let products: CmsProduct[];
@@ -45,6 +47,7 @@
 	export let websiteLink: string | undefined;
 	export let brandName: string | undefined;
 	export let galleries: CmsGallery[];
+	export let leaderboards: CmsLeaderboard[];
 
 	let classNames = '';
 	export { classNames as class };
@@ -64,6 +67,10 @@
 		digitalFiles.map((digitalFile) => [digitalFile.productId, digitalFile])
 	);
 	$: challengeById = Object.fromEntries(challenges.map((challenge) => [challenge._id, challenge]));
+	$: leaderboardById = Object.fromEntries(
+		leaderboards.map((leaderboard) => [leaderboard._id, leaderboard])
+	);
+
 	$: sliderById = Object.fromEntries(sliders.map((slider) => [slider._id, slider]));
 	$: tagById = Object.fromEntries(tags.map((tag) => [tag._id, tag]));
 	$: picturesByTag = groupBy(
@@ -187,6 +194,13 @@
 						: ''}{token.height ? `height: ${token.height}px;` : ''}"
 				/>
 				<PictureComponent picture={pictureById[token.slug]} class="my-5 lg:hidden block" />
+			{:else if token.type === 'leaderboardWidget'}
+				<LeaderBoardWidget
+					leaderboard={leaderboardById[token.slug]}
+					{pictures}
+					{products}
+					class="not-prose"
+				/>
 			{:else if token.type === 'qrCode'}
 				{#if token.slug === 'Bolt12'}
 					<a href="lightning:{$page.data.bolt12Address}">
@@ -269,6 +283,13 @@
 					/>
 				{:else if token.type === 'pictureWidget'}
 					<PictureComponent picture={pictureById[token.slug]} class="my-5" />
+				{:else if token.type === 'leaderboardWidget'}
+					<LeaderBoardWidget
+						leaderboard={leaderboardById[token.slug]}
+						{pictures}
+						{products}
+						class="not-prose"
+					/>
 				{:else if token.type === 'qrCode'}
 					{#if token.slug === 'Bolt12'}
 						<a href="lightning:{$page.data.bolt12Address}">
