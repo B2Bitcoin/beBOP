@@ -77,6 +77,7 @@ type TokenObject =
 			display: string | undefined;
 			raw: string;
 	  }
+	| { type: 'qrCode'; slug: string; raw: string }
 	| { type: 'currencyCalculatorWidget'; slug: string; raw: string };
 
 export async function cmsFromContent(
@@ -100,6 +101,7 @@ export async function cmsFromContent(
 		/\[TagProducts=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
 	const GALLERY_WIDGET_REGEX =
 		/\[Gallery=(?<slug>[\p{L}\d_-]+)(?:[?\s]display=(?<display>[a-z0-9-]+))?\]/giu;
+	const QRCODE_REGEX = /\[QRCode=(?<slug>[\p{L}\d_-]+)\]/giu;
 	const CURRENCY_CALCULATOR_WIDGET_REGEX = /\[CurrencyCalculator=(?<slug>[a-z0-9-]+)\]/giu;
 
 	const productSlugs = new Set<string>();
@@ -112,6 +114,7 @@ export async function cmsFromContent(
 	const countdownFormSlugs = new Set<string>();
 	const tagProductsSlugs = new Set<string>();
 	const gallerySlugs = new Set<string>();
+	const qrCodeSlugs = new Set<string>();
 	const currencyCalculatorSlugs = new Set<string>();
 
 	const tokens: {
@@ -143,6 +146,7 @@ export async function cmsFromContent(
 			...matchAndSort(content, COUNTDOWN_WIDGET_REGEX, 'countdownWidget'),
 			...matchAndSort(content, TAG_PRODUCTS_REGEX, 'tagProducts'),
 			...matchAndSort(content, GALLERY_WIDGET_REGEX, 'galleryWidget'),
+			...matchAndSort(content, QRCODE_REGEX, 'qrCode'),
 			...matchAndSort(content, CURRENCY_CALCULATOR_WIDGET_REGEX, 'currencyCalculatorWidget')
 		].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 		for (const match of matches) {
@@ -247,6 +251,14 @@ export async function cmsFromContent(
 							type: 'galleryWidget',
 							slug: match.groups.slug,
 							display: match.groups?.display,
+							raw: match[0]
+						});
+						break;
+					case 'qrCode':
+						qrCodeSlugs.add(match.groups.slug);
+						token.push({
+							type: 'qrCode',
+							slug: match.groups.slug,
 							raw: match[0]
 						});
 						break;

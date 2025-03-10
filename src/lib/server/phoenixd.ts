@@ -34,6 +34,21 @@ export async function phoenixdBalance(): Promise<{ balanceSat: number; feeCredit
 	return await res.json();
 }
 
+export async function phoenixdGetBolt12(): Promise<string> {
+	const res = await fetch(`${runtimeConfig.phoenixd.url}/getoffer`, {
+		headers: {
+			Authorization: `Basic ${Buffer.from(`:${runtimeConfig.phoenixd.password}`).toString(
+				'base64'
+			)}`
+		}
+	});
+
+	if (!res.ok) {
+		throw error(500, `Error fetching Bolt12 offer: ${res.status} ${await res.text()}`);
+	}
+
+	return await res.text();
+}
 export async function phoenixdDetected(url?: string): Promise<boolean> {
 	return await Promise.race<boolean>([
 		fetch(`${url || runtimeConfig.phoenixd.url}/getinfo`).then(
