@@ -44,6 +44,7 @@
 			"nonEmptyPoolsNotRemoved": "Nada foi guardado: estes pools ainda contêm artigos e não podem ser removidos nem renomeados: {pools}. Cobre-os ou esvazie-os primeiro."
 		},
 		"product": {
+			"openInShop": "Abrir na loja, num novo separador",
 			"stockReference": {
 				"label": "Referenciar o stock de outro produto (opcional)",
 				"noReference": "-- Sem referência (usar stock próprio) --",

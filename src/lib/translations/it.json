@@ -44,6 +44,7 @@
 			"nonEmptyPoolsNotRemoved": "Non è stato salvato nulla: questi pool contengono ancora articoli e non possono essere rimossi né rinominati: {pools}. Incassali o svuotali prima."
 		},
 		"product": {
+			"openInShop": "Apri nel negozio, in una nuova scheda",
 			"stockReference": {
 				"label": "Riferimento allo stock di un altro prodotto (opzionale)",
 				"noReference": "-- Nessun riferimento (usa stock proprio) --",
