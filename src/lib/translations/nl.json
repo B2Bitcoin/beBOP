@@ -44,6 +44,7 @@
 			"nonEmptyPoolsNotRemoved": "Er is niets opgeslagen: deze pools bevatten nog artikelen en kunnen niet worden verwijderd of hernoemd: {pools}. Reken ze eerst af of maak ze leeg."
 		},
 		"product": {
+			"openInShop": "Openen in de winkel, in een nieuw tabblad",
 			"stockReference": {
 				"label": "Verwijzing naar voorraad van ander product (optioneel)",
 				"noReference": "-- Geen verwijzing (gebruik eigen voorraad) --",
