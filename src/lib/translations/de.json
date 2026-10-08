@@ -40,6 +40,7 @@
 			"copied": "Kopiert"
 		},
 		"pos": {
+			"poolsHoldItems": "Diese Pools enthalten noch Artikel und können weder entfernt noch umbenannt werden: {pools}. Kassieren oder leeren Sie sie zuerst.",
 			"nonEmptyPoolsNotRemoved": "Nichts wurde gespeichert: Diese Pools enthalten noch Artikel und können weder entfernt noch umbenannt werden: {pools}. Kassieren oder leeren Sie sie zuerst."
 		},
 		"product": {
