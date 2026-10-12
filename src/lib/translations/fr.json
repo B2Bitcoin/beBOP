@@ -50,6 +50,12 @@
 				"noReference": "-- Pas de référence (utiliser le stock propre) --",
 				"warning": "⚠️ Ce produit référence le stock d'un autre produit. Les modifications de stock affecteront le produit référencé."
 			}
+		},
+		"order": {
+			"customFieldFilterLabel": "Champ de checkout personnalisé",
+			"customFieldValueLabel": "Valeur du champ",
+			"customFieldValuePlaceholder": "saisissez la valeur à filtrer",
+			"customFieldDisabled": "désactivé"
 		}
 	},
 	"ageWarning": {
@@ -1015,11 +1021,26 @@
 			"then": "puis"
 		},
 		"pricingScheduleUnit": {
-			"hour": { "one": "heure", "other": "heures" },
-			"day": { "one": "jour", "other": "jours" },
-			"week": { "one": "semaine", "other": "semaines" },
-			"month": { "one": "mois", "other": "mois" },
-			"year": { "one": "an", "other": "ans" }
+			"hour": {
+				"one": "heure",
+				"other": "heures"
+			},
+			"day": {
+				"one": "jour",
+				"other": "jours"
+			},
+			"week": {
+				"one": "semaine",
+				"other": "semaines"
+			},
+			"month": {
+				"one": "mois",
+				"other": "mois"
+			},
+			"year": {
+				"one": "an",
+				"other": "ans"
+			}
 		},
 		"type": {
 			"deposit": "Sur acompte",
