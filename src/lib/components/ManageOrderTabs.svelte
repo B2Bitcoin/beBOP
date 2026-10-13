@@ -110,7 +110,7 @@
 				<div class="flex justify-between items-center bg-gray-100 gap-2 px-4 py-2">
 					<input
 						type="text"
-						placeholder="Group Name"
+						placeholder={t('admin.pos.tabs.groupNamePlaceholder')}
 						value={group.name}
 						class="border font-semibold rounded px-2 py-1 text-sm"
 						on:focus={() => (nameBeforeEdit = group.name)}
@@ -120,7 +120,7 @@
 					<button
 						type="button"
 						class="text-sm text-red-600 hover:underline"
-						on:click={() => deleteGroup(groupIndex)}>Delete Group</button
+						on:click={() => deleteGroup(groupIndex)}>{t('admin.pos.tabs.deleteGroup')}</button
 					>
 				</div>
 
@@ -134,7 +134,7 @@
 								<div class="w-4 h-4 rounded-full" style="background-color: {tabColor(tab)}"></div>
 								<input
 									type="text"
-									placeholder="Label"
+									placeholder={t('admin.pos.tabs.labelPlaceholder')}
 									value={tab.label ?? ''}
 									class="border rounded px-2 py-1 text-sm"
 									on:input={(e) => updateLabel(groupIndex, tabIndex, inputValue(e))}
@@ -150,21 +150,21 @@
 									disabled={isFirst}
 									on:click={() => moveTab(groupIndex, tabIndex, 'up')}
 								>
-									Up
+									{t('admin.pos.tabs.moveUp')}
 								</button>
 								<button
 									class={isLast ? 'invisible' : 'text-sm text-red-600 hover:underline'}
 									type="button"
 									on:click={() => moveTab(groupIndex, tabIndex, 'down')}
 								>
-									Down
+									{t('admin.pos.tabs.moveDown')}
 								</button>
 								<button
 									class="text-sm text-red-600 hover:underline"
 									type="button"
 									on:click={() => deleteTab(groupIndex, tabIndex)}
 								>
-									Delete
+									{t('admin.pos.tabs.deleteTab')}
 								</button>
 							</div>
 						</li>
@@ -175,7 +175,7 @@
 							class="text-sm text-blue-600 hover:underline"
 							on:click={() => addTab(groupIndex)}
 						>
-							Add Tab
+							{t('admin.pos.tabs.addTab')}
 						</button>
 					</li>
 				</ul>
@@ -186,9 +186,9 @@
 				<button
 					type="button"
 					class="text-sm text-blue-600 hover:underline"
-					on:click={() => addGroup('New Group')}
+					on:click={() => addGroup(t('admin.pos.tabs.newGroupName'))}
 				>
-					Add Group
+					{t('admin.pos.tabs.addGroup')}
 				</button>
 			</div>
 		</div>
