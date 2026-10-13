@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ManageOrderTabs from '$lib/components/ManageOrderTabs.svelte';
+	import Trans from '$lib/components/Trans.svelte';
 	import { MultiSelect } from 'svelte-multiselect';
 	import { useI18n } from '$lib/i18n';
 	import type { TagGroup } from '$lib/types/TagGroup';
@@ -82,12 +83,16 @@
 	}
 </script>
 
-<h1 class="text-3xl">POS</h1>
+<h1 class="text-3xl">{t('admin.pos.title')}</h1>
 
 <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
 	<p class="text-sm text-blue-900">
-		ℹ️ Tap-to-pay settings have been moved to
-		<a href="/admin/pos-payments" class="font-bold underline">Payment Settings → PoS Payments</a>
+		ℹ️
+		<Trans key="admin.pos.tapToPaySettingsMoved">
+			<a href="/admin/pos-payments" class="font-bold underline" slot="0" let:translation>
+				{translation}
+			</a>
+		</Trans>
 	</p>
 </div>
 
@@ -97,7 +102,7 @@
 			{t('admin.pos.nonEmptyPoolsNotRemoved', { pools: form.nonEmptyPools.join(', ') })}
 		</p>
 	{/if}
-	<h2 class="text-2xl">POS Session Management (Z-Ticket System)</h2>
+	<h2 class="text-2xl">{t('admin.pos.sessionManagementTitle')}</h2>
 
 	<label class="checkbox-label">
 		<input
@@ -106,7 +111,7 @@
 			class="form-checkbox"
 			bind:checked={posSession.forbidTouchWhenSessionClosed}
 		/>
-		Forbid use of /pos/touch when PoS Session is not opened
+		{t('admin.pos.forbidTouchWhenClosed')}
 	</label>
 
 	<label class="checkbox-label">
@@ -116,7 +121,7 @@
 			class="form-checkbox"
 			bind:checked={posSession.enabled}
 		/>
-		Enable Z-ticket management
+		{t('admin.pos.enableZTicketManagement')}
 	</label>
 
 	{#if posSession.enabled}
@@ -127,7 +132,7 @@
 				class="form-checkbox"
 				bind:checked={posSession.allowXTicketEditing}
 			/>
-			Allow X ticket editing
+			{t('admin.pos.allowXTicketEditing')}
 		</label>
 
 		<label class="checkbox-label">
@@ -137,11 +142,11 @@
 				class="form-checkbox"
 				bind:checked={posSession.cashDeltaJustificationMandatory}
 			/>
-			Make cash delta justification mandatory
+			{t('admin.pos.cashDeltaJustificationMandatory')}
 		</label>
 	{/if}
 
-	<h2 class="text-2xl mt-8">PoS Checkout</h2>
+	<h2 class="text-2xl mt-8">{t('admin.pos.checkoutTitle')}</h2>
 	<label class="checkbox-label">
 		<input
 			type="checkbox"
@@ -149,7 +154,7 @@
 			class="form-checkbox"
 			checked={data.posPrefillTermOfUse}
 		/>
-		Pre-fill term of use checkbox in /checkout
+		{t('admin.pos.prefillTermOfUse')}
 	</label>
 	<label class="checkbox-label">
 		<input
@@ -158,11 +163,11 @@
 			class="form-checkbox"
 			bind:checked={posDisplayOrderQrAfterPayment}
 		/>
-		Display order QR code on PoS after payment
+		{t('admin.pos.displayOrderQrAfterPayment')}
 	</label>
 	{#if posDisplayOrderQrAfterPayment}
 		<label class="form-label">
-			set a time before redirecting to home
+			{t('admin.pos.timeBeforeRedirecting')}
 
 			<input
 				type="number"
@@ -179,7 +184,7 @@
 				class="form-checkbox"
 				checked={data.posQrCodeAfterPayment.displayCustomerCta}
 			/>
-			Display the customer CTA on PoS after payment
+			{t('admin.pos.displayCustomerCtaAfterPayment')}
 		</label>
 		<label class="checkbox-label">
 			<input
@@ -188,13 +193,13 @@
 				class="form-checkbox"
 				checked={data.posQrCodeAfterPayment.removeBebobLogo}
 			/>
-			Remove be-BOP logo from POS after payment QR code
+			{t('admin.pos.removeLogoFromQrCode')}
 		</label>
 	{/if}
 
-	<h2 class="text-2xl mt-8">Tap-to-pay / external POS reconciliation</h2>
+	<h2 class="text-2xl mt-8">{t('admin.pos.tapToPayReconciliationTitle')}</h2>
 	<label class="form-label">
-		Select Tap-to-pay provider
+		{t('admin.pos.selectTapToPayProvider')}
 		<select name="tapToPayProvider" class="form-input max-w-[25rem]">
 			{#each data.tapToPay.providers as provider}
 				<option
@@ -202,14 +207,14 @@
 					selected={data.tapToPay.currentProcessor === provider.provider}
 					disabled={!provider.available}
 				>
-					{provider.displayName}
+					{provider.displayName ?? t('admin.pos.tapToPayNotUsed')}
 				</option>
 			{/each}
 		</select>
 	</label>
 
 	<label class="form-label">
-		Fill mobile application URL (optional)
+		{t('admin.pos.fillMobileAppUrl')}
 		<input
 			type="text"
 			class="form-input max-w-[25rem]"
@@ -219,7 +224,7 @@
 		/>
 	</label>
 
-	<h2 class="text-2xl">Touchscreen PoS interface</h2>
+	<h2 class="text-2xl">{t('admin.pos.touchscreenInterfaceTitle')}</h2>
 
 	<label class="checkbox-label">
 		<input
@@ -228,7 +233,7 @@
 			class="form-checkbox"
 			bind:checked={posSession.lockItemsAfterMidTicket}
 		/>
-		Forbid item deletion / qty reduction, after mid-ticket print
+		{t('admin.pos.lockItemsAfterMidTicket')}
 	</label>
 
 	<label class="checkbox-label">
@@ -243,7 +248,7 @@
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">
-		Product Tags
+		{t('admin.pos.productTags')}
 
 		{#each tagGroups as group, idx (group._id)}
 			<div class="border border-gray-300 rounded-lg mb-4">
@@ -309,9 +314,9 @@
 	<input type="hidden" name="posTouchTag" value={JSON.stringify(getAllTagIdsFromGroups())} />
 
 	<label class="form-label">
-		Pool name label for non-empty pools
+		{t('admin.pos.poolOccupiedLabel')}
 		<small class="text-gray-600"
-			>If empty, default icon will be shown: {data.defaultFullPoolIcon}</small
+			>{t('admin.pos.defaultIconHint', { icon: data.defaultFullPoolIcon })}</small
 		>
 		<input
 			type="text"
@@ -322,9 +327,9 @@
 	</label>
 
 	<label class="form-label">
-		Pool name label for empty pools
+		{t('admin.pos.poolEmptyLabel')}
 		<small class="text-gray-600"
-			>If empty, default icon will be shown: {data.defaultEmptyPoolIcon}</small
+			>{t('admin.pos.defaultIconHint', { icon: data.defaultEmptyPoolIcon })}</small
 		>
 		<input type="text" name="posPoolEmptyIcon" class="form-input" bind:value={posPoolEmptyIcon} />
 	</label>
@@ -343,8 +348,8 @@
 	</label>
 
 	<label class="form-label">
-		Products per page in POS Touch
-		<small class="text-gray-600">Set to 0 for automatic calculation based on screen size</small>
+		{t('admin.pos.productsPerPage')}
+		<small class="text-gray-600">{t('admin.pos.productsPerPageHint')}</small>
 		<input
 			type="number"
 			name="posProductsPerPage"
@@ -355,10 +360,8 @@
 	</label>
 
 	<label class="form-label">
-		Mobile breakpoint (px)
-		<small class="text-gray-600"
-			>Screen width below which mobile layout is used (500-1500, default: 1024)</small
-		>
+		{t('admin.pos.mobileBreakpoint')}
+		<small class="text-gray-600">{t('admin.pos.mobileBreakpointHint')}</small>
 		<input
 			type="number"
 			name="posMobileBreakpoint"
@@ -371,12 +374,12 @@
 
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="form-label">
-		Tabs management
+		{t('admin.pos.tabsManagement')}
 		<ManageOrderTabs bind:tabGroups nonEmptyPoolSlugs={data.nonEmptyPoolSlugs} />
 	</label>
 	<input type="hidden" name="posTabGroups" bind:value={serializedTabGroups} />
 
 	<div>
-		<input type="submit" value="Update" class="btn btn-blue self-start" />
+		<input type="submit" value={t('admin.action.update')} class="btn btn-blue self-start" />
 	</div>
 </form>
